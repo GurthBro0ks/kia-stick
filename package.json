@@ -1,0 +1,39 @@
+{
+  "name": "kia-stick",
+  "version": "0.1.0",
+  "private": true,
+  "description": "Laptop-only fake-doc PWA MVP for KIA Stick source-governed answers.",
+  "scripts": {
+    "dev": "next dev --hostname 127.0.0.1",
+    "prebuild": "npm run generate:corpus",
+    "build": "next build",
+    "start": "next start --hostname 127.0.0.1",
+    "prelint": "npm run generate:corpus",
+    "lint": "eslint . --max-warnings=0",
+    "pretypecheck": "npm run generate:corpus",
+    "typecheck": "tsc --noEmit",
+    "pretest": "npm run generate:corpus",
+    "test": "vitest run",
+    "generate:corpus": "node scripts/generate-corpus.mjs",
+    "scan:fake": "node scripts/check-fake-docs.mjs",
+    "scan:privacy": "node scripts/privacy-scan.mjs",
+    "qa": "bash scripts/qa_gate.sh"
+  },
+  "dependencies": {
+    "lucide-react": "^0.468.0",
+    "next": "^15.1.3",
+    "react": "^19.0.0",
+    "react-dom": "^19.0.0"
+  },
+  "devDependencies": {
+    "@eslint/js": "^9.17.0",
+    "@next/eslint-plugin-next": "^15.5.19",
+    "@types/node": "^22.10.2",
+    "@types/react": "^19.0.2",
+    "@types/react-dom": "^19.0.2",
+    "eslint": "^9.17.0",
+    "typescript": "^5.7.2",
+    "typescript-eslint": "^8.19.1",
+    "vitest": "^2.1.8"
+  }
+}
