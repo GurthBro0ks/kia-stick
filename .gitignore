@@ -34,3 +34,5 @@ tsconfig.tsbuildinfo
 *.xapk
 *.so
 *.luac
+data/quarantine/
+data/redacted-approved/
