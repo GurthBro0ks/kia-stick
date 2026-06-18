@@ -34,7 +34,7 @@ git add \
 if git diff --cached --quiet; then
   echo "No staged safe changes to commit."
 else
-  git commit -m "Build KIA Stick v0.1 fake-doc laptop MVP"
+  git commit -m "Fix KIA Stick v0.1 mobile manual QA UI"
 fi
 
 if [[ "${KIA_ALLOW_PUSH:-0}" == "1" ]]; then

@@ -1,15 +1,19 @@
 "use client";
 
 import {
+  AlertTriangle,
   Archive,
   BookOpen,
   CheckCircle2,
+  ChevronRight,
   ClipboardList,
+  Database,
   FileSearch,
   Heart,
   MessageSquareText,
   Save,
   Settings,
+  ShieldCheck,
   Upload,
 } from "lucide-react";
 import { useEffect, useMemo, useState } from "react";
@@ -54,6 +58,16 @@ const details: Detail[] = ["Simple", "Detailed", "Checklist"];
 
 const savedKey = "kia-stick.saved-answers.v0.1";
 const quarantineKey = "kia-stick.quarantine.v0.1";
+
+const intentLabels: Record<AnswerResult["intent"], string> = {
+  annual_leave: "Annual leave",
+  steward_request: "Steward request",
+  step_one_evidence: "Step 1 evidence",
+  attendance_sleeping_bathroom: "Attendance / bathroom",
+  one_click_lunch: "One-click lunch",
+  source_hierarchy: "Source hierarchy",
+  unknown: "Unknown issue",
+};
 
 function loadJson<T>(key: string, fallback: T): T {
   if (typeof window === "undefined") return fallback;
@@ -142,8 +156,8 @@ export function KiaStickApp() {
     <div className="appShell">
       <header className="topBar">
         <div className="brandBlock">
+          <span className="brandEyebrow">Know-It-All Stick</span>
           <h1 className="brand">KIA Stick</h1>
-          <p className="subtitle">Know-It-All Stick · fake-doc laptop MVP</p>
         </div>
         <div className="topMeta">
           <span className="winBadge">v{clientVersion.appVersion}</span>
@@ -151,59 +165,67 @@ export function KiaStickApp() {
         </div>
       </header>
 
-      <main className="mainArea">
+      <div className="fakeNotice" role="status">
+        <AlertTriangle size={16} />
+        <span>Fake sample mode only. Real APWU/USPS/member/local docs stay out of this app.</span>
+      </div>
+
+      <main className={tab === "chat" ? "mainArea chatMain" : "mainArea"}>
         {tab === "chat" && (
           <>
-            <section className="windowPanel">
-              <div className="windowTitle">
-                <span>Ask</span>
-                <span>{answer.noAnswer ? "No controlling hit" : "Cited answer"}</span>
+            <section className="chatComposer" aria-label="Ask KIA Stick">
+              <div className="composerHeader">
+                <div>
+                  <span className="sectionKicker">Research mode</span>
+                  <h2>Ask with citations first</h2>
+                </div>
+                <span className={answer.noAnswer ? "statusPill warning" : "statusPill ok"}>
+                  {answer.noAnswer ? "No controlling hit" : "Cited answer"}
+                </span>
               </div>
-              <div className="panelBody">
-                <div className="selectorGrid">
-                  <label className="fieldLabel">
-                    Mode
-                    <select className="select" value={mode} onChange={(event) => setMode(event.target.value as Mode)}>
-                      {modes.map((item) => (
-                        <option key={item}>{item}</option>
-                      ))}
-                    </select>
-                  </label>
-                  <label className="fieldLabel">
-                    Scope
-                    <select className="select" value={scope} onChange={(event) => setScope(event.target.value as Scope)}>
-                      {scopes.map((item) => (
-                        <option key={item}>{item}</option>
-                      ))}
-                    </select>
-                  </label>
-                  <label className="fieldLabel">
-                    Detail
-                    <select className="select" value={detail} onChange={(event) => setDetail(event.target.value as Detail)}>
-                      {details.map((item) => (
-                        <option key={item}>{item}</option>
-                      ))}
-                    </select>
-                  </label>
-                </div>
 
-                <div className="chips" aria-label="test prompts">
-                  {cannedQuestions.map((prompt) => (
-                    <button className="chip" key={prompt} type="button" onClick={() => runAnswer(prompt)}>
-                      {prompt}
-                    </button>
-                  ))}
-                </div>
-
-                <label className="fieldLabel" style={{ marginTop: 10 }}>
-                  Question
-                  <textarea
-                    className="questionInput"
-                    value={question}
-                    onChange={(event) => setQuestion(event.target.value)}
-                  />
+              <div className="controlStrip">
+                <label className="controlPill">
+                  <span>Mode</span>
+                  <select value={mode} onChange={(event) => setMode(event.target.value as Mode)}>
+                    {modes.map((item) => (
+                      <option key={item}>{item}</option>
+                    ))}
+                  </select>
                 </label>
+                <label className="controlPill">
+                  <span>Scope</span>
+                  <select value={scope} onChange={(event) => setScope(event.target.value as Scope)}>
+                    {scopes.map((item) => (
+                      <option key={item}>{item}</option>
+                    ))}
+                  </select>
+                </label>
+                <label className="controlPill">
+                  <span>Detail</span>
+                  <select value={detail} onChange={(event) => setDetail(event.target.value as Detail)}>
+                    {details.map((item) => (
+                      <option key={item}>{item}</option>
+                    ))}
+                  </select>
+                </label>
+              </div>
 
+              <div className="promptRail" aria-label="fake test prompts">
+                {cannedQuestions.map((prompt) => (
+                  <button className="promptChip" key={prompt} type="button" onClick={() => runAnswer(prompt)}>
+                    {prompt}
+                    <ChevronRight size={14} />
+                  </button>
+                ))}
+              </div>
+
+              <div className="askBox">
+                <textarea
+                  aria-label="Question"
+                  value={question}
+                  onChange={(event) => setQuestion(event.target.value)}
+                />
                 <div className="chatActions">
                   <button className="button primary" type="button" onClick={() => runAnswer()}>
                     <MessageSquareText size={17} />
@@ -221,16 +243,15 @@ export function KiaStickApp() {
         )}
 
         {tab === "sources" && (
-          <section className="windowPanel">
-            <div className="windowTitle">
-              <span>Sources</span>
-              <span>{corpus.docs.length} fake docs</span>
-            </div>
-            <div className="panelBody sourceCards">
+          <section className="tabPanel">
+            <PanelHeader title="Sources" meta={`${corpus.docs.length} fake docs`} />
+            <div className="sourceCards">
               {sourceBuckets.map(({ sourceClass, docs }) => (
                 <article className="sourceCard" key={sourceClass}>
-                  <h3>{sourceClassLabels[sourceClass]}</h3>
-                  <p>{docs.length} source{docs.length === 1 ? "" : "s"} · bucket {bucketForClass(sourceClass)}</p>
+                  <div>
+                    <h3>{sourceClassLabels[sourceClass]}</h3>
+                    <p>{docs.length} source{docs.length === 1 ? "" : "s"} · bucket {bucketForClass(sourceClass)}</p>
+                  </div>
                   <div className="sourceMeta">
                     {docs.map((doc) => (
                       <span className={doc.citable ? "badge green" : "badge red"} key={doc.id}>
@@ -245,19 +266,16 @@ export function KiaStickApp() {
         )}
 
         {tab === "saved" && (
-          <section className="windowPanel">
-            <div className="windowTitle">
-              <span>Saved</span>
-              <span>{saved.length}</span>
-            </div>
-            <div className="panelBody sourceCards">
+          <section className="tabPanel">
+            <PanelHeader title="Saved" meta={`${saved.length} stored locally`} />
+            <div className="sourceCards">
               {saved.length === 0 && <p className="emptyState">No saved answers yet.</p>}
               {saved.map((item) => (
                 <article className="savedCard" key={item.id}>
                   <div className="savedHeader">
                     <h3>{item.question}</h3>
                     <button
-                      className="button iconOnly"
+                      className="button iconOnly subtle"
                       type="button"
                       title="Delete saved answer"
                       aria-label="Delete saved answer"
@@ -280,12 +298,9 @@ export function KiaStickApp() {
         )}
 
         {tab === "upload" && (
-          <section className="windowPanel">
-            <div className="windowTitle">
-              <span>Upload</span>
-              <span>Quarantine review</span>
-            </div>
-            <div className="panelBody">
+          <section className="tabPanel">
+            <PanelHeader title="Upload" meta="quarantine review only" />
+            <div className="uploadPanel">
               <label className="checkboxRow">
                 <input
                   type="checkbox"
@@ -294,7 +309,7 @@ export function KiaStickApp() {
                 />
                 Fake sample only
               </label>
-              <label className="fieldLabel" style={{ marginTop: 10 }}>
+              <label className="fieldLabel">
                 Local file metadata
                 <input
                   className="fileInput"
@@ -305,7 +320,7 @@ export function KiaStickApp() {
                   onChange={(event) => queueUpload(event.target.files)}
                 />
               </label>
-              <div className="sourceCards" style={{ marginTop: 10 }}>
+              <div className="sourceCards">
                 {quarantine.length === 0 && <p className="emptyState">No queued fake samples.</p>}
                 {quarantine.map((item) => (
                   <article className="uploadRow" key={item.id}>
@@ -325,11 +340,8 @@ export function KiaStickApp() {
         )}
 
         {tab === "settings" && (
-          <section className="windowPanel">
-            <div className="windowTitle">
-              <span>Settings</span>
-              <a href="/version" className="badge">Version page</a>
-            </div>
+          <section className="tabPanel">
+            <PanelHeader title="Settings" meta={<a href="/version">Version page</a>} />
             <dl className="settingsGrid">
               <dt>App</dt>
               <dd>{clientVersion.appVersion}</dd>
@@ -363,6 +375,15 @@ export function KiaStickApp() {
   );
 }
 
+function PanelHeader(props: { title: string; meta: React.ReactNode }) {
+  return (
+    <div className="panelHeader">
+      <h2>{props.title}</h2>
+      <span>{props.meta}</span>
+    </div>
+  );
+}
+
 function NavButton(props: { active: boolean; label: string; icon: React.ReactNode; onClick: () => void }) {
   return (
     <button className={props.active ? "navButton active" : "navButton"} type="button" onClick={props.onClick}>
@@ -374,60 +395,82 @@ function NavButton(props: { active: boolean; label: string; icon: React.ReactNod
 
 function AnswerPanel({ answer }: { answer: AnswerResult }) {
   return (
-    <section className="windowPanel">
-      <div className="windowTitle">
-        <span>Answer</span>
-        <span>{answer.intent}</span>
+    <section className="chatThread" aria-label="Current answer">
+      <div className="messageRow userMessage">
+        <div className="messageBubble userBubble">
+          <span className="messageLabel">You</span>
+          <p>{answer.question}</p>
+        </div>
       </div>
-      <div className="panelBody answerStack">
-        <div>
+
+      <div className="messageRow assistantMessage">
+        <div className="messageBubble assistantBubble">
+          <div className="answerHeader">
+            <div>
+              <span className="messageLabel">KIA Stick</span>
+              <h2>{intentLabels[answer.intent]}</h2>
+            </div>
+            <span className={answer.noAnswer ? "statusPill warning" : "statusPill ok"}>
+              {answer.noAnswer ? "Best guess disabled" : `${answer.citations.length} citations`}
+            </span>
+          </div>
+
           <p className="shortAnswer">{answer.shortAnswer}</p>
           <p className="modeNote">{answer.modeNote}</p>
-        </div>
 
-        <div>
-          <h2 className="sectionTitle">Sources</h2>
-          {answer.sourceGroups.length === 0 && <p className="emptyState">No fake sources matched.</p>}
-          {answer.sourceGroups.map((group) => (
-            <div className="sourceGroup" key={group.bucket}>
-              <strong>{group.label}</strong>
-              <ul className="sourceList">
-                {group.docs.map((doc) => (
-                  <li key={doc.id}>
-                    {doc.title}
-                    <div className="sourceMeta">
-                      <span className="badge">{sourceClassLabels[doc.class]}</span>
-                      <span className={doc.citable ? "badge green" : "badge red"}>{doc.citable ? "citable" : "not citable"}</span>
-                      <span className="badge">{doc.article}</span>
-                      <span className="badge">{doc.page}</span>
-                    </div>
-                  </li>
+          <div className="answerSection">
+            <h3 className="sectionTitle">
+              <ShieldCheck size={14} />
+              Authority Stack
+            </h3>
+            {answer.sourceGroups.length === 0 && <p className="emptyState">No fake sources matched.</p>}
+            {answer.sourceGroups.map((group) => (
+              <section className="authorityGroup" key={group.bucket}>
+                <h4>{group.label}</h4>
+                <div className="authorityGrid">
+                  {group.docs.map((doc) => (
+                    <article className="authorityCard" key={doc.id}>
+                      <strong>{doc.title}</strong>
+                      <p>{doc.excerpt}</p>
+                      <div className="sourceMeta">
+                        <span className="badge">{sourceClassLabels[doc.class]}</span>
+                        <span className={doc.citable ? "badge green" : "badge red"}>{doc.citable ? "citable" : "not citable"}</span>
+                        <span className="badge">{doc.article}</span>
+                        <span className="badge">{doc.page}</span>
+                      </div>
+                    </article>
+                  ))}
+                </div>
+              </section>
+            ))}
+          </div>
+
+          <div className="answerGrid">
+            <ListBlock title="Conflicts" items={answer.conflicts.length > 0 ? answer.conflicts : ["No visible fake-source conflicts."]} icon="conflict" />
+            <ListBlock title="Evidence Checklist" items={answer.evidenceChecklist} icon="checklist" />
+            <ListBlock title="Missing Facts" items={answer.missingFacts} icon="facts" />
+            <ListBlock title="Follow-Ups" items={answer.followUps} icon="followups" />
+          </div>
+
+          <div className="answerSection">
+            <h3 className="sectionTitle">
+              <Database size={14} />
+              Citations
+            </h3>
+            {answer.citations.length === 0 ? (
+              <p className="emptyState">No citable fake sources.</p>
+            ) : (
+              <ol className="citationCards">
+                {answer.citations.map((citation) => (
+                  <li key={citation.id}>{citationLabel(citation)}</li>
                 ))}
-              </ul>
-            </div>
-          ))}
-        </div>
+              </ol>
+            )}
+          </div>
 
-        <ListBlock title="Conflicts" items={answer.conflicts.length > 0 ? answer.conflicts : ["No visible fake-source conflicts."]} icon="conflict" />
-        <ListBlock title="Evidence Checklist" items={answer.evidenceChecklist} icon="checklist" />
-        <ListBlock title="Missing Facts" items={answer.missingFacts} icon="facts" />
-        <ListBlock title="Follow-Ups" items={answer.followUps} icon="followups" />
-
-        <div>
-          <h2 className="sectionTitle">Citations</h2>
-          {answer.citations.length === 0 ? (
-            <p className="emptyState">No citable fake sources.</p>
-          ) : (
-            <ol className="citationList">
-              {answer.citations.map((citation) => (
-                <li key={citation.id}>{citationLabel(citation)}</li>
-              ))}
-            </ol>
-          )}
-        </div>
-
-        <div className="footerLine">
-          {answer.footer} | Prompt:{answer.version.promptVersion} | Provider:{answer.version.provider}
+          <div className="footerLine">
+            {answer.footer} | Prompt:{answer.version.promptVersion} | Provider:{answer.version.provider}
+          </div>
         </div>
       </div>
     </section>
@@ -437,15 +480,15 @@ function AnswerPanel({ answer }: { answer: AnswerResult }) {
 function ListBlock({ title, items, icon }: { title: string; items: string[]; icon: "conflict" | "checklist" | "facts" | "followups" }) {
   const Icon = icon === "checklist" ? CheckCircle2 : icon === "facts" ? FileSearch : ClipboardList;
   return (
-    <div>
-      <h2 className="sectionTitle">
+    <section className="infoCard">
+      <h3 className="sectionTitle">
         <Icon size={14} /> {title}
-      </h2>
+      </h3>
       <ul className="plainList">
         {items.map((item) => (
           <li key={item}>{item}</li>
         ))}
       </ul>
-    </div>
+    </section>
   );
 }

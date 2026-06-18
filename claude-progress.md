@@ -2,7 +2,7 @@
 
 ## Current Phase
 
-- Phase: `KIA-Stick-v0.1-fake-docs-laptop-mvp`
+- Phase: `KIA-Stick-v0.1-mobile-ui-manual-qa-fix`
 - Target: `USER_LAPTOP_ONLY`
 - Provider: `local-fake-deterministic`
 
@@ -20,21 +20,23 @@
 - `curl http://127.0.0.1:3005/health`
 - `curl http://127.0.0.1:3005/version`
 - `node scripts/cdp-screenshot.mjs ...`
+- `curl -s http://127.0.0.1:3005/version | head -c 1000`
 
 ## Files Changed
 
-- Next.js app shell, PWA metadata, health/version routes.
-- Fake-only corpus and generated `data/fake-corpus.json`.
-- Source hierarchy and deterministic answer governor.
-- Saved answers and upload quarantine UI.
-- QA, fake-doc, privacy, screenshot, and safe git helper scripts.
+- Mobile-first chat-style shell and fixed bottom navigation.
+- Compact Mode/Scope/Detail selector strip.
+- Chat message cards, authority cards, citation cards, fake warning, and readable version footer.
+- `/health` phase metadata and `/version` browser/curl readability.
+- QA gate and safe sync phase labels for the UI-fix pass.
 
 ## Proof Directory
 
-- `/tmp/proof_kia_stick_v01_laptop_20260618T162015Z`
+- `/tmp/proof_kia_stick_v01_ui_fix_20260618T165630Z`
 
 ## Remaining Unknowns
 
 - npm audit reports 7 dependency advisories from the current Next dependency tree; no forced breaking upgrade was applied.
 - `/media/mint/SHARED/APWU` remains out of scope and untouched.
 - Local untracked `DB/` archive folder was observed by filename only and is ignored, not committed.
+- `next build` still prints Next's flat-ESLint plugin detection warning, but lint/typecheck/build pass.

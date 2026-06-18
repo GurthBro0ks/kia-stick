@@ -4,7 +4,8 @@ set -euo pipefail
 ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
 cd "$ROOT"
 
-PROOF_DIR="${PROOF_DIR:-/tmp/proof_kia_stick_v01_laptop_$(date -u +%Y%m%dT%H%M%SZ)}"
+PHASE="${PHASE:-KIA-Stick-v0.1-mobile-ui-manual-qa-fix}"
+PROOF_DIR="${PROOF_DIR:-/tmp/proof_kia_stick_v01_ui_fix_$(date -u +%Y%m%dT%H%M%SZ)}"
 mkdir -p "$PROOF_DIR"
 
 run_step() {
@@ -34,9 +35,9 @@ git ls-files >"$PROOF_DIR/git_ls_files.log" 2>&1 || true
 git ls-files --cached --others --exclude-standard | sort >"$PROOF_DIR/files_after.log"
 
 cat >"$PROOF_DIR/RESULT.md" <<RESULT
-# KIA Stick v0.1 Fake Docs Laptop MVP QA Result
+# KIA Stick v0.1 Manual QA UI Fix Result
 
-- Phase: KIA-Stick-v0.1-fake-docs-laptop-mvp
+- Phase: $PHASE
 - Target machine: USER_LAPTOP_ONLY
 - Target repo: $ROOT
 - Provider: local-fake-deterministic

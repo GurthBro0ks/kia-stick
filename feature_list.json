@@ -12,6 +12,8 @@
     "upload_quarantine_review_queue",
     "health_and_version_routes",
     "github_safe_gitignore",
-    "proof_pack_qa_gate"
+    "proof_pack_qa_gate",
+    "mobile_manual_qa_chat_shell",
+    "readable_version_page"
   ]
 }
