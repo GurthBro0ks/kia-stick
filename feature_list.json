@@ -1,19 +1,26 @@
 {
-  "phase": "KIA-Stick-v0.1-fake-docs-laptop-mvp",
+  "phase": "KIA-Stick-v0.1-closeout-project-state",
   "target_machine": "USER_LAPTOP_ONLY",
+  "accepted_v0_1": {
+    "commit": "1d9b05c",
+    "proof_dir": "/tmp/proof_kia_stick_v01_ui_fix_20260618T165630Z",
+    "manual_qa": "PASS",
+    "provider": "local-fake-deterministic",
+    "cloud_api_required": false,
+    "real_db_boundary": "/media/mint/SHARED/APWU untouched"
+  },
   "features": [
-    "mobile_first_pwa_shell",
-    "fake_only_source_corpus",
-    "source_class_hierarchy",
-    "citation_first_answer_governor",
-    "no_answer_best_guess_disabled",
-    "version_footer",
-    "saved_answers_local_storage",
-    "upload_quarantine_review_queue",
-    "health_and_version_routes",
+    "fake_corpus",
+    "authority_hierarchy",
+    "deterministic_answer_governor",
+    "citations_version_footer",
+    "mobile_pwa_shell",
+    "bottom_nav",
+    "saved_answers",
+    "upload_quarantine_ui",
+    "health_version_routes",
+    "fake_privacy_scans",
     "github_safe_gitignore",
-    "proof_pack_qa_gate",
-    "mobile_manual_qa_chat_shell",
-    "readable_version_page"
+    "proof_pack_qa_gate"
   ]
 }

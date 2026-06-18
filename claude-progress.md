@@ -2,9 +2,21 @@
 
 ## Current Phase
 
-- Phase: `KIA-Stick-v0.1-mobile-ui-manual-qa-fix`
+- Phase: `KIA-Stick-v0.1-closeout-project-state`
 - Target: `USER_LAPTOP_ONLY`
 - Provider: `local-fake-deterministic`
+
+## Accepted v0.1 State
+
+- Accepted scope: laptop-only fake-doc PWA MVP.
+- Accepted commit: `1d9b05c`.
+- Accepted proof directory: `/tmp/proof_kia_stick_v01_ui_fix_20260618T165630Z`.
+- Manual QA: PASS.
+- Provider: `local-fake-deterministic`.
+- Cloud/API required: no.
+- Secrets printed: no.
+- Push performed: no.
+- Real document boundary: `/media/mint/SHARED/APWU` untouched.
 
 ## Commands Run
 
@@ -21,18 +33,19 @@
 - `curl http://127.0.0.1:3005/version`
 - `node scripts/cdp-screenshot.mjs ...`
 - `curl -s http://127.0.0.1:3005/version | head -c 1000`
+- `git status --short`
+- `grep -R "FAKE SAMPLE DOCUMENT" content data app scripts README.md AGENTS.md 2>/dev/null | head`
 
 ## Files Changed
 
-- Mobile-first chat-style shell and fixed bottom navigation.
-- Compact Mode/Scope/Detail selector strip.
-- Chat message cards, authority cards, citation cards, fake warning, and readable version footer.
-- `/health` phase metadata and `/version` browser/curl readability.
-- QA gate and safe sync phase labels for the UI-fix pass.
+- Closeout state recorded in `claude-progress.md`.
+- Accepted v0.1 feature inventory recorded in `feature_list.json`.
+- Closeout summary and next safe phase plan recorded in `CLOSEOUT.md`.
 
 ## Proof Directory
 
-- `/tmp/proof_kia_stick_v01_ui_fix_20260618T165630Z`
+- Accepted v0.1 proof: `/tmp/proof_kia_stick_v01_ui_fix_20260618T165630Z`
+- Closeout proof: `/tmp/proof_kia_stick_v01_closeout_20260618T171222Z`
 
 ## Remaining Unknowns
 
@@ -40,3 +53,4 @@
 - `/media/mint/SHARED/APWU` remains out of scope and untouched.
 - Local untracked `DB/` archive folder was observed by filename only and is ignored, not committed.
 - `next build` still prints Next's flat-ESLint plugin detection warning, but lint/typecheck/build pass.
+- Next safe phase should be `KIA-Stick-v0.2-document-vault-redaction-plan`, planning-only, with no real-document reads/copies/indexing/scanning.
