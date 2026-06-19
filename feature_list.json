@@ -22,5 +22,26 @@
     "fake_privacy_scans",
     "github_safe_gitignore",
     "proof_pack_qa_gate"
-  ]
+  ],
+  "planned_v0_2": {
+    "phase": "KIA-Stick-v0.2-document-vault-redaction-plan",
+    "status": "planning_only",
+    "document": "docs/v0.2-document-vault-redaction-plan.md",
+    "lanes": [
+      "official_public",
+      "official_member_only",
+      "local_official",
+      "steward_only",
+      "redacted_examples",
+      "restricted_sensitive",
+      "quarantine"
+    ],
+    "hard_limits": [
+      "no_real_document_reads",
+      "no_ingestion",
+      "no_indexing",
+      "no_cloud",
+      "no_push"
+    ]
+  }
 }
