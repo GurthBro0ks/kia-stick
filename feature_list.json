@@ -1,5 +1,5 @@
 {
-  "phase": "KIA-Stick-v0.4-true-threaded-chat-closeout",
+  "phase": "KIA-Stick-v0.4.1-fake-chat-polish",
   "target_machine": "USER_LAPTOP_ONLY",
   "accepted_v0_1": {
     "commit": "1d9b05c",
@@ -24,11 +24,15 @@
     "duplicate_save_warning",
     "chat_bubble_layout",
     "true_threaded_chat",
+    "chat_turn_labels",
+    "polished_chat_spacing",
     "conversation_thread_model",
     "thread_local_persistence",
     "contextual_follow_up_resolution",
     "clarifying_follow_up_response",
     "per_assistant_message_save",
+    "clearer_fake_thread_save_feedback",
+    "settings_fake_mvp_about_panel",
     "message_first_chat_composer",
     "fixed_chat_composer_above_nav",
     "scrollable_chat_message_pane",
@@ -55,6 +59,7 @@
     "fake_privacy_scans",
     "github_safe_gitignore",
     "proof_pack_qa_gate",
+    "github_safe_release_note",
     "version_back_navigation"
   ],
   "planned_v0_2": {
@@ -448,6 +453,49 @@
       "next_flat_eslint_plugin_warning_during_build"
     ],
     "next_safe_phase": "KIA-Stick-v0.4-threaded-chat-polish-or-release-review",
+    "real_document_access": false,
+    "private_vault_inspected": false,
+    "real_db_boundary": "/media/mint/SHARED/APWU untouched"
+  },
+  "implemented_v0_4_1_fake_chat_polish": {
+    "phase": "KIA-Stick-v0.4.1-fake-chat-polish",
+    "status": "implemented_fake_metadata_only",
+    "baseline_commit": "4d96e83",
+    "accepted_threaded_chat_commit": "ac6f418",
+    "document": "docs/RELEASE_v0.4.md",
+    "proof_dir": "/tmp/proof_kia_stick_v041_fake_chat_polish_20260620T155120Z",
+    "product_version": "0.4.0",
+    "fixes": [
+      "cleaner_thread_message_spacing",
+      "turn_labels_for_prior_turn_scanning",
+      "clearer_new_fake_chat_send_save_controls",
+      "fake_thread_save_feedback_copy",
+      "mobile_composer_spacing_polish",
+      "settings_fake_mvp_about_panel",
+      "github_safe_v0_4_release_note"
+    ],
+    "preserved_behavior": [
+      "true_multi_turn_chronological_chat",
+      "composer_clears_after_send",
+      "contextual_followups",
+      "new_chat_confirmation_and_reset",
+      "independent_assistant_expansions",
+      "saved_answer_dedupe",
+      "thread_persistence",
+      "loading_retry_rows",
+      "details_citations_collapsed_default",
+      "sources_vault_settings_upload_health_version"
+    ],
+    "hard_limits": [
+      "fake_docs_metadata_only",
+      "no_real_document_reads",
+      "no_private_vault_inspection",
+      "no_ingestion",
+      "no_ocr",
+      "no_real_indexing",
+      "no_cloud",
+      "no_push"
+    ],
     "real_document_access": false,
     "private_vault_inspected": false,
     "real_db_boundary": "/media/mint/SHARED/APWU untouched"

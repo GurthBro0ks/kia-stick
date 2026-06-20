@@ -126,9 +126,9 @@ function savedBuildLabel(item: SavedAnswer): string {
 }
 
 function saveStatusText(status: SaveAnswerStatus): string {
-  if (status === "created") return "Saved this answer.";
-  if (status === "replaced") return "Updated the saved answer with newer details.";
-  return "Already saved. No new data.";
+  if (status === "created") return "Saved this fake-thread answer.";
+  if (status === "replaced") return "Updated this saved answer with newer fake metadata.";
+  return "Already saved. No new data in this thread.";
 }
 
 export function KiaStickApp({ runtimeVersion = clientVersion }: { runtimeVersion?: RuntimeVersion }) {
@@ -360,13 +360,14 @@ export function KiaStickApp({ runtimeVersion = clientVersion }: { runtimeVersion
                   <p>Ask a fake-doc question to start a cited thread.</p>
                 </div>
               )}
-              {thread.messages.map((message) =>
+              {thread.messages.map((message, index) =>
                 message.role === "user" ? (
-                  <UserMessageBubble key={message.messageId} message={message} />
+                  <UserMessageBubble key={message.messageId} message={message} turnLabel={`Turn ${Math.floor(index / 2) + 1}`} />
                 ) : (
                   <AssistantMessageCard
                     key={message.messageId}
                     message={message}
+                    turnLabel={`Turn ${Math.floor(index / 2) + 1}`}
                     onRetry={() => retryAssistant(message)}
                     onSave={() => saveAssistantAnswer(message)}
                   />
@@ -497,6 +498,16 @@ export function KiaStickApp({ runtimeVersion = clientVersion }: { runtimeVersion
         {tab === "settings" && (
           <section className="tabPanel settingsPanel">
             <PanelHeader title="Settings" meta={<a href="/version">Version page</a>} />
+            <section className="aboutPanel" aria-label="About this fake MVP">
+              <span className="sectionKicker">About this fake MVP</span>
+              <h3>Local deterministic fake-doc mode</h3>
+              <p>
+                KIA Stick answers from the bundled fake corpus only. Chat threads, Saved Answers, quarantine metadata, and Vault review state stay in this browser unless you clear them.
+              </p>
+              <p>
+                This build does not read private folders, real APWU/USPS/member/local/case documents, cloud services, or external APIs.
+              </p>
+            </section>
             <dl className="settingsGrid">
               <dt>Display</dt>
               <dd>{runtimeVersion.displayVersion}</dd>
@@ -535,10 +546,10 @@ export function KiaStickApp({ runtimeVersion = clientVersion }: { runtimeVersion
             <div className="composerHeaderActions">
               <button className="button subtle compactButton" type="button" onClick={startNewChat} aria-label="New chat">
                 <Plus size={16} />
-                New chat
+                New fake chat
               </button>
               <span className={latestAssistant?.answer.noAnswer ? "statusPill warning" : "statusPill ok"}>
-                {isSending ? "Thinking" : latestAssistant?.answer.noAnswer ? "No controlling hit" : latestAssistant ? "Cited answer" : "Ready"}
+                {isSending ? "Checking fake sources" : latestAssistant?.answer.noAnswer ? "No controlling hit" : latestAssistant ? "Fake thread ready" : "Ready"}
               </span>
             </div>
           </div>
@@ -559,7 +570,7 @@ export function KiaStickApp({ runtimeVersion = clientVersion }: { runtimeVersion
             <div className="chatActions">
               <button className="button primary" type="button" disabled={!draft.trim() || isSending} onClick={() => sendMessage()}>
                 <MessageSquareText size={17} />
-                Send
+                {isSending ? "Sending" : "Send"}
               </button>
             </div>
             {saveNotice && (
@@ -1044,11 +1055,14 @@ function VaultField({ label, value }: { label: string; value: string }) {
   );
 }
 
-export function UserMessageBubble({ message }: { message: UserMessage }) {
+export function UserMessageBubble({ message, turnLabel }: { message: UserMessage; turnLabel?: string }) {
   return (
     <div className="messageRow userMessage">
       <div className="messageBubble userBubble">
-        <span className="messageLabel">You</span>
+        <div className="messageMeta">
+          <span className="messageLabel">You</span>
+          {turnLabel && <span>{turnLabel}</span>}
+        </div>
         <p>{message.content}</p>
       </div>
     </div>
@@ -1057,10 +1071,12 @@ export function UserMessageBubble({ message }: { message: UserMessage }) {
 
 export function AssistantMessageCard({
   message,
+  turnLabel,
   onRetry,
   onSave,
 }: {
   message: AssistantMessage;
+  turnLabel?: string;
   onRetry: () => void;
   onSave: () => void;
 }) {
@@ -1072,7 +1088,10 @@ export function AssistantMessageCard({
     return (
       <div className="messageRow assistantMessage" aria-live="polite">
         <div className="messageBubble assistantBubble thinkingBubble">
-          <span className="messageLabel">KIA Stick</span>
+          <div className="messageMeta">
+            <span className="messageLabel">KIA Stick</span>
+            {turnLabel && <span>{turnLabel}</span>}
+          </div>
           <p>Checking the fake source trail...</p>
         </div>
       </div>
@@ -1085,7 +1104,10 @@ export function AssistantMessageCard({
         <div className="messageBubble assistantBubble">
           <div className="answerHeader">
             <div>
-              <span className="messageLabel">KIA Stick</span>
+              <div className="messageMeta">
+                <span className="messageLabel">KIA Stick</span>
+                {turnLabel && <span>{turnLabel}</span>}
+              </div>
               <h2>Generation failed</h2>
             </div>
             <span className="statusPill warning">Retry available</span>
@@ -1107,7 +1129,10 @@ export function AssistantMessageCard({
         <div className="messageBubble assistantBubble">
           <div className="answerHeader">
             <div>
-              <span className="messageLabel">KIA Stick</span>
+              <div className="messageMeta">
+                <span className="messageLabel">KIA Stick</span>
+                {turnLabel && <span>{turnLabel}</span>}
+              </div>
               <h2>{intentLabels[answer.intent]}</h2>
             </div>
             <span className={answer.noAnswer ? "statusPill warning" : "statusPill ok"}>
@@ -1146,7 +1171,7 @@ export function AssistantMessageCard({
             </button>
             <button className="button subtle" type="button" onClick={onSave} aria-label="Save this answer">
               <Save size={16} />
-              Save
+              Save to Saved
             </button>
             {answer.citations.length === 0 ? (
               <p className="emptyState">No citable fake sources.</p>

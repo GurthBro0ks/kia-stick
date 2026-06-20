@@ -1,5 +1,45 @@
 # KIA Stick Closeout
 
+## v0.4.1 Fake Chat Polish
+
+- Phase: `KIA-Stick-v0.4.1-fake-chat-polish`
+- Baseline: accepted v0.4 threaded chat closeout at `4d96e83` with implementation `ac6f418`.
+- Scope: fake-only threaded-chat polish and GitHub-safe v0.4 release note.
+- Product version: `0.4.0`
+- Release note: `docs/RELEASE_v0.4.md`
+- Proof directory: `/tmp/proof_kia_stick_v041_fake_chat_polish_20260620T155120Z`
+- Manual QA: PASS by focused CDP polish smoke plus accepted `ac6f418` multi-turn chat proof and current test suite.
+- Provider: `local-fake-deterministic`
+- Cloud/API required: no
+- Secrets printed: no
+- Push performed: no
+- Real document boundary: `/media/mint/SHARED/APWU` untouched
+- Private vault inspected: no
+
+## v0.4.1 Fake Chat Polish Coverage
+
+- Added cleaner chat spacing and turn labels so prior fake-thread turns scan more clearly.
+- Clarified visible chat controls as `New fake chat`, `Send`, and `Save to Saved`.
+- Improved save feedback for fake-thread saves, updated saved metadata, and unchanged duplicate saves.
+- Added Settings copy explaining local deterministic fake-doc mode and browser-local storage behavior.
+- Kept packet details and citations collapsed by default.
+- Added GitHub-safe v0.4 release notes covering highlights, validation, known non-failing warnings, and fake-only boundaries.
+- Product version remains `0.4.0`; only build identity changes by Git/build metadata.
+- Focused browser smoke verified polished chat controls, collapsed secondary controls, Settings about copy, `/version`, and mobile/desktop composer/nav spacing. Core multi-turn send/New chat/save dedupe behavior remains covered by the accepted `ac6f418` proof and current tests.
+
+## v0.4.1 Known Warnings
+
+- `npm run test` prints the existing Vite CJS API deprecation notice.
+- `next build` may print the existing Next flat-ESLint plugin warning while still passing validation.
+
+## Next Safe Phase
+
+Recommended next phase: `KIA-Stick-v0.4.1-release-review`.
+
+Future phases remain fake-doc/fake-metadata-only unless separately authorized. No real-document reads, copies, scans, OCR, ingestion, summarization, transforms, real indexing, uploads, private-vault inspection, pushes, cloud calls, or service changes are approved by this polish pass.
+
+---
+
 ## v0.4 True Threaded Chat Accepted Closeout
 
 - Phase: `KIA-Stick-v0.4-true-threaded-chat-closeout`

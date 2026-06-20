@@ -523,21 +523,24 @@ describe("manual QA UX shell", () => {
       modeScopeDetail: baseOptions,
       now: "2026-06-20T10:01:01.000Z",
     });
-    const userHtml = renderToStaticMarkup(React.createElement(UserMessageBubble, { message: user }));
+    const userHtml = renderToStaticMarkup(React.createElement(UserMessageBubble, { message: user, turnLabel: "Turn 1" }));
     const assistantHtml = renderToStaticMarkup(React.createElement(AssistantMessageCard, {
       message: assistant,
+      turnLabel: "Turn 1",
       onRetry: () => undefined,
       onSave: () => undefined,
     }));
 
     expect(userHtml).toContain("messageBubble userBubble");
+    expect(userHtml).toContain("Turn 1");
     expect(assistantHtml).toContain("messageBubble assistantBubble");
+    expect(assistantHtml).toContain("Turn 1");
     expect(assistantHtml).toContain("Short answer");
     expect(assistantHtml).toContain("Confidence / authority");
     expect(assistantHtml).toContain("What to do next");
     expect(assistantHtml).toContain("Show full packet");
     expect(assistantHtml).toContain("Show citations");
-    expect(assistantHtml).toContain("Save");
+    expect(assistantHtml).toContain("Save to Saved");
     expect(assistantHtml).toContain("aria-expanded=\"false\"");
     expect(assistantHtml).not.toContain("citationCards");
   });

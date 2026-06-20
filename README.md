@@ -106,3 +106,12 @@ Quarantine, redaction review, and metadata review are not index approval. Invali
 - Unresolved follow-ups ask a clarifying question instead of inventing context.
 - Current fake-thread persistence is separate from Saved Answers.
 - Each assistant response owns its own Save, packet expansion, and citation expansion state.
+
+## v0.4.1 Fake Chat Polish
+
+- Message spacing and turn labels make prior fake-thread turns easier to scan.
+- Chat controls read as `New fake chat`, `Send`, and `Save to Saved`.
+- Save feedback distinguishes fake-thread saves from unchanged duplicate saves.
+- Settings includes an “About this fake MVP” panel for local deterministic fake-doc mode.
+- Product version remains `0.4.0`; build identity continues to change through `displayVersion`.
+- GitHub-safe release notes live in `docs/RELEASE_v0.4.md`.

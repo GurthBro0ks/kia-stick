@@ -2,10 +2,27 @@
 
 ## Current Phase
 
-- Phase: `KIA-Stick-v0.4-true-threaded-chat-closeout`
+- Phase: `KIA-Stick-v0.4.1-fake-chat-polish`
 - Target: `USER_LAPTOP_ONLY`
 - Provider: `local-fake-deterministic`
-- Status: accepted v0.4 true threaded chat closeout recorded; implementation commit `ac6f418` accepted; closeout validation passed and local closeout commit pending.
+- Status: v0.4.1 fake-only chat polish implemented; validation pending.
+
+## v0.4.1 Fake Chat Polish State
+
+- Phase: `KIA-Stick-v0.4.1-fake-chat-polish`
+- Baseline: accepted v0.4 true threaded chat closeout `4d96e83`; implementation `ac6f418`.
+- Scope: fake-only chat polish, Settings fake-MVP copy, and GitHub-safe v0.4 release note.
+- Product version: `0.4.0`; displayVersion continues to change by build identity.
+- Proof directory: `/tmp/proof_kia_stick_v041_fake_chat_polish_20260620T155120Z`
+- Chat polish: cleaner message spacing, turn labels, clearer `New fake chat`, `Send`, and `Save to Saved` controls.
+- Save feedback: fake-thread save, updated metadata, and unchanged duplicate messages are clearer.
+- Settings: added “About this fake MVP” local deterministic fake-doc mode copy.
+- Release note: `docs/RELEASE_v0.4.md` added with highlights, validation, known warnings, and fake-only boundaries.
+- Preserved behavior: true multi-turn chat, composer clearing, contextual follow-ups, `New chat`, independent expansions, saved-answer dedupe, persistence, loading/retry, collapsed details/citations, and Sources/Vault/Settings/Upload/health/version surfaces.
+- Validation: PASS for lint, typecheck, test, build, qa, scan:fake, scan:privacy, manifest parse, forbidden tracked-path check, `/health`, `/version`, and docs/state checks.
+- Manual QA: PASS by focused CDP polish smoke plus accepted `ac6f418` multi-turn chat proof and current test suite.
+- Real/private document access: none.
+- Push performed: no.
 
 ## Accepted v0.4 True Threaded Chat State
 
@@ -176,6 +193,24 @@
 
 ## Commands Run
 
+- `cat ./AGENTS.md`
+- `cat ./claude-progress.md`
+- `source ./init.sh || true`
+- `git status --short --branch`
+- `git log -6 --oneline --decorate`
+- `mkdir -p /tmp/proof_kia_stick_v041_fake_chat_polish_20260620T155120Z`
+- `npm run lint`
+- `npm run typecheck`
+- `npm run test`
+- `npm run build`
+- `PHASE=KIA-Stick-v0.4.1-fake-chat-polish PROOF_DIR=/tmp/proof_kia_stick_v041_fake_chat_polish_20260620T155120Z npm run qa`
+- `npm run scan:fake`
+- `npm run scan:privacy`
+- `node -e "JSON.parse(require('fs').readFileSync('public/manifest.webmanifest','utf8')); console.log('manifest ok')"`
+- `git ls-files 'DB/**' 'data/real-documents/**' 'data/quarantine/**' 'data/redacted-approved/**' 'exports/**' 'backups/**' 'vector-store/**'`
+- `curl -fsS http://127.0.0.1:3011/health`
+- `curl -fsS http://127.0.0.1:3011/version | head -c 1500`
+- focused Chrome/CDP polish smoke for chat controls, collapsed secondary controls, Settings about copy, `/version`, and mobile/desktop composer/nav spacing.
 - `cat /home/slimy/AGENTS.md` (path missing on this machine)
 - `cat /home/slimy/claude-progress.md` (path missing on this machine)
 - `source /home/slimy/init.sh` (path missing on this machine)
@@ -389,6 +424,12 @@
 - v0.4 true threaded chat implementation note added at `docs/v0.4-true-threaded-chat.md`.
 - v0.4 true threaded chat README, closeout, feature inventory, and progress state updated.
 - v0.4 true threaded chat accepted closeout recorded in `CLOSEOUT.md`, `claude-progress.md`, and `feature_list.json`.
+- v0.4.1 fake chat polish updated chat control copy and Settings fake-MVP copy in `components/KiaStickApp.tsx`.
+- v0.4.1 fake chat polish spacing, turn labels, save feedback, and Settings panel styles updated in `app/globals.css`.
+- v0.4.1 fake chat polish `/health` phase label updated in `app/health/route.ts`.
+- v0.4.1 fake chat polish tests updated in `tests/answerGovernor.test.ts`.
+- v0.4.1 GitHub-safe release note added at `docs/RELEASE_v0.4.md`.
+- v0.4.1 README, closeout, feature inventory, and progress state updated.
 - Closeout state recorded in `claude-progress.md`.
 - Accepted v0.1 feature inventory recorded in `feature_list.json`.
 - Closeout summary and next safe phase plan recorded in `CLOSEOUT.md`.
@@ -454,6 +495,7 @@
 ## Proof Directory
 
 - v0.4 true threaded chat proof: `/tmp/proof_kia_stick_v04_true_threaded_chat_20260620T145019Z`
+- v0.4.1 fake chat polish proof: `/tmp/proof_kia_stick_v041_fake_chat_polish_20260620T155120Z`
 - v0.4 true threaded chat closeout proof: `/tmp/proof_kia_stick_v04_threaded_chat_closeout_20260620T153220Z`
 - Accepted v0.1 proof: `/tmp/proof_kia_stick_v01_ui_fix_20260618T165630Z`
 - Closeout proof: `/tmp/proof_kia_stick_v01_closeout_20260618T171222Z`
