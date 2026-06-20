@@ -17,6 +17,7 @@
     "generate:corpus": "node scripts/generate-corpus.mjs",
     "scan:fake": "node scripts/check-fake-docs.mjs",
     "scan:privacy": "node scripts/privacy-scan.mjs",
+    "release:check": "node scripts/release-check.mjs",
     "qa": "bash scripts/qa_gate.sh"
   },
   "dependencies": {

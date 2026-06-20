@@ -1,5 +1,5 @@
 {
-  "phase": "KIA-Stick-v0.5.2-fake-wizard-state-machine-hardening",
+  "phase": "KIA-Stick-v0.5.3-release-readiness-and-version-coherence-automation",
   "target_machine": "USER_LAPTOP_ONLY",
   "accepted_v0_1": {
     "commit": "1d9b05c",
@@ -59,6 +59,9 @@
     "import_wizard_sanitized_proof_export",
     "import_wizard_audit_order_tests",
     "upload_fake_button_regression_test",
+    "release_readiness_version_coherence_automation",
+    "feature_phase_derived_qa_defaults",
+    "feature_phase_derived_git_sync_commit_message",
     "build_identity_display_version",
     "health_version_routes",
     "fake_privacy_scans",
@@ -67,6 +70,44 @@
     "github_safe_release_note",
     "version_back_navigation"
   ],
+  "release_readiness": {
+    "phase": "KIA-Stick-v0.5.3-release-readiness-and-version-coherence-automation",
+    "status": "implemented_fake_only_automation",
+    "package_version": "0.4.0",
+    "product_version": "0.4.0",
+    "prompt_version": "prompt.fake-docs.v0.5-import-wizard-hardening",
+    "version_coherence": {
+      "package_version": "0.4.0",
+      "product_version": "0.4.0",
+      "prompt_version": "prompt.fake-docs.v0.5-import-wizard-hardening",
+      "checked_files": [
+        "package.json",
+        "lib/version.ts",
+        "feature_list.json",
+        "README.md",
+        "CLOSEOUT.md"
+      ],
+      "intentional_holds": [
+        {
+          "field": "productVersion",
+          "actual": "0.4.0",
+          "expected": "0.5.x phase milestone",
+          "applies_to_phase_pattern": "^KIA-Stick-v0\\.5\\.",
+          "reason": "ProductVersion stays 0.4.0 during v0.5.x fake import wizard and release-readiness phases until a planned product milestone explicitly approves a bump."
+        }
+      ]
+    },
+    "automation": [
+      "scripts/release-check.mjs",
+      "npm run release:check",
+      "qa_gate_derives_phase_and_proof_dir_from_feature_list",
+      "git_auto_sync_derives_default_commit_message_from_feature_list"
+    ],
+    "real_document_access": false,
+    "private_vault_inspected": false,
+    "push_performed": false,
+    "real_db_boundary": "/media/mint/SHARED/APWU untouched"
+  },
   "planned_v0_2": {
     "phase": "KIA-Stick-v0.2-document-vault-redaction-plan",
     "status": "planning_only",

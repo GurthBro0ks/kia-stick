@@ -1,5 +1,34 @@
 # KIA Stick Closeout
 
+## v0.5.3 Release Readiness and Version Coherence Automation
+
+- Phase: `KIA-Stick-v0.5.3-release-readiness-and-version-coherence-automation`
+- Baseline: accepted pushed v0.5.2 state at `424494b`
+- Scope: deterministic fake-only release readiness/version coherence automation, QA defaults, git-sync commit-message default, and focused regression coverage.
+- Product version impact: none; app remains `0.4.0`.
+- Prompt version: `prompt.fake-docs.v0.5-import-wizard-hardening`
+- Release check: `npm run release:check` verifies `package.json`, `lib/version.ts`, `feature_list.json`, README, and CLOSEOUT.
+- Intentional hold: `productVersion` stays `0.4.0` during v0.5.x fake import wizard and release-readiness phases until a planned product milestone explicitly approves a bump.
+- Push performed: no
+- Real document access: none
+- Private vault inspected: no
+
+## v0.5.3 Coverage
+
+- Added `scripts/release-check.mjs` with no new dependencies.
+- Added `release:check` package script and wired it into `scripts/qa_gate.sh` after privacy scan.
+- Updated `scripts/qa_gate.sh` to derive default `PHASE` and `PROOF_DIR` from `feature_list.json`.
+- Updated `scripts/git_auto_sync.sh` to derive its default commit message from `feature_list.json` while preserving the `KIA_ALLOW_PUSH` gate and push-skip default.
+- Added focused tests for release-check pass/fail/allowlist behavior and import wizard helper exports.
+
+## Next Safe Phase
+
+Recommended next phase: `KIA-Stick-v0.5.3-operator-release-check-review`.
+
+Future phases remain fake-only unless separately authorized. This automation pass does not approve real import, file pickers, path readers, file reads, copying, OCR, text extraction, indexing, upload handling, private-vault inspection, cloud calls, service changes, pushes, or private document access.
+
+---
+
 ## v0.5.2 Fake Wizard State Machine Hardening
 
 - Phase: `KIA-Stick-v0.5.2-fake-wizard-state-machine-hardening`

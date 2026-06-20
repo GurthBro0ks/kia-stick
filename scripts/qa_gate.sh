@@ -4,8 +4,16 @@ set -euo pipefail
 ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
 cd "$ROOT"
 
-PHASE="${PHASE:-KIA-Stick-v0.1-mobile-ui-manual-qa-fix}"
-PROOF_DIR="${PROOF_DIR:-/tmp/proof_kia_stick_v01_ui_fix_$(date -u +%Y%m%dT%H%M%SZ)}"
+feature_phase() {
+  node -e "const fs=require('fs'); const f=JSON.parse(fs.readFileSync('feature_list.json','utf8')); process.stdout.write(f.phase || 'KIA-Stick-unknown-phase');"
+}
+
+proof_slug() {
+  node -e "const value=process.argv[1] || 'KIA-Stick-unknown-phase'; process.stdout.write(value.toLowerCase().replace(/[^a-z0-9]+/g, '_').replace(/^_+|_+$/g, ''));" "$1"
+}
+
+PHASE="${PHASE:-$(feature_phase)}"
+PROOF_DIR="${PROOF_DIR:-/tmp/proof_$(proof_slug "$PHASE")_$(date -u +%Y%m%dT%H%M%SZ)}"
 mkdir -p "$PROOF_DIR"
 
 run_step() {
@@ -27,7 +35,8 @@ run_step 04_test npm run test
 run_step 05_build npm run build
 run_step 06_fake_doc_scan npm run scan:fake
 run_step 07_privacy_scan npm run scan:privacy
-run_step 08_fake_banner_grep grep -R "FAKE SAMPLE DOCUMENT" content/fake-docs data/fake-corpus.json
+run_step 08_release_check npm run release:check
+run_step 09_fake_banner_grep grep -R "FAKE SAMPLE DOCUMENT" content/fake-docs data/fake-corpus.json
 
 git status --short --branch >"$PROOF_DIR/git_status_after.log" 2>&1 || true
 git diff --stat >"$PROOF_DIR/git_diff_stat.log" 2>&1 || true
@@ -43,7 +52,7 @@ cat >"$PROOF_DIR/RESULT.md" <<RESULT
 - Provider: local-fake-deterministic
 - Proof directory: $PROOF_DIR
 - QA status: PASS
-- Commands: generate corpus, lint, typecheck, test, build, fake-doc scan, privacy scan, fake banner grep
+- Commands: generate corpus, lint, typecheck, test, build, fake-doc scan, privacy scan, release readiness check, fake banner grep
 - Cloud/API keys required: no
 - Secrets printed: no
 - Push performed: no

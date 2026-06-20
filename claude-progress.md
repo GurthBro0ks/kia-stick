@@ -2,10 +2,27 @@
 
 ## Current Phase
 
-- Phase: `KIA-Stick-v0.5.2-closeout-project-state`
+- Phase: `KIA-Stick-v0.5.3-release-readiness-and-version-coherence-automation`
 - Target: `USER_LAPTOP_ONLY`
 - Provider: `local-fake-deterministic`
-- Status: accepted pushed state verified at `0143c84`; closeout validation PASS; docs/state-only local commit pending, no push.
+- Status: validation PASS for deterministic release-readiness/version-coherence automation from accepted pushed v0.5.2 baseline `424494b`; one local commit created, no push.
+
+## v0.5.3 Release Readiness Automation State
+
+- Phase: `KIA-Stick-v0.5.3-release-readiness-and-version-coherence-automation`
+- Baseline: origin/main accepted pushed state `424494b`.
+- Scope: fake-only release-check automation, QA/git script defaults derived from `feature_list.json`, prompt-version coherence, docs/state updates, and focused tests.
+- Product version impact: none; app remains `0.4.0`.
+- Prompt version: `prompt.fake-docs.v0.5-import-wizard-hardening`
+- Intentional hold: `productVersion` stays `0.4.0` during v0.5.x fake import wizard and release-readiness phases until a planned product milestone explicitly approves a bump.
+- Real/private document access: none.
+- Private vault inspected: no.
+- Push performed: no.
+- Commands run: missing `/home/slimy/*` harness checks, local harness load, git status/log, repo/memory inspection, implementation edits, `npm run lint`, `npm run typecheck`, `npm run test`, `npm run build`, `npm run scan:fake`, `npm run scan:privacy`, `npm run release:check`, `npm run qa`, JSON manifest/feature parses, private tracked-path check, file-input grep, policy-boundary grep, and `git diff --check`.
+- Files changed: `scripts/release-check.mjs`, `scripts/qa_gate.sh`, `scripts/git_auto_sync.sh`, `package.json`, `lib/version.ts`, `tests/releaseCheck.test.ts`, `tests/answerGovernor.test.ts`, `README.md`, `CLOSEOUT.md`, `feature_list.json`, and `claude-progress.md`.
+- Proof directory: `/tmp/proof_kia_stick_v053_release_readiness_20260620T194855Z`
+- Validation: PASS.
+- Remaining unknowns: operator manual review of release-check allowlist reasons before any manual push.
 
 ## v0.5.2 Fake Wizard State Machine Hardening State
 

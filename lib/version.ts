@@ -14,7 +14,7 @@ export interface RuntimeVersion {
 
 export const PRODUCT_VERSION = "0.4.0";
 export const DEFAULT_CHANNEL = "dev";
-export const PROMPT_VERSION = "prompt.fake-docs.v0.4-vault-hardening";
+export const PROMPT_VERSION = "prompt.fake-docs.v0.5-import-wizard-hardening";
 export const DEFAULT_PROVIDER = "local-fake-deterministic";
 export const UNKNOWN_GIT_SHA = "unknown";
 

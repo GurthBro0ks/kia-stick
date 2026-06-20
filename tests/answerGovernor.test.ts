@@ -23,7 +23,12 @@ import {
   exportImportWizardAuditJson,
   exportImportWizardAuditMarkdown,
   importWizardAllowedTransitions,
+  importWizardNextAction,
+  importWizardNextActionLabel,
+  importWizardScreenCopy,
+  importWizardStepLabels,
   importWizardSteps,
+  nextImportWizardStep,
   type ImportWizardAction,
   type ImportWizardState,
 } from "@/lib/importWizardModel";
@@ -668,6 +673,20 @@ describe("fake import wizard model", () => {
     expect(state.fakeOnly).toBe(true);
     expect(state.realActionsDisabled).toBe(true);
     expect(assertImportWizardFakeOnly(state).ok).toBe(true);
+  });
+
+  it("keeps wizard helper labels, copy, steps, and next actions deterministic", () => {
+    expect(importWizardStepLabels.start_safety).toBe("Start / safety");
+    expect(importWizardStepLabels.audit_summary).toBe("Audit summary");
+    expect(importWizardScreenCopy.source_placeholder.title).toBe("Source Placeholder");
+    expect(importWizardScreenCopy.source_placeholder.plain).toContain("no file picker");
+    expect(importWizardScreenCopy.index_eligibility.stopSign).toContain("metadata review");
+    expect(nextImportWizardStep("start_safety")).toBe("source_placeholder");
+    expect(nextImportWizardStep("audit_summary")).toBe("audit_summary");
+    expect(importWizardNextAction("metadata_review")).toBe("approve_fake_metadata");
+    expect(importWizardNextAction("audit_summary")).toBe("complete_fake_audit");
+    expect(importWizardNextActionLabel("index_eligibility")).toBe("Record fake index decision");
+    expect(importWizardNextActionLabel("audit_summary")).toBe("Complete fake audit");
   });
 
   it("moves fake records through the full scaffold without reading files", () => {

@@ -12,6 +12,16 @@ KIA Stick separates milestone semver from build identity:
 
 `/health`, `/version`, the app header, settings, answer footer, and saved answer metadata expose the current `displayVersion`.
 
+## v0.5.3 Release Readiness Automation
+
+Phase: `KIA-Stick-v0.5.3-release-readiness-and-version-coherence-automation`.
+
+`npm run release:check` verifies version coherence across `package.json`, `lib/version.ts`, `feature_list.json`, README, and CLOSEOUT. It fails on unallowlisted drift with a human-readable expected/actual diff.
+
+Current product version remains `0.4.0`; current prompt version is `prompt.fake-docs.v0.5-import-wizard-hardening`. The intentional hold is documented in `feature_list.json`: `productVersion` stays `0.4.0` during v0.5.x fake import wizard and release-readiness phases until a planned product milestone explicitly approves a bump.
+
+`npm run qa` now runs the release check after fake/privacy scans, and its default phase/proof directory comes from `feature_list.json`. `scripts/git_auto_sync.sh` derives its default local commit message from the same phase while keeping push disabled unless `KIA_ALLOW_PUSH=1`.
+
 ## Run
 
 ```bash
