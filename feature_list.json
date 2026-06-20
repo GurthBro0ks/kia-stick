@@ -1,5 +1,5 @@
 {
-  "phase": "KIA-Stick-v0.4-fake-vault-workflow-hardening",
+  "phase": "KIA-Stick-v0.4-manual-qa-ux-fix",
   "target_machine": "USER_LAPTOP_ONLY",
   "accepted_v0_1": {
     "commit": "1d9b05c",
@@ -17,6 +17,9 @@
     "mobile_pwa_shell",
     "bottom_nav",
     "saved_answers",
+    "saved_answer_upsert",
+    "duplicate_save_warning",
+    "citation_collapse_toggle",
     "upload_quarantine_ui",
     "private_vault_governance_ui",
     "fake_vault_metadata_fixtures",
@@ -25,6 +28,8 @@
     "vault_explicit_workflow_states",
     "vault_blocked_transition_reasons",
     "vault_fake_audit_export",
+    "vault_guide_mode",
+    "vault_technical_details_toggle",
     "no_real_file_access_guard",
     "build_identity_display_version",
     "health_version_routes",
@@ -191,6 +196,35 @@
       "no_real_file_access_guard",
       "audit_export_excludes_private_paths",
       "audit_export_includes_build_identity"
+    ],
+    "real_document_access": false,
+    "private_vault_inspected": false,
+    "real_db_boundary": "/media/mint/SHARED/APWU untouched"
+  },
+  "implemented_v0_4_manual_qa_ux_fix": {
+    "phase": "KIA-Stick-v0.4-manual-qa-ux-fix",
+    "status": "implemented_fake_metadata_only",
+    "document": "docs/v0.4-manual-qa-ux-fix.md",
+    "proof_dir": "/tmp/proof_kia_stick_v04_manual_qa_ux_fix_20260620T121155Z",
+    "manual_qa": "PASS_headless_chrome_cdp",
+    "fixes": [
+      "saved_answer_upsert_by_stable_same_chat_key",
+      "duplicate_save_warning",
+      "changed_same_chat_save_replacement",
+      "citation_collapse_default",
+      "settings_bottom_nav_spacing",
+      "vault_plain_english_guide_mode",
+      "vault_technical_details_toggle"
+    ],
+    "tests": [
+      "save_create",
+      "save_duplicate",
+      "save_replacement",
+      "changed_context_new_card",
+      "citation_collapsed_default",
+      "settings_nav_presence",
+      "vault_guide_copy",
+      "technical_details_hidden_default"
     ],
     "real_document_access": false,
     "private_vault_inspected": false,

@@ -2,10 +2,10 @@
 
 ## Current Phase
 
-- Phase: `KIA-Stick-v0.4-fake-vault-workflow-hardening`
+- Phase: `KIA-Stick-v0.4-manual-qa-ux-fix`
 - Target: `USER_LAPTOP_ONLY`
 - Provider: `local-fake-deterministic`
-- Status: v0.4 fake-vault workflow hardening implemented and locally committed.
+- Status: v0.4 manual QA UX blockers fixed; validation passed and local commit pending.
 
 ## Accepted v0.1 State
 
@@ -76,6 +76,23 @@
 - Real/private document access: none.
 - Push performed: no.
 
+## v0.4 Manual QA UX Fix State
+
+- Scope: manual QA blocker fixes for saved answers, citation display, Settings navigation, and Vault guide mode.
+- Proof directory: `/tmp/proof_kia_stick_v04_manual_qa_ux_fix_20260620T121155Z`
+- Saved answers: stable same-chat upsert key using question, mode, scope, answer identity, and citations.
+- Duplicate save behavior: unchanged duplicate shows `Already saved. No new data.` and does not add a card.
+- Changed same-chat save behavior: newer details or metadata replace the existing saved card.
+- Citation display: collapsed by default behind `Show citations (n)`.
+- Settings: extra bottom spacing keeps fixed bottom toolbar visible and usable.
+- Vault: plain-English guide mode added with safe/blocked/next-step copy.
+- Technical details: lifecycle rails, workflow counts, field grids, fake refs, provenance, and flags hidden behind `Show technical details`.
+- Tests added for save create/duplicate/replacement, changed context, citation collapse, nav presence, Vault guide copy, and hidden technical details.
+- Manual QA: PASS by headless Chrome/CDP smoke on `127.0.0.1:3005`; proof saved at `/tmp/proof_kia_stick_v04_manual_qa_ux_fix_20260620T121155Z/manual_qa_cdp.json`.
+- Validation: PASS for lint, typecheck, test, build, qa, scan:fake, scan:privacy, private tracked-path check, `/health`, `/version`, and screenshot smoke.
+- Real/private document access: none.
+- Push performed: no.
+
 ## Commands Run
 
 - `cat /home/slimy/AGENTS.md` (path missing on this machine)
@@ -118,6 +135,19 @@
 - `npm run test`
 - `npm run lint`
 - `npm run build`
+- `PROOF_DIR=/tmp/proof_kia_stick_v04_manual_qa_ux_fix_20260620T121155Z PHASE=KIA-Stick-v0.4-manual-qa-ux-fix npm run qa`
+- `npm run scan:fake`
+- `npm run scan:privacy`
+- `git ls-files 'DB/**' 'data/real-documents/**' 'data/quarantine/**' 'data/redacted-approved/**' 'exports/**' 'backups/**' 'vector-store/**'`
+- `git diff --check`
+- `npm run start -- --port 3005`
+- `curl -s http://127.0.0.1:3005/health`
+- `curl -s http://127.0.0.1:3005/version | head -c 1500`
+- `curl -fsS -o /tmp/proof_kia_stick_v04_manual_qa_ux_fix_20260620T121155Z/health.json http://127.0.0.1:3005/health`
+- `curl -fsS -o /tmp/proof_kia_stick_v04_manual_qa_ux_fix_20260620T121155Z/version.html http://127.0.0.1:3005/version`
+- `node scripts/cdp-screenshot.mjs http://127.0.0.1:3005 /tmp/proof_kia_stick_v04_manual_qa_ux_fix_20260620T121155Z/app.png 390 844`
+- `node scripts/cdp-screenshot.mjs http://127.0.0.1:3005/version /tmp/proof_kia_stick_v04_manual_qa_ux_fix_20260620T121155Z/version.png 390 844`
+- headless Chrome/CDP manual QA smoke for duplicate save, citation toggle, Settings nav, Vault guide, technical details, width, and displayVersion.
 - `PHASE=KIA-Stick-v0.3-private-vault-ui-scaffold PROOF_DIR=/tmp/proof_kia_stick_v03_vault_ui_20260620T102553Z npm run qa`
 - `npm run scan:fake`
 - `npm run scan:privacy`
@@ -168,6 +198,17 @@
 - `git diff --check`
 - `git add CLOSEOUT.md README.md app/globals.css app/health/route.ts claude-progress.md components/KiaStickApp.tsx docs/v0.4-fake-vault-workflow-hardening.md feature_list.json lib/vaultModel.ts lib/version.ts package-lock.json package.json tests/answerGovernor.test.ts`
 - `git commit -m "Harden fake vault workflow"`
+- `cat /home/slimy/AGENTS.md` (path missing on this machine)
+- `cat /home/slimy/claude-progress.md` (path missing on this machine)
+- `source /home/slimy/init.sh` (path missing on this machine)
+- `cat ./AGENTS.md`
+- `cat ./claude-progress.md`
+- `source ./init.sh || true`
+- `git status --short --branch`
+- `npm run typecheck`
+- `npm run test`
+- `npm run lint`
+- `npm run build`
 
 ## Files Changed
 
@@ -203,6 +244,13 @@
 - v0.4 transition, blocked-state, export, and fake guard tests added in `tests/answerGovernor.test.ts`.
 - v0.4 implementation note added at `docs/v0.4-fake-vault-workflow-hardening.md`.
 - v0.4 README, closeout, feature inventory, and progress state updated.
+- v0.4 manual QA saved-answer upsert helper added in `lib/savedAnswers.ts`.
+- v0.4 manual QA save warning, citation collapse, Settings spacing, Vault guide, and technical-details toggle added in `components/KiaStickApp.tsx`.
+- v0.4 manual QA styles added in `app/globals.css`.
+- v0.4 manual QA `/health` phase label updated in `app/health/route.ts`.
+- v0.4 manual QA tests added in `tests/answerGovernor.test.ts`.
+- v0.4 manual QA implementation note added at `docs/v0.4-manual-qa-ux-fix.md`.
+- v0.4 manual QA README, closeout, feature inventory, and progress state updated.
 
 ## Proof Directory
 
@@ -213,6 +261,7 @@
 - v0.3 private-vault UI scaffold proof: `/tmp/proof_kia_stick_v03_vault_ui_20260620T102553Z`
 - v0.3 build identity proof: `/tmp/proof_kia_stick_v03_build_identity_20260620T110445Z`
 - v0.4 fake-vault hardening proof: `/tmp/proof_kia_stick_v04_fake_vault_hardening_20260620T114211Z`
+- v0.4 manual QA UX fix proof: `/tmp/proof_kia_stick_v04_manual_qa_ux_fix_20260620T121155Z`
 
 ## Remaining Unknowns
 

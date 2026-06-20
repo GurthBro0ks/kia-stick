@@ -56,3 +56,12 @@ Explicit fake workflow states are:
 - `eligible_fake_only`
 
 Quarantine, redaction review, and metadata review are not index approval. Invalid gate transitions are blocked with visible reasons. The Audit Log can export JSON or Markdown containing fake metadata, audit events, and build identity only.
+
+## v0.4 Manual QA UX Fixes
+
+- Saved answers upsert by stable same-chat identity instead of creating duplicate cards.
+- Duplicate unchanged saves show `Already saved. No new data.`
+- Changed details or metadata replace the existing same-chat save.
+- Chat citations are collapsed by default behind `Show citations (n)`.
+- Settings keeps bottom navigation usable on mobile.
+- Vault opens with plain-English guide mode; expert workflow details are behind `Show technical details`.

@@ -1,5 +1,45 @@
 # KIA Stick Closeout
 
+## v0.4 Manual QA UX Fix
+
+- Phase: `KIA-Stick-v0.4-manual-qa-ux-fix`
+- Scope: manual QA blocker fixes for saved answers, citations, Settings navigation, and Vault guide mode.
+- Proof directory: `/tmp/proof_kia_stick_v04_manual_qa_ux_fix_20260620T121155Z`
+- Product version: `0.4.0`
+- Manual QA: PASS by headless Chrome/CDP smoke on `127.0.0.1:3005`.
+- Provider: `local-fake-deterministic`
+- Cloud/API required: no
+- Secrets printed: no
+- Push performed: no
+- Real document boundary: `/media/mint/SHARED/APWU` untouched
+- Private vault inspected: no
+
+## v0.4 Manual QA Fix Coverage
+
+- Saved answers now upsert by stable same-chat identity using question, mode, scope, answer identity, and citations.
+- Same unchanged chat saves show a visible `Already saved. No new data.` warning instead of adding another card.
+- Same-chat saves with changed details or metadata replace the existing card.
+- Changed answer context still creates a separate saved card.
+- Chat citations are collapsed by default behind `Show citations (n)`.
+- Settings tab has additional bottom spacing so the fixed bottom toolbar remains usable.
+- Vault now opens with plain-English guide mode covering meaning, safe data, blocked actions, and next steps.
+- Expert Vault details remain available behind `Show technical details`.
+- Tests cover save create/duplicate/replace, citation collapse, bottom navigation markup, and Vault guide copy.
+- Browser smoke verified duplicate save blocking, citation expand/collapse, Settings bottom navigation usability, Vault guide mode, technical details expansion, no horizontal overflow, and displayVersion visibility.
+
+## v0.4 Manual QA Fix Known Warnings
+
+- `npm run test` prints the existing Vite CJS API deprecation notice.
+- `next build` prints the existing Next flat-ESLint plugin detection warning while still passing validation.
+
+## Next Safe Phase
+
+Recommended next phase: `KIA-Stick-v0.4-manual-qa-acceptance-review`.
+
+Future phases remain fake-doc/fake-metadata-only unless separately authorized. No real-document reads, copies, scans, OCR, ingestion, summarization, transforms, real indexing, uploads, private-vault inspection, or commits are approved by this UX fix.
+
+---
+
 ## v0.4 Fake Vault Workflow Hardening
 
 - Phase: `KIA-Stick-v0.4-fake-vault-workflow-hardening`

@@ -1,8 +1,11 @@
 import { describe, expect, it } from "vitest";
 import { renderToStaticMarkup } from "react-dom/server";
+import React from "react";
 import { GET as healthGET } from "@/app/health/route";
 import VersionPage from "@/app/version/page";
+import { KiaStickApp, VaultPanel } from "@/components/KiaStickApp";
 import { buildAnswer } from "@/lib/answerGovernor";
+import { createSavedAnswerRecord, upsertSavedAnswer } from "@/lib/savedAnswers";
 import { corpus } from "@/lib/sourceModel";
 import { createRuntimeVersion, runtimeVersionFields } from "@/lib/version";
 import {
@@ -11,7 +14,9 @@ import {
   createInitialVaultState,
   exportVaultAuditJson,
   exportVaultAuditMarkdown,
+  laneCounts,
   vaultLanes,
+  workflowStateCounts,
 } from "@/lib/vaultModel";
 
 const baseOptions = {
@@ -66,6 +71,95 @@ describe("answer governor", () => {
   });
 });
 
+describe("saved answers", () => {
+  it("creates one saved card for a new chat answer", () => {
+    const answer = buildAnswer("Can annual leave be denied after I submitted inside the fake window?", baseOptions);
+    const record = createSavedAnswerRecord({
+      answer,
+      mode: baseOptions.mode,
+      scope: baseOptions.scope,
+      detail: baseOptions.detail,
+      timestamp: "2026-06-20T04:00:00.000Z",
+    });
+    const result = upsertSavedAnswer([], record);
+
+    expect(result.status).toBe("created");
+    expect(result.saved).toHaveLength(1);
+    expect(result.saved[0].saveKey).toBe(record.saveKey);
+  });
+
+  it("blocks duplicate saves when the same chat has no new data", () => {
+    const answer = buildAnswer("Can annual leave be denied after I submitted inside the fake window?", baseOptions);
+    const first = createSavedAnswerRecord({
+      answer,
+      mode: baseOptions.mode,
+      scope: baseOptions.scope,
+      detail: baseOptions.detail,
+      timestamp: "2026-06-20T04:00:00.000Z",
+    });
+    const duplicate = createSavedAnswerRecord({
+      answer,
+      mode: baseOptions.mode,
+      scope: baseOptions.scope,
+      detail: baseOptions.detail,
+      timestamp: "2026-06-20T04:05:00.000Z",
+    });
+    const result = upsertSavedAnswer([first], duplicate);
+
+    expect(result.status).toBe("duplicate");
+    expect(result.saved).toHaveLength(1);
+    expect(result.saved[0].timestamp).toBe(first.timestamp);
+  });
+
+  it("replaces a same-chat save when metadata or details change", () => {
+    const answer = buildAnswer("Can annual leave be denied after I submitted inside the fake window?", baseOptions);
+    const first = createSavedAnswerRecord({
+      answer,
+      mode: baseOptions.mode,
+      scope: baseOptions.scope,
+      detail: "Simple",
+      timestamp: "2026-06-20T04:00:00.000Z",
+    });
+    const replacement = createSavedAnswerRecord({
+      answer,
+      mode: baseOptions.mode,
+      scope: baseOptions.scope,
+      detail: "Detailed",
+      timestamp: "2026-06-20T04:05:00.000Z",
+    });
+    const result = upsertSavedAnswer([first], replacement);
+
+    expect(result.status).toBe("replaced");
+    expect(result.saved).toHaveLength(1);
+    expect(result.saved[0].id).toBe(first.id);
+    expect(result.saved[0].detail).toBe("Detailed");
+    expect(result.saved[0].timestamp).toBe(replacement.timestamp);
+  });
+
+  it("keeps separate cards when the answer context changes", () => {
+    const annualLeave = buildAnswer("Can annual leave be denied after I submitted inside the fake window?", baseOptions);
+    const steward = buildAnswer("What should a steward request include before talking to a supervisor?", baseOptions);
+    const first = createSavedAnswerRecord({
+      answer: annualLeave,
+      mode: baseOptions.mode,
+      scope: baseOptions.scope,
+      detail: baseOptions.detail,
+      timestamp: "2026-06-20T04:00:00.000Z",
+    });
+    const changed = createSavedAnswerRecord({
+      answer: steward,
+      mode: baseOptions.mode,
+      scope: baseOptions.scope,
+      detail: baseOptions.detail,
+      timestamp: "2026-06-20T04:05:00.000Z",
+    });
+    const result = upsertSavedAnswer([first], changed);
+
+    expect(result.status).toBe("created");
+    expect(result.saved).toHaveLength(2);
+  });
+});
+
 describe("runtime build identity", () => {
   it("formats displayVersion from product milestone, channel, UTC build date, and git SHA", () => {
     const version = createRuntimeVersion({
@@ -113,6 +207,49 @@ describe("runtime build identity", () => {
     expect(html).toContain("Prompt");
     expect(html).toContain("Provider");
     expect(html).toMatch(/0\.4\.0-dev\.\d{8}\+(?:[a-z0-9]+|unknown)/);
+  });
+});
+
+describe("manual QA UX shell", () => {
+  it("renders citations collapsed by default behind a show button", () => {
+    const html = renderToStaticMarkup(React.createElement(KiaStickApp, {
+      runtimeVersion: createRuntimeVersion({ buildDate: "20260620", gitSha: "abc123" }),
+    }));
+
+    expect(html).toContain("Show citations");
+    expect(html).toContain("aria-expanded=\"false\"");
+    expect(html).not.toContain("citationCards");
+  });
+
+  it("keeps the bottom navigation including Settings in the app shell", () => {
+    const html = renderToStaticMarkup(React.createElement(KiaStickApp, {
+      runtimeVersion: createRuntimeVersion({ buildDate: "20260620", gitSha: "abc123" }),
+    }));
+
+    expect(html).toContain("KIA Stick navigation");
+    expect(html).toContain("Settings");
+    expect(html).toContain("bottomNav");
+  });
+
+  it("renders Vault guide mode and hides technical details by default", () => {
+    const state = createInitialVaultState();
+    const html = renderToStaticMarkup(React.createElement(VaultPanel, {
+      counts: laneCounts(state.records),
+      workflowCounts: workflowStateCounts(state.records),
+      state,
+      view: "vault",
+      runtimeVersion: createRuntimeVersion({ buildDate: "20260620", gitSha: "abc123" }),
+      setView: () => undefined,
+      onAction: () => undefined,
+    }));
+
+    expect(html).toContain("Guide mode");
+    expect(html).toContain("What this screen means");
+    expect(html).toContain("What is safe");
+    expect(html).toContain("What is blocked");
+    expect(html).toContain("What happens next");
+    expect(html).toContain("Show technical details");
+    expect(html).not.toContain("Lifecycle State Machine");
   });
 });
 

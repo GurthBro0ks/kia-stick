@@ -291,6 +291,22 @@ a {
   margin-top: 8px;
 }
 
+.saveNotice {
+  margin-top: 8px;
+  border: 1px solid #9fbdb4;
+  background: #def0e8;
+  color: #184b35;
+  padding: 7px;
+  font-size: 0.78rem;
+  font-weight: 900;
+}
+
+.saveNotice.warning {
+  border-color: #d69a8c;
+  background: #f8e1db;
+  color: #7a2e25;
+}
+
 .button {
   min-height: 38px;
   border: 1px solid #858b92;
@@ -492,8 +508,13 @@ a {
 .citationCards {
   display: grid;
   gap: 7px;
+  margin-top: 8px;
   padding-left: 0;
   list-style-position: inside;
+}
+
+.citationToggle {
+  width: 100%;
 }
 
 .citationCards li {
@@ -567,9 +588,63 @@ a {
   font-weight: 750;
 }
 
+.settingsPanel {
+  padding-bottom: 88px;
+}
+
 .vaultPanel {
   display: grid;
   gap: 12px;
+}
+
+.guidePanel {
+  display: grid;
+  gap: 10px;
+  border: 1px solid #b7c9cf;
+  background: #eef7f6;
+  padding: 10px;
+}
+
+.guideEyebrow {
+  display: block;
+  color: var(--muted);
+  font-size: 0.68rem;
+  font-weight: 950;
+  text-transform: uppercase;
+}
+
+.guidePanel h3 {
+  margin: 2px 0 0;
+  font-size: 1rem;
+}
+
+.guideGrid,
+.friendlyStatusGrid {
+  display: grid;
+  gap: 8px;
+}
+
+.guideItem {
+  border: 1px solid #c8d6d4;
+  background: #fff;
+  padding: 8px;
+}
+
+.guideItem strong {
+  display: block;
+  font-size: 0.82rem;
+}
+
+.guideItem p {
+  margin: 4px 0 0;
+  color: var(--muted);
+  font-size: 0.8rem;
+  font-weight: 750;
+  line-height: 1.35;
+}
+
+.technicalToggle {
+  width: 100%;
 }
 
 .boundaryGrid {
@@ -641,9 +716,27 @@ a {
 
 .laneGrid,
 .workflowGrid,
-.vaultRecordGrid {
+.vaultRecordGrid,
+.friendlyVaultSummary {
   display: grid;
   gap: 9px;
+}
+
+.friendlyVaultSummary {
+  border: 1px solid #d4dbe1;
+  background: var(--soft);
+  padding: 10px;
+}
+
+.friendlyVaultSummary strong,
+.friendlyVaultSummary span {
+  display: block;
+}
+
+.friendlyVaultSummary span {
+  color: var(--muted);
+  font-size: 0.84rem;
+  font-weight: 850;
 }
 
 .laneGrid,
@@ -800,13 +893,15 @@ a {
   margin-top: 10px;
 }
 
-.vaultFieldGrid div {
+.vaultFieldGrid div,
+.friendlyStatusGrid div {
   border: 1px solid #ccd5dc;
   background: #fff;
   padding: 7px;
 }
 
-.vaultFieldGrid span {
+.vaultFieldGrid span,
+.friendlyStatusGrid span {
   display: block;
   color: var(--muted);
   font-size: 0.66rem;
@@ -814,7 +909,8 @@ a {
   text-transform: uppercase;
 }
 
-.vaultFieldGrid strong {
+.vaultFieldGrid strong,
+.friendlyStatusGrid strong {
   display: block;
   margin-top: 3px;
   font-size: 0.78rem;
@@ -976,6 +1072,11 @@ a {
 
   .boundaryGrid {
     grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+
+  .guideGrid,
+  .friendlyStatusGrid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
   }
 
   .vaultRecordGrid {

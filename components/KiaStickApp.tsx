@@ -17,8 +17,14 @@ import {
   ShieldCheck,
   Upload,
 } from "lucide-react";
-import { useEffect, useMemo, useState } from "react";
-import { answerToMarkdown, buildAnswer, cannedQuestions, type AnswerResult } from "@/lib/answerGovernor";
+import React, { useEffect, useMemo, useState } from "react";
+import { buildAnswer, cannedQuestions, type AnswerResult } from "@/lib/answerGovernor";
+import {
+  createSavedAnswerRecord,
+  upsertSavedAnswer,
+  type SaveAnswerStatus,
+  type SavedAnswer,
+} from "@/lib/savedAnswers";
 import {
   bucketForClass,
   citationLabel,
@@ -50,18 +56,6 @@ import { clientVersion, type RuntimeVersion } from "@/lib/version";
 
 type Tab = "chat" | "sources" | "saved" | "upload" | "vault" | "settings";
 type VaultView = "vault" | "quarantine" | "redaction" | "metadata" | "index" | "audit";
-
-interface SavedAnswer {
-  id: string;
-  question: string;
-  answer: string;
-  mode: Mode;
-  citations: AnswerResult["citations"];
-  version: AnswerResult["version"];
-  provider: string;
-  timestamp: string;
-  footer: string;
-}
 
 interface QuarantineItem {
   id: string;
@@ -114,6 +108,12 @@ function savedBuildLabel(item: SavedAnswer): string {
   return item.version?.displayVersion ?? item.provider ?? "unknown";
 }
 
+function saveStatusText(status: SaveAnswerStatus): string {
+  if (status === "created") return "Saved this answer.";
+  if (status === "replaced") return "Updated the saved answer with newer details.";
+  return "Already saved. No new data.";
+}
+
 export function KiaStickApp({ runtimeVersion = clientVersion }: { runtimeVersion?: RuntimeVersion }) {
   const [tab, setTab] = useState<Tab>("chat");
   const [mode, setMode] = useState<Mode>("Strict Research");
@@ -133,6 +133,7 @@ export function KiaStickApp({ runtimeVersion = clientVersion }: { runtimeVersion
   const [vaultView, setVaultView] = useState<VaultView>("vault");
   const [vaultState, setVaultState] = useState<VaultState>(() => createInitialVaultState());
   const [fakeOnlyConfirmed, setFakeOnlyConfirmed] = useState(false);
+  const [saveNotice, setSaveNotice] = useState<{ status: SaveAnswerStatus; text: string } | null>(null);
   const [hydrated, setHydrated] = useState(false);
 
   useEffect(() => {
@@ -175,22 +176,21 @@ export function KiaStickApp({ runtimeVersion = clientVersion }: { runtimeVersion
     const nextAnswer = buildAnswer(nextQuestion, { mode, scope, detail, runtimeVersion });
     setQuestion(nextQuestion);
     setAnswer(nextAnswer);
+    setSaveNotice(null);
     setTab("chat");
   }
 
   function saveAnswer() {
-    const record: SavedAnswer = {
-      id: `${Date.now()}-${answer.intent}`,
-      question: answer.question,
-      answer: answerToMarkdown(answer),
+    const record = createSavedAnswerRecord({
+      answer,
       mode,
-      citations: answer.citations,
-      version: answer.version,
-      provider: answer.version.provider,
+      scope,
+      detail,
       timestamp: new Date().toISOString(),
-      footer: answer.footer,
-    };
-    setSaved((current) => [record, ...current].slice(0, 50));
+    });
+    const result = upsertSavedAnswer(saved, record);
+    setSaved(result.saved);
+    setSaveNotice({ status: result.status, text: saveStatusText(result.status) });
   }
 
   function queueUpload(fileList: FileList | null) {
@@ -293,6 +293,11 @@ export function KiaStickApp({ runtimeVersion = clientVersion }: { runtimeVersion
                     <Save size={17} />
                   </button>
                 </div>
+                {saveNotice && (
+                  <div className={`saveNotice ${saveNotice.status === "duplicate" ? "warning" : "ok"}`} role="status">
+                    {saveNotice.text}
+                  </div>
+                )}
               </div>
             </section>
 
@@ -345,6 +350,8 @@ export function KiaStickApp({ runtimeVersion = clientVersion }: { runtimeVersion
                   <p>{item.answer.split("\n\n")[0]}</p>
                   <div className="sourceMeta">
                     <span className="badge">{item.mode}</span>
+                    <span className="badge">{item.scope}</span>
+                    <span className="badge">{item.detail}</span>
                     <span className="badge">{item.provider}</span>
                     <span className="badge">{savedBuildLabel(item)}</span>
                     <span className="badge">{item.citations.length} citations</span>
@@ -412,7 +419,7 @@ export function KiaStickApp({ runtimeVersion = clientVersion }: { runtimeVersion
         )}
 
         {tab === "settings" && (
-          <section className="tabPanel">
+          <section className="tabPanel settingsPanel">
             <PanelHeader title="Settings" meta={<a href="/version">Version page</a>} />
             <dl className="settingsGrid">
               <dt>Display</dt>
@@ -472,7 +479,7 @@ function NavButton(props: { active: boolean; label: string; icon: React.ReactNod
   );
 }
 
-function VaultPanel(props: {
+export function VaultPanel(props: {
   counts: Record<VaultLane, number>;
   workflowCounts: Record<VaultWorkflowState, number>;
   state: VaultState;
@@ -481,6 +488,7 @@ function VaultPanel(props: {
   setView: (view: VaultView) => void;
   onAction: (action: VaultAction) => void;
 }) {
+  const [technicalOpen, setTechnicalOpen] = useState(false);
   const filteredRecords = useMemo(() => {
     if (props.view === "quarantine") {
       return props.state.records.filter((record) => record.lane === "quarantine" || record.lifecycleStep === "quarantine");
@@ -522,6 +530,36 @@ function VaultPanel(props: {
     <section className="tabPanel vaultPanel">
       <PanelHeader title={activeView.label} meta={activeView.meta} />
 
+      <section className="guidePanel" aria-label="Vault guide mode">
+        <div>
+          <span className="guideEyebrow">Guide mode</span>
+          <h3>Plain-English vault guide</h3>
+        </div>
+        <div className="guideGrid">
+          <GuideItem title="What this screen means">
+            You are looking at fake metadata rows that model a future private-vault review flow.
+          </GuideItem>
+          <GuideItem title="What is safe">
+            Synthetic titles, fake hashes, fake review notes, and build identity are safe to display and export.
+          </GuideItem>
+          <GuideItem title="What is blocked">
+            Real documents, private paths, uploads, OCR, source text, and indexing are blocked in this MVP.
+          </GuideItem>
+          <GuideItem title="What happens next">
+            Review fake redaction, review fake metadata, then mark fake-only eligibility or reject the row.
+          </GuideItem>
+        </div>
+        <button
+          aria-expanded={technicalOpen}
+          className="button subtle technicalToggle"
+          type="button"
+          onClick={() => setTechnicalOpen((open) => !open)}
+        >
+          <ClipboardList size={16} />
+          {technicalOpen ? "Hide technical details" : "Show technical details"}
+        </button>
+      </section>
+
       <div className="boundaryGrid" aria-label="private vault boundaries">
         <NoticeBox tone="warning" title="Fake metadata only">
           This scaffold uses synthetic metadata fixtures. It does not read, copy, OCR, summarize, index, upload, or transform files.
@@ -549,31 +587,42 @@ function VaultPanel(props: {
 
       {props.view === "vault" && (
         <>
-          <div className="laneGrid" aria-label="vault lane counts">
-            {(Object.entries(props.counts) as [VaultLane, number][]).map(([lane, count]) => (
-              <div className="laneTile" key={lane}>
-                <span className={`laneBadge lane-${lane}`}>{laneLabels[lane]}</span>
-                <strong>{count}</strong>
+          {technicalOpen ? (
+            <>
+              <div className="laneGrid" aria-label="vault lane counts">
+                {(Object.entries(props.counts) as [VaultLane, number][]).map(([lane, count]) => (
+                  <div className="laneTile" key={lane}>
+                    <span className={`laneBadge lane-${lane}`}>{laneLabels[lane]}</span>
+                    <strong>{count}</strong>
+                  </div>
+                ))}
               </div>
-            ))}
-          </div>
 
-          <div className="workflowGrid" aria-label="workflow state counts">
-            {(Object.entries(props.workflowCounts) as [VaultWorkflowState, number][]).map(([state, count]) => (
-              <div className="workflowTile" key={state}>
-                <span>{workflowStateLabels[state]}</span>
-                <strong>{count}</strong>
+              <div className="workflowGrid" aria-label="workflow state counts">
+                {(Object.entries(props.workflowCounts) as [VaultWorkflowState, number][]).map(([state, count]) => (
+                  <div className="workflowTile" key={state}>
+                    <span>{workflowStateLabels[state]}</span>
+                    <strong>{count}</strong>
+                  </div>
+                ))}
               </div>
-            ))}
-          </div>
 
-          <section className="lifecyclePanel" aria-label="lifecycle state machine">
-            <h3 className="sectionTitle">
-              <ClipboardList size={14} />
-              Lifecycle State Machine
-            </h3>
-            <LifecycleRail current="audit" />
-          </section>
+              <section className="lifecyclePanel" aria-label="lifecycle state machine">
+                <h3 className="sectionTitle">
+                  <ClipboardList size={14} />
+                  Lifecycle State Machine
+                </h3>
+                <LifecycleRail current="audit" />
+              </section>
+            </>
+          ) : (
+            <div className="friendlyVaultSummary" aria-label="simple vault summary">
+              <strong>{props.state.records.length} fake metadata rows</strong>
+              <span>{props.workflowCounts.eligible_fake_only} fake-only eligible</span>
+              <span>{props.workflowCounts.review_rejected} rejected or blocked</span>
+              <span>{props.workflowCounts.quarantine_only} quarantine-only</span>
+            </div>
+          )}
         </>
       )}
 
@@ -606,11 +655,20 @@ function VaultPanel(props: {
       ) : (
         <div className="vaultRecordGrid">
           {filteredRecords.map((record) => (
-            <VaultRecordCard key={record.id} onAction={props.onAction} record={record} />
+            <VaultRecordCard key={record.id} onAction={props.onAction} record={record} showTechnical={technicalOpen} />
           ))}
         </div>
       )}
     </section>
+  );
+}
+
+function GuideItem(props: { title: string; children: React.ReactNode }) {
+  return (
+    <article className="guideItem">
+      <strong>{props.title}</strong>
+      <p>{props.children}</p>
+    </article>
   );
 }
 
@@ -636,7 +694,15 @@ function LifecycleRail({ current }: { current: LifecycleStep }) {
   );
 }
 
-function VaultRecordCard({ record, onAction }: { record: FakeVaultRecord; onAction: (action: VaultAction) => void }) {
+function VaultRecordCard({
+  record,
+  onAction,
+  showTechnical,
+}: {
+  record: FakeVaultRecord;
+  onAction: (action: VaultAction) => void;
+  showTechnical: boolean;
+}) {
   const canAdvance = record.lifecycleStep !== "audit";
   const nextStep = nextLifecycleStepLabel(record.lifecycleStep);
   const workflowTone = record.workflowState === "eligible_fake_only" ? "ok" : "warning";
@@ -654,32 +720,43 @@ function VaultRecordCard({ record, onAction }: { record: FakeVaultRecord; onActi
       </div>
 
       <p>{record.fakeSummary}</p>
-      <LifecycleRail current={record.lifecycleStep} />
 
-      <div className="vaultFieldGrid">
-        <VaultField label="Lifecycle" value={lifecycleLabels[record.lifecycleStep]} />
-        <VaultField label="Authority" value={record.authorityLevel} />
-        <VaultField label="Source status" value={record.sourceStatus} />
-        <VaultField label="Sensitivity" value={record.sensitivity} />
-        <VaultField label="Redaction" value={record.redactionStatus} />
-        <VaultField label="Metadata" value={record.metadataStatus} />
-        <VaultField label="Workflow state" value={record.workflowState} />
-        <VaultField label="Reviewer" value={record.reviewer} />
-        <VaultField label="Fake hash" value={record.fakeHash} />
+      <div className="friendlyStatusGrid">
+        <VaultField label="Plain status" value={friendlyWorkflowLabel(record.workflowState)} />
+        <VaultField label="Safe?" value={record.githubSafe ? "safe fake metadata" : "blocked"} />
+        <VaultField label="Next step" value={friendlyNextStep(record)} />
       </div>
 
-      <div className="sourceMeta">
-        <span className="badge green">GitHub-safe metadata</span>
-        <span className="badge">ref: {record.fakeSourceRef}</span>
-        <span className="badge">{record.fakeProvenance}</span>
-      </div>
+      {showTechnical && (
+        <>
+          <LifecycleRail current={record.lifecycleStep} />
 
-      {record.redactionFlags.length > 0 && (
-        <ul className="flagList">
-          {record.redactionFlags.map((flag) => (
-            <li key={flag}>{flag}</li>
-          ))}
-        </ul>
+          <div className="vaultFieldGrid">
+            <VaultField label="Lifecycle" value={lifecycleLabels[record.lifecycleStep]} />
+            <VaultField label="Authority" value={record.authorityLevel} />
+            <VaultField label="Source status" value={record.sourceStatus} />
+            <VaultField label="Sensitivity" value={record.sensitivity} />
+            <VaultField label="Redaction" value={record.redactionStatus} />
+            <VaultField label="Metadata" value={record.metadataStatus} />
+            <VaultField label="Workflow state" value={record.workflowState} />
+            <VaultField label="Reviewer" value={record.reviewer} />
+            <VaultField label="Fake hash" value={record.fakeHash} />
+          </div>
+
+          <div className="sourceMeta">
+            <span className="badge green">GitHub-safe metadata</span>
+            <span className="badge">ref: {record.fakeSourceRef}</span>
+            <span className="badge">{record.fakeProvenance}</span>
+          </div>
+
+          {record.redactionFlags.length > 0 && (
+            <ul className="flagList">
+              {record.redactionFlags.map((flag) => (
+                <li key={flag}>{flag}</li>
+              ))}
+            </ul>
+          )}
+        </>
       )}
 
       <p className="indexReason">{record.indexReason}</p>
@@ -750,6 +827,24 @@ function VaultRecordCard({ record, onAction }: { record: FakeVaultRecord; onActi
   );
 }
 
+function friendlyWorkflowLabel(state: VaultWorkflowState): string {
+  if (state === "eligible_fake_only") return "Fake-only eligible";
+  if (state === "review_rejected") return "Rejected or blocked";
+  if (state === "metadata_required") return "Needs metadata review";
+  if (state === "redaction_required") return "Needs redaction review";
+  if (state === "quarantine_only") return "Quarantine only";
+  return "Not indexable";
+}
+
+function friendlyNextStep(record: FakeVaultRecord): string {
+  if (record.workflowState === "eligible_fake_only") return "Audit or export fake metadata.";
+  if (record.workflowState === "review_rejected") return "Keep blocked unless a new fake review starts.";
+  if (record.workflowState === "metadata_required") return "Approve metadata or reject review.";
+  if (record.workflowState === "redaction_required") return "Approve redaction or reject review.";
+  if (record.workflowState === "quarantine_only") return "Move through hash/provenance before review.";
+  return "Keep out of index.";
+}
+
 function nextLifecycleStepLabel(step: LifecycleStep): string {
   const currentIndex = lifecycleSteps.indexOf(step);
   const nextStep = lifecycleSteps[Math.min(currentIndex + 1, lifecycleSteps.length - 1)];
@@ -786,6 +881,8 @@ function VaultField({ label, value }: { label: string; value: string }) {
 }
 
 function AnswerPanel({ answer }: { answer: AnswerResult }) {
+  const [citationsOpen, setCitationsOpen] = useState(false);
+
   return (
     <section className="chatThread" aria-label="Current answer">
       <div className="messageRow userMessage">
@@ -852,11 +949,23 @@ function AnswerPanel({ answer }: { answer: AnswerResult }) {
             {answer.citations.length === 0 ? (
               <p className="emptyState">No citable fake sources.</p>
             ) : (
-              <ol className="citationCards">
-                {answer.citations.map((citation) => (
-                  <li key={citation.id}>{citationLabel(citation)}</li>
-                ))}
-              </ol>
+              <>
+                <button
+                  aria-expanded={citationsOpen}
+                  className="button subtle citationToggle"
+                  type="button"
+                  onClick={() => setCitationsOpen((open) => !open)}
+                >
+                  {citationsOpen ? "Hide citations" : `Show citations (${answer.citations.length})`}
+                </button>
+                {citationsOpen && (
+                  <ol className="citationCards">
+                    {answer.citations.map((citation) => (
+                      <li key={citation.id}>{citationLabel(citation)}</li>
+                    ))}
+                  </ol>
+                )}
+              </>
             )}
           </div>
 
