@@ -1,5 +1,45 @@
 # KIA Stick Closeout
 
+## v0.4 Chat Layout Blocker Fix
+
+- Phase: `KIA-Stick-v0.4-chat-layout-blocker-fix`
+- Scope: remaining manual QA layout blockers for chat composer overlap, bottom nav overlap, chronological chat flow, expanded packet layout, and manifest route conflict.
+- Proof directory: `/tmp/proof_kia_stick_v04_chat_layout_fix_20260620T141951Z`
+- Product version: `0.4.0`
+- Manual QA: CDP layout smoke PASS on 390x844 and 1280x900; operator browser click-through still recommended.
+- Provider: `local-fake-deterministic`
+- Cloud/API required: no
+- Secrets printed: no
+- Push performed: no
+- Real document boundary: `/media/mint/SHARED/APWU` untouched
+- Private vault inspected: no
+
+## v0.4 Chat Layout Blocker Fix Coverage
+
+- Chat DOM order is messages, composer, then bottom nav.
+- Message area is a fixed scroll pane that ends above the composer.
+- Composer is fixed above the bottom nav with capped internal scrolling for secondary controls.
+- Bottom nav remains fixed and separated from composer/content.
+- Expanded full packet and citations stay inside the scrollable message pane and do not cover the composer or nav.
+- Prompt shortcuts and response options remain collapsed/secondary.
+- Compact answer and packet detail disclosures remain collapsed by default.
+- `app/manifest.ts` removed so `public/manifest.webmanifest` is the only manifest source.
+- `/manifest.webmanifest` returns HTTP 200 and valid JSON.
+- Saved-answer dedupe behavior from `541742e` remains covered by tests and CDP smoke.
+
+## v0.4 Chat Layout Blocker Fix Known Warnings
+
+- `npm run test` prints the existing Vite CJS API deprecation notice.
+- `next build` may print the existing Next flat-ESLint plugin detection warning while still passing validation.
+
+## Next Safe Phase
+
+Recommended next phase: `KIA-Stick-v0.4-chat-layout-browser-acceptance`.
+
+Future phases remain fake-doc/fake-metadata-only unless separately authorized. No real-document reads, copies, scans, OCR, ingestion, summarization, transforms, real indexing, uploads, private-vault inspection, or pushes are approved by this fix.
+
+---
+
 ## v0.4 Chat UX Dedupe Fix 2
 
 - Phase: `KIA-Stick-v0.4-chat-ux-dedupe-fix-2`

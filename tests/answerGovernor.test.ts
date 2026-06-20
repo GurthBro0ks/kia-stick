@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { readFileSync } from "node:fs";
+import { existsSync, readFileSync } from "node:fs";
 import { renderToStaticMarkup } from "react-dom/server";
 import React from "react";
 import { GET as healthGET } from "@/app/health/route";
@@ -344,6 +344,7 @@ describe("runtime build identity", () => {
 
     expect(manifest.name).toBe("KIA Stick");
     expect(manifest.start_url).toBe("/");
+    expect(existsSync("app/manifest.ts")).toBe(false);
   });
 });
 
@@ -355,6 +356,8 @@ describe("manual QA UX shell", () => {
 
     expect(html).toContain("messageBubble userBubble");
     expect(html).toContain("messageBubble assistantBubble");
+    expect(html).toContain("chatScrollArea");
+    expect(html).toContain("chatComposer chatComposerDock");
     expect(html).toContain("Short answer");
     expect(html).toContain("Confidence / authority");
     expect(html).toContain("What to do next");
@@ -366,6 +369,19 @@ describe("manual QA UX shell", () => {
     expect(html).not.toContain("Authority Stack");
     expect(html).not.toContain("Evidence Checklist");
     expect(html).not.toContain("citationCards");
+  });
+
+  it("renders chronological chat layout before composer and bottom nav", () => {
+    const html = renderToStaticMarkup(React.createElement(KiaStickApp, {
+      runtimeVersion: createRuntimeVersion({ buildDate: "20260620", gitSha: "abc123" }),
+    }));
+    const messagesIndex = html.indexOf("chatScrollArea");
+    const composerIndex = html.indexOf("chatComposer chatComposerDock");
+    const navIndex = html.indexOf("bottomNav");
+
+    expect(messagesIndex).toBeGreaterThan(-1);
+    expect(composerIndex).toBeGreaterThan(messagesIndex);
+    expect(navIndex).toBeGreaterThan(composerIndex);
   });
 
   it("keeps full packet detail sections collapsed by default", () => {

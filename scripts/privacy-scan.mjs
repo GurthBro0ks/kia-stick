@@ -72,7 +72,11 @@ for (const absolute of files) {
     failures += 1;
   }
 
-  const info = await stat(absolute);
+  const info = await stat(absolute).catch((error) => {
+    if (error?.code === "ENOENT") return null;
+    throw error;
+  });
+  if (!info) continue;
   if (info.size > 1024 * 1024) continue;
   const text = await readFile(absolute, "utf8").catch(() => "");
   for (const pattern of secretPatterns) {

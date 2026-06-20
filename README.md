@@ -85,3 +85,12 @@ Quarantine, redaction review, and metadata review are not index approval. Invali
 - The chat composer is message-first; response options and prompt shortcuts are collapsed secondary controls.
 - Full packet sections are collapse-first: authority stack, conflicts, evidence checklist, missing facts, and follow-ups each stay behind a disclosure.
 - `public/manifest.webmanifest` is valid JSON for browser manifest parsing.
+
+## v0.4 Chat Layout Blocker Fix
+
+- Chat layout is structured as messages, fixed composer, then fixed bottom nav.
+- The message area is its own scroll pane and ends above the composer so response cards and expanded packets do not sit under fixed controls.
+- The composer is fixed above the bottom nav, capped in height, and scrolls internally if secondary controls are opened.
+- Bottom nav remains fixed and visually separate from the composer.
+- The duplicate app manifest route was removed; `public/manifest.webmanifest` is the only manifest source.
+- Saved-answer dedupe behavior from `541742e` remains covered.

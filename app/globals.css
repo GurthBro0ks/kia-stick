@@ -13,6 +13,9 @@
   --rose: #b45545;
   --line: #27313d;
   --shadow: rgba(23, 32, 42, 0.16);
+  --chat-top-offset: 110px;
+  --chat-composer-height: min(32vh, 270px);
+  --bottom-nav-stack: 84px;
 }
 
 * {
@@ -127,12 +130,27 @@ a {
   width: 100%;
   max-width: 920px;
   margin: 0 auto;
-  padding: 12px 10px 96px;
+  padding: 12px 10px calc(96px + env(safe-area-inset-bottom));
   overflow-x: hidden;
 }
 
 .chatMain {
+  position: fixed;
+  top: var(--chat-top-offset);
+  right: 0;
+  bottom: calc(var(--bottom-nav-stack) + var(--chat-composer-height) + 18px + env(safe-area-inset-bottom));
+  left: 0;
+  z-index: 5;
+  width: 100%;
   max-width: 780px;
+  overflow-y: auto;
+  overscroll-behavior: contain;
+  padding-bottom: 14px;
+}
+
+.chatScrollArea {
+  display: grid;
+  gap: 10px;
 }
 
 .chatComposer,
@@ -158,10 +176,16 @@ a {
 }
 
 .chatComposerDock {
-  position: sticky;
-  bottom: 88px;
-  z-index: 12;
-  margin-top: 12px;
+  position: fixed;
+  left: max(10px, env(safe-area-inset-left));
+  right: max(10px, env(safe-area-inset-right));
+  bottom: calc(var(--bottom-nav-stack) + env(safe-area-inset-bottom));
+  z-index: 35;
+  width: min(780px, calc(100vw - 20px - env(safe-area-inset-left) - env(safe-area-inset-right)));
+  height: var(--chat-composer-height);
+  margin: 0 auto;
+  overflow-y: auto;
+  overscroll-behavior: contain;
 }
 
 .composerHeader,
@@ -301,7 +325,8 @@ a {
 
 .askBox textarea {
   width: 100%;
-  min-height: 96px;
+  min-height: 64px;
+  max-height: 120px;
   border: 0;
   outline: none;
   resize: vertical;
@@ -370,7 +395,6 @@ a {
 .chatThread {
   display: grid;
   gap: 10px;
-  margin-top: 12px;
 }
 
 .messageRow {
@@ -1101,7 +1125,7 @@ a {
   left: max(10px, env(safe-area-inset-left));
   right: max(10px, env(safe-area-inset-right));
   bottom: max(10px, env(safe-area-inset-bottom));
-  z-index: 40;
+  z-index: 45;
   display: grid;
   grid-template-columns: repeat(6, minmax(0, 1fr));
   max-width: 640px;
@@ -1113,6 +1137,30 @@ a {
   border-left-color: #fff;
   background: var(--panel);
   box-shadow: 0 12px 28px var(--shadow);
+}
+
+@media (min-width: 780px) {
+  :root {
+    --chat-composer-height: 260px;
+  }
+
+  .chatMain {
+    bottom: calc(var(--bottom-nav-stack) + var(--chat-composer-height) + 20px + env(safe-area-inset-bottom));
+  }
+}
+
+@media (max-height: 720px) {
+  :root {
+    --chat-composer-height: min(34vh, 238px);
+  }
+
+  .chatMain {
+    bottom: calc(var(--bottom-nav-stack) + var(--chat-composer-height) + 16px + env(safe-area-inset-bottom));
+  }
+
+  .askBox textarea {
+    min-height: 52px;
+  }
 }
 
 .navButton {

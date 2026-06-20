@@ -2,10 +2,10 @@
 
 ## Current Phase
 
-- Phase: `KIA-Stick-v0.4-chat-ux-dedupe-fix-2`
+- Phase: `KIA-Stick-v0.4-chat-layout-blocker-fix`
 - Target: `USER_LAPTOP_ONLY`
 - Provider: `local-fake-deterministic`
-- Status: v0.4 chat UX/dedupe fix 2 implemented; final validation and commit pending.
+- Status: v0.4 chat layout blocker fix implemented; final validation and commit pending.
 
 ## Accepted v0.1 State
 
@@ -125,6 +125,22 @@
 - Real/private document access: none.
 - Push performed: no.
 
+## v0.4 Chat Layout Blocker Fix State
+
+- Scope: remaining manual QA layout blockers for chat composer overlap, bottom nav overlap, chronological chat flow, expanded packet layout, and manifest route conflict.
+- Proof directory: `/tmp/proof_kia_stick_v04_chat_layout_fix_20260620T141951Z`
+- Chat flow: DOM order is messages, fixed composer, then bottom nav.
+- Messages: chat message area is a fixed scroll pane that ends above the composer.
+- Composer: fixed above bottom nav with capped internal scrolling for response options and prompt shortcuts.
+- Bottom nav: remains fixed and separated from composer/content.
+- Expanded details: full packet and citations stay inside the scrollable message pane and do not cover composer/nav.
+- Manifest: `app/manifest.ts` removed so `public/manifest.webmanifest` is the only manifest source.
+- Saved answers: dedupe behavior from `541742e` preserved.
+- CDP layout smoke: PASS at 390x844 and 1280x900 for no overlap, no horizontal overflow, collapsed packet details, manifest console check, and saved dedupe.
+- `/health`: phase label updated to `KIA-Stick-v0.4-chat-layout-blocker-fix`.
+- Real/private document access: none.
+- Push performed: no.
+
 ## Commands Run
 
 - `cat ./AGENTS.md`
@@ -143,6 +159,18 @@
 - `node -e "JSON.parse(require('fs').readFileSync('public/manifest.webmanifest','utf8')); console.log('manifest json ok')"`
 - `npm run lint`
 - `npm run build`
+- `git status --short`
+- `git log -3 --oneline`
+- `npm run typecheck`
+- `npm run test`
+- `node -e "JSON.parse(require('fs').readFileSync('public/manifest.webmanifest','utf8')); console.log('manifest json ok')"`
+- `npm run build`
+- `npm run start -- --port 3005`
+- `curl -s -o /tmp/kia_manifest.out -w "%{http_code}\\n" http://127.0.0.1:3005/manifest.webmanifest`
+- `node scripts/cdp-screenshot.mjs http://127.0.0.1:3005 /tmp/proof_kia_stick_v04_chat_layout_fix_20260620T141951Z/layout_first.png 390 844`
+- `node scripts/cdp-screenshot.mjs http://127.0.0.1:3005 /tmp/proof_kia_stick_v04_chat_layout_fix_20260620T141951Z/layout_second.png 390 844`
+- CDP layout smoke for mobile 390x844 and desktop 1280x900 overlap, horizontal overflow, expanded packet, saved dedupe, and manifest console errors.
+- `node scripts/cdp-screenshot.mjs http://127.0.0.1:3005 /tmp/proof_kia_stick_v04_chat_layout_fix_20260620T141951Z/layout_desktop.png 1280 900`
 - `git status --short`
 - `npm run lint`
 - `npm run typecheck`
@@ -331,6 +359,13 @@
 - v0.4 chat UX/dedupe fix 2 tests added in `tests/answerGovernor.test.ts`.
 - v0.4 chat UX/dedupe fix 2 implementation note added at `docs/v0.4-chat-ux-dedupe-fix-2.md`.
 - v0.4 chat UX/dedupe fix 2 README, closeout, feature inventory, and progress state updated.
+- v0.4 chat layout blocker fix message/composer DOM order updated in `components/KiaStickApp.tsx`.
+- v0.4 chat layout blocker fix scroll-pane/composer/nav spacing updated in `app/globals.css`.
+- v0.4 chat layout blocker fix removed duplicate `app/manifest.ts`.
+- v0.4 chat layout blocker fix `/health` phase label updated in `app/health/route.ts`.
+- v0.4 chat layout blocker fix tests added in `tests/answerGovernor.test.ts`.
+- v0.4 chat layout blocker fix implementation note added at `docs/v0.4-chat-layout-blocker-fix.md`.
+- v0.4 chat layout blocker fix README, closeout, feature inventory, and progress state updated.
 
 ## Proof Directory
 
@@ -344,6 +379,7 @@
 - v0.4 fake-vault hardening proof: `/tmp/proof_kia_stick_v04_fake_vault_hardening_20260620T114211Z`
 - v0.4 manual QA UX fix proof: `/tmp/proof_kia_stick_v04_manual_qa_ux_fix_20260620T121155Z`
 - v0.4 chat UX/dedupe fix 2 proof: `/tmp/proof_kia_stick_v04_chat_dedupe_fix2_20260620T135417Z`
+- v0.4 chat layout blocker fix proof: `/tmp/proof_kia_stick_v04_chat_layout_fix_20260620T141951Z`
 
 ## Remaining Unknowns
 
@@ -358,3 +394,4 @@
 - v0.4 operator manual Vault click-through is pending; automated tests cover transition blocking, visible block reasons, audit exports, and fake-only guards.
 - A transient Next dev `/version` 500 occurred after running production build while dev server was live; restarting the local dev server cleared it and route captures passed.
 - v0.4 chat UX/dedupe fix 2 operator manual browser QA checklist is created but still requires operator click-through.
+- v0.4 chat layout blocker fix passed CDP smoke, but operator browser click-through is still recommended.

@@ -1,5 +1,5 @@
 {
-  "phase": "KIA-Stick-v0.4-chat-ux-dedupe-fix-2",
+  "phase": "KIA-Stick-v0.4-chat-layout-blocker-fix",
   "target_machine": "USER_LAPTOP_ONLY",
   "accepted_v0_1": {
     "commit": "1d9b05c",
@@ -24,12 +24,15 @@
     "duplicate_save_warning",
     "chat_bubble_layout",
     "message_first_chat_composer",
+    "fixed_chat_composer_above_nav",
+    "scrollable_chat_message_pane",
     "compact_answer_default",
     "full_packet_toggle",
     "packet_detail_disclosures",
     "citation_collapse_toggle",
     "hierarchy_grouped_sources",
     "valid_static_webmanifest",
+    "single_manifest_source",
     "upload_quarantine_ui",
     "private_vault_governance_ui",
     "fake_vault_metadata_fixtures",
@@ -306,6 +309,42 @@
       "version_back_link",
       "settings_nav_presence",
       "vault_guide_regression"
+    ],
+    "real_document_access": false,
+    "private_vault_inspected": false,
+    "real_db_boundary": "/media/mint/SHARED/APWU untouched"
+  },
+  "implemented_v0_4_chat_layout_blocker_fix": {
+    "phase": "KIA-Stick-v0.4-chat-layout-blocker-fix",
+    "status": "implemented_fake_metadata_only",
+    "document": "docs/v0.4-chat-layout-blocker-fix.md",
+    "proof_dir": "/tmp/proof_kia_stick_v04_chat_layout_fix_20260620T141951Z",
+    "manual_qa": "PASS_cdp_layout_smoke_operator_clickthrough_recommended",
+    "fixes": [
+      "chat_messages_composer_nav_dom_order",
+      "scrollable_chat_message_pane",
+      "fixed_chat_composer_above_bottom_nav",
+      "bottom_nav_separated_from_composer",
+      "expanded_packet_inside_message_scroll_area",
+      "no_mobile_desktop_horizontal_overflow",
+      "single_public_webmanifest_source",
+      "manifest_route_http_200",
+      "saved_answer_dedupe_preserved"
+    ],
+    "tests": [
+      "chronological_chat_layout_order",
+      "manifest_json_parse",
+      "single_manifest_source",
+      "bottom_nav_composer_presence",
+      "details_citations_collapsed_default",
+      "saved_dedupe_regression"
+    ],
+    "cdp_checks": [
+      "mobile_390x844_no_chat_composer_nav_overlap",
+      "desktop_1280x900_no_chat_composer_nav_overlap",
+      "expanded_packet_no_overlap",
+      "no_horizontal_overflow",
+      "manifest_console_error_absent"
     ],
     "real_document_access": false,
     "private_vault_inspected": false,

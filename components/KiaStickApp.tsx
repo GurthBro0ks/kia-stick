@@ -227,86 +227,9 @@ export function KiaStickApp({ runtimeVersion = clientVersion }: { runtimeVersion
 
       <main className={tab === "chat" ? "mainArea chatMain" : "mainArea"}>
         {tab === "chat" && (
-          <>
+          <div className="chatScrollArea" aria-label="Chat messages">
             <AnswerPanel answer={answer} />
-
-            <section className="chatComposer chatComposerDock" aria-label="Ask KIA Stick">
-              <div className="composerHeader">
-                <div>
-                  <span className="sectionKicker">Reply</span>
-                  <h2>Message KIA Stick</h2>
-                </div>
-                <span className={answer.noAnswer ? "statusPill warning" : "statusPill ok"}>
-                  {answer.noAnswer ? "No controlling hit" : "Cited answer"}
-                </span>
-              </div>
-
-              <div className="askBox">
-                <textarea
-                  aria-label="Question"
-                  placeholder="Type a fake-doc question..."
-                  value={question}
-                  onChange={(event) => setQuestion(event.target.value)}
-                />
-                <div className="chatActions">
-                  <button className="button primary" type="button" onClick={() => runAnswer()}>
-                    <MessageSquareText size={17} />
-                    Answer
-                  </button>
-                  <button className="button iconOnly" type="button" onClick={saveAnswer} title="Save answer" aria-label="Save answer">
-                    <Save size={17} />
-                  </button>
-                </div>
-                {saveNotice && (
-                  <div className={`saveNotice ${saveNotice.status === "duplicate" ? "warning" : "ok"}`} role="status">
-                    {saveNotice.text}
-                  </div>
-                )}
-              </div>
-
-              <details className="composerDisclosure">
-                <summary>Response options</summary>
-                <div className="controlStrip">
-                  <label className="controlPill">
-                    <span>Mode</span>
-                    <select value={mode} onChange={(event) => setMode(event.target.value as Mode)}>
-                      {modes.map((item) => (
-                        <option key={item}>{item}</option>
-                      ))}
-                    </select>
-                  </label>
-                  <label className="controlPill">
-                    <span>Scope</span>
-                    <select value={scope} onChange={(event) => setScope(event.target.value as Scope)}>
-                      {scopes.map((item) => (
-                        <option key={item}>{item}</option>
-                      ))}
-                    </select>
-                  </label>
-                  <label className="controlPill">
-                    <span>Detail</span>
-                    <select value={detail} onChange={(event) => setDetail(event.target.value as Detail)}>
-                      {details.map((item) => (
-                        <option key={item}>{item}</option>
-                      ))}
-                    </select>
-                  </label>
-                </div>
-              </details>
-
-              <details className="promptDetails">
-                <summary>Prompt shortcuts</summary>
-                <div className="promptRail" aria-label="fake test prompts">
-                  {cannedQuestions.map((prompt) => (
-                    <button className="promptChip" key={prompt} type="button" onClick={() => runAnswer(prompt)}>
-                      {prompt}
-                      <ChevronRight size={14} />
-                    </button>
-                  ))}
-                </div>
-              </details>
-            </section>
-          </>
+          </div>
         )}
 
         {tab === "sources" && (
@@ -457,6 +380,85 @@ export function KiaStickApp({ runtimeVersion = clientVersion }: { runtimeVersion
           </section>
         )}
       </main>
+
+      {tab === "chat" && (
+        <section className="chatComposer chatComposerDock" aria-label="Ask KIA Stick">
+          <div className="composerHeader">
+            <div>
+              <span className="sectionKicker">Reply</span>
+              <h2>Message KIA Stick</h2>
+            </div>
+            <span className={answer.noAnswer ? "statusPill warning" : "statusPill ok"}>
+              {answer.noAnswer ? "No controlling hit" : "Cited answer"}
+            </span>
+          </div>
+
+          <div className="askBox">
+            <textarea
+              aria-label="Question"
+              placeholder="Type a fake-doc question..."
+              value={question}
+              onChange={(event) => setQuestion(event.target.value)}
+            />
+            <div className="chatActions">
+              <button className="button primary" type="button" onClick={() => runAnswer()}>
+                <MessageSquareText size={17} />
+                Answer
+              </button>
+              <button className="button iconOnly" type="button" onClick={saveAnswer} title="Save answer" aria-label="Save answer">
+                <Save size={17} />
+              </button>
+            </div>
+            {saveNotice && (
+              <div className={`saveNotice ${saveNotice.status === "duplicate" ? "warning" : "ok"}`} role="status">
+                {saveNotice.text}
+              </div>
+            )}
+          </div>
+
+          <details className="composerDisclosure">
+            <summary>Response options</summary>
+            <div className="controlStrip">
+              <label className="controlPill">
+                <span>Mode</span>
+                <select value={mode} onChange={(event) => setMode(event.target.value as Mode)}>
+                  {modes.map((item) => (
+                    <option key={item}>{item}</option>
+                  ))}
+                </select>
+              </label>
+              <label className="controlPill">
+                <span>Scope</span>
+                <select value={scope} onChange={(event) => setScope(event.target.value as Scope)}>
+                  {scopes.map((item) => (
+                    <option key={item}>{item}</option>
+                  ))}
+                </select>
+              </label>
+              <label className="controlPill">
+                <span>Detail</span>
+                <select value={detail} onChange={(event) => setDetail(event.target.value as Detail)}>
+                  {details.map((item) => (
+                    <option key={item}>{item}</option>
+                  ))}
+                </select>
+              </label>
+            </div>
+          </details>
+
+          <details className="promptDetails">
+            <summary>Prompt shortcuts</summary>
+            <div className="promptRail" aria-label="fake test prompts">
+              {cannedQuestions.map((prompt) => (
+                <button className="promptChip" key={prompt} type="button" onClick={() => runAnswer(prompt)}>
+                  {prompt}
+                  <ChevronRight size={14} />
+                </button>
+              ))}
+            </div>
+          </details>
+        </section>
+      )}
 
       <nav className="bottomNav" aria-label="KIA Stick navigation">
         <NavButton active={tab === "chat"} label="Chat" onClick={() => setTab("chat")} icon={<MessageSquareText size={20} />} />
