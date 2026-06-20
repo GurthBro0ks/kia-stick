@@ -2,10 +2,30 @@
 
 ## Current Phase
 
-- Phase: `KIA-Stick-v0.4.1-fake-chat-polish`
+- Phase: `KIA-Stick-v0.4.1-release-review`
 - Target: `USER_LAPTOP_ONLY`
 - Provider: `local-fake-deterministic`
-- Status: v0.4.1 fake-only chat polish implemented; validation pending.
+- Status: v0.4.1 release review validation PASS; local commit pending.
+
+## v0.4.1 Release Review State
+
+- Phase: `KIA-Stick-v0.4.1-release-review`
+- Reviewed polish commit: `e5dd68a`
+- Baseline implementation: `ac6f418`
+- Baseline closeout: `4d96e83`
+- Scope: fake-only release/state review for v0.4.1 chat polish and GitHub-safe release notes.
+- Product version: `0.4.0`; displayVersion continues to change by build identity.
+- Proof directory: `/tmp/proof_kia_stick_v041_release_review_20260620T164104Z`
+- Release note: `docs/RELEASE_v0.4.md`
+- Release note status: GitHub-safe fake-only release note present; no private artifacts or real-document approval.
+- State docs: README, CLOSEOUT, `feature_list.json`, and `claude-progress.md` reflect v0.4.1 polish.
+- Settings: “About this fake MVP” local deterministic fake-doc mode text present.
+- Threaded chat: true multi-turn behavior remains covered by accepted `ac6f418` proof and current tests.
+- Validation: PASS for lint, typecheck, test, build, qa, scan:fake, scan:privacy, manifest parse, forbidden tracked-path check, `/health`, `/version` on disposable port `3012`, and docs/state checks.
+- Manual QA: PASS by current route/screenshot smoke plus accepted `ac6f418` multi-turn chat proof and v0.4.1 polish CDP evidence.
+- Real/private document access: none.
+- Push performed: no.
+- Known warning: existing `127.0.0.1:3011` dev server served `/health` but returned stale `/version` chunks after `npm run build`; disposable `127.0.0.1:3012` rendered `/version` correctly for proof.
 
 ## v0.4.1 Fake Chat Polish State
 
@@ -193,6 +213,14 @@
 
 ## Commands Run
 
+- `cat ./AGENTS.md`
+- `cat ./claude-progress.md`
+- `source ./init.sh || true`
+- `git status --short --branch`
+- `git log -5 --oneline --decorate`
+- `mkdir -p /tmp/proof_kia_stick_v041_release_review_20260620T164104Z`
+- `sed -n '1,240p' docs/RELEASE_v0.4.md`
+- `rg -n "v0.4.1|RELEASE_v0.4|About this fake MVP|0.4.0|displayVersion" README.md CLOSEOUT.md claude-progress.md feature_list.json app/health/route.ts lib/version.ts components/KiaStickApp.tsx`
 - `cat ./AGENTS.md`
 - `cat ./claude-progress.md`
 - `source ./init.sh || true`
@@ -430,6 +458,7 @@
 - v0.4.1 fake chat polish tests updated in `tests/answerGovernor.test.ts`.
 - v0.4.1 GitHub-safe release note added at `docs/RELEASE_v0.4.md`.
 - v0.4.1 README, closeout, feature inventory, and progress state updated.
+- v0.4.1 release review state recorded in `CLOSEOUT.md`, `claude-progress.md`, and `feature_list.json`.
 - Closeout state recorded in `claude-progress.md`.
 - Accepted v0.1 feature inventory recorded in `feature_list.json`.
 - Closeout summary and next safe phase plan recorded in `CLOSEOUT.md`.
@@ -496,6 +525,7 @@
 
 - v0.4 true threaded chat proof: `/tmp/proof_kia_stick_v04_true_threaded_chat_20260620T145019Z`
 - v0.4.1 fake chat polish proof: `/tmp/proof_kia_stick_v041_fake_chat_polish_20260620T155120Z`
+- v0.4.1 release review proof: `/tmp/proof_kia_stick_v041_release_review_20260620T164104Z`
 - v0.4 true threaded chat closeout proof: `/tmp/proof_kia_stick_v04_threaded_chat_closeout_20260620T153220Z`
 - Accepted v0.1 proof: `/tmp/proof_kia_stick_v01_ui_fix_20260618T165630Z`
 - Closeout proof: `/tmp/proof_kia_stick_v01_closeout_20260618T171222Z`

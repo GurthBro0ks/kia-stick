@@ -1,5 +1,5 @@
 {
-  "phase": "KIA-Stick-v0.4.1-fake-chat-polish",
+  "phase": "KIA-Stick-v0.4.1-release-review",
   "target_machine": "USER_LAPTOP_ONLY",
   "accepted_v0_1": {
     "commit": "1d9b05c",
@@ -496,6 +496,34 @@
       "no_cloud",
       "no_push"
     ],
+    "real_document_access": false,
+    "private_vault_inspected": false,
+    "real_db_boundary": "/media/mint/SHARED/APWU untouched"
+  },
+  "reviewed_v0_4_1_release": {
+    "phase": "KIA-Stick-v0.4.1-release-review",
+    "status": "ready_for_push_review",
+    "reviewed_polish_commit": "e5dd68a",
+    "baseline_implementation_commit": "ac6f418",
+    "baseline_closeout_commit": "4d96e83",
+    "proof_dir": "/tmp/proof_kia_stick_v041_release_review_20260620T164104Z",
+    "release_note": "docs/RELEASE_v0.4.md",
+    "product_version": "0.4.0",
+    "checks": [
+      "release_note_github_safe",
+      "readme_closeout_progress_features_updated",
+      "product_version_unchanged",
+      "display_version_current_git_sha",
+      "settings_about_fake_mvp_present",
+      "threaded_chat_regression_covered",
+      "forbidden_private_paths_not_tracked",
+      "health_route_passed",
+      "version_page_passed_on_disposable_dev_port",
+      "current_screenshot_smoke_passed",
+      "full_validation_passed"
+    ],
+    "push_ready": true,
+    "push_performed": false,
     "real_document_access": false,
     "private_vault_inspected": false,
     "real_db_boundary": "/media/mint/SHARED/APWU untouched"

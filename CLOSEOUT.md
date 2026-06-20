@@ -1,5 +1,48 @@
 # KIA Stick Closeout
 
+## v0.4.1 Release Review
+
+- Phase: `KIA-Stick-v0.4.1-release-review`
+- Reviewed polish commit: `e5dd68a`
+- Baseline implementation: `ac6f418`
+- Baseline closeout: `4d96e83`
+- Scope: fake-only release/state review for v0.4.1 chat polish and GitHub-safe release notes.
+- Product version: `0.4.0`
+- Release note: `docs/RELEASE_v0.4.md`
+- Proof directory: `/tmp/proof_kia_stick_v041_release_review_20260620T164104Z`
+- Manual QA: PASS by current route/screenshot smoke plus accepted `ac6f418` multi-turn chat proof and v0.4.1 polish CDP evidence.
+- Provider: `local-fake-deterministic`
+- Cloud/API required: no
+- Secrets printed: no
+- Push performed: no
+- Push readiness: local validation PASS; ready for separate push/tag review.
+- Real document boundary: `/media/mint/SHARED/APWU` untouched
+- Private vault inspected: no
+
+## v0.4.1 Release Review Coverage
+
+- Verified release notes exist and remain GitHub-safe, fake-only, and free of private artifacts.
+- Verified README, CLOSEOUT, `feature_list.json`, and `claude-progress.md` reflect v0.4.1 polish.
+- Verified `productVersion` remains `0.4.0`; `displayVersion` uses build identity and current Git SHA.
+- Verified Settings includes “About this fake MVP” local deterministic fake-doc mode text.
+- Verified true threaded-chat behavior remains covered by the accepted `ac6f418` proof and current test suite.
+- Verified no real/private tracked paths are present.
+- Verified current `/health` and `/version` route smoke on disposable local port `3012`; existing `3011` `/version` showed a stale Next dev chunk warning after build.
+
+## v0.4.1 Release Review Known Warnings
+
+- `npm run test` prints the existing Vite CJS API deprecation notice.
+- `next build` may print the existing Next flat-ESLint plugin warning while still passing validation.
+- Existing dev server on `127.0.0.1:3011` served `/health` but had stale `/version` chunks after `npm run build`; disposable `127.0.0.1:3012` rendered `/version` correctly for release-review proof.
+
+## Next Safe Phase
+
+Recommended next phase: `KIA-Stick-v0.4.1-github-push-or-tag-review`.
+
+Future phases remain fake-doc/fake-metadata-only unless separately authorized. No real-document reads, copies, scans, OCR, ingestion, summarization, transforms, real indexing, uploads, private-vault inspection, pushes, cloud calls, or service changes are approved by this release review.
+
+---
+
 ## v0.4.1 Fake Chat Polish
 
 - Phase: `KIA-Stick-v0.4.1-fake-chat-polish`
