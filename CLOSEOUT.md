@@ -1,5 +1,35 @@
 # KIA Stick Closeout
 
+## v0.5.4 Local Phase Runner Proof Pack
+
+- Phase: `KIA-Stick-v0.5.4-local-phase-runner-proof-pack`
+- Baseline: v0.5.3 release-readiness local commit `4b91f75`
+- Scope: local fake-only phase runner that runs validation, collects proof logs, writes `RESULT.md`, and emits a manual push command only when a local commit exists after PASS.
+- Product version impact: none; app remains `0.4.0`.
+- Prompt version: `prompt.fake-docs.v0.5-import-wizard-hardening`
+- Runner: `npm run phase:run -- --phase PHASE_NAME`
+- Commit mode: `npm run phase:run -- --phase PHASE_NAME --commit`
+- Push behavior: runner never pushes; `push_command.txt` contains only the manual `git push` command when applicable.
+- Real document access: none
+- Private vault inspected: no
+- Push performed: no
+
+## v0.5.4 Coverage
+
+- Added `scripts/phase-runner.mjs` with no new dependencies.
+- Added `phase:run` package script.
+- Added proof directory creation, command logging, `RESULT.md`, changed-file summary, commit status, and manual push command generation.
+- Added commit gating for `--commit`: validation must pass, changes must exist, and only safe project paths are staged.
+- Added tests for phase sanitization, push command generation, result summary, commit gating, and no-push invariant.
+
+## Next Safe Phase
+
+Recommended next phase: `KIA-Stick-v0.5.4-operator-runner-review`.
+
+Future phases remain fake-only unless separately authorized. This runner does not approve real import, file pickers, path readers, file reads, copying, OCR, text extraction, indexing, upload handling, private-vault inspection, cloud calls, service changes, pushes, or private document access.
+
+---
+
 ## v0.5.3 Release Readiness and Version Coherence Automation
 
 - Phase: `KIA-Stick-v0.5.3-release-readiness-and-version-coherence-automation`

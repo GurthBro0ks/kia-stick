@@ -18,6 +18,7 @@
     "scan:fake": "node scripts/check-fake-docs.mjs",
     "scan:privacy": "node scripts/privacy-scan.mjs",
     "release:check": "node scripts/release-check.mjs",
+    "phase:run": "node scripts/phase-runner.mjs",
     "qa": "bash scripts/qa_gate.sh"
   },
   "dependencies": {

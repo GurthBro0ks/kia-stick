@@ -1,5 +1,5 @@
 {
-  "phase": "KIA-Stick-v0.5.3-release-readiness-and-version-coherence-automation",
+  "phase": "KIA-Stick-v0.5.4-local-phase-runner-proof-pack",
   "target_machine": "USER_LAPTOP_ONLY",
   "accepted_v0_1": {
     "commit": "1d9b05c",
@@ -60,6 +60,10 @@
     "import_wizard_audit_order_tests",
     "upload_fake_button_regression_test",
     "release_readiness_version_coherence_automation",
+    "local_phase_runner_proof_pack",
+    "manual_push_command_output",
+    "phase_runner_commit_gate",
+    "phase_runner_no_push_invariant",
     "feature_phase_derived_qa_defaults",
     "feature_phase_derived_git_sync_commit_message",
     "build_identity_display_version",
@@ -71,7 +75,7 @@
     "version_back_navigation"
   ],
   "release_readiness": {
-    "phase": "KIA-Stick-v0.5.3-release-readiness-and-version-coherence-automation",
+    "phase": "KIA-Stick-v0.5.4-local-phase-runner-proof-pack",
     "status": "implemented_fake_only_automation",
     "package_version": "0.4.0",
     "product_version": "0.4.0",
@@ -99,9 +103,47 @@
     },
     "automation": [
       "scripts/release-check.mjs",
+      "scripts/phase-runner.mjs",
       "npm run release:check",
+      "npm run phase:run",
       "qa_gate_derives_phase_and_proof_dir_from_feature_list",
       "git_auto_sync_derives_default_commit_message_from_feature_list"
+    ],
+    "real_document_access": false,
+    "private_vault_inspected": false,
+    "push_performed": false,
+    "real_db_boundary": "/media/mint/SHARED/APWU untouched"
+  },
+  "phase_runner": {
+    "phase": "KIA-Stick-v0.5.4-local-phase-runner-proof-pack",
+    "status": "implemented_fake_only_automation",
+    "script": "scripts/phase-runner.mjs",
+    "npm_script": "phase:run",
+    "proof_dir_rule": "/tmp/proof_kia_stick_<sanitized_phase>_<UTC>",
+    "validations": [
+      "git_status_before_after",
+      "git_log_before_after",
+      "release_check",
+      "lint",
+      "typecheck",
+      "test",
+      "build",
+      "scan_fake",
+      "scan_privacy",
+      "qa",
+      "manifest_parse",
+      "feature_list_parse",
+      "private_tracked_path_check",
+      "no_file_input_grep",
+      "apwu_boundary_grep"
+    ],
+    "commit_behavior": [
+      "commit_requires_commit_flag",
+      "commit_requires_validation_pass",
+      "no_commit_when_no_changes",
+      "no_commit_on_warn_or_fail",
+      "runner_never_pushes",
+      "push_command_txt_is_manual_only"
     ],
     "real_document_access": false,
     "private_vault_inspected": false,

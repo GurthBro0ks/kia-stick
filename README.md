@@ -12,6 +12,16 @@ KIA Stick separates milestone semver from build identity:
 
 `/health`, `/version`, the app header, settings, answer footer, and saved answer metadata expose the current `displayVersion`.
 
+## v0.5.4 Local Phase Runner
+
+Phase: `KIA-Stick-v0.5.4-local-phase-runner-proof-pack`.
+
+`npm run phase:run -- --phase PHASE_NAME` creates `/tmp/proof_kia_stick_<sanitized_phase>_<UTC>`, logs git state and validation commands, writes `RESULT.md`, and prints the proof directory. It runs `release:check`, lint, typecheck, test, build, fake/privacy scans, QA, JSON parses, private tracked-path checks, no-file-input grep, and the APWU boundary grep.
+
+Use `npm run phase:run -- --phase PHASE_NAME --commit` only after reviewing the phase scope. The runner commits safe task files only when validation passes and changes exist. It never pushes. When a local commit exists after PASS, it writes `push_command.txt` containing only the manual `git push` command.
+
+Current product version remains `0.4.0`; current prompt version remains `prompt.fake-docs.v0.5-import-wizard-hardening`.
+
 ## v0.5.3 Release Readiness Automation
 
 Phase: `KIA-Stick-v0.5.3-release-readiness-and-version-coherence-automation`.
