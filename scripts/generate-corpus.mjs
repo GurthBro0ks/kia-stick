@@ -118,22 +118,32 @@ if (missingClasses.length > 0) {
 
 const corpusVersion = docs[0]?.corpusVersion ?? "unknown";
 const indexVersion = docs[0]?.indexVersion ?? "unknown";
+const nextCorpus = {
+  generatedAt: new Date().toISOString(),
+  corpusVersion,
+  indexVersion,
+  requiredBanner,
+  sourceClasses,
+  docs,
+};
+
+try {
+  const existing = JSON.parse(await readFile(outPath, "utf8"));
+  const comparable = {
+    ...nextCorpus,
+    generatedAt: existing.generatedAt,
+  };
+  if (JSON.stringify(existing) === JSON.stringify(comparable)) {
+    nextCorpus.generatedAt = existing.generatedAt;
+  }
+} catch {
+  // First generation or invalid existing JSON should get a fresh timestamp.
+}
 
 await mkdir(path.dirname(outPath), { recursive: true });
 await writeFile(
   outPath,
-  `${JSON.stringify(
-    {
-      generatedAt: new Date().toISOString(),
-      corpusVersion,
-      indexVersion,
-      requiredBanner,
-      sourceClasses,
-      docs,
-    },
-    null,
-    2
-  )}\n`,
+  `${JSON.stringify(nextCorpus, null, 2)}\n`,
   "utf8"
 );
 

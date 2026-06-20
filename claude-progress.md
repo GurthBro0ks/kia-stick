@@ -2,10 +2,10 @@
 
 ## Current Phase
 
-- Phase: `KIA-Stick-v0.2-plan-closeout`
+- Phase: `KIA-Stick-v0.3-private-vault-ui-scaffold`
 - Target: `USER_LAPTOP_ONLY`
 - Provider: `local-fake-deterministic`
-- Status: v0.2 planning accepted and closed out; no real-document ingestion implemented.
+- Status: v0.3 private-vault governance UI scaffold implemented with fake metadata fixtures only; no real-document ingestion implemented.
 
 ## Accepted v0.1 State
 
@@ -32,6 +32,18 @@
 - Push performed: no.
 - Real document boundary: `/media/mint/SHARED/APWU` untouched.
 - Real/private document access: none.
+
+## v0.3 Implementation State
+
+- Scope: private-vault governance UI scaffold with fake metadata only.
+- Proof directory: `/tmp/proof_kia_stick_v03_vault_ui_20260620T102553Z`
+- New UI surfaces: Vault, Quarantine, Redaction Review, Metadata Review, Index Eligibility, Audit Log.
+- New fake lanes: `official_public`, `official_member_only`, `local_official`, `steward_only`, `redacted_examples`, `restricted_sensitive`, `quarantine`.
+- Lifecycle shown: `selected -> quarantine -> hash_provenance -> redaction_detection -> admin_review -> approved_redacted_copy -> metadata -> index_decision -> audit`.
+- Fake-only actions: advance fake gate and mark not indexable; both update local mock state only.
+- Guard: vault action payloads with real/private paths, raw text/content fields, file/blob/bytes fields, or browser `File` objects are blocked.
+- Real/private document access: none.
+- Push performed: no.
 
 ## Commands Run
 
@@ -64,6 +76,26 @@
 - `curl -s http://127.0.0.1:3005/version | head -c 1000`
 - `git status --short`
 - `grep -R "FAKE SAMPLE DOCUMENT" content data app scripts README.md AGENTS.md 2>/dev/null | head`
+- `cat /home/slimy/AGENTS.md || true`
+- `cat /home/slimy/claude-progress.md || true`
+- `source /home/slimy/init.sh || true`
+- `cat ./AGENTS.md`
+- `cat ./claude-progress.md`
+- `source ./init.sh || true`
+- `git status --short --branch`
+- `npm run typecheck`
+- `npm run test`
+- `npm run lint`
+- `npm run build`
+- `PHASE=KIA-Stick-v0.3-private-vault-ui-scaffold PROOF_DIR=/tmp/proof_kia_stick_v03_vault_ui_20260620T102553Z npm run qa`
+- `npm run scan:fake`
+- `npm run scan:privacy`
+- `git ls-files 'DB/**' 'data/real-documents/**' 'data/quarantine/**' 'data/redacted-approved/**' 'exports/**' 'backups/**' 'vector-store/**'`
+- `grep -R "/media/mint/SHARED/APWU" app components lib docs README.md AGENTS.md claude-progress.md feature_list.json 2>/dev/null || true`
+- `npm run dev -- --port 3005`
+- `curl -s http://127.0.0.1:3005/health`
+- `curl -s http://127.0.0.1:3005/version | head -c 2000`
+- local headless Chrome/CDP manual QA for bottom nav, Vault sub-surfaces, fake action audit, chat, health, version, and mobile overflow.
 
 ## Files Changed
 
@@ -76,6 +108,15 @@
 - v0.2 accepted state and next safe phase recorded in `CLOSEOUT.md`.
 - v0.2 accepted state recorded in `feature_list.json`.
 - v0.2 closeout state recorded in `claude-progress.md`.
+- v0.3 vault model added in `lib/vaultModel.ts`.
+- v0.3 Vault tab and governance surfaces added in `components/KiaStickApp.tsx`.
+- v0.3 vault styles added in `app/globals.css`.
+- v0.3 app metadata/version/health text updated.
+- v0.3 model tests added in `tests/answerGovernor.test.ts`.
+- v0.3 implementation note added at `docs/v0.3-private-vault-ui-scaffold.md`.
+- v0.3 README and feature inventory updated.
+- Privacy scan now blocks `data/quarantine/` and `data/redacted-approved/`.
+- Fake-corpus generator preserves `generatedAt` when corpus content is unchanged.
 
 ## Proof Directory
 
@@ -83,6 +124,7 @@
 - Closeout proof: `/tmp/proof_kia_stick_v01_closeout_20260618T171222Z`
 - v0.2 document vault/redaction plan proof: `/tmp/proof_kia_stick_v02_doc_vault_plan_20260619T235153Z`
 - v0.2 plan closeout proof: `/tmp/proof_kia_stick_v02_plan_closeout_20260620T024646Z`
+- v0.3 private-vault UI scaffold proof: `/tmp/proof_kia_stick_v03_vault_ui_20260620T102553Z`
 
 ## Remaining Unknowns
 
@@ -91,4 +133,4 @@
 - `/media/mint/SHARED/APWU` remains out of scope and untouched.
 - Local untracked `DB/` archive folder was observed by filename only and is ignored, not committed.
 - `next build` still prints Next's flat-ESLint plugin detection warning, but lint/typecheck/build pass.
-- Next safe phase should be `KIA-Stick-v0.3-private-vault-ui-scaffold-plan`, fake-metadata-only unless separately authorized; no real-document reads/copies/indexing/scanning are approved by v0.2.
+- Next safe phase should continue fake-metadata-only unless separately authorized; no real-document reads/copies/indexing/scanning are approved by v0.3.

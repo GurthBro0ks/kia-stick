@@ -4,7 +4,7 @@ export default function manifest(): MetadataRoute.Manifest {
   return {
     name: "KIA Stick",
     short_name: "KIA Stick",
-    description: "Fake-doc source-governed local PWA MVP.",
+    description: "Fake-doc source-governed local PWA with private-vault governance scaffold.",
     start_url: "/",
     display: "standalone",
     background_color: "#f3f1e6",

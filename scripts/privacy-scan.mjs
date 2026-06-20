@@ -9,6 +9,8 @@ const forbiddenTrackedPrefixes = [
   "uploads/",
   "data/private/",
   "data/real-documents/",
+  "data/quarantine/",
+  "data/redacted-approved/",
   "exports/",
   "backups/",
   "vector-store/",

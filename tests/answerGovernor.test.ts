@@ -1,6 +1,12 @@
 import { describe, expect, it } from "vitest";
 import { buildAnswer } from "@/lib/answerGovernor";
 import { corpus } from "@/lib/sourceModel";
+import {
+  applyVaultAction,
+  assertFakeMetadataOnly,
+  createInitialVaultState,
+  vaultLanes,
+} from "@/lib/vaultModel";
 
 const baseOptions = {
   mode: "Strict Research" as const,
@@ -49,5 +55,50 @@ describe("answer governor", () => {
     expect(answer.relatedFakeSections.some((citation) => citation.class === "unknown_unverified")).toBe(true);
     expect(answer.citations.every((citation) => citation.citable)).toBe(true);
     expect(answer.conflicts.join(" ")).toContain("unverified");
+  });
+});
+
+describe("fake vault governance model", () => {
+  it("ships fake metadata fixtures for every vault lane", () => {
+    const state = createInitialVaultState();
+
+    for (const lane of vaultLanes) {
+      expect(state.records.some((record) => record.lane === lane)).toBe(true);
+    }
+    expect(assertFakeMetadataOnly(state.records).ok).toBe(true);
+  });
+
+  it("advances lifecycle gates with audit entries but does not make quarantine indexable", () => {
+    const state = createInitialVaultState();
+    const advanced = applyVaultAction(state, {
+      type: "advance",
+      recordId: "fake-vault-quarantine",
+      now: "2026-06-20T01:00:00.000Z",
+    });
+
+    const record = advanced.records.find((item) => item.id === "fake-vault-quarantine");
+
+    expect(record?.lifecycleStep).toBe("hash_provenance");
+    expect(record?.indexEligibility).toBe("not_eligible");
+    expect(advanced.auditLog[0].action).toBe("advance_fake_gate");
+    expect(advanced.auditLog[0].note).toContain("no file content was accessed");
+  });
+
+  it("blocks vault actions carrying real paths or raw content fields", () => {
+    const state = createInitialVaultState();
+    const blocked = applyVaultAction(state, {
+      type: "advance",
+      recordId: "fake-vault-quarantine",
+      privatePath: "/media/mint/SHARED/APWU/private.pdf",
+      rawText: "do not accept content",
+      now: "2026-06-20T02:00:00.000Z",
+    });
+
+    const record = blocked.records.find((item) => item.id === "fake-vault-quarantine");
+
+    expect(record?.lifecycleStep).toBe("quarantine");
+    expect(blocked.auditLog[0].action).toBe("blocked_real_file_access");
+    expect(blocked.auditLog[0].note).toContain("forbidden private reference");
+    expect(blocked.auditLog[0].note).toContain("forbidden file/content field");
   });
 });

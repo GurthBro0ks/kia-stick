@@ -27,9 +27,23 @@ import {
   type Mode,
   type Scope,
 } from "@/lib/sourceModel";
+import {
+  applyVaultAction,
+  createInitialVaultState,
+  laneCounts,
+  laneLabels,
+  lifecycleLabels,
+  lifecycleSteps,
+  type FakeVaultRecord,
+  type LifecycleStep,
+  type VaultAction,
+  type VaultLane,
+  type VaultState,
+} from "@/lib/vaultModel";
 import { clientVersion } from "@/lib/version";
 
-type Tab = "chat" | "sources" | "saved" | "upload" | "settings";
+type Tab = "chat" | "sources" | "saved" | "upload" | "vault" | "settings";
+type VaultView = "vault" | "quarantine" | "redaction" | "metadata" | "index" | "audit";
 
 interface SavedAnswer {
   id: string;
@@ -58,6 +72,16 @@ const details: Detail[] = ["Simple", "Detailed", "Checklist"];
 
 const savedKey = "kia-stick.saved-answers.v0.1";
 const quarantineKey = "kia-stick.quarantine.v0.1";
+const vaultKey = "kia-stick.vault-state.v0.3";
+
+const vaultViews: { id: VaultView; label: string; meta: string }[] = [
+  { id: "vault", label: "Vault", meta: "lane overview" },
+  { id: "quarantine", label: "Quarantine", meta: "not indexable" },
+  { id: "redaction", label: "Redaction Review", meta: "flags and decisions" },
+  { id: "metadata", label: "Metadata Review", meta: "authority fields" },
+  { id: "index", label: "Index Eligibility", meta: "explicit yes/no" },
+  { id: "audit", label: "Audit Log", meta: "local mock events" },
+];
 
 const intentLabels: Record<AnswerResult["intent"], string> = {
   annual_leave: "Annual leave",
@@ -91,11 +115,16 @@ export function KiaStickApp() {
   );
   const [saved, setSaved] = useState<SavedAnswer[]>([]);
   const [quarantine, setQuarantine] = useState<QuarantineItem[]>([]);
+  const [vaultView, setVaultView] = useState<VaultView>("vault");
+  const [vaultState, setVaultState] = useState<VaultState>(() => createInitialVaultState());
   const [fakeOnlyConfirmed, setFakeOnlyConfirmed] = useState(false);
+  const [hydrated, setHydrated] = useState(false);
 
   useEffect(() => {
     setSaved(loadJson<SavedAnswer[]>(savedKey, []));
     setQuarantine(loadJson<QuarantineItem[]>(quarantineKey, []));
+    setVaultState(loadJson<VaultState>(vaultKey, createInitialVaultState()));
+    setHydrated(true);
 
     if ("serviceWorker" in navigator) {
       navigator.serviceWorker.register("/sw.js").catch(() => undefined);
@@ -103,12 +132,19 @@ export function KiaStickApp() {
   }, []);
 
   useEffect(() => {
+    if (!hydrated) return;
     window.localStorage.setItem(savedKey, JSON.stringify(saved));
-  }, [saved]);
+  }, [hydrated, saved]);
 
   useEffect(() => {
+    if (!hydrated) return;
     window.localStorage.setItem(quarantineKey, JSON.stringify(quarantine));
-  }, [quarantine]);
+  }, [hydrated, quarantine]);
+
+  useEffect(() => {
+    if (!hydrated) return;
+    window.localStorage.setItem(vaultKey, JSON.stringify(vaultState));
+  }, [hydrated, vaultState]);
 
   const sourceBuckets = useMemo(() => {
     return corpus.sourceClasses.map((sourceClass) => ({
@@ -116,6 +152,8 @@ export function KiaStickApp() {
       docs: corpus.docs.filter((doc) => doc.class === sourceClass),
     }));
   }, []);
+
+  const vaultCounts = useMemo(() => laneCounts(vaultState.records), [vaultState.records]);
 
   function runAnswer(nextQuestion = question) {
     const nextAnswer = buildAnswer(nextQuestion, { mode, scope, detail });
@@ -150,6 +188,10 @@ export function KiaStickApp() {
       timestamp: new Date().toISOString(),
     }));
     setQuarantine((current) => [...items, ...current].slice(0, 30));
+  }
+
+  function runVaultAction(action: VaultAction) {
+    setVaultState((current) => applyVaultAction(current, { ...action, now: new Date().toISOString() }));
   }
 
   return (
@@ -339,6 +381,16 @@ export function KiaStickApp() {
           </section>
         )}
 
+        {tab === "vault" && (
+          <VaultPanel
+            counts={vaultCounts}
+            onAction={runVaultAction}
+            setView={setVaultView}
+            state={vaultState}
+            view={vaultView}
+          />
+        )}
+
         {tab === "settings" && (
           <section className="tabPanel">
             <PanelHeader title="Settings" meta={<a href="/version">Version page</a>} />
@@ -369,6 +421,7 @@ export function KiaStickApp() {
         <NavButton active={tab === "sources"} label="Sources" onClick={() => setTab("sources")} icon={<BookOpen size={20} />} />
         <NavButton active={tab === "saved"} label="Saved" onClick={() => setTab("saved")} icon={<Heart size={20} />} />
         <NavButton active={tab === "upload"} label="Upload" onClick={() => setTab("upload")} icon={<Upload size={20} />} />
+        <NavButton active={tab === "vault"} label="Vault" onClick={() => setTab("vault")} icon={<Database size={20} />} />
         <NavButton active={tab === "settings"} label="Settings" onClick={() => setTab("settings")} icon={<Settings size={20} />} />
       </nav>
     </div>
@@ -390,6 +443,221 @@ function NavButton(props: { active: boolean; label: string; icon: React.ReactNod
       {props.icon}
       <span>{props.label}</span>
     </button>
+  );
+}
+
+function VaultPanel(props: {
+  counts: Record<VaultLane, number>;
+  state: VaultState;
+  view: VaultView;
+  setView: (view: VaultView) => void;
+  onAction: (action: VaultAction) => void;
+}) {
+  const filteredRecords = useMemo(() => {
+    if (props.view === "quarantine") {
+      return props.state.records.filter((record) => record.lane === "quarantine" || record.lifecycleStep === "quarantine");
+    }
+    if (props.view === "redaction") {
+      return props.state.records.filter(
+        (record) =>
+          record.redactionFlags.length > 0 ||
+          record.lifecycleStep === "redaction_detection" ||
+          record.lifecycleStep === "admin_review" ||
+          record.lifecycleStep === "approved_redacted_copy"
+      );
+    }
+    if (props.view === "metadata") {
+      return props.state.records.filter(
+        (record) => record.metadataStatus !== "reviewed" || record.lifecycleStep === "metadata" || record.lifecycleStep === "index_decision"
+      );
+    }
+    if (props.view === "index") {
+      return props.state.records;
+    }
+    return props.state.records;
+  }, [props.state.records, props.view]);
+
+  const activeView = vaultViews.find((view) => view.id === props.view) ?? vaultViews[0];
+
+  return (
+    <section className="tabPanel vaultPanel">
+      <PanelHeader title={activeView.label} meta={activeView.meta} />
+
+      <div className="boundaryGrid" aria-label="private vault boundaries">
+        <NoticeBox tone="warning" title="Fake metadata only">
+          This scaffold uses synthetic metadata fixtures. It does not read, copy, OCR, summarize, index, upload, or transform files.
+        </NoticeBox>
+        <NoticeBox tone="danger" title="Private boundary">
+          `/media/mint/SHARED/APWU` and `~/kia-stick-private-vault` stay outside this UI and outside tracked GitHub content.
+        </NoticeBox>
+        <NoticeBox tone="neutral" title="Index warning">
+          Quarantine, redaction, and admin review are governance gates. They do not make an item indexable.
+        </NoticeBox>
+      </div>
+
+      <div className="vaultTabs" role="tablist" aria-label="Vault governance surfaces">
+        {vaultViews.map((view) => (
+          <button
+            className={props.view === view.id ? "vaultTab active" : "vaultTab"}
+            key={view.id}
+            type="button"
+            onClick={() => props.setView(view.id)}
+          >
+            {view.label}
+          </button>
+        ))}
+      </div>
+
+      {props.view === "vault" && (
+        <>
+          <div className="laneGrid" aria-label="vault lane counts">
+            {(Object.entries(props.counts) as [VaultLane, number][]).map(([lane, count]) => (
+              <div className="laneTile" key={lane}>
+                <span className={`laneBadge lane-${lane}`}>{laneLabels[lane]}</span>
+                <strong>{count}</strong>
+              </div>
+            ))}
+          </div>
+
+          <section className="lifecyclePanel" aria-label="lifecycle state machine">
+            <h3 className="sectionTitle">
+              <ClipboardList size={14} />
+              Lifecycle State Machine
+            </h3>
+            <LifecycleRail current="audit" />
+          </section>
+        </>
+      )}
+
+      {props.view === "audit" ? (
+        <div className="auditList">
+          {props.state.auditLog.map((entry) => (
+            <article className="auditEntry" key={entry.id}>
+              <div>
+                <strong>{entry.action}</strong>
+                <p>{entry.note}</p>
+              </div>
+              <div className="sourceMeta">
+                <span className="badge">{entry.recordId}</span>
+                <span className="badge">{entry.actor}</span>
+                <span className="badge">{new Date(entry.at).toLocaleString()}</span>
+              </div>
+            </article>
+          ))}
+        </div>
+      ) : (
+        <div className="vaultRecordGrid">
+          {filteredRecords.map((record) => (
+            <VaultRecordCard key={record.id} onAction={props.onAction} record={record} />
+          ))}
+        </div>
+      )}
+    </section>
+  );
+}
+
+function NoticeBox(props: { tone: "warning" | "danger" | "neutral"; title: string; children: React.ReactNode }) {
+  return (
+    <section className={`noticeBox ${props.tone}`}>
+      <h3>{props.title}</h3>
+      <p>{props.children}</p>
+    </section>
+  );
+}
+
+function LifecycleRail({ current }: { current: LifecycleStep }) {
+  const currentIndex = lifecycleSteps.indexOf(current);
+  return (
+    <ol className="lifecycleRail">
+      {lifecycleSteps.map((step, index) => (
+        <li className={index <= currentIndex ? "complete" : ""} key={step}>
+          {lifecycleLabels[step]}
+        </li>
+      ))}
+    </ol>
+  );
+}
+
+function VaultRecordCard({ record, onAction }: { record: FakeVaultRecord; onAction: (action: VaultAction) => void }) {
+  const canAdvance = record.lifecycleStep !== "audit";
+
+  return (
+    <article className="vaultRecordCard">
+      <div className="vaultCardHeader">
+        <div>
+          <span className={`laneBadge lane-${record.lane}`}>{laneLabels[record.lane]}</span>
+          <h3>{record.title}</h3>
+        </div>
+        <span className={record.indexEligibility === "not_eligible" ? "statusPill warning" : "statusPill ok"}>
+          {record.indexEligibility}
+        </span>
+      </div>
+
+      <p>{record.fakeSummary}</p>
+      <LifecycleRail current={record.lifecycleStep} />
+
+      <div className="vaultFieldGrid">
+        <VaultField label="Lifecycle" value={lifecycleLabels[record.lifecycleStep]} />
+        <VaultField label="Authority" value={record.authorityLevel} />
+        <VaultField label="Source status" value={record.sourceStatus} />
+        <VaultField label="Sensitivity" value={record.sensitivity} />
+        <VaultField label="Redaction" value={record.redactionStatus} />
+        <VaultField label="Metadata" value={record.metadataStatus} />
+        <VaultField label="Reviewer" value={record.reviewer} />
+        <VaultField label="Fake hash" value={record.fakeHash} />
+      </div>
+
+      <div className="sourceMeta">
+        <span className="badge green">GitHub-safe metadata</span>
+        <span className="badge">ref: {record.fakeSourceRef}</span>
+        <span className="badge">{record.fakeProvenance}</span>
+      </div>
+
+      {record.redactionFlags.length > 0 && (
+        <ul className="flagList">
+          {record.redactionFlags.map((flag) => (
+            <li key={flag}>{flag}</li>
+          ))}
+        </ul>
+      )}
+
+      <p className="indexReason">{record.indexReason}</p>
+
+      <div className="vaultActions">
+        <button
+          className="button primary"
+          disabled={!canAdvance}
+          type="button"
+          onClick={() => onAction({ type: "advance", recordId: record.id })}
+        >
+          <CheckCircle2 size={16} />
+          Advance fake gate
+        </button>
+        <button
+          className="button subtle"
+          type="button"
+          onClick={() =>
+            onAction({
+              type: "block_index",
+              recordId: record.id,
+              reason: "Manual fake review marked this item not indexable; quarantine/review does not approve indexing.",
+            })
+          }
+        >
+          <AlertTriangle size={16} />
+          Not indexable
+        </button>
+      </div>
+    </article>
+  );
+}
+
+function VaultField({ label, value }: { label: string; value: string }) {
+  return (
+    <div>
+      <span>{label}</span>
+      <strong>{value}</strong>
+    </div>
   );
 }
 

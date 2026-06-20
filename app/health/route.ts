@@ -8,7 +8,7 @@ export function GET() {
   return NextResponse.json({
     ok: true,
     app: "kia-stick",
-    phase: "KIA-Stick-v0.1-mobile-ui-manual-qa-fix",
+    phase: "KIA-Stick-v0.3-private-vault-ui-scaffold",
     targetMachine: "USER_LAPTOP_ONLY",
     fakeOnly: true,
     realDbTouched: false,

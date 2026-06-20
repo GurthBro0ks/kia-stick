@@ -1,5 +1,5 @@
 {
-  "phase": "KIA-Stick-v0.2-plan-closeout",
+  "phase": "KIA-Stick-v0.3-private-vault-ui-scaffold",
   "target_machine": "USER_LAPTOP_ONLY",
   "accepted_v0_1": {
     "commit": "1d9b05c",
@@ -18,6 +18,11 @@
     "bottom_nav",
     "saved_answers",
     "upload_quarantine_ui",
+    "private_vault_governance_ui",
+    "fake_vault_metadata_fixtures",
+    "vault_lifecycle_state_machine",
+    "vault_fake_action_audit_log",
+    "no_real_file_access_guard",
     "health_version_routes",
     "fake_privacy_scans",
     "github_safe_gitignore",
@@ -54,6 +59,52 @@
     "cloud_api_required": false,
     "real_document_access": false,
     "real_db_boundary": "/media/mint/SHARED/APWU untouched",
-    "next_safe_phase": "KIA-Stick-v0.3-private-vault-ui-scaffold-plan"
+    "next_safe_phase": "KIA-Stick-v0.3-private-vault-ui-scaffold"
+  },
+  "implemented_v0_3": {
+    "phase": "KIA-Stick-v0.3-private-vault-ui-scaffold",
+    "status": "implemented_fake_metadata_only",
+    "document": "docs/v0.3-private-vault-ui-scaffold.md",
+    "proof_dir": "/tmp/proof_kia_stick_v03_vault_ui_20260620T102553Z",
+    "lanes": [
+      "official_public",
+      "official_member_only",
+      "local_official",
+      "steward_only",
+      "redacted_examples",
+      "restricted_sensitive",
+      "quarantine"
+    ],
+    "surfaces": [
+      "Vault",
+      "Quarantine",
+      "Redaction Review",
+      "Metadata Review",
+      "Index Eligibility",
+      "Audit Log"
+    ],
+    "lifecycle": [
+      "selected",
+      "quarantine",
+      "hash_provenance",
+      "redaction_detection",
+      "admin_review",
+      "approved_redacted_copy",
+      "metadata",
+      "index_decision",
+      "audit"
+    ],
+    "hard_limits": [
+      "fake_metadata_only",
+      "no_real_document_reads",
+      "no_upload_or_ingestion",
+      "no_ocr",
+      "no_indexing",
+      "no_cloud",
+      "no_push"
+    ],
+    "real_document_access": false,
+    "private_vault_inspected": false,
+    "real_db_boundary": "/media/mint/SHARED/APWU untouched"
   }
 }

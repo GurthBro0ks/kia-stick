@@ -1,5 +1,42 @@
 # KIA Stick Closeout
 
+## v0.3 Implementation State
+
+- Phase: `KIA-Stick-v0.3-private-vault-ui-scaffold`
+- Scope: private-vault governance UI scaffold using fake metadata only.
+- Proof directory: `/tmp/proof_kia_stick_v03_vault_ui_20260620T102553Z`
+- Manual QA: PASS by local browser/CDP run on `127.0.0.1:3005`.
+- Provider: `local-fake-deterministic`
+- Cloud/API required: no
+- Secrets printed: no
+- Push performed: no
+- Real document boundary: `/media/mint/SHARED/APWU` untouched
+- Private vault inspected: no
+
+## v0.3 Implemented Coverage
+
+- Added fake metadata fixtures for every vault lane: `official_public`, `official_member_only`, `local_official`, `steward_only`, `redacted_examples`, `restricted_sensitive`, and `quarantine`.
+- Added Vault tab with surfaces for Vault, Quarantine, Redaction Review, Metadata Review, Index Eligibility, and Audit Log.
+- Added lifecycle state machine display for `selected -> quarantine -> hash/provenance -> redaction detection -> admin review -> approved redacted copy -> metadata -> index decision -> audit`.
+- Added local mock actions that advance fake gate state or mark an item not indexable. These actions update browser local state only.
+- Added warnings that quarantine/review does not mean indexable.
+- Added visible private-path and GitHub-safe boundary notices.
+- Added guard and tests for fake metadata only and no real file access.
+- Existing Chat, Sources, Saved, Upload, Settings, `/health`, and `/version` behavior remains in place.
+
+## v0.3 Known Warnings
+
+- `next build` still prints Next's flat-ESLint plugin detection warning; lint, typecheck, test, build, and QA are expected to pass.
+- `npm run test` prints the existing Vite CJS API deprecation notice.
+
+## Next Safe Phase
+
+Recommended next phase: `KIA-Stick-v0.3-manual-review-closeout` after operator UI QA, or `KIA-Stick-v0.4-fake-vault-workflow-hardening` if more fake-only workflow tests are needed.
+
+Future phases remain fake-metadata-only unless separately authorized. No real-document reads, copies, scans, OCR, ingestion, summarization, transforms, indexing, or commits are approved by this scaffold.
+
+---
+
 ## v0.2 Accepted State
 
 - Phase: `KIA-Stick-v0.2-plan-closeout`

@@ -9,8 +9,8 @@ export interface RuntimeVersion {
   provider: string;
 }
 
-export const APP_VERSION = "0.1.0";
-export const PROMPT_VERSION = "prompt.fake-docs.v0.1";
+export const APP_VERSION = "0.3.0";
+export const PROMPT_VERSION = "prompt.fake-docs.v0.3-vault-ui";
 export const DEFAULT_PROVIDER = "local-fake-deterministic";
 
 export const clientVersion: RuntimeVersion = {

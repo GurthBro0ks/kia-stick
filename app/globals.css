@@ -315,6 +315,11 @@ a {
   background: #eef3f5;
 }
 
+.button:disabled {
+  cursor: not-allowed;
+  opacity: 0.55;
+}
+
 .iconOnly {
   width: 40px;
   padding: 0;
@@ -562,6 +567,270 @@ a {
   font-weight: 750;
 }
 
+.vaultPanel {
+  display: grid;
+  gap: 12px;
+}
+
+.boundaryGrid {
+  display: grid;
+  gap: 8px;
+}
+
+.noticeBox {
+  border: 1px solid #cad3da;
+  background: #fff;
+  padding: 9px;
+}
+
+.noticeBox h3 {
+  margin: 0 0 4px;
+  font-size: 0.78rem;
+  text-transform: uppercase;
+}
+
+.noticeBox p {
+  margin: 0;
+  color: var(--muted);
+  font-size: 0.82rem;
+  font-weight: 700;
+  line-height: 1.4;
+  overflow-wrap: anywhere;
+}
+
+.noticeBox.warning {
+  background: #fff7dd;
+  border-color: #d4bb76;
+}
+
+.noticeBox.danger {
+  background: #f8e1db;
+  border-color: #d69a8c;
+}
+
+.noticeBox.neutral {
+  background: #eef7f6;
+  border-color: #b7c9cf;
+}
+
+.vaultTabs {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 6px;
+}
+
+.vaultTab {
+  min-width: 0;
+  min-height: 42px;
+  border: 1px solid #aeb7bf;
+  border-top-color: #fff;
+  border-left-color: #fff;
+  background: var(--panel);
+  color: var(--ink);
+  padding: 7px;
+  font-size: 0.72rem;
+  font-weight: 950;
+  overflow-wrap: anywhere;
+}
+
+.vaultTab.active {
+  background: #fff;
+  color: var(--blue);
+  box-shadow: inset 0 4px 0 var(--amber);
+}
+
+.laneGrid,
+.vaultRecordGrid {
+  display: grid;
+  gap: 9px;
+}
+
+.laneGrid {
+  grid-template-columns: repeat(auto-fit, minmax(138px, 1fr));
+}
+
+.laneTile {
+  min-height: 72px;
+  border: 1px solid #d4dbe1;
+  background: var(--soft);
+  padding: 9px;
+}
+
+.laneTile strong {
+  display: block;
+  margin-top: 8px;
+  font-size: 1.25rem;
+}
+
+.laneBadge {
+  display: inline-flex;
+  align-items: center;
+  max-width: 100%;
+  border: 1px solid #8c969f;
+  background: #fff;
+  color: var(--ink);
+  padding: 4px 7px;
+  font-size: 0.68rem;
+  font-weight: 950;
+  overflow-wrap: anywhere;
+}
+
+.lane-official_public {
+  background: #dff0e5;
+  color: #174c31;
+}
+
+.lane-official_member_only {
+  background: #e5edff;
+  color: #173d73;
+}
+
+.lane-local_official {
+  background: #eef7f6;
+  color: #15524d;
+}
+
+.lane-steward_only {
+  background: #f4edff;
+  color: #4d317a;
+}
+
+.lane-redacted_examples {
+  background: #fff7dd;
+  color: #59451a;
+}
+
+.lane-restricted_sensitive {
+  background: #f8e1db;
+  color: #7a2e25;
+}
+
+.lane-quarantine {
+  background: #f0f2f4;
+  color: #3b4652;
+}
+
+.lifecyclePanel,
+.vaultRecordCard,
+.auditEntry {
+  border: 1px solid #d4dbe1;
+  background: var(--soft);
+  padding: 10px;
+}
+
+.lifecycleRail {
+  display: grid;
+  grid-template-columns: repeat(9, minmax(0, 1fr));
+  gap: 4px;
+  margin: 8px 0 0;
+  padding: 0;
+  list-style: none;
+}
+
+.lifecycleRail li {
+  min-height: 34px;
+  border: 1px solid #c3ccd3;
+  background: #fff;
+  color: var(--muted);
+  padding: 5px 4px;
+  font-size: 0.62rem;
+  font-weight: 900;
+  line-height: 1.15;
+  overflow-wrap: anywhere;
+}
+
+.lifecycleRail li.complete {
+  background: #d9ece8;
+  color: #174c31;
+  border-color: #9fbdb4;
+}
+
+.vaultCardHeader {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 10px;
+}
+
+.vaultRecordCard h3 {
+  margin: 7px 0 0;
+  font-size: 0.98rem;
+  line-height: 1.25;
+}
+
+.vaultRecordCard p,
+.indexReason,
+.auditEntry p {
+  margin: 8px 0 0;
+  color: var(--muted);
+  font-size: 0.84rem;
+  line-height: 1.4;
+  overflow-wrap: anywhere;
+}
+
+.vaultFieldGrid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(128px, 1fr));
+  gap: 7px;
+  margin-top: 10px;
+}
+
+.vaultFieldGrid div {
+  border: 1px solid #ccd5dc;
+  background: #fff;
+  padding: 7px;
+}
+
+.vaultFieldGrid span {
+  display: block;
+  color: var(--muted);
+  font-size: 0.66rem;
+  font-weight: 900;
+  text-transform: uppercase;
+}
+
+.vaultFieldGrid strong {
+  display: block;
+  margin-top: 3px;
+  font-size: 0.78rem;
+  overflow-wrap: anywhere;
+}
+
+.flagList {
+  display: flex;
+  gap: 6px;
+  flex-wrap: wrap;
+  margin: 9px 0 0;
+  padding: 0;
+  list-style: none;
+}
+
+.flagList li {
+  border: 1px solid #d69a8c;
+  background: #f8e1db;
+  color: #7a2e25;
+  padding: 4px 7px;
+  font-size: 0.68rem;
+  font-weight: 900;
+}
+
+.vaultActions {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+  margin-top: 10px;
+}
+
+.auditList {
+  display: grid;
+  gap: 8px;
+}
+
+.auditEntry strong {
+  display: block;
+  font-size: 0.88rem;
+}
+
 .bottomNav {
   position: fixed;
   left: max(10px, env(safe-area-inset-left));
@@ -569,7 +838,7 @@ a {
   bottom: max(10px, env(safe-area-inset-bottom));
   z-index: 40;
   display: grid;
-  grid-template-columns: repeat(5, minmax(0, 1fr));
+  grid-template-columns: repeat(6, minmax(0, 1fr));
   max-width: 640px;
   min-height: 64px;
   margin: 0 auto;
@@ -658,6 +927,14 @@ a {
   .authorityGrid {
     grid-template-columns: repeat(2, minmax(0, 1fr));
   }
+
+  .boundaryGrid {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+
+  .vaultRecordGrid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
 }
 
 @media (max-width: 640px) {
@@ -676,6 +953,14 @@ a {
 
   .controlStrip {
     grid-template-columns: 1fr;
+  }
+
+  .vaultTabs {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .lifecycleRail {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
   }
 
   .composerHeader,
