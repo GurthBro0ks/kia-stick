@@ -86,7 +86,7 @@ import { clientVersion, type RuntimeVersion } from "@/lib/version";
 type Tab = "chat" | "sources" | "saved" | "upload" | "vault" | "import" | "settings";
 type VaultView = "vault" | "quarantine" | "redaction" | "metadata" | "index" | "audit";
 
-interface QuarantineItem {
+export interface QuarantineItem {
   id: string;
   name: string;
   size: number;
@@ -490,46 +490,12 @@ export function KiaStickApp({ runtimeVersion = clientVersion }: { runtimeVersion
         )}
 
         {tab === "upload" && (
-          <section className="tabPanel">
-            <PanelHeader title="Upload" meta="fake metadata quarantine only" />
-            <div className="uploadPanel">
-              <label className="checkboxRow">
-                <input
-                  type="checkbox"
-                  checked={fakeOnlyConfirmed}
-                  onChange={(event) => setFakeOnlyConfirmed(event.target.checked)}
-                />
-                Fake sample only
-              </label>
-              <div className="fakeUploadActions" aria-label="fake upload metadata actions">
-                <button className="button primary" type="button" disabled={!fakeOnlyConfirmed} onClick={() => queueFakeUpload("single")}>
-                  <Plus size={16} />
-                  Queue fake sample
-                </button>
-                <button className="button subtle" type="button" disabled={!fakeOnlyConfirmed} onClick={() => queueFakeUpload("batch")}>
-                  <ClipboardList size={16} />
-                  Queue fake batch
-                </button>
-              </div>
-              <p className="emptyState">No file picker is present. Upload queues synthetic metadata only.</p>
-              <div className="sourceCards">
-                {quarantine.length === 0 && <p className="emptyState">No queued fake samples.</p>}
-                {quarantine.map((item) => (
-                  <article className="uploadRow" key={item.id}>
-                    <p>
-                      <strong>{item.name}</strong> · {item.size} bytes
-                    </p>
-                    <div className="sourceMeta">
-                      <span className="badge">{item.review}</span>
-                      <span className="badge red">not_indexable</span>
-                      <span className="badge">{item.privacy}</span>
-                      <span className="badge">{new Date(item.timestamp).toLocaleString()}</span>
-                    </div>
-                  </article>
-                ))}
-              </div>
-            </div>
-          </section>
+          <FakeUploadPanel
+            fakeOnlyConfirmed={fakeOnlyConfirmed}
+            onFakeOnlyConfirmedChange={setFakeOnlyConfirmed}
+            onQueueFakeUpload={queueFakeUpload}
+            quarantine={quarantine}
+          />
         )}
 
         {tab === "vault" && (
@@ -709,6 +675,56 @@ function NavButton(props: { active: boolean; label: string; icon: React.ReactNod
       {props.icon}
       <span>{props.label}</span>
     </button>
+  );
+}
+
+export function FakeUploadPanel(props: {
+  fakeOnlyConfirmed: boolean;
+  onFakeOnlyConfirmedChange: (checked: boolean) => void;
+  onQueueFakeUpload: (kind: "single" | "batch") => void;
+  quarantine: QuarantineItem[];
+}) {
+  return (
+    <section className="tabPanel">
+      <PanelHeader title="Upload" meta="fake metadata quarantine only" />
+      <div className="uploadPanel">
+        <label className="checkboxRow">
+          <input
+            type="checkbox"
+            checked={props.fakeOnlyConfirmed}
+            onChange={(event) => props.onFakeOnlyConfirmedChange(event.target.checked)}
+          />
+          Fake sample only
+        </label>
+        <div className="fakeUploadActions" aria-label="fake upload metadata actions">
+          <button className="button primary" type="button" disabled={!props.fakeOnlyConfirmed} onClick={() => props.onQueueFakeUpload("single")}>
+            <Plus size={16} />
+            Queue fake sample
+          </button>
+          <button className="button subtle" type="button" disabled={!props.fakeOnlyConfirmed} onClick={() => props.onQueueFakeUpload("batch")}>
+            <ClipboardList size={16} />
+            Queue fake batch
+          </button>
+        </div>
+        <p className="emptyState">No file picker is present. Upload queues synthetic metadata only.</p>
+        <div className="sourceCards">
+          {props.quarantine.length === 0 && <p className="emptyState">No queued fake samples.</p>}
+          {props.quarantine.map((item) => (
+            <article className="uploadRow" key={item.id}>
+              <p>
+                <strong>{item.name}</strong> · {item.size} bytes
+              </p>
+              <div className="sourceMeta">
+                <span className="badge">{item.review}</span>
+                <span className="badge red">not_indexable</span>
+                <span className="badge">{item.privacy}</span>
+                <span className="badge">{new Date(item.timestamp).toLocaleString()}</span>
+              </div>
+            </article>
+          ))}
+        </div>
+      </div>
+    </section>
   );
 }
 

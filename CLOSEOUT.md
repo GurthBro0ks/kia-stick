@@ -1,5 +1,38 @@
 # KIA Stick Closeout
 
+## v0.5.2 Fake Wizard State Machine Hardening
+
+- Phase: `KIA-Stick-v0.5.2-fake-wizard-state-machine-hardening`
+- Baseline: v0.5.1 replacement proof closeout at `c3b9859`
+- Scope: harden fake Import Wizard state machine, proof export, Upload fake-button tests, and regression coverage.
+- Product version impact: none; app remains `0.4.0`.
+- Proof directory: `/tmp/proof_kia_stick_v052_fake_wizard_state_machine_20260620T190452Z`
+- Manual QA: PASS by CDP smoke for Import blocked actions, full fake happy path, fake proof labels, Upload fake buttons/queue, Chat render, zero file inputs, and mobile no-overflow.
+- Validation: PASS for git status/log, lint, typecheck, test, build, qa, scan:fake, scan:privacy, manifest parse, private tracked-path check, no-file-input grep, policy-boundary grep review, `/health`, `/version`, and CDP browser smoke.
+- Provider: `local-fake-deterministic`
+- Cloud/API required: no
+- Secrets printed: no
+- Push performed: no
+- Real document access: none
+- Private vault inspected: no
+
+## v0.5.2 Coverage
+
+- Added explicit deterministic allowed transitions for every fake Import Wizard screen.
+- Added specific blocked reasons for select-to-index, quarantine-to-index, detection-to-approval, redaction-to-index, metadata-to-index, and metadata-to-audit-without-decision jumps.
+- Expanded fake proof guard flags for private paths, file content, browser File objects, OCR text, snippets, uploads, vector-store data, and private notes.
+- Added fake state flags to the proof export and sanitized tainted audit text before JSON/Markdown proof output.
+- Kept Upload as fake metadata buttons and added render coverage proving no file input.
+- Kept Chat, Saved, Sources, Upload, Vault, Settings, `/health`, and `/version` in scope.
+
+## Next Safe Phase
+
+Recommended next phase: `KIA-Stick-v0.5.2-closeout-review`.
+
+Future phases remain fake-only unless separately authorized. This hardening pass does not approve real import, file pickers, path readers, file reads, copying, OCR, text extraction, indexing, upload handling, private-vault inspection, cloud calls, service changes, pushes, or private document access.
+
+---
+
 ## v0.5.1 Replacement Proof Accepted Closeout
 
 - Phase: `KIA-Stick-v0.5.1-replacement-proof-closeout`

@@ -99,6 +99,12 @@ export interface ImportWizardAuditExport {
     fakeMetadataOnly: true;
     privatePathsIncluded: false;
     fileContentIncluded: false;
+    fileObjectsIncluded: false;
+    ocrTextIncluded: false;
+    snippetsIncluded: false;
+    uploadsIncluded: false;
+    vectorStoreIncluded: false;
+    privateNotesIncluded: false;
     realImportImplemented: false;
     filePickerImplemented: false;
     exportContainsOnlySyntheticMetadata: true;
@@ -110,6 +116,21 @@ export interface ImportWizardAuditExport {
     indexDecision: ImportIndexDecision;
     realActionsDisabled: true;
   };
+  fakeState: Pick<
+    ImportWizardState,
+    | "currentStep"
+    | "acknowledgedSafety"
+    | "sourceSelected"
+    | "scopeConfirmed"
+    | "quarantineConfirmed"
+    | "provenanceRecorded"
+    | "redactionPreviewed"
+    | "redactionApproved"
+    | "metadataApproved"
+    | "auditComplete"
+    | "fakeOnly"
+    | "realActionsDisabled"
+  >;
   record: FakeImportWizardRecord;
   auditLog: ImportWizardAuditEntry[];
 }
@@ -125,6 +146,19 @@ export const importWizardStepLabels: Record<ImportWizardStep, string> = {
   metadata_review: "Metadata review",
   index_eligibility: "Index eligibility",
   audit_summary: "Audit summary",
+};
+
+export const importWizardAllowedTransitions: Record<ImportWizardStep, readonly ImportWizardStep[]> = {
+  start_safety: ["source_placeholder"],
+  source_placeholder: ["scope_confirm"],
+  scope_confirm: ["quarantine_confirm"],
+  quarantine_confirm: ["provenance_hash"],
+  provenance_hash: ["redaction_detection"],
+  redaction_detection: ["admin_redaction_review"],
+  admin_redaction_review: ["metadata_review"],
+  metadata_review: ["index_eligibility"],
+  index_eligibility: ["audit_summary"],
+  audit_summary: [],
 };
 
 export const importWizardScreenCopy: Record<ImportWizardStep, { title: string; plain: string; stopSign: string }> = {
@@ -189,10 +223,20 @@ const forbiddenActionKeys = new Set([
   "rawContent",
   "content",
   "contents",
+  "document",
+  "documents",
   "file",
   "files",
   "blob",
   "bytes",
+  "ocrText",
+  "snippet",
+  "snippets",
+  "upload",
+  "uploads",
+  "vectorStore",
+  "embeddings",
+  "privateNote",
 ]);
 
 const forbiddenPrivateFragments = [
@@ -201,6 +245,7 @@ const forbiddenPrivateFragments = [
   "data/real-documents",
   "data/quarantine",
   "data/redacted-approved",
+  "uploads/",
   "exports/",
   "backups/",
   "vector-store/",
@@ -227,13 +272,16 @@ function cloneState(state: ImportWizardState): ImportWizardState {
 }
 
 function auditEntry(step: ImportWizardStep, action: string, note: string, now: string, actor = "local-fake-admin"): ImportWizardAuditEntry {
+  const safeAction = sanitizeAuditText(action);
+  const safeActor = sanitizeAuditText(actor);
+  const safeNote = sanitizeAuditText(note);
   return {
-    id: `${now}-${step}-${action}`.replaceAll(/[^a-zA-Z0-9_-]/g, "-"),
-    action,
-    actor,
+    id: `${now}-${step}-${safeAction}`.replaceAll(/[^a-zA-Z0-9_-]/g, "-"),
+    action: safeAction,
+    actor: safeActor,
     at: now,
     step,
-    note,
+    note: safeNote,
   };
 }
 
@@ -252,6 +300,13 @@ function setBlocked(state: ImportWizardState, reason: string, now: string, actor
     },
     auditEntry(state.currentStep, action, reason, now, actor)
   );
+}
+
+function sanitizeAuditText(value: string): string {
+  if (forbiddenPrivateFragments.some((fragment) => value.includes(fragment))) {
+    return "[sanitized fake-only audit text]";
+  }
+  return value;
 }
 
 export function createInitialImportWizardState(now = "2026-06-20T00:00:00.000Z"): ImportWizardState {
@@ -340,8 +395,32 @@ export function nextImportWizardStep(step: ImportWizardStep): ImportWizardStep {
   return importWizardSteps[Math.min(currentIndex + 1, importWizardSteps.length - 1)];
 }
 
+function transitionKey(from: ImportWizardStep, to: ImportWizardStep): `${ImportWizardStep}->${ImportWizardStep}` {
+  return `${from}->${to}`;
+}
+
+const explicitBlockedTransitionReasons: Partial<Record<`${ImportWizardStep}->${ImportWizardStep}`, string>> = {
+  "source_placeholder->index_eligibility":
+    "Select-to-index blocked: fake source selection is not import. Confirm fake scope, quarantine, provenance, redaction review, and metadata review first.",
+  "quarantine_confirm->index_eligibility":
+    "Quarantine-to-index blocked: quarantine is a holding gate and is never indexable by itself. Record fake provenance, preview redaction, approve redaction, and approve metadata first.",
+  "redaction_detection->metadata_review":
+    "Detection-to-approval blocked: redaction detection is only a preview. Admin redaction review must explicitly approve fake redaction first.",
+  "redaction_detection->index_eligibility":
+    "Detection-to-index blocked: redaction detection is not approval and cannot skip admin review or metadata review.",
+  "admin_redaction_review->index_eligibility":
+    "Redaction-to-index blocked: redaction approval is not indexing. Fake metadata review must approve before index eligibility.",
+  "metadata_review->index_eligibility":
+    "Metadata-to-index blocked: use the fake metadata approval action so the audit records the review before index eligibility.",
+  "metadata_review->audit_summary":
+    "Metadata-to-audit blocked: fake metadata review cannot skip the separate index eligibility decision.",
+};
+
 function validateTargetStep(state: ImportWizardState, targetStep: ImportWizardStep): string | null {
-  if (targetStep !== nextImportWizardStep(state.currentStep)) {
+  const allowed = importWizardAllowedTransitions[state.currentStep];
+  if (!allowed.includes(targetStep)) {
+    const explicitReason = explicitBlockedTransitionReasons[transitionKey(state.currentStep, targetStep)];
+    if (explicitReason) return explicitReason;
     return `Invalid transition: ${importWizardStepLabels[state.currentStep]} can only move to ${importWizardStepLabels[nextImportWizardStep(state.currentStep)]}.`;
   }
   return null;
@@ -394,12 +473,15 @@ export function applyImportWizardAction(state: ImportWizardState, action: Import
       if (typeof actionRecord.targetStep !== "string" || !importWizardSteps.includes(actionRecord.targetStep as ImportWizardStep)) {
         return setBlocked(state, "Unknown import wizard step.", now, actor);
       }
-      return setBlocked(
-        state,
-        `Direct jump blocked: ${importWizardStepLabels[actionRecord.targetStep as ImportWizardStep]} requires prior fake gates.`,
-        now,
-        actor
-      );
+      {
+        const targetStep = actionRecord.targetStep as ImportWizardStep;
+        const directJumpReason = explicitBlockedTransitionReasons[transitionKey(state.currentStep, targetStep)];
+        const blockedReason =
+          directJumpReason ??
+          validateTargetStep(state, targetStep) ??
+          `Use the named fake action for ${importWizardStepLabels[targetStep]} so sanitized audit and guard flags are written.`;
+        return setBlocked(state, `Direct jump blocked: ${blockedReason}`, now, actor);
+      }
     case "start_fake_wizard": {
       if (state.currentStep !== "start_safety") return setBlocked(state, "Safety acknowledgement already moved past start.", now, actor);
       const nextState = advanceTo(
@@ -600,6 +682,12 @@ export function exportImportWizardAuditJson(state: ImportWizardState, version: R
       fakeMetadataOnly: true,
       privatePathsIncluded: false,
       fileContentIncluded: false,
+      fileObjectsIncluded: false,
+      ocrTextIncluded: false,
+      snippetsIncluded: false,
+      uploadsIncluded: false,
+      vectorStoreIncluded: false,
+      privateNotesIncluded: false,
       realImportImplemented: false,
       filePickerImplemented: false,
       exportContainsOnlySyntheticMetadata: true,
@@ -611,14 +699,29 @@ export function exportImportWizardAuditJson(state: ImportWizardState, version: R
       indexDecision: state.record.indexDecision,
       realActionsDisabled: true,
     },
+    fakeState: {
+      currentStep: state.currentStep,
+      acknowledgedSafety: state.acknowledgedSafety,
+      sourceSelected: state.sourceSelected,
+      scopeConfirmed: state.scopeConfirmed,
+      quarantineConfirmed: state.quarantineConfirmed,
+      provenanceRecorded: state.provenanceRecorded,
+      redactionPreviewed: state.redactionPreviewed,
+      redactionApproved: state.redactionApproved,
+      metadataApproved: state.metadataApproved,
+      auditComplete: state.auditComplete,
+      fakeOnly: true,
+      realActionsDisabled: true,
+    },
     record: cloneRecord(state.record),
-    auditLog: state.auditLog.map(cloneAudit),
+    auditLog: state.auditLog.map(sanitizeAuditEntryForExport),
   };
 
   return JSON.stringify(payload, null, 2);
 }
 
 export function exportImportWizardAuditMarkdown(state: ImportWizardState, version: RuntimeVersion, generatedAt: string): string {
+  const auditLog = state.auditLog.map(sanitizeAuditEntryForExport);
   const lines = [
     "# KIA Stick Fake Import Wizard Audit",
     "",
@@ -635,14 +738,37 @@ export function exportImportWizardAuditMarkdown(state: ImportWizardState, versio
     "- Fake metadata only: true",
     "- Private paths included: false",
     "- File content included: false",
+    "- File objects included: false",
+    "- OCR text included: false",
+    "- Snippets included: false",
+    "- Uploads included: false",
+    "- Vector store included: false",
+    "- Private notes included: false",
     "- Real import implemented: false",
     "- File picker implemented: false",
     "",
     "## Audit Events",
     "",
-    ...state.auditLog.map((entry) => `- ${entry.at} | ${entry.action} | ${entry.step} | ${entry.note}`),
+    ...auditLog.map((entry) => `- ${entry.at} | ${entry.action} | ${entry.step} | ${entry.note}`),
     "",
   ];
 
   return lines.join("\n");
+}
+
+function sanitizeAuditEntryForExport(entry: ImportWizardAuditEntry): ImportWizardAuditEntry {
+  const sanitized = {
+    ...entry,
+    id: sanitizeAuditText(entry.id),
+    action: sanitizeAuditText(entry.action),
+    actor: sanitizeAuditText(entry.actor),
+    note: sanitizeAuditText(entry.note),
+  };
+  const guard = assertImportWizardFakeOnly(sanitized);
+  if (guard.ok) return sanitized;
+
+  return {
+    ...sanitized,
+    note: `Sanitized unsafe audit entry from fake proof: ${guard.reasons.join("; ")}`,
+  };
 }

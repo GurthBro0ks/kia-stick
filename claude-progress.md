@@ -2,10 +2,29 @@
 
 ## Current Phase
 
-- Phase: `KIA-Stick-v0.5.1-replacement-proof-closeout`
+- Phase: `KIA-Stick-v0.5.2-fake-wizard-state-machine-hardening`
 - Target: `USER_LAPTOP_ONLY`
 - Provider: `local-fake-deterministic`
-- Status: replacement proof PASS for pushed v0.5.1 commit `904afc2`; closeout docs/state updated for local commit.
+- Status: validation PASS; ready for local commit, no push.
+
+## v0.5.2 Fake Wizard State Machine Hardening State
+
+- Phase: `KIA-Stick-v0.5.2-fake-wizard-state-machine-hardening`
+- Baseline: v0.5.1 replacement proof closeout at `c3b9859`.
+- Scope: fake-only Import Wizard state machine guard hardening, proof export checks, Upload fake-button regression coverage, and docs/state updates.
+- Product version impact: none; app remains `0.4.0`.
+- Proof directory: `/tmp/proof_kia_stick_v052_fake_wizard_state_machine_20260620T190452Z`
+- Implementation: explicit allowed transition map, deterministic blocked jump reasons, stronger fake-only action key guard, sanitized fake audit/proof export, expanded proof guard flags, and fake state flags in JSON proof.
+- Tests: full happy path, audit order, high-risk blocked jumps, real-file/path payload blocking, tainted audit proof sanitization, no file input, and Upload fake-button rendering.
+- Focused validation: PASS for `npm run typecheck` and `npm run test`.
+- Full validation: PASS for lint, typecheck, test, build, qa, scan:fake, scan:privacy, manifest parse, private tracked-path check, no-file-input grep, policy-boundary grep review, `/health`, `/version`, and CDP browser smoke.
+- Manual QA: PASS by CDP smoke for Import blocked actions, full fake happy path, fake proof labels, Upload fake buttons/queue, Chat render, zero file inputs, and mobile no-overflow.
+- Real/private document access: none.
+- Private vault inspected: no.
+- Push performed: no.
+- Commands run: missing `/home/slimy/*` harness checks, local harness load, git status/log, model/UI/test inspection, lint, typecheck, test, build, qa, scan:fake, scan:privacy, manifest parse, private tracked-path check, file-input grep, policy-boundary grep, `/health`, `/version`, CDP browser smoke, diff/status review, and docs/state edits.
+- Files changed so far: `app/health/route.ts`, `components/KiaStickApp.tsx`, `lib/importWizardModel.ts`, `tests/answerGovernor.test.ts`, `README.md`, `CLOSEOUT.md`, `feature_list.json`, and `claude-progress.md`.
+- Remaining unknowns: operator physical browser click-through is still optional; automated CDP smoke passed.
 
 ## v0.5.1 Replacement Proof Accepted Closeout State
 

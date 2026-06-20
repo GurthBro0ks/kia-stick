@@ -33,6 +33,14 @@ This MVP uses only fictional source documents under `content/fake-docs/`. Every 
 
 `/media/mint/SHARED/APWU` is treated as real-document storage and is intentionally not read, copied, indexed, or scanned by this repo.
 
+## v0.5.2 Fake Wizard State Machine Hardening
+
+The fake Import Wizard state machine now has an explicit allowed-transition map and deterministic blocked reasons for high-risk jumps, including select-to-index, quarantine-to-index, detection-to-approval, redaction-to-index, and metadata-to-index/audit skips.
+
+Fake audit and proof exports remain synthetic metadata only. Export guard flags state that private paths, file content, browser File objects, OCR text, snippets, uploads, vector-store data, and private notes are excluded. Proof JSON includes build identity, fake state flags, fake record metadata, sanitized fake audit events, and guard flags only.
+
+Regression tests cover the full happy path, audit order, blocked jumps, real-file payload guards, tainted-audit proof sanitization, no file input, and Upload fake-button rendering.
+
 ## v0.5.1 Fake Import Wizard UI Scaffold
 
 The `Import` tab implements the accepted v0.5 plan as a fake metadata scaffold only. It walks through:
