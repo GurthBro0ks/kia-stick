@@ -1,13 +1,13 @@
-# KIA Stick v0.3
+# KIA Stick v0.4
 
-Laptop-only fake-doc PWA for testing citation-first governance, source hierarchy, and private-vault review workflow scaffolding.
+Laptop-only fake-doc PWA for testing citation-first governance, source hierarchy, and hardened fake-vault review workflow scaffolding.
 
 ## Version Identity
 
 KIA Stick separates milestone semver from build identity:
 
-- `productVersion` changes slowly at planned milestone phases, for example `0.3.0`.
-- `displayVersion` changes per build as `productVersion-channel.buildDate+gitSha`, for example `0.3.0-dev.20260620+c33c049`.
+- `productVersion` changes slowly at planned milestone phases, for example `0.4.0`.
+- `displayVersion` changes per build as `productVersion-channel.buildDate+gitSha`, for example `0.4.0-dev.20260620+c33c049`.
 - `corpusVersion`, `indexVersion`, and `promptVersion` stay separate from the app build version.
 
 `/health`, `/version`, the app header, settings, answer footer, and saved answer metadata expose the current `displayVersion`.
@@ -33,7 +33,7 @@ This MVP uses only fictional source documents under `content/fake-docs/`. Every 
 
 `/media/mint/SHARED/APWU` is treated as real-document storage and is intentionally not read, copied, indexed, or scanned by this repo.
 
-## v0.3 Vault Scaffold
+## v0.4 Fake Vault Hardening
 
 The Vault tab uses fake metadata fixtures only. It adds local mock surfaces for:
 
@@ -44,6 +44,15 @@ The Vault tab uses fake metadata fixtures only. It adds local mock surfaces for:
 - Index Eligibility.
 - Audit Log.
 
-The scaffold models `selected -> quarantine -> hash/provenance -> redaction detection -> admin review -> approved redacted copy -> metadata -> index decision -> audit` without reading file bytes, inspecting private paths, OCR, uploads, real ingestion, or indexing.
+The scaffold models `selected -> quarantine -> hash/provenance -> redaction review -> metadata review -> index eligibility -> audit` without reading file bytes, inspecting private paths, OCR, uploads, real ingestion, or real indexing.
 
-Quarantine, redaction review, and admin review are not index approval. Index eligibility stays an explicit yes/no gate.
+Explicit fake workflow states are:
+
+- `not_indexable`
+- `quarantine_only`
+- `redaction_required`
+- `metadata_required`
+- `review_rejected`
+- `eligible_fake_only`
+
+Quarantine, redaction review, and metadata review are not index approval. Invalid gate transitions are blocked with visible reasons. The Audit Log can export JSON or Markdown containing fake metadata, audit events, and build identity only.

@@ -9,6 +9,8 @@ import {
   applyVaultAction,
   assertFakeMetadataOnly,
   createInitialVaultState,
+  exportVaultAuditJson,
+  exportVaultAuditMarkdown,
   vaultLanes,
 } from "@/lib/vaultModel";
 
@@ -42,7 +44,7 @@ describe("answer governor", () => {
     expect(answer.footer).toContain("Sources:");
     expect(answer.footer).toContain("Build:");
     expect(answer.footer).toContain("Mode:Strict Research");
-    expect(answer.version.displayVersion).toMatch(/^0\.3\.0-dev\.\d{8}\+(?:[a-z0-9]+|unknown)$/);
+    expect(answer.version.displayVersion).toMatch(/^0\.4\.0-dev\.\d{8}\+(?:[a-z0-9]+|unknown)$/);
   });
 
   it("blocks best guess for Step 1 evidence when no controlling language is present", () => {
@@ -67,7 +69,7 @@ describe("answer governor", () => {
 describe("runtime build identity", () => {
   it("formats displayVersion from product milestone, channel, UTC build date, and git SHA", () => {
     const version = createRuntimeVersion({
-      productVersion: "0.3.0",
+      productVersion: "0.4.0",
       channel: "dev",
       buildDate: "20260620",
       gitSha: "c33c049",
@@ -77,8 +79,8 @@ describe("runtime build identity", () => {
       provider: "provider.test",
     });
 
-    expect(version.displayVersion).toBe("0.3.0-dev.20260620+c33c049");
-    expect(version.productVersion).toBe("0.3.0");
+    expect(version.displayVersion).toBe("0.4.0-dev.20260620+c33c049");
+    expect(version.productVersion).toBe("0.4.0");
     expect(version.corpusVersion).toBe("corpus.test");
     expect(version.indexVersion).toBe("index.test");
   });
@@ -93,7 +95,7 @@ describe("runtime build identity", () => {
       expect(payload[field]).toBe(payload.version[field]);
     }
 
-    expect(payload.version.displayVersion).toMatch(/^0\.3\.0-dev\.\d{8}\+(?:[a-z0-9]+|unknown)$/);
+    expect(payload.version.displayVersion).toMatch(/^0\.4\.0-dev\.\d{8}\+(?:[a-z0-9]+|unknown)$/);
     expect(payload.version.corpusVersion).toBe(corpus.corpusVersion);
     expect(payload.version.indexVersion).toBe(corpus.indexVersion);
   });
@@ -110,7 +112,7 @@ describe("runtime build identity", () => {
     expect(html).toContain("Index");
     expect(html).toContain("Prompt");
     expect(html).toContain("Provider");
-    expect(html).toMatch(/0\.3\.0-dev\.\d{8}\+(?:[a-z0-9]+|unknown)/);
+    expect(html).toMatch(/0\.4\.0-dev\.\d{8}\+(?:[a-z0-9]+|unknown)/);
   });
 });
 
@@ -135,9 +137,75 @@ describe("fake vault governance model", () => {
     const record = advanced.records.find((item) => item.id === "fake-vault-quarantine");
 
     expect(record?.lifecycleStep).toBe("hash_provenance");
-    expect(record?.indexEligibility).toBe("not_eligible");
+    expect(record?.workflowState).toBe("quarantine_only");
     expect(advanced.auditLog[0].action).toBe("advance_fake_gate");
     expect(advanced.auditLog[0].note).toContain("no file content was accessed");
+  });
+
+  it("blocks invalid transitions with visible reasons", () => {
+    const state = createInitialVaultState();
+    const blocked = applyVaultAction(state, {
+      type: "advance",
+      recordId: "fake-vault-member-only",
+      targetStep: "metadata_review",
+      now: "2026-06-20T01:30:00.000Z",
+    });
+
+    const record = blocked.records.find((item) => item.id === "fake-vault-member-only");
+
+    expect(record?.lifecycleStep).toBe("redaction_review");
+    expect(record?.workflowState).toBe("redaction_required");
+    expect(record?.lastBlockedReason).toContain("redaction review must be approved");
+    expect(blocked.auditLog[0].action).toBe("blocked_invalid_transition");
+  });
+
+  it("requires redaction and metadata review before fake eligibility", () => {
+    const state = createInitialVaultState();
+    const redactionApproved = applyVaultAction(state, {
+      type: "approve_redaction",
+      recordId: "fake-vault-member-only",
+      now: "2026-06-20T02:00:00.000Z",
+    });
+    const movedToMetadata = applyVaultAction(redactionApproved, {
+      type: "advance",
+      recordId: "fake-vault-member-only",
+      now: "2026-06-20T02:01:00.000Z",
+    });
+    const metadataApproved = applyVaultAction(movedToMetadata, {
+      type: "approve_metadata",
+      recordId: "fake-vault-member-only",
+      now: "2026-06-20T02:02:00.000Z",
+    });
+    const eligible = applyVaultAction(metadataApproved, {
+      type: "advance",
+      recordId: "fake-vault-member-only",
+      now: "2026-06-20T02:03:00.000Z",
+    });
+
+    const record = eligible.records.find((item) => item.id === "fake-vault-member-only");
+
+    expect(record?.lifecycleStep).toBe("index_eligibility");
+    expect(record?.redactionStatus).toBe("approved_redacted");
+    expect(record?.metadataStatus).toBe("reviewed");
+    expect(record?.workflowState).toBe("eligible_fake_only");
+    expect(eligible.auditLog.map((entry) => entry.action)).toContain("approve_fake_redaction");
+    expect(eligible.auditLog.map((entry) => entry.action)).toContain("approve_fake_metadata");
+  });
+
+  it("tracks rejected reviews as not indexable states", () => {
+    const state = createInitialVaultState();
+    const rejected = applyVaultAction(state, {
+      type: "reject_review",
+      recordId: "fake-vault-member-only",
+      reason: "Fake reviewer found unresolved redaction flags.",
+      now: "2026-06-20T02:10:00.000Z",
+    });
+
+    const record = rejected.records.find((item) => item.id === "fake-vault-member-only");
+
+    expect(record?.workflowState).toBe("review_rejected");
+    expect(record?.lastBlockedReason).toContain("unresolved redaction flags");
+    expect(rejected.auditLog[0].action).toBe("reject_fake_review");
   });
 
   it("blocks vault actions carrying real paths or raw content fields", () => {
@@ -156,5 +224,27 @@ describe("fake vault governance model", () => {
     expect(blocked.auditLog[0].action).toBe("blocked_real_file_access");
     expect(blocked.auditLog[0].note).toContain("forbidden private reference");
     expect(blocked.auditLog[0].note).toContain("forbidden file/content field");
+    expect(blocked.auditLog[0].note).not.toContain("/media/mint/SHARED/APWU");
+  });
+
+  it("exports fake audit JSON and Markdown with build identity and no private paths", () => {
+    const state = createInitialVaultState();
+    const version = createRuntimeVersion({
+      productVersion: "0.4.0",
+      buildDate: "20260620",
+      gitSha: "dd4b997",
+    });
+    const json = exportVaultAuditJson(state, version, "2026-06-20T03:00:00.000Z");
+    const markdown = exportVaultAuditMarkdown(state, version, "2026-06-20T03:00:00.000Z");
+    const payload = JSON.parse(json);
+
+    expect(payload.version.displayVersion).toBe("0.4.0-dev.20260620+dd4b997");
+    expect(payload.guard.fakeMetadataOnly).toBe(true);
+    expect(payload.guard.privatePathsIncluded).toBe(false);
+    expect(payload.records[0]).not.toHaveProperty("lastBlockedReason");
+    expect(json).toContain("eligible_fake_only");
+    expect(markdown).toContain("Display version: 0.4.0-dev.20260620+dd4b997");
+    expect(json).not.toContain("/media/mint/SHARED/APWU");
+    expect(markdown).not.toContain("/media/mint/SHARED/APWU");
   });
 });

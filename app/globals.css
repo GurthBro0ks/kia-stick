@@ -640,26 +640,39 @@ a {
 }
 
 .laneGrid,
+.workflowGrid,
 .vaultRecordGrid {
   display: grid;
   gap: 9px;
 }
 
-.laneGrid {
+.laneGrid,
+.workflowGrid {
   grid-template-columns: repeat(auto-fit, minmax(138px, 1fr));
 }
 
-.laneTile {
+.laneTile,
+.workflowTile {
   min-height: 72px;
   border: 1px solid #d4dbe1;
   background: var(--soft);
   padding: 9px;
 }
 
-.laneTile strong {
+.laneTile strong,
+.workflowTile strong {
   display: block;
   margin-top: 8px;
   font-size: 1.25rem;
+}
+
+.workflowTile span {
+  display: block;
+  color: var(--muted);
+  font-size: 0.72rem;
+  font-weight: 950;
+  text-transform: uppercase;
+  overflow-wrap: anywhere;
 }
 
 .laneBadge {
@@ -720,7 +733,7 @@ a {
 
 .lifecycleRail {
   display: grid;
-  grid-template-columns: repeat(9, minmax(0, 1fr));
+  grid-template-columns: repeat(7, minmax(0, 1fr));
   gap: 4px;
   margin: 8px 0 0;
   padding: 0;
@@ -760,12 +773,24 @@ a {
 
 .vaultRecordCard p,
 .indexReason,
+.blockedReason,
 .auditEntry p {
   margin: 8px 0 0;
   color: var(--muted);
   font-size: 0.84rem;
   line-height: 1.4;
   overflow-wrap: anywhere;
+}
+
+.blockedReason {
+  display: flex;
+  align-items: flex-start;
+  gap: 6px;
+  border: 1px solid #d69a8c;
+  background: #f8e1db;
+  color: #7a2e25;
+  padding: 7px;
+  font-weight: 850;
 }
 
 .vaultFieldGrid {
@@ -824,6 +849,27 @@ a {
 .auditList {
   display: grid;
   gap: 8px;
+}
+
+.auditExportPanel {
+  display: grid;
+  gap: 10px;
+  border: 1px solid #b7c9cf;
+  background: #eef7f6;
+  padding: 10px;
+}
+
+.auditExportPanel h3 {
+  margin: 0;
+  font-size: 0.9rem;
+}
+
+.auditExportPanel p {
+  margin: 5px 0 0;
+  color: var(--muted);
+  font-size: 0.82rem;
+  font-weight: 750;
+  line-height: 1.35;
 }
 
 .auditEntry strong {

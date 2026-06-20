@@ -1,3 +1,5 @@
+import type { RuntimeVersion } from "@/lib/version";
+
 export const vaultLanes = [
   "official_public",
   "official_member_only",
@@ -14,11 +16,9 @@ export const lifecycleSteps = [
   "selected",
   "quarantine",
   "hash_provenance",
-  "redaction_detection",
-  "admin_review",
-  "approved_redacted_copy",
-  "metadata",
-  "index_decision",
+  "redaction_review",
+  "metadata_review",
+  "index_eligibility",
   "audit",
 ] as const;
 
@@ -29,7 +29,13 @@ export type SourceStatus = "public" | "member_only" | "local_private" | "steward
 export type Sensitivity = "low" | "moderate" | "high" | "restricted_sensitive" | "unknown";
 export type RedactionStatus = "not_started" | "detection_flagged" | "review_needed" | "approved_redacted" | "rejected" | "restricted";
 export type MetadataStatus = "not_reviewed" | "needs_changes" | "reviewed" | "rejected";
-export type IndexEligibility = "not_eligible" | "eligible_private" | "eligible_redacted" | "eligible_public";
+export type VaultWorkflowState =
+  | "not_indexable"
+  | "quarantine_only"
+  | "redaction_required"
+  | "metadata_required"
+  | "review_rejected"
+  | "eligible_fake_only";
 
 export interface FakeVaultRecord {
   id: string;
@@ -41,8 +47,9 @@ export interface FakeVaultRecord {
   sensitivity: Sensitivity;
   redactionStatus: RedactionStatus;
   metadataStatus: MetadataStatus;
-  indexEligibility: IndexEligibility;
+  workflowState: VaultWorkflowState;
   indexReason: string;
+  lastBlockedReason: string;
   reviewer: string;
   reviewedAt: string;
   fakeSourceRef: string;
@@ -71,6 +78,26 @@ export type VaultAction =
   | {
       type: "advance";
       recordId: string;
+      targetStep?: LifecycleStep;
+      actor?: string;
+      now?: string;
+    }
+  | {
+      type: "approve_redaction";
+      recordId: string;
+      actor?: string;
+      now?: string;
+    }
+  | {
+      type: "approve_metadata";
+      recordId: string;
+      actor?: string;
+      now?: string;
+    }
+  | {
+      type: "reject_review";
+      recordId: string;
+      reason: string;
       actor?: string;
       now?: string;
     }
@@ -81,6 +108,48 @@ export type VaultAction =
       actor?: string;
       now?: string;
     };
+
+export interface VaultAuditExport {
+  exportType: "kia-stick-fake-vault-audit";
+  generatedAt: string;
+  version: RuntimeVersion;
+  guard: {
+    fakeMetadataOnly: true;
+    privatePathsIncluded: false;
+    fileContentIncluded: false;
+    exportContainsOnlySyntheticMetadata: true;
+  };
+  summary: {
+    records: number;
+    auditEntries: number;
+    workflowStates: Record<VaultWorkflowState, number>;
+  };
+  records: Array<
+    Pick<
+      FakeVaultRecord,
+      | "id"
+      | "title"
+      | "lane"
+      | "lifecycleStep"
+      | "authorityLevel"
+      | "sourceStatus"
+      | "sensitivity"
+      | "redactionStatus"
+      | "metadataStatus"
+      | "workflowState"
+      | "indexReason"
+      | "reviewer"
+      | "reviewedAt"
+      | "fakeSourceRef"
+      | "fakeHash"
+      | "fakeProvenance"
+      | "fakeSummary"
+      | "redactionFlags"
+      | "githubSafe"
+    >
+  >;
+  auditLog: VaultAuditEntry[];
+}
 
 export const laneLabels: Record<VaultLane, string> = {
   official_public: "Official public",
@@ -96,27 +165,57 @@ export const lifecycleLabels: Record<LifecycleStep, string> = {
   selected: "selected",
   quarantine: "quarantine",
   hash_provenance: "hash/provenance",
-  redaction_detection: "redaction detection",
-  admin_review: "admin review",
-  approved_redacted_copy: "approved redacted copy",
-  metadata: "metadata",
-  index_decision: "index decision",
+  redaction_review: "redaction review",
+  metadata_review: "metadata review",
+  index_eligibility: "index eligibility",
   audit: "audit",
+};
+
+export const workflowStateLabels: Record<VaultWorkflowState, string> = {
+  not_indexable: "not indexable",
+  quarantine_only: "quarantine only",
+  redaction_required: "redaction required",
+  metadata_required: "metadata required",
+  review_rejected: "review rejected",
+  eligible_fake_only: "eligible fake only",
 };
 
 export const fakeVaultRecords: FakeVaultRecord[] = [
   {
+    id: "fake-vault-selected",
+    title: "Selected fake metadata shell",
+    lane: "quarantine",
+    lifecycleStep: "selected",
+    authorityLevel: "unknown",
+    sourceStatus: "unknown",
+    sensitivity: "unknown",
+    redactionStatus: "not_started",
+    metadataStatus: "not_reviewed",
+    workflowState: "quarantine_only",
+    indexReason: "Selected fake metadata is not copied, not reviewed, and not indexable.",
+    lastBlockedReason: "",
+    reviewer: "UNREVIEWED",
+    reviewedAt: "",
+    fakeSourceRef: "fake-ref-selected-placeholder",
+    fakeHash: "fakehash-selected-00112233",
+    fakeProvenance: "Fictional selected item shell; no source file exists.",
+    fakeSummary: "Shows a pre-quarantine fake metadata row that still cannot be indexed.",
+    redactionFlags: ["selection only", "not quarantined"],
+    githubSafe: true,
+  },
+  {
     id: "fake-vault-official-public",
     title: "Public handbook citation shell",
     lane: "official_public",
-    lifecycleStep: "metadata",
+    lifecycleStep: "metadata_review",
     authorityLevel: "official",
     sourceStatus: "public",
     sensitivity: "low",
     redactionStatus: "approved_redacted",
     metadataStatus: "reviewed",
-    indexEligibility: "eligible_public",
-    indexReason: "Fake public metadata fixture marked reviewed; no real source text is stored.",
+    workflowState: "metadata_required",
+    indexReason: "Fake public metadata is reviewed, but index eligibility still requires the explicit fake eligibility gate.",
+    lastBlockedReason: "",
     reviewer: "FAKE-ADMIN",
     reviewedAt: "2026-06-20T00:00:00.000Z",
     fakeSourceRef: "fake-ref-public-handbook-shell",
@@ -130,14 +229,15 @@ export const fakeVaultRecords: FakeVaultRecord[] = [
     id: "fake-vault-member-only",
     title: "Member-only notice metadata shell",
     lane: "official_member_only",
-    lifecycleStep: "admin_review",
+    lifecycleStep: "redaction_review",
     authorityLevel: "official",
     sourceStatus: "member_only",
     sensitivity: "moderate",
     redactionStatus: "review_needed",
     metadataStatus: "needs_changes",
-    indexEligibility: "not_eligible",
-    indexReason: "Member-only fake lane needs admin review before any private-only index decision.",
+    workflowState: "redaction_required",
+    indexReason: "Member-only fake lane needs redaction approval before metadata or index eligibility review.",
+    lastBlockedReason: "",
     reviewer: "UNREVIEWED",
     reviewedAt: "",
     fakeSourceRef: "fake-ref-member-only-notice",
@@ -151,20 +251,21 @@ export const fakeVaultRecords: FakeVaultRecord[] = [
     id: "fake-vault-local-official",
     title: "Local bulletin authority shell",
     lane: "local_official",
-    lifecycleStep: "index_decision",
+    lifecycleStep: "index_eligibility",
     authorityLevel: "local_official",
     sourceStatus: "local_private",
     sensitivity: "moderate",
     redactionStatus: "approved_redacted",
     metadataStatus: "reviewed",
-    indexEligibility: "eligible_private",
-    indexReason: "Fake local metadata is reviewed for private laptop-only indexing.",
+    workflowState: "eligible_fake_only",
+    indexReason: "Reviewed fake local metadata is eligible only as fake laptop-local metadata.",
+    lastBlockedReason: "",
     reviewer: "FAKE-ADMIN",
     reviewedAt: "2026-06-20T00:00:00.000Z",
     fakeSourceRef: "fake-ref-local-bulletin-shell",
     fakeHash: "fakehash-local-2c3d4e5f",
     fakeProvenance: "Fictional local-official shell with no local identifiers.",
-    fakeSummary: "Demonstrates private index eligibility after review without exposing content.",
+    fakeSummary: "Demonstrates fake local eligibility after review without exposing content.",
     redactionFlags: ["local distribution label"],
     githubSafe: true,
   },
@@ -172,14 +273,15 @@ export const fakeVaultRecords: FakeVaultRecord[] = [
     id: "fake-vault-steward-note",
     title: "Steward note review shell",
     lane: "steward_only",
-    lifecycleStep: "redaction_detection",
+    lifecycleStep: "redaction_review",
     authorityLevel: "steward_note",
     sourceStatus: "steward_private",
     sensitivity: "high",
     redactionStatus: "detection_flagged",
     metadataStatus: "not_reviewed",
-    indexEligibility: "not_eligible",
+    workflowState: "redaction_required",
     indexReason: "Steward-only notes require redaction and metadata review before any index choice.",
+    lastBlockedReason: "",
     reviewer: "UNREVIEWED",
     reviewedAt: "",
     fakeSourceRef: "fake-ref-steward-note-shell",
@@ -199,8 +301,9 @@ export const fakeVaultRecords: FakeVaultRecord[] = [
     sensitivity: "low",
     redactionStatus: "approved_redacted",
     metadataStatus: "reviewed",
-    indexEligibility: "eligible_redacted",
-    indexReason: "Fake redacted example is approved and contains no re-identifying fields.",
+    workflowState: "eligible_fake_only",
+    indexReason: "Fake redacted example is approved, reviewed, and eligible only as fake metadata.",
+    lastBlockedReason: "",
     reviewer: "FAKE-ADMIN",
     reviewedAt: "2026-06-20T00:00:00.000Z",
     fakeSourceRef: "fake-ref-approved-redacted-example",
@@ -214,14 +317,15 @@ export const fakeVaultRecords: FakeVaultRecord[] = [
     id: "fake-vault-restricted",
     title: "Restricted-sensitive placeholder shell",
     lane: "restricted_sensitive",
-    lifecycleStep: "admin_review",
+    lifecycleStep: "redaction_review",
     authorityLevel: "unknown",
     sourceStatus: "restricted",
     sensitivity: "restricted_sensitive",
     redactionStatus: "restricted",
     metadataStatus: "not_reviewed",
-    indexEligibility: "not_eligible",
-    indexReason: "Restricted-sensitive material is never indexable by default.",
+    workflowState: "review_rejected",
+    indexReason: "Restricted-sensitive material is rejected for fake indexing by default.",
+    lastBlockedReason: "",
     reviewer: "UNREVIEWED",
     reviewedAt: "",
     fakeSourceRef: "fake-ref-restricted-placeholder",
@@ -241,8 +345,9 @@ export const fakeVaultRecords: FakeVaultRecord[] = [
     sensitivity: "unknown",
     redactionStatus: "not_started",
     metadataStatus: "not_reviewed",
-    indexEligibility: "not_eligible",
+    workflowState: "quarantine_only",
     indexReason: "Quarantine means not reviewed, not approved, and never indexable.",
+    lastBlockedReason: "",
     reviewer: "UNREVIEWED",
     reviewedAt: "",
     fakeSourceRef: "fake-ref-quarantine-placeholder",
@@ -281,6 +386,15 @@ const forbiddenPrivateFragments = [
   "DB/",
 ];
 
+const workflowStateOrder: VaultWorkflowState[] = [
+  "not_indexable",
+  "quarantine_only",
+  "redaction_required",
+  "metadata_required",
+  "review_rejected",
+  "eligible_fake_only",
+];
+
 function cloneRecord(record: FakeVaultRecord): FakeVaultRecord {
   return {
     ...record,
@@ -312,7 +426,7 @@ function auditEntry(recordId: string, action: string, note: string, now: string,
 
 export function createInitialVaultState(now = "2026-06-20T00:00:00.000Z"): VaultState {
   return {
-    records: fakeVaultRecords.map(cloneRecord),
+    records: fakeVaultRecords.map((record) => refreshRecordState(record)),
     auditLog: [
       auditEntry(
         "all",
@@ -334,8 +448,9 @@ export function assertFakeMetadataOnly(value: unknown): { ok: boolean; reasons: 
     }
 
     if (typeof input === "string") {
-      const matched = forbiddenPrivateFragments.find((fragment) => input.includes(fragment));
-      if (matched) reasons.push(`forbidden private reference: ${matched}`);
+      if (forbiddenPrivateFragments.some((fragment) => input.includes(fragment))) {
+        reasons.push("forbidden private reference");
+      }
       return;
     }
 
@@ -363,73 +478,102 @@ export function nextLifecycleStep(step: LifecycleStep): LifecycleStep {
   return lifecycleSteps[Math.min(currentIndex + 1, lifecycleSteps.length - 1)];
 }
 
-function eligibilityFor(record: FakeVaultRecord): { eligibility: IndexEligibility; reason: string } {
-  if (record.lane === "quarantine") {
-    return { eligibility: "not_eligible", reason: "Quarantine is never indexable." };
+function workflowDecisionFor(record: FakeVaultRecord): { state: VaultWorkflowState; reason: string } {
+  if (record.redactionStatus === "rejected" || record.metadataStatus === "rejected" || record.redactionStatus === "restricted") {
+    return { state: "review_rejected", reason: "Review rejected this fake metadata item; it cannot become indexable." };
   }
-  if (record.lane === "restricted_sensitive") {
-    return { eligibility: "not_eligible", reason: "Restricted-sensitive material is never indexable by default." };
+  if (record.lifecycleStep === "selected" || record.lifecycleStep === "quarantine" || record.lane === "quarantine") {
+    return { state: "quarantine_only", reason: "Selected and quarantine fake metadata is not reviewed, not approved, and never indexable." };
   }
-  if (record.metadataStatus !== "reviewed" || record.redactionStatus !== "approved_redacted") {
-    return { eligibility: "not_eligible", reason: "Review and approved redaction are required before any index decision." };
+  if (record.redactionStatus !== "approved_redacted") {
+    return { state: "redaction_required", reason: "Redaction review must approve the fake metadata before metadata review or indexing." };
   }
-  if (record.lane === "official_public") {
-    return { eligibility: "eligible_public", reason: "Reviewed fake public metadata may be marked public-index eligible." };
+  if (record.metadataStatus !== "reviewed") {
+    return { state: "metadata_required", reason: "Metadata review must approve authority, source status, and sensitivity before indexing." };
   }
-  if (record.lane === "redacted_examples") {
-    return { eligibility: "eligible_redacted", reason: "Reviewed fake redacted example may be marked redacted-index eligible." };
+  if (record.lifecycleStep === "index_eligibility" || record.lifecycleStep === "audit") {
+    return { state: "eligible_fake_only", reason: "Eligible only for fake metadata workflow testing; no real document content is indexable." };
   }
-  return { eligibility: "eligible_private", reason: "Reviewed fake private metadata may be marked local private-index eligible only." };
+  return { state: "not_indexable", reason: "The explicit index eligibility gate has not been reached." };
 }
 
-function applyLifecycleEffects(record: FakeVaultRecord, nextStep: LifecycleStep, now: string): FakeVaultRecord {
+function refreshRecordState(record: FakeVaultRecord, blockedReason = ""): FakeVaultRecord {
+  const decision = workflowDecisionFor(record);
+  return {
+    ...cloneRecord(record),
+    workflowState: decision.state,
+    indexReason: decision.reason,
+    lastBlockedReason: blockedReason,
+  };
+}
+
+function blockRecord(record: FakeVaultRecord, reason: string): FakeVaultRecord {
+  return refreshRecordState(record, reason);
+}
+
+function validateTransition(record: FakeVaultRecord, targetStep: LifecycleStep): string | null {
+  const expected = nextLifecycleStep(record.lifecycleStep);
+  if (record.lifecycleStep === "audit") return "Audit is terminal for this fake workflow.";
+  if (targetStep !== expected) {
+    return `Invalid transition: ${lifecycleLabels[record.lifecycleStep]} can only move to ${lifecycleLabels[expected]}.`;
+  }
+  if (targetStep === "hash_provenance" && (!record.fakeHash || !record.fakeProvenance)) {
+    return "Hash/provenance gate requires fake hash and fake provenance metadata.";
+  }
+  if (targetStep === "metadata_review" && record.redactionStatus !== "approved_redacted") {
+    return "Blocked: redaction review must be approved before metadata review.";
+  }
+  if (targetStep === "index_eligibility" && record.metadataStatus !== "reviewed") {
+    return "Blocked: metadata review must be approved before index eligibility.";
+  }
+  if (targetStep === "audit" && record.workflowState !== "eligible_fake_only") {
+    return "Blocked: only eligible_fake_only records may enter final audit.";
+  }
+  return null;
+}
+
+function applyLifecycleEffects(record: FakeVaultRecord, nextStep: LifecycleStep): FakeVaultRecord {
   const updated: FakeVaultRecord = {
     ...record,
     lifecycleStep: nextStep,
     redactionFlags: [...record.redactionFlags],
+    lastBlockedReason: "",
   };
 
-  if (nextStep === "redaction_detection" && updated.redactionFlags.length === 0) {
-    updated.redactionFlags = ["fake detector found no sensitive fields"];
-    updated.redactionStatus = "detection_flagged";
+  if (nextStep === "hash_provenance") {
+    updated.workflowState = "redaction_required";
   }
 
-  if (nextStep === "admin_review") {
+  if (nextStep === "redaction_review") {
     updated.redactionStatus = updated.sensitivity === "restricted_sensitive" ? "restricted" : "review_needed";
+    if (updated.redactionFlags.length === 0) updated.redactionFlags = ["fake review requires redaction confirmation"];
   }
 
-  if (nextStep === "approved_redacted_copy") {
-    updated.redactionStatus = updated.sensitivity === "restricted_sensitive" ? "restricted" : "approved_redacted";
-    updated.indexEligibility = "not_eligible";
-    updated.indexReason = "Approved redacted copy alone does not make the item indexable.";
+  if (nextStep === "metadata_review") {
+    updated.metadataStatus = "needs_changes";
   }
 
-  if (nextStep === "metadata") {
-    updated.metadataStatus = updated.sensitivity === "restricted_sensitive" ? "rejected" : "needs_changes";
-    updated.indexEligibility = "not_eligible";
-    updated.indexReason = "Metadata review must be completed before index eligibility is decided.";
-  }
-
-  if (nextStep === "index_decision") {
-    updated.metadataStatus = updated.sensitivity === "restricted_sensitive" ? "rejected" : "reviewed";
+  if (nextStep === "index_eligibility" || nextStep === "audit") {
     updated.reviewer = "FAKE-ADMIN";
-    updated.reviewedAt = now;
-    const decision = eligibilityFor(updated);
-    updated.indexEligibility = decision.eligibility;
-    updated.indexReason = decision.reason;
   }
 
-  if (nextStep === "audit") {
-    const decision = eligibilityFor(updated);
-    updated.indexEligibility = decision.eligibility;
-    updated.indexReason = decision.reason;
-  }
-
-  return updated;
+  return refreshRecordState(updated);
 }
 
 function isAdvanceAction(action: VaultAction | Record<string, unknown>): action is Extract<VaultAction, { type: "advance" }> {
   return action.type === "advance" && typeof action.recordId === "string";
+}
+
+function isApproveRedactionAction(action: VaultAction | Record<string, unknown>): action is Extract<VaultAction, { type: "approve_redaction" }> {
+  return action.type === "approve_redaction" && typeof action.recordId === "string";
+}
+
+function isApproveMetadataAction(action: VaultAction | Record<string, unknown>): action is Extract<VaultAction, { type: "approve_metadata" }> {
+  return action.type === "approve_metadata" && typeof action.recordId === "string";
+}
+
+function isRejectReviewAction(action: VaultAction | Record<string, unknown>): action is Extract<VaultAction, { type: "reject_review" }> {
+  return action.type === "reject_review" && typeof action.recordId === "string" && typeof action.reason === "string";
 }
 
 function isBlockIndexAction(action: VaultAction | Record<string, unknown>): action is Extract<VaultAction, { type: "block_index" }> {
@@ -446,13 +590,7 @@ export function applyVaultAction(state: VaultState, action: VaultAction | Record
     return {
       ...cloneState(state),
       auditLog: [
-        auditEntry(
-          "blocked",
-          "blocked_real_file_access",
-          `Blocked non-metadata vault action: ${guard.reasons.join("; ")}`,
-          now,
-          actor
-        ),
+        auditEntry("blocked", "blocked_real_file_access", `Blocked non-metadata vault action: ${guard.reasons.join("; ")}`, now, actor),
         ...state.auditLog.map(cloneAudit),
       ],
     };
@@ -460,28 +598,118 @@ export function applyVaultAction(state: VaultState, action: VaultAction | Record
 
   if (isAdvanceAction(action)) {
     let changed = false;
+    let note = "";
+    let auditAction = "advance_fake_gate";
     const records = state.records.map((record) => {
       if (record.id !== action.recordId) return cloneRecord(record);
       changed = true;
-      const nextStep = nextLifecycleStep(record.lifecycleStep);
-      return applyLifecycleEffects(record, nextStep, now);
+      const targetStep = action.targetStep ?? nextLifecycleStep(record.lifecycleStep);
+      const blockedReason = validateTransition(record, targetStep);
+      if (blockedReason) {
+        auditAction = "blocked_invalid_transition";
+        note = blockedReason;
+        return blockRecord(record, blockedReason);
+      }
+      const updated = applyLifecycleEffects(record, targetStep);
+      note = `Advanced fake metadata item to ${lifecycleLabels[updated.lifecycleStep]}; no file content was accessed.`;
+      return updated;
     });
 
     if (!changed) return cloneState(state);
 
-    const updated = records.find((record) => record.id === action.recordId);
     return {
       records,
-      auditLog: [
-        auditEntry(
-          action.recordId,
-          "advance_fake_gate",
-          `Advanced fake metadata item to ${updated ? lifecycleLabels[updated.lifecycleStep] : "next gate"}; no file content was accessed.`,
-          now,
-          actor
-        ),
-        ...state.auditLog.map(cloneAudit),
-      ],
+      auditLog: [auditEntry(action.recordId, auditAction, note, now, actor), ...state.auditLog.map(cloneAudit)],
+    };
+  }
+
+  if (isApproveRedactionAction(action)) {
+    let changed = false;
+    let note = "";
+    let auditAction = "approve_fake_redaction";
+    const records = state.records.map((record) => {
+      if (record.id !== action.recordId) return cloneRecord(record);
+      changed = true;
+      if (record.lifecycleStep !== "redaction_review") {
+        auditAction = "blocked_invalid_transition";
+        note = "Blocked: redaction approval is only allowed at redaction review.";
+        return blockRecord(record, note);
+      }
+      if (record.sensitivity === "restricted_sensitive" || record.redactionStatus === "restricted") {
+        auditAction = "reject_fake_review";
+        note = "Restricted-sensitive fake metadata cannot pass redaction review.";
+        return refreshRecordState({ ...cloneRecord(record), redactionStatus: "rejected", metadataStatus: "rejected" }, note);
+      }
+      note = "Approved fake redaction metadata only; no source text or file bytes were reviewed.";
+      return refreshRecordState({
+        ...cloneRecord(record),
+        redactionStatus: "approved_redacted",
+        redactionFlags: record.redactionFlags.filter((flag) => !flag.includes("incomplete")),
+      });
+    });
+
+    if (!changed) return cloneState(state);
+
+    return {
+      records,
+      auditLog: [auditEntry(action.recordId, auditAction, note, now, actor), ...state.auditLog.map(cloneAudit)],
+    };
+  }
+
+  if (isApproveMetadataAction(action)) {
+    let changed = false;
+    let note = "";
+    let auditAction = "approve_fake_metadata";
+    const records = state.records.map((record) => {
+      if (record.id !== action.recordId) return cloneRecord(record);
+      changed = true;
+      if (record.lifecycleStep !== "metadata_review") {
+        auditAction = "blocked_invalid_transition";
+        note = "Blocked: metadata approval is only allowed at metadata review.";
+        return blockRecord(record, note);
+      }
+      if (record.redactionStatus !== "approved_redacted") {
+        auditAction = "blocked_invalid_transition";
+        note = "Blocked: redaction approval is required before metadata approval.";
+        return blockRecord(record, note);
+      }
+      note = "Approved fake authority metadata only; index eligibility remains a separate gate.";
+      return refreshRecordState({
+        ...cloneRecord(record),
+        metadataStatus: "reviewed",
+        reviewer: "FAKE-ADMIN",
+        reviewedAt: now,
+      });
+    });
+
+    if (!changed) return cloneState(state);
+
+    return {
+      records,
+      auditLog: [auditEntry(action.recordId, auditAction, note, now, actor), ...state.auditLog.map(cloneAudit)],
+    };
+  }
+
+  if (isRejectReviewAction(action)) {
+    let changed = false;
+    const records = state.records.map((record) => {
+      if (record.id !== action.recordId) return cloneRecord(record);
+      changed = true;
+      return refreshRecordState(
+        {
+          ...cloneRecord(record),
+          redactionStatus: record.lifecycleStep === "redaction_review" ? "rejected" : record.redactionStatus,
+          metadataStatus: record.lifecycleStep === "metadata_review" ? "rejected" : record.metadataStatus,
+        },
+        action.reason
+      );
+    });
+
+    if (!changed) return cloneState(state);
+
+    return {
+      records,
+      auditLog: [auditEntry(action.recordId, "reject_fake_review", action.reason, now, actor), ...state.auditLog.map(cloneAudit)],
     };
   }
 
@@ -491,9 +719,10 @@ export function applyVaultAction(state: VaultState, action: VaultAction | Record
       if (record.id !== action.recordId) return cloneRecord(record);
       changed = true;
       return {
-        ...cloneRecord(record),
-        indexEligibility: "not_eligible" as const,
+        ...refreshRecordState(record),
+        workflowState: "not_indexable" as const,
         indexReason: action.reason,
+        lastBlockedReason: action.reason,
       };
     });
 
@@ -501,10 +730,7 @@ export function applyVaultAction(state: VaultState, action: VaultAction | Record
 
     return {
       records,
-      auditLog: [
-        auditEntry(action.recordId, "mark_not_indexable", action.reason, now, actor),
-        ...state.auditLog.map(cloneAudit),
-      ],
+      auditLog: [auditEntry(action.recordId, "mark_not_indexable", action.reason, now, actor), ...state.auditLog.map(cloneAudit)],
     };
   }
 
@@ -519,4 +745,123 @@ export function laneCounts(records: FakeVaultRecord[]): Record<VaultLane, number
     }),
     {} as Record<VaultLane, number>
   );
+}
+
+export function workflowStateCounts(records: FakeVaultRecord[]): Record<VaultWorkflowState, number> {
+  return workflowStateOrder.reduce(
+    (counts, state) => ({
+      ...counts,
+      [state]: records.filter((record) => record.workflowState === state).length,
+    }),
+    {} as Record<VaultWorkflowState, number>
+  );
+}
+
+function exportRecord(record: FakeVaultRecord): VaultAuditExport["records"][number] {
+  return {
+    id: record.id,
+    title: record.title,
+    lane: record.lane,
+    lifecycleStep: record.lifecycleStep,
+    authorityLevel: record.authorityLevel,
+    sourceStatus: record.sourceStatus,
+    sensitivity: record.sensitivity,
+    redactionStatus: record.redactionStatus,
+    metadataStatus: record.metadataStatus,
+    workflowState: record.workflowState,
+    indexReason: record.indexReason,
+    reviewer: record.reviewer,
+    reviewedAt: record.reviewedAt,
+    fakeSourceRef: record.fakeSourceRef,
+    fakeHash: record.fakeHash,
+    fakeProvenance: record.fakeProvenance,
+    fakeSummary: record.fakeSummary,
+    redactionFlags: [...record.redactionFlags],
+    githubSafe: record.githubSafe,
+  };
+}
+
+export function buildVaultAuditExport(state: VaultState, version: RuntimeVersion, generatedAt = new Date().toISOString()): VaultAuditExport {
+  const exportPayload: VaultAuditExport = {
+    exportType: "kia-stick-fake-vault-audit",
+    generatedAt,
+    version,
+    guard: {
+      fakeMetadataOnly: true,
+      privatePathsIncluded: false,
+      fileContentIncluded: false,
+      exportContainsOnlySyntheticMetadata: true,
+    },
+    summary: {
+      records: state.records.length,
+      auditEntries: state.auditLog.length,
+      workflowStates: workflowStateCounts(state.records),
+    },
+    records: state.records.map(exportRecord),
+    auditLog: state.auditLog.map(cloneAudit),
+  };
+
+  const guard = assertFakeMetadataOnly(exportPayload);
+  if (!guard.ok) {
+    return {
+      ...exportPayload,
+      auditLog: [
+        auditEntry("export", "blocked_export_guard", `Export guard blocked unsafe metadata: ${guard.reasons.join("; ")}`, generatedAt, "system"),
+      ],
+      records: [],
+      summary: {
+        records: 0,
+        auditEntries: 1,
+        workflowStates: workflowStateCounts([]),
+      },
+    };
+  }
+
+  return exportPayload;
+}
+
+export function exportVaultAuditJson(state: VaultState, version: RuntimeVersion, generatedAt?: string): string {
+  return `${JSON.stringify(buildVaultAuditExport(state, version, generatedAt), null, 2)}\n`;
+}
+
+export function exportVaultAuditMarkdown(state: VaultState, version: RuntimeVersion, generatedAt?: string): string {
+  const payload = buildVaultAuditExport(state, version, generatedAt);
+  const lines = [
+    "# KIA Stick Fake Vault Audit Export",
+    "",
+    `- Generated: ${payload.generatedAt}`,
+    `- Display version: ${payload.version.displayVersion}`,
+    `- Product version: ${payload.version.productVersion}`,
+    `- Git SHA: ${payload.version.gitSha}`,
+    `- Fake metadata only: ${payload.guard.fakeMetadataOnly}`,
+    `- Private paths included: ${payload.guard.privatePathsIncluded}`,
+    `- File content included: ${payload.guard.fileContentIncluded}`,
+    "",
+    "## Workflow States",
+    "",
+    ...workflowStateOrder.map((stateName) => `- ${stateName}: ${payload.summary.workflowStates[stateName]}`),
+    "",
+    "## Records",
+    "",
+    ...payload.records.flatMap((record) => [
+      `### ${record.title}`,
+      "",
+      `- ID: ${record.id}`,
+      `- Lane: ${record.lane}`,
+      `- Lifecycle: ${record.lifecycleStep}`,
+      `- Workflow state: ${record.workflowState}`,
+      `- Redaction: ${record.redactionStatus}`,
+      `- Metadata: ${record.metadataStatus}`,
+      `- Index reason: ${record.indexReason}`,
+      `- Fake ref: ${record.fakeSourceRef}`,
+      `- Fake hash: ${record.fakeHash}`,
+      "",
+    ]),
+    "## Audit Log",
+    "",
+    ...payload.auditLog.map((entry) => `- ${entry.at} ${entry.action} ${entry.recordId}: ${entry.note}`),
+    "",
+  ];
+
+  return lines.join("\n");
 }

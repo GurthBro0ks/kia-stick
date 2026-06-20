@@ -8,6 +8,7 @@ import {
   ChevronRight,
   ClipboardList,
   Database,
+  Download,
   FileSearch,
   Heart,
   MessageSquareText,
@@ -30,15 +31,20 @@ import {
 import {
   applyVaultAction,
   createInitialVaultState,
+  exportVaultAuditJson,
+  exportVaultAuditMarkdown,
   laneCounts,
   laneLabels,
   lifecycleLabels,
   lifecycleSteps,
+  workflowStateCounts,
+  workflowStateLabels,
   type FakeVaultRecord,
   type LifecycleStep,
   type VaultAction,
   type VaultLane,
   type VaultState,
+  type VaultWorkflowState,
 } from "@/lib/vaultModel";
 import { clientVersion, type RuntimeVersion } from "@/lib/version";
 
@@ -72,15 +78,15 @@ const details: Detail[] = ["Simple", "Detailed", "Checklist"];
 
 const savedKey = "kia-stick.saved-answers.v0.1";
 const quarantineKey = "kia-stick.quarantine.v0.1";
-const vaultKey = "kia-stick.vault-state.v0.3";
+const vaultKey = "kia-stick.vault-state.v0.4";
 
 const vaultViews: { id: VaultView; label: string; meta: string }[] = [
-  { id: "vault", label: "Vault", meta: "lane overview" },
-  { id: "quarantine", label: "Quarantine", meta: "not indexable" },
-  { id: "redaction", label: "Redaction Review", meta: "flags and decisions" },
-  { id: "metadata", label: "Metadata Review", meta: "authority fields" },
-  { id: "index", label: "Index Eligibility", meta: "explicit yes/no" },
-  { id: "audit", label: "Audit Log", meta: "local mock events" },
+  { id: "vault", label: "Vault", meta: "fake lane overview" },
+  { id: "quarantine", label: "Quarantine", meta: "quarantine-only" },
+  { id: "redaction", label: "Redaction Review", meta: "required before metadata" },
+  { id: "metadata", label: "Metadata Review", meta: "required before eligibility" },
+  { id: "index", label: "Index Eligibility", meta: "eligible fake only" },
+  { id: "audit", label: "Audit Log", meta: "safe fake export" },
 ];
 
 const intentLabels: Record<AnswerResult["intent"], string> = {
@@ -163,6 +169,7 @@ export function KiaStickApp({ runtimeVersion = clientVersion }: { runtimeVersion
   }, []);
 
   const vaultCounts = useMemo(() => laneCounts(vaultState.records), [vaultState.records]);
+  const workflowCounts = useMemo(() => workflowStateCounts(vaultState.records), [vaultState.records]);
 
   function runAnswer(nextQuestion = question) {
     const nextAnswer = buildAnswer(nextQuestion, { mode, scope, detail, runtimeVersion });
@@ -351,7 +358,7 @@ export function KiaStickApp({ runtimeVersion = clientVersion }: { runtimeVersion
 
         {tab === "upload" && (
           <section className="tabPanel">
-            <PanelHeader title="Upload" meta="quarantine review only" />
+            <PanelHeader title="Upload" meta="fake metadata quarantine only" />
             <div className="uploadPanel">
               <label className="checkboxRow">
                 <input
@@ -362,7 +369,7 @@ export function KiaStickApp({ runtimeVersion = clientVersion }: { runtimeVersion
                 Fake sample only
               </label>
               <label className="fieldLabel">
-                Local file metadata
+                Fake sample metadata, never content
                 <input
                   className="fileInput"
                   type="file"
@@ -381,6 +388,7 @@ export function KiaStickApp({ runtimeVersion = clientVersion }: { runtimeVersion
                     </p>
                     <div className="sourceMeta">
                       <span className="badge">{item.review}</span>
+                      <span className="badge red">not_indexable</span>
                       <span className="badge">{item.privacy}</span>
                       <span className="badge">{new Date(item.timestamp).toLocaleString()}</span>
                     </div>
@@ -395,9 +403,11 @@ export function KiaStickApp({ runtimeVersion = clientVersion }: { runtimeVersion
           <VaultPanel
             counts={vaultCounts}
             onAction={runVaultAction}
+            runtimeVersion={runtimeVersion}
             setView={setVaultView}
             state={vaultState}
             view={vaultView}
+            workflowCounts={workflowCounts}
           />
         )}
 
@@ -464,8 +474,10 @@ function NavButton(props: { active: boolean; label: string; icon: React.ReactNod
 
 function VaultPanel(props: {
   counts: Record<VaultLane, number>;
+  workflowCounts: Record<VaultWorkflowState, number>;
   state: VaultState;
   view: VaultView;
+  runtimeVersion: RuntimeVersion;
   setView: (view: VaultView) => void;
   onAction: (action: VaultAction) => void;
 }) {
@@ -477,14 +489,17 @@ function VaultPanel(props: {
       return props.state.records.filter(
         (record) =>
           record.redactionFlags.length > 0 ||
-          record.lifecycleStep === "redaction_detection" ||
-          record.lifecycleStep === "admin_review" ||
-          record.lifecycleStep === "approved_redacted_copy"
+          record.lifecycleStep === "redaction_review" ||
+          record.workflowState === "redaction_required" ||
+          record.workflowState === "review_rejected"
       );
     }
     if (props.view === "metadata") {
       return props.state.records.filter(
-        (record) => record.metadataStatus !== "reviewed" || record.lifecycleStep === "metadata" || record.lifecycleStep === "index_decision"
+        (record) =>
+          record.metadataStatus !== "reviewed" ||
+          record.lifecycleStep === "metadata_review" ||
+          record.workflowState === "metadata_required"
       );
     }
     if (props.view === "index") {
@@ -494,6 +509,14 @@ function VaultPanel(props: {
   }, [props.state.records, props.view]);
 
   const activeView = vaultViews.find((view) => view.id === props.view) ?? vaultViews[0];
+  const jsonExport = useMemo(
+    () => exportVaultAuditJson(props.state, props.runtimeVersion, new Date().toISOString()),
+    [props.runtimeVersion, props.state]
+  );
+  const markdownExport = useMemo(
+    () => exportVaultAuditMarkdown(props.state, props.runtimeVersion, new Date().toISOString()),
+    [props.runtimeVersion, props.state]
+  );
 
   return (
     <section className="tabPanel vaultPanel">
@@ -507,7 +530,7 @@ function VaultPanel(props: {
           `/media/mint/SHARED/APWU` and `~/kia-stick-private-vault` stay outside this UI and outside tracked GitHub content.
         </NoticeBox>
         <NoticeBox tone="neutral" title="Index warning">
-          Quarantine, redaction, and admin review are governance gates. They do not make an item indexable.
+          Quarantine, redaction review, and metadata review are separate gates. They never imply index approval.
         </NoticeBox>
       </div>
 
@@ -535,6 +558,15 @@ function VaultPanel(props: {
             ))}
           </div>
 
+          <div className="workflowGrid" aria-label="workflow state counts">
+            {(Object.entries(props.workflowCounts) as [VaultWorkflowState, number][]).map(([state, count]) => (
+              <div className="workflowTile" key={state}>
+                <span>{workflowStateLabels[state]}</span>
+                <strong>{count}</strong>
+              </div>
+            ))}
+          </div>
+
           <section className="lifecyclePanel" aria-label="lifecycle state machine">
             <h3 className="sectionTitle">
               <ClipboardList size={14} />
@@ -547,6 +579,16 @@ function VaultPanel(props: {
 
       {props.view === "audit" ? (
         <div className="auditList">
+          <section className="auditExportPanel">
+            <div>
+              <h3>Fake audit export</h3>
+              <p>Exports include fake metadata, audit events, and build identity only. Private paths and file content are excluded.</p>
+            </div>
+            <div className="vaultActions">
+              <DownloadLink fileName="kia-stick-fake-vault-audit.json" label="JSON" mimeType="application/json" text={jsonExport} />
+              <DownloadLink fileName="kia-stick-fake-vault-audit.md" label="Markdown" mimeType="text/markdown" text={markdownExport} />
+            </div>
+          </section>
           {props.state.auditLog.map((entry) => (
             <article className="auditEntry" key={entry.id}>
               <div>
@@ -596,6 +638,8 @@ function LifecycleRail({ current }: { current: LifecycleStep }) {
 
 function VaultRecordCard({ record, onAction }: { record: FakeVaultRecord; onAction: (action: VaultAction) => void }) {
   const canAdvance = record.lifecycleStep !== "audit";
+  const nextStep = nextLifecycleStepLabel(record.lifecycleStep);
+  const workflowTone = record.workflowState === "eligible_fake_only" ? "ok" : "warning";
 
   return (
     <article className="vaultRecordCard">
@@ -604,8 +648,8 @@ function VaultRecordCard({ record, onAction }: { record: FakeVaultRecord; onActi
           <span className={`laneBadge lane-${record.lane}`}>{laneLabels[record.lane]}</span>
           <h3>{record.title}</h3>
         </div>
-        <span className={record.indexEligibility === "not_eligible" ? "statusPill warning" : "statusPill ok"}>
-          {record.indexEligibility}
+        <span className={`statusPill ${workflowTone}`}>
+          {record.workflowState}
         </span>
       </div>
 
@@ -619,6 +663,7 @@ function VaultRecordCard({ record, onAction }: { record: FakeVaultRecord; onActi
         <VaultField label="Sensitivity" value={record.sensitivity} />
         <VaultField label="Redaction" value={record.redactionStatus} />
         <VaultField label="Metadata" value={record.metadataStatus} />
+        <VaultField label="Workflow state" value={record.workflowState} />
         <VaultField label="Reviewer" value={record.reviewer} />
         <VaultField label="Fake hash" value={record.fakeHash} />
       </div>
@@ -639,6 +684,13 @@ function VaultRecordCard({ record, onAction }: { record: FakeVaultRecord; onActi
 
       <p className="indexReason">{record.indexReason}</p>
 
+      {record.lastBlockedReason && (
+        <p className="blockedReason">
+          <AlertTriangle size={14} />
+          {record.lastBlockedReason}
+        </p>
+      )}
+
       <div className="vaultActions">
         <button
           className="button primary"
@@ -647,7 +699,37 @@ function VaultRecordCard({ record, onAction }: { record: FakeVaultRecord; onActi
           onClick={() => onAction({ type: "advance", recordId: record.id })}
         >
           <CheckCircle2 size={16} />
-          Advance fake gate
+          Advance to {nextStep}
+        </button>
+        <button
+          className="button subtle"
+          type="button"
+          onClick={() => onAction({ type: "approve_redaction", recordId: record.id })}
+        >
+          <ShieldCheck size={16} />
+          Redaction OK
+        </button>
+        <button
+          className="button subtle"
+          type="button"
+          onClick={() => onAction({ type: "approve_metadata", recordId: record.id })}
+        >
+          <ClipboardList size={16} />
+          Metadata OK
+        </button>
+        <button
+          className="button subtle"
+          type="button"
+          onClick={() =>
+            onAction({
+              type: "reject_review",
+              recordId: record.id,
+              reason: "Manual fake review rejected this metadata row; it remains not indexable.",
+            })
+          }
+        >
+          <AlertTriangle size={16} />
+          Reject review
         </button>
         <button
           className="button subtle"
@@ -656,7 +738,7 @@ function VaultRecordCard({ record, onAction }: { record: FakeVaultRecord; onActi
             onAction({
               type: "block_index",
               recordId: record.id,
-              reason: "Manual fake review marked this item not indexable; quarantine/review does not approve indexing.",
+              reason: "Manual fake review marked this item not indexable; quarantine, redaction, and metadata review do not approve indexing.",
             })
           }
         >
@@ -665,6 +747,32 @@ function VaultRecordCard({ record, onAction }: { record: FakeVaultRecord; onActi
         </button>
       </div>
     </article>
+  );
+}
+
+function nextLifecycleStepLabel(step: LifecycleStep): string {
+  const currentIndex = lifecycleSteps.indexOf(step);
+  const nextStep = lifecycleSteps[Math.min(currentIndex + 1, lifecycleSteps.length - 1)];
+  return lifecycleLabels[nextStep];
+}
+
+function DownloadLink(props: { fileName: string; label: string; mimeType: string; text: string }) {
+  const href = useMemo(() => {
+    if (typeof window === "undefined") return "";
+    return URL.createObjectURL(new Blob([props.text], { type: props.mimeType }));
+  }, [props.mimeType, props.text]);
+
+  useEffect(() => {
+    return () => {
+      if (href) URL.revokeObjectURL(href);
+    };
+  }, [href]);
+
+  return (
+    <a className="button subtle" href={href} download={props.fileName}>
+      <Download size={16} />
+      {props.label}
+    </a>
   );
 }
 

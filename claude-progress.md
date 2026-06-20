@@ -2,10 +2,10 @@
 
 ## Current Phase
 
-- Phase: `KIA-Stick-v0.3-build-identity-version-system`
+- Phase: `KIA-Stick-v0.4-fake-vault-workflow-hardening`
 - Target: `USER_LAPTOP_ONLY`
 - Provider: `local-fake-deterministic`
-- Status: v0.3 build identity version system implemented; product milestone semver stays separate from per-build display identity.
+- Status: v0.4 fake-vault workflow hardening implemented and locally committed.
 
 ## Accepted v0.1 State
 
@@ -57,6 +57,22 @@
 - `/version`: displays `displayVersion` prominently and lists full metadata.
 - UI surfaces: header, settings, answer footer, and saved answer metadata use `displayVersion`.
 - Corpus/index/prompt versions remain separate from app build version.
+- Real/private document access: none.
+- Push performed: no.
+
+## v0.4 Fake Vault Workflow Hardening State
+
+- Scope: hardened fake private-vault workflow using fake metadata only.
+- Product version: `0.4.0`.
+- Proof directory: `/tmp/proof_kia_stick_v04_fake_vault_hardening_20260620T114211Z`
+- Lifecycle enforced: `selected -> quarantine -> hash/provenance -> redaction review -> metadata review -> index eligibility -> audit`.
+- Explicit states: `not_indexable`, `quarantine_only`, `redaction_required`, `metadata_required`, `review_rejected`, `eligible_fake_only`.
+- New fake-only actions: approve redaction, approve metadata, reject review, mark not indexable, export audit JSON, export audit Markdown.
+- Invalid transitions: blocked with visible per-record reasons and audit entries.
+- Audit export: fake metadata and build identity only; no filesystem/private paths or file content.
+- Tests added for transitions, blocked states, audit export, and no-real-file guard.
+- Validation: PASS for lint, typecheck, test, build, qa, scan:fake, scan:privacy, private tracked-path check, `/health`, and `/version`.
+- Manual QA: PARTIAL automated route/screenshot smoke; operator Vault click-through pending.
 - Real/private document access: none.
 - Push performed: no.
 
@@ -123,6 +139,35 @@
 - `curl -fsS http://127.0.0.1:3005/version | head -c 1500`
 - `curl -fsS -o /tmp/proof_kia_stick_v03_build_identity_20260620T110445Z/health.json http://127.0.0.1:3005/health`
 - `curl -fsS -o /tmp/proof_kia_stick_v03_build_identity_20260620T110445Z/version.html http://127.0.0.1:3005/version`
+- `cat /home/slimy/AGENTS.md` (path missing on this machine)
+- `cat /home/slimy/claude-progress.md` (path missing on this machine)
+- `source /home/slimy/init.sh` (path missing on this machine)
+- `cat ./AGENTS.md`
+- `cat ./claude-progress.md`
+- `source ./init.sh || true`
+- `git status --short`
+- `npm run typecheck`
+- `npm run test`
+- `node -e "JSON.parse(require('fs').readFileSync('feature_list.json','utf8')); console.log('feature_list ok')"`
+- `npm run lint`
+- `npm run typecheck`
+- `npm run test`
+- `npm run build`
+- `PROOF_DIR=/tmp/proof_kia_stick_v04_fake_vault_hardening_20260620T114211Z PHASE=KIA-Stick-v0.4-fake-vault-workflow-hardening npm run qa`
+- `npm run scan:fake`
+- `npm run scan:privacy`
+- `git ls-files 'DB/**' 'data/real-documents/**' 'data/quarantine/**' 'data/redacted-approved/**' 'exports/**' 'backups/**' 'vector-store/**'`
+- `grep -R "/media/mint/SHARED/APWU" app components lib docs README.md AGENTS.md claude-progress.md feature_list.json 2>/dev/null || true`
+- `npm run dev -- --port 3005`
+- `curl -s http://127.0.0.1:3005/health`
+- `curl -s http://127.0.0.1:3005/version | head -c 1500`
+- `curl -fsS -o /tmp/proof_kia_stick_v04_fake_vault_hardening_20260620T114211Z/health.json http://127.0.0.1:3005/health`
+- `curl -fsS -o /tmp/proof_kia_stick_v04_fake_vault_hardening_20260620T114211Z/version.html http://127.0.0.1:3005/version`
+- `node scripts/cdp-screenshot.mjs http://127.0.0.1:3005 /tmp/proof_kia_stick_v04_fake_vault_hardening_20260620T114211Z/app.png 390 844`
+- `node scripts/cdp-screenshot.mjs http://127.0.0.1:3005/version /tmp/proof_kia_stick_v04_fake_vault_hardening_20260620T114211Z/version.png 390 844`
+- `git diff --check`
+- `git add CLOSEOUT.md README.md app/globals.css app/health/route.ts claude-progress.md components/KiaStickApp.tsx docs/v0.4-fake-vault-workflow-hardening.md feature_list.json lib/vaultModel.ts lib/version.ts package-lock.json package.json tests/answerGovernor.test.ts`
+- `git commit -m "Harden fake vault workflow"`
 
 ## Files Changed
 
@@ -150,6 +195,14 @@
 - v0.3 build identity doc added at `docs/v0.3-build-identity-version-system.md`.
 - v0.3 build identity state recorded in `README.md`, `CLOSEOUT.md`, `claude-progress.md`, and `feature_list.json`.
 - QA result text updated in `scripts/qa_gate.sh` for product/build/corpus/index/prompt/provider metadata.
+- v0.4 fake-vault state machine hardened in `lib/vaultModel.ts`.
+- v0.4 Vault UI actions, blocked reasons, workflow counts, and audit export links added in `components/KiaStickApp.tsx`.
+- v0.4 vault styles added in `app/globals.css`.
+- v0.4 `/health` phase label updated in `app/health/route.ts`.
+- Product version and prompt version updated in `package.json`, `package-lock.json`, and `lib/version.ts`.
+- v0.4 transition, blocked-state, export, and fake guard tests added in `tests/answerGovernor.test.ts`.
+- v0.4 implementation note added at `docs/v0.4-fake-vault-workflow-hardening.md`.
+- v0.4 README, closeout, feature inventory, and progress state updated.
 
 ## Proof Directory
 
@@ -159,6 +212,7 @@
 - v0.2 plan closeout proof: `/tmp/proof_kia_stick_v02_plan_closeout_20260620T024646Z`
 - v0.3 private-vault UI scaffold proof: `/tmp/proof_kia_stick_v03_vault_ui_20260620T102553Z`
 - v0.3 build identity proof: `/tmp/proof_kia_stick_v03_build_identity_20260620T110445Z`
+- v0.4 fake-vault hardening proof: `/tmp/proof_kia_stick_v04_fake_vault_hardening_20260620T114211Z`
 
 ## Remaining Unknowns
 
@@ -170,3 +224,5 @@
 - Next safe phase should continue fake-metadata-only unless separately authorized; no real-document reads/copies/indexing/scanning are approved by v0.3.
 - `npm run test` still prints the Vite CJS API deprecation warning.
 - The first sandboxed `/health` curl attempt failed before the permission profile changed; direct local runtime checks passed afterward.
+- v0.4 operator manual Vault click-through is pending; automated tests cover transition blocking, visible block reasons, audit exports, and fake-only guards.
+- A transient Next dev `/version` 500 occurred after running production build while dev server was live; restarting the local dev server cleared it and route captures passed.

@@ -12,9 +12,9 @@ export interface RuntimeVersion {
   provider: string;
 }
 
-export const PRODUCT_VERSION = "0.3.0";
+export const PRODUCT_VERSION = "0.4.0";
 export const DEFAULT_CHANNEL = "dev";
-export const PROMPT_VERSION = "prompt.fake-docs.v0.3-vault-ui";
+export const PROMPT_VERSION = "prompt.fake-docs.v0.4-vault-hardening";
 export const DEFAULT_PROVIDER = "local-fake-deterministic";
 export const UNKNOWN_GIT_SHA = "unknown";
 

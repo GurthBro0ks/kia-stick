@@ -1,5 +1,43 @@
 # KIA Stick Closeout
 
+## v0.4 Fake Vault Workflow Hardening
+
+- Phase: `KIA-Stick-v0.4-fake-vault-workflow-hardening`
+- Scope: hardened fake private-vault workflow using fake metadata only.
+- Proof directory: `/tmp/proof_kia_stick_v04_fake_vault_hardening_20260620T114211Z`
+- Product version: `0.4.0`
+- Manual QA: PARTIAL automated route/screenshot smoke; operator Vault click-through pending.
+- Provider: `local-fake-deterministic`
+- Cloud/API required: no
+- Secrets printed: no
+- Push performed: no
+- Real document boundary: `/media/mint/SHARED/APWU` untouched
+- Private vault inspected: no
+
+## v0.4 Implemented Coverage
+
+- Replaced permissive fake gate advancement with the stricter lifecycle: `selected -> quarantine -> hash/provenance -> redaction review -> metadata review -> index eligibility -> audit`.
+- Added explicit workflow states: `not_indexable`, `quarantine_only`, `redaction_required`, `metadata_required`, `review_rejected`, and `eligible_fake_only`.
+- Added mock redaction approval, metadata approval, review rejection, and not-indexable actions.
+- Blocked invalid transitions with visible per-record reasons and audit-log events.
+- Added fake JSON and Markdown audit exports with build identity.
+- Redacted forbidden private references from audit notes and tests.
+- Kept Chat, Saved, Upload quarantine UI, Settings, `/health`, and `/version` working.
+- Added tests for transitions, blocked states, no-real-file guard, and audit export.
+
+## v0.4 Known Warnings
+
+- `npm run test` prints the existing Vite CJS API deprecation notice.
+- `next build` may print the existing Next flat-ESLint plugin detection warning while still passing validation.
+
+## Next Safe Phase
+
+Recommended next phase: `KIA-Stick-v0.4-manual-qa-closeout-review`.
+
+Future phases remain fake-doc/fake-metadata-only unless separately authorized. No real-document reads, copies, scans, OCR, ingestion, summarization, transforms, real indexing, uploads, private-vault inspection, or commits are approved by this hardening phase.
+
+---
+
 ## v0.3 Build Identity Version System
 
 - Phase: `KIA-Stick-v0.3-build-identity-version-system`

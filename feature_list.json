@@ -1,5 +1,5 @@
 {
-  "phase": "KIA-Stick-v0.3-build-identity-version-system",
+  "phase": "KIA-Stick-v0.4-fake-vault-workflow-hardening",
   "target_machine": "USER_LAPTOP_ONLY",
   "accepted_v0_1": {
     "commit": "1d9b05c",
@@ -22,6 +22,9 @@
     "fake_vault_metadata_fixtures",
     "vault_lifecycle_state_machine",
     "vault_fake_action_audit_log",
+    "vault_explicit_workflow_states",
+    "vault_blocked_transition_reasons",
+    "vault_fake_audit_export",
     "no_real_file_access_guard",
     "build_identity_display_version",
     "health_version_routes",
@@ -135,6 +138,60 @@
       "saved_answer_metadata"
     ],
     "corpus_index_prompt_versions_separate": true,
+    "real_document_access": false,
+    "private_vault_inspected": false,
+    "real_db_boundary": "/media/mint/SHARED/APWU untouched"
+  },
+  "implemented_v0_4": {
+    "phase": "KIA-Stick-v0.4-fake-vault-workflow-hardening",
+    "status": "implemented_fake_metadata_only",
+    "document": "docs/v0.4-fake-vault-workflow-hardening.md",
+    "proof_dir": "/tmp/proof_kia_stick_v04_fake_vault_hardening_20260620T114211Z",
+    "product_version": "0.4.0",
+    "workflow": [
+      "selected",
+      "quarantine",
+      "hash_provenance",
+      "redaction_review",
+      "metadata_review",
+      "index_eligibility",
+      "audit"
+    ],
+    "workflow_states": [
+      "not_indexable",
+      "quarantine_only",
+      "redaction_required",
+      "metadata_required",
+      "review_rejected",
+      "eligible_fake_only"
+    ],
+    "surfaces": [
+      "Vault",
+      "Quarantine",
+      "Redaction Review",
+      "Metadata Review",
+      "Index Eligibility",
+      "Audit Log",
+      "Audit JSON export",
+      "Audit Markdown export"
+    ],
+    "hard_limits": [
+      "fake_metadata_only",
+      "no_real_document_reads",
+      "no_private_vault_inspection",
+      "no_upload_or_ingestion",
+      "no_ocr",
+      "no_real_indexing",
+      "no_cloud",
+      "no_push"
+    ],
+    "guards": [
+      "invalid_transition_blocking",
+      "visible_block_reasons",
+      "no_real_file_access_guard",
+      "audit_export_excludes_private_paths",
+      "audit_export_includes_build_identity"
+    ],
     "real_document_access": false,
     "private_vault_inspected": false,
     "real_db_boundary": "/media/mint/SHARED/APWU untouched"
