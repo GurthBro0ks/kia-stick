@@ -2,10 +2,10 @@
 
 ## Current Phase
 
-- Phase: `KIA-Stick-v0.3-private-vault-ui-scaffold`
+- Phase: `KIA-Stick-v0.3-build-identity-version-system`
 - Target: `USER_LAPTOP_ONLY`
 - Provider: `local-fake-deterministic`
-- Status: v0.3 private-vault governance UI scaffold implemented with fake metadata fixtures only; no real-document ingestion implemented.
+- Status: v0.3 build identity version system implemented; product milestone semver stays separate from per-build display identity.
 
 ## Accepted v0.1 State
 
@@ -42,6 +42,21 @@
 - Lifecycle shown: `selected -> quarantine -> hash_provenance -> redaction_detection -> admin_review -> approved_redacted_copy -> metadata -> index_decision -> audit`.
 - Fake-only actions: advance fake gate and mark not indexable; both update local mock state only.
 - Guard: vault action payloads with real/private paths, raw text/content fields, file/blob/bytes fields, or browser `File` objects are blocked.
+- Real/private document access: none.
+- Push performed: no.
+
+## v0.3 Build Identity State
+
+- Scope: product milestone semver plus unique build identity.
+- Product version: `0.3.0`.
+- Display version rule: `productVersion-channel.buildDate+gitSha`.
+- Runtime display version format verified: `0.3.0-dev.20260620+<gitSha>`.
+- Runtime Git SHA source: current `git rev-parse --short HEAD` at request time, with `unknown` fallback.
+- Proof directory: `/tmp/proof_kia_stick_v03_build_identity_20260620T110445Z`
+- `/health`: exposes `productVersion`, `channel`, `buildDate`, `gitSha`, `displayVersion`, `corpusVersion`, `indexVersion`, `promptVersion`, and `provider`.
+- `/version`: displays `displayVersion` prominently and lists full metadata.
+- UI surfaces: header, settings, answer footer, and saved answer metadata use `displayVersion`.
+- Corpus/index/prompt versions remain separate from app build version.
 - Real/private document access: none.
 - Push performed: no.
 
@@ -96,6 +111,18 @@
 - `curl -s http://127.0.0.1:3005/health`
 - `curl -s http://127.0.0.1:3005/version | head -c 2000`
 - local headless Chrome/CDP manual QA for bottom nav, Vault sub-surfaces, fake action audit, chat, health, version, and mobile overflow.
+- `PHASE=KIA-Stick-v0.3-build-identity-version-system PROOF_DIR=/tmp/proof_kia_stick_v03_build_identity_20260620T110445Z npm run qa`
+- `npm run lint`
+- `npm run typecheck`
+- `npm run test`
+- `npm run build`
+- `npm run qa`
+- `npm run scan:fake`
+- `npm run scan:privacy`
+- `curl -fsS http://127.0.0.1:3005/health`
+- `curl -fsS http://127.0.0.1:3005/version | head -c 1500`
+- `curl -fsS -o /tmp/proof_kia_stick_v03_build_identity_20260620T110445Z/health.json http://127.0.0.1:3005/health`
+- `curl -fsS -o /tmp/proof_kia_stick_v03_build_identity_20260620T110445Z/version.html http://127.0.0.1:3005/version`
 
 ## Files Changed
 
@@ -117,6 +144,12 @@
 - v0.3 README and feature inventory updated.
 - Privacy scan now blocks `data/quarantine/` and `data/redacted-approved/`.
 - Fake-corpus generator preserves `generatedAt` when corpus content is unchanged.
+- v0.3 build identity module updated in `lib/version.ts` and `lib/serverVersion.ts`.
+- v0.3 `/health`, `/version`, app header, settings, answer footer, and saved answer metadata updated to use `displayVersion`.
+- v0.3 build identity tests added in `tests/answerGovernor.test.ts`.
+- v0.3 build identity doc added at `docs/v0.3-build-identity-version-system.md`.
+- v0.3 build identity state recorded in `README.md`, `CLOSEOUT.md`, `claude-progress.md`, and `feature_list.json`.
+- QA result text updated in `scripts/qa_gate.sh` for product/build/corpus/index/prompt/provider metadata.
 
 ## Proof Directory
 
@@ -125,6 +158,7 @@
 - v0.2 document vault/redaction plan proof: `/tmp/proof_kia_stick_v02_doc_vault_plan_20260619T235153Z`
 - v0.2 plan closeout proof: `/tmp/proof_kia_stick_v02_plan_closeout_20260620T024646Z`
 - v0.3 private-vault UI scaffold proof: `/tmp/proof_kia_stick_v03_vault_ui_20260620T102553Z`
+- v0.3 build identity proof: `/tmp/proof_kia_stick_v03_build_identity_20260620T110445Z`
 
 ## Remaining Unknowns
 
@@ -134,3 +168,5 @@
 - Local untracked `DB/` archive folder was observed by filename only and is ignored, not committed.
 - `next build` still prints Next's flat-ESLint plugin detection warning, but lint/typecheck/build pass.
 - Next safe phase should continue fake-metadata-only unless separately authorized; no real-document reads/copies/indexing/scanning are approved by v0.3.
+- `npm run test` still prints the Vite CJS API deprecation warning.
+- The first sandboxed `/health` curl attempt failed before the permission profile changed; direct local runtime checks passed afterward.

@@ -1,6 +1,10 @@
 import { describe, expect, it } from "vitest";
+import { renderToStaticMarkup } from "react-dom/server";
+import { GET as healthGET } from "@/app/health/route";
+import VersionPage from "@/app/version/page";
 import { buildAnswer } from "@/lib/answerGovernor";
 import { corpus } from "@/lib/sourceModel";
+import { createRuntimeVersion, runtimeVersionFields } from "@/lib/version";
 import {
   applyVaultAction,
   assertFakeMetadataOnly,
@@ -36,7 +40,9 @@ describe("answer governor", () => {
     expect(answer.bestGuessDisabled).toBe(false);
     expect(answer.citations.some((citation) => citation.class === "controlling_contract_language")).toBe(true);
     expect(answer.footer).toContain("Sources:");
+    expect(answer.footer).toContain("Build:");
     expect(answer.footer).toContain("Mode:Strict Research");
+    expect(answer.version.displayVersion).toMatch(/^0\.3\.0-dev\.\d{8}\+(?:[a-z0-9]+|unknown)$/);
   });
 
   it("blocks best guess for Step 1 evidence when no controlling language is present", () => {
@@ -55,6 +61,56 @@ describe("answer governor", () => {
     expect(answer.relatedFakeSections.some((citation) => citation.class === "unknown_unverified")).toBe(true);
     expect(answer.citations.every((citation) => citation.citable)).toBe(true);
     expect(answer.conflicts.join(" ")).toContain("unverified");
+  });
+});
+
+describe("runtime build identity", () => {
+  it("formats displayVersion from product milestone, channel, UTC build date, and git SHA", () => {
+    const version = createRuntimeVersion({
+      productVersion: "0.3.0",
+      channel: "dev",
+      buildDate: "20260620",
+      gitSha: "c33c049",
+      corpusVersion: "corpus.test",
+      indexVersion: "index.test",
+      promptVersion: "prompt.test",
+      provider: "provider.test",
+    });
+
+    expect(version.displayVersion).toBe("0.3.0-dev.20260620+c33c049");
+    expect(version.productVersion).toBe("0.3.0");
+    expect(version.corpusVersion).toBe("corpus.test");
+    expect(version.indexVersion).toBe("index.test");
+  });
+
+  it("exposes every build identity field through /health", async () => {
+    const response = healthGET();
+    const payload = await response.json();
+
+    for (const field of runtimeVersionFields) {
+      expect(payload).toHaveProperty(field);
+      expect(payload.version).toHaveProperty(field);
+      expect(payload[field]).toBe(payload.version[field]);
+    }
+
+    expect(payload.version.displayVersion).toMatch(/^0\.3\.0-dev\.\d{8}\+(?:[a-z0-9]+|unknown)$/);
+    expect(payload.version.corpusVersion).toBe(corpus.corpusVersion);
+    expect(payload.version.indexVersion).toBe(corpus.indexVersion);
+  });
+
+  it("renders full build metadata on the /version page", () => {
+    const html = renderToStaticMarkup(VersionPage());
+
+    expect(html).toContain("Build Identity");
+    expect(html).toContain("Display Version");
+    expect(html).toContain("Product Version");
+    expect(html).toContain("Build Date");
+    expect(html).toContain("Git SHA");
+    expect(html).toContain("Corpus");
+    expect(html).toContain("Index");
+    expect(html).toContain("Prompt");
+    expect(html).toContain("Provider");
+    expect(html).toMatch(/0\.3\.0-dev\.\d{8}\+(?:[a-z0-9]+|unknown)/);
   });
 });
 

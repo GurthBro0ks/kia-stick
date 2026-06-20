@@ -5,16 +5,27 @@ import { getRuntimeVersion } from "@/lib/serverVersion";
 export const dynamic = "force-dynamic";
 
 export function GET() {
+  const version = getRuntimeVersion();
+
   return NextResponse.json({
     ok: true,
     app: "kia-stick",
-    phase: "KIA-Stick-v0.3-private-vault-ui-scaffold",
+    phase: "KIA-Stick-v0.3-build-identity-version-system",
     targetMachine: "USER_LAPTOP_ONLY",
     fakeOnly: true,
     realDbTouched: false,
     cloudRequired: false,
     apiKeyRequired: false,
     docs: corpus.docs.length,
-    version: getRuntimeVersion(),
+    productVersion: version.productVersion,
+    channel: version.channel,
+    buildDate: version.buildDate,
+    gitSha: version.gitSha,
+    displayVersion: version.displayVersion,
+    corpusVersion: version.corpusVersion,
+    indexVersion: version.indexVersion,
+    promptVersion: version.promptVersion,
+    provider: version.provider,
+    version,
   });
 }

@@ -2,6 +2,16 @@
 
 Laptop-only fake-doc PWA for testing citation-first governance, source hierarchy, and private-vault review workflow scaffolding.
 
+## Version Identity
+
+KIA Stick separates milestone semver from build identity:
+
+- `productVersion` changes slowly at planned milestone phases, for example `0.3.0`.
+- `displayVersion` changes per build as `productVersion-channel.buildDate+gitSha`, for example `0.3.0-dev.20260620+c33c049`.
+- `corpusVersion`, `indexVersion`, and `promptVersion` stay separate from the app build version.
+
+`/health`, `/version`, the app header, settings, answer footer, and saved answer metadata expose the current `displayVersion`.
+
 ## Run
 
 ```bash

@@ -1,8 +1,9 @@
 import type { Metadata, Viewport } from "next";
+import { PRODUCT_VERSION } from "@/lib/version";
 import "./globals.css";
 
 export const metadata: Metadata = {
-  title: "KIA Stick v0.3",
+  title: `KIA Stick ${PRODUCT_VERSION}`,
   description: "Fake-doc source-governed local PWA with private-vault governance scaffold.",
   applicationName: "KIA Stick",
   manifest: "/manifest.webmanifest",

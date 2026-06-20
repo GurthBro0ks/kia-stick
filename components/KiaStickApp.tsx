@@ -40,7 +40,7 @@ import {
   type VaultLane,
   type VaultState,
 } from "@/lib/vaultModel";
-import { clientVersion } from "@/lib/version";
+import { clientVersion, type RuntimeVersion } from "@/lib/version";
 
 type Tab = "chat" | "sources" | "saved" | "upload" | "vault" | "settings";
 type VaultView = "vault" | "quarantine" | "redaction" | "metadata" | "index" | "audit";
@@ -104,14 +104,23 @@ function loadJson<T>(key: string, fallback: T): T {
   }
 }
 
-export function KiaStickApp() {
+function savedBuildLabel(item: SavedAnswer): string {
+  return item.version?.displayVersion ?? item.provider ?? "unknown";
+}
+
+export function KiaStickApp({ runtimeVersion = clientVersion }: { runtimeVersion?: RuntimeVersion }) {
   const [tab, setTab] = useState<Tab>("chat");
   const [mode, setMode] = useState<Mode>("Strict Research");
   const [scope, setScope] = useState<Scope>("All Fake");
   const [detail, setDetail] = useState<Detail>("Detailed");
   const [question, setQuestion] = useState(cannedQuestions[0]);
   const [answer, setAnswer] = useState<AnswerResult>(() =>
-    buildAnswer(cannedQuestions[0], { mode: "Strict Research", scope: "All Fake", detail: "Detailed" })
+    buildAnswer(cannedQuestions[0], {
+      mode: "Strict Research",
+      scope: "All Fake",
+      detail: "Detailed",
+      runtimeVersion,
+    })
   );
   const [saved, setSaved] = useState<SavedAnswer[]>([]);
   const [quarantine, setQuarantine] = useState<QuarantineItem[]>([]);
@@ -156,7 +165,7 @@ export function KiaStickApp() {
   const vaultCounts = useMemo(() => laneCounts(vaultState.records), [vaultState.records]);
 
   function runAnswer(nextQuestion = question) {
-    const nextAnswer = buildAnswer(nextQuestion, { mode, scope, detail });
+    const nextAnswer = buildAnswer(nextQuestion, { mode, scope, detail, runtimeVersion });
     setQuestion(nextQuestion);
     setAnswer(nextAnswer);
     setTab("chat");
@@ -202,8 +211,8 @@ export function KiaStickApp() {
           <h1 className="brand">KIA Stick</h1>
         </div>
         <div className="topMeta">
-          <span className="winBadge">v{clientVersion.appVersion}</span>
-          <span>{clientVersion.provider}</span>
+          <span className="winBadge">{runtimeVersion.displayVersion}</span>
+          <span>{runtimeVersion.provider}</span>
         </div>
       </header>
 
@@ -330,6 +339,7 @@ export function KiaStickApp() {
                   <div className="sourceMeta">
                     <span className="badge">{item.mode}</span>
                     <span className="badge">{item.provider}</span>
+                    <span className="badge">{savedBuildLabel(item)}</span>
                     <span className="badge">{item.citations.length} citations</span>
                     <span className="badge">{new Date(item.timestamp).toLocaleString()}</span>
                   </div>
@@ -395,18 +405,24 @@ export function KiaStickApp() {
           <section className="tabPanel">
             <PanelHeader title="Settings" meta={<a href="/version">Version page</a>} />
             <dl className="settingsGrid">
-              <dt>App</dt>
-              <dd>{clientVersion.appVersion}</dd>
-              <dt>Git</dt>
-              <dd>{clientVersion.gitSha}</dd>
+              <dt>Display</dt>
+              <dd>{runtimeVersion.displayVersion}</dd>
+              <dt>Product</dt>
+              <dd>{runtimeVersion.productVersion}</dd>
+              <dt>Channel</dt>
+              <dd>{runtimeVersion.channel}</dd>
+              <dt>Build Date</dt>
+              <dd>{runtimeVersion.buildDate}</dd>
+              <dt>Git SHA</dt>
+              <dd>{runtimeVersion.gitSha}</dd>
               <dt>Corpus</dt>
-              <dd>{clientVersion.corpusVersion}</dd>
+              <dd>{runtimeVersion.corpusVersion}</dd>
               <dt>Index</dt>
-              <dd>{clientVersion.indexVersion}</dd>
+              <dd>{runtimeVersion.indexVersion}</dd>
               <dt>Prompt</dt>
-              <dd>{clientVersion.promptVersion}</dd>
+              <dd>{runtimeVersion.promptVersion}</dd>
               <dt>Provider</dt>
-              <dd>{clientVersion.provider}</dd>
+              <dd>{runtimeVersion.provider}</dd>
               <dt>Cloud</dt>
               <dd>disabled</dd>
               <dt>Real DB</dt>

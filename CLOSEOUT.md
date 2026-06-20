@@ -1,5 +1,45 @@
 # KIA Stick Closeout
 
+## v0.3 Build Identity Version System
+
+- Phase: `KIA-Stick-v0.3-build-identity-version-system`
+- Scope: product milestone semver plus per-build date/Git identity.
+- Proof directory: `/tmp/proof_kia_stick_v03_build_identity_20260620T110445Z`
+- Runtime display version format verified: `0.3.0-dev.20260620+<gitSha>`
+- Runtime Git SHA source: current `git rev-parse --short HEAD` at request time, with `unknown` fallback.
+- Manual QA: PASS for local `/health` and `/version` checks on `127.0.0.1:3005`.
+- Provider: `local-fake-deterministic`
+- Cloud/API required: no
+- Secrets printed: no
+- Push performed: no
+- Real document boundary: `/media/mint/SHARED/APWU` untouched
+- Private vault inspected: no
+
+## v0.3 Build Identity Coverage
+
+- Added `productVersion`, `channel`, `buildDate`, `gitSha`, and `displayVersion`.
+- Kept `corpusVersion`, `indexVersion`, `promptVersion`, and `provider` separate from app build identity.
+- `displayVersion` follows `productVersion-channel.buildDate+gitSha`, for example `0.3.0-dev.20260620+c33c049`.
+- `buildDate` uses UTC `YYYYMMDD`.
+- `gitSha` uses `git rev-parse --short HEAD` when available and falls back to `unknown`.
+- `/health` exposes every version field at top level and inside `version`.
+- `/version` shows `displayVersion` prominently and lists full metadata.
+- App header, settings, answer footer, and saved answer metadata use `displayVersion`.
+- Tests verify display-version format plus `/health` and `/version` fields.
+
+## v0.3 Build Identity Known Warnings
+
+- `next build` still prints Next's flat-ESLint plugin detection warning; lint, typecheck, test, build, and QA pass.
+- `npm run test` prints the existing Vite CJS API deprecation notice.
+
+## Next Safe Phase
+
+Recommended next phase: `KIA-Stick-v0.3-build-identity-closeout-review` or `KIA-Stick-v0.4-fake-vault-workflow-hardening`.
+
+Future phases remain fake-doc/fake-metadata-only unless separately authorized. No real-document reads, copies, scans, OCR, ingestion, summarization, transforms, indexing, uploads, or commits are approved by this version-system phase.
+
+---
+
 ## v0.3 Implementation State
 
 - Phase: `KIA-Stick-v0.3-private-vault-ui-scaffold`

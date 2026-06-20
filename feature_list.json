@@ -1,5 +1,5 @@
 {
-  "phase": "KIA-Stick-v0.3-private-vault-ui-scaffold",
+  "phase": "KIA-Stick-v0.3-build-identity-version-system",
   "target_machine": "USER_LAPTOP_ONLY",
   "accepted_v0_1": {
     "commit": "1d9b05c",
@@ -23,6 +23,7 @@
     "vault_lifecycle_state_machine",
     "vault_fake_action_audit_log",
     "no_real_file_access_guard",
+    "build_identity_display_version",
     "health_version_routes",
     "fake_privacy_scans",
     "github_safe_gitignore",
@@ -103,6 +104,37 @@
       "no_cloud",
       "no_push"
     ],
+    "real_document_access": false,
+    "private_vault_inspected": false,
+    "real_db_boundary": "/media/mint/SHARED/APWU untouched"
+  },
+  "implemented_v0_3_build_identity": {
+    "phase": "KIA-Stick-v0.3-build-identity-version-system",
+    "status": "implemented",
+    "document": "docs/v0.3-build-identity-version-system.md",
+    "proof_dir": "/tmp/proof_kia_stick_v03_build_identity_20260620T110445Z",
+    "product_version": "0.3.0",
+    "display_version_rule": "productVersion-channel.buildDate+gitSha",
+    "fields": [
+      "productVersion",
+      "channel",
+      "buildDate",
+      "gitSha",
+      "displayVersion",
+      "corpusVersion",
+      "indexVersion",
+      "promptVersion",
+      "provider"
+    ],
+    "surfaces": [
+      "/health",
+      "/version",
+      "app_header",
+      "settings",
+      "answer_footer",
+      "saved_answer_metadata"
+    ],
+    "corpus_index_prompt_versions_separate": true,
     "real_document_access": false,
     "private_vault_inspected": false,
     "real_db_boundary": "/media/mint/SHARED/APWU untouched"

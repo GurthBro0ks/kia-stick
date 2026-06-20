@@ -35,7 +35,7 @@ git ls-files >"$PROOF_DIR/git_ls_files.log" 2>&1 || true
 git ls-files --cached --others --exclude-standard | sort >"$PROOF_DIR/files_after.log"
 
 cat >"$PROOF_DIR/RESULT.md" <<RESULT
-# KIA Stick v0.1 Manual QA UI Fix Result
+# KIA Stick QA Result
 
 - Phase: $PHASE
 - Target machine: USER_LAPTOP_ONLY
@@ -61,8 +61,8 @@ cat >"$PROOF_DIR/RESULT.md" <<RESULT
 - One-click lunch prompt disables best guess for unverified source.
 - Saved answer persists in local storage.
 - Upload intake queues fake review item only and does not persist files server-side.
-- /health returns version payload.
-- /version displays app/corpus/index/prompt/provider versions.
+- /health returns full product/build/corpus/index/prompt/provider version payload.
+- /version displays display/product/build/corpus/index/prompt/provider metadata.
 RESULT
 
 echo "$PROOF_DIR"

@@ -2,7 +2,6 @@ import {
   bucketForClass,
   citationForDoc,
   citationLabel,
-  corpus,
   docsForScope,
   type Citation,
   type Detail,
@@ -334,7 +333,7 @@ export function buildAnswer(question: string, options: AnswerOptions): AnswerRes
   const citations = docs.filter((doc) => doc.citable).map(citationForDoc);
   const relatedFakeSections = docs.map(citationForDoc);
   const shortAnswer = shortAnswerFor(intent, docs, options.mode);
-  const footer = `Sources:${docs.length} | Corpus:${corpus.corpusVersion} | Index:${corpus.indexVersion} | Mode:${options.mode}`;
+  const footer = `Sources:${docs.length} | Corpus:${runtimeVersion.corpusVersion} | Index:${runtimeVersion.indexVersion} | Build:${runtimeVersion.displayVersion} | Mode:${options.mode}`;
 
   return {
     question: trimmedQuestion,
