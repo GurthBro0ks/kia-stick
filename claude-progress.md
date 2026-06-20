@@ -2,10 +2,27 @@
 
 ## Current Phase
 
-- Phase: `KIA-Stick-v0.5-import-wizard-design-plan`
+- Phase: `KIA-Stick-v0.5-import-wizard-plan-closeout`
 - Target: `USER_LAPTOP_ONLY`
 - Provider: `local-fake-deterministic`
-- Status: v0.5 import wizard design plan validation PASS; local commit pending.
+- Status: v0.5 import wizard plan closeout validation PASS; local commit pending.
+
+## v0.5 Import Wizard Plan Closeout State
+
+- Phase: `KIA-Stick-v0.5-import-wizard-plan-closeout`
+- Accepted plan commit: `46eba49`
+- Baseline: v0.4.1 fake-only release review at `16e1980`.
+- Scope: closeout verification for the planning-only v0.5 import wizard design.
+- Product version impact: none; app remains `0.4.0`.
+- Design doc: `docs/v0.5-import-wizard-design-plan.md`
+- Proof directory: `/tmp/proof_kia_stick_v05_import_wizard_plan_closeout_20260620T170459Z`
+- Verified plan boundaries: planning-only, no real import, no file picker, no reads, no copying, no OCR, no indexing, no uploads, and no private-vault inspection.
+- Verified plan coverage: wizard screens, stop signs, state machine, allowed transitions, blocked transitions, proof rules, UI rules, and future acceptance checklist.
+- Validation: PASS for lint, typecheck, test, build, qa, scan:fake, scan:privacy, manifest parse, private tracked-path check, policy-boundary grep, JSON parse, and docs/state-only diff.
+- Manual QA: not applicable beyond operator plan review; no UI implementation was added.
+- Real/private document access: none.
+- Private vault inspected: no.
+- Push performed: no.
 
 ## v0.5 Import Wizard Design Plan State
 
@@ -230,6 +247,15 @@
 
 ## Commands Run
 
+- `cat ./AGENTS.md`
+- `cat ./claude-progress.md`
+- `source ./init.sh || true`
+- `git status --short --branch`
+- `git log -5 --oneline --decorate`
+- `mkdir -p /tmp/proof_kia_stick_v05_import_wizard_plan_closeout_20260620T170459Z`
+- `test -f docs/v0.5-import-wizard-design-plan.md`
+- `rg -n "planning only|planning-only|does not implement|does not approve|No real import code|No file picker|No server-side path resolver|No file copy|No OCR|No text extraction|No summarization|No embeddings|No vector store|No private-vault inspection|No upload handling" docs/v0.5-import-wizard-design-plan.md`
+- `rg -n "Start / Safety Warning|Select Source Path Placeholder|Confirm Single-File Or Explicit Scoped Batch|Copy To Quarantine Confirmation|Provenance / Hash Step|Redaction Detection Preview|Admin Redaction Review|Metadata Review|Index Eligibility Decision|Audit Summary|Stop Signs Before Real Content Is Touched|Future State Machine|Allowed transitions|Blocked transitions|Proof Log Rules|UI Rules|Future Implementation Acceptance Checklist" docs/v0.5-import-wizard-design-plan.md`
 - `cat ./AGENTS.md`
 - `cat ./claude-progress.md`
 - `source ./init.sh`
@@ -468,6 +494,7 @@
 
 ## Files Changed
 
+- v0.5 import wizard plan closeout recorded in `CLOSEOUT.md`, `claude-progress.md`, and `feature_list.json`.
 - v0.5 import wizard design plan added at `docs/v0.5-import-wizard-design-plan.md`.
 - v0.5 planning summary added in `README.md`.
 - v0.5 closeout state added in `CLOSEOUT.md`.
@@ -553,6 +580,7 @@
 
 ## Proof Directory
 
+- v0.5 import wizard plan closeout proof: `/tmp/proof_kia_stick_v05_import_wizard_plan_closeout_20260620T170459Z`
 - v0.5 import wizard design plan proof: `/tmp/proof_kia_stick_v05_import_wizard_plan_20260620T165438Z`
 - v0.4 true threaded chat proof: `/tmp/proof_kia_stick_v04_true_threaded_chat_20260620T145019Z`
 - v0.4.1 fake chat polish proof: `/tmp/proof_kia_stick_v041_fake_chat_polish_20260620T155120Z`

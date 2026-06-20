@@ -1,5 +1,39 @@
 # KIA Stick Closeout
 
+## v0.5 Import Wizard Plan Closeout
+
+- Phase: `KIA-Stick-v0.5-import-wizard-plan-closeout`
+- Accepted plan commit: `46eba49`
+- Baseline: v0.4.1 fake-only release review at `16e1980`
+- Scope: closeout verification for the planning-only v0.5 import wizard design.
+- Product version impact: none; app remains `0.4.0`.
+- Design doc: `docs/v0.5-import-wizard-design-plan.md`
+- Proof directory: `/tmp/proof_kia_stick_v05_import_wizard_plan_closeout_20260620T170459Z`
+- Manual QA: not applicable beyond operator plan review; no UI implementation was added.
+- Validation: PASS for lint, typecheck, test, build, qa, scan:fake, scan:privacy, manifest parse, private tracked-path check, policy-boundary grep, JSON parse, and docs/state-only diff.
+- Provider: `local-fake-deterministic`
+- Cloud/API required: no
+- Secrets printed: no
+- Push performed: no
+- Real document access: none
+- Private vault inspected: no
+
+## v0.5 Closeout Verification
+
+- Verified the v0.5 plan exists.
+- Verified it says planning-only and does not approve or implement real import, file pickers, file reads, copying, OCR, indexing, uploads, or private-vault inspection.
+- Verified it defines future wizard screens, stop signs, state machine, allowed transitions, blocked transitions, proof rules, UI rules, and future acceptance checklist.
+- Verified README, CLOSEOUT, `feature_list.json`, and `claude-progress.md` mention v0.5 safely.
+- Verified changed files are docs/state only.
+
+## Next Safe Phase
+
+Recommended next phase: `KIA-Stick-v0.5-operator-plan-review-or-push-review`.
+
+Future phases remain planning-only or fake-only unless separately authorized. This closeout does not approve file pickers, path readers, real import code, copying, OCR, text extraction, indexing, upload handling, private-vault inspection, cloud calls, service changes, or pushes.
+
+---
+
 ## v0.5 Import Wizard Design Plan
 
 - Phase: `KIA-Stick-v0.5-import-wizard-design-plan`

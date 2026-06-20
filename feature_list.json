@@ -1,5 +1,5 @@
 {
-  "phase": "KIA-Stick-v0.5-import-wizard-design-plan",
+  "phase": "KIA-Stick-v0.5-import-wizard-plan-closeout",
   "target_machine": "USER_LAPTOP_ONLY",
   "accepted_v0_1": {
     "commit": "1d9b05c",
@@ -568,6 +568,37 @@
       "no_private_vault_inspection",
       "no_cloud_or_api_path",
       "no_push"
+    ],
+    "validation": "passed",
+    "manual_qa": "operator_plan_review_pending",
+    "real_document_access": false,
+    "private_vault_inspected": false,
+    "real_import_implemented": false,
+    "push_performed": false,
+    "real_db_boundary": "/media/mint/SHARED/APWU untouched"
+  },
+  "closed_out_v0_5_import_wizard_plan": {
+    "phase": "KIA-Stick-v0.5-import-wizard-plan-closeout",
+    "status": "closeout_validation_passed",
+    "accepted_plan_commit": "46eba49",
+    "baseline_commit": "16e1980",
+    "document": "docs/v0.5-import-wizard-design-plan.md",
+    "proof_dir": "/tmp/proof_kia_stick_v05_import_wizard_plan_closeout_20260620T170459Z",
+    "verified": [
+      "plan_exists",
+      "planning_only_boundary",
+      "no_real_import_approved",
+      "no_file_picker_approved",
+      "no_reads_copying_ocr_indexing_uploads_approved",
+      "no_private_vault_inspection_approved",
+      "wizard_screens_defined",
+      "stop_signs_defined",
+      "state_machine_defined",
+      "blocked_transitions_defined",
+      "github_safe_proof_rules_defined",
+      "ui_rules_defined",
+      "future_acceptance_checklist_defined",
+      "readme_closeout_progress_features_safe_mentions"
     ],
     "validation": "passed",
     "manual_qa": "operator_plan_review_pending",
