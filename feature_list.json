@@ -1,5 +1,5 @@
 {
-  "phase": "KIA-Stick-v0.5.4-local-phase-runner-proof-pack",
+  "phase": "KIA-Stick-v0.5.5-proof-index-and-acceptance-helper",
   "target_machine": "USER_LAPTOP_ONLY",
   "accepted_v0_1": {
     "commit": "1d9b05c",
@@ -61,6 +61,9 @@
     "upload_fake_button_regression_test",
     "release_readiness_version_coherence_automation",
     "local_phase_runner_proof_pack",
+    "proof_index_discovery",
+    "proof_latest_acceptance_helper",
+    "proof_summary_redaction_flags",
     "manual_push_command_output",
     "phase_runner_commit_gate",
     "phase_runner_no_push_invariant",
@@ -75,7 +78,7 @@
     "version_back_navigation"
   ],
   "release_readiness": {
-    "phase": "KIA-Stick-v0.5.4-local-phase-runner-proof-pack",
+    "phase": "KIA-Stick-v0.5.5-proof-index-and-acceptance-helper",
     "status": "implemented_fake_only_automation",
     "package_version": "0.4.0",
     "product_version": "0.4.0",
@@ -104,8 +107,11 @@
     "automation": [
       "scripts/release-check.mjs",
       "scripts/phase-runner.mjs",
+      "scripts/proof-index.mjs",
       "npm run release:check",
       "npm run phase:run",
+      "npm run proof:list",
+      "npm run proof:latest",
       "qa_gate_derives_phase_and_proof_dir_from_feature_list",
       "git_auto_sync_derives_default_commit_message_from_feature_list"
     ],
@@ -144,6 +150,46 @@
       "no_commit_on_warn_or_fail",
       "runner_never_pushes",
       "push_command_txt_is_manual_only"
+    ],
+    "real_document_access": false,
+    "private_vault_inspected": false,
+    "push_performed": false,
+    "real_db_boundary": "/media/mint/SHARED/APWU untouched"
+  },
+  "accepted_v0_5_4_phase_runner": {
+    "phase": "KIA-Stick-v0.5.4-local-phase-runner-proof-pack",
+    "status": "accepted_pushed_state_verified",
+    "accepted_commit": "6e87322",
+    "origin_main": "6e87322",
+    "proof_dir": "/tmp/proof_kia_stick_v054_phase_runner_20260620T201722Z",
+    "self_test_proof_dir": "/tmp/proof_kia_stick_v0_5_4_self_test_20260620T201802Z",
+    "validation": "passed",
+    "manual_qa": "operator_review_pending",
+    "push_performed": true,
+    "real_document_access": false,
+    "private_vault_inspected": false,
+    "real_db_boundary": "/media/mint/SHARED/APWU untouched"
+  },
+  "proof_index": {
+    "phase": "KIA-Stick-v0.5.5-proof-index-and-acceptance-helper",
+    "status": "implemented_fake_only_automation",
+    "script": "scripts/proof-index.mjs",
+    "npm_scripts": [
+      "proof:list",
+      "proof:latest"
+    ],
+    "reports": [
+      "recent_proof_dirs",
+      "latest_result_markdown",
+      "latest_push_command_when_present",
+      "acceptance_next_action",
+      "redaction_and_flag_summary"
+    ],
+    "redaction_flags": [
+      "apwu_path",
+      "private_vault",
+      "file_input",
+      "secret_like"
     ],
     "real_document_access": false,
     "private_vault_inspected": false,

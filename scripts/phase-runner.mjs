@@ -139,7 +139,8 @@ function utcStamp() {
 }
 
 function makeProofDir(phase) {
-  return `/tmp/proof_kia_stick_${sanitizePhaseForProof(phase)}_${utcStamp()}`;
+  const proofRoot = process.env.KIA_PHASE_RUNNER_PROOF_ROOT || "/tmp";
+  return path.join(proofRoot, `proof_kia_stick_${sanitizePhaseForProof(phase)}_${utcStamp()}`);
 }
 
 function writeCommandLog(logPath, commandLine, result) {

@@ -12,6 +12,16 @@ KIA Stick separates milestone semver from build identity:
 
 `/health`, `/version`, the app header, settings, answer footer, and saved answer metadata expose the current `displayVersion`.
 
+## v0.5.5 Proof Index and Acceptance Helper
+
+Phase: `KIA-Stick-v0.5.5-proof-index-and-acceptance-helper`.
+
+`npm run proof:list` lists recent `/tmp/proof_kia_stick_*` proof directories with phase, result, timestamp, commit, pushed state, flags, and path.
+
+`npm run proof:latest` prints the latest redacted `RESULT.md`, prints `push_command.txt` when present, and includes an acceptance helper that checks `RESULT=PASS`, clean/ahead git state, and WARN/FAIL text before printing the next action.
+
+Proof summaries redact or flag private paths, file input markup, secrets-looking values, `/media/mint/SHARED/APWU`, and private-vault mentions. The helper never pushes; it only prints review guidance.
+
 ## v0.5.4 Local Phase Runner
 
 Phase: `KIA-Stick-v0.5.4-local-phase-runner-proof-pack`.

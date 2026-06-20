@@ -19,6 +19,8 @@
     "scan:privacy": "node scripts/privacy-scan.mjs",
     "release:check": "node scripts/release-check.mjs",
     "phase:run": "node scripts/phase-runner.mjs",
+    "proof:list": "node scripts/proof-index.mjs list",
+    "proof:latest": "node scripts/proof-index.mjs latest",
     "qa": "bash scripts/qa_gate.sh"
   },
   "dependencies": {

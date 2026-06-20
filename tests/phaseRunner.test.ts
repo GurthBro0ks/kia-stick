@@ -56,7 +56,10 @@ function runPhaseRunner(root: string, args: string[], env: NodeJS.ProcessEnv = p
   return spawnSync("node", [scriptPath, "--root", root, ...args], {
     cwd: resolve("."),
     encoding: "utf8",
-    env,
+    env: {
+      ...env,
+      KIA_PHASE_RUNNER_PROOF_ROOT: mkdtempSync(join(tmpdir(), "kia-phase-runner-proof-root-")),
+    },
   });
 }
 

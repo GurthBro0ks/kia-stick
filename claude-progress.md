@@ -2,10 +2,30 @@
 
 ## Current Phase
 
-- Phase: `KIA-Stick-v0.5.4-local-phase-runner-proof-pack`
+- Phase: `KIA-Stick-v0.5.5-proof-index-and-acceptance-helper`
 - Target: `USER_LAPTOP_ONLY`
 - Provider: `local-fake-deterministic`
-- Status: validation PASS for local phase runner proof pack from v0.5.3 baseline `4b91f75`; one local commit created, no push.
+- Status: validation PASS for proof index and acceptance helper from accepted pushed v0.5.4 baseline `6e87322`; one local commit created, no push.
+
+## v0.5.5 Proof Index State
+
+- Phase: `KIA-Stick-v0.5.5-proof-index-and-acceptance-helper`
+- Baseline: origin/main and HEAD verified at `6e87322`.
+- v0.5.4 pushed state: recorded as accepted pushed commit `6e87322`.
+- Scope: fake-only proof discovery, latest proof inspection, acceptance next action, and proof-summary redaction/flagging.
+- Product version impact: none; app remains `0.4.0`.
+- Prompt version: `prompt.fake-docs.v0.5-import-wizard-hardening`
+- Commands: `npm run proof:list` and `npm run proof:latest`.
+- Push behavior: proof tooling never pushes.
+- Real/private document access: none.
+- Private vault inspected: no.
+- Push performed in this phase: no.
+- Commands run: missing `/home/slimy/*` harness checks, local harness load, git status/log/ref checks, repo/memory inspection, implementation edits, `git rev-parse --short origin/main`, `npm run release:check`, `npm run lint`, `npm run typecheck`, `npm run test`, `npm run build`, `npm run scan:fake`, `npm run scan:privacy`, `npm run qa`, `npm run phase:run -- --phase KIA-Stick-v0.5.5-proof-index-self-test`, `npm run proof:list`, `npm run proof:latest`, private tracked-path check, no-file-input grep, APWU boundary grep, and `git diff --check`.
+- Files changed: `scripts/proof-index.mjs`, `tests/proofIndex.test.ts`, `scripts/phase-runner.mjs`, `tests/phaseRunner.test.ts`, `package.json`, `README.md`, `CLOSEOUT.md`, `feature_list.json`, and `claude-progress.md`.
+- Proof directory: `/tmp/proof_kia_stick_v055_proof_index_20260620T203815Z`
+- Phase runner self-test proof directory: `/tmp/proof_kia_stick_v0_5_5_proof_index_self_test_20260620T203854Z`
+- Validation: PASS.
+- Remaining unknowns: operator manual review of proof index output and optional manual push.
 
 ## v0.5.4 Local Phase Runner State
 

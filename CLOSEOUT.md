@@ -1,5 +1,45 @@
 # KIA Stick Closeout
 
+## v0.5.5 Proof Index and Acceptance Helper
+
+- Phase: `KIA-Stick-v0.5.5-proof-index-and-acceptance-helper`
+- Baseline: accepted pushed v0.5.4 state at `6e87322`
+- Scope: fake-only proof discovery, latest proof inspection, acceptance next-action helper, and proof-summary redaction flags.
+- Product version impact: none; app remains `0.4.0`.
+- Prompt version: `prompt.fake-docs.v0.5-import-wizard-hardening`
+- Proof index: `npm run proof:list`
+- Latest proof helper: `npm run proof:latest`
+- Redaction/flags: APWU path, private vault, file input, and secrets-looking values.
+- Push behavior: proof tooling never pushes.
+- Real document access: none
+- Private vault inspected: no
+- Push performed: no
+
+## v0.5.5 Coverage
+
+- Added `scripts/proof-index.mjs` with no new dependencies.
+- Added `proof:list` and `proof:latest` package scripts.
+- Added recent proof listing with phase, result, timestamp, commit, pushed state, flags, and path.
+- Added latest proof output with redacted `RESULT.md`, optional `push_command.txt`, and acceptance next action.
+- Added tests for proof dir parsing, RESULT parsing, latest selection, redaction/flagging, latest output, acceptance helper behavior, and no-push/read-only invariants.
+
+## v0.5.4 Accepted Pushed State
+
+- Phase: `KIA-Stick-v0.5.4-local-phase-runner-proof-pack`
+- Accepted commit: `6e87322`
+- Origin/main verified: `6e87322`
+- Push performed before this phase: yes
+- Proof directory: `/tmp/proof_kia_stick_v054_phase_runner_20260620T201722Z`
+- Self-test proof directory: `/tmp/proof_kia_stick_v0_5_4_self_test_20260620T201802Z`
+
+## Next Safe Phase
+
+Recommended next phase: `KIA-Stick-v0.5.5-operator-proof-review`.
+
+Future phases remain fake-only unless separately authorized. This proof helper does not approve real import, file pickers, path readers, file reads, copying, OCR, text extraction, indexing, upload handling, private-vault inspection, cloud calls, service changes, pushes, or private document access.
+
+---
+
 ## v0.5.4 Local Phase Runner Proof Pack
 
 - Phase: `KIA-Stick-v0.5.4-local-phase-runner-proof-pack`
