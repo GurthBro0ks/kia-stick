@@ -3,16 +3,20 @@
 ## v0.5.2 Fake Wizard State Machine Hardening
 
 - Phase: `KIA-Stick-v0.5.2-fake-wizard-state-machine-hardening`
+- Closeout phase: `KIA-Stick-v0.5.2-closeout-project-state`
+- Accepted pushed commit: `0143c84`
+- Origin/main verified: `0143c84`
 - Baseline: v0.5.1 replacement proof closeout at `c3b9859`
 - Scope: harden fake Import Wizard state machine, proof export, Upload fake-button tests, and regression coverage.
 - Product version impact: none; app remains `0.4.0`.
 - Proof directory: `/tmp/proof_kia_stick_v052_fake_wizard_state_machine_20260620T190452Z`
+- Closeout proof directory: `/tmp/proof_kia_stick_v052_closeout_20260620T192234Z`
 - Manual QA: PASS by CDP smoke for Import blocked actions, full fake happy path, fake proof labels, Upload fake buttons/queue, Chat render, zero file inputs, and mobile no-overflow.
-- Validation: PASS for git status/log, lint, typecheck, test, build, qa, scan:fake, scan:privacy, manifest parse, private tracked-path check, no-file-input grep, policy-boundary grep review, `/health`, `/version`, and CDP browser smoke.
+- Closeout validation: PASS for HEAD/origin commit checks, proof directory existence, lint, typecheck, test, build, qa, scan:fake, scan:privacy, manifest parse, private tracked-path check, no-file-input grep, policy-boundary grep review, and accepted CDP browser smoke.
 - Provider: `local-fake-deterministic`
 - Cloud/API required: no
 - Secrets printed: no
-- Push performed: no
+- Push performed in this closeout: no
 - Real document access: none
 - Private vault inspected: no
 

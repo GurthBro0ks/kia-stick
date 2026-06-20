@@ -2,28 +2,32 @@
 
 ## Current Phase
 
-- Phase: `KIA-Stick-v0.5.2-fake-wizard-state-machine-hardening`
+- Phase: `KIA-Stick-v0.5.2-closeout-project-state`
 - Target: `USER_LAPTOP_ONLY`
 - Provider: `local-fake-deterministic`
-- Status: validation PASS; ready for local commit, no push.
+- Status: accepted pushed state verified at `0143c84`; closeout validation PASS; docs/state-only local commit pending, no push.
 
 ## v0.5.2 Fake Wizard State Machine Hardening State
 
 - Phase: `KIA-Stick-v0.5.2-fake-wizard-state-machine-hardening`
+- Closeout phase: `KIA-Stick-v0.5.2-closeout-project-state`
+- Accepted pushed commit: `0143c84`
+- Origin/main verified: `0143c84`
 - Baseline: v0.5.1 replacement proof closeout at `c3b9859`.
 - Scope: fake-only Import Wizard state machine guard hardening, proof export checks, Upload fake-button regression coverage, and docs/state updates.
 - Product version impact: none; app remains `0.4.0`.
 - Proof directory: `/tmp/proof_kia_stick_v052_fake_wizard_state_machine_20260620T190452Z`
+- Closeout proof directory: `/tmp/proof_kia_stick_v052_closeout_20260620T192234Z`
 - Implementation: explicit allowed transition map, deterministic blocked jump reasons, stronger fake-only action key guard, sanitized fake audit/proof export, expanded proof guard flags, and fake state flags in JSON proof.
 - Tests: full happy path, audit order, high-risk blocked jumps, real-file/path payload blocking, tainted audit proof sanitization, no file input, and Upload fake-button rendering.
 - Focused validation: PASS for `npm run typecheck` and `npm run test`.
-- Full validation: PASS for lint, typecheck, test, build, qa, scan:fake, scan:privacy, manifest parse, private tracked-path check, no-file-input grep, policy-boundary grep review, `/health`, `/version`, and CDP browser smoke.
+- Closeout validation: PASS for HEAD/origin commit checks, proof directory existence, lint, typecheck, test, build, qa, scan:fake, scan:privacy, manifest parse, private tracked-path check, no-file-input grep, policy-boundary grep review, and accepted CDP browser smoke.
 - Manual QA: PASS by CDP smoke for Import blocked actions, full fake happy path, fake proof labels, Upload fake buttons/queue, Chat render, zero file inputs, and mobile no-overflow.
 - Real/private document access: none.
 - Private vault inspected: no.
-- Push performed: no.
-- Commands run: missing `/home/slimy/*` harness checks, local harness load, git status/log, model/UI/test inspection, lint, typecheck, test, build, qa, scan:fake, scan:privacy, manifest parse, private tracked-path check, file-input grep, policy-boundary grep, `/health`, `/version`, CDP browser smoke, diff/status review, and docs/state edits.
-- Files changed so far: `app/health/route.ts`, `components/KiaStickApp.tsx`, `lib/importWizardModel.ts`, `tests/answerGovernor.test.ts`, `README.md`, `CLOSEOUT.md`, `feature_list.json`, and `claude-progress.md`.
+- Push performed in this closeout: no.
+- Commands run in this closeout: missing `/home/slimy/*` harness checks, local harness load, git status/log, HEAD/origin checks, existing proof directory check, lint, typecheck, test, build, qa, scan:fake, scan:privacy, manifest parse, private tracked-path check, file-input grep, policy-boundary grep, accepted `manual_qa_cdp.json` review, and docs/state edits.
+- Files changed in this closeout: `CLOSEOUT.md`, `claude-progress.md`, and `feature_list.json`.
 - Remaining unknowns: operator physical browser click-through is still optional; automated CDP smoke passed.
 
 ## v0.5.1 Replacement Proof Accepted Closeout State

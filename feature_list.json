@@ -722,6 +722,36 @@
     "push_performed": false,
     "real_db_boundary": "/media/mint/SHARED/APWU untouched"
   },
+  "accepted_v0_5_2_closeout_project_state": {
+    "phase": "KIA-Stick-v0.5.2-closeout-project-state",
+    "status": "accepted_pushed_state_verified",
+    "accepted_commit": "0143c84",
+    "origin_main": "0143c84",
+    "implementation_phase": "KIA-Stick-v0.5.2-fake-wizard-state-machine-hardening",
+    "implementation_proof_dir": "/tmp/proof_kia_stick_v052_fake_wizard_state_machine_20260620T190452Z",
+    "closeout_proof_dir": "/tmp/proof_kia_stick_v052_closeout_20260620T192234Z",
+    "product_version": "0.4.0",
+    "verified": [
+      "head_equals_origin_main_0143c84",
+      "implementation_proof_dir_exists",
+      "validation_passed",
+      "manual_qa_cdp_passed",
+      "import_wizard_fake_metadata_only",
+      "upload_fake_buttons_only",
+      "zero_file_inputs",
+      "no_tracked_private_data_paths",
+      "no_real_import_path_reader_file_read_copy_ocr_upload_indexing_vector_store_or_private_vault_inspection"
+    ],
+    "validation": "passed",
+    "manual_qa": "accepted_cdp_import_upload_chat_smoke_passed",
+    "real_document_access": false,
+    "private_vault_inspected": false,
+    "real_import_implemented": false,
+    "file_picker_implemented": false,
+    "ocr_index_upload_implemented": false,
+    "push_performed": false,
+    "real_db_boundary": "/media/mint/SHARED/APWU untouched"
+  },
   "accepted_v0_5_1_replacement_proof_closeout": {
     "phase": "KIA-Stick-v0.5.1-replacement-proof-closeout",
     "status": "accepted_pushed_replacement_proof_passed",
