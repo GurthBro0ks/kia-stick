@@ -21,14 +21,14 @@ import React, { useEffect, useMemo, useState } from "react";
 import { buildAnswer, cannedQuestions, type AnswerResult } from "@/lib/answerGovernor";
 import {
   createSavedAnswerRecord,
+  migrateSavedAnswers,
   upsertSavedAnswer,
   type SaveAnswerStatus,
   type SavedAnswer,
 } from "@/lib/savedAnswers";
 import {
-  bucketForClass,
+  buildSourceHierarchyGroups,
   citationLabel,
-  corpus,
   sourceClassLabels,
   type Detail,
   type Mode,
@@ -137,7 +137,7 @@ export function KiaStickApp({ runtimeVersion = clientVersion }: { runtimeVersion
   const [hydrated, setHydrated] = useState(false);
 
   useEffect(() => {
-    setSaved(loadJson<SavedAnswer[]>(savedKey, []));
+    setSaved(migrateSavedAnswers(loadJson<unknown[]>(savedKey, [])));
     setQuarantine(loadJson<QuarantineItem[]>(quarantineKey, []));
     setVaultState(loadJson<VaultState>(vaultKey, createInitialVaultState()));
     setHydrated(true);
@@ -162,12 +162,7 @@ export function KiaStickApp({ runtimeVersion = clientVersion }: { runtimeVersion
     window.localStorage.setItem(vaultKey, JSON.stringify(vaultState));
   }, [hydrated, vaultState]);
 
-  const sourceBuckets = useMemo(() => {
-    return corpus.sourceClasses.map((sourceClass) => ({
-      sourceClass,
-      docs: corpus.docs.filter((doc) => doc.class === sourceClass),
-    }));
-  }, []);
+  const sourceHierarchyGroups = useMemo(() => buildSourceHierarchyGroups(), []);
 
   const vaultCounts = useMemo(() => laneCounts(vaultState.records), [vaultState.records]);
   const workflowCounts = useMemo(() => workflowStateCounts(vaultState.records), [vaultState.records]);
@@ -231,11 +226,13 @@ export function KiaStickApp({ runtimeVersion = clientVersion }: { runtimeVersion
       <main className={tab === "chat" ? "mainArea chatMain" : "mainArea"}>
         {tab === "chat" && (
           <>
-            <section className="chatComposer" aria-label="Ask KIA Stick">
+            <AnswerPanel answer={answer} />
+
+            <section className="chatComposer chatComposerDock" aria-label="Ask KIA Stick">
               <div className="composerHeader">
                 <div>
-                  <span className="sectionKicker">Research mode</span>
-                  <h2>Ask with citations first</h2>
+                  <span className="sectionKicker">Message</span>
+                  <h2>Ask KIA Stick</h2>
                 </div>
                 <span className={answer.noAnswer ? "statusPill warning" : "statusPill ok"}>
                   {answer.noAnswer ? "No controlling hit" : "Cited answer"}
@@ -269,14 +266,17 @@ export function KiaStickApp({ runtimeVersion = clientVersion }: { runtimeVersion
                 </label>
               </div>
 
-              <div className="promptRail" aria-label="fake test prompts">
-                {cannedQuestions.map((prompt) => (
-                  <button className="promptChip" key={prompt} type="button" onClick={() => runAnswer(prompt)}>
-                    {prompt}
-                    <ChevronRight size={14} />
-                  </button>
-                ))}
-              </div>
+              <details className="promptDetails">
+                <summary>Prompt shortcuts</summary>
+                <div className="promptRail" aria-label="fake test prompts">
+                  {cannedQuestions.map((prompt) => (
+                    <button className="promptChip" key={prompt} type="button" onClick={() => runAnswer(prompt)}>
+                      {prompt}
+                      <ChevronRight size={14} />
+                    </button>
+                  ))}
+                </div>
+              </details>
 
               <div className="askBox">
                 <textarea
@@ -300,26 +300,29 @@ export function KiaStickApp({ runtimeVersion = clientVersion }: { runtimeVersion
                 )}
               </div>
             </section>
-
-            <AnswerPanel answer={answer} />
           </>
         )}
 
         {tab === "sources" && (
           <section className="tabPanel">
-            <PanelHeader title="Sources" meta={`${corpus.docs.length} fake docs`} />
+            <PanelHeader title="Sources" meta="hierarchy grouped" />
             <div className="sourceCards">
-              {sourceBuckets.map(({ sourceClass, docs }) => (
-                <article className="sourceCard" key={sourceClass}>
+              {sourceHierarchyGroups.map(({ hierarchy, label, docs }) => (
+                <article className="sourceCard hierarchyCard" key={hierarchy}>
                   <div>
-                    <h3>{sourceClassLabels[sourceClass]}</h3>
-                    <p>{docs.length} source{docs.length === 1 ? "" : "s"} · bucket {bucketForClass(sourceClass)}</p>
+                    <h3>{label}</h3>
+                    <p>{docs.length} fake source{docs.length === 1 ? "" : "s"} in the citation hierarchy.</p>
                   </div>
-                  <div className="sourceMeta">
+                  <div className="hierarchyDocList">
                     {docs.map((doc) => (
-                      <span className={doc.citable ? "badge green" : "badge red"} key={doc.id}>
-                        {doc.citable ? "citable" : "not citable"} · {doc.page}
-                      </span>
+                      <div className="hierarchyDoc" key={doc.id}>
+                        <strong>{doc.title}</strong>
+                        <div className="sourceMeta">
+                          <span className="badge">{sourceClassLabels[doc.class]}</span>
+                          <span className={doc.citable ? "badge green" : "badge red"}>{doc.citable ? "citable" : "not citable"}</span>
+                          <span className="badge">{doc.page}</span>
+                        </div>
+                      </div>
                     ))}
                   </div>
                 </article>
@@ -882,6 +885,7 @@ function VaultField({ label, value }: { label: string; value: string }) {
 
 function AnswerPanel({ answer }: { answer: AnswerResult }) {
   const [citationsOpen, setCitationsOpen] = useState(false);
+  const [packetOpen, setPacketOpen] = useState(false);
 
   return (
     <section className="chatThread" aria-label="Current answer">
@@ -904,70 +908,56 @@ function AnswerPanel({ answer }: { answer: AnswerResult }) {
             </span>
           </div>
 
-          <p className="shortAnswer">{answer.shortAnswer}</p>
-          <p className="modeNote">{answer.modeNote}</p>
-
-          <div className="answerSection">
-            <h3 className="sectionTitle">
-              <ShieldCheck size={14} />
-              Authority Stack
-            </h3>
-            {answer.sourceGroups.length === 0 && <p className="emptyState">No fake sources matched.</p>}
-            {answer.sourceGroups.map((group) => (
-              <section className="authorityGroup" key={group.bucket}>
-                <h4>{group.label}</h4>
-                <div className="authorityGrid">
-                  {group.docs.map((doc) => (
-                    <article className="authorityCard" key={doc.id}>
-                      <strong>{doc.title}</strong>
-                      <p>{doc.excerpt}</p>
-                      <div className="sourceMeta">
-                        <span className="badge">{sourceClassLabels[doc.class]}</span>
-                        <span className={doc.citable ? "badge green" : "badge red"}>{doc.citable ? "citable" : "not citable"}</span>
-                        <span className="badge">{doc.article}</span>
-                        <span className="badge">{doc.page}</span>
-                      </div>
-                    </article>
-                  ))}
-                </div>
-              </section>
-            ))}
+          <div className="compactAnswer">
+            <section>
+              <span>Short answer</span>
+              <p className="shortAnswer">{answer.shortAnswer}</p>
+            </section>
+            <section>
+              <span>Confidence / authority</span>
+              <strong>{authoritySummary(answer)}</strong>
+              <p>{answer.modeNote}</p>
+            </section>
+            <section>
+              <span>What to do next</span>
+              <strong>{answer.followUps[0] ?? answer.evidenceChecklist[0] ?? "Review the fake source trail."}</strong>
+              <p>{answer.missingFacts[0] ?? "Keep the fake record packet attached to the answer."}</p>
+            </section>
           </div>
 
-          <div className="answerGrid">
-            <ListBlock title="Conflicts" items={answer.conflicts.length > 0 ? answer.conflicts : ["No visible fake-source conflicts."]} icon="conflict" />
-            <ListBlock title="Evidence Checklist" items={answer.evidenceChecklist} icon="checklist" />
-            <ListBlock title="Missing Facts" items={answer.missingFacts} icon="facts" />
-            <ListBlock title="Follow-Ups" items={answer.followUps} icon="followups" />
-          </div>
-
-          <div className="answerSection">
-            <h3 className="sectionTitle">
-              <Database size={14} />
-              Citations
-            </h3>
+          <div className="compactActions">
+            <button
+              aria-expanded={packetOpen}
+              className="button primary"
+              type="button"
+              onClick={() => setPacketOpen((open) => !open)}
+            >
+              <ClipboardList size={16} />
+              {packetOpen ? "Hide full packet" : "Show full packet"}
+            </button>
             {answer.citations.length === 0 ? (
               <p className="emptyState">No citable fake sources.</p>
             ) : (
-              <>
-                <button
-                  aria-expanded={citationsOpen}
-                  className="button subtle citationToggle"
-                  type="button"
-                  onClick={() => setCitationsOpen((open) => !open)}
-                >
-                  {citationsOpen ? "Hide citations" : `Show citations (${answer.citations.length})`}
-                </button>
-                {citationsOpen && (
-                  <ol className="citationCards">
-                    {answer.citations.map((citation) => (
-                      <li key={citation.id}>{citationLabel(citation)}</li>
-                    ))}
-                  </ol>
-                )}
-              </>
+              <button
+                aria-expanded={citationsOpen}
+                className="button subtle citationToggle"
+                type="button"
+                onClick={() => setCitationsOpen((open) => !open)}
+              >
+                {citationsOpen ? "Hide citations" : `Show citations (${answer.citations.length})`}
+              </button>
             )}
           </div>
+
+          {citationsOpen && (
+            <ol className="citationCards">
+              {answer.citations.map((citation) => (
+                <li key={citation.id}>{citationLabel(citation)}</li>
+              ))}
+            </ol>
+          )}
+
+          {packetOpen && <FullPacket answer={answer} />}
 
           <div className="footerLine">
             {answer.footer} | Prompt:{answer.version.promptVersion} | Provider:{answer.version.provider}
@@ -975,6 +965,57 @@ function AnswerPanel({ answer }: { answer: AnswerResult }) {
         </div>
       </div>
     </section>
+  );
+}
+
+function authoritySummary(answer: AnswerResult): string {
+  if (answer.noAnswer) return "Low confidence. No controlling fake source found.";
+  const controllingCount = answer.sourceGroups
+    .flatMap((group) => group.docs)
+    .filter((doc) => doc.class === "controlling_contract_language" || doc.class === "local_controlling_source").length;
+  if (controllingCount > 0) {
+    return `High fake-source confidence. ${controllingCount} controlling/local source${controllingCount === 1 ? "" : "s"} matched.`;
+  }
+  return `Medium fake-source confidence. ${answer.citations.length} citable source${answer.citations.length === 1 ? "" : "s"} matched.`;
+}
+
+function FullPacket({ answer }: { answer: AnswerResult }) {
+  return (
+    <div className="fullPacket">
+      <section className="answerSection">
+        <h3 className="sectionTitle">
+          <ShieldCheck size={14} />
+          Authority Stack
+        </h3>
+        {answer.sourceGroups.length === 0 && <p className="emptyState">No fake sources matched.</p>}
+        {answer.sourceGroups.map((group) => (
+          <section className="authorityGroup" key={group.bucket}>
+            <h4>{group.label}</h4>
+            <div className="authorityGrid">
+              {group.docs.map((doc) => (
+                <article className="authorityCard" key={doc.id}>
+                  <strong>{doc.title}</strong>
+                  <p>{doc.excerpt}</p>
+                  <div className="sourceMeta">
+                    <span className="badge">{sourceClassLabels[doc.class]}</span>
+                    <span className={doc.citable ? "badge green" : "badge red"}>{doc.citable ? "citable" : "not citable"}</span>
+                    <span className="badge">{doc.article}</span>
+                    <span className="badge">{doc.page}</span>
+                  </div>
+                </article>
+              ))}
+            </div>
+          </section>
+        ))}
+      </section>
+
+      <div className="answerGrid">
+        <ListBlock title="Conflicts" items={answer.conflicts.length > 0 ? answer.conflicts : ["No visible fake-source conflicts."]} icon="conflict" />
+        <ListBlock title="Evidence Checklist" items={answer.evidenceChecklist} icon="checklist" />
+        <ListBlock title="Missing Facts" items={answer.missingFacts} icon="facts" />
+        <ListBlock title="Follow-Ups" items={answer.followUps} icon="followups" />
+      </div>
+    </div>
   );
 }
 

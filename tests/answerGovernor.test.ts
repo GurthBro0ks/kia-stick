@@ -4,9 +4,9 @@ import React from "react";
 import { GET as healthGET } from "@/app/health/route";
 import VersionPage from "@/app/version/page";
 import { KiaStickApp, VaultPanel } from "@/components/KiaStickApp";
-import { buildAnswer } from "@/lib/answerGovernor";
-import { createSavedAnswerRecord, upsertSavedAnswer } from "@/lib/savedAnswers";
-import { corpus } from "@/lib/sourceModel";
+import { answerToMarkdown, buildAnswer } from "@/lib/answerGovernor";
+import { createSavedAnswerRecord, migrateSavedAnswers, upsertSavedAnswer } from "@/lib/savedAnswers";
+import { buildSourceHierarchyGroups, corpus, sourceHierarchyLabels, sourceHierarchyOrder } from "@/lib/sourceModel";
 import { createRuntimeVersion, runtimeVersionFields } from "@/lib/version";
 import {
   applyVaultAction,
@@ -30,6 +30,16 @@ describe("fake corpus", () => {
     for (const sourceClass of corpus.sourceClasses) {
       expect(corpus.docs.some((doc) => doc.class === sourceClass)).toBe(true);
     }
+  });
+
+  it("groups fake sources by the requested citation hierarchy", () => {
+    const groups = buildSourceHierarchyGroups();
+
+    expect(groups.map((group) => group.hierarchy)).toEqual(sourceHierarchyOrder);
+    expect(groups.map((group) => group.label)).toEqual(sourceHierarchyOrder.map((hierarchy) => sourceHierarchyLabels[hierarchy]));
+    expect(groups.flatMap((group) => group.docs)).toHaveLength(corpus.docs.length);
+    expect(groups.find((group) => group.hierarchy === "local")?.docs.some((doc) => doc.class === "local_controlling_source")).toBe(true);
+    expect(groups.find((group) => group.hierarchy === "national")?.docs.some((doc) => doc.class === "controlling_contract_language")).toBe(true);
   });
 
   it("keeps every document fake-bannered", () => {
@@ -109,6 +119,87 @@ describe("saved answers", () => {
     expect(result.status).toBe("duplicate");
     expect(result.saved).toHaveLength(1);
     expect(result.saved[0].timestamp).toBe(first.timestamp);
+  });
+
+  it("dedupes legacy localStorage records and makes the migrated save key reusable", () => {
+    const question = "Can annual leave be denied after I submitted inside the fake window?";
+    const older = buildAnswer(question, {
+      ...baseOptions,
+      runtimeVersion: createRuntimeVersion({ buildDate: "20260619", gitSha: "old1111" }),
+    });
+    const newer = buildAnswer(question, {
+      ...baseOptions,
+      runtimeVersion: createRuntimeVersion({ buildDate: "20260620", gitSha: "new2222" }),
+    });
+    const legacyRecords = [
+      {
+        id: "legacy-a",
+        question,
+        answer: answerToMarkdown(older),
+        mode: baseOptions.mode,
+        citations: older.citations,
+        version: older.version,
+        provider: older.version.provider,
+        timestamp: "2026-06-20T04:00:00.000Z",
+      },
+      {
+        id: "legacy-b",
+        question,
+        answer: answerToMarkdown(newer),
+        mode: baseOptions.mode,
+        citations: newer.citations,
+        version: newer.version,
+        provider: newer.version.provider,
+        timestamp: "2026-06-20T04:05:00.000Z",
+      },
+    ];
+
+    const migrated = migrateSavedAnswers(legacyRecords);
+    const currentRecord = createSavedAnswerRecord({
+      answer: newer,
+      mode: baseOptions.mode,
+      scope: baseOptions.scope,
+      detail: baseOptions.detail,
+      timestamp: "2026-06-20T04:10:00.000Z",
+    });
+    const duplicate = upsertSavedAnswer(migrated, currentRecord);
+
+    expect(migrated).toHaveLength(1);
+    expect(migrated[0].scope).toBe("All Fake");
+    expect(migrated[0].detail).toBe("Detailed");
+    expect(duplicate.status).toBe("duplicate");
+    expect(duplicate.saved).toHaveLength(1);
+  });
+
+  it("ignores timestamp and build identity when detecting unchanged same-chat saves", () => {
+    const question = "Can annual leave be denied after I submitted inside the fake window?";
+    const firstAnswer = buildAnswer(question, {
+      ...baseOptions,
+      runtimeVersion: createRuntimeVersion({ buildDate: "20260620", gitSha: "aaa1111" }),
+    });
+    const nextAnswer = buildAnswer(question, {
+      ...baseOptions,
+      runtimeVersion: createRuntimeVersion({ buildDate: "20260620", gitSha: "bbb2222" }),
+    });
+    const first = createSavedAnswerRecord({
+      answer: firstAnswer,
+      mode: baseOptions.mode,
+      scope: baseOptions.scope,
+      detail: baseOptions.detail,
+      timestamp: "2026-06-20T04:00:00.000Z",
+    });
+    const duplicate = createSavedAnswerRecord({
+      answer: nextAnswer,
+      mode: baseOptions.mode,
+      scope: baseOptions.scope,
+      detail: baseOptions.detail,
+      timestamp: "2026-06-20T04:05:00.000Z",
+    });
+    const result = upsertSavedAnswer([first], duplicate);
+
+    expect(first.saveKey).toBe(duplicate.saveKey);
+    expect(first.dataFingerprint).toBe(duplicate.dataFingerprint);
+    expect(result.status).toBe("duplicate");
   });
 
   it("replaces a same-chat save when metadata or details change", () => {
@@ -206,18 +297,29 @@ describe("runtime build identity", () => {
     expect(html).toContain("Index");
     expect(html).toContain("Prompt");
     expect(html).toContain("Provider");
+    expect(html).toContain("Back to KIA Stick");
+    expect(html).toContain("href=\"/\"");
     expect(html).toMatch(/0\.4\.0-dev\.\d{8}\+(?:[a-z0-9]+|unknown)/);
   });
 });
 
 describe("manual QA UX shell", () => {
-  it("renders citations collapsed by default behind a show button", () => {
+  it("renders the chat answer compact by default with details and citations collapsed", () => {
     const html = renderToStaticMarkup(React.createElement(KiaStickApp, {
       runtimeVersion: createRuntimeVersion({ buildDate: "20260620", gitSha: "abc123" }),
     }));
 
+    expect(html).toContain("messageBubble userBubble");
+    expect(html).toContain("messageBubble assistantBubble");
+    expect(html).toContain("Short answer");
+    expect(html).toContain("Confidence / authority");
+    expect(html).toContain("What to do next");
+    expect(html).toContain("Show full packet");
     expect(html).toContain("Show citations");
     expect(html).toContain("aria-expanded=\"false\"");
+    expect(html).toContain("Prompt shortcuts");
+    expect(html).not.toContain("Authority Stack");
+    expect(html).not.toContain("Evidence Checklist");
     expect(html).not.toContain("citationCards");
   });
 

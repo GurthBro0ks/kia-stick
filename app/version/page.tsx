@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import Link from "next/link";
 import React from "react";
 import { corpus, sourceClassLabels } from "@/lib/sourceModel";
 import { getRuntimeVersion } from "@/lib/serverVersion";
@@ -24,6 +25,9 @@ export default function VersionPage() {
         <p>
           Product {version.productVersion} changes only at milestone phases. Build identity uses channel, UTC build date, and Git SHA.
         </p>
+        <Link className="button versionBack" href="/">
+          Back to KIA Stick
+        </Link>
       </section>
 
       <section className="tabPanel">

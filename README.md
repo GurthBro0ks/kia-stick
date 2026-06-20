@@ -65,3 +65,13 @@ Quarantine, redaction review, and metadata review are not index approval. Invali
 - Chat citations are collapsed by default behind `Show citations (n)`.
 - Settings keeps bottom navigation usable on mobile.
 - Vault opens with plain-English guide mode; expert workflow details are behind `Show technical details`.
+
+## v0.4 Conversational UX Rework
+
+- Chat now opens with a user bubble and KIA Stick assistant bubble instead of a search-form-first layout.
+- First answer view is compact: short answer, confidence/authority summary, and what to do next.
+- Authority stack, conflicts, evidence checklist, missing facts, follow-ups, and citations stay collapsed behind `Show full packet` and `Show citations (n)`.
+- Prompt shortcuts live behind `Prompt shortcuts` so they are optional.
+- Sources are grouped by hierarchy: Local, State/Area, National, Manuals/Handbooks, Arbitration/Settlements, Steward Notes/Evidence, and Unknown.
+- Saved-answer migration dedupes old localStorage entries and ignores timestamp/build identity for unchanged same-chat saves.
+- `/version` includes a `Back to KIA Stick` link while preserving full build metadata.

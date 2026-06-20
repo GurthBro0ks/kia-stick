@@ -157,6 +157,13 @@ a {
   padding: 12px;
 }
 
+.chatComposerDock {
+  position: sticky;
+  bottom: 88px;
+  z-index: 12;
+  margin-top: 12px;
+}
+
 .composerHeader,
 .panelHeader,
 .answerHeader,
@@ -244,6 +251,18 @@ a {
   padding-bottom: 2px;
   overflow-x: auto;
   scrollbar-color: #a0a8af transparent;
+}
+
+.promptDetails {
+  margin-top: 10px;
+}
+
+.promptDetails summary {
+  width: fit-content;
+  color: var(--blue);
+  cursor: pointer;
+  font-size: 0.78rem;
+  font-weight: 900;
 }
 
 .promptChip {
@@ -393,6 +412,53 @@ a {
   font-weight: 900;
 }
 
+.compactAnswer {
+  display: grid;
+  gap: 9px;
+  margin-top: 12px;
+}
+
+.compactAnswer section {
+  border: 1px solid #d4dbe1;
+  background: #fff;
+  padding: 10px;
+}
+
+.compactAnswer span {
+  display: block;
+  color: var(--blue);
+  font-size: 0.7rem;
+  font-weight: 950;
+  text-transform: uppercase;
+}
+
+.compactAnswer strong,
+.compactAnswer p {
+  display: block;
+  margin: 6px 0 0;
+  line-height: 1.4;
+}
+
+.compactAnswer p {
+  color: var(--muted);
+  font-size: 0.84rem;
+  font-weight: 650;
+}
+
+.compactActions {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+  align-items: center;
+  margin-top: 10px;
+}
+
+.fullPacket {
+  margin-top: 12px;
+  border-top: 1px solid #d7dde2;
+  padding-top: 12px;
+}
+
 .modeNote {
   color: var(--muted);
   font-weight: 650;
@@ -470,6 +536,27 @@ a {
   margin-top: 8px;
 }
 
+.hierarchyCard {
+  display: grid;
+  gap: 10px;
+}
+
+.hierarchyDocList {
+  display: grid;
+  gap: 8px;
+}
+
+.hierarchyDoc {
+  border: 1px solid #d8e0e5;
+  background: #fff;
+  padding: 9px;
+}
+
+.hierarchyDoc strong {
+  display: block;
+  line-height: 1.25;
+}
+
 .badge {
   display: inline-flex;
   align-items: center;
@@ -514,7 +601,7 @@ a {
 }
 
 .citationToggle {
-  width: 100%;
+  flex: 1 1 190px;
 }
 
 .citationCards li {
@@ -1048,6 +1135,11 @@ a {
   line-height: 1.4;
 }
 
+.versionBack {
+  width: fit-content;
+  margin-top: 10px;
+}
+
 .sourceClassGrid {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
@@ -1068,6 +1160,10 @@ a {
 
   .authorityGrid {
     grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .compactAnswer {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
   }
 
   .boundaryGrid {

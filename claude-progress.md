@@ -2,10 +2,10 @@
 
 ## Current Phase
 
-- Phase: `KIA-Stick-v0.4-manual-qa-ux-fix`
+- Phase: `KIA-Stick-v0.4-conversational-ux-rework`
 - Target: `USER_LAPTOP_ONLY`
 - Provider: `local-fake-deterministic`
-- Status: v0.4 manual QA UX blockers fixed; validation passed and local commit pending.
+- Status: v0.4 conversational UX rework implemented; final validation and commit pending.
 
 ## Accepted v0.1 State
 
@@ -93,8 +93,44 @@
 - Real/private document access: none.
 - Push performed: no.
 
+## v0.4 Conversational UX Rework State
+
+- Scope: chat-first layout, compact answer defaults, full-packet/citation toggles, hierarchy-grouped sources, saved-answer legacy migration, and `/version` back navigation.
+- Proof directory: `/tmp/proof_kia_stick_v04_chat_ux_rework_20260620T133015Z`
+- Chat layout: current question renders as a user bubble and the KIA answer renders as an assistant bubble.
+- Compact answer: first view shows short answer, confidence/authority summary, and what to do next.
+- Collapsed details: authority stack, conflicts, evidence checklist, missing facts, follow-ups, and citations stay hidden until expanded.
+- Sources: grouped by Local, State/Area, National, Manuals/Handbooks, Arbitration/Settlements, Steward Notes/Evidence, and Unknown.
+- Saved answers: legacy localStorage entries migrate to the current stable same-chat identity and dedupe across timestamp/build changes.
+- Version route: `/version` includes `Back to KIA Stick`.
+- Tests added for saved migration/dedupe, build-insensitive duplicate saves, compact answer default, source hierarchy grouping, `/version` back link, Settings nav, and Vault guide regression.
+- Validation: PASS for lint, typecheck, test, build, qa, scan:fake, scan:privacy, private tracked-path check, `/health`, `/version`, and screenshot smoke.
+- Manual QA: PASS by headless Chrome/CDP smoke on `127.0.0.1:3005`; proof saved at `/tmp/proof_kia_stick_v04_chat_ux_rework_20260620T133015Z/manual_qa_cdp_v2.log`.
+- Real/private document access: none.
+- Push performed: no.
+
 ## Commands Run
 
+- `cat ./AGENTS.md`
+- `cat ./claude-progress.md`
+- `source ./init.sh || true`
+- `git status --short`
+- `npm run lint`
+- `npm run typecheck`
+- `npm run test`
+- `mkdir -p /tmp/proof_kia_stick_v04_chat_ux_rework_20260620T133015Z`
+- `npm run build`
+- `PHASE=KIA-Stick-v0.4-conversational-ux-rework PROOF_DIR=/tmp/proof_kia_stick_v04_chat_ux_rework_20260620T133015Z npm run qa`
+- `npm run scan:fake`
+- `npm run scan:privacy`
+- `git ls-files 'DB/**' 'data/real-documents/**' 'data/quarantine/**' 'data/redacted-approved/**' 'exports/**' 'backups/**' 'vector-store/**'`
+- `grep -R "/media/mint/SHARED/APWU" app components lib docs README.md AGENTS.md claude-progress.md feature_list.json 2>/dev/null || true`
+- `npm run start -- --port 3005`
+- `curl -fsS http://127.0.0.1:3005/health`
+- `curl -fsS http://127.0.0.1:3005/version | head -c 1500`
+- `node scripts/cdp-screenshot.mjs http://127.0.0.1:3005 /tmp/proof_kia_stick_v04_chat_ux_rework_20260620T133015Z/app.png 390 844`
+- `node scripts/cdp-screenshot.mjs http://127.0.0.1:3005/version /tmp/proof_kia_stick_v04_chat_ux_rework_20260620T133015Z/version.png 390 844`
+- headless Chrome/CDP manual QA smoke for compact chat, full-packet/citation toggles, source hierarchy, saved legacy dedupe, duplicate-save warning, Settings nav, Vault guide, `/version` back navigation, and mobile overflow.
 - `cat /home/slimy/AGENTS.md` (path missing on this machine)
 - `cat /home/slimy/claude-progress.md` (path missing on this machine)
 - `source /home/slimy/init.sh` (path missing on this machine)
@@ -251,6 +287,13 @@
 - v0.4 manual QA tests added in `tests/answerGovernor.test.ts`.
 - v0.4 manual QA implementation note added at `docs/v0.4-manual-qa-ux-fix.md`.
 - v0.4 manual QA README, closeout, feature inventory, and progress state updated.
+- v0.4 conversational UX source hierarchy helpers added in `lib/sourceModel.ts`.
+- v0.4 conversational UX saved-answer legacy migration hardened in `lib/savedAnswers.ts`.
+- v0.4 conversational UX chat bubbles, compact answer, full-packet toggle, grouped Sources tab, `/health` phase label, and `/version` navigation added in `components/KiaStickApp.tsx`, `app/health/route.ts`, and `app/version/page.tsx`.
+- v0.4 conversational UX styles added in `app/globals.css`.
+- v0.4 conversational UX tests added in `tests/answerGovernor.test.ts`.
+- v0.4 conversational UX implementation note added at `docs/v0.4-conversational-ux-rework.md`.
+- v0.4 conversational UX README, closeout, feature inventory, and progress state updated.
 
 ## Proof Directory
 
@@ -258,6 +301,7 @@
 - Closeout proof: `/tmp/proof_kia_stick_v01_closeout_20260618T171222Z`
 - v0.2 document vault/redaction plan proof: `/tmp/proof_kia_stick_v02_doc_vault_plan_20260619T235153Z`
 - v0.2 plan closeout proof: `/tmp/proof_kia_stick_v02_plan_closeout_20260620T024646Z`
+- v0.4 conversational UX rework proof: `/tmp/proof_kia_stick_v04_chat_ux_rework_20260620T133015Z`
 - v0.3 private-vault UI scaffold proof: `/tmp/proof_kia_stick_v03_vault_ui_20260620T102553Z`
 - v0.3 build identity proof: `/tmp/proof_kia_stick_v03_build_identity_20260620T110445Z`
 - v0.4 fake-vault hardening proof: `/tmp/proof_kia_stick_v04_fake_vault_hardening_20260620T114211Z`

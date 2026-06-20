@@ -33,6 +33,15 @@ export type SourceBucket =
   | "background"
   | "unverified";
 
+export type SourceHierarchy =
+  | "local"
+  | "state_area"
+  | "national"
+  | "manuals_handbooks"
+  | "arbitration_settlements"
+  | "steward_notes_evidence"
+  | "unknown";
+
 export interface FakeDocument {
   id: string;
   title: string;
@@ -55,6 +64,12 @@ export interface FakeDocument {
   tags: string[];
   excerpt: string;
   body: string;
+}
+
+export interface SourceHierarchyGroup {
+  hierarchy: SourceHierarchy;
+  label: string;
+  docs: FakeDocument[];
 }
 
 export interface CorpusData {
@@ -109,6 +124,26 @@ export const bucketLabels: Record<SourceBucket, string> = {
   unverified: "Unverified",
 };
 
+export const sourceHierarchyOrder: SourceHierarchy[] = [
+  "local",
+  "state_area",
+  "national",
+  "manuals_handbooks",
+  "arbitration_settlements",
+  "steward_notes_evidence",
+  "unknown",
+];
+
+export const sourceHierarchyLabels: Record<SourceHierarchy, string> = {
+  local: "Local",
+  state_area: "State/Area",
+  national: "National",
+  manuals_handbooks: "Manuals/Handbooks",
+  arbitration_settlements: "Arbitration/Settlements",
+  steward_notes_evidence: "Steward Notes/Evidence",
+  unknown: "Unknown",
+};
+
 export function bucketForClass(sourceClass: SourceClass): SourceBucket {
   switch (sourceClass) {
     case "controlling_contract_language":
@@ -133,6 +168,40 @@ export function bucketForClass(sourceClass: SourceClass): SourceBucket {
     case "unknown_unverified":
       return "unverified";
   }
+}
+
+export function hierarchyForClass(sourceClass: SourceClass): SourceHierarchy {
+  switch (sourceClass) {
+    case "local_controlling_source":
+    case "past_practice_evidence":
+      return "local";
+    case "joint_interpretation":
+      return "state_area";
+    case "controlling_contract_language":
+    case "signed_mou":
+      return "national";
+    case "official_manual":
+      return "manuals_handbooks";
+    case "persuasive_authority":
+    case "local_settlement":
+      return "arbitration_settlements";
+    case "supporting_evidence":
+    case "steward_note":
+      return "steward_notes_evidence";
+    case "historical_background":
+    case "unknown_unverified":
+      return "unknown";
+  }
+}
+
+export function buildSourceHierarchyGroups(docs: FakeDocument[] = corpus.docs): SourceHierarchyGroup[] {
+  return sourceHierarchyOrder
+    .map((hierarchy) => ({
+      hierarchy,
+      label: sourceHierarchyLabels[hierarchy],
+      docs: docs.filter((doc) => hierarchyForClass(doc.class) === hierarchy),
+    }))
+    .filter((group) => group.docs.length > 0);
 }
 
 export function citationForDoc(doc: FakeDocument): Citation {

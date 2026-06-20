@@ -1,5 +1,5 @@
 {
-  "phase": "KIA-Stick-v0.4-manual-qa-ux-fix",
+  "phase": "KIA-Stick-v0.4-conversational-ux-rework",
   "target_machine": "USER_LAPTOP_ONLY",
   "accepted_v0_1": {
     "commit": "1d9b05c",
@@ -18,8 +18,13 @@
     "bottom_nav",
     "saved_answers",
     "saved_answer_upsert",
+    "saved_answer_legacy_migration",
     "duplicate_save_warning",
+    "chat_bubble_layout",
+    "compact_answer_default",
+    "full_packet_toggle",
     "citation_collapse_toggle",
+    "hierarchy_grouped_sources",
     "upload_quarantine_ui",
     "private_vault_governance_ui",
     "fake_vault_metadata_fixtures",
@@ -35,7 +40,8 @@
     "health_version_routes",
     "fake_privacy_scans",
     "github_safe_gitignore",
-    "proof_pack_qa_gate"
+    "proof_pack_qa_gate",
+    "version_back_navigation"
   ],
   "planned_v0_2": {
     "phase": "KIA-Stick-v0.2-document-vault-redaction-plan",
@@ -225,6 +231,38 @@
       "settings_nav_presence",
       "vault_guide_copy",
       "technical_details_hidden_default"
+    ],
+    "real_document_access": false,
+    "private_vault_inspected": false,
+    "real_db_boundary": "/media/mint/SHARED/APWU untouched"
+  },
+  "implemented_v0_4_conversational_ux_rework": {
+    "phase": "KIA-Stick-v0.4-conversational-ux-rework",
+    "status": "implemented_fake_metadata_only",
+    "document": "docs/v0.4-conversational-ux-rework.md",
+    "proof_dir": "/tmp/proof_kia_stick_v04_chat_ux_rework_20260620T133015Z",
+    "manual_qa": "PASS_headless_chrome_cdp",
+    "fixes": [
+      "chat_bubble_layout",
+      "compact_answer_default",
+      "full_packet_toggle",
+      "citation_collapse_default",
+      "prompt_shortcuts_collapsed",
+      "source_hierarchy_grouping",
+      "saved_answer_legacy_migration_dedupe",
+      "timestamp_build_ignored_for_duplicate_save",
+      "version_back_navigation"
+    ],
+    "tests": [
+      "saved_migration_dedupe",
+      "duplicate_save_warning_support",
+      "metadata_replacement",
+      "compact_answer_default",
+      "details_citations_collapsed_default",
+      "source_hierarchy_grouping",
+      "version_back_link",
+      "settings_nav_presence",
+      "vault_guide_regression"
     ],
     "real_document_access": false,
     "private_vault_inspected": false,

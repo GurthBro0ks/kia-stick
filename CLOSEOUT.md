@@ -1,5 +1,46 @@
 # KIA Stick Closeout
 
+## v0.4 Conversational UX Rework
+
+- Phase: `KIA-Stick-v0.4-conversational-ux-rework`
+- Scope: chat-first UX, compact answers, source hierarchy grouping, saved-answer migration, and `/version` back navigation.
+- Proof directory: `/tmp/proof_kia_stick_v04_chat_ux_rework_20260620T133015Z`
+- Product version: `0.4.0`
+- Manual QA: PASS by headless Chrome/CDP smoke on `127.0.0.1:3005`.
+- Provider: `local-fake-deterministic`
+- Cloud/API required: no
+- Secrets printed: no
+- Push performed: no
+- Real document boundary: `/media/mint/SHARED/APWU` untouched
+- Private vault inspected: no
+
+## v0.4 Conversational UX Coverage
+
+- Chat now renders the current question as a user bubble and the answer as a KIA Stick assistant bubble.
+- First answer view is compact: short answer, confidence/authority summary, and what to do next.
+- Full packet details and citations are collapsed by default behind `Show full packet` and `Show citations (n)`.
+- Prompt shortcuts are optional under `Prompt shortcuts`.
+- Sources are grouped by Local, State/Area, National, Manuals/Handbooks, Arbitration/Settlements, Steward Notes/Evidence, and Unknown.
+- Saved-answer migration dedupes old localStorage entries and reuses the stable same-chat identity.
+- Duplicate unchanged saves ignore timestamp/build identity and keep showing `Already saved. No new data.`
+- Same-chat metadata changes still replace the saved card.
+- `/version` includes a `Back to KIA Stick` navigation button.
+- Tests cover migration/dedupe, duplicate support, metadata replacement, compact answer defaults, source grouping, version back link, Settings nav, and Vault guide regression.
+- Browser smoke verified compact chat, full-packet expansion, citation expansion, hierarchy-grouped Sources, legacy saved dedupe, duplicate-save warning, Settings nav, Vault guide/technical toggle, `/version` back navigation, and no mobile horizontal overflow.
+
+## v0.4 Conversational UX Known Warnings
+
+- `npm run test` prints the existing Vite CJS API deprecation notice.
+- `next build` may print the existing Next flat-ESLint plugin detection warning while still passing validation.
+
+## Next Safe Phase
+
+Recommended next phase: `KIA-Stick-v0.4-conversational-ux-acceptance-review`.
+
+Future phases remain fake-doc/fake-metadata-only unless separately authorized. No real-document reads, copies, scans, OCR, ingestion, summarization, transforms, real indexing, uploads, private-vault inspection, or commits are approved by this UX rework.
+
+---
+
 ## v0.4 Manual QA UX Fix
 
 - Phase: `KIA-Stick-v0.4-manual-qa-ux-fix`
