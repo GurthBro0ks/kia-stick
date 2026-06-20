@@ -1,5 +1,5 @@
 {
-  "phase": "KIA-Stick-v0.1-closeout-project-state",
+  "phase": "KIA-Stick-v0.2-plan-closeout",
   "target_machine": "USER_LAPTOP_ONLY",
   "accepted_v0_1": {
     "commit": "1d9b05c",
@@ -43,5 +43,17 @@
       "no_cloud",
       "no_push"
     ]
+  },
+  "accepted_v0_2": {
+    "phase": "KIA-Stick-v0.2-plan-closeout",
+    "plan_commit": "d496fd5",
+    "plan_proof_dir": "/tmp/proof_kia_stick_v02_doc_vault_plan_20260619T235153Z",
+    "closeout_proof_dir": "/tmp/proof_kia_stick_v02_plan_closeout_20260620T024646Z",
+    "manual_qa": "not_applicable_planning_only",
+    "provider": "local-fake-deterministic",
+    "cloud_api_required": false,
+    "real_document_access": false,
+    "real_db_boundary": "/media/mint/SHARED/APWU untouched",
+    "next_safe_phase": "KIA-Stick-v0.3-private-vault-ui-scaffold-plan"
   }
 }

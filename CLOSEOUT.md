@@ -1,3 +1,46 @@
+# KIA Stick Closeout
+
+## v0.2 Accepted State
+
+- Phase: `KIA-Stick-v0.2-plan-closeout`
+- Accepted scope: document-vault/redaction governance plan only.
+- Accepted plan commit: `d496fd5`
+- Accepted plan proof directory: `/tmp/proof_kia_stick_v02_doc_vault_plan_20260619T235153Z`
+- Closeout proof directory: `/tmp/proof_kia_stick_v02_plan_closeout_20260620T024646Z`
+- Manual QA: not applicable, planning-only.
+- Provider: `local-fake-deterministic`
+- Cloud/API required: no
+- Secrets printed: no
+- Push performed: no
+- Real document boundary: `/media/mint/SHARED/APWU` untouched
+
+## v0.2 Accepted Planning Coverage
+
+- Planning-only status and explicit no-ingestion boundary.
+- Document lanes: `official_public`, `official_member_only`, `local_official`, `steward_only`, `redacted_examples`, `restricted_sensitive`, and `quarantine`.
+- Future gated lifecycle from operator selection through quarantine, provenance, redaction detection, admin review, approved redacted copy, authority metadata, index eligibility, and audit log.
+- Redaction fields for member identifiers, contact details, employee IDs, medical, discipline, settlement, witness, screenshot, management/officer, date, installation, and case-ID data.
+- Metadata model for authority, source status, sensitivity, redaction status, review state, index eligibility, hashes, reviewer, and audit reference.
+- Index rules allowing only reviewed official docs, approved redacted examples, and reviewed steward notes while excluding quarantine, raw uploads, unreviewed sensitive docs, medical docs, screenshots, OCR dumps, and private exports.
+- Ignored private layout for `DB/`, `data/real-documents/`, `data/quarantine/`, `data/redacted-approved/`, `exports/`, `backups/`, and `vector-store/`.
+- Future UI surfaces for Vault, Quarantine, Redaction Review, Metadata Review, Index Eligibility, and Audit Log.
+- GitHub-safe proof and commit rules.
+- Acceptance checklist for any future real-document phase.
+
+## v0.2 Known Warnings
+
+- `next build` still prints Next's flat-ESLint plugin detection warning; lint, typecheck, test, build, and QA pass.
+- `npm audit` advisories from the existing Next dependency tree remain outside this planning-only phase.
+- No private-vault contents were inspected, and no real-document path was accessed.
+
+## Next Safe Phase
+
+Recommended next phase: `KIA-Stick-v0.3-private-vault-ui-scaffold-plan`.
+
+That phase should remain fake-doc-safe unless separately authorized. It may plan or scaffold UI state for Vault, Quarantine, Redaction Review, Metadata Review, Index Eligibility, and Audit Log using fake metadata only. It must not read, copy, index, scan, OCR, ingest, summarize, transform, or commit real documents.
+
+---
+
 # KIA Stick v0.1 Closeout
 
 ## Accepted State

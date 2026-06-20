@@ -2,10 +2,10 @@
 
 ## Current Phase
 
-- Phase: `KIA-Stick-v0.2-document-vault-redaction-plan`
+- Phase: `KIA-Stick-v0.2-plan-closeout`
 - Target: `USER_LAPTOP_ONLY`
 - Provider: `local-fake-deterministic`
-- Status: planning-only document created; no real-document ingestion implemented.
+- Status: v0.2 planning accepted and closed out; no real-document ingestion implemented.
 
 ## Accepted v0.1 State
 
@@ -18,6 +18,20 @@
 - Secrets printed: no.
 - Push performed: no.
 - Real document boundary: `/media/mint/SHARED/APWU` untouched.
+
+## Accepted v0.2 State
+
+- Accepted scope: document-vault/redaction governance plan only.
+- Accepted plan commit: `d496fd5`.
+- Accepted plan proof directory: `/tmp/proof_kia_stick_v02_doc_vault_plan_20260619T235153Z`.
+- Closeout proof directory: `/tmp/proof_kia_stick_v02_plan_closeout_20260620T024646Z`.
+- Manual QA: not applicable, planning-only.
+- Provider: `local-fake-deterministic`.
+- Cloud/API required: no.
+- Secrets printed: no.
+- Push performed: no.
+- Real document boundary: `/media/mint/SHARED/APWU` untouched.
+- Real/private document access: none.
 
 ## Commands Run
 
@@ -40,6 +54,10 @@
 - `npm run qa`
 - `grep -R "/media/mint/SHARED/APWU" . --exclude-dir=node_modules --exclude-dir=.next --exclude-dir=.git || true`
 - `git ls-files 'DB/**' 'data/real-documents/**' 'data/quarantine/**' 'data/redacted-approved/**' 'exports/**' 'backups/**' 'vector-store/**'`
+- `test -f docs/v0.2-document-vault-redaction-plan.md`
+- `rg -n "planning only|planning-only|does not approve|Document Lanes|official_public|official_member_only|local_official|steward_only|redacted_examples|restricted_sensitive|quarantine|Future Lifecycle|Redaction Fields|Metadata Model|Index Rules|Ignored Private Layout|Future UI|Future Proof Rules|GitHub-Safe Rules|Acceptance Checklist" docs/v0.2-document-vault-redaction-plan.md`
+- `PHASE=KIA-Stick-v0.2-plan-closeout PROOF_DIR=/tmp/proof_kia_stick_v02_plan_closeout_20260620T024646Z npm run qa`
+- `grep -R "/media/mint/SHARED/APWU" docs README.md AGENTS.md claude-progress.md CLOSEOUT.md feature_list.json 2>/dev/null || true`
 - `curl http://127.0.0.1:3005/health`
 - `curl http://127.0.0.1:3005/version`
 - `node scripts/cdp-screenshot.mjs ...`
@@ -55,12 +73,16 @@
 - v0.2 document vault/redaction planning doc added at `docs/v0.2-document-vault-redaction-plan.md`.
 - v0.2 planning metadata added to `feature_list.json`.
 - v0.2 run state recorded in `claude-progress.md`.
+- v0.2 accepted state and next safe phase recorded in `CLOSEOUT.md`.
+- v0.2 accepted state recorded in `feature_list.json`.
+- v0.2 closeout state recorded in `claude-progress.md`.
 
 ## Proof Directory
 
 - Accepted v0.1 proof: `/tmp/proof_kia_stick_v01_ui_fix_20260618T165630Z`
 - Closeout proof: `/tmp/proof_kia_stick_v01_closeout_20260618T171222Z`
 - v0.2 document vault/redaction plan proof: `/tmp/proof_kia_stick_v02_doc_vault_plan_20260619T235153Z`
+- v0.2 plan closeout proof: `/tmp/proof_kia_stick_v02_plan_closeout_20260620T024646Z`
 
 ## Remaining Unknowns
 
@@ -69,4 +91,4 @@
 - `/media/mint/SHARED/APWU` remains out of scope and untouched.
 - Local untracked `DB/` archive folder was observed by filename only and is ignored, not committed.
 - `next build` still prints Next's flat-ESLint plugin detection warning, but lint/typecheck/build pass.
-- Next safe phase should be implementation planning for private-vault UI scaffolding only after explicit approval; no real-document reads/copies/indexing/scanning are approved by v0.2.
+- Next safe phase should be `KIA-Stick-v0.3-private-vault-ui-scaffold-plan`, fake-metadata-only unless separately authorized; no real-document reads/copies/indexing/scanning are approved by v0.2.
