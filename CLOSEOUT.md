@@ -1,5 +1,58 @@
 # KIA Stick Closeout
 
+## v0.4 True Threaded Chat Accepted Closeout
+
+- Phase: `KIA-Stick-v0.4-true-threaded-chat-closeout`
+- Accepted implementation phase: `KIA-Stick-v0.4-true-threaded-chat`
+- Accepted commit: `ac6f418`
+- Accepted proof directory: `/tmp/proof_kia_stick_v04_true_threaded_chat_20260620T145019Z`
+- Closeout proof directory: `/tmp/proof_kia_stick_v04_threaded_chat_closeout_20260620T153220Z`
+- Scope: accepted fake-only true threaded chat implementation and project state closeout.
+- Product version: `0.4.0`
+- Manual QA: PASS by operator acceptance plus headless Chrome/CDP multi-turn smoke on `127.0.0.1:3011`.
+- Runtime accepted at: `http://127.0.0.1:3011`
+- Provider: `local-fake-deterministic`
+- Cloud/API required: no
+- Secrets printed: no
+- Push performed: no
+- Git status at accepted implementation: clean
+- Real document boundary: `/media/mint/SHARED/APWU` untouched
+- Private vault inspected: no
+
+## v0.4 True Threaded Chat Accepted Features
+
+- True multi-turn chronological chat with prior turns remaining visible.
+- Empty composer starts with `Message KIA Stick...`, uses `Send`, blocks blank sends, sends with Enter, preserves Shift+Enter newline, blocks double-send during generation, and clears after send.
+- Contextual fake follow-ups resolve evidence, verbal denial, supervisor wording, and next-step questions against prior thread context.
+- Unresolved follow-ups ask a clarifying question instead of inventing context.
+- `New chat` confirms before clearing non-empty threads and keeps Saved Answers separate from active-thread persistence.
+- Each assistant response owns its own Save action, full-packet expansion, and citation expansion.
+- Saved-answer dedupe remains intact; repeated save shows `Already saved. No new data.`
+- Loading and retry rows are present for answer generation failure handling.
+- Mobile and desktop CDP checks passed with no composer/nav overlap and no horizontal overflow.
+- Sources, Vault, Settings, `/version`, `Back to KIA Stick`, and manifest checks remained working.
+
+## v0.4 True Threaded Chat Accepted Evidence
+
+- `RESULT.md`: `RESULT=PASS`, `COMMIT_SHA=ac6f418`, `PUSHED=no`, `GIT_STATUS_AFTER=clean`, `RUNTIME_URL=http://127.0.0.1:3011`.
+- `MULTITURN_CDP_CHECK.json`: PASS at 390x844 and 1280x900 for chronological messages, composer clearing, contextual follow-ups, independent expansion, save dedupe, thread persistence, new-chat reset, and no overlap/overflow.
+- `MANUAL_QA_CHECKLIST.md`: all checked items PASS, including manifest JSON and no real file access.
+- Validation logs in the accepted proof directory cover lint, typecheck, test, build, QA, fake scan, privacy scan, manifest parse, forbidden tracked-path check, `/health`, `/version`, and manifest HTTP route.
+
+## v0.4 True Threaded Chat Accepted Warnings
+
+- `npm run test` prints the existing Vite CJS API deprecation notice.
+- `next build` may print the existing Next flat-ESLint plugin warning while still passing validation.
+- These warnings are non-failing and do not change the accepted fake-only state.
+
+## Next Safe Phase
+
+Recommended next phase: `KIA-Stick-v0.4-threaded-chat-polish-or-release-review`.
+
+Future phases remain fake-doc/fake-metadata-only unless separately authorized. No real-document reads, copies, scans, OCR, ingestion, summarization, transforms, real indexing, uploads, private-vault inspection, pushes, cloud calls, or service changes are approved by this closeout.
+
+---
+
 ## v0.4 True Threaded Chat
 
 - Phase: `KIA-Stick-v0.4-true-threaded-chat`

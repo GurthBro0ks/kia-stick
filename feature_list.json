@@ -1,5 +1,5 @@
 {
-  "phase": "KIA-Stick-v0.4-true-threaded-chat",
+  "phase": "KIA-Stick-v0.4-true-threaded-chat-closeout",
   "target_machine": "USER_LAPTOP_ONLY",
   "accepted_v0_1": {
     "commit": "1d9b05c",
@@ -361,7 +361,7 @@
     "status": "implemented_fake_metadata_only",
     "document": "docs/v0.4-true-threaded-chat.md",
     "proof_dir": "/tmp/proof_kia_stick_v04_true_threaded_chat_20260620T145019Z",
-    "manual_qa": "PASS_cdp_multiturn_smoke_operator_clickthrough_recommended",
+    "manual_qa": "PASS_operator_manual_qa_and_cdp_multiturn_smoke",
     "fixes": [
       "explicit_conversation_thread_model",
       "stable_thread_turn_message_ids",
@@ -400,6 +400,54 @@
       "settings_nav_presence",
       "vault_guide_regression"
     ],
+    "real_document_access": false,
+    "private_vault_inspected": false,
+    "real_db_boundary": "/media/mint/SHARED/APWU untouched"
+  },
+  "accepted_v0_4_true_threaded_chat": {
+    "phase": "KIA-Stick-v0.4-true-threaded-chat-closeout",
+    "accepted_implementation_phase": "KIA-Stick-v0.4-true-threaded-chat",
+    "accepted_commit": "ac6f418",
+    "accepted_proof_dir": "/tmp/proof_kia_stick_v04_true_threaded_chat_20260620T145019Z",
+    "closeout_proof_dir": "/tmp/proof_kia_stick_v04_threaded_chat_closeout_20260620T153220Z",
+    "runtime_url": "http://127.0.0.1:3011",
+    "manual_qa": "PASS",
+    "operator_manual_qa": "PASS",
+    "provider": "local-fake-deterministic",
+    "git_status_at_acceptance": "clean",
+    "push_performed": false,
+    "accepted_features": [
+      "true_multi_turn_chronological_chat",
+      "cleared_composer_after_send",
+      "send_button_behavior",
+      "contextual_followups",
+      "new_chat_confirmation_and_reset",
+      "independent_assistant_expansions",
+      "saved_answer_dedupe",
+      "thread_persistence_separate_from_saved_answers",
+      "loading_retry_rows",
+      "mobile_desktop_no_overlap"
+    ],
+    "validation": [
+      "lint",
+      "typecheck",
+      "test",
+      "build",
+      "qa",
+      "scan_fake",
+      "scan_privacy",
+      "manifest_parse",
+      "forbidden_tracked_path_check",
+      "health_route",
+      "version_route",
+      "manifest_http_route",
+      "cdp_multiturn_mobile_desktop"
+    ],
+    "known_non_failing_warnings": [
+      "vite_cjs_api_deprecation_notice_in_tests",
+      "next_flat_eslint_plugin_warning_during_build"
+    ],
+    "next_safe_phase": "KIA-Stick-v0.4-threaded-chat-polish-or-release-review",
     "real_document_access": false,
     "private_vault_inspected": false,
     "real_db_boundary": "/media/mint/SHARED/APWU untouched"

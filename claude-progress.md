@@ -2,10 +2,26 @@
 
 ## Current Phase
 
-- Phase: `KIA-Stick-v0.4-true-threaded-chat`
+- Phase: `KIA-Stick-v0.4-true-threaded-chat-closeout`
 - Target: `USER_LAPTOP_ONLY`
 - Provider: `local-fake-deterministic`
-- Status: v0.4 true threaded chat implemented; validation passed; commit pending.
+- Status: accepted v0.4 true threaded chat closeout recorded; implementation commit `ac6f418` accepted; closeout validation passed and local closeout commit pending.
+
+## Accepted v0.4 True Threaded Chat State
+
+- Accepted phase: `KIA-Stick-v0.4-true-threaded-chat`
+- Closeout phase: `KIA-Stick-v0.4-true-threaded-chat-closeout`
+- Accepted commit: `ac6f418`
+- Accepted proof directory: `/tmp/proof_kia_stick_v04_true_threaded_chat_20260620T145019Z`
+- Closeout proof directory: `/tmp/proof_kia_stick_v04_threaded_chat_closeout_20260620T153220Z`
+- Runtime accepted at: `http://127.0.0.1:3011`
+- Manual QA: PASS by operator acceptance plus headless Chrome/CDP multi-turn smoke on 390x844 and 1280x900.
+- Accepted features: true multi-turn chronological chat, cleared composer, `Send` behavior, contextual follow-ups, `New chat`, independent expansions, saved-answer dedupe, persistence, loading/retry, and mobile/desktop no-overlap.
+- Validation evidence: accepted proof includes lint, typecheck, test, build, QA, scan:fake, scan:privacy, manifest parse, forbidden tracked-path check, `/health`, `/version`, manifest HTTP route, CDP multi-turn smoke, and clean final Git status.
+- Closeout validation: PASS for git status/log, lint, typecheck, test, build, QA, scan:fake, scan:privacy, manifest parse, forbidden tracked-path check, `/health` on `127.0.0.1:3011`, JSON parse, and docs/state-only diff.
+- Known non-failing warnings: existing Vite CJS API deprecation notice in tests and possible Next flat-ESLint plugin warning during build.
+- Real/private document access: none.
+- Push performed: no.
 
 ## v0.4 True Threaded Chat State
 
@@ -160,6 +176,35 @@
 
 ## Commands Run
 
+- `cat /home/slimy/AGENTS.md` (path missing on this machine)
+- `cat /home/slimy/claude-progress.md` (path missing on this machine)
+- `source /home/slimy/init.sh` (path missing on this machine)
+- `cat ./AGENTS.md`
+- `cat ./claude-progress.md`
+- `source ./init.sh || true`
+- `git status --short --branch`
+- `git log -8 --oneline --decorate`
+- `git show --stat --oneline --decorate --name-only ac6f418 --`
+- `mkdir -p /tmp/proof_kia_stick_v04_threaded_chat_closeout_20260620T153220Z`
+- `cat /tmp/proof_kia_stick_v04_true_threaded_chat_20260620T145019Z/RESULT.md`
+- `cat /tmp/proof_kia_stick_v04_true_threaded_chat_20260620T145019Z/MANUAL_QA_CHECKLIST.md`
+- `cat /tmp/proof_kia_stick_v04_true_threaded_chat_20260620T145019Z/FINAL_STATUS.txt`
+- `cat /tmp/proof_kia_stick_v04_true_threaded_chat_20260620T145019Z/MULTITURN_CDP_CHECK.json`
+- `git status --short`
+- `git log -3 --oneline`
+- `node -e "JSON.parse(require('fs').readFileSync('feature_list.json','utf8')); console.log('feature_list ok')"`
+- `npm run lint`
+- `npm run typecheck`
+- `npm run test`
+- `npm run build`
+- `PHASE=KIA-Stick-v0.4-true-threaded-chat-closeout PROOF_DIR=/tmp/proof_kia_stick_v04_threaded_chat_closeout_20260620T153220Z npm run qa`
+- `npm run scan:fake`
+- `npm run scan:privacy`
+- `node -e "JSON.parse(require('fs').readFileSync('public/manifest.webmanifest','utf8')); console.log('manifest ok')"`
+- `git ls-files 'DB/**' 'data/real-documents/**' 'data/quarantine/**' 'data/redacted-approved/**' 'exports/**' 'backups/**' 'vector-store/**'`
+- `curl -s http://127.0.0.1:3011/health`
+- `git diff --check`
+- `git diff --name-only`
 - `pwd`
 - `date -u`
 - `cat /home/slimy/AGENTS.md` (path missing on this machine)
@@ -343,6 +388,7 @@
 - v0.4 true threaded chat tests added in `tests/answerGovernor.test.ts`.
 - v0.4 true threaded chat implementation note added at `docs/v0.4-true-threaded-chat.md`.
 - v0.4 true threaded chat README, closeout, feature inventory, and progress state updated.
+- v0.4 true threaded chat accepted closeout recorded in `CLOSEOUT.md`, `claude-progress.md`, and `feature_list.json`.
 - Closeout state recorded in `claude-progress.md`.
 - Accepted v0.1 feature inventory recorded in `feature_list.json`.
 - Closeout summary and next safe phase plan recorded in `CLOSEOUT.md`.
@@ -408,6 +454,7 @@
 ## Proof Directory
 
 - v0.4 true threaded chat proof: `/tmp/proof_kia_stick_v04_true_threaded_chat_20260620T145019Z`
+- v0.4 true threaded chat closeout proof: `/tmp/proof_kia_stick_v04_threaded_chat_closeout_20260620T153220Z`
 - Accepted v0.1 proof: `/tmp/proof_kia_stick_v01_ui_fix_20260618T165630Z`
 - Closeout proof: `/tmp/proof_kia_stick_v01_closeout_20260618T171222Z`
 - v0.2 document vault/redaction plan proof: `/tmp/proof_kia_stick_v02_doc_vault_plan_20260619T235153Z`
