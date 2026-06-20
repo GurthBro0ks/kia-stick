@@ -54,8 +54,31 @@ function validDetail(value: unknown): Detail {
   return typeof value === "string" && (details as readonly string[]).includes(value) ? (value as Detail) : "Detailed";
 }
 
-function citationIdentity(citations: AnswerResult["citations"]): string {
-  return citations.map((citation) => citation.id).sort().join(",");
+type CitationLike = Partial<AnswerResult["citations"][number]>;
+
+function normalizedCitationLocator(citation: CitationLike): string {
+  const locator = [
+    citation.id,
+    citation.title,
+    citation.article,
+    citation.section,
+    citation.page,
+    citation.file,
+    citation.hash,
+  ]
+    .filter((value): value is string => typeof value === "string" && value.trim().length > 0)
+    .map(normalizeText)
+    .join("@");
+
+  return locator || "unknown-citation";
+}
+
+function citationIdentity(citations: CitationLike[]): string {
+  return [...new Set(citations.map(normalizedCitationLocator))].sort().join(",");
+}
+
+function normalizedListIdentity(items: string[]): string {
+  return [...new Set(items.map(normalizeText).filter(Boolean))].sort().join("|");
 }
 
 function stableAnswerIdentity(answer: AnswerResult): string {
@@ -71,10 +94,10 @@ function stableAnswerFingerprint(answer: AnswerResult, mode: Mode, scope: Scope,
     savedAnswerKey(answer, mode, scope),
     detail,
     normalizeText(answer.modeNote),
-    answer.conflicts.join("|"),
-    answer.evidenceChecklist.join("|"),
-    answer.missingFacts.join("|"),
-    answer.followUps.join("|"),
+    normalizedListIdentity(answer.conflicts),
+    normalizedListIdentity(answer.evidenceChecklist),
+    normalizedListIdentity(answer.missingFacts),
+    normalizedListIdentity(answer.followUps),
     answer.version.corpusVersion,
     answer.version.indexVersion,
     answer.version.promptVersion,
@@ -101,7 +124,9 @@ function legacyFingerprint(item: Pick<SavedAnswer, "saveKey" | "answer" | "detai
   const answerWithoutBuild = item.answer
     .replace(/Build:[^\n|]+/g, "Build:<ignored>")
     .replace(/0\.4\.0-dev\.\d{8}\+[a-z0-9]+/gi, "displayVersion:<ignored>")
-    .replace(/0\.3\.0-dev\.\d{8}\+[a-z0-9]+/gi, "displayVersion:<ignored>");
+    .replace(/0\.3\.0-dev\.\d{8}\+[a-z0-9]+/gi, "displayVersion:<ignored>")
+    .replace(/gitSha:[^\n|]+/gi, "gitSha:<ignored>")
+    .replace(/(createdAt|savedAt|timestamp):[^\n|]+/gi, "$1:<ignored>");
   return [
     item.saveKey,
     item.detail,
@@ -195,11 +220,20 @@ export function migrateSavedAnswers(input: unknown): SavedAnswer[] {
       normalized.dataFingerprint = legacyFingerprint(normalized);
     }
 
-    return upsertSavedAnswer(saved, normalized).saved;
+    return upsertSavedAnswer(saved, normalized, { preferNewerDuplicate: true }).saved;
   }, []);
 }
 
-export function upsertSavedAnswer(current: SavedAnswer[], next: SavedAnswer): SaveAnswerResult {
+function timestampValue(value: string): number {
+  const parsed = Date.parse(value);
+  return Number.isFinite(parsed) ? parsed : 0;
+}
+
+export function upsertSavedAnswer(
+  current: SavedAnswer[],
+  next: SavedAnswer,
+  options: { preferNewerDuplicate?: boolean } = {}
+): SaveAnswerResult {
   const existingIndex = current.findIndex((item) => item.saveKey === next.saveKey);
 
   if (existingIndex === -1) {
@@ -212,6 +246,18 @@ export function upsertSavedAnswer(current: SavedAnswer[], next: SavedAnswer): Sa
 
   const existing = current[existingIndex];
   if (existing.dataFingerprint === next.dataFingerprint) {
+    if (options.preferNewerDuplicate && timestampValue(next.timestamp) >= timestampValue(existing.timestamp)) {
+      const replacement = {
+        ...next,
+        id: existing.id,
+      };
+      return {
+        status: "duplicate",
+        saved: [replacement, ...current.filter((_, index) => index !== existingIndex)].slice(0, 50),
+        record: replacement,
+      };
+    }
+
     return {
       status: "duplicate",
       saved: current,

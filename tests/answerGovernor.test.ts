@@ -1,9 +1,10 @@
 import { describe, expect, it } from "vitest";
+import { readFileSync } from "node:fs";
 import { renderToStaticMarkup } from "react-dom/server";
 import React from "react";
 import { GET as healthGET } from "@/app/health/route";
 import VersionPage from "@/app/version/page";
-import { KiaStickApp, VaultPanel } from "@/components/KiaStickApp";
+import { FullPacket, KiaStickApp, VaultPanel } from "@/components/KiaStickApp";
 import { answerToMarkdown, buildAnswer } from "@/lib/answerGovernor";
 import { createSavedAnswerRecord, migrateSavedAnswers, upsertSavedAnswer } from "@/lib/savedAnswers";
 import { buildSourceHierarchyGroups, corpus, sourceHierarchyLabels, sourceHierarchyOrder } from "@/lib/sourceModel";
@@ -40,6 +41,8 @@ describe("fake corpus", () => {
     expect(groups.flatMap((group) => group.docs)).toHaveLength(corpus.docs.length);
     expect(groups.find((group) => group.hierarchy === "local")?.docs.some((doc) => doc.class === "local_controlling_source")).toBe(true);
     expect(groups.find((group) => group.hierarchy === "national")?.docs.some((doc) => doc.class === "controlling_contract_language")).toBe(true);
+    expect(groups.find((group) => group.hierarchy === "manuals_handbooks")?.docs.some((doc) => doc.title === "Fictional Manual Checklist for Step One Evidence")).toBe(true);
+    expect(groups.find((group) => group.hierarchy === "steward_notes_evidence")?.docs.some((doc) => doc.title === "Fictional Steward Note on Attendance Interview")).toBe(true);
   });
 
   it("keeps every document fake-bannered", () => {
@@ -165,6 +168,8 @@ describe("saved answers", () => {
     const duplicate = upsertSavedAnswer(migrated, currentRecord);
 
     expect(migrated).toHaveLength(1);
+    expect(migrated[0].timestamp).toBe("2026-06-20T04:05:00.000Z");
+    expect(migrated[0].version.displayVersion).toContain("new2222");
     expect(migrated[0].scope).toBe("All Fake");
     expect(migrated[0].detail).toBe("Detailed");
     expect(duplicate.status).toBe("duplicate");
@@ -200,6 +205,38 @@ describe("saved answers", () => {
     expect(first.saveKey).toBe(duplicate.saveKey);
     expect(first.dataFingerprint).toBe(duplicate.dataFingerprint);
     expect(result.status).toBe("duplicate");
+  });
+
+  it("ignores citation and detail ordering noise in the saved fingerprint", () => {
+    const answer = buildAnswer("Can annual leave be denied after I submitted inside the fake window?", baseOptions);
+    const reordered = {
+      ...answer,
+      citations: [...answer.citations].reverse(),
+      conflicts: [...answer.conflicts].reverse(),
+      evidenceChecklist: [...answer.evidenceChecklist].reverse(),
+      missingFacts: [...answer.missingFacts].reverse(),
+      followUps: [...answer.followUps].reverse(),
+    };
+    const first = createSavedAnswerRecord({
+      answer,
+      mode: baseOptions.mode,
+      scope: baseOptions.scope,
+      detail: baseOptions.detail,
+      timestamp: "2026-06-20T04:00:00.000Z",
+    });
+    const duplicate = createSavedAnswerRecord({
+      answer: reordered,
+      mode: baseOptions.mode,
+      scope: baseOptions.scope,
+      detail: baseOptions.detail,
+      timestamp: "2026-06-20T04:05:00.000Z",
+    });
+    const result = upsertSavedAnswer([first], duplicate);
+
+    expect(first.saveKey).toBe(duplicate.saveKey);
+    expect(first.dataFingerprint).toBe(duplicate.dataFingerprint);
+    expect(result.status).toBe("duplicate");
+    expect(result.saved).toHaveLength(1);
   });
 
   it("replaces a same-chat save when metadata or details change", () => {
@@ -301,6 +338,13 @@ describe("runtime build identity", () => {
     expect(html).toContain("href=\"/\"");
     expect(html).toMatch(/0\.4\.0-dev\.\d{8}\+(?:[a-z0-9]+|unknown)/);
   });
+
+  it("ships a valid static web manifest", () => {
+    const manifest = JSON.parse(readFileSync("public/manifest.webmanifest", "utf8")) as { name?: string; start_url?: string };
+
+    expect(manifest.name).toBe("KIA Stick");
+    expect(manifest.start_url).toBe("/");
+  });
 });
 
 describe("manual QA UX shell", () => {
@@ -318,9 +362,23 @@ describe("manual QA UX shell", () => {
     expect(html).toContain("Show citations");
     expect(html).toContain("aria-expanded=\"false\"");
     expect(html).toContain("Prompt shortcuts");
+    expect(html).toContain("Response options");
     expect(html).not.toContain("Authority Stack");
     expect(html).not.toContain("Evidence Checklist");
     expect(html).not.toContain("citationCards");
+  });
+
+  it("keeps full packet detail sections collapsed by default", () => {
+    const answer = buildAnswer("Can annual leave be denied after I submitted inside the fake window?", baseOptions);
+    const html = renderToStaticMarkup(React.createElement(FullPacket, { answer }));
+
+    expect(html).toContain("Show authority stack");
+    expect(html).toContain("Show conflicts");
+    expect(html).toContain("Show evidence checklist");
+    expect(html).toContain("Show missing facts");
+    expect(html).toContain("Show follow-ups");
+    expect(html).toContain("<details");
+    expect(html).not.toContain("<details open");
   });
 
   it("keeps the bottom navigation including Settings in the app shell", () => {

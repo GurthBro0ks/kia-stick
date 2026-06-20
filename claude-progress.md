@@ -2,10 +2,10 @@
 
 ## Current Phase
 
-- Phase: `KIA-Stick-v0.4-conversational-ux-rework`
+- Phase: `KIA-Stick-v0.4-chat-ux-dedupe-fix-2`
 - Target: `USER_LAPTOP_ONLY`
 - Provider: `local-fake-deterministic`
-- Status: v0.4 conversational UX rework implemented; final validation and commit pending.
+- Status: v0.4 chat UX/dedupe fix 2 implemented; final validation and commit pending.
 
 ## Accepted v0.1 State
 
@@ -109,11 +109,40 @@
 - Real/private document access: none.
 - Push performed: no.
 
+## v0.4 Chat UX Dedupe Fix 2 State
+
+- Scope: remaining manual QA blockers for saved-answer dedupe, chat-first UX, collapse-first packet details, source hierarchy coverage, and manifest validity.
+- Proof directory: `/tmp/proof_kia_stick_v04_chat_dedupe_fix2_20260620T135417Z`
+- Saved answers: canonical identity ignores timestamp, created/saved time, build/display version, Git SHA, and citation/detail ordering noise.
+- Legacy migration: timestamp/build-only duplicates collapse to one card while keeping newest safe metadata.
+- Duplicate save behavior: unchanged duplicate shows `Already saved. No new data.` and keeps saved count stable.
+- Replacement behavior: same-chat detail or metadata changes replace the existing saved card.
+- Chat layout: composer is message-first; response options and prompt shortcuts are collapsed secondary controls.
+- Collapsed details: authority stack, conflicts, evidence checklist, missing facts, follow-ups, and citations are collapsed by default.
+- Sources: hierarchy grouping test covers expected fake docs in each practical section.
+- Manifest: `public/manifest.webmanifest` added and validated as JSON.
+- `/health`: phase label updated to `KIA-Stick-v0.4-chat-ux-dedupe-fix-2`.
+- Real/private document access: none.
+- Push performed: no.
+
 ## Commands Run
 
 - `cat ./AGENTS.md`
 - `cat ./claude-progress.md`
 - `source ./init.sh || true`
+- `cat /home/slimy/AGENTS.md` (path missing on this machine)
+- `cat /home/slimy/claude-progress.md` (path missing on this machine)
+- `source /home/slimy/init.sh` (path missing on this machine)
+- `cat ./AGENTS.md`
+- `cat ./claude-progress.md`
+- `source ./init.sh`
+- `git status --short`
+- `git log -3 --oneline`
+- `npm run typecheck`
+- `npm run test`
+- `node -e "JSON.parse(require('fs').readFileSync('public/manifest.webmanifest','utf8')); console.log('manifest json ok')"`
+- `npm run lint`
+- `npm run build`
 - `git status --short`
 - `npm run lint`
 - `npm run typecheck`
@@ -294,6 +323,14 @@
 - v0.4 conversational UX tests added in `tests/answerGovernor.test.ts`.
 - v0.4 conversational UX implementation note added at `docs/v0.4-conversational-ux-rework.md`.
 - v0.4 conversational UX README, closeout, feature inventory, and progress state updated.
+- v0.4 chat UX/dedupe fix 2 saved-answer canonical identity and migration updated in `lib/savedAnswers.ts`.
+- v0.4 chat UX/dedupe fix 2 message-first composer and collapse-first packet sections updated in `components/KiaStickApp.tsx`.
+- v0.4 chat UX/dedupe fix 2 styles updated in `app/globals.css`.
+- v0.4 chat UX/dedupe fix 2 `/health` phase label updated in `app/health/route.ts`.
+- v0.4 chat UX/dedupe fix 2 static manifest added at `public/manifest.webmanifest`.
+- v0.4 chat UX/dedupe fix 2 tests added in `tests/answerGovernor.test.ts`.
+- v0.4 chat UX/dedupe fix 2 implementation note added at `docs/v0.4-chat-ux-dedupe-fix-2.md`.
+- v0.4 chat UX/dedupe fix 2 README, closeout, feature inventory, and progress state updated.
 
 ## Proof Directory
 
@@ -306,6 +343,7 @@
 - v0.3 build identity proof: `/tmp/proof_kia_stick_v03_build_identity_20260620T110445Z`
 - v0.4 fake-vault hardening proof: `/tmp/proof_kia_stick_v04_fake_vault_hardening_20260620T114211Z`
 - v0.4 manual QA UX fix proof: `/tmp/proof_kia_stick_v04_manual_qa_ux_fix_20260620T121155Z`
+- v0.4 chat UX/dedupe fix 2 proof: `/tmp/proof_kia_stick_v04_chat_dedupe_fix2_20260620T135417Z`
 
 ## Remaining Unknowns
 
@@ -319,3 +357,4 @@
 - The first sandboxed `/health` curl attempt failed before the permission profile changed; direct local runtime checks passed afterward.
 - v0.4 operator manual Vault click-through is pending; automated tests cover transition blocking, visible block reasons, audit exports, and fake-only guards.
 - A transient Next dev `/version` 500 occurred after running production build while dev server was live; restarting the local dev server cleared it and route captures passed.
+- v0.4 chat UX/dedupe fix 2 operator manual browser QA checklist is created but still requires operator click-through.

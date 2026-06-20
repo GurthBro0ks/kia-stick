@@ -1,0 +1,17 @@
+{
+  "name": "KIA Stick",
+  "short_name": "KIA Stick",
+  "description": "Fake-doc source-governed local PWA with private-vault governance scaffold.",
+  "start_url": "/",
+  "scope": "/",
+  "display": "standalone",
+  "background_color": "#f3f1e6",
+  "theme_color": "#123f74",
+  "icons": [
+    {
+      "src": "/kia-stick-icon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml"
+    }
+  ]
+}

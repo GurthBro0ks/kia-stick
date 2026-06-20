@@ -253,16 +253,23 @@ a {
   scrollbar-color: #a0a8af transparent;
 }
 
-.promptDetails {
+.promptDetails,
+.composerDisclosure {
   margin-top: 10px;
 }
 
-.promptDetails summary {
+.promptDetails summary,
+.composerDisclosure summary,
+.packetDisclosure summary {
   width: fit-content;
   color: var(--blue);
   cursor: pointer;
   font-size: 0.78rem;
   font-weight: 900;
+}
+
+.composerDisclosure .controlStrip {
+  margin-top: 10px;
 }
 
 .promptChip {
@@ -459,6 +466,31 @@ a {
   padding-top: 12px;
 }
 
+.packetDisclosure {
+  border: 1px solid #d4dbe1;
+  background: var(--soft);
+  padding: 9px 10px;
+}
+
+.packetDisclosure + .packetDisclosure,
+.packetDisclosure + .answerGrid,
+.answerGrid .packetDisclosure {
+  margin-top: 9px;
+}
+
+.packetDisclosure summary {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  width: 100%;
+  list-style-position: inside;
+  text-transform: uppercase;
+}
+
+.packetDisclosureBody {
+  margin-top: 10px;
+}
+
 .modeNote {
   color: var(--muted);
   font-weight: 650;
@@ -498,13 +530,17 @@ a {
   gap: 9px;
 }
 
-.authorityCard,
 .sourceCard,
 .savedCard,
-.uploadRow,
-.infoCard {
+.uploadRow {
   border: 1px solid #d4dbe1;
   background: var(--soft);
+  padding: 10px;
+}
+
+.authorityCard {
+  border: 1px solid #d4dbe1;
+  background: #fff;
   padding: 10px;
 }
 

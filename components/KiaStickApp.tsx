@@ -183,9 +183,11 @@ export function KiaStickApp({ runtimeVersion = clientVersion }: { runtimeVersion
       detail,
       timestamp: new Date().toISOString(),
     });
-    const result = upsertSavedAnswer(saved, record);
-    setSaved(result.saved);
-    setSaveNotice({ status: result.status, text: saveStatusText(result.status) });
+    setSaved((current) => {
+      const result = upsertSavedAnswer(current, record);
+      setSaveNotice({ status: result.status, text: saveStatusText(result.status) });
+      return result.saved;
+    });
   }
 
   function queueUpload(fileList: FileList | null) {
@@ -231,56 +233,18 @@ export function KiaStickApp({ runtimeVersion = clientVersion }: { runtimeVersion
             <section className="chatComposer chatComposerDock" aria-label="Ask KIA Stick">
               <div className="composerHeader">
                 <div>
-                  <span className="sectionKicker">Message</span>
-                  <h2>Ask KIA Stick</h2>
+                  <span className="sectionKicker">Reply</span>
+                  <h2>Message KIA Stick</h2>
                 </div>
                 <span className={answer.noAnswer ? "statusPill warning" : "statusPill ok"}>
                   {answer.noAnswer ? "No controlling hit" : "Cited answer"}
                 </span>
               </div>
 
-              <div className="controlStrip">
-                <label className="controlPill">
-                  <span>Mode</span>
-                  <select value={mode} onChange={(event) => setMode(event.target.value as Mode)}>
-                    {modes.map((item) => (
-                      <option key={item}>{item}</option>
-                    ))}
-                  </select>
-                </label>
-                <label className="controlPill">
-                  <span>Scope</span>
-                  <select value={scope} onChange={(event) => setScope(event.target.value as Scope)}>
-                    {scopes.map((item) => (
-                      <option key={item}>{item}</option>
-                    ))}
-                  </select>
-                </label>
-                <label className="controlPill">
-                  <span>Detail</span>
-                  <select value={detail} onChange={(event) => setDetail(event.target.value as Detail)}>
-                    {details.map((item) => (
-                      <option key={item}>{item}</option>
-                    ))}
-                  </select>
-                </label>
-              </div>
-
-              <details className="promptDetails">
-                <summary>Prompt shortcuts</summary>
-                <div className="promptRail" aria-label="fake test prompts">
-                  {cannedQuestions.map((prompt) => (
-                    <button className="promptChip" key={prompt} type="button" onClick={() => runAnswer(prompt)}>
-                      {prompt}
-                      <ChevronRight size={14} />
-                    </button>
-                  ))}
-                </div>
-              </details>
-
               <div className="askBox">
                 <textarea
                   aria-label="Question"
+                  placeholder="Type a fake-doc question..."
                   value={question}
                   onChange={(event) => setQuestion(event.target.value)}
                 />
@@ -299,6 +263,48 @@ export function KiaStickApp({ runtimeVersion = clientVersion }: { runtimeVersion
                   </div>
                 )}
               </div>
+
+              <details className="composerDisclosure">
+                <summary>Response options</summary>
+                <div className="controlStrip">
+                  <label className="controlPill">
+                    <span>Mode</span>
+                    <select value={mode} onChange={(event) => setMode(event.target.value as Mode)}>
+                      {modes.map((item) => (
+                        <option key={item}>{item}</option>
+                      ))}
+                    </select>
+                  </label>
+                  <label className="controlPill">
+                    <span>Scope</span>
+                    <select value={scope} onChange={(event) => setScope(event.target.value as Scope)}>
+                      {scopes.map((item) => (
+                        <option key={item}>{item}</option>
+                      ))}
+                    </select>
+                  </label>
+                  <label className="controlPill">
+                    <span>Detail</span>
+                    <select value={detail} onChange={(event) => setDetail(event.target.value as Detail)}>
+                      {details.map((item) => (
+                        <option key={item}>{item}</option>
+                      ))}
+                    </select>
+                  </label>
+                </div>
+              </details>
+
+              <details className="promptDetails">
+                <summary>Prompt shortcuts</summary>
+                <div className="promptRail" aria-label="fake test prompts">
+                  {cannedQuestions.map((prompt) => (
+                    <button className="promptChip" key={prompt} type="button" onClick={() => runAnswer(prompt)}>
+                      {prompt}
+                      <ChevronRight size={14} />
+                    </button>
+                  ))}
+                </div>
+              </details>
             </section>
           </>
         )}
@@ -979,14 +985,13 @@ function authoritySummary(answer: AnswerResult): string {
   return `Medium fake-source confidence. ${answer.citations.length} citable source${answer.citations.length === 1 ? "" : "s"} matched.`;
 }
 
-function FullPacket({ answer }: { answer: AnswerResult }) {
+export function FullPacket({ answer }: { answer: AnswerResult }) {
+  const sourceCount = answer.sourceGroups.reduce((total, group) => total + group.docs.length, 0);
+  const conflicts = answer.conflicts.length > 0 ? answer.conflicts : ["No visible fake-source conflicts."];
+
   return (
     <div className="fullPacket">
-      <section className="answerSection">
-        <h3 className="sectionTitle">
-          <ShieldCheck size={14} />
-          Authority Stack
-        </h3>
+      <DetailDisclosure icon={<ShieldCheck size={14} />} title={`Show authority stack (${sourceCount})`}>
         {answer.sourceGroups.length === 0 && <p className="emptyState">No fake sources matched.</p>}
         {answer.sourceGroups.map((group) => (
           <section className="authorityGroup" key={group.bucket}>
@@ -1007,30 +1012,39 @@ function FullPacket({ answer }: { answer: AnswerResult }) {
             </div>
           </section>
         ))}
-      </section>
+      </DetailDisclosure>
 
       <div className="answerGrid">
-        <ListBlock title="Conflicts" items={answer.conflicts.length > 0 ? answer.conflicts : ["No visible fake-source conflicts."]} icon="conflict" />
-        <ListBlock title="Evidence Checklist" items={answer.evidenceChecklist} icon="checklist" />
-        <ListBlock title="Missing Facts" items={answer.missingFacts} icon="facts" />
-        <ListBlock title="Follow-Ups" items={answer.followUps} icon="followups" />
+        <ListBlock title={`Show conflicts (${conflicts.length})`} items={conflicts} icon="conflict" />
+        <ListBlock title={`Show evidence checklist (${answer.evidenceChecklist.length})`} items={answer.evidenceChecklist} icon="checklist" />
+        <ListBlock title={`Show missing facts (${answer.missingFacts.length})`} items={answer.missingFacts} icon="facts" />
+        <ListBlock title={`Show follow-ups (${answer.followUps.length})`} items={answer.followUps} icon="followups" />
       </div>
     </div>
   );
 }
 
-function ListBlock({ title, items, icon }: { title: string; items: string[]; icon: "conflict" | "checklist" | "facts" | "followups" }) {
-  const Icon = icon === "checklist" ? CheckCircle2 : icon === "facts" ? FileSearch : ClipboardList;
+function DetailDisclosure({ children, icon, title }: { children: React.ReactNode; icon: React.ReactNode; title: string }) {
   return (
-    <section className="infoCard">
-      <h3 className="sectionTitle">
-        <Icon size={14} /> {title}
-      </h3>
+    <details className="packetDisclosure">
+      <summary>
+        {icon}
+        {title}
+      </summary>
+      <div className="packetDisclosureBody">{children}</div>
+    </details>
+  );
+}
+
+function ListBlock({ title, items, icon }: { title: string; items: string[]; icon: "conflict" | "checklist" | "facts" | "followups" }) {
+  const Icon = icon === "checklist" ? CheckCircle2 : icon === "facts" ? FileSearch : icon === "conflict" ? AlertTriangle : ClipboardList;
+  return (
+    <DetailDisclosure icon={<Icon size={14} />} title={title}>
       <ul className="plainList">
         {items.map((item) => (
           <li key={item}>{item}</li>
         ))}
       </ul>
-    </section>
+    </DetailDisclosure>
   );
 }

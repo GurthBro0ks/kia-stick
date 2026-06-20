@@ -75,3 +75,13 @@ Quarantine, redaction review, and metadata review are not index approval. Invali
 - Sources are grouped by hierarchy: Local, State/Area, National, Manuals/Handbooks, Arbitration/Settlements, Steward Notes/Evidence, and Unknown.
 - Saved-answer migration dedupes old localStorage entries and ignores timestamp/build identity for unchanged same-chat saves.
 - `/version` includes a `Back to KIA Stick` link while preserving full build metadata.
+
+## v0.4 Chat UX Dedupe Fix 2
+
+- Saved-answer identity canonicalizes question, mode, scope, short answer, intent, and citation locators while ignoring timestamp, build/display version, Git SHA, and ordering noise.
+- Legacy saved-answer migration collapses build/timestamp-only duplicates and keeps the newest safe metadata.
+- Same unchanged saves keep saved count stable and show `Already saved. No new data.`
+- Same-chat detail or metadata changes replace the existing saved card instead of creating a duplicate.
+- The chat composer is message-first; response options and prompt shortcuts are collapsed secondary controls.
+- Full packet sections are collapse-first: authority stack, conflicts, evidence checklist, missing facts, and follow-ups each stay behind a disclosure.
+- `public/manifest.webmanifest` is valid JSON for browser manifest parsing.

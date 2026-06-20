@@ -1,5 +1,45 @@
 # KIA Stick Closeout
 
+## v0.4 Chat UX Dedupe Fix 2
+
+- Phase: `KIA-Stick-v0.4-chat-ux-dedupe-fix-2`
+- Scope: remaining v0.4 manual QA blockers for saved-answer dedupe, chat-first UX, collapse-first packet details, source hierarchy coverage, and manifest validity.
+- Proof directory: `/tmp/proof_kia_stick_v04_chat_dedupe_fix2_20260620T135417Z`
+- Product version: `0.4.0`
+- Manual QA: checklist created; automated/unit validation and local route checks required before acceptance.
+- Provider: `local-fake-deterministic`
+- Cloud/API required: no
+- Secrets printed: no
+- Push performed: no
+- Real document boundary: `/media/mint/SHARED/APWU` untouched
+- Private vault inspected: no
+
+## v0.4 Chat UX Dedupe Fix 2 Coverage
+
+- Saved-answer identity canonicalizes question, mode, scope, short answer, intent, and normalized citation locators.
+- Identity and fingerprints ignore timestamp, created/saved time, build/display version, Git SHA, and citation/detail ordering noise.
+- Legacy localStorage migration dedupes timestamp/build-only duplicates while keeping newest safe metadata.
+- Same unchanged saves keep saved count stable and surface `Already saved. No new data.`
+- Same-chat changed detail or metadata replaces the existing saved card.
+- Different question or answer context still creates a separate saved card.
+- Chat composer now reads as message-first; response options and prompt shortcuts are collapsed secondary controls.
+- Full packet details are collapse-first with separate disclosures for authority stack, conflicts, evidence checklist, missing facts, and follow-ups.
+- Sources hierarchy tests verify expected fake docs under Local, State/Area, National, Manuals/Handbooks, Arbitration/Settlements, Steward Notes/Evidence, and Unknown.
+- `public/manifest.webmanifest` is valid JSON and covered by test/validation.
+
+## v0.4 Chat UX Dedupe Fix 2 Known Warnings
+
+- `npm run test` prints the existing Vite CJS API deprecation notice.
+- `next build` may print the existing Next flat-ESLint plugin detection warning while still passing validation.
+
+## Next Safe Phase
+
+Recommended next phase: `KIA-Stick-v0.4-chat-ux-dedupe-fix-2-manual-browser-acceptance`.
+
+Future phases remain fake-doc/fake-metadata-only unless separately authorized. No real-document reads, copies, scans, OCR, ingestion, summarization, transforms, real indexing, uploads, private-vault inspection, or pushes are approved by this fix.
+
+---
+
 ## v0.4 Conversational UX Rework
 
 - Phase: `KIA-Stick-v0.4-conversational-ux-rework`
