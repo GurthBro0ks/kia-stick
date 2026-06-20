@@ -770,6 +770,12 @@ a {
   gap: 12px;
 }
 
+.fakeUploadActions {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
 .checkboxRow {
   display: flex;
   align-items: center;
@@ -1210,6 +1216,112 @@ a {
   font-size: 0.88rem;
 }
 
+.importWizardPanel {
+  display: grid;
+  gap: 12px;
+}
+
+.wizardRail {
+  display: grid;
+  grid-template-columns: repeat(5, minmax(0, 1fr));
+  gap: 5px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.wizardRail li {
+  min-height: 54px;
+  border: 1px solid #c3ccd3;
+  background: #fff;
+  color: var(--muted);
+  padding: 6px;
+  font-size: 0.64rem;
+  font-weight: 900;
+  line-height: 1.15;
+  overflow-wrap: anywhere;
+}
+
+.wizardRail li span {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 18px;
+  height: 18px;
+  margin-bottom: 4px;
+  border: 1px solid #a7b0b8;
+  background: #f0f2f4;
+  color: var(--ink);
+  font-size: 0.62rem;
+}
+
+.wizardRail li.complete {
+  background: #d9ece8;
+  color: #174c31;
+  border-color: #9fbdb4;
+}
+
+.wizardRail li.current {
+  background: #fff7dd;
+  color: #59451a;
+  border-color: #d4bb76;
+  box-shadow: inset 0 4px 0 var(--amber);
+}
+
+.wizardScreen {
+  border: 1px solid #d4dbe1;
+  background: var(--soft);
+  padding: 10px;
+}
+
+.wizardScreenHeader {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 10px;
+}
+
+.wizardScreenHeader h3 {
+  margin: 2px 0 0;
+  font-size: 1rem;
+}
+
+.wizardPlainCopy {
+  margin: 9px 0 0;
+  color: var(--muted);
+  font-size: 0.86rem;
+  font-weight: 750;
+  line-height: 1.42;
+}
+
+.wizardFieldGrid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(132px, 1fr));
+  gap: 7px;
+  margin-top: 10px;
+}
+
+.wizardFieldGrid div {
+  border: 1px solid #ccd5dc;
+  background: #fff;
+  padding: 7px;
+}
+
+.wizardFieldGrid span {
+  display: block;
+  color: var(--muted);
+  font-size: 0.66rem;
+  font-weight: 900;
+  text-transform: uppercase;
+}
+
+.wizardFieldGrid strong {
+  display: block;
+  margin-top: 3px;
+  font-size: 0.78rem;
+  overflow-wrap: anywhere;
+}
+
 .bottomNav {
   position: fixed;
   left: max(10px, env(safe-area-inset-left));
@@ -1217,8 +1329,8 @@ a {
   bottom: max(10px, env(safe-area-inset-bottom));
   z-index: 45;
   display: grid;
-  grid-template-columns: repeat(6, minmax(0, 1fr));
-  max-width: 640px;
+  grid-template-columns: repeat(7, minmax(0, 1fr));
+  max-width: 760px;
   min-height: 64px;
   margin: 0 auto;
   overflow: hidden;
@@ -1378,6 +1490,10 @@ a {
 
   .lifecycleRail {
     grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+
+  .wizardRail {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
   }
 
   .composerHeader,

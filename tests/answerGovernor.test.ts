@@ -4,7 +4,7 @@ import { renderToStaticMarkup } from "react-dom/server";
 import React from "react";
 import { GET as healthGET } from "@/app/health/route";
 import VersionPage from "@/app/version/page";
-import { AssistantMessageCard, FullPacket, KiaStickApp, UserMessageBubble, VaultPanel } from "@/components/KiaStickApp";
+import { AssistantMessageCard, FullPacket, ImportWizardPanel, KiaStickApp, UserMessageBubble, VaultPanel } from "@/components/KiaStickApp";
 import { answerToMarkdown, buildAnswer } from "@/lib/answerGovernor";
 import {
   appendTurn,
@@ -16,6 +16,14 @@ import {
   recentAnswerHistory,
   replaceAssistantMessage,
 } from "@/lib/conversationModel";
+import {
+  applyImportWizardAction,
+  assertImportWizardFakeOnly,
+  createInitialImportWizardState,
+  exportImportWizardAuditJson,
+  exportImportWizardAuditMarkdown,
+  importWizardSteps,
+} from "@/lib/importWizardModel";
 import { createSavedAnswerRecord, migrateSavedAnswers, upsertSavedAnswer } from "@/lib/savedAnswers";
 import { buildSourceHierarchyGroups, corpus, sourceHierarchyLabels, sourceHierarchyOrder } from "@/lib/sourceModel";
 import { createRuntimeVersion, runtimeVersionFields } from "@/lib/version";
@@ -577,6 +585,7 @@ describe("manual QA UX shell", () => {
     }));
 
     expect(html).toContain("KIA Stick navigation");
+    expect(html).toContain("Import");
     expect(html).toContain("Settings");
     expect(html).toContain("bottomNav");
   });
@@ -600,6 +609,165 @@ describe("manual QA UX shell", () => {
     expect(html).toContain("What happens next");
     expect(html).toContain("Show technical details");
     expect(html).not.toContain("Lifecycle State Machine");
+  });
+
+  it("renders the fake Import Wizard scaffold with stop-sign labels and no file input", () => {
+    const state = createInitialImportWizardState();
+    const html = renderToStaticMarkup(React.createElement(ImportWizardPanel, {
+      state,
+      runtimeVersion: createRuntimeVersion({ buildDate: "20260620", gitSha: "abc123" }),
+      onAction: () => undefined,
+    }));
+
+    expect(html).toContain("Import Wizard");
+    expect(html).toContain("fake UI scaffold only");
+    expect(html).toContain("Selection is not import");
+    expect(html).toContain("Quarantine is not indexable");
+    expect(html).toContain("Redaction is not approval");
+    expect(html).toContain("Approval is not indexing");
+    expect(html).toContain("No real import path exists");
+    expect(html).toContain("Try file picker");
+    expect(html).toContain("Try skip to index");
+    expect(html).toContain("Fake import proof");
+    expect(html).not.toContain("type=\"file\"");
+  });
+});
+
+describe("fake import wizard model", () => {
+  it("ships every planned wizard screen and starts fake-only", () => {
+    const state = createInitialImportWizardState();
+
+    expect(importWizardSteps).toEqual([
+      "start_safety",
+      "source_placeholder",
+      "scope_confirm",
+      "quarantine_confirm",
+      "provenance_hash",
+      "redaction_detection",
+      "admin_redaction_review",
+      "metadata_review",
+      "index_eligibility",
+      "audit_summary",
+    ]);
+    expect(state.currentStep).toBe("start_safety");
+    expect(state.fakeOnly).toBe(true);
+    expect(state.realActionsDisabled).toBe(true);
+    expect(assertImportWizardFakeOnly(state).ok).toBe(true);
+  });
+
+  it("moves fake records through the full scaffold without reading files", () => {
+    const started = applyImportWizardAction(createInitialImportWizardState(), {
+      type: "start_fake_wizard",
+      now: "2026-06-20T05:00:00.000Z",
+    });
+    const selected = applyImportWizardAction(started, {
+      type: "select_fake_source",
+      scopeMode: "explicit_fake_batch",
+      itemCount: 2,
+      now: "2026-06-20T05:01:00.000Z",
+    });
+    const scoped = applyImportWizardAction(selected, {
+      type: "confirm_fake_scope",
+      now: "2026-06-20T05:02:00.000Z",
+    });
+    const quarantined = applyImportWizardAction(scoped, {
+      type: "confirm_fake_quarantine",
+      now: "2026-06-20T05:03:00.000Z",
+    });
+    const provenanced = applyImportWizardAction(quarantined, {
+      type: "record_fake_provenance",
+      now: "2026-06-20T05:04:00.000Z",
+    });
+    const previewed = applyImportWizardAction(provenanced, {
+      type: "preview_fake_redaction",
+      now: "2026-06-20T05:05:00.000Z",
+    });
+    const redactionApproved = applyImportWizardAction(previewed, {
+      type: "approve_fake_redaction",
+      now: "2026-06-20T05:06:00.000Z",
+    });
+    const metadataApproved = applyImportWizardAction(redactionApproved, {
+      type: "approve_fake_metadata",
+      now: "2026-06-20T05:07:00.000Z",
+    });
+    const eligible = applyImportWizardAction(metadataApproved, {
+      type: "decide_fake_index",
+      decision: "eligible_fake_only",
+      now: "2026-06-20T05:08:00.000Z",
+    });
+    const audited = applyImportWizardAction(eligible, {
+      type: "complete_fake_audit",
+      now: "2026-06-20T05:09:00.000Z",
+    });
+
+    expect(audited.currentStep).toBe("audit_summary");
+    expect(audited.auditComplete).toBe(true);
+    expect(audited.record.scopeMode).toBe("explicit_fake_batch");
+    expect(audited.record.itemCount).toBe(2);
+    expect(audited.record.indexDecision).toBe("eligible_fake_only");
+    expect(audited.auditLog.map((entry) => entry.action)).toContain("fake_import_audit_complete");
+    expect(audited.auditLog.map((entry) => entry.note).join(" ")).not.toContain("file content");
+  });
+
+  it("blocks skipped gates with visible reasons", () => {
+    const state = createInitialImportWizardState();
+    const blocked = applyImportWizardAction(state, {
+      type: "jump_to_step",
+      targetStep: "index_eligibility",
+      now: "2026-06-20T05:10:00.000Z",
+    });
+    const blockedScope = applyImportWizardAction(state, {
+      type: "confirm_fake_scope",
+      now: "2026-06-20T05:11:00.000Z",
+    });
+
+    expect(blocked.currentStep).toBe("start_safety");
+    expect(blocked.lastBlockedReason).toContain("Direct jump blocked");
+    expect(blocked.auditLog[0].action).toBe("blocked_invalid_import_wizard_transition");
+    expect(blockedScope.lastBlockedReason).toContain("Select a fake source placeholder");
+  });
+
+  it("blocks real file/path payloads without leaking the private value", () => {
+    const state = createInitialImportWizardState();
+    const blocked = applyImportWizardAction(state, {
+      type: "select_fake_source",
+      privatePath: "/media/mint/SHARED/APWU/private.pdf",
+      rawText: "do not accept document text",
+      now: "2026-06-20T05:12:00.000Z",
+    } as Record<string, unknown>);
+
+    expect(blocked.currentStep).toBe("start_safety");
+    expect(blocked.auditLog[0].action).toBe("blocked_real_import_attempt");
+    expect(blocked.auditLog[0].note).toContain("forbidden private reference");
+    expect(blocked.auditLog[0].note).toContain("forbidden file/content field");
+    expect(blocked.auditLog[0].note).not.toContain("/media/mint/SHARED/APWU");
+  });
+
+  it("exports fake-only proof with build identity and no private paths", () => {
+    const state = applyImportWizardAction(createInitialImportWizardState(), {
+      type: "block_future_real_action",
+      reason: "Future real file picker disabled for fake scaffold.",
+      now: "2026-06-20T05:13:00.000Z",
+    });
+    const version = createRuntimeVersion({
+      productVersion: "0.4.0",
+      buildDate: "20260620",
+      gitSha: "bf2248b",
+    });
+    const json = exportImportWizardAuditJson(state, version, "2026-06-20T05:14:00.000Z");
+    const markdown = exportImportWizardAuditMarkdown(state, version, "2026-06-20T05:14:00.000Z");
+    const payload = JSON.parse(json);
+
+    expect(payload.version.displayVersion).toBe("0.4.0-dev.20260620+bf2248b");
+    expect(payload.guard.fakeMetadataOnly).toBe(true);
+    expect(payload.guard.privatePathsIncluded).toBe(false);
+    expect(payload.guard.fileContentIncluded).toBe(false);
+    expect(payload.guard.realImportImplemented).toBe(false);
+    expect(payload.guard.filePickerImplemented).toBe(false);
+    expect(json).toContain("fake-import-wizard-record-001");
+    expect(markdown).toContain("Real import implemented: false");
+    expect(json).not.toContain("/media/mint/SHARED/APWU");
+    expect(markdown).not.toContain("/media/mint/SHARED/APWU");
   });
 });
 

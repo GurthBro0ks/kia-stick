@@ -36,6 +36,19 @@ import {
   type UserMessage,
 } from "@/lib/conversationModel";
 import {
+  applyImportWizardAction,
+  createInitialImportWizardState,
+  exportImportWizardAuditJson,
+  exportImportWizardAuditMarkdown,
+  importWizardNextAction,
+  importWizardNextActionLabel,
+  importWizardScreenCopy,
+  importWizardStepLabels,
+  importWizardSteps,
+  type ImportWizardAction,
+  type ImportWizardState,
+} from "@/lib/importWizardModel";
+import {
   createSavedAnswerRecord,
   migrateSavedAnswers,
   upsertSavedAnswer,
@@ -70,7 +83,7 @@ import {
 } from "@/lib/vaultModel";
 import { clientVersion, type RuntimeVersion } from "@/lib/version";
 
-type Tab = "chat" | "sources" | "saved" | "upload" | "vault" | "settings";
+type Tab = "chat" | "sources" | "saved" | "upload" | "vault" | "import" | "settings";
 type VaultView = "vault" | "quarantine" | "redaction" | "metadata" | "index" | "audit";
 
 interface QuarantineItem {
@@ -90,6 +103,7 @@ const savedKey = "kia-stick.saved-answers.v0.1";
 const threadKey = "kia-stick.current-thread.v0.4";
 const quarantineKey = "kia-stick.quarantine.v0.1";
 const vaultKey = "kia-stick.vault-state.v0.4";
+const importWizardKey = "kia-stick.import-wizard-state.v0.5.1";
 
 const vaultViews: { id: VaultView; label: string; meta: string }[] = [
   { id: "vault", label: "Vault", meta: "fake lane overview" },
@@ -143,6 +157,7 @@ export function KiaStickApp({ runtimeVersion = clientVersion }: { runtimeVersion
   const [quarantine, setQuarantine] = useState<QuarantineItem[]>([]);
   const [vaultView, setVaultView] = useState<VaultView>("vault");
   const [vaultState, setVaultState] = useState<VaultState>(() => createInitialVaultState());
+  const [importWizardState, setImportWizardState] = useState<ImportWizardState>(() => createInitialImportWizardState());
   const [fakeOnlyConfirmed, setFakeOnlyConfirmed] = useState(false);
   const [saveNotice, setSaveNotice] = useState<{ status: SaveAnswerStatus; text: string } | null>(null);
   const [hydrated, setHydrated] = useState(false);
@@ -154,6 +169,7 @@ export function KiaStickApp({ runtimeVersion = clientVersion }: { runtimeVersion
     setThread(migrateConversationThread(loadJson<unknown>(threadKey, null)) ?? createConversationThread());
     setQuarantine(loadJson<QuarantineItem[]>(quarantineKey, []));
     setVaultState(loadJson<VaultState>(vaultKey, createInitialVaultState()));
+    setImportWizardState(loadJson<ImportWizardState>(importWizardKey, createInitialImportWizardState()));
     setHydrated(true);
 
     if ("serviceWorker" in navigator) {
@@ -180,6 +196,11 @@ export function KiaStickApp({ runtimeVersion = clientVersion }: { runtimeVersion
     if (!hydrated) return;
     window.localStorage.setItem(vaultKey, JSON.stringify(vaultState));
   }, [hydrated, vaultState]);
+
+  useEffect(() => {
+    if (!hydrated) return;
+    window.localStorage.setItem(importWizardKey, JSON.stringify(importWizardState));
+  }, [hydrated, importWizardState]);
 
   const sourceHierarchyGroups = useMemo(() => buildSourceHierarchyGroups(), []);
 
@@ -315,21 +336,49 @@ export function KiaStickApp({ runtimeVersion = clientVersion }: { runtimeVersion
     setTab("chat");
   }
 
-  function queueUpload(fileList: FileList | null) {
-    if (!fakeOnlyConfirmed || !fileList) return;
-    const items: QuarantineItem[] = Array.from(fileList).map((file) => ({
-      id: `${Date.now()}-${file.name}`,
-      name: file.name,
-      size: file.size,
-      review: "queued_fake_review",
-      privacy: "local_browser_only",
-      timestamp: new Date().toISOString(),
-    }));
+  function queueFakeUpload(kind: "single" | "batch") {
+    if (!fakeOnlyConfirmed) return;
+    const timestamp = new Date().toISOString();
+    const baseId = Date.now();
+    const items: QuarantineItem[] =
+      kind === "single"
+        ? [
+            {
+              id: `${baseId}-fake-upload-single`,
+              name: "fake-upload-sample-single.md",
+              size: 1280,
+              review: "queued_fake_review",
+              privacy: "local_browser_only",
+              timestamp,
+            },
+          ]
+        : [
+            {
+              id: `${baseId}-fake-upload-batch-a`,
+              name: "fake-upload-sample-batch-a.md",
+              size: 2048,
+              review: "queued_fake_review",
+              privacy: "local_browser_only",
+              timestamp,
+            },
+            {
+              id: `${baseId}-fake-upload-batch-b`,
+              name: "fake-upload-sample-batch-b.md",
+              size: 1536,
+              review: "queued_fake_review",
+              privacy: "local_browser_only",
+              timestamp,
+            },
+          ];
     setQuarantine((current) => [...items, ...current].slice(0, 30));
   }
 
   function runVaultAction(action: VaultAction) {
     setVaultState((current) => applyVaultAction(current, { ...action, now: new Date().toISOString() }));
+  }
+
+  function runImportWizardAction(action: ImportWizardAction) {
+    setImportWizardState((current) => applyImportWizardAction(current, { ...action, now: new Date().toISOString() }));
   }
 
   return (
@@ -452,17 +501,17 @@ export function KiaStickApp({ runtimeVersion = clientVersion }: { runtimeVersion
                 />
                 Fake sample only
               </label>
-              <label className="fieldLabel">
-                Fake sample metadata, never content
-                <input
-                  className="fileInput"
-                  type="file"
-                  multiple
-                  accept=".md,.txt,.json"
-                  disabled={!fakeOnlyConfirmed}
-                  onChange={(event) => queueUpload(event.target.files)}
-                />
-              </label>
+              <div className="fakeUploadActions" aria-label="fake upload metadata actions">
+                <button className="button primary" type="button" disabled={!fakeOnlyConfirmed} onClick={() => queueFakeUpload("single")}>
+                  <Plus size={16} />
+                  Queue fake sample
+                </button>
+                <button className="button subtle" type="button" disabled={!fakeOnlyConfirmed} onClick={() => queueFakeUpload("batch")}>
+                  <ClipboardList size={16} />
+                  Queue fake batch
+                </button>
+              </div>
+              <p className="emptyState">No file picker is present. Upload queues synthetic metadata only.</p>
               <div className="sourceCards">
                 {quarantine.length === 0 && <p className="emptyState">No queued fake samples.</p>}
                 {quarantine.map((item) => (
@@ -492,6 +541,14 @@ export function KiaStickApp({ runtimeVersion = clientVersion }: { runtimeVersion
             state={vaultState}
             view={vaultView}
             workflowCounts={workflowCounts}
+          />
+        )}
+
+        {tab === "import" && (
+          <ImportWizardPanel
+            onAction={runImportWizardAction}
+            runtimeVersion={runtimeVersion}
+            state={importWizardState}
           />
         )}
 
@@ -630,6 +687,7 @@ export function KiaStickApp({ runtimeVersion = clientVersion }: { runtimeVersion
         <NavButton active={tab === "saved"} label="Saved" onClick={() => setTab("saved")} icon={<Heart size={20} />} />
         <NavButton active={tab === "upload"} label="Upload" onClick={() => setTab("upload")} icon={<Upload size={20} />} />
         <NavButton active={tab === "vault"} label="Vault" onClick={() => setTab("vault")} icon={<Database size={20} />} />
+        <NavButton active={tab === "import"} label="Import" onClick={() => setTab("import")} icon={<FileSearch size={20} />} />
         <NavButton active={tab === "settings"} label="Settings" onClick={() => setTab("settings")} icon={<Settings size={20} />} />
       </nav>
     </div>
@@ -834,6 +892,188 @@ export function VaultPanel(props: {
           ))}
         </div>
       )}
+    </section>
+  );
+}
+
+export function ImportWizardPanel(props: {
+  state: ImportWizardState;
+  runtimeVersion: RuntimeVersion;
+  onAction: (action: ImportWizardAction) => void;
+}) {
+  const currentCopy = importWizardScreenCopy[props.state.currentStep];
+  const currentIndex = importWizardSteps.indexOf(props.state.currentStep);
+  const nextAction = importWizardNextAction(props.state.currentStep);
+  const jsonExport = useMemo(
+    () => exportImportWizardAuditJson(props.state, props.runtimeVersion, new Date().toISOString()),
+    [props.runtimeVersion, props.state]
+  );
+  const markdownExport = useMemo(
+    () => exportImportWizardAuditMarkdown(props.state, props.runtimeVersion, new Date().toISOString()),
+    [props.runtimeVersion, props.state]
+  );
+
+  function runNextAction() {
+    if (nextAction === "decide_fake_index") {
+      props.onAction({ type: "decide_fake_index", decision: "eligible_fake_only" });
+      return;
+    }
+    props.onAction({ type: nextAction });
+  }
+
+  return (
+    <section className="tabPanel importWizardPanel">
+      <PanelHeader title="Import Wizard" meta="fake UI scaffold only" />
+
+      <section className="guidePanel" aria-label="Import wizard guide">
+        <div>
+          <span className="guideEyebrow">Fake import wizard</span>
+          <h3>No real import path exists</h3>
+        </div>
+        <div className="guideGrid">
+          <GuideItem title="Selection is not import">
+            This tab has no file picker and no source-path reader. It uses one synthetic candidate only.
+          </GuideItem>
+          <GuideItem title="Quarantine is not indexable">
+            The quarantine screen is a mock consent gate. It never creates, copies, or indexes files.
+          </GuideItem>
+          <GuideItem title="Redaction is not approval">
+            Fake redaction review only unlocks metadata review. It does not approve indexing.
+          </GuideItem>
+          <GuideItem title="Approval is not indexing">
+            Fake eligibility records a decision only. It does not build embeddings or a vector store.
+          </GuideItem>
+        </div>
+      </section>
+
+      <div className="boundaryGrid" aria-label="import wizard boundaries">
+        <NoticeBox tone="warning" title="Fake fixtures only">
+          Uses fake IDs, fake counts, fake hashes, and fake proof IDs. No real documents, paths, bytes, screenshots, OCR, or uploads.
+        </NoticeBox>
+        <NoticeBox tone="danger" title="Future real action disabled">
+          Real file selection, private-vault inspection, copy-to-quarantine, OCR, indexing, and uploads are placeholders only.
+        </NoticeBox>
+        <NoticeBox tone="neutral" title="Proof is sanitized">
+          Audit export contains build identity, fake metadata, fake gates, and blocked reasons only.
+        </NoticeBox>
+      </div>
+
+      <ol className="wizardRail" aria-label="import wizard state machine">
+        {importWizardSteps.map((step, index) => (
+          <li
+            className={step === props.state.currentStep ? "current" : index < currentIndex ? "complete" : ""}
+            key={step}
+          >
+            <span>{index + 1}</span>
+            {importWizardStepLabels[step]}
+          </li>
+        ))}
+      </ol>
+
+      <section className="wizardScreen" aria-label={currentCopy.title}>
+        <div className="wizardScreenHeader">
+          <div>
+            <span className="sectionKicker">Current screen</span>
+            <h3>{currentCopy.title}</h3>
+          </div>
+          <span className={props.state.record.indexDecision === "eligible_fake_only" ? "statusPill ok" : "statusPill warning"}>
+            {props.state.record.indexDecision}
+          </span>
+        </div>
+
+        <p className="wizardPlainCopy">{currentCopy.plain}</p>
+        <p className="blockedReason">
+          <AlertTriangle size={14} />
+          {currentCopy.stopSign}
+        </p>
+
+        <div className="wizardFieldGrid">
+          <WizardField label="Fake record" value={props.state.record.id} />
+          <WizardField label="Display alias" value={props.state.record.displayName} />
+          <WizardField label="Source alias" value={props.state.record.fakeSourceAlias} />
+          <WizardField label="Scope" value={props.state.record.scopeMode} />
+          <WizardField label="Item count" value={String(props.state.record.itemCount)} />
+          <WizardField label="Fake hash" value={props.state.record.fakeHash} />
+          <WizardField label="Proof ID" value={props.state.record.proofId} />
+          <WizardField label="Real actions" value={props.state.realActionsDisabled ? "disabled" : "enabled"} />
+        </div>
+
+        <ul className="flagList" aria-label="fake redaction categories">
+          {props.state.record.redactionFlags.map((flag) => (
+            <li key={flag}>{flag}</li>
+          ))}
+        </ul>
+
+        {props.state.lastBlockedReason && (
+          <p className="blockedReason">
+            <AlertTriangle size={14} />
+            {props.state.lastBlockedReason}
+          </p>
+        )}
+
+        <div className="vaultActions">
+          <button
+            className="button primary"
+            type="button"
+            onClick={runNextAction}
+          >
+            <CheckCircle2 size={16} />
+            {importWizardNextActionLabel(props.state.currentStep)}
+          </button>
+          <button
+            className="button subtle"
+            type="button"
+            onClick={() =>
+              props.onAction({
+                type: "block_future_real_action",
+                reason: "Future real file picker is disabled. This v0.5.1 scaffold uses fake metadata only.",
+              })
+            }
+          >
+            <AlertTriangle size={16} />
+            Try file picker
+          </button>
+          <button
+            className="button subtle"
+            type="button"
+            onClick={() => props.onAction({ type: "jump_to_step", targetStep: "index_eligibility" })}
+          >
+            <AlertTriangle size={16} />
+            Try skip to index
+          </button>
+          <button className="button subtle" type="button" onClick={() => props.onAction({ type: "reset_fake_wizard" })}>
+            <RotateCcw size={16} />
+            Reset fake wizard
+          </button>
+        </div>
+      </section>
+
+      <section className="auditExportPanel">
+        <div>
+          <h3>Fake import proof</h3>
+          <p>Exports include fake wizard state, fake audit events, and build identity only. They exclude private paths and file content.</p>
+        </div>
+        <div className="vaultActions">
+          <DownloadLink fileName="kia-stick-fake-import-wizard-audit.json" label="JSON" mimeType="application/json" text={jsonExport} />
+          <DownloadLink fileName="kia-stick-fake-import-wizard-audit.md" label="Markdown" mimeType="text/markdown" text={markdownExport} />
+        </div>
+      </section>
+
+      <div className="auditList" aria-label="fake import wizard audit log">
+        {props.state.auditLog.slice(0, 6).map((entry) => (
+          <article className="auditEntry" key={entry.id}>
+            <div>
+              <strong>{entry.action}</strong>
+              <p>{entry.note}</p>
+            </div>
+            <div className="sourceMeta">
+              <span className="badge">{entry.step}</span>
+              <span className="badge">{entry.actor}</span>
+              <span className="badge">{new Date(entry.at).toLocaleString()}</span>
+            </div>
+          </article>
+        ))}
+      </div>
     </section>
   );
 }
@@ -1047,6 +1287,15 @@ function DownloadLink(props: { fileName: string; label: string; mimeType: string
 }
 
 function VaultField({ label, value }: { label: string; value: string }) {
+  return (
+    <div>
+      <span>{label}</span>
+      <strong>{value}</strong>
+    </div>
+  );
+}
+
+function WizardField({ label, value }: { label: string; value: string }) {
   return (
     <div>
       <span>{label}</span>

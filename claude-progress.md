@@ -2,10 +2,30 @@
 
 ## Current Phase
 
-- Phase: `KIA-Stick-v0.5-import-wizard-plan-closeout`
+- Phase: `KIA-Stick-v0.5.1-fake-import-wizard-ui-scaffold`
 - Target: `USER_LAPTOP_ONLY`
 - Provider: `local-fake-deterministic`
-- Status: v0.5 import wizard plan closeout validation PASS; local commit pending.
+- Status: v0.5.1 fake Import Wizard UI scaffold validation PASS; local commit pending.
+
+## v0.5.1 Fake Import Wizard UI Scaffold State
+
+- Phase: `KIA-Stick-v0.5.1-fake-import-wizard-ui-scaffold`
+- Baseline: accepted v0.5 plan closeout at `bf2248b`.
+- Scope: fake-only Import Wizard UI scaffold based on the accepted v0.5 design plan.
+- Product version impact: none; app remains `0.4.0`.
+- Proof directory: `/tmp/proof_kia_stick_v051_fake_import_wizard_ui_20260620T172654Z`
+- Implementation note: `docs/v0.5.1-fake-import-wizard-ui-scaffold.md`
+- UI: added `Import` tab with Start/Safety, Source Placeholder, Scope Confirm, Copy-to-Quarantine Confirm, Provenance/Hash Receipt, Redaction Detection Preview, Admin Redaction Review, Metadata Review, Index Eligibility, and Audit Summary screens.
+- Stop signs: selection is not import, quarantine is not indexable, redaction is not approval, and approval is not indexing.
+- Fake-only model: fake record ID, source alias, item count, fake hash, fake provenance, fake redaction categories, fake proof ID, fake audit events, and fake proof export.
+- Blocked actions: future file picker and skip-to-index attempts show visible reasons and sanitized fake audit entries.
+- Upload: fake metadata queue buttons remain; no browser file input exists.
+- Tests: added coverage for wizard state, blocked transitions, no-real-file guard, fake-only proof, and labels.
+- Validation: PASS for lint, typecheck, test, build, qa, scan:fake, scan:privacy, manifest parse, private tracked-path check, no-file-input grep, `/health`, `/version`, and CDP browser smoke.
+- Manual QA: PASS by CDP click-through of every wizard screen, blocked action checks, Upload fake-button check, Chat/nav check, and zero file inputs.
+- Real/private document access: none.
+- Private vault inspected: no.
+- Push performed: no.
 
 ## v0.5 Import Wizard Plan Closeout State
 
@@ -247,6 +267,17 @@
 
 ## Commands Run
 
+- `cat /home/slimy/AGENTS.md` (path missing on this machine)
+- `cat /home/slimy/claude-progress.md` (path missing on this machine)
+- `source /home/slimy/init.sh` (path missing on this machine)
+- `cat ./AGENTS.md`
+- `cat ./claude-progress.md`
+- `source ./init.sh || true`
+- `git status --short --branch`
+- `git log -5 --oneline --decorate`
+- `mkdir -p /tmp/proof_kia_stick_v051_fake_import_wizard_ui_20260620T172654Z`
+- `npx tsc --noEmit --pretty false`
+- `npm run test`
 - `cat ./AGENTS.md`
 - `cat ./claude-progress.md`
 - `source ./init.sh || true`
@@ -494,6 +525,13 @@
 
 ## Files Changed
 
+- v0.5.1 fake import wizard model added in `lib/importWizardModel.ts`.
+- v0.5.1 Import tab, fake wizard panel, fake actions, blocked reasons, and proof export links added in `components/KiaStickApp.tsx`.
+- v0.5.1 Import Wizard styles added in `app/globals.css`.
+- v0.5.1 `/health` phase label updated in `app/health/route.ts`.
+- v0.5.1 tests added in `tests/answerGovernor.test.ts`.
+- v0.5.1 implementation note added at `docs/v0.5.1-fake-import-wizard-ui-scaffold.md`.
+- v0.5.1 README, closeout, feature inventory, and progress state updated.
 - v0.5 import wizard plan closeout recorded in `CLOSEOUT.md`, `claude-progress.md`, and `feature_list.json`.
 - v0.5 import wizard design plan added at `docs/v0.5-import-wizard-design-plan.md`.
 - v0.5 planning summary added in `README.md`.
@@ -580,6 +618,7 @@
 
 ## Proof Directory
 
+- v0.5.1 fake import wizard UI scaffold proof: `/tmp/proof_kia_stick_v051_fake_import_wizard_ui_20260620T172654Z`
 - v0.5 import wizard plan closeout proof: `/tmp/proof_kia_stick_v05_import_wizard_plan_closeout_20260620T170459Z`
 - v0.5 import wizard design plan proof: `/tmp/proof_kia_stick_v05_import_wizard_plan_20260620T165438Z`
 - v0.4 true threaded chat proof: `/tmp/proof_kia_stick_v04_true_threaded_chat_20260620T145019Z`

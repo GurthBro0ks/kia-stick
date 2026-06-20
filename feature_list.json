@@ -1,5 +1,5 @@
 {
-  "phase": "KIA-Stick-v0.5-import-wizard-plan-closeout",
+  "phase": "KIA-Stick-v0.5.1-fake-import-wizard-ui-scaffold",
   "target_machine": "USER_LAPTOP_ONLY",
   "accepted_v0_1": {
     "commit": "1d9b05c",
@@ -605,6 +605,58 @@
     "real_document_access": false,
     "private_vault_inspected": false,
     "real_import_implemented": false,
+    "push_performed": false,
+    "real_db_boundary": "/media/mint/SHARED/APWU untouched"
+  },
+  "implemented_v0_5_1_fake_import_wizard_ui": {
+    "phase": "KIA-Stick-v0.5.1-fake-import-wizard-ui-scaffold",
+    "status": "implemented_fake_metadata_only_validation_passed",
+    "baseline_commit": "bf2248b",
+    "document": "docs/v0.5.1-fake-import-wizard-ui-scaffold.md",
+    "proof_dir": "/tmp/proof_kia_stick_v051_fake_import_wizard_ui_20260620T172654Z",
+    "screens": [
+      "start_safety",
+      "source_placeholder",
+      "scope_confirm",
+      "quarantine_confirm",
+      "provenance_hash",
+      "redaction_detection",
+      "admin_redaction_review",
+      "metadata_review",
+      "index_eligibility",
+      "audit_summary"
+    ],
+    "features": [
+      "import_tab",
+      "fake_wizard_state_machine",
+      "visible_blocked_transition_reasons",
+      "fake_actions_only",
+      "future_real_action_placeholders_disabled",
+      "fake_audit_json_markdown_export",
+      "build_identity_in_fake_proof",
+      "no_file_picker_in_import_wizard",
+      "upload_fake_metadata_buttons_no_file_input"
+    ],
+    "stop_signs": [
+      "selection_is_not_import",
+      "quarantine_is_not_indexable",
+      "redaction_is_not_approval",
+      "approval_is_not_indexing"
+    ],
+    "tests": [
+      "wizard_state",
+      "blocked_transitions",
+      "no_real_file_guard",
+      "fake_only_proof",
+      "ui_labels"
+    ],
+    "validation": "passed",
+    "manual_qa": "cdp_wizard_clickthrough_passed",
+    "real_document_access": false,
+    "private_vault_inspected": false,
+    "real_import_implemented": false,
+    "file_picker_implemented": false,
+    "ocr_index_upload_implemented": false,
     "push_performed": false,
     "real_db_boundary": "/media/mint/SHARED/APWU untouched"
   }

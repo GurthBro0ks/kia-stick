@@ -1,5 +1,40 @@
 # KIA Stick Closeout
 
+## v0.5.1 Fake Import Wizard UI Scaffold
+
+- Phase: `KIA-Stick-v0.5.1-fake-import-wizard-ui-scaffold`
+- Baseline: accepted v0.5 plan closeout at `bf2248b`
+- Scope: fake-only Import Wizard UI scaffold based on the accepted v0.5 design plan.
+- Product version impact: none; app remains `0.4.0`.
+- Implementation note: `docs/v0.5.1-fake-import-wizard-ui-scaffold.md`
+- Proof directory: `/tmp/proof_kia_stick_v051_fake_import_wizard_ui_20260620T172654Z`
+- Manual QA: PASS by CDP click-through of every wizard screen, blocked action checks, Upload fake-button check, Chat/nav check, and zero file inputs.
+- Validation: PASS for lint, typecheck, test, build, qa, scan:fake, scan:privacy, manifest parse, private tracked-path check, no-file-input grep, `/health`, `/version`, and CDP browser smoke.
+- Provider: `local-fake-deterministic`
+- Cloud/API required: no
+- Secrets printed: no
+- Push performed: no
+- Real document access: none
+- Private vault inspected: no
+
+## v0.5.1 Coverage
+
+- Added an `Import` tab using fake metadata only.
+- Added all planned wizard screens from start/safety through audit summary.
+- Added visible stop-sign copy: selection is not import, quarantine is not indexable, redaction is not approval, and approval is not indexing.
+- Added fake wizard state model, fake actions, blocked transition reasons, and fake audit export.
+- Kept Upload as fake metadata queue buttons with no browser file input.
+- Added tests for wizard state, blocked transitions, no-real-file guard, fake-only proof, and UI labels.
+- Kept Chat, Saved, Sources, Upload, Vault, Settings, `/health`, and `/version` in scope.
+
+## Next Safe Phase
+
+Recommended next phase: `KIA-Stick-v0.5.1-fake-import-wizard-review`.
+
+Future phases remain fake-only unless separately authorized. This scaffold does not approve real import, file pickers, path readers, file reads, copying, OCR, text extraction, indexing, upload handling, private-vault inspection, cloud calls, service changes, or pushes.
+
+---
+
 ## v0.5 Import Wizard Plan Closeout
 
 - Phase: `KIA-Stick-v0.5-import-wizard-plan-closeout`

@@ -33,6 +33,25 @@ This MVP uses only fictional source documents under `content/fake-docs/`. Every 
 
 `/media/mint/SHARED/APWU` is treated as real-document storage and is intentionally not read, copied, indexed, or scanned by this repo.
 
+## v0.5.1 Fake Import Wizard UI Scaffold
+
+The `Import` tab implements the accepted v0.5 plan as a fake metadata scaffold only. It walks through:
+
+- Start / safety.
+- Source placeholder.
+- Scope confirmation.
+- Copy-to-quarantine confirmation.
+- Provenance / hash receipt.
+- Redaction detection preview.
+- Admin redaction review.
+- Metadata review.
+- Index eligibility.
+- Audit summary.
+
+The scaffold uses fake IDs, counts, hashes, provenance, redaction categories, and proof IDs only. It has no real import code, no file picker, no path reader, no file reads, no copying, no OCR, no upload handling, no real indexing, and no private-vault inspection. Upload remains a fake metadata queue driven by buttons, not a browser file input.
+
+The visible stop signs are: selecting a path is not import, quarantine is not indexable, redaction is not approval, and approval is not indexing.
+
 ## v0.5 Import Wizard Design Plan
 
 `docs/v0.5-import-wizard-design-plan.md` defines a future real-document import wizard as a planning-only workflow. It does not add file pickers, path readers, copying, OCR, text extraction, indexing, uploads, or private-vault inspection.
