@@ -1,5 +1,5 @@
 {
-  "phase": "KIA-Stick-v0.4.1-release-review",
+  "phase": "KIA-Stick-v0.5-import-wizard-design-plan",
   "target_machine": "USER_LAPTOP_ONLY",
   "accepted_v0_1": {
     "commit": "1d9b05c",
@@ -526,6 +526,55 @@
     "push_performed": false,
     "real_document_access": false,
     "private_vault_inspected": false,
+    "real_db_boundary": "/media/mint/SHARED/APWU untouched"
+  },
+  "planned_v0_5_import_wizard": {
+    "phase": "KIA-Stick-v0.5-import-wizard-design-plan",
+    "status": "planning_only_validation_passed",
+    "baseline_commit": "16e1980",
+    "document": "docs/v0.5-import-wizard-design-plan.md",
+    "proof_dir": "/tmp/proof_kia_stick_v05_import_wizard_plan_20260620T165438Z",
+    "screens": [
+      "start_safety_warning",
+      "select_source_path_placeholder",
+      "confirm_single_file_or_explicit_scoped_batch",
+      "copy_to_quarantine_confirmation",
+      "provenance_hash_step",
+      "redaction_detection_preview",
+      "admin_redaction_review",
+      "metadata_review",
+      "index_eligibility_decision",
+      "audit_summary"
+    ],
+    "rules": [
+      "selecting_path_is_not_import",
+      "quarantine_is_not_indexable",
+      "redaction_is_not_approval",
+      "approval_is_not_indexing",
+      "private_local_audit_separate_from_github_safe_proof",
+      "blocked_transitions_have_visible_reasons"
+    ],
+    "non_goals": [
+      "no_real_import_code",
+      "no_file_picker",
+      "no_path_reader",
+      "no_file_copy",
+      "no_ocr",
+      "no_text_extraction",
+      "no_summarization",
+      "no_embeddings",
+      "no_vector_store",
+      "no_upload_handling",
+      "no_private_vault_inspection",
+      "no_cloud_or_api_path",
+      "no_push"
+    ],
+    "validation": "passed",
+    "manual_qa": "operator_plan_review_pending",
+    "real_document_access": false,
+    "private_vault_inspected": false,
+    "real_import_implemented": false,
+    "push_performed": false,
     "real_db_boundary": "/media/mint/SHARED/APWU untouched"
   }
 }

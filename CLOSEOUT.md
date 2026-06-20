@@ -1,5 +1,40 @@
 # KIA Stick Closeout
 
+## v0.5 Import Wizard Design Plan
+
+- Phase: `KIA-Stick-v0.5-import-wizard-design-plan`
+- Baseline: v0.4.1 fake-only release review at `16e1980`
+- Scope: planning-only future real-document import wizard design.
+- Product version impact: none.
+- Design doc: `docs/v0.5-import-wizard-design-plan.md`
+- Proof directory: `/tmp/proof_kia_stick_v05_import_wizard_plan_20260620T165438Z`
+- Manual QA: pending operator plan review.
+- Validation: PASS for lint, typecheck, test, build, qa, scan:fake, scan:privacy, manifest parse, private tracked-path check, policy-boundary grep, JSON parse, and docs/state-only diff.
+- Provider: `local-fake-deterministic`
+- Cloud/API required: no
+- Secrets printed: no
+- Push performed: no
+- Real document access: none
+- Private vault inspected: no
+
+## v0.5 Import Wizard Plan Coverage
+
+- Defined future wizard screens from start/safety warning through audit summary.
+- Added steward-friendly copy for each gate.
+- Defined stop signs before future real content is touched.
+- Defined state machine, allowed transitions, and blocked transitions.
+- Defined GitHub-safe proof rules that exclude raw docs, private paths, snippets, OCR, identifiers, vector stores, exports, backups, uploads, and secrets.
+- Re-stated UI rules: selection is not import, quarantine is not indexable, redaction is not approval, and approval is not indexing.
+- Added future implementation acceptance checklist.
+
+## Next Safe Phase
+
+Recommended next phase: `KIA-Stick-v0.5-import-wizard-plan-review`.
+
+Future phases remain planning-only or fake-only unless separately authorized. This plan does not approve file pickers, path readers, real import code, copying, OCR, text extraction, indexing, upload handling, private-vault inspection, cloud calls, service changes, or pushes.
+
+---
+
 ## v0.4.1 Release Review
 
 - Phase: `KIA-Stick-v0.4.1-release-review`

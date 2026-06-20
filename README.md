@@ -33,6 +33,25 @@ This MVP uses only fictional source documents under `content/fake-docs/`. Every 
 
 `/media/mint/SHARED/APWU` is treated as real-document storage and is intentionally not read, copied, indexed, or scanned by this repo.
 
+## v0.5 Import Wizard Design Plan
+
+`docs/v0.5-import-wizard-design-plan.md` defines a future real-document import wizard as a planning-only workflow. It does not add file pickers, path readers, copying, OCR, text extraction, indexing, uploads, or private-vault inspection.
+
+The planned wizard separates every consent gate:
+
+- Start / safety warning.
+- Source path placeholder.
+- Single-file or explicitly scoped batch confirmation.
+- Copy-to-quarantine confirmation.
+- Provenance and hash receipt.
+- Redaction detection preview.
+- Admin redaction review.
+- Metadata review.
+- Index eligibility decision.
+- Audit summary.
+
+The core UI rules remain: selecting a path is not import, quarantine is not indexable, redaction is not approval, and approval is not indexing.
+
 ## v0.4 Fake Vault Hardening
 
 The Vault tab uses fake metadata fixtures only. It adds local mock surfaces for:

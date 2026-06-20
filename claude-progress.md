@@ -2,10 +2,27 @@
 
 ## Current Phase
 
-- Phase: `KIA-Stick-v0.4.1-release-review`
+- Phase: `KIA-Stick-v0.5-import-wizard-design-plan`
 - Target: `USER_LAPTOP_ONLY`
 - Provider: `local-fake-deterministic`
-- Status: v0.4.1 release review validation PASS; local commit pending.
+- Status: v0.5 import wizard design plan validation PASS; local commit pending.
+
+## v0.5 Import Wizard Design Plan State
+
+- Phase: `KIA-Stick-v0.5-import-wizard-design-plan`
+- Baseline: v0.4.1 fake-only release review at `16e1980`.
+- Scope: planning-only future real-document import wizard UX and governance design.
+- Design doc: `docs/v0.5-import-wizard-design-plan.md`
+- Proof directory: `/tmp/proof_kia_stick_v05_import_wizard_plan_20260620T165438Z`
+- Wizard screens: start/safety warning, source path placeholder, scope confirmation, copy-to-quarantine confirmation, provenance/hash, redaction detection preview, admin redaction review, metadata review, index eligibility, and audit summary.
+- Required rules: selecting a path is not import, quarantine is not indexable, redaction is not approval, and approval is not indexing.
+- Stop signs: written future implementation approval, operator safety acknowledgement, explicit single-file or bounded batch scope, non-recursive confirmation, private ignored quarantine destination, separate quarantine-copy consent, and visible blocked states.
+- Proof model: private local audit separated from GitHub-safe proof; GitHub-safe proof excludes raw docs, private paths, snippets, OCR, identifiers, private notes, raw hashes by default, vector stores, exports, backups, uploads, and secrets.
+- Validation: PASS for lint, typecheck, test, build, qa, scan:fake, scan:privacy, manifest parse, private tracked-path check, policy-boundary grep, JSON parse, and docs/state-only diff.
+- Manual QA: pending operator plan review.
+- Real/private document access: none.
+- Private vault inspected: no.
+- Push performed: no.
 
 ## v0.4.1 Release Review State
 
@@ -213,6 +230,14 @@
 
 ## Commands Run
 
+- `cat ./AGENTS.md`
+- `cat ./claude-progress.md`
+- `source ./init.sh`
+- `git status --short --branch`
+- `git log -5 --oneline --decorate`
+- `mkdir -p /tmp/proof_kia_stick_v05_import_wizard_plan_20260620T165438Z`
+- `sed -n '1,260p' docs/v0.2-document-vault-redaction-plan.md`
+- `sed -n '1,260p' docs/v0.4-fake-vault-workflow-hardening.md`
 - `cat ./AGENTS.md`
 - `cat ./claude-progress.md`
 - `source ./init.sh || true`
@@ -443,6 +468,11 @@
 
 ## Files Changed
 
+- v0.5 import wizard design plan added at `docs/v0.5-import-wizard-design-plan.md`.
+- v0.5 planning summary added in `README.md`.
+- v0.5 closeout state added in `CLOSEOUT.md`.
+- v0.5 planning metadata added in `feature_list.json`.
+- v0.5 run state recorded in `claude-progress.md`.
 - v0.4 true threaded chat model added in `lib/conversationModel.ts`.
 - v0.4 true threaded chat context resolver added in `lib/answerGovernor.ts`.
 - v0.4 true threaded chat UI, composer behavior, New chat, loading/retry rows, per-message Save, and thread persistence added in `components/KiaStickApp.tsx`.
@@ -523,6 +553,7 @@
 
 ## Proof Directory
 
+- v0.5 import wizard design plan proof: `/tmp/proof_kia_stick_v05_import_wizard_plan_20260620T165438Z`
 - v0.4 true threaded chat proof: `/tmp/proof_kia_stick_v04_true_threaded_chat_20260620T145019Z`
 - v0.4.1 fake chat polish proof: `/tmp/proof_kia_stick_v041_fake_chat_polish_20260620T155120Z`
 - v0.4.1 release review proof: `/tmp/proof_kia_stick_v041_release_review_20260620T164104Z`
