@@ -1,5 +1,39 @@
 # KIA Stick Closeout
 
+## v0.5.1 Replacement Proof Accepted Closeout
+
+- Phase: `KIA-Stick-v0.5.1-replacement-proof-closeout`
+- Accepted pushed commit: `904afc2`
+- Origin/main verified: `904afc2`
+- Product version impact: none; app remains `0.4.0`.
+- Expected display version: `0.4.0-dev.20260620+904afc2`
+- Original proof directory status: WARN_FIXED_BY_REPLACEMENT; `/tmp/proof_kia_stick_v051_fake_import_wizard_ui_20260620T172654Z` was missing on this machine and was not treated as present.
+- Replacement proof directory: `/tmp/proof_kia_stick_v051_replacement_closeout_20260620T184157Z`
+- Manual QA: PASS by replacement CDP smoke for Import, Upload, Chat/nav, `/health`, `/version`, fake-only copy, blocked-action controls, zero file inputs, and mobile screenshots.
+- Validation: PASS for HEAD/origin commit checks, lint, typecheck, test, build, qa, scan:fake, scan:privacy, manifest parse, private tracked-path check, no-file-input grep, policy-boundary grep review, `/health`, `/version`, and CDP browser smoke.
+- Provider: `local-fake-deterministic`
+- Cloud/API required: no
+- Secrets printed: no
+- Push performed in this closeout: no
+- Real document access: none
+- Private vault inspected: no
+
+## v0.5.1 Replacement Proof Coverage
+
+- Verified accepted pushed state from the current commit, not from the missing original proof directory.
+- Verified the Import tab remains fake metadata only.
+- Verified no file picker, real import, path reader, file reads, copying, OCR, upload handling, real indexing, vector store, or private-vault inspection was added.
+- Verified Upload remains fake queue buttons and Chat/nav still render.
+- Verified tracked private data paths are empty for `DB/`, `data/real-documents/`, `data/quarantine/`, `data/redacted-approved/`, `exports/`, `backups/`, and `vector-store/`.
+
+## Next Safe Phase
+
+Recommended next phase: `KIA-Stick-v0.5.1-closeout-docs-push-review`.
+
+Future phases remain fake-only unless separately authorized. This replacement proof closeout does not approve real import, file pickers, path readers, file reads, copying, OCR, text extraction, indexing, upload handling, private-vault inspection, cloud calls, service changes, or pushes.
+
+---
+
 ## v0.5.1 Fake Import Wizard UI Scaffold
 
 - Phase: `KIA-Stick-v0.5.1-fake-import-wizard-ui-scaffold`

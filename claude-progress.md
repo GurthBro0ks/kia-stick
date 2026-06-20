@@ -2,10 +2,30 @@
 
 ## Current Phase
 
-- Phase: `KIA-Stick-v0.5.1-fake-import-wizard-ui-scaffold`
+- Phase: `KIA-Stick-v0.5.1-replacement-proof-closeout`
 - Target: `USER_LAPTOP_ONLY`
 - Provider: `local-fake-deterministic`
-- Status: v0.5.1 fake Import Wizard UI scaffold validation PASS; local commit pending.
+- Status: replacement proof PASS for pushed v0.5.1 commit `904afc2`; closeout docs/state updated for local commit.
+
+## v0.5.1 Replacement Proof Accepted Closeout State
+
+- Phase: `KIA-Stick-v0.5.1-replacement-proof-closeout`
+- Accepted pushed commit: `904afc2`
+- Origin/main verified: `904afc2`
+- Product version impact: none; app remains `0.4.0`.
+- Expected display version: `0.4.0-dev.20260620+904afc2`
+- Original proof directory status: WARN_FIXED_BY_REPLACEMENT; `/tmp/proof_kia_stick_v051_fake_import_wizard_ui_20260620T172654Z` was missing on this machine and was not treated as present.
+- Replacement proof directory: `/tmp/proof_kia_stick_v051_replacement_closeout_20260620T184157Z`
+- Validation: PASS for HEAD/origin commit checks, lint, typecheck, test, build, qa, scan:fake, scan:privacy, manifest parse, private tracked-path check, no-file-input grep, policy-boundary grep review, `/health`, `/version`, and CDP browser smoke.
+- Manual QA: PASS by replacement CDP smoke for Import, Upload, Chat/nav, `/health`, `/version`, fake-only copy, blocked-action controls, zero file inputs, and mobile screenshots.
+- Fake-only verification: no file picker, real import, path reader, file reads, copying, OCR, upload handling, real indexing, vector store, or private-vault inspection was added.
+- Real/private document access: none.
+- Private vault inspected: no.
+- Push performed: no.
+- Commands run: harness load, git status/log/HEAD/origin checks, replacement proof-dir creation, lint, typecheck, test, build, qa, scan:fake, scan:privacy, manifest parse, private tracked-path check, file-input grep, APWU boundary grep, `/health`, `/version`, CDP app/version screenshots, CDP Import/Upload/Chat smoke, JSON parse, final privacy scan, diff check, and local docs/state commit.
+- Files changed: `CLOSEOUT.md`, `claude-progress.md`, and `feature_list.json`.
+- Proof artifacts: route outputs, screenshots, smoke logs, validation logs, and final report stored under `/tmp/proof_kia_stick_v051_replacement_closeout_20260620T184157Z`.
+- Remaining unknowns: the original `/tmp/proof_kia_stick_v051_fake_import_wizard_ui_20260620T172654Z` proof directory remains missing and is recorded only as WARN_FIXED_BY_REPLACEMENT.
 
 ## v0.5.1 Fake Import Wizard UI Scaffold State
 
