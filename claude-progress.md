@@ -2,10 +2,27 @@
 
 ## Current Phase
 
-- Phase: `KIA-Stick-v0.4-chat-layout-blocker-fix`
+- Phase: `KIA-Stick-v0.4-true-threaded-chat`
 - Target: `USER_LAPTOP_ONLY`
 - Provider: `local-fake-deterministic`
-- Status: v0.4 chat layout blocker fix implemented; final validation and commit pending.
+- Status: v0.4 true threaded chat implemented; validation passed; commit pending.
+
+## v0.4 True Threaded Chat State
+
+- Scope: fake-only multi-turn threaded chat replacing the remaining single-answer query flow.
+- Proof directory: `/tmp/proof_kia_stick_v04_true_threaded_chat_20260620T145019Z`
+- Manual QA: PASS by headless Chrome/CDP multi-turn smoke on `127.0.0.1:3011`; port `3010` was already in use.
+- Thread model: explicit `ConversationThread`, `ChatMessage`, `UserMessage`, and `AssistantMessage` records with stable IDs.
+- Chat flow: user and assistant messages append chronologically; prior turns remain visible.
+- Composer: starts empty, uses `Message KIA Stick...`, primary action says `Send`, blank send is blocked, Enter sends, Shift+Enter inserts newline, and the draft clears immediately after send.
+- Persistence: current fake thread restores from local browser storage under a separate key from Saved Answers.
+- Controls: `New chat` confirms before clearing non-empty threads.
+- Assistant messages: each response owns Save, full-packet expansion, and citation expansion state.
+- Loading/failure: submitted user message stays visible with a temporary assistant row and retry support on failure.
+- Governor context: recent fake-thread history is passed into `buildAnswer`; evidence, verbal denial, supervisor wording, and next-step follow-ups resolve against prior topic.
+- Clarification: unresolved follow-ups ask for the topic instead of inventing context.
+- Real/private document access: none.
+- Push performed: no.
 
 ## Accepted v0.1 State
 
@@ -143,6 +160,19 @@
 
 ## Commands Run
 
+- `pwd`
+- `date -u`
+- `cat /home/slimy/AGENTS.md` (path missing on this machine)
+- `cat /home/slimy/claude-progress.md` (path missing on this machine)
+- `source /home/slimy/init.sh` (path missing on this machine)
+- `cat ./AGENTS.md`
+- `cat ./claude-progress.md`
+- `source ./init.sh || true`
+- `git status --short`
+- `git log -5 --oneline`
+- `npm run typecheck`
+- `npm run test`
+- `npm run lint`
 - `cat ./AGENTS.md`
 - `cat ./claude-progress.md`
 - `source ./init.sh || true`
@@ -305,6 +335,14 @@
 
 ## Files Changed
 
+- v0.4 true threaded chat model added in `lib/conversationModel.ts`.
+- v0.4 true threaded chat context resolver added in `lib/answerGovernor.ts`.
+- v0.4 true threaded chat UI, composer behavior, New chat, loading/retry rows, per-message Save, and thread persistence added in `components/KiaStickApp.tsx`.
+- v0.4 true threaded chat styles added in `app/globals.css`.
+- v0.4 true threaded chat `/health` phase label updated in `app/health/route.ts`.
+- v0.4 true threaded chat tests added in `tests/answerGovernor.test.ts`.
+- v0.4 true threaded chat implementation note added at `docs/v0.4-true-threaded-chat.md`.
+- v0.4 true threaded chat README, closeout, feature inventory, and progress state updated.
 - Closeout state recorded in `claude-progress.md`.
 - Accepted v0.1 feature inventory recorded in `feature_list.json`.
 - Closeout summary and next safe phase plan recorded in `CLOSEOUT.md`.
@@ -369,6 +407,7 @@
 
 ## Proof Directory
 
+- v0.4 true threaded chat proof: `/tmp/proof_kia_stick_v04_true_threaded_chat_20260620T145019Z`
 - Accepted v0.1 proof: `/tmp/proof_kia_stick_v01_ui_fix_20260618T165630Z`
 - Closeout proof: `/tmp/proof_kia_stick_v01_closeout_20260618T171222Z`
 - v0.2 document vault/redaction plan proof: `/tmp/proof_kia_stick_v02_doc_vault_plan_20260619T235153Z`

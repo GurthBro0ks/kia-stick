@@ -4,8 +4,18 @@ import { renderToStaticMarkup } from "react-dom/server";
 import React from "react";
 import { GET as healthGET } from "@/app/health/route";
 import VersionPage from "@/app/version/page";
-import { FullPacket, KiaStickApp, VaultPanel } from "@/components/KiaStickApp";
+import { AssistantMessageCard, FullPacket, KiaStickApp, UserMessageBubble, VaultPanel } from "@/components/KiaStickApp";
 import { answerToMarkdown, buildAnswer } from "@/lib/answerGovernor";
+import {
+  appendTurn,
+  createAssistantMessage,
+  createConversationThread,
+  createLoadingAssistantMessage,
+  createUserMessage,
+  migrateConversationThread,
+  recentAnswerHistory,
+  replaceAssistantMessage,
+} from "@/lib/conversationModel";
 import { createSavedAnswerRecord, migrateSavedAnswers, upsertSavedAnswer } from "@/lib/savedAnswers";
 import { buildSourceHierarchyGroups, corpus, sourceHierarchyLabels, sourceHierarchyOrder } from "@/lib/sourceModel";
 import { createRuntimeVersion, runtimeVersionFields } from "@/lib/version";
@@ -81,6 +91,32 @@ describe("answer governor", () => {
     expect(answer.relatedFakeSections.some((citation) => citation.class === "unknown_unverified")).toBe(true);
     expect(answer.citations.every((citation) => citation.citable)).toBe(true);
     expect(answer.conflicts.join(" ")).toContain("unverified");
+  });
+
+  it("resolves verbal follow-up questions against the prior annual-leave topic", () => {
+    const first = buildAnswer("Can annual leave be denied after I submitted inside the fake window?", baseOptions);
+    const followUp = buildAnswer("What if the denial was only verbal?", {
+      ...baseOptions,
+      threadHistory: [
+        { role: "user", content: first.question },
+        { role: "assistant", content: first.shortAnswer, intent: first.intent, question: first.question },
+      ],
+    });
+
+    expect(followUp.intent).toBe("annual_leave");
+    expect(followUp.clarificationNeeded).toBe(false);
+    expect(followUp.contextNote).toContain("prior annual leave denial context");
+    expect(followUp.shortAnswer).toContain("verbal denial");
+    expect(followUp.resolvedQuestion).toContain("annual leave denial");
+  });
+
+  it("asks for clarification when a follow-up has no prior topic", () => {
+    const answer = buildAnswer("What evidence should I get?", baseOptions);
+
+    expect(answer.clarificationNeeded).toBe(true);
+    expect(answer.noAnswer).toBe(true);
+    expect(answer.shortAnswer).toContain("Which topic");
+    expect(answer.citations).toHaveLength(0);
   });
 });
 
@@ -288,6 +324,110 @@ describe("saved answers", () => {
   });
 });
 
+describe("conversation thread model", () => {
+  it("appends multiple turns in chronological user-assistant order and keeps prior turns visible", () => {
+    let thread = createConversationThread("2026-06-20T10:00:00.000Z");
+    const firstUser = createUserMessage({
+      threadId: thread.threadId,
+      content: "Can annual leave be denied after I submitted inside the fake window?",
+      modeScopeDetail: baseOptions,
+      now: "2026-06-20T10:01:00.000Z",
+    });
+    const firstAnswer = buildAnswer(firstUser.content, baseOptions);
+    const firstAssistant = createAssistantMessage({
+      threadId: thread.threadId,
+      turnId: firstUser.turnId,
+      parentMessageId: firstUser.messageId,
+      answer: firstAnswer,
+      modeScopeDetail: baseOptions,
+      now: "2026-06-20T10:01:01.000Z",
+    });
+    thread = appendTurn(thread, firstUser, firstAssistant);
+
+    const secondUser = createUserMessage({
+      threadId: thread.threadId,
+      content: "What if the denial was only verbal?",
+      modeScopeDetail: baseOptions,
+      now: "2026-06-20T10:02:00.000Z",
+    });
+    const secondAnswer = buildAnswer(secondUser.content, {
+      ...baseOptions,
+      threadHistory: recentAnswerHistory(thread),
+    });
+    const secondAssistant = createAssistantMessage({
+      threadId: thread.threadId,
+      turnId: secondUser.turnId,
+      parentMessageId: secondUser.messageId,
+      answer: secondAnswer,
+      modeScopeDetail: baseOptions,
+      now: "2026-06-20T10:02:01.000Z",
+    });
+    thread = appendTurn(thread, secondUser, secondAssistant);
+
+    expect(thread.messages.map((message) => message.role)).toEqual(["user", "assistant", "user", "assistant"]);
+    expect(thread.messages[0].content).toContain("annual leave");
+    expect(thread.messages[2].content).toContain("verbal");
+    expect(secondAssistant.answer.intent).toBe("annual_leave");
+    expect(firstUser.messageId).not.toBe(firstUser.createdAt);
+    expect(firstAssistant.parentMessageId).toBe(firstUser.messageId);
+  });
+
+  it("restores a fake thread from browser persistence without mixing saved answers", () => {
+    const thread = createConversationThread("2026-06-20T10:00:00.000Z");
+    const user = createUserMessage({
+      threadId: thread.threadId,
+      content: "Can annual leave be denied after I submitted inside the fake window?",
+      modeScopeDetail: baseOptions,
+      now: "2026-06-20T10:01:00.000Z",
+    });
+    const assistant = createAssistantMessage({
+      threadId: thread.threadId,
+      turnId: user.turnId,
+      parentMessageId: user.messageId,
+      answer: buildAnswer(user.content, baseOptions),
+      modeScopeDetail: baseOptions,
+      now: "2026-06-20T10:01:01.000Z",
+    });
+    const restored = migrateConversationThread(appendTurn(thread, user, assistant));
+
+    expect(restored?.threadId).toBe(thread.threadId);
+    expect(restored?.messages).toHaveLength(2);
+    expect(restored?.messages[1].role).toBe("assistant");
+  });
+
+  it("replaces a loading assistant row without removing the submitted user message", () => {
+    const thread = createConversationThread("2026-06-20T10:00:00.000Z");
+    const user = createUserMessage({
+      threadId: thread.threadId,
+      content: "What should I do next?",
+      modeScopeDetail: baseOptions,
+      now: "2026-06-20T10:01:00.000Z",
+    });
+    const loading = createLoadingAssistantMessage({
+      threadId: thread.threadId,
+      turnId: user.turnId,
+      parentMessageId: user.messageId,
+      modeScopeDetail: baseOptions,
+      now: "2026-06-20T10:01:01.000Z",
+    });
+    const pendingThread = appendTurn(thread, user, loading);
+    const answer = buildAnswer(user.content, baseOptions);
+    const complete = createAssistantMessage({
+      threadId: thread.threadId,
+      turnId: user.turnId,
+      parentMessageId: user.messageId,
+      answer,
+      modeScopeDetail: baseOptions,
+      now: "2026-06-20T10:01:02.000Z",
+    });
+    const completedThread = replaceAssistantMessage(pendingThread, loading.messageId, complete);
+
+    expect(completedThread.messages).toHaveLength(2);
+    expect(completedThread.messages[0].role).toBe("user");
+    expect((completedThread.messages[1] as typeof complete).status).toBe("complete");
+  });
+});
+
 describe("runtime build identity", () => {
   it("formats displayVersion from product milestone, channel, UTC build date, and git SHA", () => {
     const version = createRuntimeVersion({
@@ -349,26 +489,57 @@ describe("runtime build identity", () => {
 });
 
 describe("manual QA UX shell", () => {
-  it("renders the chat answer compact by default with details and citations collapsed", () => {
+  it("renders an empty threaded chat shell with a cleared composer and Send button", () => {
     const html = renderToStaticMarkup(React.createElement(KiaStickApp, {
       runtimeVersion: createRuntimeVersion({ buildDate: "20260620", gitSha: "abc123" }),
     }));
 
-    expect(html).toContain("messageBubble userBubble");
-    expect(html).toContain("messageBubble assistantBubble");
     expect(html).toContain("chatScrollArea");
     expect(html).toContain("chatComposer chatComposerDock");
-    expect(html).toContain("Short answer");
-    expect(html).toContain("Confidence / authority");
-    expect(html).toContain("What to do next");
-    expect(html).toContain("Show full packet");
-    expect(html).toContain("Show citations");
-    expect(html).toContain("aria-expanded=\"false\"");
+    expect(html).toContain("New fake chat");
+    expect(html).toContain("Message KIA Stick...");
+    expect(html).toContain("New chat");
+    expect(html).toContain("Send");
+    expect(html).toContain("disabled=\"\"");
+    expect(html).not.toContain("Answer</button>");
     expect(html).toContain("Prompt shortcuts");
     expect(html).toContain("Response options");
-    expect(html).not.toContain("Authority Stack");
-    expect(html).not.toContain("Evidence Checklist");
-    expect(html).not.toContain("citationCards");
+  });
+
+  it("renders assistant messages compact by default with independent collapsed details and citations", () => {
+    const thread = createConversationThread("2026-06-20T10:00:00.000Z");
+    const answer = buildAnswer("Can annual leave be denied after I submitted inside the fake window?", baseOptions);
+    const user = createUserMessage({
+      threadId: thread.threadId,
+      content: answer.question,
+      modeScopeDetail: baseOptions,
+      now: "2026-06-20T10:01:00.000Z",
+    });
+    const assistant = createAssistantMessage({
+      threadId: thread.threadId,
+      turnId: user.turnId,
+      parentMessageId: user.messageId,
+      answer,
+      modeScopeDetail: baseOptions,
+      now: "2026-06-20T10:01:01.000Z",
+    });
+    const userHtml = renderToStaticMarkup(React.createElement(UserMessageBubble, { message: user }));
+    const assistantHtml = renderToStaticMarkup(React.createElement(AssistantMessageCard, {
+      message: assistant,
+      onRetry: () => undefined,
+      onSave: () => undefined,
+    }));
+
+    expect(userHtml).toContain("messageBubble userBubble");
+    expect(assistantHtml).toContain("messageBubble assistantBubble");
+    expect(assistantHtml).toContain("Short answer");
+    expect(assistantHtml).toContain("Confidence / authority");
+    expect(assistantHtml).toContain("What to do next");
+    expect(assistantHtml).toContain("Show full packet");
+    expect(assistantHtml).toContain("Show citations");
+    expect(assistantHtml).toContain("Save");
+    expect(assistantHtml).toContain("aria-expanded=\"false\"");
+    expect(assistantHtml).not.toContain("citationCards");
   });
 
   it("renders chronological chat layout before composer and bottom nav", () => {

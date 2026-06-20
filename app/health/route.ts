@@ -10,7 +10,7 @@ export function GET() {
   return NextResponse.json({
     ok: true,
     app: "kia-stick",
-    phase: "KIA-Stick-v0.4-chat-layout-blocker-fix",
+    phase: "KIA-Stick-v0.4-true-threaded-chat",
     targetMachine: "USER_LAPTOP_ONLY",
     fakeOnly: true,
     realDbTouched: false,

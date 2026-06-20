@@ -12,13 +12,29 @@ import {
   FileSearch,
   Heart,
   MessageSquareText,
+  Plus,
+  RotateCcw,
   Save,
   Settings,
   ShieldCheck,
   Upload,
 } from "lucide-react";
-import React, { useEffect, useMemo, useState } from "react";
+import React, { useEffect, useMemo, useRef, useState } from "react";
 import { buildAnswer, cannedQuestions, type AnswerResult } from "@/lib/answerGovernor";
+import {
+  appendTurn,
+  createAssistantMessage,
+  createConversationThread,
+  createLoadingAssistantMessage,
+  createUserMessage,
+  migrateConversationThread,
+  recentAnswerHistory,
+  replaceAssistantMessage,
+  type AssistantMessage,
+  type ConversationThread,
+  type ModeScopeDetailSnapshot,
+  type UserMessage,
+} from "@/lib/conversationModel";
 import {
   createSavedAnswerRecord,
   migrateSavedAnswers,
@@ -71,6 +87,7 @@ const scopes: Scope[] = ["All Fake", "Official-Like", "Local-Like", "Notes+Evide
 const details: Detail[] = ["Simple", "Detailed", "Checklist"];
 
 const savedKey = "kia-stick.saved-answers.v0.1";
+const threadKey = "kia-stick.current-thread.v0.4";
 const quarantineKey = "kia-stick.quarantine.v0.1";
 const vaultKey = "kia-stick.vault-state.v0.4";
 
@@ -119,15 +136,9 @@ export function KiaStickApp({ runtimeVersion = clientVersion }: { runtimeVersion
   const [mode, setMode] = useState<Mode>("Strict Research");
   const [scope, setScope] = useState<Scope>("All Fake");
   const [detail, setDetail] = useState<Detail>("Detailed");
-  const [question, setQuestion] = useState(cannedQuestions[0]);
-  const [answer, setAnswer] = useState<AnswerResult>(() =>
-    buildAnswer(cannedQuestions[0], {
-      mode: "Strict Research",
-      scope: "All Fake",
-      detail: "Detailed",
-      runtimeVersion,
-    })
-  );
+  const [draft, setDraft] = useState("");
+  const [thread, setThread] = useState<ConversationThread>(() => createConversationThread());
+  const [isSending, setIsSending] = useState(false);
   const [saved, setSaved] = useState<SavedAnswer[]>([]);
   const [quarantine, setQuarantine] = useState<QuarantineItem[]>([]);
   const [vaultView, setVaultView] = useState<VaultView>("vault");
@@ -135,9 +146,12 @@ export function KiaStickApp({ runtimeVersion = clientVersion }: { runtimeVersion
   const [fakeOnlyConfirmed, setFakeOnlyConfirmed] = useState(false);
   const [saveNotice, setSaveNotice] = useState<{ status: SaveAnswerStatus; text: string } | null>(null);
   const [hydrated, setHydrated] = useState(false);
+  const [pendingScroll, setPendingScroll] = useState(false);
+  const chatScrollRef = useRef<HTMLElement>(null);
 
   useEffect(() => {
     setSaved(migrateSavedAnswers(loadJson<unknown[]>(savedKey, [])));
+    setThread(migrateConversationThread(loadJson<unknown>(threadKey, null)) ?? createConversationThread());
     setQuarantine(loadJson<QuarantineItem[]>(quarantineKey, []));
     setVaultState(loadJson<VaultState>(vaultKey, createInitialVaultState()));
     setHydrated(true);
@@ -154,6 +168,11 @@ export function KiaStickApp({ runtimeVersion = clientVersion }: { runtimeVersion
 
   useEffect(() => {
     if (!hydrated) return;
+    window.localStorage.setItem(threadKey, JSON.stringify(thread));
+  }, [hydrated, thread]);
+
+  useEffect(() => {
+    if (!hydrated) return;
     window.localStorage.setItem(quarantineKey, JSON.stringify(quarantine));
   }, [hydrated, quarantine]);
 
@@ -166,21 +185,117 @@ export function KiaStickApp({ runtimeVersion = clientVersion }: { runtimeVersion
 
   const vaultCounts = useMemo(() => laneCounts(vaultState.records), [vaultState.records]);
   const workflowCounts = useMemo(() => workflowStateCounts(vaultState.records), [vaultState.records]);
+  const latestAssistant = useMemo(
+    () => [...thread.messages].reverse().find((message): message is AssistantMessage => message.role === "assistant" && message.status === "complete"),
+    [thread.messages]
+  );
 
-  function runAnswer(nextQuestion = question) {
-    const nextAnswer = buildAnswer(nextQuestion, { mode, scope, detail, runtimeVersion });
-    setQuestion(nextQuestion);
-    setAnswer(nextAnswer);
-    setSaveNotice(null);
-    setTab("chat");
+  useEffect(() => {
+    if (!pendingScroll || tab !== "chat") return;
+    const frame = window.requestAnimationFrame(() => {
+      chatScrollRef.current?.scrollTo({
+        top: chatScrollRef.current.scrollHeight,
+        behavior: "smooth",
+      });
+      setPendingScroll(false);
+    });
+    return () => window.cancelAnimationFrame(frame);
+  }, [pendingScroll, tab, thread.messages]);
+
+  function completeAssistantTurn(input: {
+    userMessage: UserMessage;
+    loadingMessage: AssistantMessage;
+    snapshot: ModeScopeDetailSnapshot;
+    baseThread: ConversationThread;
+  }) {
+    window.setTimeout(() => {
+      try {
+        const answer = buildAnswer(input.userMessage.content, {
+          ...input.snapshot,
+          runtimeVersion,
+          threadHistory: recentAnswerHistory(input.baseThread),
+        });
+        const assistantMessage = createAssistantMessage({
+          threadId: input.userMessage.threadId,
+          turnId: input.userMessage.turnId,
+          parentMessageId: input.userMessage.messageId,
+          answer,
+          modeScopeDetail: input.snapshot,
+        });
+        setThread((current) => replaceAssistantMessage(current, input.loadingMessage.messageId, assistantMessage));
+      } catch (error) {
+        const failedMessage: AssistantMessage = {
+          ...input.loadingMessage,
+          status: "failed",
+          content: "KIA Stick could not generate this fake response.",
+          error: error instanceof Error ? error.message : "Unknown generation failure.",
+          createdAt: new Date().toISOString(),
+        };
+        setThread((current) => replaceAssistantMessage(current, input.loadingMessage.messageId, failedMessage));
+      } finally {
+        setIsSending(false);
+        setPendingScroll(true);
+      }
+    }, 90);
   }
 
-  function saveAnswer() {
+  function sendMessage(messageText = draft) {
+    const content = messageText.trim();
+    if (!content || isSending) return;
+    const snapshot = { mode, scope, detail };
+    const baseThread = thread;
+    const userMessage = createUserMessage({
+      threadId: thread.threadId,
+      content,
+      modeScopeDetail: snapshot,
+    });
+    const loadingMessage = createLoadingAssistantMessage({
+      threadId: thread.threadId,
+      turnId: userMessage.turnId,
+      parentMessageId: userMessage.messageId,
+      modeScopeDetail: snapshot,
+    });
+
+    setDraft("");
+    setSaveNotice(null);
+    setIsSending(true);
+    setPendingScroll(true);
+    setTab("chat");
+    setThread((current) => appendTurn(current, userMessage, loadingMessage));
+    completeAssistantTurn({ userMessage, loadingMessage, snapshot, baseThread });
+  }
+
+  function retryAssistant(message: AssistantMessage) {
+    if (isSending) return;
+    const userMessage = thread.messages.find(
+      (candidate): candidate is UserMessage => candidate.role === "user" && candidate.messageId === message.parentMessageId
+    );
+    if (!userMessage) return;
+    const loadingMessage = createLoadingAssistantMessage({
+      threadId: thread.threadId,
+      turnId: userMessage.turnId,
+      parentMessageId: userMessage.messageId,
+      modeScopeDetail: message.modeScopeDetail,
+    });
+    const baseThread: ConversationThread = {
+      ...thread,
+      messages: thread.messages.filter((candidate) => candidate.messageId !== message.messageId),
+    };
+
+    setSaveNotice(null);
+    setIsSending(true);
+    setPendingScroll(true);
+    setThread((current) => replaceAssistantMessage(current, message.messageId, loadingMessage));
+    completeAssistantTurn({ userMessage, loadingMessage, snapshot: message.modeScopeDetail, baseThread });
+  }
+
+  function saveAssistantAnswer(message: AssistantMessage) {
+    if (message.status !== "complete") return;
     const record = createSavedAnswerRecord({
-      answer,
-      mode,
-      scope,
-      detail,
+      answer: message.answer,
+      mode: message.modeScopeDetail.mode,
+      scope: message.modeScopeDetail.scope,
+      detail: message.modeScopeDetail.detail,
       timestamp: new Date().toISOString(),
     });
     setSaved((current) => {
@@ -188,6 +303,16 @@ export function KiaStickApp({ runtimeVersion = clientVersion }: { runtimeVersion
       setSaveNotice({ status: result.status, text: saveStatusText(result.status) });
       return result.saved;
     });
+  }
+
+  function startNewChat() {
+    if (thread.messages.length > 0 && !window.confirm("Start a new fake chat and clear the current thread?")) return;
+    setThread(createConversationThread());
+    setDraft("");
+    setSaveNotice(null);
+    setIsSending(false);
+    setPendingScroll(true);
+    setTab("chat");
   }
 
   function queueUpload(fileList: FileList | null) {
@@ -225,10 +350,29 @@ export function KiaStickApp({ runtimeVersion = clientVersion }: { runtimeVersion
         <span>Fake sample mode only. Real APWU/USPS/member/local docs stay out of this app.</span>
       </div>
 
-      <main className={tab === "chat" ? "mainArea chatMain" : "mainArea"}>
+      <main className={tab === "chat" ? "mainArea chatMain" : "mainArea"} ref={chatScrollRef}>
         {tab === "chat" && (
           <div className="chatScrollArea" aria-label="Chat messages">
-            <AnswerPanel answer={answer} />
+            <section className="chatThread" aria-label="Current conversation">
+              {thread.messages.length === 0 && (
+                <div className="emptyChatState">
+                  <span className="messageLabel">New fake chat</span>
+                  <p>Ask a fake-doc question to start a cited thread.</p>
+                </div>
+              )}
+              {thread.messages.map((message) =>
+                message.role === "user" ? (
+                  <UserMessageBubble key={message.messageId} message={message} />
+                ) : (
+                  <AssistantMessageCard
+                    key={message.messageId}
+                    message={message}
+                    onRetry={() => retryAssistant(message)}
+                    onSave={() => saveAssistantAnswer(message)}
+                  />
+                )
+              )}
+            </section>
           </div>
         )}
 
@@ -388,29 +532,38 @@ export function KiaStickApp({ runtimeVersion = clientVersion }: { runtimeVersion
               <span className="sectionKicker">Reply</span>
               <h2>Message KIA Stick</h2>
             </div>
-            <span className={answer.noAnswer ? "statusPill warning" : "statusPill ok"}>
-              {answer.noAnswer ? "No controlling hit" : "Cited answer"}
-            </span>
+            <div className="composerHeaderActions">
+              <button className="button subtle compactButton" type="button" onClick={startNewChat} aria-label="New chat">
+                <Plus size={16} />
+                New chat
+              </button>
+              <span className={latestAssistant?.answer.noAnswer ? "statusPill warning" : "statusPill ok"}>
+                {isSending ? "Thinking" : latestAssistant?.answer.noAnswer ? "No controlling hit" : latestAssistant ? "Cited answer" : "Ready"}
+              </span>
+            </div>
           </div>
 
           <div className="askBox">
             <textarea
-              aria-label="Question"
-              placeholder="Type a fake-doc question..."
-              value={question}
-              onChange={(event) => setQuestion(event.target.value)}
+              aria-label="Message KIA Stick"
+              placeholder="Message KIA Stick..."
+              value={draft}
+              onChange={(event) => setDraft(event.target.value)}
+              onKeyDown={(event) => {
+                if (event.key === "Enter" && !event.shiftKey) {
+                  event.preventDefault();
+                  sendMessage();
+                }
+              }}
             />
             <div className="chatActions">
-              <button className="button primary" type="button" onClick={() => runAnswer()}>
+              <button className="button primary" type="button" disabled={!draft.trim() || isSending} onClick={() => sendMessage()}>
                 <MessageSquareText size={17} />
-                Answer
-              </button>
-              <button className="button iconOnly" type="button" onClick={saveAnswer} title="Save answer" aria-label="Save answer">
-                <Save size={17} />
+                Send
               </button>
             </div>
             {saveNotice && (
-              <div className={`saveNotice ${saveNotice.status === "duplicate" ? "warning" : "ok"}`} role="status">
+              <div className={`saveNotice ${saveNotice.status === "duplicate" ? "warning" : "ok"}`} role="status" aria-live="polite">
                 {saveNotice.text}
               </div>
             )}
@@ -450,7 +603,7 @@ export function KiaStickApp({ runtimeVersion = clientVersion }: { runtimeVersion
             <summary>Prompt shortcuts</summary>
             <div className="promptRail" aria-label="fake test prompts">
               {cannedQuestions.map((prompt) => (
-                <button className="promptChip" key={prompt} type="button" onClick={() => runAnswer(prompt)}>
+                <button className="promptChip" key={prompt} type="button" onClick={() => setDraft(prompt)}>
                   {prompt}
                   <ChevronRight size={14} />
                 </button>
@@ -891,19 +1044,65 @@ function VaultField({ label, value }: { label: string; value: string }) {
   );
 }
 
-function AnswerPanel({ answer }: { answer: AnswerResult }) {
+export function UserMessageBubble({ message }: { message: UserMessage }) {
+  return (
+    <div className="messageRow userMessage">
+      <div className="messageBubble userBubble">
+        <span className="messageLabel">You</span>
+        <p>{message.content}</p>
+      </div>
+    </div>
+  );
+}
+
+export function AssistantMessageCard({
+  message,
+  onRetry,
+  onSave,
+}: {
+  message: AssistantMessage;
+  onRetry: () => void;
+  onSave: () => void;
+}) {
   const [citationsOpen, setCitationsOpen] = useState(false);
   const [packetOpen, setPacketOpen] = useState(false);
+  const answer = message.answer;
 
-  return (
-    <section className="chatThread" aria-label="Current answer">
-      <div className="messageRow userMessage">
-        <div className="messageBubble userBubble">
-          <span className="messageLabel">You</span>
-          <p>{answer.question}</p>
+  if (message.status === "loading") {
+    return (
+      <div className="messageRow assistantMessage" aria-live="polite">
+        <div className="messageBubble assistantBubble thinkingBubble">
+          <span className="messageLabel">KIA Stick</span>
+          <p>Checking the fake source trail...</p>
         </div>
       </div>
+    );
+  }
 
+  if (message.status === "failed") {
+    return (
+      <div className="messageRow assistantMessage" aria-live="assertive">
+        <div className="messageBubble assistantBubble">
+          <div className="answerHeader">
+            <div>
+              <span className="messageLabel">KIA Stick</span>
+              <h2>Generation failed</h2>
+            </div>
+            <span className="statusPill warning">Retry available</span>
+          </div>
+          <p>{message.error ?? "The fake response was not generated."}</p>
+          <div className="compactActions">
+            <button className="button primary" type="button" onClick={onRetry} aria-label="Retry response">
+              <RotateCcw size={16} />
+              Retry
+            </button>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
+  return (
       <div className="messageRow assistantMessage">
         <div className="messageBubble assistantBubble">
           <div className="answerHeader">
@@ -933,6 +1132,8 @@ function AnswerPanel({ answer }: { answer: AnswerResult }) {
             </section>
           </div>
 
+          {answer.contextNote && <p className="contextNote">{answer.contextNote}</p>}
+
           <div className="compactActions">
             <button
               aria-expanded={packetOpen}
@@ -942,6 +1143,10 @@ function AnswerPanel({ answer }: { answer: AnswerResult }) {
             >
               <ClipboardList size={16} />
               {packetOpen ? "Hide full packet" : "Show full packet"}
+            </button>
+            <button className="button subtle" type="button" onClick={onSave} aria-label="Save this answer">
+              <Save size={16} />
+              Save
             </button>
             {answer.citations.length === 0 ? (
               <p className="emptyState">No citable fake sources.</p>
@@ -972,7 +1177,6 @@ function AnswerPanel({ answer }: { answer: AnswerResult }) {
           </div>
         </div>
       </div>
-    </section>
   );
 }
 

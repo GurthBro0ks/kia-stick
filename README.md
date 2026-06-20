@@ -94,3 +94,15 @@ Quarantine, redaction review, and metadata review are not index approval. Invali
 - Bottom nav remains fixed and visually separate from the composer.
 - The duplicate app manifest route was removed; `public/manifest.webmanifest` is the only manifest source.
 - Saved-answer dedupe behavior from `541742e` remains covered.
+
+## v0.4 True Threaded Chat
+
+- Chat state now uses explicit `ConversationThread`, `UserMessage`, and `AssistantMessage` records with stable IDs.
+- Submitted turns append chronologically instead of replacing the previous answer.
+- The composer starts empty, says `Message KIA Stick...`, clears after send, and uses `Send`.
+- Blank send is blocked, Enter sends, Shift+Enter inserts a newline, and double-send is blocked during generation.
+- Recent fake-thread history is passed to the deterministic answer governor for follow-up context.
+- Supported fake follow-ups include evidence, verbal denial, supervisor wording, and next steps.
+- Unresolved follow-ups ask a clarifying question instead of inventing context.
+- Current fake-thread persistence is separate from Saved Answers.
+- Each assistant response owns its own Save, packet expansion, and citation expansion state.

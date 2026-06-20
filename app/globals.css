@@ -198,6 +198,15 @@ a {
   gap: 12px;
 }
 
+.composerHeaderActions {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 8px;
+  min-width: 0;
+  flex-wrap: wrap;
+}
+
 .sectionKicker,
 .messageLabel {
   display: block;
@@ -382,6 +391,12 @@ a {
   background: #eef3f5;
 }
 
+.compactButton {
+  min-height: 32px;
+  padding: 6px 9px;
+  font-size: 0.78rem;
+}
+
 .button:disabled {
   cursor: not-allowed;
   opacity: 0.55;
@@ -395,6 +410,20 @@ a {
 .chatThread {
   display: grid;
   gap: 10px;
+}
+
+.emptyChatState {
+  border: 1px solid #c8d6d4;
+  background: #eef7f6;
+  padding: 12px;
+  border-radius: 8px;
+}
+
+.emptyChatState p {
+  margin: 5px 0 0;
+  color: var(--muted);
+  font-size: 0.86rem;
+  font-weight: 750;
 }
 
 .messageRow {
@@ -428,6 +457,11 @@ a {
   width: 100%;
   background: var(--surface);
   border: 1px solid #d7dde2;
+}
+
+.thinkingBubble {
+  border-style: dashed;
+  background: #f6f8f4;
 }
 
 .messageBubble p {
@@ -474,6 +508,17 @@ a {
   color: var(--muted);
   font-size: 0.84rem;
   font-weight: 650;
+}
+
+.contextNote {
+  margin: 10px 0 0;
+  border-left: 3px solid var(--teal);
+  background: #eef7f6;
+  padding: 8px 10px;
+  color: #15524d;
+  font-size: 0.82rem;
+  font-weight: 850;
+  line-height: 1.4;
 }
 
 .compactActions {

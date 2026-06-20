@@ -26,6 +26,15 @@ export interface AnswerOptions {
   scope: Scope;
   detail: Detail;
   runtimeVersion?: RuntimeVersion;
+  threadHistory?: AnswerHistoryMessage[];
+}
+
+export interface AnswerHistoryMessage {
+  role: "user" | "assistant";
+  content: string;
+  intent?: AnswerIntent;
+  question?: string;
+  resolvedQuestion?: string;
 }
 
 export interface AnswerSourceGroup {
@@ -36,6 +45,9 @@ export interface AnswerSourceGroup {
 
 export interface AnswerResult {
   question: string;
+  resolvedQuestion?: string;
+  contextNote?: string;
+  clarificationNeeded?: boolean;
   intent: AnswerIntent;
   shortAnswer: string;
   modeNote: string;
@@ -54,11 +66,12 @@ export interface AnswerResult {
 }
 
 const noAnswerText = "I could not find controlling language for that exact issue.";
+const clarificationText = "I need the prior fake issue before I can answer that follow-up. Which topic are you asking about?";
 
 const intentMatchers: Record<AnswerIntent, string[]> = {
   annual_leave: ["annual leave", "vacation", "leave request", "vacation board", "leave denial"],
   steward_request: ["steward request", "steward", "representation", "meeting", "supervisor"],
-  step_one_evidence: ["step 1", "step one", "evidence", "grievance file", "checklist"],
+  step_one_evidence: ["step 1", "step one", "grievance file", "checklist"],
   attendance_sleeping_bathroom: ["attendance", "sleeping", "bathroom", "break location", "discipline"],
   one_click_lunch: ["one-click lunch", "one click lunch", "lunch click", "scanner", "lunch"],
   source_hierarchy: ["source hierarchy", "hierarchy", "citation", "governance", "conflict"],
@@ -141,6 +154,108 @@ function docsForIntent(question: string, scope: Scope): { intent: AnswerIntent; 
   };
 }
 
+type FollowUpKind = "evidence" | "verbal" | "supervisor_script" | "next_steps" | null;
+
+interface ContextResolution {
+  originalQuestion: string;
+  governedQuestion: string;
+  contextNote?: string;
+  clarificationNeeded: boolean;
+  followUpKind: FollowUpKind;
+}
+
+function lastResolvedTopic(history: AnswerHistoryMessage[] = []): AnswerIntent {
+  for (const message of [...history].reverse()) {
+    if (message.intent && message.intent !== "unknown") return message.intent;
+    const text = [message.resolvedQuestion, message.question, message.content].filter(Boolean).join(" ");
+    const intent = detectIntent(text);
+    if (intent !== "unknown") return intent;
+  }
+  return "unknown";
+}
+
+function topicLabel(intent: AnswerIntent): string {
+  if (intent === "annual_leave") return "annual leave denial";
+  if (intent === "steward_request") return "steward request";
+  if (intent === "step_one_evidence") return "Step 1 evidence packet";
+  if (intent === "attendance_sleeping_bathroom") return "attendance or bathroom allegation";
+  if (intent === "one_click_lunch") return "one-click lunch scanner issue";
+  if (intent === "source_hierarchy") return "source hierarchy question";
+  return "prior fake issue";
+}
+
+function topicQuestion(intent: AnswerIntent): string {
+  if (intent === "annual_leave") return "Can annual leave be denied after I submitted inside the fake window?";
+  if (intent === "steward_request") return "What should a steward request include before talking to a supervisor?";
+  if (intent === "step_one_evidence") return "What evidence belongs in a Step 1 fake file?";
+  if (intent === "attendance_sleeping_bathroom") return "How should I frame attendance or sleeping in a bathroom allegation?";
+  if (intent === "one_click_lunch") return "Can I grieve a one-click lunch scanner issue?";
+  if (intent === "source_hierarchy") return "How should fake source hierarchy and citation conflicts be handled?";
+  return "";
+}
+
+function detectFollowUpKind(question: string): FollowUpKind {
+  const normalized = question.toLowerCase();
+  if (/\bevidence\b|\bproof\b|\brecords?\b/.test(normalized)) return "evidence";
+  if (/\bverbal\b|\bspoken\b|\bsaid\b|\btold\b/.test(normalized)) return "verbal";
+  if (/\bsay\b|\bsupervisor\b|\bscript\b|\bword\b/.test(normalized)) return "supervisor_script";
+  if (/\bnext\b|\bdo now\b|\bdo next\b|\bnext step\b/.test(normalized)) return "next_steps";
+  return null;
+}
+
+function resolveQuestionContext(question: string, history: AnswerHistoryMessage[] = []): ContextResolution {
+  const originalQuestion = question.trim() || "What fake source controls this issue?";
+  const explicitIntent = detectIntent(originalQuestion);
+  if (explicitIntent !== "unknown") {
+    return {
+      originalQuestion,
+      governedQuestion: originalQuestion,
+      clarificationNeeded: false,
+      followUpKind: detectFollowUpKind(originalQuestion),
+    };
+  }
+
+  const followUpKind = detectFollowUpKind(originalQuestion);
+  if (!followUpKind) {
+    return {
+      originalQuestion,
+      governedQuestion: originalQuestion,
+      clarificationNeeded: false,
+      followUpKind,
+    };
+  }
+
+  const topic = lastResolvedTopic(history);
+  if (topic === "unknown") {
+    return {
+      originalQuestion,
+      governedQuestion: originalQuestion,
+      contextNote: "No prior fake topic was available for this follow-up.",
+      clarificationNeeded: true,
+      followUpKind,
+    };
+  }
+
+  const topicText = topicLabel(topic);
+  const baseQuestion = topicQuestion(topic);
+  const governedQuestion =
+    followUpKind === "verbal"
+      ? `What if the ${topicText} was only verbal? ${baseQuestion}`
+      : followUpKind === "evidence"
+        ? `What evidence should I get for the ${topicText}? ${baseQuestion}`
+        : followUpKind === "supervisor_script"
+          ? `How would I say that to the supervisor about the ${topicText}? ${baseQuestion}`
+          : `What should I do next about the ${topicText}? ${baseQuestion}`;
+
+  return {
+    originalQuestion,
+    governedQuestion,
+    contextNote: `Resolved follow-up against prior ${topicText} context.`,
+    clarificationNeeded: false,
+    followUpKind,
+  };
+}
+
 function groupSources(docs: FakeDocument[]): AnswerSourceGroup[] {
   return bucketOrder
     .map((bucket) => ({
@@ -176,10 +291,22 @@ function modeNote(mode: Mode, noAnswer: boolean): string {
     : "Calm mode gives the practical answer first, then the source trail.";
 }
 
-function shortAnswerFor(intent: AnswerIntent, docs: FakeDocument[], mode: Mode): string {
+function shortAnswerFor(intent: AnswerIntent, docs: FakeDocument[], mode: Mode, followUpKind: FollowUpKind): string {
   if (!hasControllingLanguage(docs)) return noAnswerText;
 
   if (intent === "annual_leave") {
+    if (followUpKind === "verbal") {
+      return "For the fake annual-leave thread, a verbal denial is not enough by itself. Ask for the denial reason in writing and preserve who said it, when, and what fake board record they relied on.";
+    }
+    if (followUpKind === "evidence") {
+      return "For the fake annual-leave thread, collect the request timestamp, posted window, vacation board snapshot, written or verbal denial record, and any coverage/conflict record used for the decision.";
+    }
+    if (followUpKind === "supervisor_script") {
+      return "Say it as a record request: identify the fake annual-leave request, ask for the specific denial reason, and ask which fake board snapshot or coverage record supports it.";
+    }
+    if (followUpKind === "next_steps") {
+      return "Next, lock down the fake paper trail: request the written denial reason, save the board snapshot, and compare both against the cited fake annual-leave language.";
+    }
     if (mode === "Steward-to-Supervisor") {
       return "Please identify the fake annual leave denial reason, the request timestamp, and the vacation board snapshot used for the decision.";
     }
@@ -326,20 +453,27 @@ function followUpsFor(intent: AnswerIntent): string[] {
 
 export function buildAnswer(question: string, options: AnswerOptions): AnswerResult {
   const runtimeVersion = options.runtimeVersion ?? clientVersion;
-  const trimmedQuestion = question.trim() || "What fake source controls this issue?";
-  const { intent, docs } = docsForIntent(trimmedQuestion, options.scope);
+  const resolution = resolveQuestionContext(question, options.threadHistory);
+  const { intent, docs } = resolution.clarificationNeeded
+    ? { intent: "unknown" as AnswerIntent, docs: [] as FakeDocument[] }
+    : docsForIntent(resolution.governedQuestion, options.scope);
   const sourceGroups = groupSources(docs);
-  const noAnswer = !hasControllingLanguage(docs);
+  const noAnswer = resolution.clarificationNeeded || !hasControllingLanguage(docs);
   const citations = docs.filter((doc) => doc.citable).map(citationForDoc);
   const relatedFakeSections = docs.map(citationForDoc);
-  const shortAnswer = shortAnswerFor(intent, docs, options.mode);
+  const shortAnswer = resolution.clarificationNeeded
+    ? clarificationText
+    : shortAnswerFor(intent, docs, options.mode, resolution.followUpKind);
   const footer = `Sources:${docs.length} | Corpus:${runtimeVersion.corpusVersion} | Index:${runtimeVersion.indexVersion} | Build:${runtimeVersion.displayVersion} | Mode:${options.mode}`;
 
   return {
-    question: trimmedQuestion,
+    question: resolution.originalQuestion,
+    resolvedQuestion: resolution.governedQuestion !== resolution.originalQuestion ? resolution.governedQuestion : undefined,
+    contextNote: resolution.contextNote,
+    clarificationNeeded: resolution.clarificationNeeded,
     intent,
     shortAnswer,
-    modeNote: modeNote(options.mode, noAnswer),
+    modeNote: resolution.clarificationNeeded ? "Context follow-up mode asks a clarifying question instead of inventing a fake source match." : modeNote(options.mode, noAnswer),
     noAnswer,
     bestGuessDisabled: noAnswer,
     sourceGroups,
@@ -362,11 +496,12 @@ export function answerToMarkdown(answer: AnswerResult): string {
 
   return [
     `Short answer: ${answer.shortAnswer}`,
+    answer.contextNote ? `Context: ${answer.contextNote}` : null,
     `Mode note: ${answer.modeNote}`,
     `Conflicts: ${answer.conflicts.join(" | ") || "No visible fake-source conflicts."}`,
     `Evidence checklist: ${answer.evidenceChecklist.join(" | ")}`,
     `Missing facts: ${answer.missingFacts.join(" | ")}`,
     `Citations:\n${citations}`,
     answer.footer,
-  ].join("\n\n");
+  ].filter((line): line is string => typeof line === "string").join("\n\n");
 }

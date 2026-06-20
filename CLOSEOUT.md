@@ -1,5 +1,47 @@
 # KIA Stick Closeout
 
+## v0.4 True Threaded Chat
+
+- Phase: `KIA-Stick-v0.4-true-threaded-chat`
+- Scope: fake-only multi-turn threaded chat.
+- Proof directory: `/tmp/proof_kia_stick_v04_true_threaded_chat_20260620T145019Z`
+- Product version: `0.4.0`
+- Manual QA: CDP multi-turn smoke PASS on 390x844 and 1280x900; operator browser click-through still recommended.
+- Provider: `local-fake-deterministic`
+- Cloud/API required: no
+- Secrets printed: no
+- Push performed: no
+- Real document boundary: `/media/mint/SHARED/APWU` untouched
+- Private vault inspected: no
+
+## v0.4 True Threaded Chat Coverage
+
+- Explicit typed thread model for `ConversationThread`, `ChatMessage`, `UserMessage`, and `AssistantMessage`.
+- Stable non-timestamp-only thread, turn, and message IDs.
+- Ordered multi-turn user/assistant messages append instead of replacing prior turns.
+- Empty composer with `Message KIA Stick...`, `Send`, blank-send blocking, Enter send, and Shift+Enter newline.
+- Composer clears immediately after send.
+- Loading row while the fake answer is generated and retry support on failure.
+- `New chat` confirmation for non-empty threads.
+- Current fake thread persists separately from Saved Answers.
+- Per-assistant-message Save action preserves existing dedupe behavior.
+- Full-packet and citation expansion state is owned per assistant message.
+- Recent thread history is passed to the deterministic fake answer governor.
+- Contextual follow-up support covers evidence, verbal denial, supervisor wording, and next steps.
+- Unresolved follow-ups return a clarifying response.
+
+## v0.4 True Threaded Chat Known Warnings
+
+- `npm run test` prints the existing Vite CJS API deprecation notice.
+- `next build` may print the existing Next flat-ESLint plugin warning while still passing validation.
+- Operator manual click-through remains separate from automated CDP smoke evidence.
+
+## Next Safe Phase
+
+Recommended next phase: `KIA-Stick-v0.4-threaded-chat-review`.
+
+Future phases remain fake-doc/fake-metadata-only unless separately authorized. No real-document reads, copies, scans, OCR, ingestion, summarization, transforms, real indexing, uploads, private-vault inspection, or pushes are approved by this fix.
+
 ## v0.4 Chat Layout Blocker Fix
 
 - Phase: `KIA-Stick-v0.4-chat-layout-blocker-fix`
