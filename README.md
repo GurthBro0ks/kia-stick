@@ -12,6 +12,20 @@ KIA Stick separates milestone semver from build identity:
 
 `/health`, `/version`, the app header, settings, answer footer, and saved answer metadata expose the current `displayVersion`.
 
+## v0.6.3 Fake-Only Pilot Simulator
+
+Phase: `KIA-Stick-v0.6.3-fake-only-pilot-simulator`.
+
+`lib/fakePilotSimulatorModel.ts` implements a synthetic-only simulator for the future one-document pilot gate flow. It covers operator approval, source scope, non-recursive confirmation, quarantine label, provenance label, redaction review, metadata review, index eligibility, audit, rollback, and retention/deletion decisions using only synthetic IDs, labels, counts, booleans, and PASS/WARN/FAIL results.
+
+Simulator proof export includes GitHub-safe guard fields proving no private paths, filenames, snippets, OCR text, hash values, identifiers, exports, vector data, private notes, upload handlers, file inputs, real-document access, or real pilot implementation are included.
+
+This is **FAKE ONLY**. It does not add file pickers, path readers, file reads, copying, OCR, text extraction, summarization, transforms, embeddings, indexing, vector stores, upload handlers, private-vault inspection, service changes, pushes, or real-document access.
+
+Validation passed with proof at `/tmp/proof_kia_stick_v063_fake_pilot_sim_20260621T163640Z` and phase-runner self-test proof at `/tmp/proof_kia_stick_v0_6_3_fake_pilot_simulator_self_test_20260621T163950Z`. `queue-007-fake-only-pilot-simulator` is `needs_review` for operator review.
+
+Current product version remains `0.4.0`; current prompt version remains `prompt.fake-docs.v0.5-import-wizard-hardening`.
+
 ## v0.6.2 Real-Doc Safety Review Checklist
 
 Phase: `KIA-Stick-v0.6.2-safety-review-checklist`.

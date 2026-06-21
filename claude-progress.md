@@ -2,10 +2,31 @@
 
 ## Current Phase
 
-- Phase: `KIA-Stick-v0.6.1-post-plan-safety-closeout`
+- Phase: `KIA-Stick-v0.6.3-fake-only-pilot-simulator`
 - Target: `USER_LAPTOP_ONLY`
 - Provider: `local-fake-deterministic`
-- Status: validation PASS for planning/checklist-only v0.6.2 real-doc safety review checklist from accepted pushed v0.6.1 baseline `7b2d5b4`; one local commit created, no push.
+- Status: validation PASS for fake-only v0.6.3 pilot simulator from accepted pushed v0.6.2 baseline `6587a47`; one local commit created, no push.
+
+## v0.6.3 Fake-Only Pilot Simulator State
+
+- Phase: `KIA-Stick-v0.6.3-fake-only-pilot-simulator`
+- Baseline: origin/main and HEAD verified at `6587a47`.
+- v0.6.2 pushed state: recorded as accepted pushed commit `6587a47`.
+- Scope: fake-only simulator implementation/tests for future one-document pilot gates; no real-doc access or implementation.
+- Product version impact: none; app remains `0.4.0`; any future bump requires a separate implementation-phase decision.
+- Prompt version: `prompt.fake-docs.v0.5-import-wizard-hardening`
+- Simulator model: `lib/fakePilotSimulatorModel.ts`
+- Tests added: `tests/fakePilotSimulator.test.ts`
+- Queue state: `queue-006-safety-review-checklist` accepted after pushed baseline `6587a47`; `queue-007-fake-only-pilot-simulator` marked `needs_review` after validation passed.
+- Real/private document access: none.
+- Private vault inspected: no.
+- Push performed in this phase: no.
+- Commands run: missing `/home/slimy/*` harness checks, local harness load, `git fetch origin main`, git status/ref checks, repo inspection, fake simulator model/test edits, focused typecheck and simulator/checklist/queue tests, `npm run queue:set -- --id queue-006-safety-review-checklist --status accepted`, `test "$(git rev-parse --short origin/main)" = "6587a47"`, `npm run release:check`, `npm run lint`, `npm run typecheck`, `npm run test`, `npm run build`, `npm run scan:fake`, `npm run scan:privacy`, `npm run qa`, `npm run phase:run -- --phase KIA-Stick-v0.6.3-fake-pilot-simulator-self-test`, `npm run proof:latest`, `npm run queue:next`, `npm run closeout:review`, `npm run closeout:summary`, private tracked-path checks, no-file-input grep, APWU boundary grep, and `npm run queue:set -- --id queue-007-fake-only-pilot-simulator --status needs_review`.
+- Files changed: `lib/fakePilotSimulatorModel.ts`, `tests/fakePilotSimulator.test.ts`, `tests/taskQueue.test.ts`, `docs/phase-backlog.json`, `README.md`, `CLOSEOUT.md`, `feature_list.json`, and `claude-progress.md`.
+- Proof directory: `/tmp/proof_kia_stick_v063_fake_pilot_sim_20260621T163640Z`
+- Phase runner self-test proof directory: `/tmp/proof_kia_stick_v0_6_3_fake_pilot_simulator_self_test_20260621T163950Z`
+- Validation: PASS.
+- Remaining unknowns: operator manual review before push and optional manual push.
 
 ## v0.6.2 Real-Doc Safety Review Checklist State
 
@@ -17,10 +38,10 @@
 - Prompt version: `prompt.fake-docs.v0.5-import-wizard-hardening`
 - Checklist document: `docs/v0.6-real-doc-safety-checklist.md`
 - Tests added: `tests/realDocSafetyChecklist.test.ts`
-- Queue state: `queue-006-safety-review-checklist` marked `needs_review` after validation passed.
+- Queue state: `queue-006-safety-review-checklist` accepted after pushed baseline `6587a47` was verified.
 - Real/private document access: none.
 - Private vault inspected: no.
-- Push performed in this phase: no.
+- Push performed in this phase: yes, accepted pushed state is `6587a47`.
 - Commands run: missing `/home/slimy/*` harness checks, local harness load, git status/ref checks, memory/repo inspection, v0.6 plan/backlog/release inspection, focused docs/queue tests, `test "$(git rev-parse --short origin/main)" = "7b2d5b4"`, `npm run release:check`, `npm run lint`, `npm run typecheck`, `npm run test`, `npm run build`, `npm run scan:fake`, `npm run scan:privacy`, `npm run qa`, `npm run phase:run -- --phase KIA-Stick-v0.6.2-safety-checklist-self-test`, `npm run proof:latest`, `npm run queue:next`, `npm run closeout:review`, `npm run closeout:summary`, private tracked-path checks, no-file-input grep, APWU boundary grep, and `npm run queue:set -- --id queue-006-safety-review-checklist --status needs_review`.
 - Files changed: `docs/v0.6-real-doc-safety-checklist.md`, `tests/realDocSafetyChecklist.test.ts`, `tests/taskQueue.test.ts`, `docs/phase-backlog.json`, `README.md`, `CLOSEOUT.md`, `feature_list.json`, and `claude-progress.md`.
 - Proof directory: `/tmp/proof_kia_stick_v062_safety_checklist_20260621T161513Z`

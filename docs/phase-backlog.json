@@ -1,6 +1,6 @@
 {
   "schema": "kia-stick-local-task-queue.v1",
-  "updated_at": "2026-06-21T16:16:46.843Z",
+  "updated_at": "2026-06-21T16:38:09.697Z",
   "items": [
     {
       "id": "queue-001-closeout-helper-hardening",
@@ -160,13 +160,13 @@
       "id": "queue-006-safety-review-checklist",
       "phase": "KIA-Stick-v0.6.2-safety-review-checklist",
       "title": "Safety review checklist",
-      "status": "needs_review",
+      "status": "accepted",
       "model": "Claude",
       "risk": "high",
       "summary": "Write a checklist for reviewing the v0.6.0 plan, proof output, queue state, rollback wording, and no-real-document implementation boundary before any later pilot prompt.",
-      "next_action": "Operator reviews the checklist, proof latest, closeout summary, queue state, and confirms no real-doc implementation before any push.",
+      "next_action": "Accepted pushed state verified at 6587a47; proceed to the fake-only pilot simulator phase.",
       "created_at": "2026-06-21T03:16:48.000Z",
-      "updated_at": "2026-06-21T16:16:46.843Z",
+      "updated_at": "2026-06-21T16:34:46.523Z",
       "history": [
         {
           "at": "2026-06-21T03:16:48.000Z",
@@ -179,6 +179,12 @@
           "from": "planned",
           "to": "needs_review",
           "note": "v0.6.2 safety checklist validation passed; ready for operator proof review."
+        },
+        {
+          "at": "2026-06-21T16:34:46.523Z",
+          "from": "needs_review",
+          "to": "accepted",
+          "note": "v0.6.2 safety checklist accepted after pushed baseline 6587a47 was verified."
         }
       ]
     },
@@ -186,19 +192,25 @@
       "id": "queue-007-fake-only-pilot-simulator",
       "phase": "KIA-Stick-v0.6.3-fake-only-pilot-simulator",
       "title": "Fake-only pilot simulator",
-      "status": "planned",
+      "status": "needs_review",
       "model": "GPT/Codex $100",
       "risk": "medium",
       "summary": "Build or plan a simulator using fictional metadata only to exercise the single-document pilot gates without file inputs, file reads, OCR, uploads, indexing, or private storage.",
-      "next_action": "Draft a simulator prompt that uses synthetic fixtures only and proves gate order, stop conditions, rollback labels, and GitHub-safe proof summaries.",
+      "next_action": "Operator reviews simulator proof, proof latest, closeout summary, queue state, and confirms no real-doc access before any push.",
       "created_at": "2026-06-21T03:16:48.000Z",
-      "updated_at": "2026-06-21T03:16:48.000Z",
+      "updated_at": "2026-06-21T16:38:09.697Z",
       "history": [
         {
           "at": "2026-06-21T03:16:48.000Z",
           "from": "planned",
           "to": "planned",
           "note": "Seeded as fake-only simulator work; no real file or content access is approved."
+        },
+        {
+          "at": "2026-06-21T16:38:09.697Z",
+          "from": "planned",
+          "to": "needs_review",
+          "note": "v0.6.3 fake-only pilot simulator validation passed; ready for operator proof review."
         }
       ]
     },

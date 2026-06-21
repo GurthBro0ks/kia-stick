@@ -1,5 +1,40 @@
 # KIA Stick Closeout
 
+## v0.6.3 Fake-Only Pilot Simulator
+
+- Phase: `KIA-Stick-v0.6.3-fake-only-pilot-simulator`
+- Baseline: accepted pushed v0.6.2 state at `6587a47`
+- Origin/main verified: `6587a47`
+- Scope: fake-only simulator implementation/tests for the future one-document pilot gates; no real-doc access or implementation.
+- Product version impact: none; app remains `0.4.0`.
+- Prompt version: `prompt.fake-docs.v0.5-import-wizard-hardening`
+- Simulator model: `lib/fakePilotSimulatorModel.ts`
+- Tests added: `tests/fakePilotSimulator.test.ts`
+- Proof directory: `/tmp/proof_kia_stick_v063_fake_pilot_sim_20260621T163640Z`
+- Phase runner self-test proof directory: `/tmp/proof_kia_stick_v0_6_3_fake_pilot_simulator_self_test_20260621T163950Z`
+- Validation: PASS
+- Queue state: `queue-006-safety-review-checklist` accepted after pushed baseline `6587a47`; `queue-007-fake-only-pilot-simulator` marked `needs_review` after validation passed.
+- Real document access: none
+- Private vault inspected: no
+- Push performed: no
+
+## v0.6.2 Accepted Pushed State
+
+- Phase: `KIA-Stick-v0.6.2-safety-review-checklist`
+- Accepted commit: `6587a47`
+- Origin/main verified: `6587a47`
+- Push performed before this phase: yes
+- Proof directory: `/tmp/proof_kia_stick_v062_safety_checklist_20260621T161513Z`
+- Self-test proof directory: `/tmp/proof_kia_stick_v0_6_2_safety_checklist_self_test_20260621T161902Z`
+
+## Next Safe Phase
+
+Recommended next phase after operator review: `KIA-Stick-v0.6.4-operator-approval-packet`.
+
+Any future real-doc pilot must still pass `docs/v0.6-real-doc-safety-checklist.md` and a fresh operator approval packet. This simulator phase does not approve real import, file pickers, path readers, file reads, copying, OCR, text extraction, summarization, transforms, indexing, upload handling, private-vault inspection, cloud calls, service changes, pushes, or private document access.
+
+---
+
 ## v0.6.2 Real-Doc Safety Review Checklist
 
 - Phase: `KIA-Stick-v0.6.2-safety-review-checklist`
@@ -13,10 +48,10 @@
 - Proof directory: `/tmp/proof_kia_stick_v062_safety_checklist_20260621T161513Z`
 - Phase runner self-test proof directory: `/tmp/proof_kia_stick_v0_6_2_safety_checklist_self_test_20260621T161902Z`
 - Validation: PASS
-- Queue state: `queue-006-safety-review-checklist` marked `needs_review` after validation passed.
+- Queue state: `queue-006-safety-review-checklist` accepted after pushed baseline `6587a47` was verified.
 - Real document access: none
 - Private vault inspected: no
-- Push performed: no
+- Push performed: yes, accepted pushed state is `6587a47`
 
 ## v0.6.1 Accepted Pushed State
 
