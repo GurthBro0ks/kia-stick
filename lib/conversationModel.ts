@@ -129,11 +129,11 @@ export function createLoadingAssistantMessage(input: {
     relatedFakeSections: [],
     footer: "Sources:0 | Provider:local-fake-deterministic",
     version: {
-      productVersion: "0.4.0",
+      productVersion: "0.7.0",
       channel: "dev",
       buildDate: "unknown",
       gitSha: "unknown",
-      displayVersion: "0.4.0-dev.unknown+unknown",
+      displayVersion: "0.7.0-dev.unknown+unknown",
       corpusVersion: "unknown",
       indexVersion: "unknown",
       promptVersion: "unknown",

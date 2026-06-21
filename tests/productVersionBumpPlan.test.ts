@@ -33,15 +33,17 @@ function readRuntimeSources(): string {
 }
 
 describe("v0.7.1 product-version bump plan", () => {
-  it("is explicitly planning-only and keeps runtime version constants held", () => {
+  it("remains traceable after the separately approved v0.7.2 implementation", () => {
     expect(plan).toContain("KIA-Stick-v0.7.1-product-version-bump-plan");
     expect(plan).toContain("PLAN ONLY");
     expect(plan).toContain("`productVersion` stays `0.4.0`");
     expect(plan).toContain("`promptVersion` stays `prompt.fake-docs.v0.5-import-wizard-hardening`");
     expect(plan).toContain("does not change runtime `productVersion` or `promptVersion`");
+    expect(plan).toContain("KIA-Stick-v0.7.2-product-version-bump-implementation-to-0.7.0");
+    expect(plan).toContain("implements the `0.7.0` product/runtime identity bump");
 
     const versionSource = readFileSync("lib/version.ts", "utf8");
-    expect(versionSource).toContain('export const PRODUCT_VERSION = "0.4.0";');
+    expect(versionSource).toContain('export const PRODUCT_VERSION = "0.7.0";');
     expect(versionSource).toContain('export const PROMPT_VERSION = "prompt.fake-docs.v0.5-import-wizard-hardening";');
   });
 

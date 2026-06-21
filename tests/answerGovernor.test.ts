@@ -93,7 +93,7 @@ describe("answer governor", () => {
     expect(answer.footer).toContain("Sources:");
     expect(answer.footer).toContain("Build:");
     expect(answer.footer).toContain("Mode:Strict Research");
-    expect(answer.version.displayVersion).toMatch(/^0\.4\.0-dev\.\d{8}\+(?:[a-z0-9]+|unknown)$/);
+    expect(answer.version.displayVersion).toMatch(/^0\.7\.0-dev\.\d{8}\+(?:[a-z0-9]+|unknown)$/);
   });
 
   it("blocks best guess for Step 1 evidence when no controlling language is present", () => {
@@ -478,7 +478,8 @@ describe("runtime build identity", () => {
       expect(payload[field]).toBe(payload.version[field]);
     }
 
-    expect(payload.version.displayVersion).toMatch(/^0\.4\.0-dev\.\d{8}\+(?:[a-z0-9]+|unknown)$/);
+    expect(payload.version.productVersion).toBe("0.7.0");
+    expect(payload.version.displayVersion).toMatch(/^0\.7\.0-dev\.\d{8}\+(?:[a-z0-9]+|unknown)$/);
     expect(payload.version.corpusVersion).toBe(corpus.corpusVersion);
     expect(payload.version.indexVersion).toBe(corpus.indexVersion);
   });
@@ -497,7 +498,7 @@ describe("runtime build identity", () => {
     expect(html).toContain("Provider");
     expect(html).toContain("Back to KIA Stick");
     expect(html).toContain("href=\"/\"");
-    expect(html).toMatch(/0\.4\.0-dev\.\d{8}\+(?:[a-z0-9]+|unknown)/);
+    expect(html).toMatch(/0\.7\.0-dev\.\d{8}\+(?:[a-z0-9]+|unknown)/);
   });
 
   it("ships a valid static web manifest", () => {

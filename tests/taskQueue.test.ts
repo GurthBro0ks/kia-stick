@@ -51,7 +51,7 @@ describe("task-queue", () => {
     const queue = mod.loadQueue(resolve("."));
 
     expect(queue.schema).toBe("kia-stick-local-task-queue.v1");
-    expect(queue.items).toHaveLength(15);
+    expect(queue.items).toHaveLength(16);
     expect(queue.items.map((item) => item.id)).toEqual([
       "queue-001-closeout-helper-hardening",
       "queue-002-fake-redaction-metadata-depth",
@@ -68,13 +68,15 @@ describe("task-queue", () => {
       "queue-013-v07-fake-only-ux-polish",
       "queue-014-v07-real-doc-gate-preparation",
       "queue-015-v07-first-real-doc-gate-request",
+      "queue-016-v072-product-version-bump-implementation",
     ]);
     expect(queue.items.slice(0, 10).every((item) => item.status === "accepted")).toBe(true);
     expect(queue.items[10].status).toBe("planned");
-    expect(queue.items[11].status).toBe("ready_to_push");
+    expect(queue.items[11].status).toBe("accepted");
     expect(queue.items[12].status).toBe("planned");
     expect(queue.items[13].status).toBe("planned");
     expect(queue.items[14].status).toBe("blocked");
+    expect(queue.items[15].status).toBe("ready_to_push");
     expect(queue.items.every((item) => item.history.length > 0)).toBe(true);
     expect(mod.validateQueue(queue)).toBe(true);
   });
@@ -109,14 +111,30 @@ describe("task-queue", () => {
     const bumpPlan = queue.items.find((item) => item.id === "queue-012-v07-product-version-bump-plan");
 
     expect(bumpPlan?.phase).toBe("KIA-Stick-v0.7.1-product-version-bump-plan");
-    expect(bumpPlan?.status).toBe("ready_to_push");
+    expect(bumpPlan?.status).toBe("accepted");
     expect(bumpPlan?.model).toBe("GPT/Codex $100");
     const bumpText = `${bumpPlan?.summary}\n${bumpPlan?.next_action}`;
     expect(bumpText).toContain("docs/tests/state only");
-    expect(bumpText).toContain("keeping productVersion at 0.4.0");
-    expect(bumpText).toContain("future separately approved bump");
+    expect(bumpText).toContain("Accepted after the v0.7.2 product-version bump implementation");
+    expect(bumpText).toContain("0.7.0");
     expect(bumpText).not.toMatch(/<input[^>]*type=["']file/i);
     expect(bumpText).not.toMatch(/\bshowOpenFilePicker\b|\bFileReader\b|\breadAsText\b|\breadAsArrayBuffer\b/i);
+  });
+
+  it("tracks the v0.7.2 product-version bump implementation without approving prompt or real-doc work", async () => {
+    const mod = await loadModule();
+    const queue = mod.loadQueue(resolve("."));
+    const implementation = queue.items.find((item) => item.id === "queue-016-v072-product-version-bump-implementation");
+
+    expect(implementation?.phase).toBe("KIA-Stick-v0.7.2-product-version-bump-implementation-to-0.7.0");
+    expect(implementation?.status).toBe("ready_to_push");
+    expect(implementation?.model).toBe("GPT/Codex $100");
+    const text = `${implementation?.summary}\n${implementation?.next_action}`;
+    expect(text).toContain("0.7.0");
+    expect(text).toContain("promptVersion unchanged");
+    expect(text).toContain("no real-doc capability");
+    expect(text).not.toMatch(/<input[^>]*type=["']file/i);
+    expect(text).not.toMatch(/\bshowOpenFilePicker\b|\bFileReader\b|\breadAsText\b|\breadAsArrayBuffer\b/i);
   });
 
   it("seeds the requested post-plan safety backlog without approving implementation", async () => {

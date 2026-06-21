@@ -1,5 +1,31 @@
 # KIA Stick Closeout
 
+## v0.7.2 Product-Version Bump to 0.7.0
+
+- Phase: `KIA-Stick-v0.7.2-product-version-bump-implementation-to-0.7.0`
+- Baseline: accepted pushed v0.7.1 state at `40d8c29`
+- Origin/main verified: `40d8c29`
+- Scope: product/runtime identity bump to exactly `0.7.0`; no runtime features, prompt change, or real-doc implementation.
+- Product version: `0.7.0`
+- Package version: `0.7.0`
+- Prompt version: `prompt.fake-docs.v0.5-import-wizard-hardening`
+- Source plan: `docs/v0.7.1-product-version-bump-plan.md`
+- Release note: `docs/RELEASE_v0.7.md`
+- Tests added: `tests/productVersionContractBump.test.ts`
+- Proof directory: `/tmp/proof_kia_stick_v0_7_2_product_version_bump_0_7_0_20260621T175112Z`
+- Validation: PASS
+- Queue state: `queue-012-v07-product-version-bump-plan` accepted as the decision basis; `queue-016-v072-product-version-bump-implementation` is ready for the task prompt auto-push gate.
+- Runtime version surfaces: `/health`, `/version`, app metadata, and saved-answer metadata derive from the shared `0.7.0` version contract.
+- Real document access: none
+- Private vault inspected: no
+- Push performed: auto-push only if the task prompt's validation gates pass.
+
+## v0.7.2 Safety Boundary
+
+This phase changes product identity only. It does not add file pickers, path readers, file reads, copying, OCR, upload handlers, real redaction, embeddings, indexing, vector stores, private-vault inspection, service changes, credentials, or real-document access. `promptVersion` remains unchanged.
+
+---
+
 ## v0.7.1 Product-Version Bump Plan
 
 - Phase: `KIA-Stick-v0.7.1-product-version-bump-plan`

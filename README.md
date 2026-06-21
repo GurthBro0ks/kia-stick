@@ -1,4 +1,4 @@
-# KIA Stick v0.4
+# KIA Stick v0.7
 
 Laptop-only fake-doc PWA for testing citation-first governance, source hierarchy, and hardened fake-vault review workflow scaffolding.
 
@@ -6,11 +6,23 @@ Laptop-only fake-doc PWA for testing citation-first governance, source hierarchy
 
 KIA Stick separates milestone semver from build identity:
 
-- `productVersion` changes slowly at planned milestone phases, for example `0.4.0`.
-- `displayVersion` changes per build as `productVersion-channel.buildDate+gitSha`, for example `0.4.0-dev.20260620+c33c049`.
+- `productVersion` changes slowly at planned milestone phases, for example `0.7.0`.
+- `displayVersion` changes per build as `productVersion-channel.buildDate+gitSha`, for example `0.7.0-dev.20260621+40d8c29`.
 - `corpusVersion`, `indexVersion`, and `promptVersion` stay separate from the app build version.
 
 `/health`, `/version`, the app header, settings, answer footer, and saved answer metadata expose the current `displayVersion`.
+
+## v0.7.2 Product-Version Bump to 0.7.0
+
+Phase: `KIA-Stick-v0.7.2-product-version-bump-implementation-to-0.7.0`.
+
+This phase implements the separately approved runtime/product identity bump to exactly `0.7.0`. It updates the shared runtime version contract, package metadata, release readiness state, and version-contract tests while keeping `promptVersion` at `prompt.fake-docs.v0.5-import-wizard-hardening`.
+
+This is an **identity/release-coherence bump only**. It does not add file pickers, path readers, file reads, copying, OCR, real redaction, embeddings, indexing, vector stores, upload handlers, private-vault inspection, service changes, or real-document access.
+
+`docs/v0.7.1-product-version-bump-plan.md` remains the traceable decision basis for selecting `0.7.0`; `docs/RELEASE_v0.7.md` records the GitHub-safe release note for the bump.
+
+Current product version is `0.7.0`; current prompt version remains `prompt.fake-docs.v0.5-import-wizard-hardening`.
 
 ## v0.7.1 Product-Version Bump Plan
 

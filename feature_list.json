@@ -1,5 +1,5 @@
 {
-  "phase": "KIA-Stick-v0.7.1-product-version-bump-plan",
+  "phase": "KIA-Stick-v0.7.2-product-version-bump-implementation-to-0.7.0",
   "target_machine": "USER_LAPTOP_ONLY",
   "accepted_v0_1": {
     "commit": "1d9b05c",
@@ -162,17 +162,22 @@
     "v071_product_version_decision_rule",
     "v071_product_version_later_bump_validation_checklist",
     "v071_product_version_no_bump_rollback_criteria",
-    "v07_product_version_hold_intentional"
+    "v072_product_version_bump_0_7_0",
+    "product_runtime_version_0_7_0",
+    "package_version_0_7_0",
+    "prompt_version_unchanged_after_product_bump",
+    "version_contract_0_7_0_validation",
+    "v071_plan_implementation_trace"
   ],
   "release_readiness": {
-    "phase": "KIA-Stick-v0.7.1-product-version-bump-plan",
-    "status": "v071_product_version_bump_plan_validation_passed",
-    "package_version": "0.4.0",
-    "product_version": "0.4.0",
+    "phase": "KIA-Stick-v0.7.2-product-version-bump-implementation-to-0.7.0",
+    "status": "v072_product_version_bump_0_7_0_validation_passed",
+    "package_version": "0.7.0",
+    "product_version": "0.7.0",
     "prompt_version": "prompt.fake-docs.v0.5-import-wizard-hardening",
     "version_coherence": {
-      "package_version": "0.4.0",
-      "product_version": "0.4.0",
+      "package_version": "0.7.0",
+      "product_version": "0.7.0",
       "prompt_version": "prompt.fake-docs.v0.5-import-wizard-hardening",
       "checked_files": [
         "package.json",
@@ -195,13 +200,6 @@
           "expected": "0.6.x phase milestone",
           "applies_to_phase_pattern": "^KIA-Stick-v0\\.6\\.",
           "reason": "ProductVersion stays 0.4.0 for v0.6.x real-doc planning and safety-closeout phases; a future implementation prompt must separately approve any product milestone bump."
-        },
-        {
-          "field": "productVersion",
-          "actual": "0.4.0",
-          "expected": "0.7.x phase milestone",
-          "applies_to_phase_pattern": "^KIA-Stick-v0\\.7\\.",
-          "reason": "ProductVersion stays 0.4.0 for v0.7.x planning and product-version bump-plan phases until a future implementation prompt separately approves a runtime productVersion bump."
         }
       ]
     },
@@ -1805,6 +1803,50 @@
     "vector_store_added": false,
     "real_redaction_added": false,
     "private_path_in_plan": false,
+    "push_performed": false,
+    "real_db_boundary": "real-doc source mount untouched",
+    "implementation_phase": "KIA-Stick-v0.7.2-product-version-bump-implementation-to-0.7.0",
+    "implementation_target": "0.7.0",
+    "implementation_status": "implemented_by_v0_7_2"
+  },
+  "v072_product_version_bump_0_7_0": {
+    "phase": "KIA-Stick-v0.7.2-product-version-bump-implementation-to-0.7.0",
+    "status": "validation_passed",
+    "document": "docs/RELEASE_v0.7.md",
+    "source_plan": "docs/v0.7.1-product-version-bump-plan.md",
+    "baseline": "40d8c29",
+    "origin_main": "40d8c29",
+    "proof_dir": "/tmp/proof_kia_stick_v0_7_2_product_version_bump_0_7_0_20260621T175112Z",
+    "selected_queue_item": "queue-016-v072-product-version-bump-implementation",
+    "product_version": "0.7.0",
+    "package_version": "0.7.0",
+    "prompt_version": "prompt.fake-docs.v0.5-import-wizard-hardening",
+    "changed_runtime_version": true,
+    "changed_prompt_version": false,
+    "release_identity_only": true,
+    "tests": [
+      "tests/productVersionContractBump.test.ts",
+      "tests/productVersionBumpPlan.test.ts",
+      "tests/taskQueue.test.ts",
+      "tests/answerGovernor.test.ts"
+    ],
+    "validation": "passed",
+    "manual_qa": "auto_push_gate_pending",
+    "queue_012_status": "accepted_after_implementation",
+    "queue_016_status": "ready_to_push_after_validation_passed",
+    "authorizes_runtime_bump": true,
+    "authorizes_prompt_bump": false,
+    "authorizes_runtime_features": false,
+    "authorizes_implementation": false,
+    "real_document_access": false,
+    "private_vault_inspected": false,
+    "real_doc_code_path_added": false,
+    "file_input_added": false,
+    "upload_handler_added": false,
+    "ocr_added": false,
+    "vector_store_added": false,
+    "real_redaction_added": false,
+    "private_path_in_release_note": false,
     "push_performed": false,
     "real_db_boundary": "real-doc source mount untouched"
   }
