@@ -1,5 +1,39 @@
 # KIA Stick Closeout
 
+## v0.6.0 Real-Doc Pilot Plan
+
+- Phase: `KIA-Stick-v0.6.0-real-doc-pilot-plan-only`
+- Baseline: accepted pushed v0.5.10 state at `ef1cb84`
+- Scope: planning-only future single-document real-doc pilot design with approval gates, stop conditions, quarantine copy rules, hashing/provenance handling, redaction review, metadata review, index eligibility, audit, rollback, retention, and GitHub-safe proof rules.
+- Product version impact: none; app remains `0.4.0`.
+- Prompt version: `prompt.fake-docs.v0.5-import-wizard-hardening`
+- Plan document: `docs/v0.6-real-doc-pilot-plan.md`
+- Tests added: `tests/realDocPilotPlan.test.ts`
+- Proof directory: `/tmp/proof_kia_stick_v060_real_doc_pilot_plan_20260621T025129Z`
+- Phase runner self-test proof directory: `/tmp/proof_kia_stick_v0_6_0_real_doc_pilot_plan_self_test_20260621T025613Z`
+- Validation: PASS
+- Queue state: `queue-004-docs-release-pack` accepted after pushed baseline `ef1cb84` was verified; `queue-005-real-doc-pilot-plan-only` marked `needs_review` only after validation passed.
+- Real document access: none
+- Private vault inspected: no
+- Push performed: no
+
+## v0.5.10 Accepted Pushed State
+
+- Phase: `KIA-Stick-v0.5.10-docs-release-pack`
+- Accepted commit: `ef1cb84`
+- Origin/main verified: `ef1cb84`
+- Push performed before this phase: yes
+- Proof directory: `/tmp/proof_kia_stick_v0510_docs_release_20260621T023319Z`
+- Self-test proof directory: `/tmp/proof_kia_stick_v0_5_10_docs_release_self_test_20260621T023719Z`
+
+## Next Safe Phase
+
+Recommended next phase: `KIA-Stick-v0.6.0-operator-plan-review`.
+
+Future implementation must start from the acceptance checklist in `docs/v0.6-real-doc-pilot-plan.md`. This planning phase does not approve real import, file pickers, path readers, file reads, copying, OCR, text extraction, summarization, transforms, indexing, upload handling, private-vault inspection, cloud calls, service changes, pushes, or private document access.
+
+---
+
 ## v0.5.10 Docs Release Pack
 
 - Phase: `KIA-Stick-v0.5.10-docs-release-pack`

@@ -52,8 +52,8 @@ describe("task-queue", () => {
     expect(queue.items[0].status).toBe("accepted");
     expect(queue.items[1].status).toBe("accepted");
     expect(queue.items[2].status).toBe("accepted");
-    expect(["planned", "needs_review"]).toContain(queue.items[3].status);
-    expect(queue.items.slice(4).every((item) => item.status === "planned")).toBe(true);
+    expect(queue.items[3].status).toBe("accepted");
+    expect(["planned", "needs_review"]).toContain(queue.items[4].status);
     expect(queue.items.every((item) => item.history.length > 0)).toBe(true);
     expect(mod.validateQueue(queue)).toBe(true);
   });
@@ -64,8 +64,9 @@ describe("task-queue", () => {
     queue.items[0].status = "accepted";
     queue.items[1].status = "accepted";
     queue.items[2].status = "accepted";
+    queue.items[3].status = "accepted";
 
-    expect(mod.selectNextItem(queue)?.id).toBe("queue-004-docs-release-pack");
+    expect(mod.selectNextItem(queue)?.id).toBe("queue-005-real-doc-pilot-plan-only");
   });
 
   it("updates status, next action, timestamps, and history", async () => {
@@ -133,9 +134,9 @@ describe("task-queue", () => {
     const result = spawnSync("node", [scriptPath, "next"], { cwd: resolve("."), encoding: "utf8" });
 
     expect(result.status).toBe(0);
-    expect(result.stdout).toContain("id=queue-004-docs-release-pack");
+    expect(result.stdout).toContain("id=queue-005-real-doc-pilot-plan-only");
     expect(result.stdout).toContain("Codex-ready summary:");
-    expect(result.stdout).toContain("KIA-Stick-v0.5.10-docs-release-pack");
+    expect(result.stdout).toContain("KIA-Stick-v0.6.0-real-doc-pilot-plan-only");
   });
 
   it("does not execute git push from queue commands", () => {

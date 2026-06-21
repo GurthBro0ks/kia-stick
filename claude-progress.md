@@ -2,10 +2,31 @@
 
 ## Current Phase
 
-- Phase: `KIA-Stick-v0.5.10-docs-release-pack`
+- Phase: `KIA-Stick-v0.6.0-real-doc-pilot-plan-only`
 - Target: `USER_LAPTOP_ONLY`
 - Provider: `local-fake-deterministic`
-- Status: validation PASS for fake-only docs release pack from accepted pushed v0.5.9 baseline `c6bd17f`; one local commit will be created, no push.
+- Status: validation PASS for planning-only real-doc pilot design from accepted pushed v0.5.10 baseline `ef1cb84`; one local commit will be created, no push.
+
+## v0.6.0 Real-Doc Pilot Plan State
+
+- Phase: `KIA-Stick-v0.6.0-real-doc-pilot-plan-only`
+- Baseline: origin/main and HEAD verified at `ef1cb84`.
+- v0.5.10 pushed state: recorded as accepted pushed commit `ef1cb84`.
+- Scope: planning-only future single-document real-doc pilot workflow with explicit approval gates, stop conditions, quarantine copy rules, hashing/provenance handling, redaction review, metadata review, index eligibility, audit, rollback, retention, and GitHub-safe proof rules.
+- Product version impact: none; app remains `0.4.0`; any future bump requires a separate implementation-phase decision.
+- Prompt version: `prompt.fake-docs.v0.5-import-wizard-hardening`
+- Plan document: `docs/v0.6-real-doc-pilot-plan.md`
+- Tests added: `tests/realDocPilotPlan.test.ts`
+- Queue state: `queue-004-docs-release-pack` accepted after pushed baseline `ef1cb84` was verified; `queue-005-real-doc-pilot-plan-only` marked `needs_review` only after validation passed.
+- Real/private document access: none.
+- Private vault inspected: no.
+- Push performed in this phase: no.
+- Commands run: missing `/home/slimy/*` harness checks, local harness load, git status/ref checks, memory/repo inspection, queue inspection, `npm run queue:set -- --id queue-004-docs-release-pack --status accepted`, focused docs/queue tests, `test "$(git rev-parse --short origin/main)" = "ef1cb84"`, `npm run release:check`, `npm run lint`, `npm run typecheck`, `npm run test`, `npm run build`, `npm run scan:fake`, `npm run scan:privacy`, `npm run qa`, `npm run phase:run -- --phase KIA-Stick-v0.6.0-real-doc-pilot-plan-self-test`, `npm run proof:latest`, `npm run queue:next`, `npm run closeout:review`, `npm run closeout:summary`, private tracked-path checks, no-file-input grep, APWU boundary grep, and `npm run queue:set -- --id queue-005-real-doc-pilot-plan-only --status needs_review`.
+- Files changed: `docs/v0.6-real-doc-pilot-plan.md`, `tests/realDocPilotPlan.test.ts`, `tests/taskQueue.test.ts`, `docs/phase-backlog.json`, `README.md`, `CLOSEOUT.md`, `feature_list.json`, and `claude-progress.md`.
+- Proof directory: `/tmp/proof_kia_stick_v060_real_doc_pilot_plan_20260621T025129Z`
+- Phase runner self-test proof directory: `/tmp/proof_kia_stick_v0_6_0_real_doc_pilot_plan_self_test_20260621T025613Z`
+- Validation: PASS.
+- Remaining unknowns: local commit SHA, operator review, queue ready-to-push decision, and optional manual push.
 
 ## v0.5.10 Docs Release Pack State
 

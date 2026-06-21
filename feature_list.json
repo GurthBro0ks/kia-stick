@@ -1,5 +1,5 @@
 {
-  "phase": "KIA-Stick-v0.5.10-docs-release-pack",
+  "phase": "KIA-Stick-v0.6.0-real-doc-pilot-plan-only",
   "target_machine": "USER_LAPTOP_ONLY",
   "accepted_v0_1": {
     "commit": "1d9b05c",
@@ -84,6 +84,10 @@
     "operator_release_checklist",
     "v0_5_changelog",
     "safe_boundary_release_notes",
+    "real_doc_pilot_plan",
+    "single_document_operator_approval_gates",
+    "github_safe_real_doc_proof_rules",
+    "real_doc_stop_conditions",
     "manual_push_command_output",
     "phase_runner_commit_gate",
     "phase_runner_no_push_invariant",
@@ -98,7 +102,7 @@
     "version_back_navigation"
   ],
   "release_readiness": {
-    "phase": "KIA-Stick-v0.5.10-docs-release-pack",
+    "phase": "KIA-Stick-v0.6.0-real-doc-pilot-plan-only",
     "status": "implemented_fake_only_automation",
     "package_version": "0.4.0",
     "product_version": "0.4.0",
@@ -121,6 +125,13 @@
           "expected": "0.5.x phase milestone",
           "applies_to_phase_pattern": "^KIA-Stick-v0\\.5\\.",
           "reason": "ProductVersion stays 0.4.0 during v0.5.x fake import wizard and release-readiness phases until a planned product milestone explicitly approves a bump."
+        },
+        {
+          "field": "productVersion",
+          "actual": "0.4.0",
+          "expected": "0.6.x phase milestone",
+          "applies_to_phase_pattern": "^KIA-Stick-v0\\.6\\.0-real-doc-pilot-plan-only$",
+          "reason": "ProductVersion stays 0.4.0 for the v0.6.0 planning-only real-doc pilot design; a future implementation prompt must separately approve any product milestone bump."
         }
       ]
     },
@@ -409,6 +420,56 @@
     ],
     "real_document_access": false,
     "private_vault_inspected": false,
+    "push_performed": false,
+    "real_db_boundary": "/media/mint/SHARED/APWU untouched"
+  },
+  "accepted_v0_5_10_docs_release_pack": {
+    "phase": "KIA-Stick-v0.5.10-docs-release-pack",
+    "status": "accepted_pushed_state_verified",
+    "accepted_commit": "ef1cb84",
+    "origin_main": "ef1cb84",
+    "proof_dir": "/tmp/proof_kia_stick_v0510_docs_release_20260621T023319Z",
+    "self_test_proof_dir": "/tmp/proof_kia_stick_v0_5_10_docs_release_self_test_20260621T023719Z",
+    "validation": "passed",
+    "manual_qa": "operator_review_pending",
+    "push_performed": true,
+    "real_document_access": false,
+    "private_vault_inspected": false,
+    "real_db_boundary": "/media/mint/SHARED/APWU untouched"
+  },
+  "real_doc_pilot_plan": {
+    "phase": "KIA-Stick-v0.6.0-real-doc-pilot-plan-only",
+    "status": "planning_only_validation_passed",
+    "document": "docs/v0.6-real-doc-pilot-plan.md",
+    "proof_dir": "/tmp/proof_kia_stick_v060_real_doc_pilot_plan_20260621T025129Z",
+    "self_test_proof_dir": "/tmp/proof_kia_stick_v0_6_0_real_doc_pilot_plan_self_test_20260621T025613Z",
+    "coverage": [
+      "single_document_future_source_scope",
+      "operator_approval_gates",
+      "stop_conditions_before_content_touch",
+      "quarantine_copy_rules",
+      "hashing_provenance_rules",
+      "redaction_review_rules",
+      "metadata_review_rules",
+      "index_eligibility_rules",
+      "audit_rollback_retention_rules",
+      "github_safe_proof_exclusions",
+      "later_implementation_acceptance_checklist"
+    ],
+    "tests": [
+      "tests/realDocPilotPlan.test.ts",
+      "tests/taskQueue.test.ts"
+    ],
+    "product_version": "0.4.0",
+    "product_version_bump": "future_prompt_only",
+    "validation": "passed",
+    "manual_qa": "operator_review_pending",
+    "queue_status": "needs_review_after_validation_passed",
+    "real_document_access": false,
+    "private_vault_inspected": false,
+    "real_doc_code_path_added": false,
+    "file_input_added": false,
+    "private_path_in_plan": false,
     "push_performed": false,
     "real_db_boundary": "/media/mint/SHARED/APWU untouched"
   },

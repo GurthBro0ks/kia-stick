@@ -12,6 +12,16 @@ KIA Stick separates milestone semver from build identity:
 
 `/health`, `/version`, the app header, settings, answer footer, and saved answer metadata expose the current `displayVersion`.
 
+## v0.6.0 Real-Doc Pilot Plan
+
+Phase: `KIA-Stick-v0.6.0-real-doc-pilot-plan-only`.
+
+`docs/v0.6-real-doc-pilot-plan.md` defines the safest future single-document pilot workflow with explicit operator approval gates, stop conditions, quarantine copy rules, hashing/provenance handling, redaction review, metadata review, index eligibility, audit, rollback, retention, and GitHub-safe proof rules.
+
+This is **PLAN ONLY**. It does not add file pickers, path readers, file reads, copying, OCR, text extraction, summarization, transforms, embeddings, indexing, vector stores, upload handlers, private-vault inspection, service changes, pushes, or real-document access.
+
+Current product version remains `0.4.0`; current prompt version remains `prompt.fake-docs.v0.5-import-wizard-hardening`. A future real-doc implementation prompt must separately decide whether any product milestone bump is warranted.
+
 ## v0.5.10 Docs Release Pack
 
 Phase: `KIA-Stick-v0.5.10-docs-release-pack`.

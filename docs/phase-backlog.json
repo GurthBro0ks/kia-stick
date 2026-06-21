@@ -1,6 +1,6 @@
 {
   "schema": "kia-stick-local-task-queue.v1",
-  "updated_at": "2026-06-21T02:34:54.030Z",
+  "updated_at": "2026-06-21T02:57:23.738Z",
   "items": [
     {
       "id": "queue-001-closeout-helper-hardening",
@@ -96,13 +96,13 @@
       "id": "queue-004-docs-release-pack",
       "phase": "KIA-Stick-v0.5.10-docs-release-pack",
       "title": "Docs release pack",
-      "status": "needs_review",
+      "status": "accepted",
       "model": "Claude closeout review after Codex validation",
       "risk": "low",
       "summary": "Prepare a GitHub-safe docs release pack from existing fake-only state, validation logs, and proof summaries.",
-      "next_action": "Review v0.5.10 docs release proof pack and closeout helper output before manual push.",
+      "next_action": "Accepted pushed state verified at ef1cb84; proceed to the v0.6.0 planning-only pilot.",
       "created_at": "2026-06-20T20:45:00.000Z",
-      "updated_at": "2026-06-21T02:34:54.030Z",
+      "updated_at": "2026-06-21T02:50:41.763Z",
       "history": [
         {
           "at": "2026-06-20T20:45:00.000Z",
@@ -115,6 +115,12 @@
           "from": "planned",
           "to": "needs_review",
           "note": "v0.5.10 docs release pack validation passed; ready for operator proof review."
+        },
+        {
+          "at": "2026-06-21T02:50:41.763Z",
+          "from": "needs_review",
+          "to": "accepted",
+          "note": "v0.5.10 docs release pack accepted after pushed baseline ef1cb84 was verified."
         }
       ]
     },
@@ -122,19 +128,25 @@
       "id": "queue-005-real-doc-pilot-plan-only",
       "phase": "KIA-Stick-v0.6.0-real-doc-pilot-plan-only",
       "title": "Real-doc pilot PLAN ONLY",
-      "status": "planned",
+      "status": "needs_review",
       "model": "Claude planning review with Codex validation",
       "risk": "high",
       "summary": "Planning-only pilot outline for future real-document handling boundaries; no reads, copying, OCR, import, indexing, or private-vault inspection.",
-      "next_action": "Write a planning-only prompt that re-states every real-document boundary before any future approval.",
+      "next_action": "Operator reviews the plan, proof latest, closeout summary, queue state, and confirms no real-doc access before any push.",
       "created_at": "2026-06-20T20:45:00.000Z",
-      "updated_at": "2026-06-20T20:45:00.000Z",
+      "updated_at": "2026-06-21T02:57:23.738Z",
       "history": [
         {
           "at": "2026-06-20T20:45:00.000Z",
           "from": "planned",
           "to": "planned",
           "note": "Seeded planning-only backlog item; no real documents are approved."
+        },
+        {
+          "at": "2026-06-21T02:57:23.738Z",
+          "from": "planned",
+          "to": "needs_review",
+          "note": "v0.6.0 real-doc pilot plan-only validation passed; ready for operator proof review."
         }
       ]
     }
