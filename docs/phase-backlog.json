@@ -1,6 +1,6 @@
 {
   "schema": "kia-stick-local-task-queue.v1",
-  "updated_at": "2026-06-21T02:57:23.738Z",
+  "updated_at": "2026-06-21T03:16:48.000Z",
   "items": [
     {
       "id": "queue-001-closeout-helper-hardening",
@@ -128,13 +128,13 @@
       "id": "queue-005-real-doc-pilot-plan-only",
       "phase": "KIA-Stick-v0.6.0-real-doc-pilot-plan-only",
       "title": "Real-doc pilot PLAN ONLY",
-      "status": "needs_review",
+      "status": "accepted",
       "model": "Claude planning review with Codex validation",
       "risk": "high",
       "summary": "Planning-only pilot outline for future real-document handling boundaries; no reads, copying, OCR, import, indexing, or private-vault inspection.",
-      "next_action": "Operator reviews the plan, proof latest, closeout summary, queue state, and confirms no real-doc access before any push.",
+      "next_action": "Accepted pushed state verified at 5454e3d; proceed to the safety review checklist planning phase.",
       "created_at": "2026-06-20T20:45:00.000Z",
-      "updated_at": "2026-06-21T02:57:23.738Z",
+      "updated_at": "2026-06-21T03:16:48.000Z",
       "history": [
         {
           "at": "2026-06-20T20:45:00.000Z",
@@ -147,6 +147,112 @@
           "from": "planned",
           "to": "needs_review",
           "note": "v0.6.0 real-doc pilot plan-only validation passed; ready for operator proof review."
+        },
+        {
+          "at": "2026-06-21T03:16:48.000Z",
+          "from": "needs_review",
+          "to": "accepted",
+          "note": "v0.6.0 real-doc pilot plan-only accepted after pushed baseline 5454e3d and plan-only checks were verified."
+        }
+      ]
+    },
+    {
+      "id": "queue-006-safety-review-checklist",
+      "phase": "KIA-Stick-v0.6.2-safety-review-checklist",
+      "title": "Safety review checklist",
+      "status": "planned",
+      "model": "Claude",
+      "risk": "high",
+      "summary": "Write a checklist for reviewing the v0.6.0 plan, proof output, queue state, rollback wording, and no-real-document implementation boundary before any later pilot prompt.",
+      "next_action": "Draft a docs-only safety review checklist with explicit PASS/FAIL operator decisions and no content-touching actions.",
+      "created_at": "2026-06-21T03:16:48.000Z",
+      "updated_at": "2026-06-21T03:16:48.000Z",
+      "history": [
+        {
+          "at": "2026-06-21T03:16:48.000Z",
+          "from": "planned",
+          "to": "planned",
+          "note": "Seeded after v0.6.0 plan acceptance as a docs-only safety review task."
+        }
+      ]
+    },
+    {
+      "id": "queue-007-fake-only-pilot-simulator",
+      "phase": "KIA-Stick-v0.6.3-fake-only-pilot-simulator",
+      "title": "Fake-only pilot simulator",
+      "status": "planned",
+      "model": "GPT/Codex $100",
+      "risk": "medium",
+      "summary": "Build or plan a simulator using fictional metadata only to exercise the single-document pilot gates without file inputs, file reads, OCR, uploads, indexing, or private storage.",
+      "next_action": "Draft a simulator prompt that uses synthetic fixtures only and proves gate order, stop conditions, rollback labels, and GitHub-safe proof summaries.",
+      "created_at": "2026-06-21T03:16:48.000Z",
+      "updated_at": "2026-06-21T03:16:48.000Z",
+      "history": [
+        {
+          "at": "2026-06-21T03:16:48.000Z",
+          "from": "planned",
+          "to": "planned",
+          "note": "Seeded as fake-only simulator work; no real file or content access is approved."
+        }
+      ]
+    },
+    {
+      "id": "queue-008-operator-approval-packet",
+      "phase": "KIA-Stick-v0.6.4-operator-approval-packet",
+      "title": "Operator approval packet",
+      "status": "planned",
+      "model": "Claude",
+      "risk": "high",
+      "summary": "Prepare a copy-ready operator packet that turns the v0.6.0 plan into review questions, approval gates, stop conditions, validation evidence, and manual signoff fields.",
+      "next_action": "Draft the packet as documentation only, with no implementation approval and no private source details.",
+      "created_at": "2026-06-21T03:16:48.000Z",
+      "updated_at": "2026-06-21T03:16:48.000Z",
+      "history": [
+        {
+          "at": "2026-06-21T03:16:48.000Z",
+          "from": "planned",
+          "to": "planned",
+          "note": "Seeded as operator-review documentation after plan-only acceptance."
+        }
+      ]
+    },
+    {
+      "id": "queue-009-local-redaction-policy-plan",
+      "phase": "KIA-Stick-v0.6.5-local-redaction-policy-plan",
+      "title": "Local-only redaction policy plan",
+      "status": "planned",
+      "model": "Claude",
+      "risk": "high",
+      "summary": "Plan local-only redaction review policy, reviewer roles, metadata labels, proof exclusions, and retention/deletion rules before any later content-touching work.",
+      "next_action": "Draft the policy plan as docs/tests only and keep detection, OCR, real redaction, indexing, and private artifact generation blocked.",
+      "created_at": "2026-06-21T03:16:48.000Z",
+      "updated_at": "2026-06-21T03:16:48.000Z",
+      "history": [
+        {
+          "at": "2026-06-21T03:16:48.000Z",
+          "from": "planned",
+          "to": "planned",
+          "note": "Seeded as a policy-planning task with no real content handling approved."
+        }
+      ]
+    },
+    {
+      "id": "queue-010-future-implementation-gate-draft",
+      "phase": "KIA-Stick-v0.6.6-future-implementation-gate-draft",
+      "title": "Future implementation gate draft",
+      "status": "planned",
+      "model": "Claude with optional GLM-5.2 high review",
+      "risk": "high",
+      "summary": "Draft the minimum future prompt requirements and blocked-action matrix for any later single-document pilot implementation request.",
+      "next_action": "Produce a gate draft that remains non-executable until the operator separately approves exact scope, validation, rollback, sanitized proof, and manual review.",
+      "created_at": "2026-06-21T03:16:48.000Z",
+      "updated_at": "2026-06-21T03:16:48.000Z",
+      "history": [
+        {
+          "at": "2026-06-21T03:16:48.000Z",
+          "from": "planned",
+          "to": "planned",
+          "note": "Seeded as a planning-only implementation gate draft after v0.6.0 plan acceptance."
         }
       ]
     }

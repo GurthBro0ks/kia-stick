@@ -11,7 +11,15 @@ interface TaskQueueModule {
   loadQueue(root?: string): {
     schema: string;
     updated_at?: string;
-    items: Array<{ id: string; phase: string; title: string; status: string; history: unknown[] }>;
+    items: Array<{
+      id: string;
+      phase: string;
+      title: string;
+      status: string;
+      summary: string;
+      next_action: string;
+      history: unknown[];
+    }>;
   };
   selectNextItem(queue: { items: Array<{ id: string; status: string }> }): { id: string } | null;
   updateQueueItemStatus(
@@ -41,19 +49,25 @@ describe("task-queue", () => {
     const queue = mod.loadQueue(resolve("."));
 
     expect(queue.schema).toBe("kia-stick-local-task-queue.v1");
-    expect(queue.items).toHaveLength(5);
+    expect(queue.items).toHaveLength(10);
     expect(queue.items.map((item) => item.id)).toEqual([
       "queue-001-closeout-helper-hardening",
       "queue-002-fake-redaction-metadata-depth",
       "queue-003-citation-qa-fixtures",
       "queue-004-docs-release-pack",
       "queue-005-real-doc-pilot-plan-only",
+      "queue-006-safety-review-checklist",
+      "queue-007-fake-only-pilot-simulator",
+      "queue-008-operator-approval-packet",
+      "queue-009-local-redaction-policy-plan",
+      "queue-010-future-implementation-gate-draft",
     ]);
     expect(queue.items[0].status).toBe("accepted");
     expect(queue.items[1].status).toBe("accepted");
     expect(queue.items[2].status).toBe("accepted");
     expect(queue.items[3].status).toBe("accepted");
-    expect(["planned", "needs_review"]).toContain(queue.items[4].status);
+    expect(queue.items[4].status).toBe("accepted");
+    expect(queue.items.slice(5).every((item) => item.status === "planned")).toBe(true);
     expect(queue.items.every((item) => item.history.length > 0)).toBe(true);
     expect(mod.validateQueue(queue)).toBe(true);
   });
@@ -65,8 +79,38 @@ describe("task-queue", () => {
     queue.items[1].status = "accepted";
     queue.items[2].status = "accepted";
     queue.items[3].status = "accepted";
+    queue.items[4].status = "accepted";
 
-    expect(mod.selectNextItem(queue)?.id).toBe("queue-005-real-doc-pilot-plan-only");
+    expect(mod.selectNextItem(queue)?.id).toBe("queue-006-safety-review-checklist");
+  });
+
+  it("seeds the requested post-plan safety backlog without approving implementation", async () => {
+    const mod = await loadModule();
+    const queue = mod.loadQueue(resolve("."));
+    const postPlanItems = queue.items.slice(5);
+
+    expect(postPlanItems.map((item) => item.id)).toEqual([
+      "queue-006-safety-review-checklist",
+      "queue-007-fake-only-pilot-simulator",
+      "queue-008-operator-approval-packet",
+      "queue-009-local-redaction-policy-plan",
+      "queue-010-future-implementation-gate-draft",
+    ]);
+    expect(postPlanItems.map((item) => item.title)).toEqual([
+      "Safety review checklist",
+      "Fake-only pilot simulator",
+      "Operator approval packet",
+      "Local-only redaction policy plan",
+      "Future implementation gate draft",
+    ]);
+
+    const joined = postPlanItems.map((item) => `${item.summary}\n${item.next_action}`).join("\n");
+    expect(joined).toContain("fictional metadata only");
+    expect(joined).toContain("documentation only");
+    expect(joined).toContain("docs/tests only");
+    expect(joined).not.toMatch(/<input[^>]*type=["']file/i);
+    expect(joined).not.toMatch(/\bshowOpenFilePicker\b|\bFileReader\b|\breadAsText\b|\breadAsArrayBuffer\b/i);
+    expect(joined).not.toMatch(/\bapproved real\b|\breal-document implementation approved\b/i);
   });
 
   it("updates status, next action, timestamps, and history", async () => {
@@ -134,9 +178,9 @@ describe("task-queue", () => {
     const result = spawnSync("node", [scriptPath, "next"], { cwd: resolve("."), encoding: "utf8" });
 
     expect(result.status).toBe(0);
-    expect(result.stdout).toContain("id=queue-005-real-doc-pilot-plan-only");
+    expect(result.stdout).toContain("id=queue-006-safety-review-checklist");
     expect(result.stdout).toContain("Codex-ready summary:");
-    expect(result.stdout).toContain("KIA-Stick-v0.6.0-real-doc-pilot-plan-only");
+    expect(result.stdout).toContain("KIA-Stick-v0.6.2-safety-review-checklist");
   });
 
   it("does not execute git push from queue commands", () => {

@@ -1,5 +1,5 @@
 {
-  "phase": "KIA-Stick-v0.6.0-real-doc-pilot-plan-only",
+  "phase": "KIA-Stick-v0.6.1-post-plan-safety-closeout",
   "target_machine": "USER_LAPTOP_ONLY",
   "accepted_v0_1": {
     "commit": "1d9b05c",
@@ -88,6 +88,13 @@
     "single_document_operator_approval_gates",
     "github_safe_real_doc_proof_rules",
     "real_doc_stop_conditions",
+    "post_plan_safety_closeout",
+    "accepted_v0_6_0_plan_state",
+    "safety_review_checklist_backlog",
+    "fake_only_pilot_simulator_backlog",
+    "operator_approval_packet_backlog",
+    "local_redaction_policy_plan_backlog",
+    "future_implementation_gate_draft_backlog",
     "manual_push_command_output",
     "phase_runner_commit_gate",
     "phase_runner_no_push_invariant",
@@ -102,8 +109,8 @@
     "version_back_navigation"
   ],
   "release_readiness": {
-    "phase": "KIA-Stick-v0.6.0-real-doc-pilot-plan-only",
-    "status": "implemented_fake_only_automation",
+    "phase": "KIA-Stick-v0.6.1-post-plan-safety-closeout",
+    "status": "docs_state_closeout_validation_passed",
     "package_version": "0.4.0",
     "product_version": "0.4.0",
     "prompt_version": "prompt.fake-docs.v0.5-import-wizard-hardening",
@@ -130,8 +137,8 @@
           "field": "productVersion",
           "actual": "0.4.0",
           "expected": "0.6.x phase milestone",
-          "applies_to_phase_pattern": "^KIA-Stick-v0\\.6\\.0-real-doc-pilot-plan-only$",
-          "reason": "ProductVersion stays 0.4.0 for the v0.6.0 planning-only real-doc pilot design; a future implementation prompt must separately approve any product milestone bump."
+          "applies_to_phase_pattern": "^KIA-Stick-v0\\.6\\.",
+          "reason": "ProductVersion stays 0.4.0 for v0.6.x real-doc planning and safety-closeout phases; a future implementation prompt must separately approve any product milestone bump."
         }
       ]
     },
@@ -227,7 +234,7 @@
       "blocked",
       "parked"
     ],
-    "seed_count": 5,
+    "seed_count": 10,
     "real_document_access": false,
     "private_vault_inspected": false,
     "push_performed": false,
@@ -464,12 +471,58 @@
     "product_version_bump": "future_prompt_only",
     "validation": "passed",
     "manual_qa": "operator_review_pending",
-    "queue_status": "needs_review_after_validation_passed",
+    "queue_status": "accepted_after_pushed_state_and_plan_only_checks",
     "real_document_access": false,
     "private_vault_inspected": false,
     "real_doc_code_path_added": false,
     "file_input_added": false,
     "private_path_in_plan": false,
+    "push_performed": false,
+    "real_db_boundary": "/media/mint/SHARED/APWU untouched"
+  },
+  "accepted_v0_6_0_real_doc_pilot_plan": {
+    "phase": "KIA-Stick-v0.6.0-real-doc-pilot-plan-only",
+    "status": "accepted_pushed_state_verified",
+    "accepted_commit": "5454e3d",
+    "origin_main": "5454e3d",
+    "proof_dir": "/tmp/proof_kia_stick_v060_real_doc_pilot_plan_20260621T025129Z",
+    "self_test_proof_dir": "/tmp/proof_kia_stick_v0_6_0_real_doc_pilot_plan_self_test_20260621T025613Z",
+    "validation": "passed",
+    "plan_only_checks": "passed",
+    "manual_qa": "operator_review_pending",
+    "push_performed": true,
+    "real_document_access": false,
+    "private_vault_inspected": false,
+    "real_doc_code_path_added": false,
+    "file_input_added": false,
+    "real_db_boundary": "/media/mint/SHARED/APWU untouched"
+  },
+  "post_plan_safety_closeout": {
+    "phase": "KIA-Stick-v0.6.1-post-plan-safety-closeout",
+    "status": "docs_test_state_validation_passed",
+    "baseline": "5454e3d",
+    "origin_main": "5454e3d",
+    "proof_dir": "/tmp/proof_kia_stick_v061_post_plan_closeout_20260621T031648Z",
+    "scope": "docs_test_state_only_no_real_doc_implementation",
+    "plan_reviewed": "docs/v0.6-real-doc-pilot-plan.md",
+    "queue_file": "docs/phase-backlog.json",
+    "tests": [
+      "tests/taskQueue.test.ts",
+      "tests/realDocPilotPlan.test.ts"
+    ],
+    "queue_005_status": "accepted_after_pushed_state_and_plan_only_checks",
+    "next_queue_item": "queue-006-safety-review-checklist",
+    "next_planned_tasks": [
+      "safety_review_checklist",
+      "fake_only_pilot_simulator",
+      "operator_approval_packet",
+      "local_redaction_policy_plan",
+      "future_implementation_gate_draft"
+    ],
+    "real_document_access": false,
+    "private_vault_inspected": false,
+    "real_doc_code_path_added": false,
+    "file_input_added": false,
     "push_performed": false,
     "real_db_boundary": "/media/mint/SHARED/APWU untouched"
   },

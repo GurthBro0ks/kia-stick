@@ -1,5 +1,41 @@
 # KIA Stick Closeout
 
+## v0.6.1 Post-Plan Safety Closeout
+
+- Phase: `KIA-Stick-v0.6.1-post-plan-safety-closeout`
+- Baseline: accepted pushed v0.6.0 state at `5454e3d`
+- Origin/main verified: `5454e3d`
+- Scope: docs/test/state-only safety closeout for the pushed v0.6.0 real-doc pilot plan; no real-doc implementation.
+- Product version impact: none; app remains `0.4.0`.
+- Prompt version: `prompt.fake-docs.v0.5-import-wizard-hardening`
+- Plan reviewed: `docs/v0.6-real-doc-pilot-plan.md`
+- Backlog refreshed: `docs/phase-backlog.json`
+- Tests updated: `tests/taskQueue.test.ts`
+- Proof directory: `/tmp/proof_kia_stick_v061_post_plan_closeout_20260621T031648Z`
+- Validation: PASS
+- Queue state: `queue-005-real-doc-pilot-plan-only` accepted after pushed baseline `5454e3d` and plan-only checks were verified; next planned item is `queue-006-safety-review-checklist`.
+- Next planned tasks: safety review checklist, fake-only pilot simulator, operator approval packet, local-only redaction policy plan, and future implementation gate draft.
+- Real document access: none
+- Private vault inspected: no
+- Push performed: no
+
+## v0.6.0 Accepted Pushed State
+
+- Phase: `KIA-Stick-v0.6.0-real-doc-pilot-plan-only`
+- Accepted commit: `5454e3d`
+- Origin/main verified: `5454e3d`
+- Push performed before this phase: yes
+- Proof directory: `/tmp/proof_kia_stick_v060_real_doc_pilot_plan_20260621T025129Z`
+- Self-test proof directory: `/tmp/proof_kia_stick_v0_6_0_real_doc_pilot_plan_self_test_20260621T025613Z`
+
+## Next Safe Phase
+
+Recommended next phase: `KIA-Stick-v0.6.2-safety-review-checklist`.
+
+Future implementation must start from the acceptance checklist in `docs/v0.6-real-doc-pilot-plan.md` and a fresh operator approval packet. This closeout does not approve real import, file pickers, path readers, file reads, copying, OCR, text extraction, summarization, transforms, indexing, upload handling, private-vault inspection, cloud calls, service changes, pushes, or private document access.
+
+---
+
 ## v0.6.0 Real-Doc Pilot Plan
 
 - Phase: `KIA-Stick-v0.6.0-real-doc-pilot-plan-only`
@@ -12,7 +48,7 @@
 - Proof directory: `/tmp/proof_kia_stick_v060_real_doc_pilot_plan_20260621T025129Z`
 - Phase runner self-test proof directory: `/tmp/proof_kia_stick_v0_6_0_real_doc_pilot_plan_self_test_20260621T025613Z`
 - Validation: PASS
-- Queue state: `queue-004-docs-release-pack` accepted after pushed baseline `ef1cb84` was verified; `queue-005-real-doc-pilot-plan-only` marked `needs_review` only after validation passed.
+- Queue state: `queue-004-docs-release-pack` accepted after pushed baseline `ef1cb84` was verified; `queue-005-real-doc-pilot-plan-only` later accepted by the v0.6.1 post-plan safety closeout after pushed baseline `5454e3d` and plan-only checks were verified.
 - Real document access: none
 - Private vault inspected: no
 - Push performed: no
@@ -28,7 +64,7 @@
 
 ## Next Safe Phase
 
-Recommended next phase: `KIA-Stick-v0.6.0-operator-plan-review`.
+Recommended next phase: `KIA-Stick-v0.6.2-safety-review-checklist`.
 
 Future implementation must start from the acceptance checklist in `docs/v0.6-real-doc-pilot-plan.md`. This planning phase does not approve real import, file pickers, path readers, file reads, copying, OCR, text extraction, summarization, transforms, indexing, upload handling, private-vault inspection, cloud calls, service changes, pushes, or private document access.
 

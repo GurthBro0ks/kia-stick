@@ -12,6 +12,16 @@ KIA Stick separates milestone semver from build identity:
 
 `/health`, `/version`, the app header, settings, answer footer, and saved answer metadata expose the current `displayVersion`.
 
+## v0.6.1 Post-Plan Safety Closeout
+
+Phase: `KIA-Stick-v0.6.1-post-plan-safety-closeout`.
+
+This docs/test/state closeout accepts the pushed v0.6.0 real-doc pilot plan at `5454e3d` after confirming the plan is still **PLAN ONLY** and does not approve real-document implementation.
+
+`docs/phase-backlog.json` now advances the next safe work into planning and simulator tasks only: safety review checklist, fake-only pilot simulator, operator approval packet, local-only redaction policy plan, and future implementation gate draft.
+
+Current product version remains `0.4.0`; current prompt version remains `prompt.fake-docs.v0.5-import-wizard-hardening`. No file pickers, path readers, file reads, copying, OCR, text extraction, summarization, transforms, embeddings, indexing, vector stores, upload handlers, private-vault inspection, service changes, pushes, or real-document access are approved by this closeout.
+
 ## v0.6.0 Real-Doc Pilot Plan
 
 Phase: `KIA-Stick-v0.6.0-real-doc-pilot-plan-only`.
