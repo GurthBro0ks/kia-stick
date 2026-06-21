@@ -24,6 +24,8 @@
     "queue:list": "node scripts/task-queue.mjs list",
     "queue:next": "node scripts/task-queue.mjs next",
     "queue:set": "node scripts/task-queue.mjs set",
+    "closeout:review": "node scripts/closeout-helper.mjs review",
+    "closeout:summary": "node scripts/closeout-helper.mjs summary",
     "qa": "bash scripts/qa_gate.sh"
   },
   "dependencies": {

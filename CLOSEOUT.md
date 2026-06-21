@@ -1,5 +1,48 @@
 # KIA Stick Closeout
 
+## v0.5.7 Closeout Helper Hardening
+
+- Phase: `KIA-Stick-v0.5.7-closeout-helper-hardening`
+- Baseline: accepted pushed v0.5.6 state at `e15f2ee`
+- Scope: fake-only local closeout helper for proof summaries, final git state capture, manual review wording, and task-queue status guidance.
+- Product version impact: none; app remains `0.4.0`.
+- Prompt version: `prompt.fake-docs.v0.5-import-wizard-hardening`
+- Closeout commands: `npm run closeout:review` and `npm run closeout:summary`
+- Proof directory: `/tmp/proof_kia_stick_v057_closeout_helper_20260621T010549Z`
+- Phase runner self-test proof directory: `/tmp/proof_kia_stick_v0_5_7_closeout_helper_self_test_20260621T010628Z`
+- Validation: PASS
+- Push behavior: closeout tooling never pushes.
+- Queue behavior: read-only; it prints a suggested `npm run queue:set` command and does not edit status automatically.
+- Real document access: none
+- Private vault inspected: no
+- Push performed: no
+
+## v0.5.7 Coverage
+
+- Added `scripts/closeout-helper.mjs` with no new dependencies.
+- Added `closeout:review` and `closeout:summary` package scripts.
+- Added latest-proof, git HEAD/origin/status, local-ahead, and queue-state review output.
+- Added warnings for missing proof, non-PASS proof result, WARN/FAIL text in `RESULT.md`, dirty worktree, local commit without push, and queue item not ready or accepted.
+- Added redaction/flags for APWU paths, private-vault mentions, file input markup, and secrets-looking values.
+- Added tests for proof parsing, redaction, next-action logic, missing proof, local-ahead state, dirty state, queue read-only behavior, and no-push invariant.
+
+## v0.5.6 Accepted Pushed State
+
+- Phase: `KIA-Stick-v0.5.6-local-task-queue`
+- Accepted commit: `e15f2ee`
+- Origin/main verified: `e15f2ee`
+- Push performed before this phase: yes
+- Proof directory: `/tmp/proof_kia_stick_v056_task_queue_20260621T005030Z`
+- Self-test proof directory: `/tmp/proof_kia_stick_v0_5_6_task_queue_self_test_20260621T005110Z`
+
+## Next Safe Phase
+
+Recommended next phase: `KIA-Stick-v0.5.7-operator-closeout-helper-review`.
+
+Future phases remain fake-only unless separately authorized. This closeout helper does not approve real import, file pickers, path readers, file reads, copying, OCR, text extraction, indexing, upload handling, private-vault inspection, cloud calls, service changes, pushes, or private document access.
+
+---
+
 ## v0.5.6 Local Task Queue
 
 - Phase: `KIA-Stick-v0.5.6-local-task-queue`

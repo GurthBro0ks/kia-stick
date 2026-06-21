@@ -1,5 +1,5 @@
 {
-  "phase": "KIA-Stick-v0.5.6-local-task-queue",
+  "phase": "KIA-Stick-v0.5.7-closeout-helper-hardening",
   "target_machine": "USER_LAPTOP_ONLY",
   "accepted_v0_1": {
     "commit": "1d9b05c",
@@ -68,6 +68,9 @@
     "phase_backlog_json",
     "queue_next_codex_summary",
     "queue_status_history",
+    "closeout_review_helper",
+    "closeout_summary_fields",
+    "closeout_queue_status_guidance",
     "manual_push_command_output",
     "phase_runner_commit_gate",
     "phase_runner_no_push_invariant",
@@ -82,7 +85,7 @@
     "version_back_navigation"
   ],
   "release_readiness": {
-    "phase": "KIA-Stick-v0.5.6-local-task-queue",
+    "phase": "KIA-Stick-v0.5.7-closeout-helper-hardening",
     "status": "implemented_fake_only_automation",
     "package_version": "0.4.0",
     "product_version": "0.4.0",
@@ -113,6 +116,7 @@
       "scripts/phase-runner.mjs",
       "scripts/proof-index.mjs",
       "scripts/task-queue.mjs",
+      "scripts/closeout-helper.mjs",
       "npm run release:check",
       "npm run phase:run",
       "npm run proof:list",
@@ -120,6 +124,8 @@
       "npm run queue:list",
       "npm run queue:next",
       "npm run queue:set",
+      "npm run closeout:review",
+      "npm run closeout:summary",
       "qa_gate_derives_phase_and_proof_dir_from_feature_list",
       "git_auto_sync_derives_default_commit_message_from_feature_list"
     ],
@@ -198,6 +204,55 @@
       "parked"
     ],
     "seed_count": 5,
+    "real_document_access": false,
+    "private_vault_inspected": false,
+    "push_performed": false,
+    "real_db_boundary": "/media/mint/SHARED/APWU untouched"
+  },
+  "accepted_v0_5_6_task_queue": {
+    "phase": "KIA-Stick-v0.5.6-local-task-queue",
+    "status": "accepted_pushed_state_verified",
+    "accepted_commit": "e15f2ee",
+    "origin_main": "e15f2ee",
+    "proof_dir": "/tmp/proof_kia_stick_v056_task_queue_20260621T005030Z",
+    "self_test_proof_dir": "/tmp/proof_kia_stick_v0_5_6_task_queue_self_test_20260621T005110Z",
+    "validation": "passed",
+    "manual_qa": "operator_review_pending",
+    "push_performed": true,
+    "real_document_access": false,
+    "private_vault_inspected": false,
+    "real_db_boundary": "/media/mint/SHARED/APWU untouched"
+  },
+  "closeout_helper": {
+    "phase": "KIA-Stick-v0.5.7-closeout-helper-hardening",
+    "status": "implemented_fake_only_automation",
+    "script": "scripts/closeout-helper.mjs",
+    "proof_dir": "/tmp/proof_kia_stick_v057_closeout_helper_20260621T010549Z",
+    "self_test_proof_dir": "/tmp/proof_kia_stick_v0_5_7_closeout_helper_self_test_20260621T010628Z",
+    "npm_scripts": [
+      "closeout:review",
+      "closeout:summary"
+    ],
+    "reads": [
+      "latest_proof_result",
+      "git_head_origin_main_status",
+      "task_queue_state"
+    ],
+    "warnings": [
+      "local_commit_without_push",
+      "proof_result_not_pass",
+      "worktree_dirty",
+      "queue_item_not_ready_or_accepted",
+      "warn_fail_text_in_result",
+      "proof_dir_missing"
+    ],
+    "redaction_flags": [
+      "apwu_path",
+      "private_vault",
+      "file_input",
+      "secret_like"
+    ],
+    "queue_behavior": "read_only_suggests_queue_set_command_only",
     "real_document_access": false,
     "private_vault_inspected": false,
     "push_performed": false,

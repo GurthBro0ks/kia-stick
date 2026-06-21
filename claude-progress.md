@@ -2,10 +2,31 @@
 
 ## Current Phase
 
-- Phase: `KIA-Stick-v0.5.6-local-task-queue`
+- Phase: `KIA-Stick-v0.5.7-closeout-helper-hardening`
 - Target: `USER_LAPTOP_ONLY`
 - Provider: `local-fake-deterministic`
-- Status: validation PASS for local task queue from accepted pushed v0.5.5 baseline `eaf0c31`; one local commit created, no push.
+- Status: validation PASS for closeout helper hardening from accepted pushed v0.5.6 baseline `e15f2ee`; one local commit pending, no push.
+
+## v0.5.7 Closeout Helper State
+
+- Phase: `KIA-Stick-v0.5.7-closeout-helper-hardening`
+- Baseline: origin/main and HEAD verified at `e15f2ee`.
+- v0.5.6 pushed state: recorded as accepted pushed commit `e15f2ee`.
+- Scope: fake-only closeout helper for latest proof summaries, final git state capture, manual review wording, and task-queue status guidance.
+- Product version impact: none; app remains `0.4.0`.
+- Prompt version: `prompt.fake-docs.v0.5-import-wizard-hardening`
+- Commands: `npm run closeout:review` and `npm run closeout:summary`.
+- Push behavior: closeout tooling never pushes.
+- Queue behavior: read-only; suggested `npm run queue:set` command only.
+- Real/private document access: none.
+- Private vault inspected: no.
+- Push performed in this phase: no.
+- Commands run: missing `/home/slimy/*` harness checks, local harness load, git status/log/ref checks, repo/memory inspection, implementation edits, `git status --short`, `test "$(git rev-parse --short origin/main)" = "e15f2ee"`, `npm run release:check`, `npm run lint`, `npm run typecheck`, `npm run test`, `npm run build`, `npm run scan:fake`, `npm run scan:privacy`, `npm run qa`, `npm run phase:run -- --phase KIA-Stick-v0.5.7-closeout-helper-self-test`, `npm run proof:latest`, `npm run queue:next`, `npm run closeout:review`, `npm run closeout:summary`, private tracked-path check, no-file-input grep, APWU boundary grep, and `git diff --check`.
+- Files changed: `scripts/closeout-helper.mjs`, `tests/closeoutHelper.test.ts`, `package.json`, `README.md`, `CLOSEOUT.md`, `feature_list.json`, and `claude-progress.md`.
+- Proof directory: `/tmp/proof_kia_stick_v057_closeout_helper_20260621T010549Z`
+- Phase runner self-test proof directory: `/tmp/proof_kia_stick_v0_5_7_closeout_helper_self_test_20260621T010628Z`
+- Validation: PASS.
+- Remaining unknowns: local commit SHA, operator review, queue status update decision, and optional manual push.
 
 ## v0.5.6 Local Task Queue State
 

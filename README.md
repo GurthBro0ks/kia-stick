@@ -12,6 +12,16 @@ KIA Stick separates milestone semver from build identity:
 
 `/health`, `/version`, the app header, settings, answer footer, and saved answer metadata expose the current `displayVersion`.
 
+## v0.5.7 Closeout Helper Hardening
+
+Phase: `KIA-Stick-v0.5.7-closeout-helper-hardening`.
+
+`npm run closeout:review` reads the latest `/tmp/proof_kia_stick_*` proof, current git HEAD/origin state, worktree status, and local task queue state. It prints `PASS`, `WARN`, or `FAIL` with a concrete next action.
+
+`npm run closeout:summary` prints compact final-response fields for operator copy/paste. The helper warns on missing proof, non-PASS proof results, WARN/FAIL text in `RESULT.md`, dirty worktrees, local commits not yet pushed, and queue items that are not `ready_to_push` or `accepted`.
+
+Closeout summaries redact or flag private paths, file input markup, secrets-looking values, `/media/mint/SHARED/APWU`, and private-vault mentions. The helper never pushes and never edits queue status; it only prints a suggested `npm run queue:set` command when queue state needs operator action.
+
 ## v0.5.6 Local Task Queue
 
 Phase: `KIA-Stick-v0.5.6-local-task-queue`.
