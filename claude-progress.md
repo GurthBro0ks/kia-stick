@@ -2,10 +2,32 @@
 
 ## Current Phase
 
-- Phase: `KIA-Stick-v0.6.3-fake-only-pilot-simulator`
+- Phase: `KIA-Stick-v0.6.4-operator-approval-packet`
 - Target: `USER_LAPTOP_ONLY`
 - Provider: `local-fake-deterministic`
-- Status: validation PASS for fake-only v0.6.3 pilot simulator from accepted pushed v0.6.2 baseline `6587a47`; one local commit created, no push.
+- Status: validation PASS for planning-only v0.6.4 operator approval packet from accepted pushed v0.6.3 baseline `bc8c9df`; one local docs/test/state commit, auto-pushed only if all gates PASS.
+
+## v0.6.4 Operator Approval Packet State
+
+- Phase: `KIA-Stick-v0.6.4-operator-approval-packet`
+- Baseline: origin/main and HEAD verified at `bc8c9df`.
+- v0.6.3 pushed state: recorded as accepted pushed commit `bc8c9df`.
+- Scope: planning/approval-template-only operator approval packet for any future one-document real-doc pilot; no real-doc implementation.
+- Product version impact: none; app remains `0.4.0`; any future bump requires a separate implementation-phase decision.
+- Prompt version: `prompt.fake-docs.v0.5-import-wizard-hardening`
+- Packet document: `docs/v0.6-operator-approval-packet.md`
+- Tests added: `tests/operatorApprovalPacket.test.ts`
+- Packet requires: exact phase, one-document scope, allowed actions, blocked actions, rollback, deletion/retention, GitHub-safe proof, operator signature/date, PASS/WARN/FAIL gates, and do-not-proceed blockers.
+- Implementation authorization: none; a later prompt must name exactly one gate and one document and still pass the safety checklist.
+- Queue state: `queue-007-fake-only-pilot-simulator` accepted after pushed baseline `bc8c9df`; `queue-008-operator-approval-packet` marked `needs_review` after validation passed.
+- Real/private document access: none.
+- Private vault inspected: no.
+- Commands run: missing `/home/slimy/*` harness checks, local harness inspection, git status/ref checks confirming `origin/main` = HEAD = `bc8c9df`, repo/pattern inspection, packet doc and test creation, queue/feature/README/CLOSEOUT/progress edits, focused `vitest run tests/operatorApprovalPacket.test.ts tests/taskQueue.test.ts`, `npm run phase:run -- --phase KIA-Stick-v0.6.4-approval-packet-self-test` (which runs release:check, lint, typecheck, test, build, scan:fake, scan:privacy, qa, manifest/feature parse, private tracked-path check, no-file-input grep, and APWU boundary grep), `npm run proof:latest`, `npm run queue:next`, `npm run closeout:review`, and `npm run closeout:summary`.
+- Files changed: `docs/v0.6-operator-approval-packet.md`, `tests/operatorApprovalPacket.test.ts`, `tests/taskQueue.test.ts`, `docs/phase-backlog.json`, `feature_list.json`, `README.md`, `CLOSEOUT.md`, and `claude-progress.md`.
+- Proof directory: `/tmp/proof_kia_stick_v064_approval_packet_20260621T164952Z`
+- Phase runner self-test proof directory: `/tmp/proof_kia_stick_v0_6_4_approval_packet_self_test_20260621T165340Z`
+- Validation: PASS.
+- Remaining unknowns: operator manual review of final proof and post-push state.
 
 ## v0.6.3 Fake-Only Pilot Simulator State
 

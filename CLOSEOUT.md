@@ -1,5 +1,41 @@
 # KIA Stick Closeout
 
+## v0.6.4 Operator Approval Packet
+
+- Phase: `KIA-Stick-v0.6.4-operator-approval-packet`
+- Baseline: accepted pushed v0.6.3 state at `bc8c9df`
+- Origin/main verified: `bc8c9df`
+- Scope: planning/approval-template-only operator approval packet for any future one-document real-doc pilot; no real-doc implementation.
+- Product version impact: none; app remains `0.4.0`.
+- Prompt version: `prompt.fake-docs.v0.5-import-wizard-hardening`
+- Packet document: `docs/v0.6-operator-approval-packet.md`
+- Tests added: `tests/operatorApprovalPacket.test.ts`
+- Proof directory: `/tmp/proof_kia_stick_v064_approval_packet_20260621T164952Z`
+- Phase runner self-test proof directory: `/tmp/proof_kia_stick_v0_6_4_approval_packet_self_test_20260621T165340Z`
+- Validation: PASS
+- Queue state: `queue-007-fake-only-pilot-simulator` accepted after pushed baseline `bc8c9df`; `queue-008-operator-approval-packet` marked `needs_review` after validation passed.
+- Authorizes implementation: no; a later prompt must name exactly one gate and one document and still pass `docs/v0.6-real-doc-safety-checklist.md`.
+- Real document access: none
+- Private vault inspected: no
+- Push performed: auto-push of this docs/test/state commit only if all gates PASS.
+
+## v0.6.3 Accepted Pushed State
+
+- Phase: `KIA-Stick-v0.6.3-fake-only-pilot-simulator`
+- Accepted commit: `bc8c9df`
+- Origin/main verified: `bc8c9df`
+- Push performed before this phase: yes
+- Proof directory: `/tmp/proof_kia_stick_v063_fake_pilot_sim_20260621T163640Z`
+- Self-test proof directory: `/tmp/proof_kia_stick_v0_6_3_fake_pilot_simulator_self_test_20260621T163950Z`
+
+## Next Safe Phase
+
+Recommended next phase after operator review: `KIA-Stick-v0.6.5-local-redaction-policy-plan`.
+
+Any future real-doc pilot must still pass `docs/v0.6-real-doc-safety-checklist.md` and a completed, signed operator approval packet from `docs/v0.6-operator-approval-packet.md`. This packet phase does not approve real import, file pickers, path readers, file reads, copying, OCR, text extraction, summarization, transforms, indexing, upload handling, private-vault inspection, cloud calls, service changes, or private document access.
+
+---
+
 ## v0.6.3 Fake-Only Pilot Simulator
 
 - Phase: `KIA-Stick-v0.6.3-fake-only-pilot-simulator`

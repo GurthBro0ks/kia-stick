@@ -12,6 +12,20 @@ KIA Stick separates milestone semver from build identity:
 
 `/health`, `/version`, the app header, settings, answer footer, and saved answer metadata expose the current `displayVersion`.
 
+## v0.6.4 Operator Approval Packet
+
+Phase: `KIA-Stick-v0.6.4-operator-approval-packet`.
+
+`docs/v0.6-operator-approval-packet.md` is a copy-ready operator approval packet template for any future one-document real-doc pilot. It requires the operator to fill in the exact phase, one-document scope, allowed actions, blocked actions, rollback, deletion/retention, GitHub-safe proof, and a signed/dated operator signature block. It includes a PASS/WARN/FAIL approval gate checklist, do-not-proceed blockers before any content touch, GitHub-safe proof rules, and a copy-ready template.
+
+A completed and signed packet, by itself, does **not** authorize implementation. Any later implementation prompt must separately name exactly one gate and exactly one document, and must still pass `docs/v0.6-real-doc-safety-checklist.md`.
+
+This is **PLAN ONLY**. It does not add file pickers, path readers, file reads, copying, OCR, text extraction, summarization, transforms, embeddings, indexing, vector stores, upload handlers, private-vault inspection, service changes, pushes, or real-document access.
+
+`queue-007-fake-only-pilot-simulator` is accepted after the pushed v0.6.3 baseline `bc8c9df` was verified; `queue-008-operator-approval-packet` is `needs_review` for operator review.
+
+Current product version remains `0.4.0`; current prompt version remains `prompt.fake-docs.v0.5-import-wizard-hardening`.
+
 ## v0.6.3 Fake-Only Pilot Simulator
 
 Phase: `KIA-Stick-v0.6.3-fake-only-pilot-simulator`.

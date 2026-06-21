@@ -68,8 +68,9 @@ describe("task-queue", () => {
     expect(queue.items[3].status).toBe("accepted");
     expect(queue.items[4].status).toBe("accepted");
     expect(queue.items[5].status).toBe("accepted");
-    expect(queue.items[6].status).toBe("needs_review");
-    expect(queue.items.slice(7).every((item) => item.status === "planned")).toBe(true);
+    expect(queue.items[6].status).toBe("accepted");
+    expect(queue.items[7].status).toBe("needs_review");
+    expect(queue.items.slice(8).every((item) => item.status === "planned")).toBe(true);
     expect(queue.items.every((item) => item.history.length > 0)).toBe(true);
     expect(mod.validateQueue(queue)).toBe(true);
   });
@@ -83,8 +84,9 @@ describe("task-queue", () => {
     queue.items[3].status = "accepted";
     queue.items[4].status = "accepted";
     queue.items[5].status = "accepted";
+    queue.items[6].status = "accepted";
 
-    expect(mod.selectNextItem(queue)?.id).toBe("queue-007-fake-only-pilot-simulator");
+    expect(mod.selectNextItem(queue)?.id).toBe("queue-008-operator-approval-packet");
   });
 
   it("seeds the requested post-plan safety backlog without approving implementation", async () => {
@@ -181,9 +183,9 @@ describe("task-queue", () => {
     const result = spawnSync("node", [scriptPath, "next"], { cwd: resolve("."), encoding: "utf8" });
 
     expect(result.status).toBe(0);
-    expect(result.stdout).toContain("id=queue-007-fake-only-pilot-simulator");
+    expect(result.stdout).toContain("id=queue-008-operator-approval-packet");
     expect(result.stdout).toContain("Codex-ready summary:");
-    expect(result.stdout).toContain("KIA-Stick-v0.6.3-fake-only-pilot-simulator");
+    expect(result.stdout).toContain("KIA-Stick-v0.6.4-operator-approval-packet");
   });
 
   it("does not execute git push from queue commands", () => {
