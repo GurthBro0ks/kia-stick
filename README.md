@@ -12,6 +12,20 @@ KIA Stick separates milestone semver from build identity:
 
 `/health`, `/version`, the app header, settings, answer footer, and saved answer metadata expose the current `displayVersion`.
 
+## v0.6.5 Local-Only Redaction Policy Plan
+
+Phase: `KIA-Stick-v0.6.5-local-redaction-policy-plan`.
+
+`docs/v0.6-local-redaction-policy-plan.md` plans the local-only redaction review policy for any future one-document real-doc pilot. It defines redaction categories (member identifiers, employee IDs, contact info, case facts, medical, discipline, settlement, witnesses, screenshots/images, management/officer names, dates, locations, installation data, grievance IDs, signatures, account/session/device data, and metadata), PASS/WARN/FAIL handling, reviewer roles, escalation rules, default-deny and not-indexable behavior, deletion/retention rules, and GitHub-safe proof rules.
+
+This policy plan alone does **not** authorize real detection, real redaction, or implementation. Any later prompt must separately name exactly one gate and exactly one document, still pass `docs/v0.6-real-doc-safety-checklist.md`, and present a completed, signed packet from `docs/v0.6-operator-approval-packet.md`.
+
+This is **PLAN ONLY**. It does not add file pickers, path readers, file reads, copying, OCR, text extraction, summarization, transforms, detection over real content, real redaction, embeddings, indexing, vector stores, upload handlers, private-vault inspection, service changes, pushes, or real-document access.
+
+`queue-008-operator-approval-packet` is accepted after the pushed v0.6.4 baseline `8ae4dd0` was verified; `queue-009-local-redaction-policy-plan` is `needs_review` for operator review.
+
+Current product version remains `0.4.0`; current prompt version remains `prompt.fake-docs.v0.5-import-wizard-hardening`.
+
 ## v0.6.4 Operator Approval Packet
 
 Phase: `KIA-Stick-v0.6.4-operator-approval-packet`.

@@ -1,6 +1,6 @@
 {
   "schema": "kia-stick-local-task-queue.v1",
-  "updated_at": "2026-06-21T16:49:52.000Z",
+  "updated_at": "2026-06-21T16:59:48.000Z",
   "items": [
     {
       "id": "queue-001-closeout-helper-hardening",
@@ -224,13 +224,13 @@
       "id": "queue-008-operator-approval-packet",
       "phase": "KIA-Stick-v0.6.4-operator-approval-packet",
       "title": "Operator approval packet",
-      "status": "needs_review",
+      "status": "accepted",
       "model": "Claude",
       "risk": "high",
       "summary": "Prepare a copy-ready operator packet that turns the v0.6.0 plan into review questions, approval gates, stop conditions, validation evidence, and manual signoff fields.",
-      "next_action": "Operator reviews the approval packet documentation only, proof latest, closeout summary, and queue state, and confirms no real-doc implementation before any push.",
+      "next_action": "Accepted pushed state verified at 8ae4dd0; proceed to the local-only redaction policy plan phase.",
       "created_at": "2026-06-21T03:16:48.000Z",
-      "updated_at": "2026-06-21T16:49:52.000Z",
+      "updated_at": "2026-06-21T16:59:48.000Z",
       "history": [
         {
           "at": "2026-06-21T03:16:48.000Z",
@@ -243,6 +243,12 @@
           "from": "planned",
           "to": "needs_review",
           "note": "v0.6.4 operator approval packet validation passed; ready for operator proof review."
+        },
+        {
+          "at": "2026-06-21T16:59:48.000Z",
+          "from": "needs_review",
+          "to": "accepted",
+          "note": "v0.6.4 operator approval packet accepted after pushed baseline 8ae4dd0 was verified."
         }
       ]
     },
@@ -250,19 +256,25 @@
       "id": "queue-009-local-redaction-policy-plan",
       "phase": "KIA-Stick-v0.6.5-local-redaction-policy-plan",
       "title": "Local-only redaction policy plan",
-      "status": "planned",
+      "status": "needs_review",
       "model": "Claude",
       "risk": "high",
       "summary": "Plan local-only redaction review policy, reviewer roles, metadata labels, proof exclusions, and retention/deletion rules before any later content-touching work.",
-      "next_action": "Draft the policy plan as docs/tests only and keep detection, OCR, real redaction, indexing, and private artifact generation blocked.",
+      "next_action": "Operator reviews the redaction policy plan docs/tests only, proof latest, closeout summary, and queue state, and confirms no real redaction or implementation before any push.",
       "created_at": "2026-06-21T03:16:48.000Z",
-      "updated_at": "2026-06-21T03:16:48.000Z",
+      "updated_at": "2026-06-21T16:59:48.000Z",
       "history": [
         {
           "at": "2026-06-21T03:16:48.000Z",
           "from": "planned",
           "to": "planned",
           "note": "Seeded as a policy-planning task with no real content handling approved."
+        },
+        {
+          "at": "2026-06-21T16:59:48.000Z",
+          "from": "planned",
+          "to": "needs_review",
+          "note": "v0.6.5 local redaction policy plan validation passed; ready for operator proof review."
         }
       ]
     },

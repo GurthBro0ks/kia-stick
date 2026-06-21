@@ -2,10 +2,32 @@
 
 ## Current Phase
 
-- Phase: `KIA-Stick-v0.6.4-operator-approval-packet`
+- Phase: `KIA-Stick-v0.6.5-local-redaction-policy-plan`
 - Target: `USER_LAPTOP_ONLY`
 - Provider: `local-fake-deterministic`
-- Status: validation PASS for planning-only v0.6.4 operator approval packet from accepted pushed v0.6.3 baseline `bc8c9df`; one local docs/test/state commit, auto-pushed only if all gates PASS.
+- Status: validation PASS for planning-only v0.6.5 local redaction policy plan from accepted pushed v0.6.4 baseline `8ae4dd0`; one local docs/test/state commit, auto-pushed only if all gates PASS.
+
+## v0.6.5 Local-Only Redaction Policy Plan State
+
+- Phase: `KIA-Stick-v0.6.5-local-redaction-policy-plan`
+- Baseline: origin/main and HEAD verified at `8ae4dd0`.
+- v0.6.4 pushed state: recorded as accepted pushed commit `8ae4dd0`.
+- Scope: planning/policy-only local redaction review policy for any future one-document real-doc pilot; no real-doc implementation and no real redaction.
+- Product version impact: none; app remains `0.4.0`; any future bump requires a separate implementation-phase decision.
+- Prompt version: `prompt.fake-docs.v0.5-import-wizard-hardening`
+- Policy document: `docs/v0.6-local-redaction-policy-plan.md`
+- Tests added: `tests/localRedactionPolicyPlan.test.ts`
+- Policy defines: redaction categories (member identifiers, employee IDs, contact info, case facts, medical, discipline, settlement, witnesses, screenshots/images, management/officer names, dates, locations, installation data, grievance IDs, signatures, account/session/device data, metadata), PASS/WARN/FAIL handling, reviewer roles, escalation rules, default-deny/not-indexable behavior, and deletion/retention rules.
+- Implementation/real-redaction authorization: none; a later prompt must name exactly one gate and one document, pass the safety checklist, and present a signed approval packet.
+- Queue state: `queue-008-operator-approval-packet` accepted after pushed baseline `8ae4dd0`; `queue-009-local-redaction-policy-plan` marked `needs_review` after validation passed.
+- Real/private document access: none.
+- Private vault inspected: no.
+- Commands run: missing `/home/slimy/*` harness checks, local harness inspection, git status/ref checks confirming `origin/main` = HEAD = `8ae4dd0`, policy doc and test creation, queue/feature/README/CLOSEOUT/progress edits, focused `vitest run tests/localRedactionPolicyPlan.test.ts tests/taskQueue.test.ts`, `npm run phase:run -- --phase KIA-Stick-v0.6.5-redaction-policy-self-test` (which runs release:check, lint, typecheck, test, build, scan:fake, scan:privacy, qa, manifest/feature parse, private tracked-path check, no-file-input grep, and APWU boundary grep), `npm run proof:latest`, `npm run queue:next`, `npm run closeout:review`, and `npm run closeout:summary`.
+- Files changed: `docs/v0.6-local-redaction-policy-plan.md`, `tests/localRedactionPolicyPlan.test.ts`, `tests/taskQueue.test.ts`, `docs/phase-backlog.json`, `feature_list.json`, `README.md`, `CLOSEOUT.md`, and `claude-progress.md`.
+- Proof directory: `/tmp/proof_kia_stick_v065_redaction_policy_20260621T165948Z`
+- Phase runner self-test proof directory: `SELF_TEST_/tmp/proof_kia_stick_v065_redaction_policy_20260621T165948Z`
+- Validation: PASS.
+- Remaining unknowns: operator manual review of final proof and post-push state.
 
 ## v0.6.4 Operator Approval Packet State
 

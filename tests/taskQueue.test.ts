@@ -69,8 +69,9 @@ describe("task-queue", () => {
     expect(queue.items[4].status).toBe("accepted");
     expect(queue.items[5].status).toBe("accepted");
     expect(queue.items[6].status).toBe("accepted");
-    expect(queue.items[7].status).toBe("needs_review");
-    expect(queue.items.slice(8).every((item) => item.status === "planned")).toBe(true);
+    expect(queue.items[7].status).toBe("accepted");
+    expect(queue.items[8].status).toBe("needs_review");
+    expect(queue.items.slice(9).every((item) => item.status === "planned")).toBe(true);
     expect(queue.items.every((item) => item.history.length > 0)).toBe(true);
     expect(mod.validateQueue(queue)).toBe(true);
   });
@@ -85,8 +86,9 @@ describe("task-queue", () => {
     queue.items[4].status = "accepted";
     queue.items[5].status = "accepted";
     queue.items[6].status = "accepted";
+    queue.items[7].status = "accepted";
 
-    expect(mod.selectNextItem(queue)?.id).toBe("queue-008-operator-approval-packet");
+    expect(mod.selectNextItem(queue)?.id).toBe("queue-009-local-redaction-policy-plan");
   });
 
   it("seeds the requested post-plan safety backlog without approving implementation", async () => {
@@ -111,8 +113,8 @@ describe("task-queue", () => {
 
     const joined = postPlanItems.map((item) => `${item.summary}\n${item.next_action}`).join("\n");
     expect(joined).toContain("fictional metadata only");
-    expect(joined).toContain("documentation only");
     expect(joined).toContain("docs/tests only");
+    expect(joined).toContain("non-executable");
     expect(joined).not.toMatch(/<input[^>]*type=["']file/i);
     expect(joined).not.toMatch(/\bshowOpenFilePicker\b|\bFileReader\b|\breadAsText\b|\breadAsArrayBuffer\b/i);
     expect(joined).not.toMatch(/\bapproved real\b|\breal-document implementation approved\b/i);
@@ -183,9 +185,9 @@ describe("task-queue", () => {
     const result = spawnSync("node", [scriptPath, "next"], { cwd: resolve("."), encoding: "utf8" });
 
     expect(result.status).toBe(0);
-    expect(result.stdout).toContain("id=queue-008-operator-approval-packet");
+    expect(result.stdout).toContain("id=queue-009-local-redaction-policy-plan");
     expect(result.stdout).toContain("Codex-ready summary:");
-    expect(result.stdout).toContain("KIA-Stick-v0.6.4-operator-approval-packet");
+    expect(result.stdout).toContain("KIA-Stick-v0.6.5-local-redaction-policy-plan");
   });
 
   it("does not execute git push from queue commands", () => {
