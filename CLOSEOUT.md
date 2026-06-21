@@ -1,5 +1,40 @@
 # KIA Stick Closeout
 
+## v0.6.7 Backlog Closeout and v0.7 Decision Checkpoint
+
+- Phase: `KIA-Stick-v0.6.7-backlog-closeout-v0.7-decision-checkpoint`
+- Baseline: accepted pushed v0.6.6 state at `6bbd6ce`
+- Origin/main verified: `6bbd6ce`
+- Scope: planning/state-only backlog closeout and v0.7 decision checkpoint; no real-doc implementation.
+- Product version impact: none; app remains `0.4.0`.
+- Prompt version: `prompt.fake-docs.v0.5-import-wizard-hardening`
+- Checkpoint document: `docs/v0.7-decision-checkpoint.md`
+- Tests added: `tests/v07DecisionCheckpoint.test.ts`
+- Proof directory: `/tmp/proof_kia_stick_v067_v07_checkpoint_20260621T171709Z`
+- Phase runner self-test proof directory: `SELF_TEST_/tmp/proof_kia_stick_v067_v07_checkpoint_20260621T171709Z`
+- Validation: PASS
+- Queue state: `queue-010-future-implementation-gate-draft` accepted after pushed baseline `6bbd6ce`, completing the v0.6.x planning backlog (queue-006 through queue-010). Refreshed backlog adds planned v0.7 options `queue-011` through `queue-014` and a `blocked` `queue-015-v07-first-real-doc-gate-request`.
+- v0.7 choices documented: pause/stabilize, product-version bump plan, fake-only UX polish, real-doc gate preparation, first real-doc gate request.
+- Real-doc implementation: blocked until separately approved with signed packet, PASS safety checklist, redaction policy, future gate draft conformance, exactly one gate, exactly one document, and fresh operator approval.
+- Real document access: none
+- Private vault inspected: no
+- Push performed: auto-push of this docs/test/state commit only if all gates PASS.
+
+## v0.6.6 Accepted Pushed State
+
+- Phase: `KIA-Stick-v0.6.6-future-implementation-gate-draft`
+- Accepted commit: `6bbd6ce`
+- Origin/main verified: `6bbd6ce`
+- Push performed before this phase: yes
+- Proof directory: `/tmp/proof_kia_stick_v066_gate_draft_20260621T170847Z`
+- Self-test proof directory: `/tmp/proof_kia_stick_v0_6_6_gate_draft_self_test_20260621T171234Z`
+
+## Next Safe Phase
+
+The seeded v0.6.x planning backlog is complete. The operator chooses a v0.7 direction at `docs/v0.7-decision-checkpoint.md`: pause/stabilize, product-version bump plan, fake-only UX polish, or real-doc gate preparation. The first real-doc gate request is a `blocked` backlog item and remains blocked until a separately approved prompt provides a completed/signed approval packet, a `PASS` safety checklist, a redaction policy result, conformance to `docs/v0.6-future-implementation-gate-draft.md`, exactly one gate, exactly one document, and fresh operator approval. No real-doc implementation is approved.
+
+---
+
 ## v0.6.6 Future Implementation Gate Draft
 
 - Phase: `KIA-Stick-v0.6.6-future-implementation-gate-draft`

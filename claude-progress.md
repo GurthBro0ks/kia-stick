@@ -2,10 +2,32 @@
 
 ## Current Phase
 
-- Phase: `KIA-Stick-v0.6.6-future-implementation-gate-draft`
+- Phase: `KIA-Stick-v0.6.7-backlog-closeout-v0.7-decision-checkpoint`
 - Target: `USER_LAPTOP_ONLY`
 - Provider: `local-fake-deterministic`
-- Status: validation PASS for planning-only v0.6.6 future implementation gate draft from accepted pushed v0.6.5 baseline `5aa46b8`; one local docs/test/state commit, auto-pushed only if all gates PASS.
+- Status: validation PASS for planning-only v0.6.7 backlog closeout and v0.7 decision checkpoint from accepted pushed v0.6.6 baseline `6bbd6ce`; one local docs/test/state commit, auto-pushed only if all gates PASS.
+
+## v0.6.7 Backlog Closeout and v0.7 Decision Checkpoint State
+
+- Phase: `KIA-Stick-v0.6.7-backlog-closeout-v0.7-decision-checkpoint`
+- Baseline: origin/main and HEAD verified at `6bbd6ce`.
+- v0.6.6 pushed state: recorded as accepted pushed commit `6bbd6ce`.
+- Scope: planning/state-only backlog closeout and v0.7 decision checkpoint; no real-doc implementation.
+- Product version impact: none; app remains `0.4.0`; any future bump requires a separate implementation-phase decision.
+- Prompt version: `prompt.fake-docs.v0.5-import-wizard-hardening`
+- Checkpoint document: `docs/v0.7-decision-checkpoint.md`
+- Tests added: `tests/v07DecisionCheckpoint.test.ts`
+- Checkpoint summarizes safe state (fake app, proof tooling, queue tooling, five v0.6 planning artifacts, no real-doc implementation), lists v0.7 choices (pause/stabilize, product-version bump plan, fake-only UX polish, real-doc gate preparation, first real-doc gate request), and states real-doc requirements (signed approval packet, PASS safety checklist, redaction policy, future gate draft, exactly one gate, exactly one document, fresh operator approval).
+- Queue state: `queue-010-future-implementation-gate-draft` accepted after pushed baseline `6bbd6ce`, completing the v0.6.x planning backlog. Refreshed backlog adds planned `queue-011` through `queue-014` and a `blocked` `queue-015-v07-first-real-doc-gate-request`; queue now has 15 items.
+- Real-doc implementation: blocked until separately approved.
+- Real/private document access: none.
+- Private vault inspected: no.
+- Commands run: missing `/home/slimy/*` harness checks, local harness inspection, git status/ref checks confirming `origin/main` = HEAD = `6bbd6ce`, checkpoint doc and test creation, queue refresh, queue/feature/README/CLOSEOUT/progress edits, focused `vitest run tests/v07DecisionCheckpoint.test.ts tests/taskQueue.test.ts`, `npm run phase:run -- --phase KIA-Stick-v0.6.7-v0.7-checkpoint-self-test` (which runs release:check, lint, typecheck, test, build, scan:fake, scan:privacy, qa, manifest/feature parse, private tracked-path check, no-file-input grep, and APWU boundary grep), `npm run proof:latest`, `npm run queue:next`, `npm run closeout:review`, and `npm run closeout:summary`.
+- Files changed: `docs/v0.7-decision-checkpoint.md`, `tests/v07DecisionCheckpoint.test.ts`, `tests/taskQueue.test.ts`, `docs/phase-backlog.json`, `feature_list.json`, `README.md`, `CLOSEOUT.md`, and `claude-progress.md`.
+- Proof directory: `/tmp/proof_kia_stick_v067_v07_checkpoint_20260621T171709Z`
+- Phase runner self-test proof directory: `SELF_TEST_/tmp/proof_kia_stick_v067_v07_checkpoint_20260621T171709Z`
+- Validation: PASS.
+- Remaining unknowns: operator chooses a v0.7 direction; manual review of final proof and post-push state.
 
 ## v0.6.6 Future Implementation Gate Draft State
 

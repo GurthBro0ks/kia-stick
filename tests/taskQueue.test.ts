@@ -49,7 +49,7 @@ describe("task-queue", () => {
     const queue = mod.loadQueue(resolve("."));
 
     expect(queue.schema).toBe("kia-stick-local-task-queue.v1");
-    expect(queue.items).toHaveLength(10);
+    expect(queue.items).toHaveLength(15);
     expect(queue.items.map((item) => item.id)).toEqual([
       "queue-001-closeout-helper-hardening",
       "queue-002-fake-redaction-metadata-depth",
@@ -61,18 +61,18 @@ describe("task-queue", () => {
       "queue-008-operator-approval-packet",
       "queue-009-local-redaction-policy-plan",
       "queue-010-future-implementation-gate-draft",
+      "queue-011-v07-pause-stabilize",
+      "queue-012-v07-product-version-bump-plan",
+      "queue-013-v07-fake-only-ux-polish",
+      "queue-014-v07-real-doc-gate-preparation",
+      "queue-015-v07-first-real-doc-gate-request",
     ]);
-    expect(queue.items[0].status).toBe("accepted");
-    expect(queue.items[1].status).toBe("accepted");
-    expect(queue.items[2].status).toBe("accepted");
-    expect(queue.items[3].status).toBe("accepted");
-    expect(queue.items[4].status).toBe("accepted");
-    expect(queue.items[5].status).toBe("accepted");
-    expect(queue.items[6].status).toBe("accepted");
-    expect(queue.items[7].status).toBe("accepted");
-    expect(queue.items[8].status).toBe("accepted");
-    expect(queue.items[9].status).toBe("needs_review");
-    expect(queue.items.slice(0, 9).every((item) => item.status === "accepted")).toBe(true);
+    expect(queue.items.slice(0, 10).every((item) => item.status === "accepted")).toBe(true);
+    expect(queue.items[10].status).toBe("planned");
+    expect(queue.items[11].status).toBe("planned");
+    expect(queue.items[12].status).toBe("planned");
+    expect(queue.items[13].status).toBe("planned");
+    expect(queue.items[14].status).toBe("blocked");
     expect(queue.items.every((item) => item.history.length > 0)).toBe(true);
     expect(mod.validateQueue(queue)).toBe(true);
   });
@@ -80,23 +80,31 @@ describe("task-queue", () => {
   it("selects the first non-accepted item", async () => {
     const mod = await loadModule();
     const queue = mod.loadQueue(resolve("."));
-    queue.items[0].status = "accepted";
-    queue.items[1].status = "accepted";
-    queue.items[2].status = "accepted";
-    queue.items[3].status = "accepted";
-    queue.items[4].status = "accepted";
-    queue.items[5].status = "accepted";
-    queue.items[6].status = "accepted";
-    queue.items[7].status = "accepted";
-    queue.items[8].status = "accepted";
+    for (let index = 0; index < 10; index += 1) {
+      queue.items[index].status = "accepted";
+    }
 
-    expect(mod.selectNextItem(queue)?.id).toBe("queue-010-future-implementation-gate-draft");
+    expect(mod.selectNextItem(queue)?.id).toBe("queue-011-v07-pause-stabilize");
+  });
+
+  it("keeps the first real-doc gate request blocked until separately approved", async () => {
+    const mod = await loadModule();
+    const queue = mod.loadQueue(resolve("."));
+    const realDocGate = queue.items.find((item) => item.id === "queue-015-v07-first-real-doc-gate-request");
+
+    expect(realDocGate?.status).toBe("blocked");
+    const gateText = `${realDocGate?.summary}\n${realDocGate?.next_action}`;
+    expect(gateText).toContain("blocked");
+    expect(gateText).toContain("exactly one gate");
+    expect(gateText).toContain("exactly one document");
+    expect(gateText).not.toMatch(/<input[^>]*type=["']file/i);
+    expect(gateText).not.toMatch(/\bshowOpenFilePicker\b|\bFileReader\b|\breadAsText\b|\breadAsArrayBuffer\b/i);
   });
 
   it("seeds the requested post-plan safety backlog without approving implementation", async () => {
     const mod = await loadModule();
     const queue = mod.loadQueue(resolve("."));
-    const postPlanItems = queue.items.slice(5);
+    const postPlanItems = queue.items.slice(5, 10);
 
     expect(postPlanItems.map((item) => item.id)).toEqual([
       "queue-006-safety-review-checklist",
@@ -116,7 +124,7 @@ describe("task-queue", () => {
     const joined = postPlanItems.map((item) => `${item.summary}\n${item.next_action}`).join("\n");
     expect(joined).toContain("fictional metadata only");
     expect(joined).toContain("blocked-action matrix");
-    expect(joined).toContain("non-executable");
+    expect(joined).toContain("no-real-document implementation");
     expect(joined).not.toMatch(/<input[^>]*type=["']file/i);
     expect(joined).not.toMatch(/\bshowOpenFilePicker\b|\bFileReader\b|\breadAsText\b|\breadAsArrayBuffer\b/i);
     expect(joined).not.toMatch(/\bapproved real\b|\breal-document implementation approved\b/i);
@@ -187,9 +195,9 @@ describe("task-queue", () => {
     const result = spawnSync("node", [scriptPath, "next"], { cwd: resolve("."), encoding: "utf8" });
 
     expect(result.status).toBe(0);
-    expect(result.stdout).toContain("id=queue-010-future-implementation-gate-draft");
+    expect(result.stdout).toContain("id=queue-011-v07-pause-stabilize");
     expect(result.stdout).toContain("Codex-ready summary:");
-    expect(result.stdout).toContain("KIA-Stick-v0.6.6-future-implementation-gate-draft");
+    expect(result.stdout).toContain("KIA-Stick-v0.7.0-pause-stabilize");
   });
 
   it("does not execute git push from queue commands", () => {

@@ -12,6 +12,20 @@ KIA Stick separates milestone semver from build identity:
 
 `/health`, `/version`, the app header, settings, answer footer, and saved answer metadata expose the current `displayVersion`.
 
+## v0.6.7 Backlog Closeout and v0.7 Decision Checkpoint
+
+Phase: `KIA-Stick-v0.6.7-backlog-closeout-v0.7-decision-checkpoint`.
+
+`docs/v0.7-decision-checkpoint.md` closes out the seeded v0.6.x planning backlog and presents a v0.7 operator decision checkpoint. It summarizes the current safe state (fake app, proof tooling, queue tooling, the five v0.6 planning artifacts, and no real-doc implementation), lists the v0.7 choices (pause/stabilize, product-version bump plan, fake-only UX polish, real-doc gate preparation, and first real-doc gate request), and states the hard requirements for any real-doc path.
+
+Any real-doc path remains **blocked** until a future, separately approved prompt provides a completed/signed approval packet, a `PASS` safety checklist, a redaction policy result, conformance to the future gate draft, exactly one gate, exactly one document, and fresh operator approval. `docs/phase-backlog.json` is refreshed with planned v0.7 options; `queue-015-v07-first-real-doc-gate-request` is seeded as `blocked`.
+
+This is **PLAN ONLY**. It does not add file pickers, path readers, file reads, copying, OCR, real redaction, embeddings, indexing, vector stores, upload handlers, private-vault inspection, service changes, pushes beyond this docs/test/state commit, or real-document access.
+
+`queue-010-future-implementation-gate-draft` is accepted after the pushed v0.6.6 baseline `6bbd6ce` was verified, completing the v0.6.x planning backlog.
+
+Current product version remains `0.4.0`; current prompt version remains `prompt.fake-docs.v0.5-import-wizard-hardening`.
+
 ## v0.6.6 Future Implementation Gate Draft
 
 Phase: `KIA-Stick-v0.6.6-future-implementation-gate-draft`.
