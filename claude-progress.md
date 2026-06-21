@@ -2,10 +2,32 @@
 
 ## Current Phase
 
-- Phase: `KIA-Stick-v0.6.5-local-redaction-policy-plan`
+- Phase: `KIA-Stick-v0.6.6-future-implementation-gate-draft`
 - Target: `USER_LAPTOP_ONLY`
 - Provider: `local-fake-deterministic`
-- Status: validation PASS for planning-only v0.6.5 local redaction policy plan from accepted pushed v0.6.4 baseline `8ae4dd0`; one local docs/test/state commit, auto-pushed only if all gates PASS.
+- Status: validation PASS for planning-only v0.6.6 future implementation gate draft from accepted pushed v0.6.5 baseline `5aa46b8`; one local docs/test/state commit, auto-pushed only if all gates PASS.
+
+## v0.6.6 Future Implementation Gate Draft State
+
+- Phase: `KIA-Stick-v0.6.6-future-implementation-gate-draft`
+- Baseline: origin/main and HEAD verified at `5aa46b8`.
+- v0.6.5 pushed state: recorded as accepted pushed commit `5aa46b8`.
+- Scope: planning/draft-only future implementation gate structure for any later one-document real-doc pilot; non-executable, no real-doc implementation.
+- Product version impact: none; app remains `0.4.0`; any future bump requires a separate implementation-phase decision.
+- Prompt version: `prompt.fake-docs.v0.5-import-wizard-hardening`
+- Gate draft document: `docs/v0.6-future-implementation-gate-draft.md`
+- Tests added: `tests/futureImplementationGateDraft.test.ts`
+- Draft defines: one-gate/one-document rule, required future-prompt fields (exact gate, exact one-document scope, allowed action, blocked actions, approval packet reference, safety checklist result, redaction policy result, rollback, deletion/retention, proof-safe output, stop conditions), gate types (source selection, quarantine copy, provenance/hash, redaction detection, redaction review, metadata review, index eligibility, audit, rollback, deletion), and do-not-proceed blockers.
+- Implementation authorization: none; the draft is non-executable and a later prompt must be separately approved, name exactly one gate and one document, reference a signed packet, and pass the safety checklist and redaction policy.
+- Queue state: `queue-009-local-redaction-policy-plan` accepted after pushed baseline `5aa46b8`; `queue-010-future-implementation-gate-draft` marked `needs_review` after validation passed. The seeded v0.6.x planning backlog (queue-006 through queue-010) is now complete.
+- Real/private document access: none.
+- Private vault inspected: no.
+- Commands run: missing `/home/slimy/*` harness checks, local harness inspection, git status/ref checks confirming `origin/main` = HEAD = `5aa46b8`, gate draft doc and test creation, queue/feature/README/CLOSEOUT/progress edits, focused `vitest run tests/futureImplementationGateDraft.test.ts tests/taskQueue.test.ts`, `npm run phase:run -- --phase KIA-Stick-v0.6.6-gate-draft-self-test` (which runs release:check, lint, typecheck, test, build, scan:fake, scan:privacy, qa, manifest/feature parse, private tracked-path check, no-file-input grep, and APWU boundary grep), `npm run proof:latest`, `npm run queue:next`, `npm run closeout:review`, and `npm run closeout:summary`.
+- Files changed: `docs/v0.6-future-implementation-gate-draft.md`, `tests/futureImplementationGateDraft.test.ts`, `tests/taskQueue.test.ts`, `docs/phase-backlog.json`, `feature_list.json`, `README.md`, `CLOSEOUT.md`, and `claude-progress.md`.
+- Proof directory: `/tmp/proof_kia_stick_v066_gate_draft_20260621T170847Z`
+- Phase runner self-test proof directory: `SELF_TEST_/tmp/proof_kia_stick_v066_gate_draft_20260621T170847Z`
+- Validation: PASS.
+- Remaining unknowns: operator manual review of final proof and post-push state.
 
 ## v0.6.5 Local-Only Redaction Policy Plan State
 

@@ -12,6 +12,20 @@ KIA Stick separates milestone semver from build identity:
 
 `/health`, `/version`, the app header, settings, answer footer, and saved answer metadata expose the current `displayVersion`.
 
+## v0.6.6 Future Implementation Gate Draft
+
+Phase: `KIA-Stick-v0.6.6-future-implementation-gate-draft`.
+
+`docs/v0.6-future-implementation-gate-draft.md` drafts how any later one-document real-doc pilot prompt must be shaped. It enforces a one-gate/one-document rule, defines required future-prompt fields (exact gate, exact one-document scope, allowed action, blocked actions, approval packet reference, safety checklist result, redaction policy result, rollback, deletion/retention, proof-safe output, and stop conditions), defines gate types (source selection, quarantine copy, provenance/hash, redaction detection, redaction review, metadata review, index eligibility, audit, rollback, deletion), and lists do-not-proceed blockers.
+
+This draft is non-executable and does **not** authorize implementation. A later prompt must be separately approved, name exactly one gate and exactly one document, reference a completed/signed packet from `docs/v0.6-operator-approval-packet.md`, record a `PASS` for `docs/v0.6-real-doc-safety-checklist.md`, and follow `docs/v0.6-local-redaction-policy-plan.md`.
+
+This is **PLAN ONLY**. It does not add file pickers, path readers, file reads, copying, OCR, text extraction, summarization, transforms, detection over real content, real redaction, embeddings, indexing, vector stores, upload handlers, private-vault inspection, service changes, pushes, or real-document access.
+
+`queue-009-local-redaction-policy-plan` is accepted after the pushed v0.6.5 baseline `5aa46b8` was verified; `queue-010-future-implementation-gate-draft` is `needs_review` for operator review.
+
+Current product version remains `0.4.0`; current prompt version remains `prompt.fake-docs.v0.5-import-wizard-hardening`.
+
 ## v0.6.5 Local-Only Redaction Policy Plan
 
 Phase: `KIA-Stick-v0.6.5-local-redaction-policy-plan`.

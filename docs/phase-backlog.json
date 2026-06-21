@@ -1,6 +1,6 @@
 {
   "schema": "kia-stick-local-task-queue.v1",
-  "updated_at": "2026-06-21T16:59:48.000Z",
+  "updated_at": "2026-06-21T17:08:47.000Z",
   "items": [
     {
       "id": "queue-001-closeout-helper-hardening",
@@ -256,13 +256,13 @@
       "id": "queue-009-local-redaction-policy-plan",
       "phase": "KIA-Stick-v0.6.5-local-redaction-policy-plan",
       "title": "Local-only redaction policy plan",
-      "status": "needs_review",
+      "status": "accepted",
       "model": "Claude",
       "risk": "high",
       "summary": "Plan local-only redaction review policy, reviewer roles, metadata labels, proof exclusions, and retention/deletion rules before any later content-touching work.",
-      "next_action": "Operator reviews the redaction policy plan docs/tests only, proof latest, closeout summary, and queue state, and confirms no real redaction or implementation before any push.",
+      "next_action": "Accepted pushed state verified at 5aa46b8; proceed to the future implementation gate draft phase.",
       "created_at": "2026-06-21T03:16:48.000Z",
-      "updated_at": "2026-06-21T16:59:48.000Z",
+      "updated_at": "2026-06-21T17:08:47.000Z",
       "history": [
         {
           "at": "2026-06-21T03:16:48.000Z",
@@ -275,6 +275,12 @@
           "from": "planned",
           "to": "needs_review",
           "note": "v0.6.5 local redaction policy plan validation passed; ready for operator proof review."
+        },
+        {
+          "at": "2026-06-21T17:08:47.000Z",
+          "from": "needs_review",
+          "to": "accepted",
+          "note": "v0.6.5 local redaction policy plan accepted after pushed baseline 5aa46b8 was verified."
         }
       ]
     },
@@ -282,19 +288,25 @@
       "id": "queue-010-future-implementation-gate-draft",
       "phase": "KIA-Stick-v0.6.6-future-implementation-gate-draft",
       "title": "Future implementation gate draft",
-      "status": "planned",
+      "status": "needs_review",
       "model": "Claude with optional GLM-5.2 high review",
       "risk": "high",
       "summary": "Draft the minimum future prompt requirements and blocked-action matrix for any later single-document pilot implementation request.",
-      "next_action": "Produce a gate draft that remains non-executable until the operator separately approves exact scope, validation, rollback, sanitized proof, and manual review.",
+      "next_action": "Operator reviews the gate draft, which remains non-executable, plus proof latest, closeout summary, and queue state, and confirms no real-doc implementation before any push.",
       "created_at": "2026-06-21T03:16:48.000Z",
-      "updated_at": "2026-06-21T03:16:48.000Z",
+      "updated_at": "2026-06-21T17:08:47.000Z",
       "history": [
         {
           "at": "2026-06-21T03:16:48.000Z",
           "from": "planned",
           "to": "planned",
           "note": "Seeded as a planning-only implementation gate draft after v0.6.0 plan acceptance."
+        },
+        {
+          "at": "2026-06-21T17:08:47.000Z",
+          "from": "planned",
+          "to": "needs_review",
+          "note": "v0.6.6 future implementation gate draft validation passed; ready for operator proof review."
         }
       ]
     }

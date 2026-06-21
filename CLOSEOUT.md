@@ -1,5 +1,41 @@
 # KIA Stick Closeout
 
+## v0.6.6 Future Implementation Gate Draft
+
+- Phase: `KIA-Stick-v0.6.6-future-implementation-gate-draft`
+- Baseline: accepted pushed v0.6.5 state at `5aa46b8`
+- Origin/main verified: `5aa46b8`
+- Scope: planning/draft-only future implementation gate structure for any later one-document real-doc pilot; no real-doc implementation and non-executable.
+- Product version impact: none; app remains `0.4.0`.
+- Prompt version: `prompt.fake-docs.v0.5-import-wizard-hardening`
+- Gate draft document: `docs/v0.6-future-implementation-gate-draft.md`
+- Tests added: `tests/futureImplementationGateDraft.test.ts`
+- Proof directory: `/tmp/proof_kia_stick_v066_gate_draft_20260621T170847Z`
+- Phase runner self-test proof directory: `SELF_TEST_/tmp/proof_kia_stick_v066_gate_draft_20260621T170847Z`
+- Validation: PASS
+- Queue state: `queue-009-local-redaction-policy-plan` accepted after pushed baseline `5aa46b8`; `queue-010-future-implementation-gate-draft` marked `needs_review` after validation passed.
+- Authorizes implementation: no; the draft is non-executable and a later prompt must be separately approved, name exactly one gate and one document, reference a signed packet, and pass the safety checklist and redaction policy.
+- Real document access: none
+- Private vault inspected: no
+- Push performed: auto-push of this docs/test/state commit only if all gates PASS.
+
+## v0.6.5 Accepted Pushed State
+
+- Phase: `KIA-Stick-v0.6.5-local-redaction-policy-plan`
+- Accepted commit: `5aa46b8`
+- Origin/main verified: `5aa46b8`
+- Push performed before this phase: yes
+- Proof directory: `/tmp/proof_kia_stick_v065_redaction_policy_20260621T165948Z`
+- Self-test proof directory: `/tmp/proof_kia_stick_v0_6_5_redaction_policy_self_test_20260621T170329Z`
+
+## Next Safe Phase
+
+The seeded v0.6.x planning backlog (queue-006 through queue-010) is now complete: safety checklist, fake-only pilot simulator, operator approval packet, local redaction policy plan, and future implementation gate draft are all docs/tests only. No real-doc implementation is approved.
+
+Any future real-doc pilot must still pass `docs/v0.6-real-doc-safety-checklist.md`, present a completed, signed operator approval packet from `docs/v0.6-operator-approval-packet.md`, follow `docs/v0.6-local-redaction-policy-plan.md`, and be shaped per `docs/v0.6-future-implementation-gate-draft.md` (exactly one gate and one document, separately approved). This phase does not approve real detection, real redaction, real import, file pickers, path readers, file reads, copying, OCR, text extraction, summarization, transforms, indexing, upload handling, private-vault inspection, cloud calls, service changes, or private document access.
+
+---
+
 ## v0.6.5 Local-Only Redaction Policy Plan
 
 - Phase: `KIA-Stick-v0.6.5-local-redaction-policy-plan`
