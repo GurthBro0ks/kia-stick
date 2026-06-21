@@ -1,5 +1,31 @@
 # KIA Stick Closeout
 
+## v0.7.3 Fake-Only UX Stabilization Plan
+
+- Phase: `KIA-Stick-v0.7.3-fake-only-ux-triage-and-stabilization-plan`
+- Baseline: accepted pushed v0.7.2 state at `179f883`
+- Origin/main verified: `179f883`
+- Scope: docs/tests/state-only fake-only UX and stability triage before real-doc gate prep; no runtime feature implementation.
+- Product version: `0.7.0`
+- Package version: `0.7.0`
+- Prompt version: `prompt.fake-docs.v0.5-import-wizard-hardening`
+- Plan document: `docs/v0.7.3-fake-only-ux-stabilization-plan.md`
+- Tests added: `tests/fakeOnlyUxStabilizationPlan.test.ts`
+- Proof directory: `/tmp/proof_kia_stick_v0_7_3_fake_only_ux_triage_20260621T180640Z`
+- Validation: PASS
+- Queue state: `queue-016-v072-product-version-bump-implementation` accepted after pushed baseline `179f883`; `queue-017-v073-fake-only-ux-triage` is ready for the task prompt auto-push gate; `queue-018-v074-chat-saved-upload-stabilization` is the recommended next fake-only implementation chunk.
+- Surface inventory: Chat, Sources, Saved, Upload, Import, Vault, Settings, `/health`, and `/version`.
+- Recommended next phase: `KIA-Stick-v0.7.4-chat-saved-upload-stabilization`.
+- Real document access: none
+- Private vault inspected: no
+- Push performed: auto-push only if the task prompt's validation gates pass.
+
+## v0.7.3 Safety Boundary
+
+This phase does not approve real-doc work. It does not add file pickers, path readers, file reads, copying, OCR, upload handlers, real redaction, embeddings, indexing, vector stores, private-vault inspection, service changes, credentials, or real-document access. `productVersion` remains `0.7.0` and `promptVersion` remains unchanged.
+
+---
+
 ## v0.7.2 Product-Version Bump to 0.7.0
 
 - Phase: `KIA-Stick-v0.7.2-product-version-bump-implementation-to-0.7.0`

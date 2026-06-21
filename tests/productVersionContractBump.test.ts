@@ -45,6 +45,7 @@ describe("v0.7.2 product-version contract bump", () => {
     const featureList = JSON.parse(readFileSync("feature_list.json", "utf8")) as {
       phase: string;
       release_readiness: {
+        phase: string;
         package_version: string;
         product_version: string;
         prompt_version: string;
@@ -61,7 +62,8 @@ describe("v0.7.2 product-version contract bump", () => {
     expect(packageJson.version).toBe(targetProductVersion);
     expect(packageLock.version).toBe(targetProductVersion);
     expect(packageLock.packages[""].version).toBe(targetProductVersion);
-    expect(featureList.phase).toBe("KIA-Stick-v0.7.2-product-version-bump-implementation-to-0.7.0");
+    expect(featureList.phase).toBe("KIA-Stick-v0.7.3-fake-only-ux-triage-and-stabilization-plan");
+    expect(featureList.release_readiness.phase).toBe(featureList.phase);
     expect(featureList.release_readiness.package_version).toBe(targetProductVersion);
     expect(featureList.release_readiness.product_version).toBe(targetProductVersion);
     expect(featureList.release_readiness.prompt_version).toBe(promptVersion);

@@ -51,7 +51,7 @@ describe("task-queue", () => {
     const queue = mod.loadQueue(resolve("."));
 
     expect(queue.schema).toBe("kia-stick-local-task-queue.v1");
-    expect(queue.items).toHaveLength(16);
+    expect(queue.items).toHaveLength(18);
     expect(queue.items.map((item) => item.id)).toEqual([
       "queue-001-closeout-helper-hardening",
       "queue-002-fake-redaction-metadata-depth",
@@ -69,6 +69,8 @@ describe("task-queue", () => {
       "queue-014-v07-real-doc-gate-preparation",
       "queue-015-v07-first-real-doc-gate-request",
       "queue-016-v072-product-version-bump-implementation",
+      "queue-017-v073-fake-only-ux-triage",
+      "queue-018-v074-chat-saved-upload-stabilization",
     ]);
     expect(queue.items.slice(0, 10).every((item) => item.status === "accepted")).toBe(true);
     expect(queue.items[10].status).toBe("planned");
@@ -76,7 +78,9 @@ describe("task-queue", () => {
     expect(queue.items[12].status).toBe("planned");
     expect(queue.items[13].status).toBe("planned");
     expect(queue.items[14].status).toBe("blocked");
-    expect(queue.items[15].status).toBe("ready_to_push");
+    expect(queue.items[15].status).toBe("accepted");
+    expect(queue.items[16].status).toBe("ready_to_push");
+    expect(queue.items[17].status).toBe("planned");
     expect(queue.items.every((item) => item.history.length > 0)).toBe(true);
     expect(mod.validateQueue(queue)).toBe(true);
   });
@@ -127,14 +131,39 @@ describe("task-queue", () => {
     const implementation = queue.items.find((item) => item.id === "queue-016-v072-product-version-bump-implementation");
 
     expect(implementation?.phase).toBe("KIA-Stick-v0.7.2-product-version-bump-implementation-to-0.7.0");
-    expect(implementation?.status).toBe("ready_to_push");
+    expect(implementation?.status).toBe("accepted");
     expect(implementation?.model).toBe("GPT/Codex $100");
     const text = `${implementation?.summary}\n${implementation?.next_action}`;
     expect(text).toContain("0.7.0");
     expect(text).toContain("promptVersion unchanged");
     expect(text).toContain("no real-doc capability");
+    expect(text).toContain("179f883");
     expect(text).not.toMatch(/<input[^>]*type=["']file/i);
     expect(text).not.toMatch(/\bshowOpenFilePicker\b|\bFileReader\b|\breadAsText\b|\breadAsArrayBuffer\b/i);
+  });
+
+  it("tracks the v0.7.3 fake-only UX triage plan and the recommended v0.7.4 chunk", async () => {
+    const mod = await loadModule();
+    const queue = mod.loadQueue(resolve("."));
+    const triage = queue.items.find((item) => item.id === "queue-017-v073-fake-only-ux-triage");
+    const nextChunk = queue.items.find((item) => item.id === "queue-018-v074-chat-saved-upload-stabilization");
+    const realDocGate = queue.items.find((item) => item.id === "queue-015-v07-first-real-doc-gate-request");
+
+    expect(triage?.phase).toBe("KIA-Stick-v0.7.3-fake-only-ux-triage-and-stabilization-plan");
+    expect(triage?.status).toBe("ready_to_push");
+    expect(triage?.model).toBe("GPT/Codex $100");
+    expect(`${triage?.summary}\n${triage?.next_action}`).toContain("Chat, Sources, Saved, Upload, Import, Vault, Settings");
+    expect(`${triage?.summary}\n${triage?.next_action}`).toContain("no prohibited file or document capability");
+
+    expect(nextChunk?.phase).toBe("KIA-Stick-v0.7.4-chat-saved-upload-stabilization");
+    expect(nextChunk?.status).toBe("planned");
+    expect(`${nextChunk?.summary}\n${nextChunk?.next_action}`).toContain("Chat save feedback");
+    expect(`${nextChunk?.summary}\n${nextChunk?.next_action}`).toContain("fake-only");
+    expect(realDocGate?.status).toBe("blocked");
+
+    const joined = [triage, nextChunk].map((item) => `${item?.summary}\n${item?.next_action}`).join("\n");
+    expect(joined).not.toMatch(/<input[^>]*type=["']file/i);
+    expect(joined).not.toMatch(/\bshowOpenFilePicker\b|\bFileReader\b|\breadAsText\b|\breadAsArrayBuffer\b/i);
   });
 
   it("seeds the requested post-plan safety backlog without approving implementation", async () => {
