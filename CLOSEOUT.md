@@ -1,10 +1,44 @@
 # KIA Stick Closeout
 
+## v0.6.2 Real-Doc Safety Review Checklist
+
+- Phase: `KIA-Stick-v0.6.2-safety-review-checklist`
+- Baseline: accepted pushed v0.6.1 state at `7b2d5b4`
+- Origin/main verified: `7b2d5b4`
+- Scope: planning/checklist-only safety review for any future real-doc pilot; no real-doc implementation.
+- Product version impact: none; app remains `0.4.0`.
+- Prompt version: `prompt.fake-docs.v0.5-import-wizard-hardening`
+- Checklist document: `docs/v0.6-real-doc-safety-checklist.md`
+- Tests added: `tests/realDocSafetyChecklist.test.ts`
+- Proof directory: `/tmp/proof_kia_stick_v062_safety_checklist_20260621T161513Z`
+- Phase runner self-test proof directory: `/tmp/proof_kia_stick_v0_6_2_safety_checklist_self_test_20260621T161902Z`
+- Validation: PASS
+- Queue state: `queue-006-safety-review-checklist` marked `needs_review` after validation passed.
+- Real document access: none
+- Private vault inspected: no
+- Push performed: no
+
+## v0.6.1 Accepted Pushed State
+
+- Phase: `KIA-Stick-v0.6.1-post-plan-safety-closeout`
+- Accepted commit: `7b2d5b4`
+- Origin/main verified: `7b2d5b4`
+- Push performed before this phase: yes
+- Proof directory: `/tmp/proof_kia_stick_v061_post_plan_closeout_20260621T031648Z`
+
+## Next Safe Phase
+
+Recommended next phase after operator review: `KIA-Stick-v0.6.3-fake-only-pilot-simulator`.
+
+Future implementation must pass `docs/v0.6-real-doc-safety-checklist.md` and start from a fresh operator approval packet. This checklist phase does not approve real import, file pickers, path readers, file reads, copying, OCR, text extraction, summarization, transforms, indexing, upload handling, private-vault inspection, cloud calls, service changes, pushes, or private document access.
+
+---
+
 ## v0.6.1 Post-Plan Safety Closeout
 
 - Phase: `KIA-Stick-v0.6.1-post-plan-safety-closeout`
 - Baseline: accepted pushed v0.6.0 state at `5454e3d`
-- Origin/main verified: `5454e3d`
+- Origin/main verified during phase: `5454e3d`
 - Scope: docs/test/state-only safety closeout for the pushed v0.6.0 real-doc pilot plan; no real-doc implementation.
 - Product version impact: none; app remains `0.4.0`.
 - Prompt version: `prompt.fake-docs.v0.5-import-wizard-hardening`
@@ -17,7 +51,7 @@
 - Next planned tasks: safety review checklist, fake-only pilot simulator, operator approval packet, local-only redaction policy plan, and future implementation gate draft.
 - Real document access: none
 - Private vault inspected: no
-- Push performed: no
+- Push performed: yes, accepted pushed state is `7b2d5b4`
 
 ## v0.6.0 Accepted Pushed State
 

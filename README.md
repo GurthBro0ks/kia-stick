@@ -12,11 +12,23 @@ KIA Stick separates milestone semver from build identity:
 
 `/health`, `/version`, the app header, settings, answer footer, and saved answer metadata expose the current `displayVersion`.
 
+## v0.6.2 Real-Doc Safety Review Checklist
+
+Phase: `KIA-Stick-v0.6.2-safety-review-checklist`.
+
+`docs/v0.6-real-doc-safety-checklist.md` defines the operator review checklist required before any later real-doc pilot can touch content. It covers operator approval, source scope, single-document limit, non-recursive rule, quarantine destination, hash/provenance handling, redaction review, metadata review, index eligibility, audit, rollback, deletion/retention, stop conditions, PASS/WARN/FAIL gates, and GitHub-safe proof exclusions.
+
+This is **PLAN ONLY**. It does not add file pickers, path readers, file reads, copying, OCR, text extraction, summarization, transforms, embeddings, indexing, vector stores, upload handlers, private-vault inspection, service changes, pushes, or real-document access.
+
+Validation passed with proof at `/tmp/proof_kia_stick_v062_safety_checklist_20260621T161513Z` and phase-runner self-test proof at `/tmp/proof_kia_stick_v0_6_2_safety_checklist_self_test_20260621T161902Z`. `queue-006-safety-review-checklist` is `needs_review` for operator review.
+
+Current product version remains `0.4.0`; current prompt version remains `prompt.fake-docs.v0.5-import-wizard-hardening`.
+
 ## v0.6.1 Post-Plan Safety Closeout
 
 Phase: `KIA-Stick-v0.6.1-post-plan-safety-closeout`.
 
-This docs/test/state closeout accepts the pushed v0.6.0 real-doc pilot plan at `5454e3d` after confirming the plan is still **PLAN ONLY** and does not approve real-document implementation.
+This docs/test/state closeout accepts the pushed v0.6.0 real-doc pilot plan at `5454e3d` after confirming the plan is still **PLAN ONLY** and does not approve real-document implementation. The pushed v0.6.1 closeout state is recorded at `7b2d5b4`.
 
 `docs/phase-backlog.json` now advances the next safe work into planning and simulator tasks only: safety review checklist, fake-only pilot simulator, operator approval packet, local-only redaction policy plan, and future implementation gate draft.
 

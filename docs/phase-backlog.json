@@ -1,6 +1,6 @@
 {
   "schema": "kia-stick-local-task-queue.v1",
-  "updated_at": "2026-06-21T03:16:48.000Z",
+  "updated_at": "2026-06-21T16:16:46.843Z",
   "items": [
     {
       "id": "queue-001-closeout-helper-hardening",
@@ -160,19 +160,25 @@
       "id": "queue-006-safety-review-checklist",
       "phase": "KIA-Stick-v0.6.2-safety-review-checklist",
       "title": "Safety review checklist",
-      "status": "planned",
+      "status": "needs_review",
       "model": "Claude",
       "risk": "high",
       "summary": "Write a checklist for reviewing the v0.6.0 plan, proof output, queue state, rollback wording, and no-real-document implementation boundary before any later pilot prompt.",
-      "next_action": "Draft a docs-only safety review checklist with explicit PASS/FAIL operator decisions and no content-touching actions.",
+      "next_action": "Operator reviews the checklist, proof latest, closeout summary, queue state, and confirms no real-doc implementation before any push.",
       "created_at": "2026-06-21T03:16:48.000Z",
-      "updated_at": "2026-06-21T03:16:48.000Z",
+      "updated_at": "2026-06-21T16:16:46.843Z",
       "history": [
         {
           "at": "2026-06-21T03:16:48.000Z",
           "from": "planned",
           "to": "planned",
           "note": "Seeded after v0.6.0 plan acceptance as a docs-only safety review task."
+        },
+        {
+          "at": "2026-06-21T16:16:46.843Z",
+          "from": "planned",
+          "to": "needs_review",
+          "note": "v0.6.2 safety checklist validation passed; ready for operator proof review."
         }
       ]
     },

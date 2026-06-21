@@ -67,7 +67,8 @@ describe("task-queue", () => {
     expect(queue.items[2].status).toBe("accepted");
     expect(queue.items[3].status).toBe("accepted");
     expect(queue.items[4].status).toBe("accepted");
-    expect(queue.items.slice(5).every((item) => item.status === "planned")).toBe(true);
+    expect(queue.items[5].status).toBe("needs_review");
+    expect(queue.items.slice(6).every((item) => item.status === "planned")).toBe(true);
     expect(queue.items.every((item) => item.history.length > 0)).toBe(true);
     expect(mod.validateQueue(queue)).toBe(true);
   });
