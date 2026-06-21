@@ -21,6 +21,9 @@
     "phase:run": "node scripts/phase-runner.mjs",
     "proof:list": "node scripts/proof-index.mjs list",
     "proof:latest": "node scripts/proof-index.mjs latest",
+    "queue:list": "node scripts/task-queue.mjs list",
+    "queue:next": "node scripts/task-queue.mjs next",
+    "queue:set": "node scripts/task-queue.mjs set",
     "qa": "bash scripts/qa_gate.sh"
   },
   "dependencies": {

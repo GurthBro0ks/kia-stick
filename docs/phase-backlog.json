@@ -1,0 +1,106 @@
+{
+  "schema": "kia-stick-local-task-queue.v1",
+  "updated_at": "2026-06-20T20:45:00.000Z",
+  "items": [
+    {
+      "id": "queue-001-closeout-helper-hardening",
+      "phase": "KIA-Stick-v0.5.7-closeout-helper-hardening",
+      "title": "Closeout helper hardening",
+      "status": "planned",
+      "model": "GPT/Codex $100",
+      "risk": "low",
+      "summary": "Harden local closeout helpers around proof summaries, final git state capture, and manual review wording without changing app behavior.",
+      "next_action": "Draft a phase prompt for closeout helper hardening using fake-only proof outputs.",
+      "created_at": "2026-06-20T20:45:00.000Z",
+      "updated_at": "2026-06-20T20:45:00.000Z",
+      "history": [
+        {
+          "at": "2026-06-20T20:45:00.000Z",
+          "from": "planned",
+          "to": "planned",
+          "note": "Seeded fake-only backlog item."
+        }
+      ]
+    },
+    {
+      "id": "queue-002-fake-redaction-metadata-depth",
+      "phase": "KIA-Stick-v0.5.8-fake-redaction-metadata-depth",
+      "title": "Fake redaction metadata depth",
+      "status": "planned",
+      "model": "GPT/Codex $100",
+      "risk": "medium",
+      "summary": "Expand synthetic redaction metadata fixtures and tests while keeping all data fictional and GitHub-safe.",
+      "next_action": "Plan fake metadata categories and acceptance checks before implementation.",
+      "created_at": "2026-06-20T20:45:00.000Z",
+      "updated_at": "2026-06-20T20:45:00.000Z",
+      "history": [
+        {
+          "at": "2026-06-20T20:45:00.000Z",
+          "from": "planned",
+          "to": "planned",
+          "note": "Seeded fake-only backlog item."
+        }
+      ]
+    },
+    {
+      "id": "queue-003-citation-qa-fixtures",
+      "phase": "KIA-Stick-v0.5.9-citation-qa-fixtures",
+      "title": "Citation QA fixtures",
+      "status": "planned",
+      "model": "GPT/Codex $100",
+      "risk": "medium",
+      "summary": "Add fake citation QA fixtures that stress authority hierarchy, no-answer handling, and version metadata without changing answer content.",
+      "next_action": "Identify fake fixture cases and expected citation classes.",
+      "created_at": "2026-06-20T20:45:00.000Z",
+      "updated_at": "2026-06-20T20:45:00.000Z",
+      "history": [
+        {
+          "at": "2026-06-20T20:45:00.000Z",
+          "from": "planned",
+          "to": "planned",
+          "note": "Seeded fake-only backlog item."
+        }
+      ]
+    },
+    {
+      "id": "queue-004-docs-release-pack",
+      "phase": "KIA-Stick-v0.5.10-docs-release-pack",
+      "title": "Docs release pack",
+      "status": "planned",
+      "model": "Claude closeout review after Codex validation",
+      "risk": "low",
+      "summary": "Prepare a GitHub-safe docs release pack from existing fake-only state, validation logs, and proof summaries.",
+      "next_action": "Collect current fake-only release notes and closeout summaries for review.",
+      "created_at": "2026-06-20T20:45:00.000Z",
+      "updated_at": "2026-06-20T20:45:00.000Z",
+      "history": [
+        {
+          "at": "2026-06-20T20:45:00.000Z",
+          "from": "planned",
+          "to": "planned",
+          "note": "Seeded fake-only backlog item."
+        }
+      ]
+    },
+    {
+      "id": "queue-005-real-doc-pilot-plan-only",
+      "phase": "KIA-Stick-v0.6.0-real-doc-pilot-plan-only",
+      "title": "Real-doc pilot PLAN ONLY",
+      "status": "planned",
+      "model": "Claude planning review with Codex validation",
+      "risk": "high",
+      "summary": "Planning-only pilot outline for future real-document handling boundaries; no reads, copying, OCR, import, indexing, or private-vault inspection.",
+      "next_action": "Write a planning-only prompt that re-states every real-document boundary before any future approval.",
+      "created_at": "2026-06-20T20:45:00.000Z",
+      "updated_at": "2026-06-20T20:45:00.000Z",
+      "history": [
+        {
+          "at": "2026-06-20T20:45:00.000Z",
+          "from": "planned",
+          "to": "planned",
+          "note": "Seeded planning-only backlog item; no real documents are approved."
+        }
+      ]
+    }
+  ]
+}

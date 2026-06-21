@@ -1,5 +1,5 @@
 {
-  "phase": "KIA-Stick-v0.5.5-proof-index-and-acceptance-helper",
+  "phase": "KIA-Stick-v0.5.6-local-task-queue",
   "target_machine": "USER_LAPTOP_ONLY",
   "accepted_v0_1": {
     "commit": "1d9b05c",
@@ -64,6 +64,10 @@
     "proof_index_discovery",
     "proof_latest_acceptance_helper",
     "proof_summary_redaction_flags",
+    "local_task_queue",
+    "phase_backlog_json",
+    "queue_next_codex_summary",
+    "queue_status_history",
     "manual_push_command_output",
     "phase_runner_commit_gate",
     "phase_runner_no_push_invariant",
@@ -78,7 +82,7 @@
     "version_back_navigation"
   ],
   "release_readiness": {
-    "phase": "KIA-Stick-v0.5.5-proof-index-and-acceptance-helper",
+    "phase": "KIA-Stick-v0.5.6-local-task-queue",
     "status": "implemented_fake_only_automation",
     "package_version": "0.4.0",
     "product_version": "0.4.0",
@@ -108,10 +112,14 @@
       "scripts/release-check.mjs",
       "scripts/phase-runner.mjs",
       "scripts/proof-index.mjs",
+      "scripts/task-queue.mjs",
       "npm run release:check",
       "npm run phase:run",
       "npm run proof:list",
       "npm run proof:latest",
+      "npm run queue:list",
+      "npm run queue:next",
+      "npm run queue:set",
       "qa_gate_derives_phase_and_proof_dir_from_feature_list",
       "git_auto_sync_derives_default_commit_message_from_feature_list"
     ],
@@ -151,6 +159,45 @@
       "runner_never_pushes",
       "push_command_txt_is_manual_only"
     ],
+    "real_document_access": false,
+    "private_vault_inspected": false,
+    "push_performed": false,
+    "real_db_boundary": "/media/mint/SHARED/APWU untouched"
+  },
+  "accepted_v0_5_5_proof_index": {
+    "phase": "KIA-Stick-v0.5.5-proof-index-and-acceptance-helper",
+    "status": "accepted_pushed_state_verified",
+    "accepted_commit": "eaf0c31",
+    "origin_main": "eaf0c31",
+    "proof_dir": "/tmp/proof_kia_stick_v055_proof_index_20260620T203815Z",
+    "self_test_proof_dir": "/tmp/proof_kia_stick_v0_5_5_proof_index_self_test_20260620T203854Z",
+    "validation": "passed",
+    "manual_qa": "operator_review_pending",
+    "push_performed": true,
+    "real_document_access": false,
+    "private_vault_inspected": false,
+    "real_db_boundary": "/media/mint/SHARED/APWU untouched"
+  },
+  "task_queue": {
+    "phase": "KIA-Stick-v0.5.6-local-task-queue",
+    "status": "implemented_fake_only_automation",
+    "script": "scripts/task-queue.mjs",
+    "queue_file": "docs/phase-backlog.json",
+    "npm_scripts": [
+      "queue:list",
+      "queue:next",
+      "queue:set"
+    ],
+    "statuses": [
+      "planned",
+      "running",
+      "needs_review",
+      "ready_to_push",
+      "accepted",
+      "blocked",
+      "parked"
+    ],
+    "seed_count": 5,
     "real_document_access": false,
     "private_vault_inspected": false,
     "push_performed": false,

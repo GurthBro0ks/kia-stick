@@ -1,5 +1,45 @@
 # KIA Stick Closeout
 
+## v0.5.6 Local Task Queue
+
+- Phase: `KIA-Stick-v0.5.6-local-task-queue`
+- Baseline: accepted pushed v0.5.5 state at `eaf0c31`
+- Scope: fake-only local task queue for grouping future KIA work into larger chunks.
+- Product version impact: none; app remains `0.4.0`.
+- Prompt version: `prompt.fake-docs.v0.5-import-wizard-hardening`
+- Queue file: `docs/phase-backlog.json`
+- Queue commands: `npm run queue:list`, `npm run queue:next`, and `npm run queue:set`
+- Seeded tasks: closeout helper hardening, fake redaction metadata depth, citation QA fixtures, docs release pack, and real-doc pilot PLAN ONLY.
+- Push behavior: queue tooling never pushes.
+- Real document access: none
+- Private vault inspected: no
+- Push performed: no
+
+## v0.5.6 Coverage
+
+- Added `scripts/task-queue.mjs` with no new dependencies.
+- Added `queue:list`, `queue:next`, and `queue:set` package scripts.
+- Added a GitHub-safe seeded backlog in `docs/phase-backlog.json`.
+- Added status/history updates with private-path and secrets-looking value rejection.
+- Added tests for parsing, status changes, sanitization, next selection, no-push invariant, and seed validity.
+
+## v0.5.5 Accepted Pushed State
+
+- Phase: `KIA-Stick-v0.5.5-proof-index-and-acceptance-helper`
+- Accepted commit: `eaf0c31`
+- Origin/main verified: `eaf0c31`
+- Push performed before this phase: yes
+- Proof directory: `/tmp/proof_kia_stick_v055_proof_index_20260620T203815Z`
+- Self-test proof directory: `/tmp/proof_kia_stick_v0_5_5_proof_index_self_test_20260620T203854Z`
+
+## Next Safe Phase
+
+Recommended next phase: `KIA-Stick-v0.5.6-operator-queue-review`.
+
+Future phases remain fake-only unless separately authorized. This queue does not approve real import, file pickers, path readers, file reads, copying, OCR, text extraction, indexing, upload handling, private-vault inspection, cloud calls, service changes, pushes, or private document access.
+
+---
+
 ## v0.5.5 Proof Index and Acceptance Helper
 
 - Phase: `KIA-Stick-v0.5.5-proof-index-and-acceptance-helper`

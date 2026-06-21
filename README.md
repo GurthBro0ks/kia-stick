@@ -12,6 +12,14 @@ KIA Stick separates milestone semver from build identity:
 
 `/health`, `/version`, the app header, settings, answer footer, and saved answer metadata expose the current `displayVersion`.
 
+## v0.5.6 Local Task Queue
+
+Phase: `KIA-Stick-v0.5.6-local-task-queue`.
+
+`docs/phase-backlog.json` is a local fake-only phase backlog for grouping future work. It stores safe fields only: id, phase, title, status, model, risk, summary, next action, timestamps, and sanitized history.
+
+`npm run queue:list` prints the backlog. `npm run queue:next` prints the first non-accepted item plus a compact Codex-ready summary. `npm run queue:set -- --id ID --status STATUS` updates status and history after rejecting private paths and secrets-looking values. Queue tooling never pushes.
+
 ## v0.5.5 Proof Index and Acceptance Helper
 
 Phase: `KIA-Stick-v0.5.5-proof-index-and-acceptance-helper`.
