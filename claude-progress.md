@@ -2,10 +2,31 @@
 
 ## Current Phase
 
-- Phase: `KIA-Stick-v0.5.9-citation-qa-fixtures`
+- Phase: `KIA-Stick-v0.5.10-docs-release-pack`
 - Target: `USER_LAPTOP_ONLY`
 - Provider: `local-fake-deterministic`
-- Status: validation PASS for fake-only citation QA fixtures from accepted pushed v0.5.8 baseline `cb9174b`; one local commit will be created, no push.
+- Status: validation PASS for fake-only docs release pack from accepted pushed v0.5.9 baseline `c6bd17f`; one local commit will be created, no push.
+
+## v0.5.10 Docs Release Pack State
+
+- Phase: `KIA-Stick-v0.5.10-docs-release-pack`
+- Baseline: origin/main and HEAD verified at `c6bd17f`.
+- v0.5.9 pushed state: recorded as accepted pushed commit `c6bd17f`.
+- Scope: fake-only docs release pack covering operator guide, safe boundaries, queue workflow, proof workflow, closeout workflow, validation commands, and release notes.
+- Product version impact: none; app remains `0.4.0`.
+- Prompt version: `prompt.fake-docs.v0.5-import-wizard-hardening`
+- Release pack: `docs/RELEASE_v0.5.md`.
+- Tests added: `tests/docsRelease.test.ts`.
+- Queue state: `queue-001-closeout-helper-hardening`, `queue-002-fake-redaction-metadata-depth`, and `queue-003-citation-qa-fixtures` accepted; `queue-004-docs-release-pack` marked `needs_review` after validation passed.
+- Real/private document access: none.
+- Private vault inspected: no.
+- Push performed in this phase: no.
+- Commands run: missing `/home/slimy/*` harness checks, local harness load, git status/log/ref checks, queue inspection, closeout helper inspection, implementation edits, `npm run queue:set -- --id queue-003-citation-qa-fixtures --status accepted`, focused JSON/release/doc/queue checks, `test "$(git rev-parse --short origin/main)" = "c6bd17f"`, `npm run release:check`, `npm run lint`, `npm run typecheck`, `npm run test`, `npm run build`, `npm run scan:fake`, `npm run scan:privacy`, `npm run qa`, `npm run phase:run -- --phase KIA-Stick-v0.5.10-docs-release-self-test`, `npm run proof:latest`, `npm run queue:next`, `npm run closeout:review`, `npm run closeout:summary`, JSON parse checks, private tracked-path check, no-file-input grep, APWU boundary grep, `git diff --check`, and `npm run queue:set -- --id queue-004-docs-release-pack --status needs_review`.
+- Files changed: `docs/RELEASE_v0.5.md`, `tests/docsRelease.test.ts`, `tests/taskQueue.test.ts`, `docs/phase-backlog.json`, `README.md`, `CLOSEOUT.md`, `feature_list.json`, and `claude-progress.md`.
+- Proof directory: `/tmp/proof_kia_stick_v0510_docs_release_20260621T023319Z`
+- Phase runner self-test proof directory: `/tmp/proof_kia_stick_v0_5_10_docs_release_self_test_20260621T023719Z`
+- Validation: PASS.
+- Remaining unknowns: local commit SHA, operator review, queue ready-to-push decision, and optional manual push.
 
 ## v0.5.9 Citation QA Fixture State
 

@@ -1,6 +1,6 @@
 {
   "schema": "kia-stick-local-task-queue.v1",
-  "updated_at": "2026-06-21T02:11:26.182Z",
+  "updated_at": "2026-06-21T02:34:54.030Z",
   "items": [
     {
       "id": "queue-001-closeout-helper-hardening",
@@ -64,13 +64,13 @@
       "id": "queue-003-citation-qa-fixtures",
       "phase": "KIA-Stick-v0.5.9-citation-qa-fixtures",
       "title": "Citation QA fixtures",
-      "status": "needs_review",
+      "status": "accepted",
       "model": "GPT/Codex $100",
       "risk": "medium",
       "summary": "Add fake citation QA fixtures that stress authority hierarchy, no-answer handling, and version metadata without changing answer content.",
-      "next_action": "Review v0.5.9 citation QA proof pack and closeout helper output before manual push.",
+      "next_action": "Accepted pushed state verified at c6bd17f; proceed to the docs release pack phase.",
       "created_at": "2026-06-20T20:45:00.000Z",
-      "updated_at": "2026-06-21T02:11:26.182Z",
+      "updated_at": "2026-06-21T02:30:31.719Z",
       "history": [
         {
           "at": "2026-06-20T20:45:00.000Z",
@@ -83,6 +83,12 @@
           "from": "planned",
           "to": "needs_review",
           "note": "v0.5.9 citation QA validation passed; ready for operator proof review."
+        },
+        {
+          "at": "2026-06-21T02:30:31.719Z",
+          "from": "needs_review",
+          "to": "accepted",
+          "note": "v0.5.9 citation QA fixtures accepted after pushed baseline c6bd17f was verified."
         }
       ]
     },
@@ -90,19 +96,25 @@
       "id": "queue-004-docs-release-pack",
       "phase": "KIA-Stick-v0.5.10-docs-release-pack",
       "title": "Docs release pack",
-      "status": "planned",
+      "status": "needs_review",
       "model": "Claude closeout review after Codex validation",
       "risk": "low",
       "summary": "Prepare a GitHub-safe docs release pack from existing fake-only state, validation logs, and proof summaries.",
-      "next_action": "Collect current fake-only release notes and closeout summaries for review.",
+      "next_action": "Review v0.5.10 docs release proof pack and closeout helper output before manual push.",
       "created_at": "2026-06-20T20:45:00.000Z",
-      "updated_at": "2026-06-20T20:45:00.000Z",
+      "updated_at": "2026-06-21T02:34:54.030Z",
       "history": [
         {
           "at": "2026-06-20T20:45:00.000Z",
           "from": "planned",
           "to": "planned",
           "note": "Seeded fake-only backlog item."
+        },
+        {
+          "at": "2026-06-21T02:34:54.030Z",
+          "from": "planned",
+          "to": "needs_review",
+          "note": "v0.5.10 docs release pack validation passed; ready for operator proof review."
         }
       ]
     },

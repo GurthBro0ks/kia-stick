@@ -12,6 +12,14 @@ KIA Stick separates milestone semver from build identity:
 
 `/health`, `/version`, the app header, settings, answer footer, and saved answer metadata expose the current `displayVersion`.
 
+## v0.5.10 Docs Release Pack
+
+Phase: `KIA-Stick-v0.5.10-docs-release-pack`.
+
+`docs/RELEASE_v0.5.md` is the GitHub-safe fake-only release pack for the current KIA Stick state. It covers the operator guide, safe real-document boundaries, queue workflow, proof workflow, closeout workflow, validation commands, explicit non-approvals, and the v0.5.1 through v0.5.10 changelog.
+
+Current product version remains `0.4.0`; current prompt version remains `prompt.fake-docs.v0.5-import-wizard-hardening`.
+
 ## v0.5.9 Citation QA Fixtures
 
 Phase: `KIA-Stick-v0.5.9-citation-qa-fixtures`.

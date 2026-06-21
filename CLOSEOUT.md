@@ -1,5 +1,48 @@
 # KIA Stick Closeout
 
+## v0.5.10 Docs Release Pack
+
+- Phase: `KIA-Stick-v0.5.10-docs-release-pack`
+- Baseline: accepted pushed v0.5.9 state at `c6bd17f`
+- Scope: fake-only docs release pack for operator guide, safe boundaries, queue workflow, proof workflow, closeout workflow, validation commands, and release notes.
+- Product version impact: none; app remains `0.4.0`.
+- Prompt version: `prompt.fake-docs.v0.5-import-wizard-hardening`
+- Release pack: `docs/RELEASE_v0.5.md`
+- Tests added: `tests/docsRelease.test.ts`
+- Covered docs: current fake-only features, explicit non-approvals, operator checklist, validation commands, queue/proof/closeout workflows, and v0.5.1 through v0.5.10 changelog.
+- Proof directory: `/tmp/proof_kia_stick_v0510_docs_release_20260621T023319Z`
+- Phase runner self-test proof directory: `/tmp/proof_kia_stick_v0_5_10_docs_release_self_test_20260621T023719Z`
+- Validation: PASS
+- Queue state: `queue-001-closeout-helper-hardening`, `queue-002-fake-redaction-metadata-depth`, and `queue-003-citation-qa-fixtures` accepted; `queue-004-docs-release-pack` marked `needs_review` after validation passed.
+- Real document access: none
+- Private vault inspected: no
+- Push performed: no
+
+## v0.5.9 Accepted Pushed State
+
+- Phase: `KIA-Stick-v0.5.9-citation-qa-fixtures`
+- Accepted commit: `c6bd17f`
+- Origin/main verified: `c6bd17f`
+- Push performed before this phase: yes
+- Proof directory: `/tmp/proof_kia_stick_v059_citation_qa_20260621T020937Z`
+- Self-test proof directory: `/tmp/proof_kia_stick_v0_5_9_citation_qa_self_test_20260621T021017Z`
+
+## Next Safe Phase
+
+Recommended next phase: `KIA-Stick-v0.5.10-operator-docs-release-review`.
+
+Future phases remain fake-only unless separately authorized. This docs release pack does not approve real import, file pickers, path readers, file reads, copying, OCR, text extraction, indexing, upload handling, private-vault inspection, cloud calls, service changes, pushes, or private document access.
+
+---
+
+## v0.5.10 Coverage
+
+- Added `docs/RELEASE_v0.5.md` as the GitHub-safe fake-only release pack.
+- Documented current fake-only features, safe real-document boundaries, explicit non-approvals, operator checklist, validation commands, queue workflow, proof workflow, and closeout workflow.
+- Added a concise v0.5.1 through v0.5.10 changelog.
+- Added `tests/docsRelease.test.ts` to keep the release pack's required sections and commands covered.
+- Preserved app behavior; this phase is docs/state plus docs coverage only.
+
 ## v0.5.9 Citation QA Fixtures
 
 - Phase: `KIA-Stick-v0.5.9-citation-qa-fixtures`
