@@ -50,8 +50,9 @@ describe("task-queue", () => {
       "queue-005-real-doc-pilot-plan-only",
     ]);
     expect(queue.items[0].status).toBe("accepted");
-    expect(queue.items[1].status).toBe("needs_review");
-    expect(queue.items.slice(2).every((item) => item.status === "planned")).toBe(true);
+    expect(queue.items[1].status).toBe("accepted");
+    expect(["planned", "needs_review"]).toContain(queue.items[2].status);
+    expect(queue.items.slice(3).every((item) => item.status === "planned")).toBe(true);
     expect(queue.items.every((item) => item.history.length > 0)).toBe(true);
     expect(mod.validateQueue(queue)).toBe(true);
   });
@@ -60,8 +61,9 @@ describe("task-queue", () => {
     const mod = await loadModule();
     const queue = mod.loadQueue(resolve("."));
     queue.items[0].status = "accepted";
+    queue.items[1].status = "accepted";
 
-    expect(mod.selectNextItem(queue)?.id).toBe("queue-002-fake-redaction-metadata-depth");
+    expect(mod.selectNextItem(queue)?.id).toBe("queue-003-citation-qa-fixtures");
   });
 
   it("updates status, next action, timestamps, and history", async () => {
@@ -129,9 +131,9 @@ describe("task-queue", () => {
     const result = spawnSync("node", [scriptPath, "next"], { cwd: resolve("."), encoding: "utf8" });
 
     expect(result.status).toBe(0);
-    expect(result.stdout).toContain("id=queue-002-fake-redaction-metadata-depth");
+    expect(result.stdout).toContain("id=queue-003-citation-qa-fixtures");
     expect(result.stdout).toContain("Codex-ready summary:");
-    expect(result.stdout).toContain("KIA-Stick-v0.5.8-fake-redaction-metadata-depth");
+    expect(result.stdout).toContain("KIA-Stick-v0.5.9-citation-qa-fixtures");
   });
 
   it("does not execute git push from queue commands", () => {

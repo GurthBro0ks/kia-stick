@@ -12,6 +12,16 @@ KIA Stick separates milestone semver from build identity:
 
 `/health`, `/version`, the app header, settings, answer footer, and saved answer metadata expose the current `displayVersion`.
 
+## v0.5.9 Citation QA Fixtures
+
+Phase: `KIA-Stick-v0.5.9-citation-qa-fixtures`.
+
+`tests/fixtures/citationQaFixtures.ts` and `tests/citationQa.test.ts` add fake-only citation QA coverage for authority hierarchy order, no-answer citation integrity, conflict notes, duplicate citation dedupe, and source grouping.
+
+The answer governor now orders fake citation candidates by the documented hierarchy before rendering citations: local, state/area, national, manuals/handbooks, arbitration/settlements, steward notes/evidence, and unknown. Duplicate fake documents and citations are collapsed by stable id. Unverified fake material can still appear in related sections for follow-up context, but it is not promoted into citable proof.
+
+Current product version remains `0.4.0`; current prompt version remains `prompt.fake-docs.v0.5-import-wizard-hardening`.
+
 ## v0.5.8 Fake Redaction Metadata Depth
 
 Phase: `KIA-Stick-v0.5.8-fake-redaction-metadata-depth`.

@@ -2,10 +2,32 @@
 
 ## Current Phase
 
-- Phase: `KIA-Stick-v0.5.8-fake-redaction-metadata-depth`
+- Phase: `KIA-Stick-v0.5.9-citation-qa-fixtures`
 - Target: `USER_LAPTOP_ONLY`
 - Provider: `local-fake-deterministic`
-- Status: validation PASS for fake redaction metadata depth from accepted pushed v0.5.7 baseline `809bbb9`; one local commit will be created, no push.
+- Status: validation PASS for fake-only citation QA fixtures from accepted pushed v0.5.8 baseline `cb9174b`; one local commit will be created, no push.
+
+## v0.5.9 Citation QA Fixture State
+
+- Phase: `KIA-Stick-v0.5.9-citation-qa-fixtures`
+- Baseline: origin/main and HEAD verified at `cb9174b`.
+- v0.5.8 pushed state: recorded as accepted pushed commit `cb9174b`.
+- Scope: fake-only citation QA fixtures plus deterministic citation ordering and dedupe checks.
+- Product version impact: none; app remains `0.4.0`.
+- Prompt version: `prompt.fake-docs.v0.5-import-wizard-hardening`
+- Fixture files: `tests/fixtures/citationQaFixtures.ts` and `tests/citationQa.test.ts`.
+- Covered hierarchy: local, state/area, national, manuals/handbooks, arbitration/settlements, steward notes/evidence, and unknown.
+- Covered behaviors: answer citation integrity, missing citation/no-answer path, conflict notes, citation ordering, duplicate citation dedupe, and source grouping.
+- Queue state: `queue-001-closeout-helper-hardening` accepted; `queue-002-fake-redaction-metadata-depth` accepted after pushed state was verified; `queue-003-citation-qa-fixtures` marked `needs_review` after validation passed.
+- Real/private document access: none.
+- Private vault inspected: no.
+- Push performed in this phase: no.
+- Commands run: missing `/home/slimy/*` harness checks, local harness load, git status/log/ref checks, queue inspection, closeout helper inspection, implementation edits, focused `npm run typecheck`, focused `npm run test -- tests/citationQa.test.ts tests/answerGovernor.test.ts tests/taskQueue.test.ts`, `test "$(git rev-parse --short origin/main)" = "cb9174b"`, `npm run release:check`, `npm run lint`, `npm run typecheck`, `npm run test`, `npm run build`, `npm run scan:fake`, `npm run scan:privacy`, `npm run qa`, `npm run phase:run -- --phase KIA-Stick-v0.5.9-citation-qa-self-test`, `npm run proof:latest`, `npm run queue:next`, `npm run closeout:review`, `npm run closeout:summary`, JSON parse checks, private tracked-path check, no-file-input grep, APWU boundary grep, `git diff --check`, and `npm run queue:set -- --id queue-003-citation-qa-fixtures --status needs_review`.
+- Files changed: `lib/sourceModel.ts`, `lib/answerGovernor.ts`, `tests/fixtures/citationQaFixtures.ts`, `tests/citationQa.test.ts`, `tests/taskQueue.test.ts`, `docs/phase-backlog.json`, `README.md`, `CLOSEOUT.md`, `feature_list.json`, and `claude-progress.md`.
+- Proof directory: `/tmp/proof_kia_stick_v059_citation_qa_20260621T020937Z`
+- Phase runner self-test proof directory: `/tmp/proof_kia_stick_v0_5_9_citation_qa_self_test_20260621T021017Z`
+- Validation: PASS.
+- Remaining unknowns: local commit SHA, operator review, queue ready-to-push decision, and optional manual push.
 
 ## v0.5.8 Fake Redaction Metadata State
 

@@ -2,7 +2,9 @@ import {
   bucketForClass,
   citationForDoc,
   citationLabel,
+  dedupeCitations,
   docsForScope,
+  orderFakeDocumentsForCitation,
   type Citation,
   type Detail,
   type FakeDocument,
@@ -457,10 +459,11 @@ export function buildAnswer(question: string, options: AnswerOptions): AnswerRes
   const { intent, docs } = resolution.clarificationNeeded
     ? { intent: "unknown" as AnswerIntent, docs: [] as FakeDocument[] }
     : docsForIntent(resolution.governedQuestion, options.scope);
-  const sourceGroups = groupSources(docs);
-  const noAnswer = resolution.clarificationNeeded || !hasControllingLanguage(docs);
-  const citations = docs.filter((doc) => doc.citable).map(citationForDoc);
-  const relatedFakeSections = docs.map(citationForDoc);
+  const orderedDocs = orderFakeDocumentsForCitation(docs);
+  const sourceGroups = groupSources(orderedDocs);
+  const noAnswer = resolution.clarificationNeeded || !hasControllingLanguage(orderedDocs);
+  const citations = dedupeCitations(orderedDocs.filter((doc) => doc.citable).map(citationForDoc));
+  const relatedFakeSections = orderedDocs.map(citationForDoc);
   const shortAnswer = resolution.clarificationNeeded
     ? clarificationText
     : shortAnswerFor(intent, docs, options.mode, resolution.followUpKind);
@@ -478,7 +481,7 @@ export function buildAnswer(question: string, options: AnswerOptions): AnswerRes
     bestGuessDisabled: noAnswer,
     sourceGroups,
     citations,
-    conflicts: conflictsFor(intent, docs, noAnswer),
+    conflicts: conflictsFor(intent, orderedDocs, noAnswer),
     evidenceChecklist: checklistFor(intent, options.detail),
     missingFacts: missingFactsFor(intent, noAnswer),
     followUps: followUpsFor(intent),

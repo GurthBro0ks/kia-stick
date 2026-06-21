@@ -1,5 +1,48 @@
 # KIA Stick Closeout
 
+## v0.5.9 Citation QA Fixtures
+
+- Phase: `KIA-Stick-v0.5.9-citation-qa-fixtures`
+- Baseline: accepted pushed v0.5.8 state at `cb9174b`
+- Scope: fake-only citation QA fixtures and deterministic citation ordering/dedupe checks.
+- Product version impact: none; app remains `0.4.0`.
+- Prompt version: `prompt.fake-docs.v0.5-import-wizard-hardening`
+- Fixture files: `tests/fixtures/citationQaFixtures.ts` and `tests/citationQa.test.ts`
+- Covered hierarchy: local, state/area, national, manuals/handbooks, arbitration/settlements, steward notes/evidence, and unknown.
+- Covered behaviors: answer citation integrity, missing citation/no-answer path, conflict notes, citation ordering, duplicate citation dedupe, and source grouping.
+- Proof directory: `/tmp/proof_kia_stick_v059_citation_qa_20260621T020937Z`
+- Phase runner self-test proof directory: `/tmp/proof_kia_stick_v0_5_9_citation_qa_self_test_20260621T021017Z`
+- Validation: PASS
+- Queue state: `queue-001-closeout-helper-hardening` accepted; `queue-002-fake-redaction-metadata-depth` accepted after pushed state was verified; `queue-003-citation-qa-fixtures` marked `needs_review` after validation passed.
+- Real document access: none
+- Private vault inspected: no
+- Push performed: no
+
+## v0.5.8 Accepted Pushed State
+
+- Phase: `KIA-Stick-v0.5.8-fake-redaction-metadata-depth`
+- Accepted commit: `cb9174b`
+- Origin/main verified: `cb9174b`
+- Push performed before this phase: yes
+- Proof directory: `/tmp/proof_kia_stick_v058_redaction_metadata_20260621T012056Z`
+- Self-test proof directory: `/tmp/proof_kia_stick_v0_5_8_redaction_metadata_self_test_20260621T012136Z`
+
+## Next Safe Phase
+
+Recommended next phase: `KIA-Stick-v0.5.9-operator-citation-qa-review`.
+
+Future phases remain fake-only unless separately authorized. This citation QA pass does not approve real import, file pickers, path readers, file reads, copying, OCR, text extraction, indexing, upload handling, private-vault inspection, cloud calls, service changes, pushes, or private document access.
+
+---
+
+## v0.5.9 Coverage
+
+- Added deterministic fake citation QA fixtures for annual leave, one-click lunch, and Step 1 evidence paths.
+- Added hierarchy assertions covering local, state/area, national, manuals/handbooks, arbitration/settlements, steward notes/evidence, and unknown groups.
+- Added answer citation integrity checks for citable status, hash/page locator presence, no-answer paths, conflict notes, and unverified-source exclusion from authoritative citations.
+- Added duplicate fake document and citation dedupe checks by stable id.
+- Preserved fake-only answer wording and UI behavior; changes are limited to deterministic citation ordering/dedupe and test coverage.
+
 ## v0.5.8 Fake Redaction Metadata Depth
 
 - Phase: `KIA-Stick-v0.5.8-fake-redaction-metadata-depth`

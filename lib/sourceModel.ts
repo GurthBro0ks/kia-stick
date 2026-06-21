@@ -204,6 +204,29 @@ export function buildSourceHierarchyGroups(docs: FakeDocument[] = corpus.docs): 
     .filter((group) => group.docs.length > 0);
 }
 
+function sourceHierarchyRank(sourceClass: SourceClass): number {
+  return sourceHierarchyOrder.indexOf(hierarchyForClass(sourceClass));
+}
+
+export function dedupeFakeDocuments(docs: FakeDocument[]): FakeDocument[] {
+  const seen = new Set<string>();
+  const unique: FakeDocument[] = [];
+  for (const doc of docs) {
+    if (seen.has(doc.id)) continue;
+    seen.add(doc.id);
+    unique.push(doc);
+  }
+  return unique;
+}
+
+export function orderFakeDocumentsForCitation(docs: FakeDocument[]): FakeDocument[] {
+  return dedupeFakeDocuments(docs).sort((left, right) => {
+    const rank = sourceHierarchyRank(left.class) - sourceHierarchyRank(right.class);
+    if (rank !== 0) return rank;
+    return left.id.localeCompare(right.id);
+  });
+}
+
 export function citationForDoc(doc: FakeDocument): Citation {
   return {
     id: doc.id,
@@ -218,6 +241,17 @@ export function citationForDoc(doc: FakeDocument): Citation {
     hash: doc.hash,
     citable: doc.citable,
   };
+}
+
+export function dedupeCitations(citations: Citation[]): Citation[] {
+  const seen = new Set<string>();
+  const unique: Citation[] = [];
+  for (const citation of citations) {
+    if (seen.has(citation.id)) continue;
+    seen.add(citation.id);
+    unique.push(citation);
+  }
+  return unique;
 }
 
 export function citationLabel(citation: Citation): string {

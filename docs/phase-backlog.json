@@ -1,6 +1,6 @@
 {
   "schema": "kia-stick-local-task-queue.v1",
-  "updated_at": "2026-06-21T01:25:00.000Z",
+  "updated_at": "2026-06-21T02:11:26.182Z",
   "items": [
     {
       "id": "queue-001-closeout-helper-hardening",
@@ -32,13 +32,13 @@
       "id": "queue-002-fake-redaction-metadata-depth",
       "phase": "KIA-Stick-v0.5.8-fake-redaction-metadata-depth",
       "title": "Fake redaction metadata depth",
-      "status": "needs_review",
+      "status": "accepted",
       "model": "GPT/Codex $100",
       "risk": "medium",
       "summary": "Expand synthetic redaction metadata fixtures and tests while keeping all data fictional and GitHub-safe.",
-      "next_action": "Review v0.5.8 proof pack, closeout helper output, and fake redaction metadata coverage before manual push.",
+      "next_action": "Accepted pushed state verified at cb9174b; proceed to the fake citation QA fixture phase.",
       "created_at": "2026-06-20T20:45:00.000Z",
-      "updated_at": "2026-06-21T01:25:00.000Z",
+      "updated_at": "2026-06-21T02:07:01.000Z",
       "history": [
         {
           "at": "2026-06-20T20:45:00.000Z",
@@ -51,6 +51,12 @@
           "from": "planned",
           "to": "needs_review",
           "note": "v0.5.8 fake redaction metadata validation passed; ready for operator proof review."
+        },
+        {
+          "at": "2026-06-21T02:07:01.000Z",
+          "from": "needs_review",
+          "to": "accepted",
+          "note": "v0.5.8 fake redaction metadata accepted after pushed baseline cb9174b was verified."
         }
       ]
     },
@@ -58,19 +64,25 @@
       "id": "queue-003-citation-qa-fixtures",
       "phase": "KIA-Stick-v0.5.9-citation-qa-fixtures",
       "title": "Citation QA fixtures",
-      "status": "planned",
+      "status": "needs_review",
       "model": "GPT/Codex $100",
       "risk": "medium",
       "summary": "Add fake citation QA fixtures that stress authority hierarchy, no-answer handling, and version metadata without changing answer content.",
-      "next_action": "Identify fake fixture cases and expected citation classes.",
+      "next_action": "Review v0.5.9 citation QA proof pack and closeout helper output before manual push.",
       "created_at": "2026-06-20T20:45:00.000Z",
-      "updated_at": "2026-06-20T20:45:00.000Z",
+      "updated_at": "2026-06-21T02:11:26.182Z",
       "history": [
         {
           "at": "2026-06-20T20:45:00.000Z",
           "from": "planned",
           "to": "planned",
           "note": "Seeded fake-only backlog item."
+        },
+        {
+          "at": "2026-06-21T02:11:26.182Z",
+          "from": "planned",
+          "to": "needs_review",
+          "note": "v0.5.9 citation QA validation passed; ready for operator proof review."
         }
       ]
     },
