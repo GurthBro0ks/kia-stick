@@ -819,6 +819,9 @@ export function VaultPanel(props: {
         <NoticeBox tone="neutral" title="Index warning">
           Quarantine, redaction review, and metadata review are separate gates. They never imply index approval.
         </NoticeBox>
+        <NoticeBox tone="warning" title="Fake redaction labels">
+          Redaction categories, reviewer notes, confidence, and eligibility impact are synthetic labels only. They are not real redaction, approval, or indexing.
+        </NoticeBox>
       </div>
 
       <div className="vaultTabs" role="tablist" aria-label="Vault governance surfaces">
@@ -970,7 +973,7 @@ export function ImportWizardPanel(props: {
           Real file selection, private-vault inspection, copy-to-quarantine, OCR, indexing, and uploads are placeholders only.
         </NoticeBox>
         <NoticeBox tone="neutral" title="Proof is sanitized">
-          Audit export contains build identity, fake metadata, fake gates, and blocked reasons only.
+          Audit export contains build identity, fake metadata, fake redaction labels, fake gates, and blocked reasons only.
         </NoticeBox>
       </div>
 
@@ -1011,8 +1014,13 @@ export function ImportWizardPanel(props: {
           <WizardField label="Item count" value={String(props.state.record.itemCount)} />
           <WizardField label="Fake hash" value={props.state.record.fakeHash} />
           <WizardField label="Proof ID" value={props.state.record.proofId} />
+          <WizardField label="Redaction outcome" value={props.state.record.redactionReviewOutcome} />
+          <WizardField label="Eligibility impact" value={props.state.record.redactionEligibilityImpact} />
           <WizardField label="Real actions" value={props.state.realActionsDisabled ? "disabled" : "enabled"} />
         </div>
+
+        <p className="indexReason">Fake redaction metadata is advisory fixture data only; it is not real redaction, approval, or indexing.</p>
+        <RedactionMetadataList metadata={props.state.record.redactionMetadata} />
 
         <ul className="flagList" aria-label="fake redaction categories">
           {props.state.record.redactionFlags.map((flag) => (
@@ -1067,7 +1075,7 @@ export function ImportWizardPanel(props: {
       <section className="auditExportPanel">
         <div>
           <h3>Fake import proof</h3>
-          <p>Exports include fake wizard state, fake audit events, and build identity only. They exclude private paths and file content.</p>
+          <p>Exports include fake wizard state, fake redaction metadata labels, fake audit events, and build identity only. They exclude private paths, snippets, OCR text, real identifiers, and file content.</p>
         </div>
         <div className="vaultActions">
           <DownloadLink fileName="kia-stick-fake-import-wizard-audit.json" label="JSON" mimeType="application/json" text={jsonExport} />
@@ -1168,6 +1176,8 @@ function VaultRecordCard({
             <VaultField label="Source status" value={record.sourceStatus} />
             <VaultField label="Sensitivity" value={record.sensitivity} />
             <VaultField label="Redaction" value={record.redactionStatus} />
+            <VaultField label="Redaction outcome" value={record.redactionReviewOutcome} />
+            <VaultField label="Eligibility impact" value={record.redactionEligibilityImpact} />
             <VaultField label="Metadata" value={record.metadataStatus} />
             <VaultField label="Workflow state" value={record.workflowState} />
             <VaultField label="Reviewer" value={record.reviewer} />
@@ -1187,6 +1197,8 @@ function VaultRecordCard({
               ))}
             </ul>
           )}
+
+          <RedactionMetadataList metadata={record.redactionMetadata} />
         </>
       )}
 
@@ -1255,6 +1267,19 @@ function VaultRecordCard({
         </button>
       </div>
     </article>
+  );
+}
+
+function RedactionMetadataList({ metadata }: { metadata: FakeVaultRecord["redactionMetadata"] }) {
+  if (metadata.length === 0) return <p className="emptyState">No fake redaction metadata labels.</p>;
+  return (
+    <ul className="flagList" aria-label="fake redaction metadata details">
+      {metadata.map((item) => (
+        <li key={`${item.category}-${item.safeExampleLabel}`}>
+          {item.safeExampleLabel}: {item.category}, {item.severity}, confidence {Math.round(item.confidence * 100)}%, impact {item.eligibilityImpact}
+        </li>
+      ))}
+    </ul>
   );
 }
 

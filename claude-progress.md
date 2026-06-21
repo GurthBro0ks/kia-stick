@@ -2,10 +2,33 @@
 
 ## Current Phase
 
-- Phase: `KIA-Stick-v0.5.7-closeout-helper-hardening`
+- Phase: `KIA-Stick-v0.5.8-fake-redaction-metadata-depth`
 - Target: `USER_LAPTOP_ONLY`
 - Provider: `local-fake-deterministic`
-- Status: validation PASS for closeout helper hardening from accepted pushed v0.5.6 baseline `e15f2ee`; one local commit pending, no push.
+- Status: validation PASS for fake redaction metadata depth from accepted pushed v0.5.7 baseline `809bbb9`; one local commit will be created, no push.
+
+## v0.5.8 Fake Redaction Metadata State
+
+- Phase: `KIA-Stick-v0.5.8-fake-redaction-metadata-depth`
+- Baseline: origin/main and HEAD verified at `809bbb9`.
+- v0.5.7 pushed state: recorded as accepted pushed commit `809bbb9`.
+- Scope: fake-only redaction metadata depth for Import Wizard and Vault review workflows.
+- Product version impact: none; app remains `0.4.0`.
+- Prompt version: `prompt.fake-docs.v0.5-import-wizard-hardening`
+- Shared model: `lib/redactionMetadataModel.ts`
+- Fake metadata fields: category, severity, reviewer note, confidence, reason, safe example label, and index eligibility impact.
+- Review outcomes: `approve_redaction`, `needs_more_redaction`, `reject_sensitive`, and `metadata_incomplete`.
+- Proof behavior: exports include synthetic labels and guard fields only; no private paths, snippets, OCR text, real identifiers, or file content.
+- Queue state: `queue-001-closeout-helper-hardening` accepted; `queue-002-fake-redaction-metadata-depth` marked `needs_review` after validation passed.
+- Real/private document access: none.
+- Private vault inspected: no.
+- Push performed in this phase: no.
+- Commands run: missing `/home/slimy/*` harness checks, local harness load, git status/log/ref checks, repo/memory inspection, queue inspection, closeout helper inspection, implementation edits, focused `npm run typecheck`, focused `npm run test -- tests/answerGovernor.test.ts tests/taskQueue.test.ts`, `npm run queue:next`, `test "$(git rev-parse --short origin/main)" = "809bbb9"`, `npm run release:check`, `npm run lint`, `npm run typecheck`, `npm run test`, `npm run build`, `npm run scan:fake`, `npm run scan:privacy`, `npm run qa`, `npm run phase:run -- --phase KIA-Stick-v0.5.8-redaction-metadata-self-test`, `npm run proof:latest`, `npm run closeout:review`, `npm run closeout:summary`, private tracked-path check, no-file-input grep, APWU boundary grep, `git diff --check`, post-queue `npm run release:check`, post-queue `npm run test`, post-queue `npm run queue:next`, post-queue `npm run closeout:review`, post-queue `npm run closeout:summary`, and post-queue JSON/diff checks.
+- Files changed: `lib/redactionMetadataModel.ts`, `lib/importWizardModel.ts`, `lib/vaultModel.ts`, `components/KiaStickApp.tsx`, `tests/answerGovernor.test.ts`, `tests/taskQueue.test.ts`, `docs/phase-backlog.json`, `README.md`, `CLOSEOUT.md`, `feature_list.json`, and `claude-progress.md`.
+- Proof directory: `/tmp/proof_kia_stick_v058_redaction_metadata_20260621T012056Z`
+- Phase runner self-test proof directory: `/tmp/proof_kia_stick_v0_5_8_redaction_metadata_self_test_20260621T012136Z`
+- Validation: PASS.
+- Remaining unknowns: local commit SHA, operator review, queue ready-to-push decision, and optional manual push.
 
 ## v0.5.7 Closeout Helper State
 

@@ -1,5 +1,49 @@
 # KIA Stick Closeout
 
+## v0.5.8 Fake Redaction Metadata Depth
+
+- Phase: `KIA-Stick-v0.5.8-fake-redaction-metadata-depth`
+- Baseline: accepted pushed v0.5.7 state at `809bbb9`
+- Scope: fake-only redaction metadata depth for Import Wizard and Vault review workflows.
+- Product version impact: none; app remains `0.4.0`.
+- Prompt version: `prompt.fake-docs.v0.5-import-wizard-hardening`
+- Shared model: `lib/redactionMetadataModel.ts`
+- Fake metadata fields: category, severity, reviewer note, confidence, reason, safe example label, and index eligibility impact.
+- Deterministic outcomes: `approve_redaction`, `needs_more_redaction`, `reject_sensitive`, and `metadata_incomplete`.
+- Proof behavior: exports include synthetic redaction labels and guard fields only; no private paths, snippets, OCR text, real identifiers, or file content.
+- Proof directory: `/tmp/proof_kia_stick_v058_redaction_metadata_20260621T012056Z`
+- Phase runner self-test proof directory: `/tmp/proof_kia_stick_v0_5_8_redaction_metadata_self_test_20260621T012136Z`
+- Validation: PASS
+- Queue state: `queue-001-closeout-helper-hardening` accepted; `queue-002-fake-redaction-metadata-depth` marked `needs_review` after validation passed.
+- Real document access: none
+- Private vault inspected: no
+- Push performed: no
+
+## v0.5.8 Coverage
+
+- Added structured fake redaction metadata fixtures shared by Import Wizard and Vault.
+- Added deterministic redaction review outcomes and eligibility impact derivation.
+- Added visible copy clarifying fake redaction metadata is not real redaction, not approval, and not indexing.
+- Added fake proof/export fields and sanitization for redaction metadata.
+- Added tests for redaction metadata, blocked unsafe payloads, proof sanitization, eligibility impact, and queue/status progression.
+
+## v0.5.7 Accepted Pushed State
+
+- Phase: `KIA-Stick-v0.5.7-closeout-helper-hardening`
+- Accepted commit: `809bbb9`
+- Origin/main verified: `809bbb9`
+- Push performed before this phase: yes
+- Proof directory: `/tmp/proof_kia_stick_v057_closeout_helper_20260621T010549Z`
+- Self-test proof directory: `/tmp/proof_kia_stick_v0_5_7_closeout_helper_self_test_20260621T010628Z`
+
+## Next Safe Phase
+
+Recommended next phase: `KIA-Stick-v0.5.8-operator-redaction-metadata-review`.
+
+Future phases remain fake-only unless separately authorized. This metadata pass does not approve real import, file pickers, path readers, file reads, copying, OCR, text extraction, indexing, upload handling, private-vault inspection, cloud calls, service changes, pushes, or private document access.
+
+---
+
 ## v0.5.7 Closeout Helper Hardening
 
 - Phase: `KIA-Stick-v0.5.7-closeout-helper-hardening`

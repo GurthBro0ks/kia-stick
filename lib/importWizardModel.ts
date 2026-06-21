@@ -1,4 +1,15 @@
 import type { RuntimeVersion } from "@/lib/version";
+import {
+  assertFakeRedactionMetadataSafe,
+  cloneRedactionMetadata,
+  fakeImportRedactionMetadata,
+  redactionEligibilityImpactFor,
+  redactionMetadataCategoryLabels,
+  redactionReviewOutcomeFor,
+  type FakeEligibilityImpact,
+  type FakeRedactionMetadata,
+  type FakeRedactionReviewOutcome,
+} from "@/lib/redactionMetadataModel";
 
 export const importWizardSteps = [
   "start_safety",
@@ -30,6 +41,9 @@ export interface FakeImportWizardRecord {
   fakeHash: string;
   fakeProvenance: string;
   redactionFlags: string[];
+  redactionMetadata: FakeRedactionMetadata[];
+  redactionReviewOutcome: FakeRedactionReviewOutcome;
+  redactionEligibilityImpact: FakeEligibilityImpact;
   reviewer: string;
   metadataReviewer: string;
   indexDecision: ImportIndexDecision;
@@ -105,6 +119,7 @@ export interface ImportWizardAuditExport {
     uploadsIncluded: false;
     vectorStoreIncluded: false;
     privateNotesIncluded: false;
+    realIdentifiersIncluded: false;
     realImportImplemented: false;
     filePickerImplemented: false;
     exportContainsOnlySyntheticMetadata: true;
@@ -114,6 +129,8 @@ export interface ImportWizardAuditExport {
     auditEntries: number;
     itemCount: number;
     indexDecision: ImportIndexDecision;
+    redactionReviewOutcome: FakeRedactionReviewOutcome;
+    redactionEligibilityImpact: FakeEligibilityImpact;
     realActionsDisabled: true;
   };
   fakeState: Pick<
@@ -237,6 +254,12 @@ const forbiddenActionKeys = new Set([
   "vectorStore",
   "embeddings",
   "privateNote",
+  "realIdentifier",
+  "realIdentifiers",
+  "memberId",
+  "accountId",
+  "employeeId",
+  "caseId",
 ]);
 
 const forbiddenPrivateFragments = [
@@ -256,6 +279,7 @@ function cloneRecord(record: FakeImportWizardRecord): FakeImportWizardRecord {
   return {
     ...record,
     redactionFlags: [...record.redactionFlags],
+    redactionMetadata: cloneRedactionMetadata(record.redactionMetadata),
   };
 }
 
@@ -323,7 +347,10 @@ export function createInitialImportWizardState(now = "2026-06-20T00:00:00.000Z")
       sensitivity: "moderate",
       fakeHash: "fakehash-import-051-a1b2c3d4",
       fakeProvenance: "Synthetic import wizard fixture; no source file exists.",
-      redactionFlags: ["fake name category", "fake date category", "fake local context category"],
+      redactionFlags: redactionMetadataCategoryLabels(fakeImportRedactionMetadata),
+      redactionMetadata: cloneRedactionMetadata(fakeImportRedactionMetadata),
+      redactionReviewOutcome: redactionReviewOutcomeFor(fakeImportRedactionMetadata),
+      redactionEligibilityImpact: redactionEligibilityImpactFor(fakeImportRedactionMetadata),
       reviewer: "UNREVIEWED",
       metadataReviewer: "UNREVIEWED",
       indexDecision: "not_indexable",
@@ -538,10 +565,11 @@ export function applyImportWizardAction(state: ImportWizardState, action: Import
         {
           ...state,
           quarantineConfirmed: true,
-          record: {
-            ...cloneRecord(state.record),
-            indexDecision: "not_indexable",
-          },
+      record: {
+        ...cloneRecord(state.record),
+        indexDecision: "not_indexable",
+        redactionEligibilityImpact: redactionEligibilityImpactFor(state.record.redactionMetadata),
+      },
         },
         "provenance_hash",
         now,
@@ -587,6 +615,8 @@ export function applyImportWizardAction(state: ImportWizardState, action: Import
           record: {
             ...cloneRecord(state.record),
             reviewer: "FAKE-ADMIN",
+            redactionReviewOutcome: "approve_redaction",
+            redactionEligibilityImpact: "metadata_required",
           },
         },
         "metadata_review",
@@ -674,6 +704,7 @@ export function importWizardNextActionLabel(step: ImportWizardStep): string {
 }
 
 export function exportImportWizardAuditJson(state: ImportWizardState, version: RuntimeVersion, generatedAt: string): string {
+  const record = sanitizeImportRecordForExport(state.record);
   const payload: ImportWizardAuditExport = {
     exportType: "kia-stick-fake-import-wizard-audit",
     generatedAt,
@@ -688,6 +719,7 @@ export function exportImportWizardAuditJson(state: ImportWizardState, version: R
       uploadsIncluded: false,
       vectorStoreIncluded: false,
       privateNotesIncluded: false,
+      realIdentifiersIncluded: false,
       realImportImplemented: false,
       filePickerImplemented: false,
       exportContainsOnlySyntheticMetadata: true,
@@ -697,6 +729,8 @@ export function exportImportWizardAuditJson(state: ImportWizardState, version: R
       auditEntries: state.auditLog.length,
       itemCount: state.record.itemCount,
       indexDecision: state.record.indexDecision,
+      redactionReviewOutcome: state.record.redactionReviewOutcome,
+      redactionEligibilityImpact: state.record.redactionEligibilityImpact,
       realActionsDisabled: true,
     },
     fakeState: {
@@ -713,7 +747,7 @@ export function exportImportWizardAuditJson(state: ImportWizardState, version: R
       fakeOnly: true,
       realActionsDisabled: true,
     },
-    record: cloneRecord(state.record),
+    record,
     auditLog: state.auditLog.map(sanitizeAuditEntryForExport),
   };
 
@@ -722,16 +756,19 @@ export function exportImportWizardAuditJson(state: ImportWizardState, version: R
 
 export function exportImportWizardAuditMarkdown(state: ImportWizardState, version: RuntimeVersion, generatedAt: string): string {
   const auditLog = state.auditLog.map(sanitizeAuditEntryForExport);
+  const record = sanitizeImportRecordForExport(state.record);
   const lines = [
     "# KIA Stick Fake Import Wizard Audit",
     "",
     `Generated: ${generatedAt}`,
     `Display version: ${version.displayVersion}`,
     `Current step: ${importWizardStepLabels[state.currentStep]}`,
-    `Record: ${state.record.id}`,
-    `Scope: ${state.record.scopeMode}`,
-    `Items: ${state.record.itemCount}`,
-    `Index decision: ${state.record.indexDecision}`,
+    `Record: ${record.id}`,
+    `Scope: ${record.scopeMode}`,
+    `Items: ${record.itemCount}`,
+    `Index decision: ${record.indexDecision}`,
+    `Redaction outcome: ${record.redactionReviewOutcome}`,
+    `Redaction eligibility impact: ${record.redactionEligibilityImpact}`,
     "",
     "## Guard",
     "",
@@ -744,8 +781,17 @@ export function exportImportWizardAuditMarkdown(state: ImportWizardState, versio
     "- Uploads included: false",
     "- Vector store included: false",
     "- Private notes included: false",
+    "- Real identifiers included: false",
     "- Real import implemented: false",
     "- File picker implemented: false",
+    "- Real identifiers included: false",
+    "",
+    "## Fake Redaction Metadata",
+    "",
+    ...record.redactionMetadata.map(
+      (item) =>
+        `- ${item.safeExampleLabel} | ${item.category} | ${item.severity} | confidence ${item.confidence} | ${item.eligibilityImpact} | ${item.reason}`
+    ),
     "",
     "## Audit Events",
     "",
@@ -770,5 +816,19 @@ function sanitizeAuditEntryForExport(entry: ImportWizardAuditEntry): ImportWizar
   return {
     ...sanitized,
     note: `Sanitized unsafe audit entry from fake proof: ${guard.reasons.join("; ")}`,
+  };
+}
+
+function sanitizeImportRecordForExport(record: FakeImportWizardRecord): FakeImportWizardRecord {
+  const cloned = cloneRecord(record);
+  const metadataGuard = assertFakeRedactionMetadataSafe(cloned.redactionMetadata);
+  const recordGuard = assertImportWizardFakeOnly(cloned);
+  if (metadataGuard.ok && recordGuard.ok) return cloned;
+  return {
+    ...cloned,
+    redactionFlags: ["sanitized-fake-redaction-metadata"],
+    redactionMetadata: [],
+    redactionReviewOutcome: "needs_more_redaction",
+    redactionEligibilityImpact: "redaction_required",
   };
 }

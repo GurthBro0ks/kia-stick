@@ -12,6 +12,16 @@ KIA Stick separates milestone semver from build identity:
 
 `/health`, `/version`, the app header, settings, answer footer, and saved answer metadata expose the current `displayVersion`.
 
+## v0.5.8 Fake Redaction Metadata Depth
+
+Phase: `KIA-Stick-v0.5.8-fake-redaction-metadata-depth`.
+
+`lib/redactionMetadataModel.ts` defines shared fake-only redaction metadata for Import Wizard and Vault rows. Each synthetic finding has category, severity, reviewer note, confidence, reason, safe example label, and index eligibility impact.
+
+Deterministic fake review outcomes are `approve_redaction`, `needs_more_redaction`, `reject_sensitive`, and `metadata_incomplete`. These outcomes are fixture guidance only: fake redaction metadata is not real redaction, not approval, and not indexing.
+
+Import and Vault proof exports now include fake redaction metadata labels and guard fields proving no private paths, snippets, OCR text, real identifiers, or file content are included. Unsafe fake metadata is blocked or sanitized before export.
+
 ## v0.5.7 Closeout Helper Hardening
 
 Phase: `KIA-Stick-v0.5.7-closeout-helper-hardening`.

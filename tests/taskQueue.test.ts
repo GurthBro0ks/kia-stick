@@ -49,7 +49,9 @@ describe("task-queue", () => {
       "queue-004-docs-release-pack",
       "queue-005-real-doc-pilot-plan-only",
     ]);
-    expect(queue.items.every((item) => item.status === "planned")).toBe(true);
+    expect(queue.items[0].status).toBe("accepted");
+    expect(queue.items[1].status).toBe("needs_review");
+    expect(queue.items.slice(2).every((item) => item.status === "planned")).toBe(true);
     expect(queue.items.every((item) => item.history.length > 0)).toBe(true);
     expect(mod.validateQueue(queue)).toBe(true);
   });
@@ -74,7 +76,7 @@ describe("task-queue", () => {
     expect(updated.status).toBe("running");
     expect(updated.next_action).toBe("Run local validation only.");
     expect(updated.updated_at).toBe("2026-06-20T21:00:00.000Z");
-    expect((updated.history as unknown[])).toHaveLength(2);
+    expect((updated.history as unknown[])).toHaveLength(queue.items[0].history.length);
     expect(queue.updated_at).toBe("2026-06-20T21:00:00.000Z");
   });
 
@@ -127,9 +129,9 @@ describe("task-queue", () => {
     const result = spawnSync("node", [scriptPath, "next"], { cwd: resolve("."), encoding: "utf8" });
 
     expect(result.status).toBe(0);
-    expect(result.stdout).toContain("id=queue-001-closeout-helper-hardening");
+    expect(result.stdout).toContain("id=queue-002-fake-redaction-metadata-depth");
     expect(result.stdout).toContain("Codex-ready summary:");
-    expect(result.stdout).toContain("KIA-Stick-v0.5.7-closeout-helper-hardening");
+    expect(result.stdout).toContain("KIA-Stick-v0.5.8-fake-redaction-metadata-depth");
   });
 
   it("does not execute git push from queue commands", () => {

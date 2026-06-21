@@ -32,6 +32,11 @@ import {
   type ImportWizardAction,
   type ImportWizardState,
 } from "@/lib/importWizardModel";
+import {
+  assertFakeRedactionMetadataSafe,
+  redactionEligibilityImpactFor,
+  redactionReviewOutcomeFor,
+} from "@/lib/redactionMetadataModel";
 import { createSavedAnswerRecord, migrateSavedAnswers, upsertSavedAnswer } from "@/lib/savedAnswers";
 import { buildSourceHierarchyGroups, corpus, sourceHierarchyLabels, sourceHierarchyOrder } from "@/lib/sourceModel";
 import { createRuntimeVersion, runtimeVersionFields } from "@/lib/version";
@@ -637,6 +642,8 @@ describe("manual QA UX shell", () => {
     expect(html).toContain("Try file picker");
     expect(html).toContain("Try skip to index");
     expect(html).toContain("Fake import proof");
+    expect(html).toContain("Fake redaction metadata is advisory fixture data only");
+    expect(html).toContain("Eligibility impact");
     expect(html).not.toContain("type=\"file\"");
   });
 });
@@ -672,7 +679,51 @@ describe("fake import wizard model", () => {
     expect(state.currentStep).toBe("start_safety");
     expect(state.fakeOnly).toBe(true);
     expect(state.realActionsDisabled).toBe(true);
+    expect(state.record.redactionMetadata).toHaveLength(3);
+    expect(state.record.redactionMetadata[0]).toMatchObject({
+      category: "fake_name",
+      severity: "moderate",
+      safeExampleLabel: "fake-person-label",
+      eligibilityImpact: "redaction_required",
+    });
+    expect(state.record.redactionReviewOutcome).toBe("needs_more_redaction");
+    expect(state.record.redactionEligibilityImpact).toBe("redaction_required");
+    expect(assertFakeRedactionMetadataSafe(state.record.redactionMetadata).ok).toBe(true);
     expect(assertImportWizardFakeOnly(state).ok).toBe(true);
+  });
+
+  it("derives deterministic fake redaction review outcomes and eligibility impacts", () => {
+    const state = createInitialImportWizardState();
+
+    expect(redactionReviewOutcomeFor([])).toBe("approve_redaction");
+    expect(redactionReviewOutcomeFor(state.record.redactionMetadata)).toBe("needs_more_redaction");
+    expect(redactionEligibilityImpactFor(state.record.redactionMetadata)).toBe("redaction_required");
+    expect(
+      redactionReviewOutcomeFor([
+        {
+          category: "fake_date",
+          severity: "low",
+          reviewerNote: "Needs fake authority metadata.",
+          confidence: 0.7,
+          reason: "Synthetic dates need context.",
+          safeExampleLabel: "fake-date-label",
+          eligibilityImpact: "metadata_required",
+        },
+      ])
+    ).toBe("metadata_incomplete");
+    expect(
+      redactionReviewOutcomeFor([
+        {
+          category: "fake_restricted_marker",
+          severity: "restricted",
+          reviewerNote: "Reject synthetic restricted marker.",
+          confidence: 1,
+          reason: "Restricted fake marker.",
+          safeExampleLabel: "fake-restricted-label",
+          eligibilityImpact: "not_indexable",
+        },
+      ])
+    ).toBe("reject_sensitive");
   });
 
   it("keeps wizard helper labels, copy, steps, and next actions deterministic", () => {
@@ -705,6 +756,8 @@ describe("fake import wizard model", () => {
     expect(audited.record.scopeMode).toBe("explicit_fake_batch");
     expect(audited.record.itemCount).toBe(2);
     expect(audited.record.indexDecision).toBe("eligible_fake_only");
+    expect(audited.record.redactionReviewOutcome).toBe("approve_redaction");
+    expect(audited.record.redactionEligibilityImpact).toBe("metadata_required");
     expect(audited.auditLog.map((entry) => entry.action)).toContain("fake_import_audit_complete");
     expect(audited.auditLog.map((entry) => entry.at)).toEqual([
       "2026-06-20T05:09:00.000Z",
@@ -806,6 +859,8 @@ describe("fake import wizard model", () => {
       type: "select_fake_source",
       privatePath: "/media/mint/SHARED/APWU/private.pdf",
       rawText: "do not accept document text",
+      ocrText: "do not accept OCR text",
+      realIdentifier: "member_id=123456",
       now: "2026-06-20T05:12:00.000Z",
     } as Record<string, unknown>);
 
@@ -841,6 +896,9 @@ describe("fake import wizard model", () => {
     expect(payload.guard.uploadsIncluded).toBe(false);
     expect(payload.guard.vectorStoreIncluded).toBe(false);
     expect(payload.guard.privateNotesIncluded).toBe(false);
+    expect(payload.guard.realIdentifiersIncluded).toBe(false);
+    expect(payload.record.redactionMetadata[0].safeExampleLabel).toBe("fake-person-label");
+    expect(payload.record.redactionMetadata[0]).not.toHaveProperty("snippet");
     expect(payload.guard.realImportImplemented).toBe(false);
     expect(payload.guard.filePickerImplemented).toBe(false);
     expect(payload.fakeState.currentStep).toBe("start_safety");
@@ -848,6 +906,8 @@ describe("fake import wizard model", () => {
     expect(payload.fakeState.realActionsDisabled).toBe(true);
     expect(json).toContain("fake-import-wizard-record-001");
     expect(markdown).toContain("Real import implemented: false");
+    expect(markdown).toContain("Real identifiers included: false");
+    expect(markdown).toContain("fake-person-label");
     expect(json).not.toContain("/media/mint/SHARED/APWU");
     expect(markdown).not.toContain("/media/mint/SHARED/APWU");
   });
@@ -874,6 +934,37 @@ describe("fake import wizard model", () => {
     expect(markdown).toContain("[sanitized fake-only audit text]");
     expect(json).not.toContain("/media/mint/SHARED/APWU");
     expect(markdown).not.toContain("/media/mint/SHARED/APWU");
+  });
+
+  it("sanitizes tainted fake redaction metadata before import proof export", () => {
+    const state: ImportWizardState = {
+      ...createInitialImportWizardState(),
+      record: {
+        ...createInitialImportWizardState().record,
+        redactionMetadata: [
+          {
+            category: "fake_name",
+            severity: "moderate",
+            reviewerNote: "unsafe /media/mint/SHARED/APWU/private.pdf",
+            confidence: 0.9,
+            reason: "member_id=123456",
+            safeExampleLabel: "fake-tainted-label",
+            eligibilityImpact: "redaction_required",
+          },
+        ],
+      },
+    };
+    const version = createRuntimeVersion({ productVersion: "0.4.0", buildDate: "20260620", gitSha: "bf2248b" });
+    const json = exportImportWizardAuditJson(state, version, "2026-06-20T05:18:00.000Z");
+    const markdown = exportImportWizardAuditMarkdown(state, version, "2026-06-20T05:18:00.000Z");
+    const payload = JSON.parse(json);
+
+    expect(payload.record.redactionMetadata).toEqual([]);
+    expect(payload.record.redactionFlags).toEqual(["sanitized-fake-redaction-metadata"]);
+    expect(json).not.toContain("/media/mint/SHARED/APWU");
+    expect(json).not.toContain("member_id=123456");
+    expect(markdown).not.toContain("/media/mint/SHARED/APWU");
+    expect(markdown).not.toContain("member_id=123456");
   });
 
   it("keeps Upload as fake buttons with no file input", () => {
@@ -929,6 +1020,9 @@ describe("fake vault governance model", () => {
       expect(state.records.some((record) => record.lane === lane)).toBe(true);
     }
     expect(assertFakeMetadataOnly(state.records).ok).toBe(true);
+    expect(state.records.every((record) => assertFakeRedactionMetadataSafe(record.redactionMetadata).ok)).toBe(true);
+    expect(state.records.find((record) => record.id === "fake-vault-steward-note")?.redactionReviewOutcome).toBe("needs_more_redaction");
+    expect(state.records.find((record) => record.id === "fake-vault-restricted")?.redactionReviewOutcome).toBe("reject_sensitive");
   });
 
   it("advances lifecycle gates with audit entries but does not make quarantine indexable", () => {
@@ -992,6 +1086,8 @@ describe("fake vault governance model", () => {
     expect(record?.lifecycleStep).toBe("index_eligibility");
     expect(record?.redactionStatus).toBe("approved_redacted");
     expect(record?.metadataStatus).toBe("reviewed");
+    expect(record?.redactionReviewOutcome).toBe("approve_redaction");
+    expect(record?.redactionEligibilityImpact).toBe("metadata_required");
     expect(record?.workflowState).toBe("eligible_fake_only");
     expect(eligible.auditLog.map((entry) => entry.action)).toContain("approve_fake_redaction");
     expect(eligible.auditLog.map((entry) => entry.action)).toContain("approve_fake_metadata");
@@ -1020,6 +1116,8 @@ describe("fake vault governance model", () => {
       recordId: "fake-vault-quarantine",
       privatePath: "/media/mint/SHARED/APWU/private.pdf",
       rawText: "do not accept content",
+      ocrText: "do not accept OCR text",
+      realIdentifier: "case_id=123456",
       now: "2026-06-20T02:00:00.000Z",
     });
 
@@ -1046,10 +1144,49 @@ describe("fake vault governance model", () => {
     expect(payload.version.displayVersion).toBe("0.4.0-dev.20260620+dd4b997");
     expect(payload.guard.fakeMetadataOnly).toBe(true);
     expect(payload.guard.privatePathsIncluded).toBe(false);
+    expect(payload.guard.ocrTextIncluded).toBe(false);
+    expect(payload.guard.snippetsIncluded).toBe(false);
+    expect(payload.guard.realIdentifiersIncluded).toBe(false);
     expect(payload.records[0]).not.toHaveProperty("lastBlockedReason");
+    expect(payload.records.find((record: { id: string }) => record.id === "fake-vault-member-only").redactionMetadata[0].safeExampleLabel).toBe("fake-member-only-label");
     expect(json).toContain("eligible_fake_only");
     expect(markdown).toContain("Display version: 0.4.0-dev.20260620+dd4b997");
+    expect(markdown).toContain("Real identifiers included: false");
+    expect(markdown).toContain("Fake redaction labels");
     expect(json).not.toContain("/media/mint/SHARED/APWU");
     expect(markdown).not.toContain("/media/mint/SHARED/APWU");
+  });
+
+  it("blocks unsafe fake redaction metadata from vault proof export", () => {
+    const state = createInitialVaultState();
+    const tainted = {
+      ...state,
+      records: state.records.map((record) =>
+        record.id === "fake-vault-member-only"
+          ? {
+              ...record,
+              redactionMetadata: [
+                {
+                  category: "fake_name" as const,
+                  severity: "moderate" as const,
+                  reviewerNote: "unsafe /media/mint/SHARED/APWU/private.pdf",
+                  confidence: 0.9,
+                  reason: "case_id=123456",
+                  safeExampleLabel: "fake-tainted-label",
+                  eligibilityImpact: "redaction_required" as const,
+                },
+              ],
+            }
+          : record
+      ),
+    };
+    const version = createRuntimeVersion({ productVersion: "0.4.0", buildDate: "20260620", gitSha: "dd4b997" });
+    const json = exportVaultAuditJson(tainted, version, "2026-06-20T03:10:00.000Z");
+    const payload = JSON.parse(json);
+
+    expect(payload.records).toEqual([]);
+    expect(payload.auditLog[0].action).toBe("blocked_export_guard");
+    expect(json).not.toContain("/media/mint/SHARED/APWU");
+    expect(json).not.toContain("case_id=123456");
   });
 });

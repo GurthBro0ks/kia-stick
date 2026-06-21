@@ -1,4 +1,15 @@
 import type { RuntimeVersion } from "@/lib/version";
+import {
+  assertFakeRedactionMetadataSafe,
+  cloneRedactionMetadata,
+  fakeVaultRedactionMetadataByRecord,
+  redactionEligibilityImpactFor,
+  redactionMetadataCategoryLabels,
+  redactionReviewOutcomeFor,
+  type FakeEligibilityImpact,
+  type FakeRedactionMetadata,
+  type FakeRedactionReviewOutcome,
+} from "@/lib/redactionMetadataModel";
 
 export const vaultLanes = [
   "official_public",
@@ -57,6 +68,9 @@ export interface FakeVaultRecord {
   fakeProvenance: string;
   fakeSummary: string;
   redactionFlags: string[];
+  redactionMetadata: FakeRedactionMetadata[];
+  redactionReviewOutcome: FakeRedactionReviewOutcome;
+  redactionEligibilityImpact: FakeEligibilityImpact;
   githubSafe: boolean;
 }
 
@@ -117,6 +131,9 @@ export interface VaultAuditExport {
     fakeMetadataOnly: true;
     privatePathsIncluded: false;
     fileContentIncluded: false;
+    ocrTextIncluded: false;
+    snippetsIncluded: false;
+    realIdentifiersIncluded: false;
     exportContainsOnlySyntheticMetadata: true;
   };
   summary: {
@@ -145,6 +162,9 @@ export interface VaultAuditExport {
       | "fakeProvenance"
       | "fakeSummary"
       | "redactionFlags"
+      | "redactionMetadata"
+      | "redactionReviewOutcome"
+      | "redactionEligibilityImpact"
       | "githubSafe"
     >
   >;
@@ -200,7 +220,10 @@ export const fakeVaultRecords: FakeVaultRecord[] = [
     fakeHash: "fakehash-selected-00112233",
     fakeProvenance: "Fictional selected item shell; no source file exists.",
     fakeSummary: "Shows a pre-quarantine fake metadata row that still cannot be indexed.",
-    redactionFlags: ["selection only", "not quarantined"],
+    redactionFlags: redactionMetadataCategoryLabels(fakeVaultRedactionMetadataByRecord["fake-vault-selected"]),
+    redactionMetadata: cloneRedactionMetadata(fakeVaultRedactionMetadataByRecord["fake-vault-selected"]),
+    redactionReviewOutcome: redactionReviewOutcomeFor(fakeVaultRedactionMetadataByRecord["fake-vault-selected"]),
+    redactionEligibilityImpact: redactionEligibilityImpactFor(fakeVaultRedactionMetadataByRecord["fake-vault-selected"]),
     githubSafe: true,
   },
   {
@@ -223,6 +246,9 @@ export const fakeVaultRecords: FakeVaultRecord[] = [
     fakeProvenance: "Fictional public lane shell created for UI testing.",
     fakeSummary: "Represents a reviewed public-authority metadata row without document content.",
     redactionFlags: [],
+    redactionMetadata: cloneRedactionMetadata(fakeVaultRedactionMetadataByRecord["fake-vault-official-public"]),
+    redactionReviewOutcome: redactionReviewOutcomeFor(fakeVaultRedactionMetadataByRecord["fake-vault-official-public"]),
+    redactionEligibilityImpact: redactionEligibilityImpactFor(fakeVaultRedactionMetadataByRecord["fake-vault-official-public"]),
     githubSafe: true,
   },
   {
@@ -244,7 +270,10 @@ export const fakeVaultRecords: FakeVaultRecord[] = [
     fakeHash: "fakehash-member-1b2c3d4e",
     fakeProvenance: "Fictional member-only lane shell; no account or source data.",
     fakeSummary: "Shows a review queue item that is not automatically indexable.",
-    redactionFlags: ["distribution limit", "member-only source status"],
+    redactionFlags: redactionMetadataCategoryLabels(fakeVaultRedactionMetadataByRecord["fake-vault-member-only"]),
+    redactionMetadata: cloneRedactionMetadata(fakeVaultRedactionMetadataByRecord["fake-vault-member-only"]),
+    redactionReviewOutcome: redactionReviewOutcomeFor(fakeVaultRedactionMetadataByRecord["fake-vault-member-only"]),
+    redactionEligibilityImpact: redactionEligibilityImpactFor(fakeVaultRedactionMetadataByRecord["fake-vault-member-only"]),
     githubSafe: true,
   },
   {
@@ -266,7 +295,10 @@ export const fakeVaultRecords: FakeVaultRecord[] = [
     fakeHash: "fakehash-local-2c3d4e5f",
     fakeProvenance: "Fictional local-official shell with no local identifiers.",
     fakeSummary: "Demonstrates fake local eligibility after review without exposing content.",
-    redactionFlags: ["local distribution label"],
+    redactionFlags: redactionMetadataCategoryLabels(fakeVaultRedactionMetadataByRecord["fake-vault-local-official"]),
+    redactionMetadata: cloneRedactionMetadata(fakeVaultRedactionMetadataByRecord["fake-vault-local-official"]),
+    redactionReviewOutcome: redactionReviewOutcomeFor(fakeVaultRedactionMetadataByRecord["fake-vault-local-official"]),
+    redactionEligibilityImpact: redactionEligibilityImpactFor(fakeVaultRedactionMetadataByRecord["fake-vault-local-official"]),
     githubSafe: true,
   },
   {
@@ -288,7 +320,10 @@ export const fakeVaultRecords: FakeVaultRecord[] = [
     fakeHash: "fakehash-steward-3d4e5f6a",
     fakeProvenance: "Fictional steward-work-product shell for workflow testing.",
     fakeSummary: "Shows sensitive review flags while storing only sanitized fake metadata.",
-    redactionFlags: ["work product", "possible private narrative"],
+    redactionFlags: redactionMetadataCategoryLabels(fakeVaultRedactionMetadataByRecord["fake-vault-steward-note"]),
+    redactionMetadata: cloneRedactionMetadata(fakeVaultRedactionMetadataByRecord["fake-vault-steward-note"]),
+    redactionReviewOutcome: redactionReviewOutcomeFor(fakeVaultRedactionMetadataByRecord["fake-vault-steward-note"]),
+    redactionEligibilityImpact: redactionEligibilityImpactFor(fakeVaultRedactionMetadataByRecord["fake-vault-steward-note"]),
     githubSafe: true,
   },
   {
@@ -311,6 +346,9 @@ export const fakeVaultRecords: FakeVaultRecord[] = [
     fakeProvenance: "Fictional approved example created from synthetic facts only.",
     fakeSummary: "Represents the only kind of example that could become GitHub-safe after review.",
     redactionFlags: [],
+    redactionMetadata: cloneRedactionMetadata(fakeVaultRedactionMetadataByRecord["fake-vault-redacted-example"]),
+    redactionReviewOutcome: redactionReviewOutcomeFor(fakeVaultRedactionMetadataByRecord["fake-vault-redacted-example"]),
+    redactionEligibilityImpact: redactionEligibilityImpactFor(fakeVaultRedactionMetadataByRecord["fake-vault-redacted-example"]),
     githubSafe: true,
   },
   {
@@ -332,7 +370,10 @@ export const fakeVaultRecords: FakeVaultRecord[] = [
     fakeHash: "fakehash-restricted-5f6a7b8c",
     fakeProvenance: "Fictional restricted lane placeholder; no private facts.",
     fakeSummary: "Keeps restricted policy visible without storing sensitive content.",
-    redactionFlags: ["restricted sensitivity", "never index by default"],
+    redactionFlags: redactionMetadataCategoryLabels(fakeVaultRedactionMetadataByRecord["fake-vault-restricted"]),
+    redactionMetadata: cloneRedactionMetadata(fakeVaultRedactionMetadataByRecord["fake-vault-restricted"]),
+    redactionReviewOutcome: redactionReviewOutcomeFor(fakeVaultRedactionMetadataByRecord["fake-vault-restricted"]),
+    redactionEligibilityImpact: redactionEligibilityImpactFor(fakeVaultRedactionMetadataByRecord["fake-vault-restricted"]),
     githubSafe: true,
   },
   {
@@ -354,7 +395,10 @@ export const fakeVaultRecords: FakeVaultRecord[] = [
     fakeHash: "fakehash-quarantine-6a7b8c9d",
     fakeProvenance: "Fictional quarantine placeholder only; no copied file exists.",
     fakeSummary: "Shows raw-intake governance without any file upload or content access.",
-    redactionFlags: ["raw intake placeholder", "hash/provenance incomplete"],
+    redactionFlags: redactionMetadataCategoryLabels(fakeVaultRedactionMetadataByRecord["fake-vault-quarantine"]),
+    redactionMetadata: cloneRedactionMetadata(fakeVaultRedactionMetadataByRecord["fake-vault-quarantine"]),
+    redactionReviewOutcome: redactionReviewOutcomeFor(fakeVaultRedactionMetadataByRecord["fake-vault-quarantine"]),
+    redactionEligibilityImpact: redactionEligibilityImpactFor(fakeVaultRedactionMetadataByRecord["fake-vault-quarantine"]),
     githubSafe: true,
   },
 ];
@@ -372,6 +416,15 @@ const forbiddenActionKeys = new Set([
   "files",
   "blob",
   "bytes",
+  "ocrText",
+  "snippet",
+  "snippets",
+  "realIdentifier",
+  "realIdentifiers",
+  "memberId",
+  "accountId",
+  "employeeId",
+  "caseId",
 ]);
 
 const forbiddenPrivateFragments = [
@@ -399,6 +452,7 @@ function cloneRecord(record: FakeVaultRecord): FakeVaultRecord {
   return {
     ...record,
     redactionFlags: [...record.redactionFlags],
+    redactionMetadata: cloneRedactionMetadata(record.redactionMetadata),
   };
 }
 
@@ -485,8 +539,11 @@ function workflowDecisionFor(record: FakeVaultRecord): { state: VaultWorkflowSta
   if (record.lifecycleStep === "selected" || record.lifecycleStep === "quarantine" || record.lane === "quarantine") {
     return { state: "quarantine_only", reason: "Selected and quarantine fake metadata is not reviewed, not approved, and never indexable." };
   }
+  if (record.redactionEligibilityImpact === "not_indexable") {
+    return { state: "review_rejected", reason: "Fake redaction metadata marks this row not indexable." };
+  }
   if (record.redactionStatus !== "approved_redacted") {
-    return { state: "redaction_required", reason: "Redaction review must approve the fake metadata before metadata review or indexing." };
+    return { state: "redaction_required", reason: "Structured fake redaction metadata must be resolved before metadata review or indexing." };
   }
   if (record.metadataStatus !== "reviewed") {
     return { state: "metadata_required", reason: "Metadata review must approve authority, source status, and sensitivity before indexing." };
@@ -546,7 +603,9 @@ function applyLifecycleEffects(record: FakeVaultRecord, nextStep: LifecycleStep)
 
   if (nextStep === "redaction_review") {
     updated.redactionStatus = updated.sensitivity === "restricted_sensitive" ? "restricted" : "review_needed";
-    if (updated.redactionFlags.length === 0) updated.redactionFlags = ["fake review requires redaction confirmation"];
+    if (updated.redactionFlags.length === 0) updated.redactionFlags = ["fake-review-required"];
+    updated.redactionReviewOutcome = redactionReviewOutcomeFor(updated.redactionMetadata);
+    updated.redactionEligibilityImpact = redactionEligibilityImpactFor(updated.redactionMetadata);
   }
 
   if (nextStep === "metadata_review") {
@@ -640,10 +699,22 @@ export function applyVaultAction(state: VaultState, action: VaultAction | Record
         note = "Restricted-sensitive fake metadata cannot pass redaction review.";
         return refreshRecordState({ ...cloneRecord(record), redactionStatus: "rejected", metadataStatus: "rejected" }, note);
       }
+      if (record.redactionReviewOutcome === "reject_sensitive") {
+        auditAction = "reject_fake_review";
+        note = "Structured fake redaction metadata rejected this row as sensitive.";
+        return refreshRecordState({ ...cloneRecord(record), redactionStatus: "rejected", metadataStatus: "rejected" }, note);
+      }
+      if (record.redactionReviewOutcome === "needs_more_redaction") {
+        auditAction = "needs_more_fake_redaction";
+        note = "Structured fake redaction metadata requires more redaction before metadata review.";
+        return refreshRecordState({ ...cloneRecord(record), redactionStatus: "review_needed", metadataStatus: "needs_changes" }, note);
+      }
       note = "Approved fake redaction metadata only; no source text or file bytes were reviewed.";
       return refreshRecordState({
         ...cloneRecord(record),
         redactionStatus: "approved_redacted",
+        redactionReviewOutcome: "approve_redaction",
+        redactionEligibilityImpact: record.redactionEligibilityImpact === "redaction_required" ? "metadata_required" : record.redactionEligibilityImpact,
         redactionFlags: record.redactionFlags.filter((flag) => !flag.includes("incomplete")),
       });
     });
@@ -700,6 +771,8 @@ export function applyVaultAction(state: VaultState, action: VaultAction | Record
           ...cloneRecord(record),
           redactionStatus: record.lifecycleStep === "redaction_review" ? "rejected" : record.redactionStatus,
           metadataStatus: record.lifecycleStep === "metadata_review" ? "rejected" : record.metadataStatus,
+          redactionReviewOutcome: "reject_sensitive",
+          redactionEligibilityImpact: "not_indexable",
         },
         action.reason
       );
@@ -777,11 +850,15 @@ function exportRecord(record: FakeVaultRecord): VaultAuditExport["records"][numb
     fakeProvenance: record.fakeProvenance,
     fakeSummary: record.fakeSummary,
     redactionFlags: [...record.redactionFlags],
+    redactionMetadata: cloneRedactionMetadata(record.redactionMetadata),
+    redactionReviewOutcome: record.redactionReviewOutcome,
+    redactionEligibilityImpact: record.redactionEligibilityImpact,
     githubSafe: record.githubSafe,
   };
 }
 
 export function buildVaultAuditExport(state: VaultState, version: RuntimeVersion, generatedAt = new Date().toISOString()): VaultAuditExport {
+  const sanitizedRecords = state.records.map(exportRecord);
   const exportPayload: VaultAuditExport = {
     exportType: "kia-stick-fake-vault-audit",
     generatedAt,
@@ -790,6 +867,9 @@ export function buildVaultAuditExport(state: VaultState, version: RuntimeVersion
       fakeMetadataOnly: true,
       privatePathsIncluded: false,
       fileContentIncluded: false,
+      ocrTextIncluded: false,
+      snippetsIncluded: false,
+      realIdentifiersIncluded: false,
       exportContainsOnlySyntheticMetadata: true,
     },
     summary: {
@@ -797,16 +877,26 @@ export function buildVaultAuditExport(state: VaultState, version: RuntimeVersion
       auditEntries: state.auditLog.length,
       workflowStates: workflowStateCounts(state.records),
     },
-    records: state.records.map(exportRecord),
+    records: sanitizedRecords,
     auditLog: state.auditLog.map(cloneAudit),
   };
 
   const guard = assertFakeMetadataOnly(exportPayload);
-  if (!guard.ok) {
+  const redactionGuard = {
+    ok: state.records.every((record) => assertFakeRedactionMetadataSafe(record.redactionMetadata).ok),
+    reasons: state.records.flatMap((record) => assertFakeRedactionMetadataSafe(record.redactionMetadata).reasons),
+  };
+  if (!guard.ok || !redactionGuard.ok) {
     return {
       ...exportPayload,
       auditLog: [
-        auditEntry("export", "blocked_export_guard", `Export guard blocked unsafe metadata: ${guard.reasons.join("; ")}`, generatedAt, "system"),
+        auditEntry(
+          "export",
+          "blocked_export_guard",
+          `Export guard blocked unsafe metadata: ${[...guard.reasons, ...redactionGuard.reasons].join("; ")}`,
+          generatedAt,
+          "system"
+        ),
       ],
       records: [],
       summary: {
@@ -836,6 +926,9 @@ export function exportVaultAuditMarkdown(state: VaultState, version: RuntimeVers
     `- Fake metadata only: ${payload.guard.fakeMetadataOnly}`,
     `- Private paths included: ${payload.guard.privatePathsIncluded}`,
     `- File content included: ${payload.guard.fileContentIncluded}`,
+    `- OCR text included: ${payload.guard.ocrTextIncluded}`,
+    `- Snippets included: ${payload.guard.snippetsIncluded}`,
+    `- Real identifiers included: ${payload.guard.realIdentifiersIncluded}`,
     "",
     "## Workflow States",
     "",
@@ -851,10 +944,13 @@ export function exportVaultAuditMarkdown(state: VaultState, version: RuntimeVers
       `- Lifecycle: ${record.lifecycleStep}`,
       `- Workflow state: ${record.workflowState}`,
       `- Redaction: ${record.redactionStatus}`,
+      `- Redaction outcome: ${record.redactionReviewOutcome}`,
+      `- Redaction impact: ${record.redactionEligibilityImpact}`,
       `- Metadata: ${record.metadataStatus}`,
       `- Index reason: ${record.indexReason}`,
       `- Fake ref: ${record.fakeSourceRef}`,
       `- Fake hash: ${record.fakeHash}`,
+      `- Fake redaction labels: ${record.redactionMetadata.map((item) => item.safeExampleLabel).join(", ") || "none"}`,
       "",
     ]),
     "## Audit Log",
