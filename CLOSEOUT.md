@@ -1,5 +1,29 @@
 # KIA Stick Closeout
 
+## v0.7.1 Product-Version Bump Plan
+
+- Phase: `KIA-Stick-v0.7.1-product-version-bump-plan`
+- Baseline: accepted pushed v0.6.7 state at `f0baf12`
+- Origin/main verified: `f0baf12`
+- Scope: docs/tests/state-only plan for choosing a future runtime/productVersion bump target; no productVersion or promptVersion change in this phase.
+- Product version impact: none; app remains `0.4.0`.
+- Prompt version: `prompt.fake-docs.v0.5-import-wizard-hardening`
+- Plan document: `docs/v0.7.1-product-version-bump-plan.md`
+- Tests added: `tests/productVersionBumpPlan.test.ts`
+- Proof directory: `/tmp/proof_kia_stick_v0_7_1_product_version_bump_plan_20260621T173058Z`
+- Validation: PASS
+- Queue state: `queue-012-v07-product-version-bump-plan` selected as the v0.7.1 product-version bump planning phase; other v0.7 choices remain unapproved future options.
+- Recommended later bump target: `0.7.0` only if a future, separately approved implementation phase performs a pure identity catch-up release with no new runtime capability and no real-doc implementation.
+- Real document access: none
+- Private vault inspected: no
+- Push performed: auto-push only if the task prompt's validation gates pass.
+
+## v0.7.1 Later Bump Decision
+
+The later bump implementation phase should choose `0.7.0` by default when the operator wants runtime identity to catch up to the accepted v0.5/v0.6/v0.7 planning and fake-only tooling history. Choose `0.5.0` only for strict chronological semver, choose `0.6.0` only for safety/governance-focused release notes that clearly say no real-doc capability exists, and choose no bump if validation is not clean or the change would imply unimplemented real-doc capability. No runtime version change is approved by this closeout entry.
+
+---
+
 ## v0.6.7 Backlog Closeout and v0.7 Decision Checkpoint
 
 - Phase: `KIA-Stick-v0.6.7-backlog-closeout-v0.7-decision-checkpoint`

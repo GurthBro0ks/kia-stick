@@ -1,6 +1,6 @@
 {
   "schema": "kia-stick-local-task-queue.v1",
-  "updated_at": "2026-06-21T17:17:09.000Z",
+  "updated_at": "2026-06-21T17:30:58.000Z",
   "items": [
     {
       "id": "queue-001-closeout-helper-hardening",
@@ -338,21 +338,27 @@
     },
     {
       "id": "queue-012-v07-product-version-bump-plan",
-      "phase": "KIA-Stick-v0.7.0-product-version-bump-plan",
-      "title": "v0.7 product-version bump plan",
-      "status": "planned",
-      "model": "Claude",
+      "phase": "KIA-Stick-v0.7.1-product-version-bump-plan",
+      "title": "v0.7.1 product-version bump plan",
+      "status": "ready_to_push",
+      "model": "GPT/Codex $100",
       "risk": "low",
-      "summary": "Document a productVersion bump path from 0.4.0 toward a future milestone as docs only; no code bump until separately approved.",
-      "next_action": "If selected, draft the bump path as documentation only and keep productVersion at 0.4.0 until a separate approval.",
+      "summary": "Document the productVersion bump decision path as docs/tests/state only, comparing 0.5.0, 0.6.0, and 0.7.0 while keeping productVersion at 0.4.0 in this phase.",
+      "next_action": "Auto-push this planning commit only if validation gates pass; any actual productVersion bump still requires a future separately approved bump phase.",
       "created_at": "2026-06-21T17:17:09.000Z",
-      "updated_at": "2026-06-21T17:17:09.000Z",
+      "updated_at": "2026-06-21T17:30:58.000Z",
       "history": [
         {
           "at": "2026-06-21T17:17:09.000Z",
           "from": "planned",
           "to": "planned",
           "note": "Seeded as a v0.7 safe option at the decision checkpoint; no real-doc work approved."
+        },
+        {
+          "at": "2026-06-21T17:30:58.000Z",
+          "from": "planned",
+          "to": "ready_to_push",
+          "note": "v0.7.1 product-version bump plan validation passed; ready for the task prompt auto-push gate with no runtime version change."
         }
       ]
     },

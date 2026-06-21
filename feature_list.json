@@ -1,5 +1,5 @@
 {
-  "phase": "KIA-Stick-v0.6.7-backlog-closeout-v0.7-decision-checkpoint",
+  "phase": "KIA-Stick-v0.7.1-product-version-bump-plan",
   "target_machine": "USER_LAPTOP_ONLY",
   "accepted_v0_1": {
     "commit": "1d9b05c",
@@ -156,11 +156,17 @@
     "github_safe_gitignore",
     "proof_pack_qa_gate",
     "github_safe_release_note",
-    "version_back_navigation"
+    "version_back_navigation",
+    "v071_product_version_bump_plan",
+    "v071_product_version_candidate_comparison",
+    "v071_product_version_decision_rule",
+    "v071_product_version_later_bump_validation_checklist",
+    "v071_product_version_no_bump_rollback_criteria",
+    "v07_product_version_hold_intentional"
   ],
   "release_readiness": {
-    "phase": "KIA-Stick-v0.6.7-backlog-closeout-v0.7-decision-checkpoint",
-    "status": "v07_decision_checkpoint_validation_passed",
+    "phase": "KIA-Stick-v0.7.1-product-version-bump-plan",
+    "status": "v071_product_version_bump_plan_validation_passed",
     "package_version": "0.4.0",
     "product_version": "0.4.0",
     "prompt_version": "prompt.fake-docs.v0.5-import-wizard-hardening",
@@ -189,6 +195,13 @@
           "expected": "0.6.x phase milestone",
           "applies_to_phase_pattern": "^KIA-Stick-v0\\.6\\.",
           "reason": "ProductVersion stays 0.4.0 for v0.6.x real-doc planning and safety-closeout phases; a future implementation prompt must separately approve any product milestone bump."
+        },
+        {
+          "field": "productVersion",
+          "actual": "0.4.0",
+          "expected": "0.7.x phase milestone",
+          "applies_to_phase_pattern": "^KIA-Stick-v0\\.7\\.",
+          "reason": "ProductVersion stays 0.4.0 for v0.7.x planning and product-version bump-plan phases until a future implementation prompt separately approves a runtime productVersion bump."
         }
       ]
     },
@@ -1754,5 +1767,45 @@
     "ocr_index_upload_implemented": false,
     "push_performed": false,
     "real_db_boundary": "/media/mint/SHARED/APWU untouched"
+  },
+  "v071_product_version_bump_plan": {
+    "phase": "KIA-Stick-v0.7.1-product-version-bump-plan",
+    "status": "validation_passed",
+    "document": "docs/v0.7.1-product-version-bump-plan.md",
+    "baseline": "f0baf12",
+    "origin_main": "f0baf12",
+    "proof_dir": "/tmp/proof_kia_stick_v0_7_1_product_version_bump_plan_20260621T173058Z",
+    "selected_queue_item": "queue-012-v07-product-version-bump-plan",
+    "compared_targets": [
+      "0.5.0",
+      "0.6.0",
+      "0.7.0"
+    ],
+    "recommended_later_target": "0.7.0",
+    "recommendation_scope": "future_separately_approved_bump_phase_only",
+    "no_bump_this_phase": true,
+    "current_product_version": "0.4.0",
+    "current_prompt_version": "prompt.fake-docs.v0.5-import-wizard-hardening",
+    "tests": [
+      "tests/productVersionBumpPlan.test.ts",
+      "tests/taskQueue.test.ts"
+    ],
+    "validation": "passed",
+    "manual_qa": "auto_push_gate_pending",
+    "queue_012_status": "ready_to_push_after_validation_passed",
+    "authorizes_runtime_bump": false,
+    "authorizes_prompt_bump": false,
+    "authorizes_implementation": false,
+    "real_document_access": false,
+    "private_vault_inspected": false,
+    "real_doc_code_path_added": false,
+    "file_input_added": false,
+    "upload_handler_added": false,
+    "ocr_added": false,
+    "vector_store_added": false,
+    "real_redaction_added": false,
+    "private_path_in_plan": false,
+    "push_performed": false,
+    "real_db_boundary": "real-doc source mount untouched"
   }
 }

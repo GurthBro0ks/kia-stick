@@ -16,6 +16,8 @@ interface TaskQueueModule {
       phase: string;
       title: string;
       status: string;
+      model: string;
+      risk: string;
       summary: string;
       next_action: string;
       history: unknown[];
@@ -69,7 +71,7 @@ describe("task-queue", () => {
     ]);
     expect(queue.items.slice(0, 10).every((item) => item.status === "accepted")).toBe(true);
     expect(queue.items[10].status).toBe("planned");
-    expect(queue.items[11].status).toBe("planned");
+    expect(queue.items[11].status).toBe("ready_to_push");
     expect(queue.items[12].status).toBe("planned");
     expect(queue.items[13].status).toBe("planned");
     expect(queue.items[14].status).toBe("blocked");
@@ -99,6 +101,22 @@ describe("task-queue", () => {
     expect(gateText).toContain("exactly one document");
     expect(gateText).not.toMatch(/<input[^>]*type=["']file/i);
     expect(gateText).not.toMatch(/\bshowOpenFilePicker\b|\bFileReader\b|\breadAsText\b|\breadAsArrayBuffer\b/i);
+  });
+
+  it("tracks the selected v0.7.1 product-version bump planning phase without approving a runtime bump", async () => {
+    const mod = await loadModule();
+    const queue = mod.loadQueue(resolve("."));
+    const bumpPlan = queue.items.find((item) => item.id === "queue-012-v07-product-version-bump-plan");
+
+    expect(bumpPlan?.phase).toBe("KIA-Stick-v0.7.1-product-version-bump-plan");
+    expect(bumpPlan?.status).toBe("ready_to_push");
+    expect(bumpPlan?.model).toBe("GPT/Codex $100");
+    const bumpText = `${bumpPlan?.summary}\n${bumpPlan?.next_action}`;
+    expect(bumpText).toContain("docs/tests/state only");
+    expect(bumpText).toContain("keeping productVersion at 0.4.0");
+    expect(bumpText).toContain("future separately approved bump");
+    expect(bumpText).not.toMatch(/<input[^>]*type=["']file/i);
+    expect(bumpText).not.toMatch(/\bshowOpenFilePicker\b|\bFileReader\b|\breadAsText\b|\breadAsArrayBuffer\b/i);
   });
 
   it("seeds the requested post-plan safety backlog without approving implementation", async () => {

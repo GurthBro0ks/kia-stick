@@ -12,6 +12,18 @@ KIA Stick separates milestone semver from build identity:
 
 `/health`, `/version`, the app header, settings, answer footer, and saved answer metadata expose the current `displayVersion`.
 
+## v0.7.1 Product-Version Bump Plan
+
+Phase: `KIA-Stick-v0.7.1-product-version-bump-plan`.
+
+`docs/v0.7.1-product-version-bump-plan.md` documents how a later runtime/productVersion bump should choose between `0.5.0`, `0.6.0`, and `0.7.0`. It recommends `0.7.0` only as a future, separately approved identity catch-up target when the later phase is a pure product-version bump with no new runtime capability and no real-doc implementation.
+
+This is **PLAN ONLY**. It does not change `productVersion`, `promptVersion`, `package.json` version, `/health`, `/version`, saved-answer metadata, file pickers, path readers, file reads, copying, OCR, real redaction, embeddings, indexing, vector stores, upload handlers, private-vault inspection, service changes, or real-document access.
+
+`queue-012-v07-product-version-bump-plan` records this selected planning phase as ready for the task prompt's auto-push gate after validation; other v0.7 options remain unapproved future choices.
+
+Current product version remains `0.4.0`; current prompt version remains `prompt.fake-docs.v0.5-import-wizard-hardening`.
+
 ## v0.6.7 Backlog Closeout and v0.7 Decision Checkpoint
 
 Phase: `KIA-Stick-v0.6.7-backlog-closeout-v0.7-decision-checkpoint`.
