@@ -12,6 +12,16 @@ KIA Stick separates milestone semver from build identity:
 
 `/health`, `/version`, the app header, settings, answer footer, and saved answer metadata expose the current `displayVersion`.
 
+## v0.7.4 Chat/Saved/Upload Stabilization
+
+Phase: `KIA-Stick-v0.7.4-chat-saved-upload-stabilization`.
+
+This phase implements the fake-only Chat/Saved/Upload stabilization chunk recommended by the v0.7.3 plan. Chat save feedback now distinguishes new saves, metadata refreshes, duplicates, and no-answer blocks. Saved answers expose clearer empty/detail states with `productVersion`, `promptVersion`, build, and provider metadata. Upload remains button-only and queues synthetic names, sizes, and timestamps only.
+
+`/health` now reports the current v0.7.4 phase instead of the stale v0.5.2 implementation phase. `productVersion` stays `0.7.0`, `promptVersion` stays `prompt.fake-docs.v0.5-import-wizard-hardening`, and `queue-015-v07-first-real-doc-gate-request` remains blocked.
+
+This is **fake-only runtime/test hardening**. It does not add file pickers, path readers, file reads, uploads, OCR, real redaction, embeddings, indexing, vector stores, private-vault inspection, service changes, or real-document access.
+
 ## v0.7.3 Fake-Only UX Stabilization Plan
 
 Phase: `KIA-Stick-v0.7.3-fake-only-ux-triage-and-stabilization-plan`.

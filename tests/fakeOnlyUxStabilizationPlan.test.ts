@@ -3,6 +3,7 @@ import { describe, expect, it } from "vitest";
 
 const phase = "KIA-Stick-v0.7.3-fake-only-ux-triage-and-stabilization-plan";
 const nextPhase = "KIA-Stick-v0.7.4-chat-saved-upload-stabilization";
+const acceptedPlanCommit = "38bff5f";
 const promptVersion = "prompt.fake-docs.v0.5-import-wizard-hardening";
 const planPath = "docs/v0.7.3-fake-only-ux-stabilization-plan.md";
 const plan = readFileSync(planPath, "utf8");
@@ -35,7 +36,7 @@ function readRuntimeSources(): string {
 }
 
 describe("v0.7.3 fake-only UX stabilization plan", () => {
-  it("records the current accepted v0.7.2 state without changing product or prompt identity", () => {
+  it("keeps the accepted v0.7.3 plan traceable while v0.7.4 is current", () => {
     const featureList = JSON.parse(readFileSync("feature_list.json", "utf8")) as {
       phase: string;
       release_readiness: {
@@ -45,17 +46,21 @@ describe("v0.7.3 fake-only UX stabilization plan", () => {
         prompt_version: string;
       };
       v073_fake_only_ux_stabilization_plan: {
+        phase: string;
+        status: string;
         previous_accepted_phase: string;
         previous_accepted_commit: string;
         recommended_next_phase: string;
       };
     };
 
-    expect(featureList.phase).toBe(phase);
-    expect(featureList.release_readiness.phase).toBe(phase);
+    expect(featureList.phase).toBe(nextPhase);
+    expect(featureList.release_readiness.phase).toBe(nextPhase);
     expect(featureList.release_readiness.product_version).toBe("0.7.0");
     expect(featureList.release_readiness.package_version).toBe("0.7.0");
     expect(featureList.release_readiness.prompt_version).toBe(promptVersion);
+    expect(featureList.v073_fake_only_ux_stabilization_plan.phase).toBe(phase);
+    expect(featureList.v073_fake_only_ux_stabilization_plan.status).toContain("accepted");
     expect(featureList.v073_fake_only_ux_stabilization_plan.previous_accepted_phase).toBe(
       "KIA-Stick-v0.7.2-product-version-bump-implementation-to-0.7.0"
     );
@@ -107,7 +112,7 @@ describe("v0.7.3 fake-only UX stabilization plan", () => {
     expect(plan).not.toContain(privateVault);
   });
 
-  it("seeds the v0.7.3 and v0.7.4 queue state while accepting pushed v0.7.2", () => {
+  it("records v0.7.3 as accepted and advances v0.7.4 to the validation push gate", () => {
     const queue = JSON.parse(readFileSync("docs/phase-backlog.json", "utf8")) as {
       items: Array<{ id: string; phase: string; status: string; summary: string; next_action: string }>;
     };
@@ -118,10 +123,10 @@ describe("v0.7.3 fake-only UX stabilization plan", () => {
     expect(v072?.status).toBe("accepted");
     expect(v072?.next_action).toContain("179f883");
     expect(v073?.phase).toBe(phase);
-    expect(v073?.status).toBe("ready_to_push");
-    expect(`${v073?.summary}\n${v073?.next_action}`).toContain("no prohibited file or document capability");
+    expect(v073?.status).toBe("accepted");
+    expect(v073?.next_action).toContain(acceptedPlanCommit);
     expect(v074?.phase).toBe(nextPhase);
-    expect(v074?.status).toBe("planned");
+    expect(v074?.status).toBe("ready_to_push");
     expect(`${v074?.summary}\n${v074?.next_action}`).toContain("Chat save feedback");
     expect(`${v074?.summary}\n${v074?.next_action}`).toContain("fake-only");
   });

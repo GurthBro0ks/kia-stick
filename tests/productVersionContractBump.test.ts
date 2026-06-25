@@ -3,6 +3,7 @@ import { describe, expect, it } from "vitest";
 
 const targetProductVersion = "0.7.0";
 const promptVersion = "prompt.fake-docs.v0.5-import-wizard-hardening";
+const currentPhase = "KIA-Stick-v0.7.4-chat-saved-upload-stabilization";
 
 function constantValue(source: string, name: string): string {
   const match = source.match(new RegExp(`export\\s+const\\s+${name}\\s*=\\s*"([^"]+)"`));
@@ -62,7 +63,7 @@ describe("v0.7.2 product-version contract bump", () => {
     expect(packageJson.version).toBe(targetProductVersion);
     expect(packageLock.version).toBe(targetProductVersion);
     expect(packageLock.packages[""].version).toBe(targetProductVersion);
-    expect(featureList.phase).toBe("KIA-Stick-v0.7.3-fake-only-ux-triage-and-stabilization-plan");
+    expect(featureList.phase).toBe(currentPhase);
     expect(featureList.release_readiness.phase).toBe(featureList.phase);
     expect(featureList.release_readiness.package_version).toBe(targetProductVersion);
     expect(featureList.release_readiness.product_version).toBe(targetProductVersion);

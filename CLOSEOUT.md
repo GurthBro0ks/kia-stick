@@ -1,5 +1,30 @@
 # KIA Stick Closeout
 
+## v0.7.4 Chat/Saved/Upload Stabilization
+
+- Phase: `KIA-Stick-v0.7.4-chat-saved-upload-stabilization`
+- Baseline: accepted pushed v0.7.3 state at `38bff5f`
+- Origin/main verified: `38bff5f`
+- Scope: fake-only runtime/test hardening for Chat save feedback, Saved empty/detail metadata, Upload fake metadata copy, and `/health` phase metadata.
+- Product version: `0.7.0`
+- Package version: `0.7.0`
+- Prompt version: `prompt.fake-docs.v0.5-import-wizard-hardening`
+- Source plan: `docs/v0.7.3-fake-only-ux-stabilization-plan.md`
+- Tests updated: `tests/answerGovernor.test.ts`, `tests/fakeOnlyUxStabilizationPlan.test.ts`, `tests/productVersionContractBump.test.ts`
+- Proof directory: `/tmp/proof_kia_stick_v0_7_4_chat_saved_upload_stabilization_20260625T183457Z`
+- Validation: PASS
+- Queue state: `queue-017-v073-fake-only-ux-triage` accepted after pushed baseline `38bff5f`; `queue-018-v074-chat-saved-upload-stabilization` is ready for the task prompt auto-push gate; `queue-015-v07-first-real-doc-gate-request` remains blocked.
+- Runtime notes: `/health` no longer reports stale phase `KIA-Stick-v0.5.2-fake-wizard-state-machine-hardening`; Chat blocks no-answer saves; Saved shows product/prompt/build/provider metadata; Upload remains button-only synthetic metadata.
+- Real document access: none
+- Private vault inspected: no
+- Push performed: auto-push only if the task prompt's validation gates pass.
+
+## v0.7.4 Safety Boundary
+
+This phase does not approve real-doc work. It does not add file pickers, path readers, file reads, copying, OCR, upload handlers, real redaction, embeddings, indexing, vector stores, private-vault inspection, service changes, credentials, or real-document access. `productVersion` remains `0.7.0` and `promptVersion` remains unchanged.
+
+---
+
 ## v0.7.3 Fake-Only UX Stabilization Plan
 
 - Phase: `KIA-Stick-v0.7.3-fake-only-ux-triage-and-stabilization-plan`

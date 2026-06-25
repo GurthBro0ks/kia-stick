@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server";
 import { corpus } from "@/lib/sourceModel";
 import { getRuntimeVersion } from "@/lib/serverVersion";
+import { CURRENT_PHASE } from "@/lib/version";
 
 export const dynamic = "force-dynamic";
 
@@ -10,7 +11,7 @@ export function GET() {
   return NextResponse.json({
     ok: true,
     app: "kia-stick",
-    phase: "KIA-Stick-v0.5.2-fake-wizard-state-machine-hardening",
+    phase: CURRENT_PHASE,
     targetMachine: "USER_LAPTOP_ONLY",
     fakeOnly: true,
     realDbTouched: false,

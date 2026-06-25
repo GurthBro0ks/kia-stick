@@ -140,9 +140,9 @@ function savedBuildLabel(item: SavedAnswer): string {
 }
 
 function saveStatusText(status: SaveAnswerStatus): string {
-  if (status === "created") return "Saved this fake-thread answer.";
-  if (status === "replaced") return "Updated this saved answer with newer fake metadata.";
-  return "Already saved. No new data in this thread.";
+  if (status === "created") return "Saved fake answer to Saved with current version metadata.";
+  if (status === "replaced") return "Updated the saved answer with newer fake metadata.";
+  return "Already saved. No duplicate Saved record was created.";
 }
 
 export function KiaStickApp({ runtimeVersion = clientVersion }: { runtimeVersion?: RuntimeVersion }) {
@@ -312,6 +312,7 @@ export function KiaStickApp({ runtimeVersion = clientVersion }: { runtimeVersion
 
   function saveAssistantAnswer(message: AssistantMessage) {
     if (message.status !== "complete") return;
+    if (message.answer.noAnswer) return;
     const record = createSavedAnswerRecord({
       answer: message.answer,
       mode: message.modeScopeDetail.mode,
@@ -455,38 +456,10 @@ export function KiaStickApp({ runtimeVersion = clientVersion }: { runtimeVersion
         )}
 
         {tab === "saved" && (
-          <section className="tabPanel">
-            <PanelHeader title="Saved" meta={`${saved.length} stored locally`} />
-            <div className="sourceCards">
-              {saved.length === 0 && <p className="emptyState">No saved answers yet.</p>}
-              {saved.map((item) => (
-                <article className="savedCard" key={item.id}>
-                  <div className="savedHeader">
-                    <h3>{item.question}</h3>
-                    <button
-                      className="button iconOnly subtle"
-                      type="button"
-                      title="Delete saved answer"
-                      aria-label="Delete saved answer"
-                      onClick={() => setSaved((current) => current.filter((savedItem) => savedItem.id !== item.id))}
-                    >
-                      <Archive size={16} />
-                    </button>
-                  </div>
-                  <p>{item.answer.split("\n\n")[0]}</p>
-                  <div className="sourceMeta">
-                    <span className="badge">{item.mode}</span>
-                    <span className="badge">{item.scope}</span>
-                    <span className="badge">{item.detail}</span>
-                    <span className="badge">{item.provider}</span>
-                    <span className="badge">{savedBuildLabel(item)}</span>
-                    <span className="badge">{item.citations.length} citations</span>
-                    <span className="badge">{new Date(item.timestamp).toLocaleString()}</span>
-                  </div>
-                </article>
-              ))}
-            </div>
-          </section>
+          <SavedAnswersPanel
+            saved={saved}
+            onDelete={(id) => setSaved((current) => current.filter((savedItem) => savedItem.id !== id))}
+          />
         )}
 
         {tab === "upload" && (
@@ -694,21 +667,21 @@ export function FakeUploadPanel(props: {
             checked={props.fakeOnlyConfirmed}
             onChange={(event) => props.onFakeOnlyConfirmedChange(event.target.checked)}
           />
-          Fake sample only
+          Confirm fake sample metadata only
         </label>
         <div className="fakeUploadActions" aria-label="fake upload metadata actions">
           <button className="button primary" type="button" disabled={!props.fakeOnlyConfirmed} onClick={() => props.onQueueFakeUpload("single")}>
             <Plus size={16} />
-            Queue fake sample
+            Queue fake sample metadata
           </button>
           <button className="button subtle" type="button" disabled={!props.fakeOnlyConfirmed} onClick={() => props.onQueueFakeUpload("batch")}>
             <ClipboardList size={16} />
-            Queue fake batch
+            Queue fake batch metadata
           </button>
         </div>
-        <p className="emptyState">No file picker is present. Upload queues synthetic metadata only.</p>
+        <p className="emptyState">No file picker is present. Buttons queue synthetic names, sizes, and timestamps only.</p>
         <div className="sourceCards">
-          {props.quarantine.length === 0 && <p className="emptyState">No queued fake samples.</p>}
+          {props.quarantine.length === 0 && <p className="emptyState">No queued fake samples. Confirm fake sample metadata only, then queue a sample or batch.</p>}
           {props.quarantine.map((item) => (
             <article className="uploadRow" key={item.id}>
               <p>
@@ -716,6 +689,7 @@ export function FakeUploadPanel(props: {
               </p>
               <div className="sourceMeta">
                 <span className="badge">{item.review}</span>
+                <span className="badge">synthetic_metadata_only</span>
                 <span className="badge red">not_indexable</span>
                 <span className="badge">{item.privacy}</span>
                 <span className="badge">{new Date(item.timestamp).toLocaleString()}</span>
@@ -723,6 +697,55 @@ export function FakeUploadPanel(props: {
             </article>
           ))}
         </div>
+      </div>
+    </section>
+  );
+}
+
+export function SavedAnswersPanel(props: { saved: SavedAnswer[]; onDelete: (id: string) => void }) {
+  return (
+    <section className="tabPanel">
+      <PanelHeader title="Saved" meta={`${props.saved.length} stored locally`} />
+      <div className="sourceCards">
+        {props.saved.length === 0 && (
+          <p className="emptyState">
+            No saved fake answers yet. Save a cited Chat answer to review its local metadata here.
+          </p>
+        )}
+        {props.saved.map((item) => (
+          <article className="savedCard" key={item.id}>
+            <div className="savedHeader">
+              <h3>{item.question}</h3>
+              <button
+                className="button iconOnly subtle"
+                type="button"
+                title="Delete saved answer"
+                aria-label="Delete saved answer"
+                onClick={() => props.onDelete(item.id)}
+              >
+                <Archive size={16} />
+              </button>
+            </div>
+            <p>{item.answer.split("\n\n")[0]}</p>
+            <dl className="savedDetailList" aria-label="Saved answer metadata">
+              <dt>Product</dt>
+              <dd>{item.version.productVersion}</dd>
+              <dt>Prompt</dt>
+              <dd>{item.version.promptVersion}</dd>
+              <dt>Build</dt>
+              <dd>{savedBuildLabel(item)}</dd>
+              <dt>Provider</dt>
+              <dd>{item.provider}</dd>
+            </dl>
+            <div className="sourceMeta">
+              <span className="badge">{item.mode}</span>
+              <span className="badge">{item.scope}</span>
+              <span className="badge">{item.detail}</span>
+              <span className="badge">{item.citations.length} citations</span>
+              <span className="badge">{new Date(item.timestamp).toLocaleString()}</span>
+            </div>
+          </article>
+        ))}
       </div>
     </section>
   );
@@ -1459,12 +1482,18 @@ export function AssistantMessageCard({
               <ClipboardList size={16} />
               {packetOpen ? "Hide full packet" : "Show full packet"}
             </button>
-            <button className="button subtle" type="button" onClick={onSave} aria-label="Save this answer">
+            <button
+              className="button subtle"
+              type="button"
+              onClick={onSave}
+              aria-label={answer.noAnswer ? "No-answer responses cannot be saved" : "Save this answer"}
+              disabled={answer.noAnswer}
+            >
               <Save size={16} />
-              Save to Saved
+              {answer.noAnswer ? "No answer to save" : "Save to Saved"}
             </button>
             {answer.citations.length === 0 ? (
-              <p className="emptyState">No citable fake sources.</p>
+              <p className="emptyState">No Saved record is created for no-answer responses.</p>
             ) : (
               <button
                 aria-expanded={citationsOpen}

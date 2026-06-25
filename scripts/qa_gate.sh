@@ -56,7 +56,7 @@ cat >"$PROOF_DIR/RESULT.md" <<RESULT
 - Cloud/API keys required: no
 - Secrets printed: no
 - Push performed: no
-- Real DB boundary: /media/mint/SHARED/APWU intentionally untouched
+- Real DB boundary: real-doc source mount intentionally untouched
 
 ## Manual QA Checklist
 

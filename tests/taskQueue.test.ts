@@ -79,8 +79,8 @@ describe("task-queue", () => {
     expect(queue.items[13].status).toBe("planned");
     expect(queue.items[14].status).toBe("blocked");
     expect(queue.items[15].status).toBe("accepted");
-    expect(queue.items[16].status).toBe("ready_to_push");
-    expect(queue.items[17].status).toBe("planned");
+    expect(queue.items[16].status).toBe("accepted");
+    expect(queue.items[17].status).toBe("ready_to_push");
     expect(queue.items.every((item) => item.history.length > 0)).toBe(true);
     expect(mod.validateQueue(queue)).toBe(true);
   });
@@ -150,15 +150,16 @@ describe("task-queue", () => {
     const realDocGate = queue.items.find((item) => item.id === "queue-015-v07-first-real-doc-gate-request");
 
     expect(triage?.phase).toBe("KIA-Stick-v0.7.3-fake-only-ux-triage-and-stabilization-plan");
-    expect(triage?.status).toBe("ready_to_push");
+    expect(triage?.status).toBe("accepted");
     expect(triage?.model).toBe("GPT/Codex $100");
     expect(`${triage?.summary}\n${triage?.next_action}`).toContain("Chat, Sources, Saved, Upload, Import, Vault, Settings");
-    expect(`${triage?.summary}\n${triage?.next_action}`).toContain("no prohibited file or document capability");
+    expect(`${triage?.summary}\n${triage?.next_action}`).toContain("38bff5f");
 
     expect(nextChunk?.phase).toBe("KIA-Stick-v0.7.4-chat-saved-upload-stabilization");
-    expect(nextChunk?.status).toBe("planned");
+    expect(nextChunk?.status).toBe("ready_to_push");
     expect(`${nextChunk?.summary}\n${nextChunk?.next_action}`).toContain("Chat save feedback");
     expect(`${nextChunk?.summary}\n${nextChunk?.next_action}`).toContain("fake-only");
+    expect(`${nextChunk?.summary}\n${nextChunk?.next_action}`).toContain("no prohibited file or document capability");
     expect(realDocGate?.status).toBe("blocked");
 
     const joined = [triage, nextChunk].map((item) => `${item?.summary}\n${item?.next_action}`).join("\n");

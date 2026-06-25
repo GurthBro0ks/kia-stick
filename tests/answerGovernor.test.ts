@@ -4,7 +4,7 @@ import { renderToStaticMarkup } from "react-dom/server";
 import React from "react";
 import { GET as healthGET } from "@/app/health/route";
 import VersionPage from "@/app/version/page";
-import { AssistantMessageCard, FakeUploadPanel, FullPacket, ImportWizardPanel, KiaStickApp, UserMessageBubble, VaultPanel } from "@/components/KiaStickApp";
+import { AssistantMessageCard, FakeUploadPanel, FullPacket, ImportWizardPanel, KiaStickApp, SavedAnswersPanel, UserMessageBubble, VaultPanel } from "@/components/KiaStickApp";
 import { answerToMarkdown, buildAnswer } from "@/lib/answerGovernor";
 import {
   appendTurn,
@@ -39,7 +39,7 @@ import {
 } from "@/lib/redactionMetadataModel";
 import { createSavedAnswerRecord, migrateSavedAnswers, upsertSavedAnswer } from "@/lib/savedAnswers";
 import { buildSourceHierarchyGroups, corpus, sourceHierarchyLabels, sourceHierarchyOrder } from "@/lib/sourceModel";
-import { createRuntimeVersion, runtimeVersionFields } from "@/lib/version";
+import { CURRENT_PHASE, PRODUCT_VERSION, PROMPT_VERSION, createRuntimeVersion, runtimeVersionFields } from "@/lib/version";
 import {
   applyVaultAction,
   assertFakeMetadataOnly,
@@ -156,6 +156,8 @@ describe("saved answers", () => {
     expect(result.status).toBe("created");
     expect(result.saved).toHaveLength(1);
     expect(result.saved[0].saveKey).toBe(record.saveKey);
+    expect(result.saved[0].version.productVersion).toBe(PRODUCT_VERSION);
+    expect(result.saved[0].version.promptVersion).toBe(PROMPT_VERSION);
   });
 
   it("blocks duplicate saves when the same chat has no new data", () => {
@@ -479,6 +481,8 @@ describe("runtime build identity", () => {
     }
 
     expect(payload.version.productVersion).toBe("0.7.0");
+    expect(payload.phase).toBe(CURRENT_PHASE);
+    expect(payload.phase).not.toBe("KIA-Stick-v0.5.2-fake-wizard-state-machine-hardening");
     expect(payload.version.displayVersion).toMatch(/^0\.7\.0-dev\.\d{8}\+(?:[a-z0-9]+|unknown)$/);
     expect(payload.version.corpusVersion).toBe(corpus.corpusVersion);
     expect(payload.version.indexVersion).toBe(corpus.indexVersion);
@@ -565,6 +569,63 @@ describe("manual QA UX shell", () => {
     expect(assistantHtml).toContain("Save to Saved");
     expect(assistantHtml).toContain("aria-expanded=\"false\"");
     expect(assistantHtml).not.toContain("citationCards");
+  });
+
+  it("blocks saving no-answer assistant responses from the UI", () => {
+    const user = createUserMessage({
+      threadId: "thread-test",
+      content: "What evidence should I get?",
+      modeScopeDetail: baseOptions,
+      now: "2026-06-20T10:01:00.000Z",
+    });
+    const answer = buildAnswer(user.content, baseOptions);
+    const assistant = createAssistantMessage({
+      threadId: user.threadId,
+      turnId: user.turnId,
+      parentMessageId: user.messageId,
+      answer,
+      modeScopeDetail: baseOptions,
+      now: "2026-06-20T10:01:01.000Z",
+    });
+    const html = renderToStaticMarkup(React.createElement(AssistantMessageCard, {
+      message: assistant,
+      turnLabel: "Turn 1",
+      onRetry: () => undefined,
+      onSave: () => undefined,
+    }));
+
+    expect(answer.noAnswer).toBe(true);
+    expect(html).toContain("No answer to save");
+    expect(html).toContain("disabled=\"\"");
+    expect(html).toContain("No Saved record is created for no-answer responses.");
+    expect(html).not.toContain("aria-label=\"Save this answer\"");
+  });
+
+  it("renders Saved empty and detail states with version metadata", () => {
+    const emptyHtml = renderToStaticMarkup(React.createElement(SavedAnswersPanel, {
+      saved: [],
+      onDelete: () => undefined,
+    }));
+    const answer = buildAnswer("Can annual leave be denied after I submitted inside the fake window?", baseOptions);
+    const record = createSavedAnswerRecord({
+      answer,
+      mode: baseOptions.mode,
+      scope: baseOptions.scope,
+      detail: baseOptions.detail,
+      timestamp: "2026-06-20T04:00:00.000Z",
+    });
+    const savedHtml = renderToStaticMarkup(React.createElement(SavedAnswersPanel, {
+      saved: [record],
+      onDelete: () => undefined,
+    }));
+
+    expect(emptyHtml).toContain("No saved fake answers yet.");
+    expect(savedHtml).toContain("Saved answer metadata");
+    expect(savedHtml).toContain("Product");
+    expect(savedHtml).toContain(PRODUCT_VERSION);
+    expect(savedHtml).toContain("Prompt");
+    expect(savedHtml).toContain(PROMPT_VERSION);
+    expect(savedHtml).toContain("Delete saved answer");
   });
 
   it("renders chronological chat layout before composer and bottom nav", () => {
@@ -988,6 +1049,7 @@ describe("fake import wizard model", () => {
     expect(html).toContain("Queue fake sample");
     expect(html).toContain("Queue fake batch");
     expect(html).toContain("No file picker is present");
+    expect(html).toContain("synthetic_metadata_only");
     expect(html).toContain("fake-upload-sample-single.md");
     expect(html).toContain("not_indexable");
     expect(html).not.toContain("type=\"file\"");
