@@ -51,7 +51,7 @@ describe("task-queue", () => {
     const queue = mod.loadQueue(resolve("."));
 
     expect(queue.schema).toBe("kia-stick-local-task-queue.v1");
-    expect(queue.items).toHaveLength(20);
+    expect(queue.items).toHaveLength(21);
     expect(queue.items.map((item) => item.id)).toEqual([
       "queue-001-closeout-helper-hardening",
       "queue-002-fake-redaction-metadata-depth",
@@ -73,6 +73,7 @@ describe("task-queue", () => {
       "queue-018-v074-chat-saved-upload-stabilization",
       "queue-019-v075-sources-vault-import-polish",
       "queue-020-v076-design-md-fake-only-ux-contract",
+      "queue-021-v077-design-contract-drift-guard",
     ]);
     expect(queue.items.slice(0, 10).every((item) => item.status === "accepted")).toBe(true);
     expect(queue.items[10].status).toBe("planned");
@@ -84,7 +85,8 @@ describe("task-queue", () => {
     expect(queue.items[16].status).toBe("accepted");
     expect(queue.items[17].status).toBe("accepted");
     expect(queue.items[18].status).toBe("accepted");
-    expect(queue.items[19].status).toBe("ready_to_push");
+    expect(queue.items[19].status).toBe("accepted");
+    expect(queue.items[20].status).toBe("ready_to_push");
     expect(queue.items.every((item) => item.history.length > 0)).toBe(true);
     expect(mod.validateQueue(queue)).toBe(true);
   });
@@ -146,13 +148,14 @@ describe("task-queue", () => {
     expect(text).not.toMatch(/\bshowOpenFilePicker\b|\bFileReader\b|\breadAsText\b|\breadAsArrayBuffer\b/i);
   });
 
-  it("tracks accepted v0.7.3/v0.7.4/v0.7.5 state and the active v0.7.6 design contract", async () => {
+  it("tracks accepted v0.7.3 through v0.7.6 state and the active v0.7.7 design guard", async () => {
     const mod = await loadModule();
     const queue = mod.loadQueue(resolve("."));
     const triage = queue.items.find((item) => item.id === "queue-017-v073-fake-only-ux-triage");
     const v074 = queue.items.find((item) => item.id === "queue-018-v074-chat-saved-upload-stabilization");
     const v075 = queue.items.find((item) => item.id === "queue-019-v075-sources-vault-import-polish");
-    const nextChunk = queue.items.find((item) => item.id === "queue-020-v076-design-md-fake-only-ux-contract");
+    const v076 = queue.items.find((item) => item.id === "queue-020-v076-design-md-fake-only-ux-contract");
+    const nextChunk = queue.items.find((item) => item.id === "queue-021-v077-design-contract-drift-guard");
     const realDocGate = queue.items.find((item) => item.id === "queue-015-v07-first-real-doc-gate-request");
 
     expect(triage?.phase).toBe("KIA-Stick-v0.7.3-fake-only-ux-triage-and-stabilization-plan");
@@ -169,12 +172,15 @@ describe("task-queue", () => {
     expect(v075?.status).toBe("accepted");
     expect(`${v075?.summary}\n${v075?.next_action}`).toContain("303f12b");
 
-    expect(nextChunk?.phase).toBe("KIA-Stick-v0.7.6-design-md-fake-only-ux-contract");
+    expect(v076?.phase).toBe("KIA-Stick-v0.7.6-design-md-fake-only-ux-contract");
+    expect(v076?.status).toBe("accepted");
+    expect(`${v076?.summary}\n${v076?.next_action}`).toContain("4e7ab62");
+
+    expect(nextChunk?.phase).toBe("KIA-Stick-v0.7.7-design-contract-drift-guard");
     expect(nextChunk?.status).toBe("ready_to_push");
-    expect(`${nextChunk?.summary}\n${nextChunk?.next_action}`).toContain("DESIGN.md");
-    expect(`${nextChunk?.summary}\n${nextChunk?.next_action}`).toContain("scan density");
-    expect(`${nextChunk?.summary}\n${nextChunk?.next_action}`).toContain("safety-label language");
-    expect(`${nextChunk?.summary}\n${nextChunk?.next_action}`).toContain("fake-only");
+    expect(`${nextChunk?.summary}\n${nextChunk?.next_action}`).toContain("design:check");
+    expect(`${nextChunk?.summary}\n${nextChunk?.next_action}`).toContain("DESIGN.md fake-only rules");
+    expect(`${nextChunk?.summary}\n${nextChunk?.next_action}`).toContain("queue-015 remains blocked");
     expect(`${nextChunk?.summary}\n${nextChunk?.next_action}`).toContain("no prohibited file or document capability");
     expect(realDocGate?.status).toBe("blocked");
 

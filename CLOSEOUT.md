@@ -1,5 +1,32 @@
 # KIA Stick Closeout
 
+## v0.7.7 Design Contract Drift Guard
+
+- Phase: `KIA-Stick-v0.7.7-design-contract-drift-guard`
+- Baseline: accepted pushed v0.7.6 state at `4e7ab62`
+- Origin/main verified: `4e7ab62`
+- Scope: docs/tests/tooling guard for `DESIGN.md` fake-only UX contract, AGENTS.md routing, version identity, required surface coverage, proof-safe output language, accessibility/mobile/no-answer state coverage, repo-local skill-dir absence, and blocked real-doc queue state.
+- Product version: `0.7.0`
+- Package version: `0.7.0`
+- Prompt version: `prompt.fake-docs.v0.5-import-wizard-hardening`
+- Guard script: `scripts/design-contract-check.mjs`
+- NPM script: `npm run design:check`
+- Tests added: `tests/designContractCheck.test.ts`
+- Proof directory: `/tmp/proof_kia_stick_v0_7_7_design_contract_drift_guard_20260625T234744Z`
+- Validation: PASS for release check, QA, design check, proof latest, closeout helper proof read, fake-doc scan, privacy scan, exact safety scans, JSON parse, focused guard/queue/version tests, and `git diff --check`.
+- Queue state: `queue-020-v076-design-md-fake-only-ux-contract` accepted after pushed baseline `4e7ab62`; `queue-021-v077-design-contract-drift-guard` is ready for the task prompt auto-push gate; `queue-015-v07-first-real-doc-gate-request` remains blocked.
+- Real document access: none
+- Private vault inspected: no
+- Skills installed: no
+- Global agent config changed: no
+- Push performed: auto-push only if the task prompt's validation gates pass.
+
+## v0.7.7 Safety Boundary
+
+This phase does not approve real-doc work. It does not add file pickers, path readers, file reads, copying, OCR, upload handlers, real redaction, embeddings, indexing, vector stores, private-vault inspection, service changes, credentials, skills, global agent config, or real-document access. `productVersion` remains `0.7.0` and `promptVersion` remains unchanged.
+
+---
+
 ## v0.7.6 DESIGN.md Fake-Only UX Contract
 
 - Phase: `KIA-Stick-v0.7.6-design-md-fake-only-ux-contract`

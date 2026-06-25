@@ -2,10 +2,31 @@
 
 ## Current Phase
 
-- Phase: `KIA-Stick-v0.7.6-design-md-fake-only-ux-contract`
+- Phase: `KIA-Stick-v0.7.7-design-contract-drift-guard`
 - Target: `USER_LAPTOP_ONLY`
 - Provider: `local-fake-deterministic`
-- Status: validation PASS for repo-owned `DESIGN.md` fake-only UX/design contract from accepted pushed v0.7.5 baseline `303f12b`; one task-scoped commit, auto-pushed only if all gates PASS and only expected ahead-by-one WARN remains.
+- Status: validation PASS for deterministic `DESIGN.md` fake-only UX contract drift guard from accepted pushed v0.7.6 baseline `4e7ab62`; one task-scoped commit, auto-pushed only if all gates PASS and only expected ahead-by-one WARN remains.
+
+## v0.7.7 Design Contract Drift Guard State
+
+- Phase: `KIA-Stick-v0.7.7-design-contract-drift-guard`
+- Baseline: origin/main and HEAD verified at `4e7ab62`.
+- v0.7.6 pushed state: recorded as accepted pushed commit `4e7ab62`.
+- Scope: docs/tests/tooling guard for `DESIGN.md` fake-only UX contract, AGENTS routing, product/prompt version identity, required surface coverage, proof-safe output language, accessibility/mobile/no-answer states, repo-local skill-dir absence, and blocked real-doc queue state.
+- Product version: `0.7.0`
+- Prompt version: `prompt.fake-docs.v0.5-import-wizard-hardening`
+- Guard script: `scripts/design-contract-check.mjs`
+- NPM script: `design:check`
+- Queue state: `queue-020-v076-design-md-fake-only-ux-contract` accepted after pushed baseline `4e7ab62`; `queue-021-v077-design-contract-drift-guard` marked `ready_to_push`; `queue-015-v07-first-real-doc-gate-request` remains `blocked`.
+- Real/private document access: none.
+- Private vault inspected: no.
+- Skills installed: no.
+- Global agent config changed: no.
+- Commands run so far: missing `/home/slimy/*` bootstrap checks, git status/ref/log before-state capture, DESIGN/AGENTS/README/CLOSEOUT/feature/queue/version/script/test inspection, scoped guard/docs/state/test edits, focused `npm run test -- tests/designContractCheck.test.ts tests/designContract.test.ts tests/taskQueue.test.ts tests/fakeOnlyUxStabilizationPlan.test.ts tests/productVersionContractBump.test.ts`, `npm run release:check`, `PROOF_DIR=/tmp/proof_kia_stick_v0_7_7_design_contract_drift_guard_20260625T234744Z npm run qa`, `npm run design:check`, `npm run proof:latest`, `npm run closeout:review`, `npm run closeout:summary`, `npm run scan:fake`, `npm run scan:privacy`, exact forbidden-path/file-affordance/skill-dir safety scans, JSON parse, `git diff --check`, and `git status --short`.
+- Files changed so far: `scripts/design-contract-check.mjs`, `tests/designContractCheck.test.ts`, `package.json`, `lib/version.ts`, `feature_list.json`, `docs/phase-backlog.json`, `README.md`, `CLOSEOUT.md`, `claude-progress.md`, `tests/fakeOnlyUxStabilizationPlan.test.ts`, `tests/productVersionContractBump.test.ts`, and `tests/taskQueue.test.ts`.
+- Proof directory: `/tmp/proof_kia_stick_v0_7_7_design_contract_drift_guard_20260625T234744Z`
+- Validation: PASS.
+- Remaining unknowns: final validation result, final commit SHA, post-commit closeout review, and push verification.
 
 ## v0.7.6 DESIGN.md Fake-Only UX Contract State
 

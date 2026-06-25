@@ -12,6 +12,16 @@ KIA Stick separates milestone semver from build identity:
 
 `/health`, `/version`, the app header, settings, answer footer, and saved answer metadata expose the current `displayVersion`.
 
+## v0.7.7 Design Contract Drift Guard
+
+Phase: `KIA-Stick-v0.7.7-design-contract-drift-guard`.
+
+This phase adds deterministic `npm run design:check` tooling for the repo-owned `DESIGN.md` fake-only UX contract. The guard fails if future work drifts from the DESIGN.md fake-only boundary, AGENTS.md routing, product/prompt version identity, required Chat/Sources/Saved/Upload/Import/Vault/Settings/`/health`/`/version` coverage, proof-safe output rules, accessibility/mobile/no-answer state coverage, repo-local skill-dir limits, or the blocked `queue-015-v07-first-real-doc-gate-request` state.
+
+`productVersion` stays `0.7.0`, `promptVersion` stays `prompt.fake-docs.v0.5-import-wizard-hardening`, and `queue-015-v07-first-real-doc-gate-request` remains blocked.
+
+This is **fake-only docs/tests/tooling work**. It does not change runtime UX, add file pickers, path readers, file reads, uploads, OCR, real redaction, embeddings, indexing, vector stores, private-vault inspection, service changes, global agent config, skills, or real-document access.
+
 ## v0.7.6 DESIGN.md Fake-Only UX Contract
 
 Phase: `KIA-Stick-v0.7.6-design-md-fake-only-ux-contract`.

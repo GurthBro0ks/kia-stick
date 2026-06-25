@@ -3,7 +3,7 @@ import { describe, expect, it } from "vitest";
 
 const phase = "KIA-Stick-v0.7.3-fake-only-ux-triage-and-stabilization-plan";
 const v074Phase = "KIA-Stick-v0.7.4-chat-saved-upload-stabilization";
-const currentPhase = "KIA-Stick-v0.7.6-design-md-fake-only-ux-contract";
+const currentPhase = "KIA-Stick-v0.7.7-design-contract-drift-guard";
 const acceptedPlanCommit = "38bff5f";
 const promptVersion = "prompt.fake-docs.v0.5-import-wizard-hardening";
 const planPath = "docs/v0.7.3-fake-only-ux-stabilization-plan.md";
@@ -113,7 +113,7 @@ describe("v0.7.3 fake-only UX stabilization plan", () => {
     expect(plan).not.toContain(privateVault);
   });
 
-  it("records v0.7.3/v0.7.4/v0.7.5 as accepted and advances v0.7.6 to the validation push gate", () => {
+  it("records v0.7.3 through v0.7.6 as accepted and advances v0.7.7 to the validation push gate", () => {
     const queue = JSON.parse(readFileSync("docs/phase-backlog.json", "utf8")) as {
       items: Array<{ id: string; phase: string; status: string; summary: string; next_action: string }>;
     };
@@ -122,6 +122,7 @@ describe("v0.7.3 fake-only UX stabilization plan", () => {
     const v074 = queue.items.find((item) => item.id === "queue-018-v074-chat-saved-upload-stabilization");
     const v075 = queue.items.find((item) => item.id === "queue-019-v075-sources-vault-import-polish");
     const v076 = queue.items.find((item) => item.id === "queue-020-v076-design-md-fake-only-ux-contract");
+    const v077 = queue.items.find((item) => item.id === "queue-021-v077-design-contract-drift-guard");
 
     expect(v072?.status).toBe("accepted");
     expect(v072?.next_action).toContain("179f883");
@@ -136,10 +137,14 @@ describe("v0.7.3 fake-only UX stabilization plan", () => {
     expect(v075?.status).toBe("accepted");
     expect(`${v075?.summary}\n${v075?.next_action}`).toContain("Sources hierarchy traceability");
     expect(`${v075?.summary}\n${v075?.next_action}`).toContain("fake-only");
-    expect(v076?.phase).toBe(currentPhase);
-    expect(v076?.status).toBe("ready_to_push");
+    expect(v076?.phase).toBe("KIA-Stick-v0.7.6-design-md-fake-only-ux-contract");
+    expect(v076?.status).toBe("accepted");
     expect(`${v076?.summary}\n${v076?.next_action}`).toContain("DESIGN.md");
     expect(`${v076?.summary}\n${v076?.next_action}`).toContain("fake-only");
+    expect(v077?.phase).toBe(currentPhase);
+    expect(v077?.status).toBe("ready_to_push");
+    expect(`${v077?.summary}\n${v077?.next_action}`).toContain("design:check");
+    expect(`${v077?.summary}\n${v077?.next_action}`).toContain("queue-015 remains blocked");
   });
 
   it("does not add file input, picker, reader, OCR, upload, vector, or real-doc runtime code paths", () => {

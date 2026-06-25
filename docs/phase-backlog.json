@@ -1,6 +1,6 @@
 {
   "schema": "kia-stick-local-task-queue.v1",
-  "updated_at": "2026-06-25T21:50:00.000Z",
+  "updated_at": "2026-06-25T23:50:00.000Z",
   "items": [
     {
       "id": "queue-001-closeout-helper-hardening",
@@ -542,19 +542,45 @@
       "id": "queue-020-v076-design-md-fake-only-ux-contract",
       "phase": "KIA-Stick-v0.7.6-design-md-fake-only-ux-contract",
       "title": "v0.7.6 DESIGN.md fake-only UX contract",
-      "status": "ready_to_push",
+      "status": "accepted",
       "model": "GPT/Codex $100",
       "risk": "low",
       "summary": "Create repo-owned DESIGN.md for KIA Stick's fake-only UX/design contract covering citation-first hierarchy, scan density, safety-label language, version identity, accessibility, mobile, and proof-safe output rules.",
-      "next_action": "Auto-push this docs/tests/state commit only if validation passes, queue-015 remains blocked, no prohibited file or document capability is added, and only the expected ahead-by-one warning remains.",
+      "next_action": "Accepted pushed state verified at 4e7ab62; proceed to v0.7.7 design contract drift guard.",
       "created_at": "2026-06-25T21:50:00.000Z",
-      "updated_at": "2026-06-25T21:50:00.000Z",
+      "updated_at": "2026-06-25T23:50:00.000Z",
       "history": [
         {
           "at": "2026-06-25T21:50:00.000Z",
           "from": "planned",
           "to": "ready_to_push",
           "note": "v0.7.6 DESIGN.md fake-only UX contract implemented for validation; no real-doc work approved."
+        },
+        {
+          "at": "2026-06-25T23:50:00.000Z",
+          "from": "ready_to_push",
+          "to": "accepted",
+          "note": "v0.7.6 DESIGN.md fake-only UX contract accepted after pushed baseline 4e7ab62 was verified."
+        }
+      ]
+    },
+    {
+      "id": "queue-021-v077-design-contract-drift-guard",
+      "phase": "KIA-Stick-v0.7.7-design-contract-drift-guard",
+      "title": "v0.7.7 design contract drift guard",
+      "status": "ready_to_push",
+      "model": "GPT/Codex $100",
+      "risk": "low",
+      "summary": "Add deterministic design:check tooling to fail if DESIGN.md fake-only rules, version identity, AGENTS routing, blocked queue-015 state, or repo-local skill-dir boundaries drift.",
+      "next_action": "Auto-push this docs/tests/tooling commit only if validation passes, queue-015 remains blocked, no prohibited file or document capability is added, and only the expected ahead-by-one warning remains.",
+      "created_at": "2026-06-25T23:50:00.000Z",
+      "updated_at": "2026-06-25T23:50:00.000Z",
+      "history": [
+        {
+          "at": "2026-06-25T23:50:00.000Z",
+          "from": "planned",
+          "to": "ready_to_push",
+          "note": "v0.7.7 design contract drift guard implemented for validation; no real-doc work approved."
         }
       ]
     }
