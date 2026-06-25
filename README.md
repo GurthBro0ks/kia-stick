@@ -12,6 +12,16 @@ KIA Stick separates milestone semver from build identity:
 
 `/health`, `/version`, the app header, settings, answer footer, and saved answer metadata expose the current `displayVersion`.
 
+## v0.7.5 Sources/Vault/Import Scan-Density Polish
+
+Phase: `KIA-Stick-v0.7.5-sources-vault-import-scan-density-polish`.
+
+This phase implements the deferred fake-only polish from the v0.7.3 plan. Sources now exposes a denser traceability summary, fake source IDs, hierarchy ranks, citable/context-only labels, and current build/prompt identity. Vault now surfaces redaction review, metadata review, fake eligibility, not-indexable, blocked, quarantine, row-level redaction, index gate, and audit-export safety labels without opening technical details. Import aligns blocked-action labels and fake proof/export safety copy with Upload and Vault language.
+
+`productVersion` stays `0.7.0`, `promptVersion` stays `prompt.fake-docs.v0.5-import-wizard-hardening`, and `queue-015-v07-first-real-doc-gate-request` remains blocked.
+
+This is **fake-only UX/test polish**. It does not add file pickers, path readers, file reads, uploads, OCR, real redaction, embeddings, indexing, vector stores, private-vault inspection, service changes, or real-document access.
+
 ## v0.7.4 Chat/Saved/Upload Stabilization
 
 Phase: `KIA-Stick-v0.7.4-chat-saved-upload-stabilization`.

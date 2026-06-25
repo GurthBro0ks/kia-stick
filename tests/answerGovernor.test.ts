@@ -4,7 +4,7 @@ import { renderToStaticMarkup } from "react-dom/server";
 import React from "react";
 import { GET as healthGET } from "@/app/health/route";
 import VersionPage from "@/app/version/page";
-import { AssistantMessageCard, FakeUploadPanel, FullPacket, ImportWizardPanel, KiaStickApp, SavedAnswersPanel, UserMessageBubble, VaultPanel } from "@/components/KiaStickApp";
+import { AssistantMessageCard, FakeUploadPanel, FullPacket, ImportWizardPanel, KiaStickApp, SavedAnswersPanel, SourcesPanel, UserMessageBubble, VaultPanel } from "@/components/KiaStickApp";
 import { answerToMarkdown, buildAnswer } from "@/lib/answerGovernor";
 import {
   appendTurn,
@@ -665,6 +665,23 @@ describe("manual QA UX shell", () => {
     expect(html).toContain("bottomNav");
   });
 
+  it("renders Sources hierarchy traceability with fake source IDs and build identity", () => {
+    const version = createRuntimeVersion({ buildDate: "20260625", gitSha: "v075abc" });
+    const html = renderToStaticMarkup(React.createElement(SourcesPanel, {
+      sourceHierarchyGroups: buildSourceHierarchyGroups(),
+      runtimeVersion: version,
+    }));
+
+    expect(html).toContain("source traceability summary");
+    expect(html).toContain("fake sources");
+    expect(html).toContain("citable in answer citations");
+    expect(html).toContain("Rank 1 in the fake citation hierarchy");
+    expect(html).toContain("source id");
+    expect(html).toContain("fake sample");
+    expect(html).toContain(version.promptVersion);
+    expect(html).toContain(version.displayVersion);
+  });
+
   it("renders Vault guide mode and hides technical details by default", () => {
     const state = createInitialVaultState();
     const html = renderToStaticMarkup(React.createElement(VaultPanel, {
@@ -682,6 +699,12 @@ describe("manual QA UX shell", () => {
     expect(html).toContain("What is safe");
     expect(html).toContain("What is blocked");
     expect(html).toContain("What happens next");
+    expect(html).toContain("redaction review needed");
+    expect(html).toContain("metadata review needed");
+    expect(html).toContain("not indexable");
+    expect(html).toContain("Audit export");
+    expect(html).toContain("metadata and guard flags only");
+    expect(html).toContain("Index gate");
     expect(html).toContain("Show technical details");
     expect(html).not.toContain("Lifecycle State Machine");
   });
@@ -701,7 +724,11 @@ describe("manual QA UX shell", () => {
     expect(html).toContain("Redaction is not approval");
     expect(html).toContain("Approval is not indexing");
     expect(html).toContain("No real import path exists");
-    expect(html).toContain("Try file picker");
+    expect(html).toContain("Blocked-action matrix");
+    expect(html).toContain("Proof export safety");
+    expect(html).toContain("Export safety");
+    expect(html).toContain("synthetic metadata only");
+    expect(html).toContain("Verify file picker blocked");
     expect(html).toContain("Try skip to index");
     expect(html).toContain("Fake import proof");
     expect(html).toContain("Fake redaction metadata is advisory fixture data only");

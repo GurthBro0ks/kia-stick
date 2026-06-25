@@ -428,31 +428,7 @@ export function KiaStickApp({ runtimeVersion = clientVersion }: { runtimeVersion
         )}
 
         {tab === "sources" && (
-          <section className="tabPanel">
-            <PanelHeader title="Sources" meta="hierarchy grouped" />
-            <div className="sourceCards">
-              {sourceHierarchyGroups.map(({ hierarchy, label, docs }) => (
-                <article className="sourceCard hierarchyCard" key={hierarchy}>
-                  <div>
-                    <h3>{label}</h3>
-                    <p>{docs.length} fake source{docs.length === 1 ? "" : "s"} in the citation hierarchy.</p>
-                  </div>
-                  <div className="hierarchyDocList">
-                    {docs.map((doc) => (
-                      <div className="hierarchyDoc" key={doc.id}>
-                        <strong>{doc.title}</strong>
-                        <div className="sourceMeta">
-                          <span className="badge">{sourceClassLabels[doc.class]}</span>
-                          <span className={doc.citable ? "badge green" : "badge red"}>{doc.citable ? "citable" : "not citable"}</span>
-                          <span className="badge">{doc.page}</span>
-                        </div>
-                      </div>
-                    ))}
-                  </div>
-                </article>
-              ))}
-            </div>
-          </section>
+          <SourcesPanel sourceHierarchyGroups={sourceHierarchyGroups} runtimeVersion={runtimeVersion} />
         )}
 
         {tab === "saved" && (
@@ -702,6 +678,55 @@ export function FakeUploadPanel(props: {
   );
 }
 
+export function SourcesPanel({
+  sourceHierarchyGroups,
+  runtimeVersion,
+}: {
+  sourceHierarchyGroups: ReturnType<typeof buildSourceHierarchyGroups>;
+  runtimeVersion: RuntimeVersion;
+}) {
+  const totalSources = sourceHierarchyGroups.reduce((total, group) => total + group.docs.length, 0);
+  const citableSources = sourceHierarchyGroups.flatMap((group) => group.docs).filter((doc) => doc.citable).length;
+
+  return (
+    <section className="tabPanel">
+      <PanelHeader title="Sources" meta="hierarchy traceable" />
+      <div className="traceSummary" aria-label="source traceability summary">
+        <strong>{totalSources} fake sources</strong>
+        <span>{citableSources} citable in answer citations</span>
+        <span>Prompt {runtimeVersion.promptVersion}</span>
+        <span>Build {runtimeVersion.displayVersion}</span>
+      </div>
+      <div className="sourceCards">
+        {sourceHierarchyGroups.map(({ hierarchy, label, docs }, index) => (
+          <article className="sourceCard hierarchyCard" key={hierarchy}>
+            <div>
+              <h3>{label}</h3>
+              <p>
+                Rank {index + 1} in the fake citation hierarchy. Citation labels trace back to these fake source IDs and page tags.
+              </p>
+            </div>
+            <div className="hierarchyDocList">
+              {docs.map((doc) => (
+                <div className="hierarchyDoc" key={doc.id}>
+                  <strong>{doc.title}</strong>
+                  <div className="sourceMeta">
+                    <span className="badge">{sourceClassLabels[doc.class]}</span>
+                    <span className={doc.citable ? "badge green" : "badge red"}>{doc.citable ? "citable in Chat" : "context only"}</span>
+                    <span className="badge">source id {doc.id}</span>
+                    <span className="badge">{doc.page}</span>
+                    <span className="badge">{doc.status.includes("fake") ? "fake sample" : "blocked"}</span>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </article>
+        ))}
+      </div>
+    </section>
+  );
+}
+
 export function SavedAnswersPanel(props: { saved: SavedAnswer[]; onDelete: (id: string) => void }) {
   return (
     <section className="tabPanel">
@@ -837,7 +862,7 @@ export function VaultPanel(props: {
           This scaffold uses synthetic metadata fixtures. It does not read, copy, OCR, summarize, index, upload, or transform files.
         </NoticeBox>
         <NoticeBox tone="danger" title="Private boundary">
-          `/media/mint/SHARED/APWU` and `~/kia-stick-private-vault` stay outside this UI and outside tracked GitHub content.
+          Real-document source mounts and private vault folders stay outside this UI and outside tracked GitHub content.
         </NoticeBox>
         <NoticeBox tone="neutral" title="Index warning">
           Quarantine, redaction review, and metadata review are separate gates. They never imply index approval.
@@ -893,7 +918,10 @@ export function VaultPanel(props: {
           ) : (
             <div className="friendlyVaultSummary" aria-label="simple vault summary">
               <strong>{props.state.records.length} fake metadata rows</strong>
+              <span>{props.workflowCounts.redaction_required} redaction review needed</span>
+              <span>{props.workflowCounts.metadata_required} metadata review needed</span>
               <span>{props.workflowCounts.eligible_fake_only} fake-only eligible</span>
+              <span>{props.workflowCounts.not_indexable} not indexable</span>
               <span>{props.workflowCounts.review_rejected} rejected or blocked</span>
               <span>{props.workflowCounts.quarantine_only} quarantine-only</span>
             </div>
@@ -906,7 +934,7 @@ export function VaultPanel(props: {
           <section className="auditExportPanel">
             <div>
               <h3>Fake audit export</h3>
-              <p>Exports include fake metadata, audit events, and build identity only. Private paths and file content are excluded.</p>
+              <p>Exports include fake metadata, audit events, build identity, redaction labels, and guard flags only. Private paths, file content, OCR, uploads, and vectors are excluded.</p>
             </div>
             <div className="vaultActions">
               <DownloadLink fileName="kia-stick-fake-vault-audit.json" label="JSON" mimeType="application/json" text={jsonExport} />
@@ -992,11 +1020,11 @@ export function ImportWizardPanel(props: {
         <NoticeBox tone="warning" title="Fake fixtures only">
           Uses fake IDs, fake counts, fake hashes, and fake proof IDs. No real documents, paths, bytes, screenshots, OCR, or uploads.
         </NoticeBox>
-        <NoticeBox tone="danger" title="Future real action disabled">
-          Real file selection, private-vault inspection, copy-to-quarantine, OCR, indexing, and uploads are placeholders only.
+        <NoticeBox tone="danger" title="Blocked-action matrix">
+          File selection, private-vault inspection, copy-to-quarantine, OCR, indexing, uploads, and vector creation are blocked action checks only.
         </NoticeBox>
-        <NoticeBox tone="neutral" title="Proof is sanitized">
-          Audit export contains build identity, fake metadata, fake redaction labels, fake gates, and blocked reasons only.
+        <NoticeBox tone="neutral" title="Proof export safety">
+          Audit export contains build identity, fake metadata, fake redaction labels, fake gates, blocked reasons, and guard flags only.
         </NoticeBox>
       </div>
 
@@ -1039,6 +1067,7 @@ export function ImportWizardPanel(props: {
           <WizardField label="Proof ID" value={props.state.record.proofId} />
           <WizardField label="Redaction outcome" value={props.state.record.redactionReviewOutcome} />
           <WizardField label="Eligibility impact" value={props.state.record.redactionEligibilityImpact} />
+          <WizardField label="Export safety" value="synthetic metadata only" />
           <WizardField label="Real actions" value={props.state.realActionsDisabled ? "disabled" : "enabled"} />
         </div>
 
@@ -1073,12 +1102,12 @@ export function ImportWizardPanel(props: {
             onClick={() =>
               props.onAction({
                 type: "block_future_real_action",
-                reason: "Future real file picker is disabled. This v0.5.1 scaffold uses fake metadata only.",
+                reason: "Future real file picker is blocked. This fake scaffold uses synthetic metadata only.",
               })
             }
           >
             <AlertTriangle size={16} />
-            Try file picker
+            Verify file picker blocked
           </button>
           <button
             className="button subtle"
@@ -1185,7 +1214,10 @@ function VaultRecordCard({
 
       <div className="friendlyStatusGrid">
         <VaultField label="Plain status" value={friendlyWorkflowLabel(record.workflowState)} />
+        <VaultField label="Redaction" value={friendlyRedactionLabel(record)} />
+        <VaultField label="Index gate" value={friendlyIndexGateLabel(record)} />
         <VaultField label="Safe?" value={record.githubSafe ? "safe fake metadata" : "blocked"} />
+        <VaultField label="Audit export" value={record.githubSafe ? "metadata and guard flags only" : "export blocked"} />
         <VaultField label="Next step" value={friendlyNextStep(record)} />
       </div>
 
@@ -1313,6 +1345,23 @@ function friendlyWorkflowLabel(state: VaultWorkflowState): string {
   if (state === "redaction_required") return "Needs redaction review";
   if (state === "quarantine_only") return "Quarantine only";
   return "Not indexable";
+}
+
+function friendlyRedactionLabel(record: FakeVaultRecord): string {
+  if (record.redactionStatus === "approved_redacted") return `approved fake redaction (${record.redactionReviewOutcome})`;
+  if (record.redactionStatus === "review_needed") return `review needed (${record.redactionReviewOutcome})`;
+  if (record.redactionStatus === "detection_flagged") return "fake detection flagged";
+  if (record.redactionStatus === "restricted") return "restricted fake metadata";
+  if (record.redactionStatus === "rejected") return "redaction rejected";
+  return "not started";
+}
+
+function friendlyIndexGateLabel(record: FakeVaultRecord): string {
+  if (record.workflowState === "eligible_fake_only") return "eligible fake metadata only";
+  if (record.workflowState === "not_indexable" || record.workflowState === "review_rejected") return "not indexable";
+  if (record.workflowState === "metadata_required") return "metadata review before index";
+  if (record.workflowState === "redaction_required") return "redaction review before index";
+  return "quarantine is not index";
 }
 
 function friendlyNextStep(record: FakeVaultRecord): string {

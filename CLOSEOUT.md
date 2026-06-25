@@ -1,5 +1,30 @@
 # KIA Stick Closeout
 
+## v0.7.5 Sources/Vault/Import Scan-Density Polish
+
+- Phase: `KIA-Stick-v0.7.5-sources-vault-import-scan-density-polish`
+- Baseline: accepted pushed v0.7.4 state at `5a3758d`
+- Origin/main verified: `5a3758d`
+- Scope: fake-only UX/test polish for Sources hierarchy traceability, Vault scan-density labels, Import blocked-action copy, and fake proof/export safety cues.
+- Product version: `0.7.0`
+- Package version: `0.7.0`
+- Prompt version: `prompt.fake-docs.v0.5-import-wizard-hardening`
+- Source plan: `docs/v0.7.3-fake-only-ux-stabilization-plan.md`
+- Tests updated: `tests/answerGovernor.test.ts`, `tests/fakeOnlyUxStabilizationPlan.test.ts`, `tests/productVersionContractBump.test.ts`, `tests/taskQueue.test.ts`
+- Proof directory: `/tmp/proof_kia_stick_v0_7_5_sources_vault_import_polish_20260625T191746Z`
+- Validation: PASS for focused tests, release check, QA, fake-doc scan, privacy scan, exact safety greps, JSON parse, and `git diff --check`.
+- Queue state: `queue-018-v074-chat-saved-upload-stabilization` accepted after pushed baseline `5a3758d`; `queue-019-v075-sources-vault-import-polish` is ready for the task prompt auto-push gate; `queue-015-v07-first-real-doc-gate-request` remains blocked.
+- Runtime notes: Sources shows hierarchy ranks, fake source IDs, citable/context labels, and build/prompt traceability; Vault shows denser workflow/redaction/index/audit labels; Import blocked-action and proof-export labels are aligned with fake-only safety language.
+- Real document access: none
+- Private vault inspected: no
+- Push performed: auto-push only if the task prompt's validation gates pass.
+
+## v0.7.5 Safety Boundary
+
+This phase does not approve real-doc work. It does not add file pickers, path readers, file reads, copying, OCR, upload handlers, real redaction, embeddings, indexing, vector stores, private-vault inspection, service changes, credentials, or real-document access. `productVersion` remains `0.7.0` and `promptVersion` remains unchanged.
+
+---
+
 ## v0.7.4 Chat/Saved/Upload Stabilization
 
 - Phase: `KIA-Stick-v0.7.4-chat-saved-upload-stabilization`

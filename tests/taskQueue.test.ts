@@ -51,7 +51,7 @@ describe("task-queue", () => {
     const queue = mod.loadQueue(resolve("."));
 
     expect(queue.schema).toBe("kia-stick-local-task-queue.v1");
-    expect(queue.items).toHaveLength(18);
+    expect(queue.items).toHaveLength(19);
     expect(queue.items.map((item) => item.id)).toEqual([
       "queue-001-closeout-helper-hardening",
       "queue-002-fake-redaction-metadata-depth",
@@ -71,6 +71,7 @@ describe("task-queue", () => {
       "queue-016-v072-product-version-bump-implementation",
       "queue-017-v073-fake-only-ux-triage",
       "queue-018-v074-chat-saved-upload-stabilization",
+      "queue-019-v075-sources-vault-import-polish",
     ]);
     expect(queue.items.slice(0, 10).every((item) => item.status === "accepted")).toBe(true);
     expect(queue.items[10].status).toBe("planned");
@@ -80,7 +81,8 @@ describe("task-queue", () => {
     expect(queue.items[14].status).toBe("blocked");
     expect(queue.items[15].status).toBe("accepted");
     expect(queue.items[16].status).toBe("accepted");
-    expect(queue.items[17].status).toBe("ready_to_push");
+    expect(queue.items[17].status).toBe("accepted");
+    expect(queue.items[18].status).toBe("ready_to_push");
     expect(queue.items.every((item) => item.history.length > 0)).toBe(true);
     expect(mod.validateQueue(queue)).toBe(true);
   });
@@ -142,11 +144,12 @@ describe("task-queue", () => {
     expect(text).not.toMatch(/\bshowOpenFilePicker\b|\bFileReader\b|\breadAsText\b|\breadAsArrayBuffer\b/i);
   });
 
-  it("tracks the v0.7.3 fake-only UX triage plan and the recommended v0.7.4 chunk", async () => {
+  it("tracks accepted v0.7.3/v0.7.4 state and the active v0.7.5 polish chunk", async () => {
     const mod = await loadModule();
     const queue = mod.loadQueue(resolve("."));
     const triage = queue.items.find((item) => item.id === "queue-017-v073-fake-only-ux-triage");
-    const nextChunk = queue.items.find((item) => item.id === "queue-018-v074-chat-saved-upload-stabilization");
+    const v074 = queue.items.find((item) => item.id === "queue-018-v074-chat-saved-upload-stabilization");
+    const nextChunk = queue.items.find((item) => item.id === "queue-019-v075-sources-vault-import-polish");
     const realDocGate = queue.items.find((item) => item.id === "queue-015-v07-first-real-doc-gate-request");
 
     expect(triage?.phase).toBe("KIA-Stick-v0.7.3-fake-only-ux-triage-and-stabilization-plan");
@@ -155,14 +158,20 @@ describe("task-queue", () => {
     expect(`${triage?.summary}\n${triage?.next_action}`).toContain("Chat, Sources, Saved, Upload, Import, Vault, Settings");
     expect(`${triage?.summary}\n${triage?.next_action}`).toContain("38bff5f");
 
-    expect(nextChunk?.phase).toBe("KIA-Stick-v0.7.4-chat-saved-upload-stabilization");
+    expect(v074?.phase).toBe("KIA-Stick-v0.7.4-chat-saved-upload-stabilization");
+    expect(v074?.status).toBe("accepted");
+    expect(`${v074?.summary}\n${v074?.next_action}`).toContain("5a3758d");
+
+    expect(nextChunk?.phase).toBe("KIA-Stick-v0.7.5-sources-vault-import-scan-density-polish");
     expect(nextChunk?.status).toBe("ready_to_push");
-    expect(`${nextChunk?.summary}\n${nextChunk?.next_action}`).toContain("Chat save feedback");
+    expect(`${nextChunk?.summary}\n${nextChunk?.next_action}`).toContain("Sources hierarchy traceability");
+    expect(`${nextChunk?.summary}\n${nextChunk?.next_action}`).toContain("Vault row/status scan density");
+    expect(`${nextChunk?.summary}\n${nextChunk?.next_action}`).toContain("Import blocked-action");
     expect(`${nextChunk?.summary}\n${nextChunk?.next_action}`).toContain("fake-only");
     expect(`${nextChunk?.summary}\n${nextChunk?.next_action}`).toContain("no prohibited file or document capability");
     expect(realDocGate?.status).toBe("blocked");
 
-    const joined = [triage, nextChunk].map((item) => `${item?.summary}\n${item?.next_action}`).join("\n");
+    const joined = [triage, v074, nextChunk].map((item) => `${item?.summary}\n${item?.next_action}`).join("\n");
     expect(joined).not.toMatch(/<input[^>]*type=["']file/i);
     expect(joined).not.toMatch(/\bshowOpenFilePicker\b|\bFileReader\b|\breadAsText\b|\breadAsArrayBuffer\b/i);
   });

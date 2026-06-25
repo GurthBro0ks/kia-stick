@@ -2,10 +2,29 @@
 
 ## Current Phase
 
-- Phase: `KIA-Stick-v0.7.4-chat-saved-upload-stabilization`
+- Phase: `KIA-Stick-v0.7.5-sources-vault-import-scan-density-polish`
 - Target: `USER_LAPTOP_ONLY`
 - Provider: `local-fake-deterministic`
-- Status: validation PASS for fake-only Chat/Saved/Upload stabilization from accepted pushed v0.7.3 baseline `38bff5f`; one task-scoped commit, auto-pushed only if all gates PASS and only expected ahead-by-one WARN remains.
+- Status: validation PASS for fake-only Sources/Vault/Import scan-density polish from accepted pushed v0.7.4 baseline `5a3758d`; one task-scoped commit, auto-pushed only if all gates PASS and only expected ahead-by-one WARN remains.
+
+## v0.7.5 Sources/Vault/Import Scan-Density Polish State
+
+- Phase: `KIA-Stick-v0.7.5-sources-vault-import-scan-density-polish`
+- Baseline: origin/main and HEAD verified at `5a3758d`.
+- v0.7.4 pushed state: recorded as accepted pushed commit `5a3758d`.
+- Scope: fake-only UX/test polish for Sources hierarchy traceability, Vault workflow scan-density labels, Import blocked-action copy, and fake proof/export safety cues.
+- Product version: `0.7.0`
+- Prompt version: `prompt.fake-docs.v0.5-import-wizard-hardening`
+- Source plan: `docs/v0.7.3-fake-only-ux-stabilization-plan.md`
+- Implementation: Sources shows hierarchy ranks, fake source IDs, citable/context labels, and build/prompt traceability; Vault shows denser redaction, metadata, index gate, and audit-export labels; Import aligns blocked-action and sanitized proof/export copy with Upload/Vault fake-only language.
+- Queue state: `queue-018-v074-chat-saved-upload-stabilization` accepted after pushed baseline `5a3758d`; `queue-019-v075-sources-vault-import-polish` marked `ready_to_push`; `queue-015-v07-first-real-doc-gate-request` remains `blocked`.
+- Real/private document access: none.
+- Private vault inspected: no.
+- Commands run so far: missing `/home/slimy/*` bootstrap checks, git status/ref/log before-state capture, v0.7.3 plan/README/CLOSEOUT/feature/queue/version/app/test inspection, scoped UI/state edits, focused `npm test -- tests/answerGovernor.test.ts tests/fakeOnlyUxStabilizationPlan.test.ts tests/productVersionContractBump.test.ts tests/taskQueue.test.ts`, `npm run release:check`, `PROOF_DIR=/tmp/proof_kia_stick_v0_7_5_sources_vault_import_polish_20260625T191746Z npm run qa`, `npm run proof:latest`, `npm run closeout:review`, `npm run closeout:summary`, `npm run scan:fake`, `npm run scan:privacy`, exact forbidden-path and file-capability safety greps, `git diff --check`, and `git status --short`.
+- Files changed so far: `components/KiaStickApp.tsx`, `app/globals.css`, `lib/version.ts`, `feature_list.json`, `docs/phase-backlog.json`, `README.md`, `CLOSEOUT.md`, `claude-progress.md`, `tests/answerGovernor.test.ts`, `tests/fakeOnlyUxStabilizationPlan.test.ts`, `tests/productVersionContractBump.test.ts`, and `tests/taskQueue.test.ts`.
+- Proof directory: `/tmp/proof_kia_stick_v0_7_5_sources_vault_import_polish_20260625T191746Z`
+- Validation: PASS.
+- Remaining unknowns: final commit SHA, post-commit closeout review, and push verification.
 
 ## v0.7.4 Chat/Saved/Upload Stabilization State
 

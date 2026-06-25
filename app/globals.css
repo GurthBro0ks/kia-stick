@@ -688,6 +688,27 @@ a {
   gap: 10px;
 }
 
+.traceSummary {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(136px, 1fr));
+  gap: 7px;
+  border: 1px solid #c8d6d4;
+  background: #eef7f6;
+  padding: 9px;
+}
+
+.traceSummary strong,
+.traceSummary span {
+  min-width: 0;
+  overflow-wrap: anywhere;
+  font-size: 0.78rem;
+  font-weight: 850;
+}
+
+.traceSummary span {
+  color: var(--muted);
+}
+
 .hierarchyDocList {
   display: grid;
   gap: 8px;
