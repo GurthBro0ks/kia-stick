@@ -12,6 +12,16 @@ KIA Stick separates milestone semver from build identity:
 
 `/health`, `/version`, the app header, settings, answer footer, and saved answer metadata expose the current `displayVersion`.
 
+## v0.7.6 DESIGN.md Fake-Only UX Contract
+
+Phase: `KIA-Stick-v0.7.6-design-md-fake-only-ux-contract`.
+
+This phase adds repo-owned `DESIGN.md` project knowledge for KIA Stick's fake-only UX/design contract. The contract formalizes the accepted v0.7.5 direction: restrained operational interface, citation-first hierarchy, dense but readable Chat/Sources/Saved/Upload/Import/Vault/Settings surfaces, proof-safe screenshot/output expectations, consistent safety-label language, and version identity rules for `/health`, `/version`, saved metadata, productVersion, displayVersion, promptVersion, and provider.
+
+`productVersion` stays `0.7.0`, `promptVersion` stays `prompt.fake-docs.v0.5-import-wizard-hardening`, and `queue-015-v07-first-real-doc-gate-request` remains blocked.
+
+This is **fake-only docs/tests/state work**. `DESIGN.md` is not a source of approval for real-doc work. It does not add file pickers, path readers, file reads, uploads, OCR, real redaction, embeddings, indexing, vector stores, private-vault inspection, service changes, or real-document access.
+
 ## v0.7.5 Sources/Vault/Import Scan-Density Polish
 
 Phase: `KIA-Stick-v0.7.5-sources-vault-import-scan-density-polish`.

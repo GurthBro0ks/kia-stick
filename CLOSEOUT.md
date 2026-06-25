@@ -1,5 +1,30 @@
 # KIA Stick Closeout
 
+## v0.7.6 DESIGN.md Fake-Only UX Contract
+
+- Phase: `KIA-Stick-v0.7.6-design-md-fake-only-ux-contract`
+- Baseline: accepted pushed v0.7.5 state at `303f12b`
+- Origin/main verified: `303f12b`
+- Scope: docs/tests/state contract for KIA Stick fake-only UX direction, safety-label language, scan-density rules, version identity rules, accessibility/mobile rules, and proof-safe screenshot/output expectations.
+- Product version: `0.7.0`
+- Package version: `0.7.0`
+- Prompt version: `prompt.fake-docs.v0.5-import-wizard-hardening`
+- Design contract: `DESIGN.md`
+- Source plan: `docs/v0.7.3-fake-only-ux-stabilization-plan.md`
+- Tests added: `tests/designContract.test.ts`
+- Proof directory: `/tmp/proof_kia_stick_v0_7_6_designmd_fake_only_ux_contract_20260625T214816Z`
+- Validation: PASS for focused design/queue tests, release check, QA, fake-doc scan, privacy scan, closeout helper proof read, exact safety greps, JSON parse, and `git diff --check`.
+- Queue state: `queue-019-v075-sources-vault-import-polish` accepted after pushed baseline `303f12b`; `queue-020-v076-design-md-fake-only-ux-contract` is ready for the task prompt auto-push gate; `queue-015-v07-first-real-doc-gate-request` remains blocked.
+- Real document access: none
+- Private vault inspected: no
+- Push performed: auto-push only if the task prompt's validation gates pass.
+
+## v0.7.6 Safety Boundary
+
+This phase does not approve real-doc work. It does not add file pickers, path readers, file reads, copying, OCR, upload handlers, real redaction, embeddings, indexing, vector stores, private-vault inspection, service changes, credentials, or real-document access. `productVersion` remains `0.7.0` and `promptVersion` remains unchanged.
+
+---
+
 ## v0.7.5 Sources/Vault/Import Scan-Density Polish
 
 - Phase: `KIA-Stick-v0.7.5-sources-vault-import-scan-density-polish`

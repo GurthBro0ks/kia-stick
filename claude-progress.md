@@ -2,10 +2,29 @@
 
 ## Current Phase
 
-- Phase: `KIA-Stick-v0.7.5-sources-vault-import-scan-density-polish`
+- Phase: `KIA-Stick-v0.7.6-design-md-fake-only-ux-contract`
 - Target: `USER_LAPTOP_ONLY`
 - Provider: `local-fake-deterministic`
-- Status: validation PASS for fake-only Sources/Vault/Import scan-density polish from accepted pushed v0.7.4 baseline `5a3758d`; one task-scoped commit, auto-pushed only if all gates PASS and only expected ahead-by-one WARN remains.
+- Status: validation PASS for repo-owned `DESIGN.md` fake-only UX/design contract from accepted pushed v0.7.5 baseline `303f12b`; one task-scoped commit, auto-pushed only if all gates PASS and only expected ahead-by-one WARN remains.
+
+## v0.7.6 DESIGN.md Fake-Only UX Contract State
+
+- Phase: `KIA-Stick-v0.7.6-design-md-fake-only-ux-contract`
+- Baseline: origin/main and HEAD verified at `303f12b`.
+- v0.7.5 pushed state: recorded as accepted pushed commit `303f12b`.
+- Scope: docs/tests/state contract for restrained operational UI direction, citation-first hierarchy, scan-density rules, Upload/Import/Vault safety copy, version identity surfaces, accessibility/mobile rules, empty/loading/error/no-answer states, and proof-safe outputs.
+- Product version: `0.7.0`
+- Prompt version: `prompt.fake-docs.v0.5-import-wizard-hardening`
+- Design contract: `DESIGN.md`
+- Source plan: `docs/v0.7.3-fake-only-ux-stabilization-plan.md`
+- Queue state: `queue-019-v075-sources-vault-import-polish` accepted after pushed baseline `303f12b`; `queue-020-v076-design-md-fake-only-ux-contract` marked `ready_to_push`; `queue-015-v07-first-real-doc-gate-request` remains `blocked`.
+- Real/private document access: none.
+- Private vault inspected: no.
+- Commands run so far: missing `/home/slimy/*` bootstrap checks, git status/ref/log before-state capture, README/CLOSEOUT/feature/queue/v0.7.3 plan/version/test inspection, focused `npm run test -- tests/designContract.test.ts tests/taskQueue.test.ts tests/fakeOnlyUxStabilizationPlan.test.ts tests/productVersionContractBump.test.ts`, `npm run release:check`, `PROOF_DIR=/tmp/proof_kia_stick_v0_7_6_designmd_fake_only_ux_contract_20260625T214816Z npm run qa`, `npm run proof:latest`, `npm run closeout:review`, `npm run closeout:summary`, `npm run scan:fake`, `npm run scan:privacy`, exact forbidden-path and file-capability safety greps, JSON parse, `git diff --check`, and `git status --short`.
+- Files changed so far: `DESIGN.md`, `AGENTS.md`, `lib/version.ts`, `feature_list.json`, `docs/phase-backlog.json`, `README.md`, `CLOSEOUT.md`, `claude-progress.md`, `tests/designContract.test.ts`, `tests/fakeOnlyUxStabilizationPlan.test.ts`, `tests/productVersionContractBump.test.ts`, and `tests/taskQueue.test.ts`.
+- Proof directory: `/tmp/proof_kia_stick_v0_7_6_designmd_fake_only_ux_contract_20260625T214816Z`
+- Validation: PASS.
+- Remaining unknowns: final commit SHA, post-commit closeout review, and push verification.
 
 ## v0.7.5 Sources/Vault/Import Scan-Density Polish State
 

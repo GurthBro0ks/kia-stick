@@ -4,6 +4,12 @@
 
 This repo is a laptop-only MVP for KIA Stick / Know-It-All Stick using **fake sample documents only**.
 
+## Design/UX Routing
+
+For design, UI, UX, layout, copy, scan-density, or interaction work, read `DESIGN.md` first.
+
+For fake-only KIA work, read `docs/v0.7.3-fake-only-ux-stabilization-plan.md` and `DESIGN.md` before changing runtime or proof surfaces.
+
 Allowed:
 - Fake source hierarchy and citation-first answer governance.
 - Local deterministic answer generation.

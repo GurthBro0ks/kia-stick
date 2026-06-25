@@ -1,6 +1,6 @@
 {
   "schema": "kia-stick-local-task-queue.v1",
-  "updated_at": "2026-06-21T18:06:40.000Z",
+  "updated_at": "2026-06-25T21:50:00.000Z",
   "items": [
     {
       "id": "queue-001-closeout-helper-hardening",
@@ -516,19 +516,45 @@
       "id": "queue-019-v075-sources-vault-import-polish",
       "phase": "KIA-Stick-v0.7.5-sources-vault-import-scan-density-polish",
       "title": "v0.7.5 Sources/Vault/Import scan-density polish",
-      "status": "ready_to_push",
+      "status": "accepted",
       "model": "GPT/Codex $100",
       "risk": "low",
       "summary": "Polish fake-only Sources hierarchy traceability, Vault row/status scan density, and Import blocked-action/export safety copy without adding real-doc capability.",
-      "next_action": "Auto-push this fake-only runtime/test/docs commit only if validation passes, queue-015 remains blocked, no prohibited file or document capability is added, and only the expected ahead-by-one warning remains.",
+      "next_action": "Accepted pushed state verified at 303f12b; proceed to v0.7.6 DESIGN.md fake-only UX contract.",
       "created_at": "2026-06-25T19:17:46.000Z",
-      "updated_at": "2026-06-25T19:17:46.000Z",
+      "updated_at": "2026-06-25T21:50:00.000Z",
       "history": [
         {
           "at": "2026-06-25T19:17:46.000Z",
           "from": "planned",
           "to": "ready_to_push",
           "note": "v0.7.5 fake-only Sources/Vault/Import polish implemented for validation; no real-doc work approved."
+        },
+        {
+          "at": "2026-06-25T21:50:00.000Z",
+          "from": "ready_to_push",
+          "to": "accepted",
+          "note": "v0.7.5 Sources/Vault/Import scan-density polish accepted after pushed baseline 303f12b was verified."
+        }
+      ]
+    },
+    {
+      "id": "queue-020-v076-design-md-fake-only-ux-contract",
+      "phase": "KIA-Stick-v0.7.6-design-md-fake-only-ux-contract",
+      "title": "v0.7.6 DESIGN.md fake-only UX contract",
+      "status": "ready_to_push",
+      "model": "GPT/Codex $100",
+      "risk": "low",
+      "summary": "Create repo-owned DESIGN.md for KIA Stick's fake-only UX/design contract covering citation-first hierarchy, scan density, safety-label language, version identity, accessibility, mobile, and proof-safe output rules.",
+      "next_action": "Auto-push this docs/tests/state commit only if validation passes, queue-015 remains blocked, no prohibited file or document capability is added, and only the expected ahead-by-one warning remains.",
+      "created_at": "2026-06-25T21:50:00.000Z",
+      "updated_at": "2026-06-25T21:50:00.000Z",
+      "history": [
+        {
+          "at": "2026-06-25T21:50:00.000Z",
+          "from": "planned",
+          "to": "ready_to_push",
+          "note": "v0.7.6 DESIGN.md fake-only UX contract implemented for validation; no real-doc work approved."
         }
       ]
     }
