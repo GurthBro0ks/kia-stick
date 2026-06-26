@@ -7,6 +7,7 @@ import {
 import { PRODUCT_VERSION, PROMPT_VERSION } from "@/lib/version";
 
 const phase = "KIA-Stick-v0.7.14-synthetic-approval-packet-validator";
+const currentPhase = "KIA-Stick-v0.7.15-synthetic-packet-report-runner";
 const docPath = "docs/v0.7.14-synthetic-approval-packet-validator.md";
 const productVersion = "0.7.0";
 const promptVersion = "prompt.fake-docs.v0.5-import-wizard-hardening";
@@ -219,8 +220,8 @@ describe("v0.7.14 synthetic approval-packet validator", () => {
     expect(PRODUCT_VERSION).toBe(productVersion);
     expect(PROMPT_VERSION).toBe(promptVersion);
     expect(packageJson.version).toBe(productVersion);
-    expect(featureList.phase).toBe(phase);
-    expect(featureList.release_readiness.phase).toBe(phase);
+    expect(featureList.phase).toBe(currentPhase);
+    expect(featureList.release_readiness.phase).toBe(currentPhase);
     expect(featureList.release_readiness.package_version).toBe(productVersion);
     expect(featureList.release_readiness.product_version).toBe(productVersion);
     expect(featureList.release_readiness.prompt_version).toBe(promptVersion);

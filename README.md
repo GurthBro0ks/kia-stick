@@ -12,6 +12,16 @@ KIA Stick separates milestone semver from build identity:
 
 `/health`, `/version`, the app header, settings, answer footer, and saved answer metadata expose the current `displayVersion`.
 
+## v0.7.15 Synthetic Packet Report Runner
+
+Phase: `KIA-Stick-v0.7.15-synthetic-packet-report-runner`.
+
+`docs/v0.7.15-synthetic-packet-report-runner.md` documents the synthetic-only report runner for the accepted v0.7.14 synthetic approval-packet validator. `scripts/synthetic-packet-report.mjs` is exposed through `npm run packet:report` and runs only built-in synthetic PASS/WARN/FAIL fixtures.
+
+This is **docs/tests/tooling work only**. It does not approve implementation, name or touch a real document, add runtime capability, change product version, change prompt version, accept path arguments, read user-provided packet files, check filesystem existence for packet fields, scan directories, add file pickers, directory pickers, drag/drop import zones, path readers, uploads, OCR, real redaction, text extraction, summarization, embeddings, indexing, vector stores, private-source inspection, services, secrets, Discord, skills, global config, or system changes.
+
+`queue-030-v0715-synthetic-packet-report-runner` is `needs_review` after validation. `queue-029-v0714-synthetic-approval-packet-validator` remains accepted. `queue-015-v07-first-real-doc-gate-request` remains blocked. Product version remains `0.7.0`; prompt version remains `prompt.fake-docs.v0.5-import-wizard-hardening`.
+
 ## v0.7.14 Synthetic Approval-Packet Validator
 
 Phase: `KIA-Stick-v0.7.14-synthetic-approval-packet-validator`.

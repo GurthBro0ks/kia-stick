@@ -3,7 +3,7 @@ import { describe, expect, it } from "vitest";
 
 const phase = "KIA-Stick-v0.7.3-fake-only-ux-triage-and-stabilization-plan";
 const v074Phase = "KIA-Stick-v0.7.4-chat-saved-upload-stabilization";
-const currentPhase = "KIA-Stick-v0.7.14-synthetic-approval-packet-validator";
+const currentPhase = "KIA-Stick-v0.7.15-synthetic-packet-report-runner";
 const acceptedPlanCommit = "38bff5f";
 const promptVersion = "prompt.fake-docs.v0.5-import-wizard-hardening";
 const planPath = "docs/v0.7.3-fake-only-ux-stabilization-plan.md";

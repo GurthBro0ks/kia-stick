@@ -1,6 +1,6 @@
 {
   "schema": "kia-stick-local-task-queue.v1",
-  "updated_at": "2026-06-26T13:17:41.000Z",
+  "updated_at": "2026-06-26T13:28:42.000Z",
   "items": [
     {
       "id": "queue-001-closeout-helper-hardening",
@@ -795,6 +795,26 @@
           "from": "ready_to_push",
           "to": "accepted",
           "note": "Accepted after closeout review, validation PASS, operator QA PASS, and git push. HEAD equals origin/main. queue-015 remains blocked. No real-doc work was done."
+        }
+      ]
+    },
+    {
+      "id": "queue-030-v0715-synthetic-packet-report-runner",
+      "phase": "KIA-Stick-v0.7.15-synthetic-packet-report-runner",
+      "title": "v0.7.15 synthetic packet report runner",
+      "status": "needs_review",
+      "model": "GPT/Codex $100 coding plan",
+      "risk": "medium",
+      "summary": "Add a synthetic-only GitHub-safe packet report runner using built-in synthetic fixtures and the accepted v0.7.14 validator, without accepting paths, reading user files, scanning directories, touching real documents, or adding runtime capability.",
+      "next_action": "Operator review the v0.7.15 report runner doc, npm run packet:report output, tests, proof outputs, and local commit. Do not push or unblock queue-015 without a separate closeout prompt; queue-015 remains blocked.",
+      "created_at": "2026-06-26T13:28:42.000Z",
+      "updated_at": "2026-06-26T13:28:42.000Z",
+      "history": [
+        {
+          "at": "2026-06-26T13:28:42.000Z",
+          "from": "planned",
+          "to": "needs_review",
+          "note": "v0.7.15 synthetic packet report runner prepared as docs/tests/tooling with built-in synthetic fixtures only; queue-015 remains blocked, product/prompt unchanged, no runtime or real-doc capability is approved, and no push without later approval."
         }
       ]
     }
