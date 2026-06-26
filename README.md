@@ -12,6 +12,18 @@ KIA Stick separates milestone semver from build identity:
 
 `/health`, `/version`, the app header, settings, answer footer, and saved answer metadata expose the current `displayVersion`.
 
+## v0.7.13 Planning-Only Real-Doc Gate Rehearsal
+
+Phase: `KIA-Stick-v0.7.13-planning-only-real-doc-gate-rehearsal`.
+
+`docs/v0.7.13-planning-only-real-doc-gate-rehearsal.md` rehearses the future operator gate shape with fake/synthetic placeholders only. It records a synthetic rehearsal packet, the exactly-one-document / exactly-one-gate future rule, future approval packet checklist, stop-on-WARN/FAIL checklist, redaction/privacy placeholders, proof-safe output rules, PASS/WARN/FAIL examples, and closeout gates required before any future real-doc implementation.
+
+This is **planning-only docs/tests/state work**. It does not approve implementation, name or touch a real document, add runtime capability, change product version, change prompt version, add file pickers, directory pickers, drag/drop import zones, path readers, file reads, uploads, OCR, real redaction, text extraction, summarization, embeddings, indexing, vector stores, private-source inspection, services, secrets, Discord, skills, global config, or system changes.
+
+Validation tooling now distinguishes the current project/docs phase from the last runtime metadata phase so operator smoke can pass without changing `/health` for this no-runtime-change rehearsal.
+
+`queue-028-v0713-planning-only-real-doc-gate-rehearsal` is `needs_review`. `queue-015-v07-first-real-doc-gate-request` remains blocked. Product version remains `0.7.0`; prompt version remains `prompt.fake-docs.v0.5-import-wizard-hardening`.
+
 ## v0.7.12 Operator QA Closeout And Push
 
 Phase: `KIA-Stick-v0.7.12-operator-qa-closeout-and-push`.

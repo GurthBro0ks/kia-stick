@@ -51,7 +51,7 @@ describe("task-queue", () => {
     const queue = mod.loadQueue(resolve("."));
 
     expect(queue.schema).toBe("kia-stick-local-task-queue.v1");
-    expect(queue.items).toHaveLength(27);
+    expect(queue.items).toHaveLength(28);
     expect(queue.items.map((item) => item.id)).toEqual([
       "queue-001-closeout-helper-hardening",
       "queue-002-fake-redaction-metadata-depth",
@@ -80,6 +80,7 @@ describe("task-queue", () => {
       "queue-025-v0711-persistent-proof-index-review-guide",
       "queue-026-v0712-fake-only-polish-and-real-doc-gate-planning",
       "queue-027-v0712-operator-qa-closeout-and-push",
+      "queue-028-v0713-planning-only-real-doc-gate-rehearsal",
     ]);
     expect(queue.items.slice(0, 10).every((item) => item.status === "accepted")).toBe(true);
     expect(queue.items[10].status).toBe("planned");
@@ -99,6 +100,7 @@ describe("task-queue", () => {
     expect(queue.items[24].status).toBe("accepted");
     expect(queue.items[25].status).toBe("accepted");
     expect(queue.items[26].status).toBe("accepted");
+    expect(queue.items[27].status).toBe("needs_review");
     expect(queue.items.every((item) => item.history.length > 0)).toBe(true);
     expect(mod.validateQueue(queue)).toBe(true);
   });
@@ -160,7 +162,7 @@ describe("task-queue", () => {
     expect(text).not.toMatch(/\bshowOpenFilePicker\b|\bFileReader\b|\breadAsText\b|\breadAsArrayBuffer\b/i);
   });
 
-  it("tracks accepted v0.7.3 through v0.7.12 state", async () => {
+  it("tracks accepted v0.7.3 through v0.7.13 planning state", async () => {
     const mod = await loadModule();
     const queue = mod.loadQueue(resolve("."));
     const triage = queue.items.find((item) => item.id === "queue-017-v073-fake-only-ux-triage");
@@ -174,6 +176,7 @@ describe("task-queue", () => {
     const persistentProofIndex = queue.items.find((item) => item.id === "queue-025-v0711-persistent-proof-index-review-guide");
     const fakeOnlyPolish = queue.items.find((item) => item.id === "queue-026-v0712-fake-only-polish-and-real-doc-gate-planning");
     const operatorCloseout = queue.items.find((item) => item.id === "queue-027-v0712-operator-qa-closeout-and-push");
+    const rehearsal = queue.items.find((item) => item.id === "queue-028-v0713-planning-only-real-doc-gate-rehearsal");
     const realDocGate = queue.items.find((item) => item.id === "queue-015-v07-first-real-doc-gate-request");
 
     expect(triage?.phase).toBe("KIA-Stick-v0.7.3-fake-only-ux-triage-and-stabilization-plan");
@@ -235,9 +238,13 @@ describe("task-queue", () => {
     expect(operatorCloseout?.status).toBe("accepted");
     expect(`${operatorCloseout?.summary}\n${operatorCloseout?.next_action}`).toContain("operator QA PASS");
     expect(`${operatorCloseout?.summary}\n${operatorCloseout?.next_action}`).toContain("HEAD equals origin/main");
+    expect(rehearsal?.phase).toBe("KIA-Stick-v0.7.13-planning-only-real-doc-gate-rehearsal");
+    expect(rehearsal?.status).toBe("needs_review");
+    expect(`${rehearsal?.summary}\n${rehearsal?.next_action}`).toContain("synthetic-only");
+    expect(`${rehearsal?.summary}\n${rehearsal?.next_action}`).toContain("queue-015 blocked");
     expect(realDocGate?.status).toBe("blocked");
 
-    const joined = [triage, v074, v077, v078, nextChunk, fakeOnlyPolish, operatorCloseout].map((item) => `${item?.summary}\n${item?.next_action}`).join("\n");
+    const joined = [triage, v074, v077, v078, nextChunk, fakeOnlyPolish, operatorCloseout, rehearsal].map((item) => `${item?.summary}\n${item?.next_action}`).join("\n");
     expect(joined).not.toMatch(/<input[^>]*type=["']file/i);
     expect(joined).not.toMatch(/\bshowOpenFilePicker\b|\bFileReader\b|\breadAsText\b|\breadAsArrayBuffer\b/i);
   });

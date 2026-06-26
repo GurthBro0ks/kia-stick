@@ -1,5 +1,5 @@
 {
-  "phase": "KIA-Stick-v0.7.12-operator-qa-closeout-and-push",
+  "phase": "KIA-Stick-v0.7.13-planning-only-real-doc-gate-rehearsal",
   "target_machine": "USER_LAPTOP_ONLY",
   "accepted_v0_1": {
     "commit": "1d9b05c",
@@ -212,11 +212,17 @@
     "mobile_narrow_review_checklist",
     "local_proof_inspection_checklist",
     "planning_only_exactly_one_document_gate_checklist",
-    "v0712_operator_qa_closeout_push"
+    "v0712_operator_qa_closeout_push",
+    "v0713_planning_only_real_doc_gate_rehearsal",
+    "synthetic_only_gate_rehearsal_packet",
+    "future_exactly_one_document_gate_rule",
+    "future_stop_on_warn_fail_checklist",
+    "proof_safe_rehearsal_output_rules",
+    "operator_smoke_project_runtime_phase_split"
   ],
   "release_readiness": {
-    "phase": "KIA-Stick-v0.7.12-operator-qa-closeout-and-push",
-    "status": "v0712_operator_qa_closeout_pushed",
+    "phase": "KIA-Stick-v0.7.13-planning-only-real-doc-gate-rehearsal",
+    "status": "v0713_planning_only_gate_rehearsal_needs_review",
     "package_version": "0.7.0",
     "product_version": "0.7.0",
     "prompt_version": "prompt.fake-docs.v0.5-import-wizard-hardening",
@@ -235,7 +241,8 @@
         "docs/v0.7.9-operator-qa-smoke-pack.md",
         "docs/v0.7.10b-persistent-smoke-evidence-closeout.md",
         "docs/v0.7.11-persistent-proof-index-review-guide.md",
-        "docs/v0.7.12-fake-only-polish-and-real-doc-gate-planning.md"
+        "docs/v0.7.12-fake-only-polish-and-real-doc-gate-planning.md",
+        "docs/v0.7.13-planning-only-real-doc-gate-rehearsal.md"
       ],
       "intentional_holds": [
         {
@@ -2569,6 +2576,91 @@
     "dedupe_result": "not_applicable",
     "push_performed": true,
     "head_equals_origin_main": true,
+    "real_db_boundary": "real-doc source mount untouched"
+  },
+  "v0713_planning_only_real_doc_gate_rehearsal": {
+    "phase": "KIA-Stick-v0.7.13-planning-only-real-doc-gate-rehearsal",
+    "status": "needs_review_after_validation",
+    "document": "docs/v0.7.13-planning-only-real-doc-gate-rehearsal.md",
+    "baseline": "7102ec916965eea1c091683021e0994597eab3df",
+    "proof_dir": "/tmp/proof_kia_stick_v0_7_13_planning_only_gate_rehearsal_20260626T114049Z",
+    "validation": "PASS",
+    "safety_boundary_result": "PASS_REVIEWED_POLICY_AND_GUARD_REFERENCES_ONLY",
+    "selected_queue_item": "queue-028-v0713-planning-only-real-doc-gate-rehearsal",
+    "product_version": "0.7.0",
+    "package_version": "0.7.0",
+    "prompt_version": "prompt.fake-docs.v0.5-import-wizard-hardening",
+    "planning_only": true,
+    "docs_tests_state_only": true,
+    "runtime_ui_changed": false,
+    "runtime_capability_changed": false,
+    "validation_tooling_changed": true,
+    "validation_tooling": [
+      "scripts/operator-qa-smoke.mjs distinguishes current project/docs phase from last runtime metadata phase"
+    ],
+    "authorizes_runtime_bump": false,
+    "authorizes_prompt_bump": false,
+    "authorizes_real_doc_work": false,
+    "real_document_named": false,
+    "real_document_access": false,
+    "private_vault_inspected": false,
+    "real_doc_code_path_added": false,
+    "file_input_added": false,
+    "file_picker_added": false,
+    "directory_picker_added": false,
+    "drag_drop_import_zone_added": false,
+    "path_reader_added": false,
+    "real_file_read_added": false,
+    "copying_added": false,
+    "hashing_real_files_added": false,
+    "upload_handler_added": false,
+    "ocr_added": false,
+    "text_extraction_added": false,
+    "summarization_added": false,
+    "embeddings_added": false,
+    "indexing_added": false,
+    "vector_store_added": false,
+    "real_redaction_added": false,
+    "quarantine_writes_added": false,
+    "cloud_api_calls_added": false,
+    "skills_installed": false,
+    "global_agent_config_changed": false,
+    "services_restarted": false,
+    "cron_changed": false,
+    "timer_changed": false,
+    "tmux_changed": false,
+    "caddy_changed": false,
+    "dns_changed": false,
+    "secrets_printed": false,
+    "discord_sent": false,
+    "notify_mode": "disabled_user_laptop",
+    "dedupe_result": "not_applicable",
+    "queue_015_status": "blocked",
+    "queue_028_status": "needs_review",
+    "future_gate_rule": {
+      "exactly_one_document": true,
+      "exactly_one_gate": true,
+      "broad_private_recursive_source_path_language_rejected": true,
+      "stop_on_warn_fail": true
+    },
+    "synthetic_rehearsal_packet": {
+      "packet_id": "FAKE-GATE-REHEARSAL-001",
+      "document_placeholder": "SYNTH-ONE-DOC-ALPHA",
+      "gate_placeholder": "SYNTH-GATE-METADATA-ONLY",
+      "real_document_accessed": false
+    },
+    "tests": [
+      "tests/planningOnlyRealDocGateRehearsal.test.ts",
+      "tests/taskQueue.test.ts",
+      "tests/productVersionContractBump.test.ts",
+      "tests/fakeOnlyPolishRealDocGatePlanning.test.ts",
+      "tests/fakeOnlyUxStabilizationPlan.test.ts",
+      "tests/operatorQaSmokePack.test.ts",
+      "tests/persistentSmokeEvidenceCloseout.test.ts",
+      "tests/v07ReleaseStateCloseout.test.ts"
+    ],
+    "manual_qa_status": "pending_operator_review",
+    "push_performed": false,
     "real_db_boundary": "real-doc source mount untouched"
   }
 }

@@ -1,5 +1,38 @@
 # KIA Stick Closeout
 
+## v0.7.13 Planning-Only Real-Doc Gate Rehearsal
+
+- Phase: `KIA-Stick-v0.7.13-planning-only-real-doc-gate-rehearsal`
+- Baseline: accepted pushed v0.7.12 closeout state at `7102ec916965eea1c091683021e0994597eab3df`
+- Scope: planning-only operator gate rehearsal using fake/synthetic placeholders, checklist fields, and PASS/WARN/FAIL examples only.
+- Product version: `0.7.0`
+- Package version: `0.7.0`
+- Prompt version: `prompt.fake-docs.v0.5-import-wizard-hardening`
+- Planning/review document: `docs/v0.7.13-planning-only-real-doc-gate-rehearsal.md`
+- Proof directory: `/tmp/proof_kia_stick_v0_7_13_planning_only_gate_rehearsal_20260626T114049Z`
+- Runtime UI changed: no
+- Runtime capability changed: no
+- Validation tooling changed: yes, `scripts/operator-qa-smoke.mjs` now distinguishes the current project/docs phase from the last runtime metadata phase so `/health` can remain unchanged for this no-runtime-change rehearsal.
+- Validation: PASS for focused v0.7.13/current-state tests, design check, release check, full QA gate, queue list/next, fake-doc scan, privacy scan, safety-boundary scans, `git diff --check`, and git status capture.
+- Queue state: `queue-028-v0713-planning-only-real-doc-gate-rehearsal` is `needs_review`; `queue-015-v07-first-real-doc-gate-request` remains blocked.
+- Manual QA status: pending operator review
+- Real document access: none
+- Real document named: no
+- Private source folders inspected: no
+- Skills installed: no
+- Global agent config changed: no
+- Services restarted: no
+- Cron/timer/tmux/Caddy/DNS changed: no
+- Secrets printed: no
+- Discord sent: no
+- Push performed: no
+
+## v0.7.13 Safety Boundary
+
+This phase does not approve real-doc work. It does not add file pickers, directory pickers, drag/drop import zones, path readers, file reads over real documents, copying, hashing real files, OCR, upload handlers, real redaction, text extraction, summarization, embeddings, indexing, vector stores, quarantine writes, private-source inspection, service changes, credentials, skills, global agent config, or real-document access. `productVersion` remains `0.7.0` and `promptVersion` remains unchanged.
+
+---
+
 ## v0.7.12 Operator QA Closeout And Push
 
 - Phase: `KIA-Stick-v0.7.12-operator-qa-closeout-and-push`

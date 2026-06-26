@@ -1,6 +1,6 @@
 {
   "schema": "kia-stick-local-task-queue.v1",
-  "updated_at": "2026-06-26T10:46:48.000Z",
+  "updated_at": "2026-06-26T11:40:49.000Z",
   "items": [
     {
       "id": "queue-001-closeout-helper-hardening",
@@ -731,6 +731,26 @@
           "from": "planned",
           "to": "accepted",
           "note": "Operator QA closeout records PASS for v0.7.11/v0.7.12, validates fake-only scope, keeps queue-015 blocked, and authorizes a normal push only after validation PASS."
+        }
+      ]
+    },
+    {
+      "id": "queue-028-v0713-planning-only-real-doc-gate-rehearsal",
+      "phase": "KIA-Stick-v0.7.13-planning-only-real-doc-gate-rehearsal",
+      "title": "v0.7.13 planning-only real-doc gate rehearsal",
+      "status": "needs_review",
+      "model": "GPT/Codex $100 coding plan",
+      "risk": "high",
+      "summary": "Create a synthetic-only operator gate rehearsal guide and tests for a future exactly-one-document and exactly-one-gate approval flow without naming, touching, reading, hashing, OCR, indexing, uploading, or implementing real-doc capability.",
+      "next_action": "Review the v0.7.13 rehearsal proof and planning doc. Keep queue-015 blocked; no push until a separate closeout prompt approves it.",
+      "created_at": "2026-06-26T11:40:49.000Z",
+      "updated_at": "2026-06-26T11:40:49.000Z",
+      "history": [
+        {
+          "at": "2026-06-26T11:40:49.000Z",
+          "from": "planned",
+          "to": "needs_review",
+          "note": "v0.7.13 planning-only gate rehearsal prepared as docs/tests/state only with synthetic placeholders, queue-015 still blocked, product/prompt unchanged, no runtime capability, and no push without later approval."
         }
       ]
     }
