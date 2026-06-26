@@ -1,5 +1,33 @@
 # KIA Stick Closeout
 
+## v0.7.8 v0.7 Release-State Closeout
+
+- Phase: `KIA-Stick-v0.7.8-v0.7-release-state-closeout`
+- Baseline: accepted pushed v0.7.7 state at `b086f85`
+- Origin/main verified: `b086f85`
+- Scope: KIA-only docs/tests/state closeout consolidating accepted v0.7.2 through v0.7.7 state, current validation command surface, blocked real-doc queue state, and recommended next choices.
+- Product version: `0.7.0`
+- Package version: `0.7.0`
+- Prompt version: `prompt.fake-docs.v0.5-import-wizard-hardening`
+- Release closeout: `docs/RELEASE_v0.7-closeout.md`
+- Source release note: `docs/RELEASE_v0.7.md`
+- Tests added: `tests/v07ReleaseStateCloseout.test.ts`
+- Proof directory: `/tmp/proof_kia_stick_v0_7_8_release_state_closeout_20260626T001056Z`
+- Validation: PASS for design check, release check, QA, proof latest, queue next, closeout helper proof read, fake-doc scan, privacy scan, focused closeout/guard/queue/version tests, exact safety scans, `git diff --check`, and `git status --short`.
+- Queue state: `queue-021-v077-design-contract-drift-guard` accepted after pushed baseline `b086f85`; `queue-022-v078-v07-release-state-closeout` is ready for the task prompt auto-push gate; `queue-015-v07-first-real-doc-gate-request` remains blocked.
+- Recommended next choice: pause and accept v0.7 state, or continue fake-only polish. Real-doc gate preparation remains planning-only unless separately approved.
+- Real document access: none
+- Private vault inspected: no
+- Skills installed: no
+- Global agent config changed: no
+- Push performed: auto-push only if the task prompt's validation gates pass.
+
+## v0.7.8 Safety Boundary
+
+This phase does not approve real-doc work. It does not add file pickers, path readers, file reads, copying, OCR, upload handlers, real redaction, embeddings, indexing, vector stores, private-vault inspection, service changes, credentials, skills, global agent config, or real-document access. `productVersion` remains `0.7.0` and `promptVersion` remains unchanged.
+
+---
+
 ## v0.7.7 Design Contract Drift Guard
 
 - Phase: `KIA-Stick-v0.7.7-design-contract-drift-guard`

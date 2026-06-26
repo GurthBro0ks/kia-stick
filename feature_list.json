@@ -1,5 +1,5 @@
 {
-  "phase": "KIA-Stick-v0.7.7-design-contract-drift-guard",
+  "phase": "KIA-Stick-v0.7.8-v0.7-release-state-closeout",
   "target_machine": "USER_LAPTOP_ONLY",
   "accepted_v0_1": {
     "commit": "1d9b05c",
@@ -192,11 +192,14 @@
     "v076_design_contract_no_real_doc_approval",
     "v077_design_contract_drift_guard",
     "design_contract_check_script",
-    "design_check_release_gate"
+    "design_check_release_gate",
+    "v078_v07_release_state_closeout",
+    "v07_release_state_closeout_doc",
+    "v07_release_next_choices"
   ],
   "release_readiness": {
-    "phase": "KIA-Stick-v0.7.7-design-contract-drift-guard",
-    "status": "v077_design_contract_drift_guard_validation_passed",
+    "phase": "KIA-Stick-v0.7.8-v0.7-release-state-closeout",
+    "status": "v078_release_state_closeout_validation_passed",
     "package_version": "0.7.0",
     "product_version": "0.7.0",
     "prompt_version": "prompt.fake-docs.v0.5-import-wizard-hardening",
@@ -210,7 +213,8 @@
         "feature_list.json",
         "README.md",
         "CLOSEOUT.md",
-        "DESIGN.md"
+        "DESIGN.md",
+        "docs/RELEASE_v0.7-closeout.md"
       ],
       "intentional_holds": [
         {
@@ -2095,7 +2099,7 @@
   },
   "v077_design_contract_drift_guard": {
     "phase": "KIA-Stick-v0.7.7-design-contract-drift-guard",
-    "status": "validation_passed",
+    "status": "accepted_after_push_verified",
     "script": "scripts/design-contract-check.mjs",
     "npm_script": "design:check",
     "baseline": "4e7ab62",
@@ -2131,7 +2135,86 @@
     "release_check_wires_design_check": true,
     "queue_015_status": "blocked",
     "queue_020_status": "accepted_after_push_verified",
-    "queue_021_status": "ready_to_push_after_validation_passed",
+    "queue_021_status": "accepted_after_push_verified",
+    "authorizes_runtime_bump": false,
+    "authorizes_prompt_bump": false,
+    "authorizes_real_doc_work": false,
+    "real_document_access": false,
+    "private_vault_inspected": false,
+    "real_doc_code_path_added": false,
+    "file_input_added": false,
+    "upload_handler_added": false,
+    "ocr_added": false,
+    "embeddings_added": false,
+    "vector_store_added": false,
+    "real_redaction_added": false,
+    "skills_installed": false,
+    "symlinks_created": false,
+    "global_agent_config_changed": false,
+    "push_performed": true,
+    "accepted_commit": "b086f85",
+    "origin_main": "b086f85",
+    "accepted_proof_dir": "/tmp/proof_kia_stick_v0_7_7_acceptance_closeout_20260626T000104Z",
+    "real_db_boundary": "real-doc source mount untouched"
+  },
+  "v078_v07_release_state_closeout": {
+    "phase": "KIA-Stick-v0.7.8-v0.7-release-state-closeout",
+    "status": "validation_passed",
+    "document": "docs/RELEASE_v0.7-closeout.md",
+    "source_release_note": "docs/RELEASE_v0.7.md",
+    "baseline": "b086f85",
+    "selected_queue_item": "queue-022-v078-v07-release-state-closeout",
+    "previous_accepted_phase": "KIA-Stick-v0.7.7-design-contract-drift-guard",
+    "previous_accepted_commit": "b086f85",
+    "proof_dir": "/tmp/proof_kia_stick_v0_7_8_release_state_closeout_20260626T001056Z",
+    "product_version": "0.7.0",
+    "package_version": "0.7.0",
+    "prompt_version": "prompt.fake-docs.v0.5-import-wizard-hardening",
+    "changed_runtime_version": false,
+    "changed_prompt_version": false,
+    "docs_tests_state_only": true,
+    "consolidated_phases": [
+      {
+        "phase": "KIA-Stick-v0.7.2-product-version-bump-implementation-to-0.7.0",
+        "commit": "179f883"
+      },
+      {
+        "phase": "KIA-Stick-v0.7.3-fake-only-ux-triage-and-stabilization-plan",
+        "commit": "38bff5f"
+      },
+      {
+        "phase": "KIA-Stick-v0.7.4-chat-saved-upload-stabilization",
+        "commit": "5a3758d"
+      },
+      {
+        "phase": "KIA-Stick-v0.7.5-sources-vault-import-scan-density-polish",
+        "commit": "303f12b"
+      },
+      {
+        "phase": "KIA-Stick-v0.7.6-design-md-fake-only-ux-contract",
+        "commit": "4e7ab62"
+      },
+      {
+        "phase": "KIA-Stick-v0.7.7-design-contract-drift-guard",
+        "commit": "b086f85"
+      }
+    ],
+    "recommended_next_choices": [
+      "pause_and_accept_v07_state",
+      "continue_fake_only_polish",
+      "begin_real_doc_gate_preparation_planning_only"
+    ],
+    "tests": [
+      "tests/v07ReleaseStateCloseout.test.ts",
+      "tests/designContractCheck.test.ts",
+      "tests/designContract.test.ts",
+      "tests/fakeOnlyUxStabilizationPlan.test.ts",
+      "tests/productVersionContractBump.test.ts",
+      "tests/taskQueue.test.ts"
+    ],
+    "queue_015_status": "blocked",
+    "queue_021_status": "accepted_after_push_verified",
+    "queue_022_status": "ready_to_push_after_validation_passed",
     "authorizes_runtime_bump": false,
     "authorizes_prompt_bump": false,
     "authorizes_real_doc_work": false,

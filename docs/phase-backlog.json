@@ -1,6 +1,6 @@
 {
   "schema": "kia-stick-local-task-queue.v1",
-  "updated_at": "2026-06-25T23:50:00.000Z",
+  "updated_at": "2026-06-26T00:10:56.000Z",
   "items": [
     {
       "id": "queue-001-closeout-helper-hardening",
@@ -568,19 +568,45 @@
       "id": "queue-021-v077-design-contract-drift-guard",
       "phase": "KIA-Stick-v0.7.7-design-contract-drift-guard",
       "title": "v0.7.7 design contract drift guard",
-      "status": "ready_to_push",
+      "status": "accepted",
       "model": "GPT/Codex $100",
       "risk": "low",
       "summary": "Add deterministic design:check tooling to fail if DESIGN.md fake-only rules, version identity, AGENTS routing, blocked queue-015 state, or repo-local skill-dir boundaries drift.",
-      "next_action": "Auto-push this docs/tests/tooling commit only if validation passes, queue-015 remains blocked, no prohibited file or document capability is added, and only the expected ahead-by-one warning remains.",
+      "next_action": "Accepted pushed state verified at b086f85; proceed to v0.7.8 release-state closeout.",
       "created_at": "2026-06-25T23:50:00.000Z",
-      "updated_at": "2026-06-25T23:50:00.000Z",
+      "updated_at": "2026-06-26T00:10:56.000Z",
       "history": [
         {
           "at": "2026-06-25T23:50:00.000Z",
           "from": "planned",
           "to": "ready_to_push",
           "note": "v0.7.7 design contract drift guard implemented for validation; no real-doc work approved."
+        },
+        {
+          "at": "2026-06-26T00:10:56.000Z",
+          "from": "ready_to_push",
+          "to": "accepted",
+          "note": "v0.7.7 design contract drift guard accepted after pushed baseline b086f85 was verified."
+        }
+      ]
+    },
+    {
+      "id": "queue-022-v078-v07-release-state-closeout",
+      "phase": "KIA-Stick-v0.7.8-v0.7-release-state-closeout",
+      "title": "v0.7.8 v0.7 release-state closeout",
+      "status": "ready_to_push",
+      "model": "GPT/Codex $100",
+      "risk": "low",
+      "summary": "Create a KIA-only docs/tests/state closeout pack consolidating accepted v0.7.2 through v0.7.7 state, validation commands, blocked real-doc queue state, and recommended next choices.",
+      "next_action": "Auto-push this release-state closeout commit only if validation passes, queue-015 remains blocked, no prohibited file or document capability is added, and final HEAD equals origin/main after push.",
+      "created_at": "2026-06-26T00:10:56.000Z",
+      "updated_at": "2026-06-26T00:10:56.000Z",
+      "history": [
+        {
+          "at": "2026-06-26T00:10:56.000Z",
+          "from": "planned",
+          "to": "ready_to_push",
+          "note": "v0.7.8 release-state closeout seeded from accepted pushed v0.7.7 baseline b086f85; no runtime feature or real-doc work approved."
         }
       ]
     }

@@ -12,6 +12,18 @@ KIA Stick separates milestone semver from build identity:
 
 `/health`, `/version`, the app header, settings, answer footer, and saved answer metadata expose the current `displayVersion`.
 
+## v0.7.8 v0.7 Release-State Closeout
+
+Phase: `KIA-Stick-v0.7.8-v0.7-release-state-closeout`.
+
+`docs/RELEASE_v0.7-closeout.md` consolidates accepted pushed v0.7.2 through v0.7.7 state: product identity `0.7.0` at `179f883`, fake-only UX triage at `38bff5f`, Chat/Saved/Upload stabilization at `5a3758d`, Sources/Vault/Import scan-density polish at `303f12b`, `DESIGN.md` fake-only UX contract at `4e7ab62`, and `design:check` drift guard at `b086f85`.
+
+`productVersion` stays `0.7.0`, `promptVersion` stays `prompt.fake-docs.v0.5-import-wizard-hardening`, and `queue-015-v07-first-real-doc-gate-request` remains blocked.
+
+Recommended next choice: pause and accept v0.7 state, or continue fake-only polish. Real-doc gate preparation may proceed as planning only, but this closeout does not approve implementation.
+
+This is **KIA-only docs/tests/state closeout work**. It does not change runtime UX, add file pickers, path readers, file reads, uploads, OCR, real redaction, embeddings, indexing, vector stores, private-vault inspection, service changes, global agent config, skills, or real-document access.
+
 ## v0.7.7 Design Contract Drift Guard
 
 Phase: `KIA-Stick-v0.7.7-design-contract-drift-guard`.
