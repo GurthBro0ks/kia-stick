@@ -1,6 +1,6 @@
 {
   "schema": "kia-stick-local-task-queue.v1",
-  "updated_at": "2026-06-26T12:13:11.000Z",
+  "updated_at": "2026-06-26T12:23:51.000Z",
   "items": [
     {
       "id": "queue-001-closeout-helper-hardening",
@@ -763,6 +763,26 @@
           "from": "ready_to_push",
           "to": "accepted",
           "note": "Accepted after closeout review, validation PASS, operator QA PASS, and git push. HEAD equals origin/main. queue-015 remains blocked. No real-doc work was done."
+        }
+      ]
+    },
+    {
+      "id": "queue-029-v0714-synthetic-approval-packet-validator",
+      "phase": "KIA-Stick-v0.7.14-synthetic-approval-packet-validator",
+      "title": "v0.7.14 synthetic approval-packet validator",
+      "status": "needs_review",
+      "model": "GPT/Codex $100 coding plan",
+      "risk": "high",
+      "summary": "Add a synthetic-only PASS/WARN/FAIL validator for future one-document and one-gate approval packet objects without accepting paths, reading files, scanning directories, touching real documents, or adding runtime capability.",
+      "next_action": "Operator review the v0.7.14 validator doc, tests, proof outputs, and local commit. Do not push or unblock queue-015 without a separate closeout prompt; queue-015 remains blocked.",
+      "created_at": "2026-06-26T12:23:51.000Z",
+      "updated_at": "2026-06-26T12:23:51.000Z",
+      "history": [
+        {
+          "at": "2026-06-26T12:23:51.000Z",
+          "from": "planned",
+          "to": "needs_review",
+          "note": "v0.7.14 synthetic approval-packet validator prepared as docs/tests/tooling with in-memory fake packet validation only; queue-015 remains blocked, product/prompt unchanged, and no runtime or real-doc capability is approved."
         }
       ]
     }

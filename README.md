@@ -12,6 +12,16 @@ KIA Stick separates milestone semver from build identity:
 
 `/health`, `/version`, the app header, settings, answer footer, and saved answer metadata expose the current `displayVersion`.
 
+## v0.7.14 Synthetic Approval-Packet Validator
+
+Phase: `KIA-Stick-v0.7.14-synthetic-approval-packet-validator`.
+
+`docs/v0.7.14-synthetic-approval-packet-validator.md` documents the synthetic-only approval-packet validator. `lib/syntheticApprovalPacketValidator.ts` validates in-memory fake packet objects and returns `PASS`, `WARN`, or `FAIL` for future one-document / one-gate review packet completeness.
+
+This is **docs/tests/tooling work only**. It does not approve implementation, name or touch a real document, add runtime capability, change product version, change prompt version, accept path arguments, check filesystem existence, scan directories, add file pickers, directory pickers, drag/drop import zones, path readers, file reads, uploads, OCR, real redaction, text extraction, summarization, embeddings, indexing, vector stores, private-source inspection, services, secrets, Discord, skills, global config, or system changes.
+
+`queue-029-v0714-synthetic-approval-packet-validator` is `needs_review` after local validation. `queue-015-v07-first-real-doc-gate-request` remains blocked. Product version remains `0.7.0`; prompt version remains `prompt.fake-docs.v0.5-import-wizard-hardening`.
+
 ## v0.7.13 Planning-Only Real-Doc Gate Rehearsal
 
 Phase: `KIA-Stick-v0.7.13-planning-only-real-doc-gate-rehearsal`.
