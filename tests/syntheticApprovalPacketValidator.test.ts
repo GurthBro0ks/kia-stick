@@ -204,6 +204,10 @@ describe("v0.7.14 synthetic approval-packet validator", () => {
         indexing_added: boolean;
         vector_store_added: boolean;
         upload_handler_added: boolean;
+        push_performed: boolean;
+        head_equals_origin_main: boolean;
+        closeout_push_proof_dir: string;
+        accepted_pushed_state: string;
       };
     };
     const queue = JSON.parse(readFileSync("docs/phase-backlog.json", "utf8")) as {
@@ -235,6 +239,10 @@ describe("v0.7.14 synthetic approval-packet validator", () => {
     expect(featureList.v0714_synthetic_approval_packet_validator.indexing_added).toBe(false);
     expect(featureList.v0714_synthetic_approval_packet_validator.vector_store_added).toBe(false);
     expect(featureList.v0714_synthetic_approval_packet_validator.upload_handler_added).toBe(false);
+    expect(featureList.v0714_synthetic_approval_packet_validator.push_performed).toBe(true);
+    expect(featureList.v0714_synthetic_approval_packet_validator.head_equals_origin_main).toBe(true);
+    expect(featureList.v0714_synthetic_approval_packet_validator.closeout_push_proof_dir).toContain("proof_kia_stick_v0_7_14_operator_qa_closeout_push");
+    expect(featureList.v0714_synthetic_approval_packet_validator.accepted_pushed_state).toBe("verified_HEAD_equals_origin_main_after_closeout_push");
 
     expect(realDocGate?.status).toBe("blocked");
     expect(validatorQueueItem?.phase).toBe(phase);

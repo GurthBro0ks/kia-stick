@@ -2761,7 +2761,7 @@
       "tests/v07ReleaseStateCloseout.test.ts"
     ],
     "manual_qa_status": "PASS",
-    "push_performed": false,
+    "push_performed": true,
     "real_db_boundary": "real-doc source mount untouched",
     "operator_qa_pass_proof_dir": "/tmp/proof_kia_stick_v0_7_14_operator_qa_pass_20260626T131048Z",
     "operator_qa_pass_source": "OPERATOR_QA_PASS prompt on 2026-06-26",
@@ -2772,6 +2772,9 @@
       "unsafe packet returns FAIL",
       "no real-doc implementation is approved",
       "queue-015 remains blocked"
-    ]
+    ],
+    "head_equals_origin_main": true,
+    "closeout_push_proof_dir": "/tmp/proof_kia_stick_v0_7_14_operator_qa_closeout_push_20260626T131941Z",
+    "accepted_pushed_state": "verified_HEAD_equals_origin_main_after_closeout_push"
   }
 }
