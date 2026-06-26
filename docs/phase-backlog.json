@@ -1,6 +1,6 @@
 {
   "schema": "kia-stick-local-task-queue.v1",
-  "updated_at": "2026-06-26T17:59:15.138Z",
+  "updated_at": "2026-06-26T21:50:56.172Z",
   "items": [
     {
       "id": "queue-001-closeout-helper-hardening",
@@ -320,19 +320,25 @@
       "id": "queue-011-v07-pause-stabilize",
       "phase": "KIA-Stick-v0.7.0-pause-stabilize",
       "title": "v0.7 pause and stabilize",
-      "status": "planned",
+      "status": "accepted",
       "model": "GPT/Codex $100",
       "risk": "low",
-      "summary": "Pause new features and stabilize the fake-only app, proof tooling, and queue tooling with small fixes only; no real-doc handling.",
-      "next_action": "If selected, draft a docs/tests-only stabilization phase with no new privacy surface and no real-doc implementation.",
+      "summary": "Reconciled historical v0.7 pause/stabilize placeholder. Later accepted fake-only stabilization, proof, design, release, operator QA, and queue work covered this intent without real-doc handling.",
+      "next_action": "Closed by v0.8.1/v0.8.2 backlog reconciliation. Create a fresh queue item for any new stabilization work.",
       "created_at": "2026-06-21T17:17:09.000Z",
-      "updated_at": "2026-06-21T17:17:09.000Z",
+      "updated_at": "2026-06-26T21:50:56.172Z",
       "history": [
         {
           "at": "2026-06-21T17:17:09.000Z",
           "from": "planned",
           "to": "planned",
           "note": "Seeded as a v0.7 safe option at the decision checkpoint; no real-doc work approved."
+        },
+        {
+          "at": "2026-06-26T21:50:56.172Z",
+          "from": "planned",
+          "to": "accepted",
+          "note": "v0.8.1/v0.8.2 reconciliation accepted this historical placeholder based on accepted v0.7.3 through v0.8.0 repo evidence; no real-doc implementation is approved."
         }
       ]
     },
@@ -343,10 +349,10 @@
       "status": "accepted",
       "model": "GPT/Codex $100",
       "risk": "low",
-      "summary": "Document the productVersion bump decision path as docs/tests/state only, comparing 0.5.0, 0.6.0, and 0.7.0 while keeping productVersion at 0.4.0 in this phase.",
-      "next_action": "Accepted after the v0.7.2 product-version bump implementation set productVersion to 0.7.0 and preserved the prompt/real-doc safety boundary.",
+      "summary": "Accepted v0.7.1 product-version bump plan, docs/tests/state only, already fulfilled by the separately accepted v0.7.2 implementation that set productVersion/package version to 0.7.0 while preserving prompt and real-doc boundaries.",
+      "next_action": "Accepted after the v0.7.2 product-version bump implementation set productVersion to 0.7.0 and preserved the prompt/real-doc safety boundary. Future product-version bumps require a separate approved product-version phase.",
       "created_at": "2026-06-21T17:17:09.000Z",
-      "updated_at": "2026-06-21T17:51:12.000Z",
+      "updated_at": "2026-06-26T21:50:56.172Z",
       "history": [
         {
           "at": "2026-06-21T17:17:09.000Z",
@@ -365,6 +371,12 @@
           "from": "ready_to_push",
           "to": "accepted",
           "note": "v0.7.1 product-version bump plan accepted as the basis for the separately approved v0.7.2 implementation."
+        },
+        {
+          "at": "2026-06-26T21:50:56.172Z",
+          "from": "accepted",
+          "to": "accepted",
+          "note": "v0.8.2 reconciliation confirmed this item was already accepted and fulfilled by the v0.7.2 product-version implementation; no new product-version bump is approved."
         }
       ]
     },
@@ -372,19 +384,25 @@
       "id": "queue-013-v07-fake-only-ux-polish",
       "phase": "KIA-Stick-v0.7.0-fake-only-ux-polish",
       "title": "v0.7 fake-only UX polish",
-      "status": "planned",
+      "status": "accepted",
       "model": "GPT/Codex $100",
       "risk": "low",
-      "summary": "Polish the existing fake app UX with fictional data only and no new privacy surface or real-doc handling.",
-      "next_action": "If selected, scope UX polish for the fake app docs/tests only with no real-doc handling.",
+      "summary": "Reconciled historical fake-only UX polish placeholder. Accepted v0.7.3, v0.7.4, v0.7.5, v0.7.6, and v0.7.12 work covered fake-only UX planning, stabilization, design contract, and operator clarity.",
+      "next_action": "Closed by v0.8.1/v0.8.2 backlog reconciliation. Create a fresh queue item for any new fake-only UX polish bundle.",
       "created_at": "2026-06-21T17:17:09.000Z",
-      "updated_at": "2026-06-21T17:17:09.000Z",
+      "updated_at": "2026-06-26T21:50:56.172Z",
       "history": [
         {
           "at": "2026-06-21T17:17:09.000Z",
           "from": "planned",
           "to": "planned",
           "note": "Seeded as a v0.7 safe option at the decision checkpoint; no real-doc work approved."
+        },
+        {
+          "at": "2026-06-26T21:50:56.172Z",
+          "from": "planned",
+          "to": "accepted",
+          "note": "v0.8.1/v0.8.2 reconciliation accepted this historical placeholder based on accepted fake-only UX polish evidence; no real-doc implementation is approved."
         }
       ]
     },
@@ -392,19 +410,25 @@
       "id": "queue-014-v07-real-doc-gate-preparation",
       "phase": "KIA-Stick-v0.7.0-real-doc-gate-preparation",
       "title": "v0.7 real-doc gate preparation",
-      "status": "planned",
+      "status": "accepted",
       "model": "Claude with optional GLM-5.2 high review",
       "risk": "high",
-      "summary": "Continue docs/tests-only preparation for a future single real-doc gate; remains blocked from any content touch until separately approved.",
-      "next_action": "If selected, keep preparation docs/tests only and require a signed packet, PASS safety checklist, redaction policy, and gate draft before any content touch.",
+      "summary": "Reconciled historical real-doc gate preparation placeholder as planning-only/synthetic preparation. Accepted v0.7.13 through v0.8.0 governance work prepared future packet/checklist/report flow without approving real-doc implementation.",
+      "next_action": "Closed as planning-only preparation. queue-015 remains blocked and any real-doc implementation still needs a separate exactly-one-document, exactly-one-gate approval packet.",
       "created_at": "2026-06-21T17:17:09.000Z",
-      "updated_at": "2026-06-21T17:17:09.000Z",
+      "updated_at": "2026-06-26T21:50:56.172Z",
       "history": [
         {
           "at": "2026-06-21T17:17:09.000Z",
           "from": "planned",
           "to": "planned",
           "note": "Seeded as a v0.7 high-risk planning option; no real-doc work approved."
+        },
+        {
+          "at": "2026-06-26T21:50:56.172Z",
+          "from": "planned",
+          "to": "accepted",
+          "note": "v0.8.1/v0.8.2 reconciliation accepted this as planning-only/synthetic preparation based on accepted v0.7.13 through v0.8.0 evidence; queue-015 remains blocked."
         }
       ]
     },
@@ -418,13 +442,19 @@
       "summary": "First real-doc gate request for exactly one gate and one document; blocked until a separately approved prompt meets all real-doc requirements.",
       "next_action": "Blocked. Requires a signed approval packet, PASS safety checklist, redaction policy result, future gate draft conformance, exactly one gate, exactly one document, and fresh operator approval before unblocking.",
       "created_at": "2026-06-21T17:17:09.000Z",
-      "updated_at": "2026-06-21T17:17:09.000Z",
+      "updated_at": "2026-06-26T21:50:56.172Z",
       "history": [
         {
           "at": "2026-06-21T17:17:09.000Z",
           "from": "planned",
           "to": "blocked",
           "note": "Seeded as blocked; real-doc implementation is not approved and requires separate operator approval."
+        },
+        {
+          "at": "2026-06-26T21:50:56.172Z",
+          "from": "blocked",
+          "to": "blocked",
+          "note": "v0.8.1-v0.8.5 backlog reconciliation explicitly preserved queue-015 as blocked; no real-doc implementation is approved."
         }
       ]
     },
@@ -999,6 +1029,136 @@
           "from": "ready_to_push",
           "to": "accepted",
           "note": "Accepted after v0.8.0 synthetic governance bundle closeout validation, operator QA PASS, and git push gate. queue-015 remains blocked, product/prompt unchanged, no real-doc implementation is approved, and no real-doc work was done."
+        }
+      ]
+    },
+    {
+      "id": "queue-036-v081-queue-reality-audit",
+      "phase": "KIA-Stick-v0.8.1-queue-reality-audit",
+      "title": "v0.8.1 queue reality audit",
+      "status": "needs_review",
+      "model": "GPT/Codex $100",
+      "risk": "low",
+      "summary": "Audit why queue:next selected stale v0.7 placeholders after accepted v0.7.13 through v0.8.0 work; fake/synthetic docs/tests/state only.",
+      "next_action": "Pending one bundle operator QA review with v0.8.1 through v0.8.5 proof; do not push until separately approved.",
+      "created_at": "2026-06-26T21:50:56.172Z",
+      "updated_at": "2026-06-26T21:50:56.172Z",
+      "history": [
+        {
+          "at": "2026-06-26T21:50:56.172Z",
+          "from": "planned",
+          "to": "planned",
+          "note": "Seeded by the v0.8.1-to-v0.8.5 backlog reconciliation bundle as fake/synthetic docs/tests/tooling/state work."
+        },
+        {
+          "at": "2026-06-26T21:50:56.172Z",
+          "from": "planned",
+          "to": "needs_review",
+          "note": "Completed locally in the v0.8.1-to-v0.8.5 bundle and pending one bundle operator QA review; no push performed and queue-015 remains blocked."
+        }
+      ]
+    },
+    {
+      "id": "queue-037-v082-v07-v08-backlog-reconciliation",
+      "phase": "KIA-Stick-v0.8.2-v07-v08-backlog-reconciliation",
+      "title": "v0.8.2 v0.7-v0.8 backlog reconciliation",
+      "status": "needs_review",
+      "model": "GPT/Codex $100",
+      "risk": "medium",
+      "summary": "Reconcile queue-011 through queue-014 using accepted repo evidence while preserving queue-015 as blocked.",
+      "next_action": "Pending one bundle operator QA review; confirm queue-011 through queue-014 are accepted from evidence and queue-015 remains blocked.",
+      "created_at": "2026-06-26T21:50:56.172Z",
+      "updated_at": "2026-06-26T21:50:56.172Z",
+      "history": [
+        {
+          "at": "2026-06-26T21:50:56.172Z",
+          "from": "planned",
+          "to": "planned",
+          "note": "Seeded by the v0.8.1-to-v0.8.5 backlog reconciliation bundle as fake/synthetic docs/tests/tooling/state work."
+        },
+        {
+          "at": "2026-06-26T21:50:56.172Z",
+          "from": "planned",
+          "to": "needs_review",
+          "note": "Completed locally in the v0.8.1-to-v0.8.5 bundle and pending one bundle operator QA review; no push performed and queue-015 remains blocked."
+        }
+      ]
+    },
+    {
+      "id": "queue-038-v083-queue-next-contract-hardening",
+      "phase": "KIA-Stick-v0.8.3-queue-next-contract-hardening",
+      "title": "v0.8.3 queue-next contract hardening",
+      "status": "needs_review",
+      "model": "GPT/Codex $100",
+      "risk": "medium",
+      "summary": "Harden queue:next so accepted, blocked, and parked items do not hide the next actionable planned/running/review/push task.",
+      "next_action": "Pending one bundle operator QA review; confirm queue:list and queue:set still behave normally and queue:next stays no-push.",
+      "created_at": "2026-06-26T21:50:56.172Z",
+      "updated_at": "2026-06-26T21:50:56.172Z",
+      "history": [
+        {
+          "at": "2026-06-26T21:50:56.172Z",
+          "from": "planned",
+          "to": "planned",
+          "note": "Seeded by the v0.8.1-to-v0.8.5 backlog reconciliation bundle as fake/synthetic docs/tests/tooling/state work."
+        },
+        {
+          "at": "2026-06-26T21:50:56.172Z",
+          "from": "planned",
+          "to": "needs_review",
+          "note": "Completed locally in the v0.8.1-to-v0.8.5 bundle and pending one bundle operator QA review; no push performed and queue-015 remains blocked."
+        }
+      ]
+    },
+    {
+      "id": "queue-039-v084-large-bundle-operator-workflow",
+      "phase": "KIA-Stick-v0.8.4-large-bundle-operator-workflow",
+      "title": "v0.8.4 large bundle operator workflow",
+      "status": "needs_review",
+      "model": "GPT/Codex $100",
+      "risk": "low",
+      "summary": "Document one bundle operator QA workflow for multiple fake/synthetic subphases with stop-on-WARN/FAIL/safety rules and separate closeout/push.",
+      "next_action": "Pending one bundle operator QA review; use one OPERATOR_QA_PASS only after reviewing the full proof directory.",
+      "created_at": "2026-06-26T21:50:56.172Z",
+      "updated_at": "2026-06-26T21:50:56.172Z",
+      "history": [
+        {
+          "at": "2026-06-26T21:50:56.172Z",
+          "from": "planned",
+          "to": "planned",
+          "note": "Seeded by the v0.8.1-to-v0.8.5 backlog reconciliation bundle as fake/synthetic docs/tests/tooling/state work."
+        },
+        {
+          "at": "2026-06-26T21:50:56.172Z",
+          "from": "planned",
+          "to": "needs_review",
+          "note": "Completed locally in the v0.8.1-to-v0.8.5 bundle and pending one bundle operator QA review; no push performed and queue-015 remains blocked."
+        }
+      ]
+    },
+    {
+      "id": "queue-040-v085-next-large-work-checkpoint",
+      "phase": "KIA-Stick-v0.8.5-next-large-work-checkpoint",
+      "title": "v0.8.5 next large work checkpoint",
+      "status": "needs_review",
+      "model": "GPT/Codex $100",
+      "risk": "low",
+      "summary": "Create next large work options for fake-only UX polish, synthetic governance hardening, planning-only real-doc packet preparation, and release-state consolidation.",
+      "next_action": "Pending one bundle operator QA review; choose a next large work option only after this bundle is accepted.",
+      "created_at": "2026-06-26T21:50:56.172Z",
+      "updated_at": "2026-06-26T21:50:56.172Z",
+      "history": [
+        {
+          "at": "2026-06-26T21:50:56.172Z",
+          "from": "planned",
+          "to": "planned",
+          "note": "Seeded by the v0.8.1-to-v0.8.5 backlog reconciliation bundle as fake/synthetic docs/tests/tooling/state work."
+        },
+        {
+          "at": "2026-06-26T21:50:56.172Z",
+          "from": "planned",
+          "to": "needs_review",
+          "note": "Completed locally in the v0.8.1-to-v0.8.5 bundle and pending one bundle operator QA review; no push performed and queue-015 remains blocked."
         }
       ]
     }

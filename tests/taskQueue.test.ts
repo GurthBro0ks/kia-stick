@@ -51,7 +51,7 @@ describe("task-queue", () => {
     const queue = mod.loadQueue(resolve("."));
 
     expect(queue.schema).toBe("kia-stick-local-task-queue.v1");
-    expect(queue.items).toHaveLength(35);
+    expect(queue.items).toHaveLength(40);
     expect(queue.items.map((item) => item.id)).toEqual([
       "queue-001-closeout-helper-hardening",
       "queue-002-fake-redaction-metadata-depth",
@@ -88,12 +88,17 @@ describe("task-queue", () => {
       "queue-033-v0718-synthetic-governance-bundle-report",
       "queue-034-v0719-bundled-operator-qa-pack",
       "queue-035-v080-synthetic-governance-checkpoint-plan",
+      "queue-036-v081-queue-reality-audit",
+      "queue-037-v082-v07-v08-backlog-reconciliation",
+      "queue-038-v083-queue-next-contract-hardening",
+      "queue-039-v084-large-bundle-operator-workflow",
+      "queue-040-v085-next-large-work-checkpoint",
     ]);
-    expect(queue.items.slice(0, 10).every((item) => item.status === "accepted")).toBe(true);
-    expect(queue.items[10].status).toBe("planned");
+    expect(queue.items.slice(0, 14).every((item) => item.status === "accepted")).toBe(true);
+    expect(queue.items[10].status).toBe("accepted");
     expect(queue.items[11].status).toBe("accepted");
-    expect(queue.items[12].status).toBe("planned");
-    expect(queue.items[13].status).toBe("planned");
+    expect(queue.items[12].status).toBe("accepted");
+    expect(queue.items[13].status).toBe("accepted");
     expect(queue.items[14].status).toBe("blocked");
     expect(queue.items[15].status).toBe("accepted");
     expect(queue.items[16].status).toBe("accepted");
@@ -115,18 +120,20 @@ describe("task-queue", () => {
     expect(queue.items[32].status).toBe("accepted");
     expect(queue.items[33].status).toBe("accepted");
     expect(queue.items[34].status).toBe("accepted");
+    expect(queue.items.slice(35).every((item) => item.status === "needs_review")).toBe(true);
     expect(queue.items.every((item) => item.history.length > 0)).toBe(true);
     expect(mod.validateQueue(queue)).toBe(true);
   });
 
-  it("selects the first non-accepted item", async () => {
+  it("selects the first actionable item", async () => {
     const mod = await loadModule();
     const queue = mod.loadQueue(resolve("."));
-    for (let index = 0; index < 10; index += 1) {
+    for (let index = 0; index < 35; index += 1) {
       queue.items[index].status = "accepted";
     }
+    queue.items[14].status = "blocked";
 
-    expect(mod.selectNextItem(queue)?.id).toBe("queue-011-v07-pause-stabilize");
+    expect(mod.selectNextItem(queue)?.id).toBe("queue-036-v081-queue-reality-audit");
   });
 
   it("keeps the first real-doc gate request blocked until separately approved", async () => {
@@ -410,9 +417,9 @@ describe("task-queue", () => {
     const result = spawnSync("node", [scriptPath, "next"], { cwd: resolve("."), encoding: "utf8" });
 
     expect(result.status).toBe(0);
-    expect(result.stdout).toContain("id=queue-011-v07-pause-stabilize");
+    expect(result.stdout).toContain("id=queue-036-v081-queue-reality-audit");
     expect(result.stdout).toContain("Codex-ready summary:");
-    expect(result.stdout).toContain("KIA-Stick-v0.7.0-pause-stabilize");
+    expect(result.stdout).toContain("KIA-Stick-v0.8.1-queue-reality-audit");
   });
 
   it("does not execute git push from queue commands", () => {

@@ -12,6 +12,16 @@ KIA Stick separates milestone semver from build identity:
 
 `/health`, `/version`, the app header, settings, answer footer, and saved answer metadata expose the current `displayVersion`.
 
+## v0.8.1 to v0.8.5 Backlog Reconciliation Bundle
+
+Phase: `KIA-Stick-v0.8.5-next-large-work-checkpoint`.
+
+This local bundle reconciles stale v0.7 queue placeholders, hardens `npm run queue:next`, documents the large-bundle operator workflow, and records next large-work options. It adds `docs/v0.8.1-queue-reality-audit.md`, `docs/v0.8.2-v07-v08-backlog-reconciliation.md`, `docs/v0.8.3-queue-next-contract-hardening.md`, `docs/v0.8.4-large-bundle-operator-workflow.md`, and `docs/v0.8.5-next-large-work-checkpoint.md` with focused tests.
+
+Local validation is PASS. `queue-011-v07-pause-stabilize`, `queue-012-v07-product-version-bump-plan`, `queue-013-v07-fake-only-ux-polish`, and `queue-014-v07-real-doc-gate-preparation` are reconciled as accepted historical work from repo-owned evidence. `queue-015-v07-first-real-doc-gate-request` remains blocked. `queue-036` through `queue-040` are `needs_review` pending one bundle operator QA pass. `npm run queue:next` now skips accepted, blocked, and parked items, so it selects the next actionable item instead of the first non-accepted item.
+
+This is **fake/synthetic docs/tests/tooling/state work only**. It does not approve implementation, name or touch a real document, add runtime capability, change product version, change prompt version, accept arbitrary path input, read user-provided packet files, scan directories, add file pickers, directory pickers, drag/drop import zones, path readers, uploads, OCR, real redaction, text extraction, summarization, embeddings, indexing, vector stores, private-source inspection, services, secrets, Discord, skills, global config, or system changes. Product version remains `0.7.0`; prompt version remains `prompt.fake-docs.v0.5-import-wizard-hardening`. No push is approved by this bundle.
+
 ## v0.8.0 Synthetic Governance Checkpoint Plan
 
 Phase: `KIA-Stick-v0.8.0-synthetic-governance-checkpoint-plan`.

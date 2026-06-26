@@ -1,5 +1,39 @@
 # KIA Stick Closeout
 
+## v0.8.1 to v0.8.5 Backlog Reconciliation Bundle
+
+- Phase: `KIA-Stick-v0.8.5-next-large-work-checkpoint`
+- Bundle: `KIA-Stick-v0.8.1-to-v0.8.5-backlog-reconciliation-bundle`
+- Baseline: accepted pushed v0.8.0 closeout state at `01afd03303d0bd5edf76f0326d5b763d03e3d652`
+- Scope: fake/synthetic docs/tests/tooling/state bundle for stale queue audit, v0.7-v0.8 backlog reconciliation, queue-next hardening, large-bundle operator workflow, and next large-work checkpoint.
+- Product version: `0.7.0`
+- Package version: `0.7.0`
+- Prompt version: `prompt.fake-docs.v0.5-import-wizard-hardening`
+- Proof directory: `/tmp/proof_kia_stick_v0_8_1_to_v0_8_5_backlog_reconciliation_bundle_20260626T214423Z`
+- Runtime UI changed: no
+- Runtime capability changed: no
+- Validation tooling changed: yes, `npm run queue:next` now skips accepted, blocked, and parked queue items.
+- Validation: PASS for focused tests, full test suite, design check, release check with scoped v0.8.x product-version hold, full QA gate, queue list/next, fake-doc scan, privacy scan, exact safety-boundary scan, `git diff --check`, and git status capture.
+- Queue state: `queue-011` through `queue-014` are reconciled as accepted historical work; `queue-015-v07-first-real-doc-gate-request` remains blocked; `queue-036` through `queue-040` are `needs_review` pending one bundle operator QA pass.
+- Manual QA status: pending
+- Real document access: none
+- Real document named: no
+- Private source folders inspected: no
+- Skills installed: no
+- Global agent config changed: no
+- Services restarted: no
+- Cron/timer/tmux/Caddy/DNS changed: no
+- Secrets printed: no
+- Discord sent: no
+- Push performed: no
+- Local commit: recorded in proof `local-commits.txt` after validation-gated commit
+
+## v0.8.1 to v0.8.5 Safety Boundary
+
+This bundle does not approve real-doc work. It does not add file pickers, directory pickers, drag/drop import zones, path readers, user-provided packet reads, file reads over real documents, copying, hashing real files, OCR, upload handlers, real redaction, text extraction, summarization, embeddings, indexing, vector stores, quarantine writes, private-source inspection, service changes, credentials, skills, global agent config, or real-document access. `productVersion` remains `0.7.0`, `promptVersion` remains unchanged, and `queue-015-v07-first-real-doc-gate-request` remains blocked.
+
+---
+
 ## v0.8.0 Synthetic Governance Checkpoint Bundle
 
 - Phase: `KIA-Stick-v0.8.0-synthetic-governance-checkpoint-plan`

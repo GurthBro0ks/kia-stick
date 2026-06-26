@@ -7,7 +7,7 @@ import {
 import { PRODUCT_VERSION, PROMPT_VERSION } from "@/lib/version";
 
 const phase = "KIA-Stick-v0.7.14-synthetic-approval-packet-validator";
-const currentPhase = "KIA-Stick-v0.8.0-synthetic-governance-checkpoint-plan";
+const currentPhase = "KIA-Stick-v0.8.5-next-large-work-checkpoint";
 const docPath = "docs/v0.7.14-synthetic-approval-packet-validator.md";
 const productVersion = "0.7.0";
 const promptVersion = "prompt.fake-docs.v0.5-import-wizard-hardening";

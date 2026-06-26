@@ -2,6 +2,7 @@ import { existsSync, readFileSync } from "node:fs";
 import { describe, expect, it } from "vitest";
 
 const phase = "KIA-Stick-v0.8.0-synthetic-governance-checkpoint-plan";
+const currentPhase = "KIA-Stick-v0.8.5-next-large-work-checkpoint";
 const docPath = "docs/v0.8.0-synthetic-governance-checkpoint-plan.md";
 const productVersion = "0.7.0";
 const promptVersion = "prompt.fake-docs.v0.5-import-wizard-hardening";
@@ -65,9 +66,9 @@ describe("v0.8.0 synthetic governance checkpoint plan", () => {
     const q015 = queue.items.find((item) => item.id === "queue-015-v07-first-real-doc-gate-request");
     const q035 = queue.items.find((item) => item.id === "queue-035-v080-synthetic-governance-checkpoint-plan");
 
-    expect(featureList.phase).toBe(phase);
-    expect(featureList.release_readiness.phase).toBe(phase);
-    expect(featureList.release_readiness.status).toBe("v080_synthetic_governance_bundle_accepted");
+    expect(featureList.phase).toBe(currentPhase);
+    expect(featureList.release_readiness.phase).toBe(currentPhase);
+    expect(featureList.release_readiness.status).toBe("v081_v085_backlog_reconciliation_needs_operator_qa");
     expect(featureList.release_readiness.package_version).toBe(productVersion);
     expect(featureList.release_readiness.product_version).toBe(productVersion);
     expect(featureList.release_readiness.prompt_version).toBe(promptVersion);

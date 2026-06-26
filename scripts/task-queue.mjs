@@ -3,6 +3,7 @@ import { existsSync, readFileSync, writeFileSync } from "node:fs";
 import path from "node:path";
 
 export const queueStatuses = ["planned", "running", "needs_review", "ready_to_push", "accepted", "blocked", "parked"];
+export const nonActionableQueueStatuses = ["accepted", "blocked", "parked"];
 const queuePath = "docs/phase-backlog.json";
 const privatePathPatterns = [
   /\/media\/mint\/SHARED\/APWU/i,
@@ -75,7 +76,7 @@ export function validateQueue(queue) {
 }
 
 export function selectNextItem(queue) {
-  return queue.items.find((item) => item.status !== "accepted") ?? null;
+  return queue.items.find((item) => !nonActionableQueueStatuses.includes(item.status)) ?? null;
 }
 
 export function updateQueueItemStatus(queue, id, status, options = {}) {
@@ -114,7 +115,7 @@ export function renderQueueList(queue) {
 }
 
 export function renderNextItem(item) {
-  if (!item) return "No non-accepted queue items.";
+  if (!item) return "No actionable queue items. Blocked and parked items are intentionally skipped.";
   return [
     `id=${item.id}`,
     `phase=${item.phase}`,
