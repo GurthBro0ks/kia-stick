@@ -20,7 +20,7 @@ Phase: `KIA-Stick-v0.7.14-synthetic-approval-packet-validator`.
 
 This is **docs/tests/tooling work only**. It does not approve implementation, name or touch a real document, add runtime capability, change product version, change prompt version, accept path arguments, check filesystem existence, scan directories, add file pickers, directory pickers, drag/drop import zones, path readers, file reads, uploads, OCR, real redaction, text extraction, summarization, embeddings, indexing, vector stores, private-source inspection, services, secrets, Discord, skills, global config, or system changes.
 
-`queue-029-v0714-synthetic-approval-packet-validator` is `needs_review` after local validation. `queue-015-v07-first-real-doc-gate-request` remains blocked. Product version remains `0.7.0`; prompt version remains `prompt.fake-docs.v0.5-import-wizard-hardening`.
+Operator QA PASS is recorded and `queue-029-v0714-synthetic-approval-packet-validator` is `ready_to_push` for a separate closeout review. No push was performed by this QA-pass update. `queue-015-v07-first-real-doc-gate-request` remains blocked. Product version remains `0.7.0`; prompt version remains `prompt.fake-docs.v0.5-import-wizard-hardening`.
 
 ## v0.7.13 Planning-Only Real-Doc Gate Rehearsal
 

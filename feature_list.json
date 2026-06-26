@@ -225,7 +225,7 @@
   ],
   "release_readiness": {
     "phase": "KIA-Stick-v0.7.14-synthetic-approval-packet-validator",
-    "status": "v0714_synthetic_approval_packet_validator_needs_review",
+    "status": "v0714_synthetic_approval_packet_validator_operator_qa_pass_ready_for_closeout",
     "package_version": "0.7.0",
     "product_version": "0.7.0",
     "prompt_version": "prompt.fake-docs.v0.5-import-wizard-hardening",
@@ -2674,7 +2674,7 @@
   },
   "v0714_synthetic_approval_packet_validator": {
     "phase": "KIA-Stick-v0.7.14-synthetic-approval-packet-validator",
-    "status": "validation_pass_needs_operator_review",
+    "status": "operator_qa_pass_ready_for_closeout",
     "document": "docs/v0.7.14-synthetic-approval-packet-validator.md",
     "baseline": "f41109d064dcf9ca29188ecd3ffa19763eccc0d9",
     "proof_dir": "/tmp/proof_kia_stick_v0_7_14_synthetic_approval_packet_validator_20260626T121841Z",
@@ -2734,7 +2734,7 @@
     "notify_mode": "disabled_user_laptop",
     "dedupe_result": "not_applicable",
     "queue_015_status": "blocked",
-    "queue_029_status": "needs_review",
+    "queue_029_status": "ready_to_push",
     "future_gate_rule": {
       "exactly_one_document": true,
       "exactly_one_gate": true,
@@ -2760,8 +2760,18 @@
       "tests/persistentSmokeEvidenceCloseout.test.ts",
       "tests/v07ReleaseStateCloseout.test.ts"
     ],
-    "manual_qa_status": "PENDING_OPERATOR_REVIEW",
+    "manual_qa_status": "PASS",
     "push_performed": false,
-    "real_db_boundary": "real-doc source mount untouched"
+    "real_db_boundary": "real-doc source mount untouched",
+    "operator_qa_pass_proof_dir": "/tmp/proof_kia_stick_v0_7_14_operator_qa_pass_20260626T131048Z",
+    "operator_qa_pass_source": "OPERATOR_QA_PASS prompt on 2026-06-26",
+    "operator_qa_findings": [
+      "validator is synthetic-only",
+      "complete synthetic packet returns PASS",
+      "incomplete safe synthetic packet returns WARN",
+      "unsafe packet returns FAIL",
+      "no real-doc implementation is approved",
+      "queue-015 remains blocked"
+    ]
   }
 }

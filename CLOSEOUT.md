@@ -11,12 +11,13 @@
 - Planning/review document: `docs/v0.7.14-synthetic-approval-packet-validator.md`
 - Validator module: `lib/syntheticApprovalPacketValidator.ts`
 - Proof directory: `/tmp/proof_kia_stick_v0_7_14_synthetic_approval_packet_validator_20260626T121841Z`
+- Operator QA PASS proof directory: `/tmp/proof_kia_stick_v0_7_14_operator_qa_pass_20260626T131048Z`
 - Runtime UI changed: no
 - Runtime capability changed: no
 - Validation tooling changed: yes, a pure in-memory synthetic packet validator was added.
 - Validation: PASS for focused validator/current-state tests, operator smoke static checks, design check, release check, full QA gate, queue check, fake-doc scan, privacy scan, safety-boundary scans, `git diff --check`, and git status capture.
-- Queue state: `queue-029-v0714-synthetic-approval-packet-validator` needs review; `queue-015-v07-first-real-doc-gate-request` remains blocked.
-- Manual QA status: pending operator review
+- Queue state: `queue-029-v0714-synthetic-approval-packet-validator` ready to push after operator QA PASS; `queue-015-v07-first-real-doc-gate-request` remains blocked.
+- Manual QA status: PASS by operator prompt on 2026-06-26
 - Real document access: none
 - Real document named: no
 - Private source folders inspected: no
@@ -27,6 +28,10 @@
 - Secrets printed: no
 - Discord sent: no
 - Push performed: no
+
+## v0.7.14 Operator QA PASS Findings
+
+The operator review confirmed that the validator is synthetic-only, validates in-memory fake packet objects only, accepts no path arguments, checks no filesystem existence, scans no directories, rejects broad/private/recursive/path-shaped values, returns PASS/WARN/FAIL correctly for complete/incomplete/unsafe synthetic packets, keeps product version at `0.7.0`, keeps prompt version at `prompt.fake-docs.v0.5-import-wizard-hardening`, and leaves `queue-015-v07-first-real-doc-gate-request` blocked. No real-doc implementation is approved.
 
 ## v0.7.14 Safety Boundary
 

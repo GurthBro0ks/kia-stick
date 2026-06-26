@@ -221,12 +221,12 @@ describe("v0.7.14 synthetic approval-packet validator", () => {
     expect(featureList.release_readiness.product_version).toBe(productVersion);
     expect(featureList.release_readiness.prompt_version).toBe(promptVersion);
     expect(featureList.v0714_synthetic_approval_packet_validator.phase).toBe(phase);
-    expect(featureList.v0714_synthetic_approval_packet_validator.status).toBe("validation_pass_needs_operator_review");
+    expect(featureList.v0714_synthetic_approval_packet_validator.status).toBe("operator_qa_pass_ready_for_closeout");
     expect(featureList.v0714_synthetic_approval_packet_validator.product_version).toBe(productVersion);
     expect(featureList.v0714_synthetic_approval_packet_validator.package_version).toBe(productVersion);
     expect(featureList.v0714_synthetic_approval_packet_validator.prompt_version).toBe(promptVersion);
     expect(featureList.v0714_synthetic_approval_packet_validator.queue_015_status).toBe("blocked");
-    expect(featureList.v0714_synthetic_approval_packet_validator.queue_029_status).toBe("needs_review");
+    expect(featureList.v0714_synthetic_approval_packet_validator.queue_029_status).toBe("ready_to_push");
     expect(featureList.v0714_synthetic_approval_packet_validator.authorizes_real_doc_work).toBe(false);
     expect(featureList.v0714_synthetic_approval_packet_validator.real_document_access).toBe(false);
     expect(featureList.v0714_synthetic_approval_packet_validator.file_picker_added).toBe(false);
@@ -238,7 +238,7 @@ describe("v0.7.14 synthetic approval-packet validator", () => {
 
     expect(realDocGate?.status).toBe("blocked");
     expect(validatorQueueItem?.phase).toBe(phase);
-    expect(validatorQueueItem?.status).toBe("needs_review");
+    expect(validatorQueueItem?.status).toBe("ready_to_push");
     expect(`${validatorQueueItem?.summary}\n${validatorQueueItem?.next_action}`).toContain("synthetic-only");
     expect(`${validatorQueueItem?.summary}\n${validatorQueueItem?.next_action}`).toContain("queue-015 remains blocked");
   });
