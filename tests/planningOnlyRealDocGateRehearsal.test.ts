@@ -3,7 +3,7 @@ import { describe, expect, it } from "vitest";
 
 const phase = "KIA-Stick-v0.7.13-planning-only-real-doc-gate-rehearsal";
 const currentPhase = "KIA-Stick-v0.7.15-synthetic-packet-report-runner";
-const currentStatus = "v0715_synthetic_packet_report_runner_needs_review";
+const currentStatus = "v0715_synthetic_packet_report_runner_operator_qa_pass_ready_to_push";
 const docPath = "docs/v0.7.13-planning-only-real-doc-gate-rehearsal.md";
 const productVersion = "0.7.0";
 const promptVersion = "prompt.fake-docs.v0.5-import-wizard-hardening";

@@ -142,12 +142,12 @@ describe("v0.7.15 synthetic packet report runner", () => {
     expect(featureList.release_readiness.product_version).toBe(productVersion);
     expect(featureList.release_readiness.prompt_version).toBe(promptVersion);
     expect(featureList.v0715_synthetic_packet_report_runner.phase).toBe(phase);
-    expect(featureList.v0715_synthetic_packet_report_runner.status).toBe("validation_pass_needs_operator_review");
+    expect(featureList.v0715_synthetic_packet_report_runner.status).toBe("operator_qa_pass_ready_to_push");
     expect(featureList.v0715_synthetic_packet_report_runner.product_version).toBe(productVersion);
     expect(featureList.v0715_synthetic_packet_report_runner.package_version).toBe(productVersion);
     expect(featureList.v0715_synthetic_packet_report_runner.prompt_version).toBe(promptVersion);
     expect(featureList.v0715_synthetic_packet_report_runner.queue_015_status).toBe("blocked");
-    expect(featureList.v0715_synthetic_packet_report_runner.queue_030_status).toBe("needs_review");
+    expect(featureList.v0715_synthetic_packet_report_runner.queue_030_status).toBe("ready_to_push");
     expect(featureList.v0715_synthetic_packet_report_runner.authorizes_real_doc_work).toBe(false);
     expect(featureList.v0715_synthetic_packet_report_runner.real_document_access).toBe(false);
     expect(featureList.v0715_synthetic_packet_report_runner.reads_user_files).toBe(false);
@@ -159,7 +159,7 @@ describe("v0.7.15 synthetic packet report runner", () => {
     expect(featureList.v0715_synthetic_packet_report_runner.vector_store_added).toBe(false);
     expect(q015?.status).toBe("blocked");
     expect(q030?.phase).toBe(phase);
-    expect(q030?.status).toBe("needs_review");
+    expect(q030?.status).toBe("ready_to_push");
     expect(`${q030?.summary}\n${q030?.next_action}`).toContain("built-in synthetic fixtures");
     expect(`${q030?.summary}\n${q030?.next_action}`).toContain("queue-015 remains blocked");
   });

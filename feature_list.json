@@ -228,7 +228,7 @@
   ],
   "release_readiness": {
     "phase": "KIA-Stick-v0.7.15-synthetic-packet-report-runner",
-    "status": "v0715_synthetic_packet_report_runner_needs_review",
+    "status": "v0715_synthetic_packet_report_runner_operator_qa_pass_ready_to_push",
     "package_version": "0.7.0",
     "product_version": "0.7.0",
     "prompt_version": "prompt.fake-docs.v0.5-import-wizard-hardening",
@@ -2785,7 +2785,7 @@
   },
   "v0715_synthetic_packet_report_runner": {
     "phase": "KIA-Stick-v0.7.15-synthetic-packet-report-runner",
-    "status": "validation_pass_needs_operator_review",
+    "status": "operator_qa_pass_ready_to_push",
     "document": "docs/v0.7.15-synthetic-packet-report-runner.md",
     "baseline": "10b63645d74cabf56c50232842e4debaf0d79c5c",
     "proof_dir": "/tmp/proof_kia_stick_v0_7_15_synthetic_packet_report_runner_20260626T132621Z",
@@ -2846,7 +2846,7 @@
     "dedupe_result": "not_applicable",
     "queue_015_status": "blocked",
     "queue_029_status": "accepted",
-    "queue_030_status": "needs_review",
+    "queue_030_status": "ready_to_push",
     "report_fixtures": {
       "pass_fixture": "fixture-pass-complete",
       "warn_fixture": "fixture-warn-missing-reviewer-retention",
@@ -2864,8 +2864,33 @@
       "tests/persistentSmokeEvidenceCloseout.test.ts",
       "tests/v07ReleaseStateCloseout.test.ts"
     ],
-    "manual_qa_status": "PENDING_OPERATOR_REVIEW",
+    "manual_qa_status": "PASS_BY_OPERATOR_PROMPT_2026_06_26",
     "push_performed": false,
-    "real_db_boundary": "real-doc source mount untouched"
+    "real_db_boundary": "real-doc source mount untouched",
+    "operator_qa_status": "PASS",
+    "operator_qa_pass_at": "2026-06-26T13:45:40.000Z",
+    "operator_qa_pass_proof_dir": "/tmp/proof_kia_stick_v0_7_15_operator_qa_pass_20260626T134540Z",
+    "closeout_review_ready": true,
+    "head_equals_origin_main": false,
+    "real_doc_implementation_approved": false,
+    "operator_qa_findings": [
+      "report runner synthetic-only",
+      "built-in synthetic fixtures only",
+      "uses accepted v0.7.14 validator",
+      "packet report produces PASS/WARN/FAIL fixture results",
+      "GitHub-safe report output",
+      "queue-015 blocked guard fields present",
+      "realDocumentAccessed=false present",
+      "no real paths accepted",
+      "no user-provided files read",
+      "no directory scans",
+      "no real document named requested read scanned uploaded copied hashed OCR indexed summarized redacted inspected transformed or touched",
+      "no file picker path reader upload OCR indexing vector or real-doc implementation",
+      "productVersion remains 0.7.0",
+      "promptVersion remains prompt.fake-docs.v0.5-import-wizard-hardening",
+      "queue-015 remains blocked",
+      "queue-030 ready for closeout review",
+      "no real-doc implementation approved"
+    ]
   }
 }

@@ -12,12 +12,13 @@
 - Report helper: `scripts/synthetic-packet-report.mjs`
 - NPM script: `npm run packet:report`
 - Proof directory: `/tmp/proof_kia_stick_v0_7_15_synthetic_packet_report_runner_20260626T132621Z`
+- Operator QA PASS proof directory: `/tmp/proof_kia_stick_v0_7_15_operator_qa_pass_20260626T134540Z`
 - Runtime UI changed: no
 - Runtime capability changed: no
 - Validation tooling changed: yes, a local synthetic-only report runner was added for built-in fixtures.
 - Validation: PASS for packet report output, focused report/current-state tests, design check, release check, full QA gate, queue check, fake-doc scan, privacy scan, safety-boundary scans, `git diff --check`, and git status capture.
-- Queue state: `queue-030-v0715-synthetic-packet-report-runner` needs operator review; `queue-029-v0714-synthetic-approval-packet-validator` remains accepted; `queue-015-v07-first-real-doc-gate-request` remains blocked.
-- Manual QA status: pending operator review
+- Queue state: `queue-030-v0715-synthetic-packet-report-runner` ready for closeout review after operator QA PASS; `queue-029-v0714-synthetic-approval-packet-validator` remains accepted; `queue-015-v07-first-real-doc-gate-request` remains blocked.
+- Manual QA status: PASS by operator prompt on 2026-06-26
 - Real document access: none
 - Real document named: no
 - Private source folders inspected: no
@@ -29,6 +30,10 @@
 - Discord sent: no
 - Push performed: no
 - HEAD/origin equality: not expected after the local validation commit until a later operator closeout authorizes push.
+
+## v0.7.15 Operator QA PASS Findings
+
+The operator review confirmed that the report runner is synthetic-only, runs built-in synthetic fixtures only, uses the accepted v0.7.14 validator, produces PASS/WARN/FAIL fixture results through `npm run packet:report`, keeps report output GitHub-safe, includes `queue-015` blocked guard fields and `realDocumentAccessed=false`, rejects real paths, reads no user-provided files, scans no directories, names or touches no real document, adds no file picker/path reader/upload/OCR/indexing/vector/real-doc implementation, keeps product version at `0.7.0`, keeps prompt version at `prompt.fake-docs.v0.5-import-wizard-hardening`, and leaves `queue-015-v07-first-real-doc-gate-request` blocked. No real-doc implementation is approved.
 
 ## v0.7.15 Safety Boundary
 
