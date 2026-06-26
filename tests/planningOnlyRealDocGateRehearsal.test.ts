@@ -118,6 +118,7 @@ describe("v0.7.13 planning-only real-doc gate rehearsal", () => {
       v0713_planning_only_real_doc_gate_rehearsal: {
         phase: string;
         status: string;
+        operator_qa_closeout_proof_dir: string;
         product_version: string;
         package_version: string;
         prompt_version: string;
@@ -153,14 +154,15 @@ describe("v0.7.13 planning-only real-doc gate rehearsal", () => {
 
     expect(featureList.phase).toBe(phase);
     expect(featureList.release_readiness.phase).toBe(phase);
-    expect(featureList.release_readiness.status).toBe("v0713_planning_only_gate_rehearsal_needs_review");
+    expect(featureList.release_readiness.status).toBe("v0713_planning_only_gate_rehearsal_operator_qa_pass_ready_to_push");
     expect(featureList.release_readiness.product_version).toBe(productVersion);
     expect(featureList.release_readiness.package_version).toBe(productVersion);
     expect(featureList.release_readiness.prompt_version).toBe(promptVersion);
 
     const state = featureList.v0713_planning_only_real_doc_gate_rehearsal;
     expect(state.phase).toBe(phase);
-    expect(state.status).toBe("needs_review_after_validation");
+    expect(state.status).toBe("ready_to_push_after_operator_qa_pass");
+    expect(state.operator_qa_closeout_proof_dir).toContain("proof_kia_stick_v0_7_13_operator_qa_pass_closeout");
     expect(state.product_version).toBe(productVersion);
     expect(state.package_version).toBe(productVersion);
     expect(state.prompt_version).toBe(promptVersion);
@@ -179,7 +181,7 @@ describe("v0.7.13 planning-only real-doc gate rehearsal", () => {
     expect(state.indexing_added).toBe(false);
     expect(state.vector_store_added).toBe(false);
     expect(state.queue_015_status).toBe("blocked");
-    expect(state.queue_028_status).toBe("needs_review");
+    expect(state.queue_028_status).toBe("ready_to_push");
     expect(state.future_gate_rule.exactly_one_document).toBe(true);
     expect(state.future_gate_rule.exactly_one_gate).toBe(true);
     expect(state.future_gate_rule.broad_private_recursive_source_path_language_rejected).toBe(true);
@@ -187,7 +189,7 @@ describe("v0.7.13 planning-only real-doc gate rehearsal", () => {
 
     expect(realDocGate?.status).toBe("blocked");
     expect(rehearsal?.phase).toBe(phase);
-    expect(rehearsal?.status).toBe("needs_review");
+    expect(rehearsal?.status).toBe("ready_to_push");
     expect(`${rehearsal?.summary}\n${rehearsal?.next_action}`).toContain("synthetic-only");
     expect(`${rehearsal?.summary}\n${rehearsal?.next_action}`).toContain("queue-015 blocked");
   });
