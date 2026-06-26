@@ -2,10 +2,37 @@
 
 ## Current Phase
 
-- Phase: `KIA-Stick-v0.7.15-synthetic-packet-report-runner`
+- Phase: `KIA-Stick-v0.7.16-synthetic-packet-safety-drift-guard`
 - Target: `USER_LAPTOP_ONLY`
 - Provider: `local-fake-deterministic`
-- Status: accepted after validation PASS, operator QA PASS, and push. HEAD equals origin/main. Phase closed.
+- Status: validation PASS; queue-031 needs operator review; no push authorized.
+
+## v0.7.16 Synthetic Packet Safety Drift Guard State
+
+- Phase: `KIA-Stick-v0.7.16-synthetic-packet-safety-drift-guard`
+- Baseline: accepted pushed v0.7.15 closeout state at `e69037c5f11c1148ec80564b6354e0a84ac71508`
+- Scope: docs/tests/tooling synthetic-only safety drift guard for the accepted v0.7.14 validator and v0.7.15 report runner; no real document naming/touching, no private source inspection, and no queue-015 unblock.
+- Product version: `0.7.0`
+- Prompt version: `prompt.fake-docs.v0.5-import-wizard-hardening`
+- Planning/review document: `docs/v0.7.16-synthetic-packet-safety-drift-guard.md`
+- Guard helper: `scripts/synthetic-packet-safety-guard.mjs`
+- NPM script: `npm run packet:guard`
+- Queue state: `queue-031-v0716-synthetic-packet-safety-drift-guard` needs review after validation PASS; `queue-030-v0715-synthetic-packet-report-runner` remains accepted; `queue-015-v07-first-real-doc-gate-request` remains blocked.
+- Runtime UI changed: no
+- Runtime capability changed: no
+- Real/private document access: none
+- Private source folders inspected: no
+- Skills installed: no
+- Global agent config changed: no
+- Services/cron/timers/tmux/Caddy/DNS changed: no
+- Discord sent: no
+- Proof directory for this phase: `/tmp/proof_kia_stick_v0_7_16_synthetic_packet_safety_drift_guard_20260626T140318Z`
+- Commands run so far: attached prompt inspection from the pasted request, local harness/progress inspection, memory quick pass, git status/log before-state capture, scoped synthetic-only guard helper/doc/state/test edits, JSON state update for queue-031, `npm run packet:report`, `npm run packet:guard`, focused guard/current-state tests, `npm run design:check`, `npm run release:check`, `PROOF_DIR=/tmp/proof_kia_stick_v0_7_16_synthetic_packet_safety_drift_guard_20260626T140318Z npm run qa`, `npm run queue:next`, `npm run scan:fake`, `npm run scan:privacy`, exact runtime affordance scan, guard argument-rejection proof, `git diff --check`, and git status capture.
+- Files changed so far: `docs/v0.7.16-synthetic-packet-safety-drift-guard.md`, `scripts/synthetic-packet-safety-guard.mjs`, `tests/syntheticPacketSafetyDriftGuard.test.ts`, `docs/phase-backlog.json`, `feature_list.json`, `package.json`, `README.md`, `CLOSEOUT.md`, `claude-progress.md`, `scripts/operator-qa-smoke.mjs`, `tests/syntheticApprovalPacketValidator.test.ts`, `tests/syntheticPacketReportRunner.test.ts`, `tests/planningOnlyRealDocGateRehearsal.test.ts`, `tests/taskQueue.test.ts`, `tests/operatorQaSmokePack.test.ts`, `tests/persistentSmokeEvidenceCloseout.test.ts`, `tests/v07ReleaseStateCloseout.test.ts`, `tests/productVersionContractBump.test.ts`, `tests/fakeOnlyPolishRealDocGatePlanning.test.ts`, and `tests/fakeOnlyUxStabilizationPlan.test.ts`.
+- Validation: PASS.
+- Manual QA status: pending operator review.
+- Push status: not pushed; local commit only if validation PASS.
+- Remaining unknowns: operator review and local commit SHA.
 
 ## v0.7.15 Synthetic Packet Report Runner State
 

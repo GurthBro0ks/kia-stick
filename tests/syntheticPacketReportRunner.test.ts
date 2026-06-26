@@ -3,6 +3,7 @@ import { existsSync, readFileSync } from "node:fs";
 import { describe, expect, it } from "vitest";
 
 const phase = "KIA-Stick-v0.7.15-synthetic-packet-report-runner";
+const currentPhase = "KIA-Stick-v0.7.16-synthetic-packet-safety-drift-guard";
 const docPath = "docs/v0.7.15-synthetic-packet-report-runner.md";
 const scriptPath = "scripts/synthetic-packet-report.mjs";
 const productVersion = "0.7.0";
@@ -136,8 +137,8 @@ describe("v0.7.15 synthetic packet report runner", () => {
 
     expect(packageJson.scripts["packet:report"]).toBe("node scripts/synthetic-packet-report.mjs");
     expect(packageJson.version).toBe(productVersion);
-    expect(featureList.phase).toBe(phase);
-    expect(featureList.release_readiness.phase).toBe(phase);
+    expect(featureList.phase).toBe(currentPhase);
+    expect(featureList.release_readiness.phase).toBe(currentPhase);
     expect(featureList.release_readiness.package_version).toBe(productVersion);
     expect(featureList.release_readiness.product_version).toBe(productVersion);
     expect(featureList.release_readiness.prompt_version).toBe(promptVersion);

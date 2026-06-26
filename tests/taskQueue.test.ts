@@ -51,7 +51,7 @@ describe("task-queue", () => {
     const queue = mod.loadQueue(resolve("."));
 
     expect(queue.schema).toBe("kia-stick-local-task-queue.v1");
-    expect(queue.items).toHaveLength(30);
+    expect(queue.items).toHaveLength(31);
     expect(queue.items.map((item) => item.id)).toEqual([
       "queue-001-closeout-helper-hardening",
       "queue-002-fake-redaction-metadata-depth",
@@ -83,6 +83,7 @@ describe("task-queue", () => {
       "queue-028-v0713-planning-only-real-doc-gate-rehearsal",
       "queue-029-v0714-synthetic-approval-packet-validator",
       "queue-030-v0715-synthetic-packet-report-runner",
+      "queue-031-v0716-synthetic-packet-safety-drift-guard",
     ]);
     expect(queue.items.slice(0, 10).every((item) => item.status === "accepted")).toBe(true);
     expect(queue.items[10].status).toBe("planned");
@@ -105,6 +106,7 @@ describe("task-queue", () => {
     expect(queue.items[27].status).toBe("accepted");
     expect(queue.items[28].status).toBe("accepted");
     expect(queue.items[29].status).toBe("accepted");
+    expect(queue.items[30].status).toBe("needs_review");
     expect(queue.items.every((item) => item.history.length > 0)).toBe(true);
     expect(mod.validateQueue(queue)).toBe(true);
   });
@@ -166,7 +168,7 @@ describe("task-queue", () => {
     expect(text).not.toMatch(/\bshowOpenFilePicker\b|\bFileReader\b|\breadAsText\b|\breadAsArrayBuffer\b/i);
   });
 
-  it("tracks accepted v0.7.3 through v0.7.15 report runner state", async () => {
+  it("tracks accepted v0.7.3 through v0.7.16 safety drift guard state", async () => {
     const mod = await loadModule();
     const queue = mod.loadQueue(resolve("."));
     const triage = queue.items.find((item) => item.id === "queue-017-v073-fake-only-ux-triage");
@@ -183,6 +185,7 @@ describe("task-queue", () => {
     const rehearsal = queue.items.find((item) => item.id === "queue-028-v0713-planning-only-real-doc-gate-rehearsal");
     const validator = queue.items.find((item) => item.id === "queue-029-v0714-synthetic-approval-packet-validator");
     const reportRunner = queue.items.find((item) => item.id === "queue-030-v0715-synthetic-packet-report-runner");
+    const safetyGuard = queue.items.find((item) => item.id === "queue-031-v0716-synthetic-packet-safety-drift-guard");
     const realDocGate = queue.items.find((item) => item.id === "queue-015-v07-first-real-doc-gate-request");
 
     expect(triage?.phase).toBe("KIA-Stick-v0.7.3-fake-only-ux-triage-and-stabilization-plan");
@@ -256,9 +259,13 @@ describe("task-queue", () => {
     expect(reportRunner?.status).toBe("accepted");
     expect(`${reportRunner?.summary}\n${reportRunner?.next_action}`).toContain("built-in synthetic fixtures");
     expect(`${reportRunner?.summary}\n${reportRunner?.next_action}`).toContain("queue-015 remains blocked");
+    expect(safetyGuard?.phase).toBe("KIA-Stick-v0.7.16-synthetic-packet-safety-drift-guard");
+    expect(safetyGuard?.status).toBe("needs_review");
+    expect(`${safetyGuard?.summary}\n${safetyGuard?.next_action}`).toContain("fixed allowlist");
+    expect(`${safetyGuard?.summary}\n${safetyGuard?.next_action}`).toContain("queue-015 remains blocked");
     expect(realDocGate?.status).toBe("blocked");
 
-    const joined = [triage, v074, v077, v078, nextChunk, fakeOnlyPolish, operatorCloseout, rehearsal, validator, reportRunner]
+    const joined = [triage, v074, v077, v078, nextChunk, fakeOnlyPolish, operatorCloseout, rehearsal, validator, reportRunner, safetyGuard]
       .map((item) => `${item?.summary}\n${item?.next_action}`)
       .join("\n");
     expect(joined).not.toMatch(/<input[^>]*type=["']file/i);

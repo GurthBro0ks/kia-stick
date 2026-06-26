@@ -12,6 +12,16 @@ KIA Stick separates milestone semver from build identity:
 
 `/health`, `/version`, the app header, settings, answer footer, and saved answer metadata expose the current `displayVersion`.
 
+## v0.7.16 Synthetic Packet Safety Drift Guard
+
+Phase: `KIA-Stick-v0.7.16-synthetic-packet-safety-drift-guard`.
+
+`docs/v0.7.16-synthetic-packet-safety-drift-guard.md` documents the synthetic-only safety drift guard for the accepted v0.7.14 validator and v0.7.15 report runner. `scripts/synthetic-packet-safety-guard.mjs` is exposed through `npm run packet:guard` and reads only a fixed allowlist of repo-owned files.
+
+This is **docs/tests/tooling work only**. It does not approve implementation, name or touch a real document, add runtime capability, change product version, change prompt version, accept path arguments, read user-provided files, check filesystem existence for packet fields, scan directories, add file pickers, directory pickers, drag/drop import zones, path readers, uploads, OCR, real redaction, text extraction, summarization, embeddings, indexing, vector stores, private-source inspection, services, secrets, Discord, skills, global config, or system changes.
+
+Local validation is PASS for this phase. `queue-031-v0716-synthetic-packet-safety-drift-guard` is `needs_review`. `queue-030-v0715-synthetic-packet-report-runner` remains accepted. `queue-015-v07-first-real-doc-gate-request` remains blocked. Product version remains `0.7.0`; prompt version remains `prompt.fake-docs.v0.5-import-wizard-hardening`. No push is authorized by this phase.
+
 ## v0.7.15 Synthetic Packet Report Runner
 
 Phase: `KIA-Stick-v0.7.15-synthetic-packet-report-runner`.

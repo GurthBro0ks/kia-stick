@@ -1,5 +1,41 @@
 # KIA Stick Closeout
 
+## v0.7.16 Synthetic Packet Safety Drift Guard
+
+- Phase: `KIA-Stick-v0.7.16-synthetic-packet-safety-drift-guard`
+- Baseline: accepted pushed v0.7.15 closeout state at `e69037c5f11c1148ec80564b6354e0a84ac71508`
+- Scope: synthetic-only safety drift guard for the accepted v0.7.14 validator and v0.7.15 report runner.
+- Product version: `0.7.0`
+- Package version: `0.7.0`
+- Prompt version: `prompt.fake-docs.v0.5-import-wizard-hardening`
+- Planning/review document: `docs/v0.7.16-synthetic-packet-safety-drift-guard.md`
+- Guard helper: `scripts/synthetic-packet-safety-guard.mjs`
+- NPM script: `npm run packet:guard`
+- Proof directory: `/tmp/proof_kia_stick_v0_7_16_synthetic_packet_safety_drift_guard_20260626T140318Z`
+- Runtime UI changed: no
+- Runtime capability changed: no
+- Validation tooling changed: yes, a local synthetic-only safety drift guard was added for fixed allowlisted repo sources.
+- Validation: PASS for packet report output, packet guard output, focused guard/current-state tests, design check, release check, full QA gate, queue check, fake-doc scan, privacy scan, safety-boundary scans, argument-rejection proof, `git diff --check`, and git status capture.
+- Queue state: `queue-031-v0716-synthetic-packet-safety-drift-guard` needs operator review after validation PASS; `queue-030-v0715-synthetic-packet-report-runner` remains accepted; `queue-015-v07-first-real-doc-gate-request` remains blocked.
+- Manual QA status: pending operator review
+- Real document access: none
+- Real document named: no
+- Private source folders inspected: no
+- Skills installed: no
+- Global agent config changed: no
+- Services restarted: no
+- Cron/timer/tmux/Caddy/DNS changed: no
+- Secrets printed: no
+- Discord sent: no
+- Push performed: no
+- HEAD/origin equality: true before the local v0.7.16 commit; this phase does not push.
+
+## v0.7.16 Safety Boundary
+
+This phase does not approve real-doc work. It does not add file pickers, directory pickers, drag/drop import zones, path readers, user-provided packet reads, file reads over real documents, copying, hashing real files, OCR, upload handlers, real redaction, text extraction, summarization, embeddings, indexing, vector stores, quarantine writes, private-source inspection, service changes, credentials, skills, global agent config, or real-document access. `productVersion` remains `0.7.0`, `promptVersion` remains unchanged, and `queue-015-v07-first-real-doc-gate-request` remains blocked.
+
+---
+
 ## v0.7.15 Synthetic Packet Report Runner
 
 - Phase: `KIA-Stick-v0.7.15-synthetic-packet-report-runner`

@@ -1,6 +1,6 @@
 {
   "schema": "kia-stick-local-task-queue.v1",
-  "updated_at": "2026-06-26T13:53:21.000Z",
+  "updated_at": "2026-06-26T14:18:30.000Z",
   "items": [
     {
       "id": "queue-001-closeout-helper-hardening",
@@ -827,6 +827,32 @@
           "from": "ready_to_push",
           "to": "accepted",
           "note": "Accepted after closeout review, validation PASS, operator QA PASS, and git push. HEAD equals origin/main. queue-015 remains blocked. No real-doc work was done."
+        }
+      ]
+    },
+    {
+      "id": "queue-031-v0716-synthetic-packet-safety-drift-guard",
+      "phase": "KIA-Stick-v0.7.16-synthetic-packet-safety-drift-guard",
+      "title": "v0.7.16 synthetic packet safety drift guard",
+      "status": "needs_review",
+      "model": "GPT/Codex $100 coding plan",
+      "risk": "medium",
+      "summary": "Add a synthetic-only safety drift guard that reads a fixed allowlist of repo-owned validator/report-runner/state files and fails on drift toward path args, user-file reads, directory scans, file picker/upload/OCR/indexing/vector/private-source, or queue-015 unblock capability.",
+      "next_action": "Operator review requested after local validation PASS. Keep synthetic-only fixed allowlist guard; queue-015 remains blocked; do not push or approve real-doc implementation without a separate closeout.",
+      "created_at": "2026-06-26T14:09:33.000Z",
+      "updated_at": "2026-06-26T14:18:30.000Z",
+      "history": [
+        {
+          "at": "2026-06-26T14:09:33.000Z",
+          "from": "planned",
+          "to": "needs_review",
+          "note": "v0.7.16 synthetic packet safety drift guard prepared as docs/tests/tooling with fixed allowlisted repo sources only; queue-015 remains blocked, product/prompt unchanged, no runtime or real-doc capability is approved, and no push without later approval."
+        },
+        {
+          "at": "2026-06-26T14:18:30.000Z",
+          "from": "needs_review",
+          "to": "needs_review",
+          "note": "v0.7.16 synthetic packet safety drift guard validation PASS recorded with queue-015 still blocked, product/prompt unchanged, no runtime or real-doc capability approved, and no push performed."
         }
       ]
     }
