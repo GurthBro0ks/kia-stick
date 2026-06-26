@@ -32,7 +32,7 @@
 - Files changed so far: `docs/v0.7.17-synthetic-packet-fixture-matrix.md`, `lib/syntheticPacketFixtures.ts`, `tests/syntheticPacketFixtureMatrix.test.ts`, `docs/v0.7.18-synthetic-governance-bundle-report.md`, `scripts/synthetic-governance-report.mjs`, `tests/syntheticGovernanceReport.test.ts`, `docs/v0.7.19-bundled-operator-qa-pack.md`, `tests/bundledOperatorQaPack.test.ts`, `docs/v0.8.0-synthetic-governance-checkpoint-plan.md`, `tests/v080SyntheticGovernanceCheckpoint.test.ts`, `docs/phase-backlog.json`, `feature_list.json`, `package.json`, `README.md`, `CLOSEOUT.md`, `claude-progress.md`, `scripts/operator-qa-smoke.mjs`, and current-phase tests.
 - Validation: PASS.
 - Manual QA status: PASS.
-- Push status: closeout/push prompt in progress; final push proof is recorded in the closeout proof directory.
+- Push status: pushed; final proof records HEAD equals origin/main after closeout push.
 - Remaining unknowns: closeout/push decision.
 
 ## v0.7.16 Synthetic Packet Safety Drift Guard State

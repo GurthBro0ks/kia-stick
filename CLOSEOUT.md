@@ -27,6 +27,7 @@
 - Secrets printed: no
 - Discord sent: no
 - Push performed: yes, after closeout validation and operator bundle QA PASS
+- HEAD/origin equality: yes after closeout push
 
 ## v0.8.0 Bundle Safety Boundary
 
