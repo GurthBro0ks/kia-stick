@@ -1,6 +1,6 @@
 {
   "schema": "kia-stick-local-task-queue.v1",
-  "updated_at": "2026-06-26T12:03:49.000Z",
+  "updated_at": "2026-06-26T12:13:11.000Z",
   "items": [
     {
       "id": "queue-001-closeout-helper-hardening",
@@ -738,13 +738,13 @@
       "id": "queue-028-v0713-planning-only-real-doc-gate-rehearsal",
       "phase": "KIA-Stick-v0.7.13-planning-only-real-doc-gate-rehearsal",
       "title": "v0.7.13 planning-only real-doc gate rehearsal",
-      "status": "ready_to_push",
+      "status": "accepted",
       "model": "GPT/Codex $100 coding plan",
       "risk": "high",
       "summary": "Create a synthetic-only operator gate rehearsal guide and tests for a future exactly-one-document and exactly-one-gate approval flow without naming, touching, reading, hashing, OCR, indexing, uploading, or implementing real-doc capability.",
-      "next_action": "Operator QA PASS recorded. Ready for closeout review and a separate push-approval prompt; keep queue-015 blocked and do not push from this acceptance record.",
+      "next_action": "Accepted after validation PASS, operator QA PASS, and push. queue-015 blocked; no real-doc implementation is approved. This phase is closed.",
       "created_at": "2026-06-26T11:40:49.000Z",
-      "updated_at": "2026-06-26T12:03:49.000Z",
+      "updated_at": "2026-06-26T12:13:11.000Z",
       "history": [
         {
           "at": "2026-06-26T11:40:49.000Z",
@@ -757,6 +757,12 @@
           "from": "needs_review",
           "to": "ready_to_push",
           "note": "Operator QA PASS accepted the v0.7.13 planning-only rehearsal; queue-015 remains blocked, no real-doc implementation is approved, and no push is performed without a later closeout prompt."
+        },
+        {
+          "at": "2026-06-26T12:13:11.000Z",
+          "from": "ready_to_push",
+          "to": "accepted",
+          "note": "Accepted after closeout review, validation PASS, operator QA PASS, and git push. HEAD equals origin/main. queue-015 remains blocked. No real-doc work was done."
         }
       ]
     }

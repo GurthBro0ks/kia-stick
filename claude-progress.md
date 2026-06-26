@@ -5,7 +5,7 @@
 - Phase: `KIA-Stick-v0.7.13-planning-only-real-doc-gate-rehearsal`
 - Target: `USER_LAPTOP_ONLY`
 - Provider: `local-fake-deterministic`
-- Status: operator QA PASS recorded for the planning-only, synthetic-only gate rehearsal; local state is ready for closeout review without pushing.
+- Status: accepted after validation PASS, operator QA PASS, and push. HEAD equals origin/main. Phase closed.
 
 ## v0.7.13 Planning-Only Real-Doc Gate Rehearsal State
 
@@ -15,7 +15,7 @@
 - Product version: `0.7.0`
 - Prompt version: `prompt.fake-docs.v0.5-import-wizard-hardening`
 - Planning/review document: `docs/v0.7.13-planning-only-real-doc-gate-rehearsal.md`
-- Queue state: `queue-028-v0713-planning-only-real-doc-gate-rehearsal` is `ready_to_push`; `queue-015-v07-first-real-doc-gate-request` remains blocked.
+- Queue state: `queue-028-v0713-planning-only-real-doc-gate-rehearsal` accepted after push; `queue-015-v07-first-real-doc-gate-request` remains blocked.
 - Runtime UI changed: no
 - Runtime capability changed: no
 - Real/private document access: none
@@ -30,8 +30,8 @@
 - Files changed so far: `docs/v0.7.13-planning-only-real-doc-gate-rehearsal.md`, `docs/phase-backlog.json`, `feature_list.json`, `README.md`, `CLOSEOUT.md`, `claude-progress.md`, `scripts/operator-qa-smoke.mjs`, `tests/planningOnlyRealDocGateRehearsal.test.ts`, `tests/taskQueue.test.ts`, `tests/operatorQaSmokePack.test.ts`, `tests/persistentSmokeEvidenceCloseout.test.ts`, `tests/v07ReleaseStateCloseout.test.ts`, `tests/productVersionContractBump.test.ts`, `tests/fakeOnlyPolishRealDocGatePlanning.test.ts`, and `tests/fakeOnlyUxStabilizationPlan.test.ts`.
 - Validation: PASS.
 - Manual QA status: PASS by operator prompt on 2026-06-26.
-- Push status: not pushed; no push is approved in this phase.
-- Remaining unknowns: final operator QA closeout commit SHA and later push approval.
+- Push status: performed after closeout validation PASS, operator QA PASS, and task-scoped commit; HEAD equals origin/main.
+- Remaining unknowns: none. Phase is fully closed.
 
 ## v0.7.12 Operator QA Closeout And Push State
 

@@ -22,7 +22,7 @@ This is **planning-only docs/tests/state work**. It does not approve implementat
 
 Validation tooling now distinguishes the current project/docs phase from the last runtime metadata phase so operator smoke can pass without changing `/health` for this no-runtime-change rehearsal.
 
-Operator QA PASS is recorded for this planning-only rehearsal. `queue-028-v0713-planning-only-real-doc-gate-rehearsal` is `ready_to_push` for a later closeout/push decision. `queue-015-v07-first-real-doc-gate-request` remains blocked. Product version remains `0.7.0`; prompt version remains `prompt.fake-docs.v0.5-import-wizard-hardening`.
+Operator QA PASS is recorded and this phase is accepted after push. `queue-028-v0713-planning-only-real-doc-gate-rehearsal` is `accepted`. `queue-015-v07-first-real-doc-gate-request` remains blocked. Product version remains `0.7.0`; prompt version remains `prompt.fake-docs.v0.5-import-wizard-hardening`.
 
 ## v0.7.12 Operator QA Closeout And Push
 

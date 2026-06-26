@@ -15,7 +15,7 @@
 - Runtime capability changed: no
 - Validation tooling changed: yes, `scripts/operator-qa-smoke.mjs` now distinguishes the current project/docs phase from the last runtime metadata phase so `/health` can remain unchanged for this no-runtime-change rehearsal.
 - Validation: PASS for focused v0.7.13/current-state tests, design check, release check, full QA gate, queue list/next, fake-doc scan, privacy scan, safety-boundary scans, `git diff --check`, and git status capture.
-- Queue state: `queue-028-v0713-planning-only-real-doc-gate-rehearsal` is `ready_to_push`; `queue-015-v07-first-real-doc-gate-request` remains blocked.
+- Queue state: `queue-028-v0713-planning-only-real-doc-gate-rehearsal` accepted after push; `queue-015-v07-first-real-doc-gate-request` remains blocked.
 - Manual QA status: PASS by operator prompt on 2026-06-26
 - Real document access: none
 - Real document named: no
@@ -26,7 +26,8 @@
 - Cron/timer/tmux/Caddy/DNS changed: no
 - Secrets printed: no
 - Discord sent: no
-- Push performed: no
+- Push performed: yes, after closeout validation and task-scoped commit.
+- HEAD/origin equality: verified after push by the closeout proof.
 
 ## v0.7.13 Operator QA PASS Findings
 

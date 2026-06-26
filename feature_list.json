@@ -222,7 +222,7 @@
   ],
   "release_readiness": {
     "phase": "KIA-Stick-v0.7.13-planning-only-real-doc-gate-rehearsal",
-    "status": "v0713_planning_only_gate_rehearsal_operator_qa_pass_ready_to_push",
+    "status": "v0713_planning_only_gate_rehearsal_accepted_after_push",
     "package_version": "0.7.0",
     "product_version": "0.7.0",
     "prompt_version": "prompt.fake-docs.v0.5-import-wizard-hardening",
@@ -2580,7 +2580,7 @@
   },
   "v0713_planning_only_real_doc_gate_rehearsal": {
     "phase": "KIA-Stick-v0.7.13-planning-only-real-doc-gate-rehearsal",
-    "status": "ready_to_push_after_operator_qa_pass",
+    "status": "accepted_after_push",
     "document": "docs/v0.7.13-planning-only-real-doc-gate-rehearsal.md",
     "baseline": "7102ec916965eea1c091683021e0994597eab3df",
     "proof_dir": "/tmp/proof_kia_stick_v0_7_13_planning_only_gate_rehearsal_20260626T114049Z",
@@ -2638,7 +2638,7 @@
     "notify_mode": "disabled_user_laptop",
     "dedupe_result": "not_applicable",
     "queue_015_status": "blocked",
-    "queue_028_status": "ready_to_push",
+    "queue_028_status": "accepted",
     "future_gate_rule": {
       "exactly_one_document": true,
       "exactly_one_gate": true,
