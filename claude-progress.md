@@ -5,7 +5,7 @@
 - Phase: `KIA-Stick-v0.8.0-synthetic-governance-checkpoint-plan`
 - Target: `USER_LAPTOP_ONLY`
 - Provider: `local-fake-deterministic`
-- Status: validation PASS and operator bundle QA PASS recorded; queue-031 through queue-035 are ready to push after a separate closeout/push step; no push performed.
+- Status: validation PASS and operator bundle QA PASS recorded; queue-031 through queue-035 accepted after closeout/push review; no real-doc implementation approved.
 
 ## v0.7.16 to v0.8.0 Synthetic Governance Bundle State
 
@@ -18,7 +18,7 @@
 - New/updated docs: `docs/v0.7.17-synthetic-packet-fixture-matrix.md`, `docs/v0.7.18-synthetic-governance-bundle-report.md`, `docs/v0.7.19-bundled-operator-qa-pack.md`, `docs/v0.8.0-synthetic-governance-checkpoint-plan.md`
 - New helpers/modules: `lib/syntheticPacketFixtures.ts`, `scripts/synthetic-governance-report.mjs`
 - New npm script: `npm run governance:report`
-- Queue state: `queue-031` through `queue-035` are `ready_to_push` after operator bundle QA PASS; `queue-030` remains accepted; `queue-015-v07-first-real-doc-gate-request` remains blocked.
+- Queue state: `queue-031` through `queue-035` are accepted after closeout validation and operator bundle QA PASS; `queue-030` remains accepted; `queue-015-v07-first-real-doc-gate-request` remains blocked.
 - Runtime UI changed: no
 - Runtime capability changed: no
 - Real/private document access: none
@@ -28,11 +28,11 @@
 - Services/cron/timers/tmux/Caddy/DNS changed: no
 - Discord sent: no
 - Proof directory for this bundle: `/tmp/proof_kia_stick_v0_7_16_to_v0_8_0_synthetic_governance_bundle_20260626T142836Z`
-- Commands run so far: attached prompt inspection, local harness/progress inspection, `source ./init.sh`, memory quick pass, git status/log before-state capture, v0.7.16 packet guard/report precheck, scoped synthetic-only bundle docs/tooling/state/test edits, `npm run governance:report`, focused bundle tests, `npm run packet:guard`, `npm run packet:report`, full final validation matrix, exact safety-boundary scan, `git diff --check`, git status capture, operator QA PASS recording, and queue-031 through queue-035 transition to `ready_to_push`.
+- Commands run so far: attached prompt inspection, local harness/progress inspection, `source ./init.sh`, memory quick pass, git status/log before-state capture, v0.7.16 packet guard/report precheck, scoped synthetic-only bundle docs/tooling/state/test edits, `npm run governance:report`, focused bundle tests, `npm run packet:guard`, `npm run packet:report`, full final validation matrix, exact safety-boundary scan, `git diff --check`, git status capture, operator QA PASS recording, queue-031 through queue-035 transition to `ready_to_push`, closeout/push validation, and queue-031 through queue-035 transition to accepted.
 - Files changed so far: `docs/v0.7.17-synthetic-packet-fixture-matrix.md`, `lib/syntheticPacketFixtures.ts`, `tests/syntheticPacketFixtureMatrix.test.ts`, `docs/v0.7.18-synthetic-governance-bundle-report.md`, `scripts/synthetic-governance-report.mjs`, `tests/syntheticGovernanceReport.test.ts`, `docs/v0.7.19-bundled-operator-qa-pack.md`, `tests/bundledOperatorQaPack.test.ts`, `docs/v0.8.0-synthetic-governance-checkpoint-plan.md`, `tests/v080SyntheticGovernanceCheckpoint.test.ts`, `docs/phase-backlog.json`, `feature_list.json`, `package.json`, `README.md`, `CLOSEOUT.md`, `claude-progress.md`, `scripts/operator-qa-smoke.mjs`, and current-phase tests.
 - Validation: PASS.
 - Manual QA status: PASS.
-- Push status: not pushed; separate closeout/push prompt still required.
+- Push status: closeout/push prompt in progress; final push proof is recorded in the closeout proof directory.
 - Remaining unknowns: closeout/push decision.
 
 ## v0.7.16 Synthetic Packet Safety Drift Guard State

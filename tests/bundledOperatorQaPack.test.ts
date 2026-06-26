@@ -39,7 +39,7 @@ describe("v0.7.19 bundled operator QA pack", () => {
     }
   });
 
-  it("keeps feature and queue state ready to push after operator bundle QA pass", () => {
+  it("keeps feature and queue state accepted after operator bundle QA pass and closeout", () => {
     const featureList = JSON.parse(readFileSync("feature_list.json", "utf8")) as {
       phase: string;
       release_readiness: { phase: string; product_version: string; package_version: string; prompt_version: string };
@@ -65,15 +65,15 @@ describe("v0.7.19 bundled operator QA pack", () => {
     expect(featureList.release_readiness.product_version).toBe(productVersion);
     expect(featureList.release_readiness.prompt_version).toBe(promptVersion);
     expect(featureList.v0719_bundled_operator_qa_pack.phase).toBe(phase);
-    expect(featureList.v0719_bundled_operator_qa_pack.status).toBe("ready_to_push_after_operator_bundle_qa_pass");
+    expect(featureList.v0719_bundled_operator_qa_pack.status).toBe("accepted_after_closeout_push");
     expect(featureList.v0719_bundled_operator_qa_pack.queue_015_status).toBe("blocked");
-    expect(featureList.v0719_bundled_operator_qa_pack.queue_034_status).toBe("ready_to_push");
+    expect(featureList.v0719_bundled_operator_qa_pack.queue_034_status).toBe("accepted");
     expect(featureList.v0719_bundled_operator_qa_pack.manual_qa_status).toBe("PASS");
     expect(featureList.v0719_bundled_operator_qa_pack.authorizes_real_doc_work).toBe(false);
-    expect(featureList.v0719_bundled_operator_qa_pack.push_performed).toBe(false);
+    expect(featureList.v0719_bundled_operator_qa_pack.push_performed).toBe(true);
     expect(q015?.status).toBe("blocked");
     expect(q034?.phase).toBe(phase);
-    expect(q034?.status).toBe("ready_to_push");
+    expect(q034?.status).toBe("accepted");
     expect(`${q034?.summary}\n${q034?.next_action}`).toContain("operator QA");
     expect(`${q034?.summary}\n${q034?.next_action}`).toContain("queue-015 remains blocked");
   });

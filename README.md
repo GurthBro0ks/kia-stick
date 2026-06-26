@@ -20,7 +20,7 @@ This checkpoint bundles the synthetic governance lane from v0.7.16 through v0.8.
 
 This is **synthetic-only docs/tests/tooling/state work**. It does not approve implementation, name or touch a real document, add runtime capability, change product version, change prompt version, accept arbitrary path input, read user-provided packet files, scan directories, add file pickers, directory pickers, drag/drop import zones, path readers, uploads, OCR, real redaction, text extraction, summarization, embeddings, indexing, vector stores, private-source inspection, services, secrets, Discord, skills, global config, or system changes.
 
-Final local validation is PASS and operator bundle QA PASS is recorded. `queue-031-v0716-synthetic-packet-safety-drift-guard` through `queue-035-v080-synthetic-governance-checkpoint-plan` are `ready_to_push` for a separate closeout/push step. `queue-030-v0715-synthetic-packet-report-runner` remains accepted. `queue-015-v07-first-real-doc-gate-request` remains blocked. Product version remains `0.7.0`; prompt version remains `prompt.fake-docs.v0.5-import-wizard-hardening`. No push was performed by this operator QA pass.
+Final validation is PASS, operator bundle QA PASS is recorded, and `queue-031-v0716-synthetic-packet-safety-drift-guard` through `queue-035-v080-synthetic-governance-checkpoint-plan` are accepted after closeout/push review. `queue-030-v0715-synthetic-packet-report-runner` remains accepted. `queue-015-v07-first-real-doc-gate-request` remains blocked. Product version remains `0.7.0`; prompt version remains `prompt.fake-docs.v0.5-import-wizard-hardening`. No real-doc implementation is approved.
 
 ## v0.7.16 Synthetic Packet Safety Drift Guard
 
@@ -30,7 +30,7 @@ Phase: `KIA-Stick-v0.7.16-synthetic-packet-safety-drift-guard`.
 
 This is **docs/tests/tooling work only**. It does not approve implementation, name or touch a real document, add runtime capability, change product version, change prompt version, accept path arguments, read user-provided files, check filesystem existence for packet fields, scan directories, add file pickers, directory pickers, drag/drop import zones, path readers, uploads, OCR, real redaction, text extraction, summarization, embeddings, indexing, vector stores, private-source inspection, services, secrets, Discord, skills, global config, or system changes.
 
-Local validation is PASS for this phase and the bundle-level operator QA PASS is recorded. `queue-031-v0716-synthetic-packet-safety-drift-guard` is `ready_to_push` as part of the v0.7.16-to-v0.8.0 synthetic governance bundle. `queue-030-v0715-synthetic-packet-report-runner` remains accepted. `queue-015-v07-first-real-doc-gate-request` remains blocked. Product version remains `0.7.0`; prompt version remains `prompt.fake-docs.v0.5-import-wizard-hardening`. No push was performed by the operator QA pass.
+Local validation is PASS for this phase and the bundle-level operator QA PASS is recorded. `queue-031-v0716-synthetic-packet-safety-drift-guard` is accepted as part of the v0.7.16-to-v0.8.0 synthetic governance bundle closeout. `queue-030-v0715-synthetic-packet-report-runner` remains accepted. `queue-015-v07-first-real-doc-gate-request` remains blocked. Product version remains `0.7.0`; prompt version remains `prompt.fake-docs.v0.5-import-wizard-hardening`. No real-doc implementation is approved.
 
 ## v0.7.15 Synthetic Packet Report Runner
 

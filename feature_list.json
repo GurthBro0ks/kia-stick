@@ -240,7 +240,7 @@
   ],
   "release_readiness": {
     "phase": "KIA-Stick-v0.8.0-synthetic-governance-checkpoint-plan",
-    "status": "v080_synthetic_governance_bundle_ready_to_push",
+    "status": "v080_synthetic_governance_bundle_accepted",
     "package_version": "0.7.0",
     "product_version": "0.7.0",
     "prompt_version": "prompt.fake-docs.v0.5-import-wizard-hardening",
@@ -330,10 +330,15 @@
     ],
     "real_document_access": false,
     "private_vault_inspected": false,
-    "push_performed": false,
+    "push_performed": true,
     "real_db_boundary": "/media/mint/SHARED/APWU untouched",
     "validation": "PASS",
-    "manual_qa_status": "PASS"
+    "manual_qa_status": "PASS",
+    "closeout_push_proof_dir": "/tmp/proof_kia_stick_v0_8_0_synthetic_governance_bundle_closeout_push_20260626T175722Z",
+    "head_equals_origin_main": true,
+    "accepted_after_closeout_at": "2026-06-26T17:59:15.138Z",
+    "accepted_pushed_state": "pending_push_proof_after_commit",
+    "status_notes": "Queues 031 through 035 accepted after closeout validation and operator QA PASS; push proof is captured in the closeout proof directory."
   },
   "phase_runner": {
     "phase": "KIA-Stick-v0.5.4-local-phase-runner-proof-pack",
@@ -2936,7 +2941,7 @@
   },
   "v0716_synthetic_packet_safety_drift_guard": {
     "phase": "KIA-Stick-v0.7.16-synthetic-packet-safety-drift-guard",
-    "status": "ready_to_push_after_operator_bundle_qa_pass",
+    "status": "accepted_after_closeout_push",
     "document": "docs/v0.7.16-synthetic-packet-safety-drift-guard.md",
     "baseline": "e69037c5f11c1148ec80564b6354e0a84ac71508",
     "proof_dir": "/tmp/proof_kia_stick_v0_7_16_synthetic_packet_safety_drift_guard_20260626T140318Z",
@@ -2999,7 +3004,7 @@
     "queue_015_status": "blocked",
     "queue_029_status": "accepted",
     "queue_030_status": "accepted",
-    "queue_031_status": "ready_to_push",
+    "queue_031_status": "accepted",
     "guard_allowlisted_files": [
       "lib/syntheticApprovalPacketValidator.ts",
       "scripts/synthetic-packet-report.mjs",
@@ -3026,7 +3031,7 @@
       "tests/v07ReleaseStateCloseout.test.ts"
     ],
     "manual_qa_status": "PASS",
-    "push_performed": false,
+    "push_performed": true,
     "real_db_boundary": "real-doc source mount untouched",
     "closeout_review_ready": true,
     "head_equals_origin_main_before_local_commit": true,
@@ -3064,15 +3069,18 @@
       "git-diff-check.txt",
       "git-status-after.txt"
     ],
-    "bundle_proof_dir": "/tmp/proof_kia_stick_v0_7_16_to_v0_8_0_synthetic_governance_bundle_20260626T142836Z"
+    "bundle_proof_dir": "/tmp/proof_kia_stick_v0_7_16_to_v0_8_0_synthetic_governance_bundle_20260626T142836Z",
+    "closeout_push_proof_dir": "/tmp/proof_kia_stick_v0_8_0_synthetic_governance_bundle_closeout_push_20260626T175722Z",
+    "accepted_after_closeout_at": "2026-06-26T17:59:15.138Z",
+    "accepted_pushed_state": "pending_push_proof_after_commit"
   },
   "v0717_synthetic_packet_fixture_matrix": {
     "phase": "KIA-Stick-v0.7.17-synthetic-packet-fixture-matrix",
-    "status": "ready_to_push_after_operator_bundle_qa_pass",
+    "status": "accepted_after_closeout_push",
     "document": "docs/v0.7.17-synthetic-packet-fixture-matrix.md",
     "fixture_module": "lib/syntheticPacketFixtures.ts",
     "selected_queue_item": "queue-032-v0717-synthetic-packet-fixture-matrix",
-    "queue_032_status": "ready_to_push",
+    "queue_032_status": "accepted",
     "packet_file_loader_added": false,
     "fixture_counts": {
       "pass": 1,
@@ -3102,7 +3110,7 @@
     "vector_store_added": false,
     "secrets_printed": false,
     "discord_sent": false,
-    "push_performed": false,
+    "push_performed": true,
     "queue_015_status": "blocked",
     "notify_mode": "disabled_user_laptop",
     "dedupe_result": "not_applicable",
@@ -3123,16 +3131,19 @@
       "safety-boundary-scan.txt",
       "git-diff-check.txt",
       "git-status-after.txt"
-    ]
+    ],
+    "closeout_push_proof_dir": "/tmp/proof_kia_stick_v0_8_0_synthetic_governance_bundle_closeout_push_20260626T175722Z",
+    "accepted_after_closeout_at": "2026-06-26T17:59:15.138Z",
+    "accepted_pushed_state": "pending_push_proof_after_commit"
   },
   "v0718_synthetic_governance_bundle_report": {
     "phase": "KIA-Stick-v0.7.18-synthetic-governance-bundle-report",
-    "status": "ready_to_push_after_operator_bundle_qa_pass",
+    "status": "accepted_after_closeout_push",
     "document": "docs/v0.7.18-synthetic-governance-bundle-report.md",
     "report_helper": "scripts/synthetic-governance-report.mjs",
     "npm_script": "governance:report",
     "selected_queue_item": "queue-033-v0718-synthetic-governance-bundle-report",
-    "queue_033_status": "ready_to_push",
+    "queue_033_status": "accepted",
     "built_in_synthetic_fixtures_only": true,
     "fixed_repo_metadata_only": true,
     "product_version": "0.7.0",
@@ -3158,7 +3169,7 @@
     "vector_store_added": false,
     "secrets_printed": false,
     "discord_sent": false,
-    "push_performed": false,
+    "push_performed": true,
     "queue_015_status": "blocked",
     "notify_mode": "disabled_user_laptop",
     "dedupe_result": "not_applicable",
@@ -3179,14 +3190,17 @@
       "safety-boundary-scan.txt",
       "git-diff-check.txt",
       "git-status-after.txt"
-    ]
+    ],
+    "closeout_push_proof_dir": "/tmp/proof_kia_stick_v0_8_0_synthetic_governance_bundle_closeout_push_20260626T175722Z",
+    "accepted_after_closeout_at": "2026-06-26T17:59:15.138Z",
+    "accepted_pushed_state": "pending_push_proof_after_commit"
   },
   "v0719_bundled_operator_qa_pack": {
     "phase": "KIA-Stick-v0.7.19-bundled-operator-qa-pack",
-    "status": "ready_to_push_after_operator_bundle_qa_pass",
+    "status": "accepted_after_closeout_push",
     "document": "docs/v0.7.19-bundled-operator-qa-pack.md",
     "selected_queue_item": "queue-034-v0719-bundled-operator-qa-pack",
-    "queue_034_status": "ready_to_push",
+    "queue_034_status": "accepted",
     "copy_ready_operator_qa_pass_template": true,
     "stop_on_warn_fail": true,
     "product_version": "0.7.0",
@@ -3212,7 +3226,7 @@
     "vector_store_added": false,
     "secrets_printed": false,
     "discord_sent": false,
-    "push_performed": false,
+    "push_performed": true,
     "queue_015_status": "blocked",
     "notify_mode": "disabled_user_laptop",
     "dedupe_result": "not_applicable",
@@ -3233,18 +3247,21 @@
       "safety-boundary-scan.txt",
       "git-diff-check.txt",
       "git-status-after.txt"
-    ]
+    ],
+    "closeout_push_proof_dir": "/tmp/proof_kia_stick_v0_8_0_synthetic_governance_bundle_closeout_push_20260626T175722Z",
+    "accepted_after_closeout_at": "2026-06-26T17:59:15.138Z",
+    "accepted_pushed_state": "pending_push_proof_after_commit"
   },
   "v080_synthetic_governance_checkpoint_plan": {
     "phase": "KIA-Stick-v0.8.0-synthetic-governance-checkpoint-plan",
-    "status": "ready_to_push_after_operator_bundle_qa_pass",
+    "status": "accepted_after_closeout_push",
     "document": "docs/v0.8.0-synthetic-governance-checkpoint-plan.md",
     "selected_queue_item": "queue-035-v080-synthetic-governance-checkpoint-plan",
-    "queue_031_status": "ready_to_push",
-    "queue_032_status": "ready_to_push",
-    "queue_033_status": "ready_to_push",
-    "queue_034_status": "ready_to_push",
-    "queue_035_status": "ready_to_push",
+    "queue_031_status": "accepted",
+    "queue_032_status": "accepted",
+    "queue_033_status": "accepted",
+    "queue_034_status": "accepted",
+    "queue_035_status": "accepted",
     "authorizes_product_version_bump": false,
     "real_doc_implementation_approved": false,
     "checkpoint_not_product_bump": true,
@@ -3277,7 +3294,7 @@
     "vector_store_added": false,
     "secrets_printed": false,
     "discord_sent": false,
-    "push_performed": false,
+    "push_performed": true,
     "queue_015_status": "blocked",
     "notify_mode": "disabled_user_laptop",
     "dedupe_result": "not_applicable",
@@ -3299,6 +3316,9 @@
       "git-diff-check.txt",
       "git-status-after.txt"
     ],
-    "bundle_result": "PASS"
+    "bundle_result": "PASS",
+    "closeout_push_proof_dir": "/tmp/proof_kia_stick_v0_8_0_synthetic_governance_bundle_closeout_push_20260626T175722Z",
+    "accepted_after_closeout_at": "2026-06-26T17:59:15.138Z",
+    "accepted_pushed_state": "pending_push_proof_after_commit"
   }
 }

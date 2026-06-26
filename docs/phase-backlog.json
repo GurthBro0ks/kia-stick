@@ -1,6 +1,6 @@
 {
   "schema": "kia-stick-local-task-queue.v1",
-  "updated_at": "2026-06-26T15:20:08.624Z",
+  "updated_at": "2026-06-26T17:59:15.138Z",
   "items": [
     {
       "id": "queue-001-closeout-helper-hardening",
@@ -834,13 +834,13 @@
       "id": "queue-031-v0716-synthetic-packet-safety-drift-guard",
       "phase": "KIA-Stick-v0.7.16-synthetic-packet-safety-drift-guard",
       "title": "v0.7.16 synthetic packet safety drift guard",
-      "status": "ready_to_push",
+      "status": "accepted",
       "model": "GPT/Codex $100 coding plan",
       "risk": "medium",
       "summary": "Add a synthetic-only safety drift guard that reads a fixed allowlist of repo-owned validator/report-runner/state files and fails on drift toward path args, user-file reads, directory scans, file picker/upload/OCR/indexing/vector/private-source, or queue-015 unblock capability.",
-      "next_action": "Ready for separate closeout/push review as part of the v0.7.16-to-v0.8.0 synthetic governance bundle; queue-015 remains blocked and no real-doc implementation is approved.",
+      "next_action": "Accepted after closeout validation, operator QA PASS, and bundle push; queue-015 remains blocked and no real-doc implementation is approved.",
       "created_at": "2026-06-26T14:09:33.000Z",
-      "updated_at": "2026-06-26T15:19:49.278Z",
+      "updated_at": "2026-06-26T17:59:15.138Z",
       "history": [
         {
           "at": "2026-06-26T14:09:33.000Z",
@@ -865,6 +865,12 @@
           "from": "needs_review",
           "to": "ready_to_push",
           "note": "Operator QA PASS accepted the v0.7.16-to-v0.8.0 synthetic governance bundle for closeout review; validation stayed PASS, queue-015 stayed blocked, product/prompt unchanged, no real-doc implementation is approved, and no push was performed."
+        },
+        {
+          "at": "2026-06-26T17:59:15.138Z",
+          "from": "ready_to_push",
+          "to": "accepted",
+          "note": "Accepted after v0.8.0 synthetic governance bundle closeout validation, operator QA PASS, and git push gate. queue-015 remains blocked, product/prompt unchanged, no real-doc implementation is approved, and no real-doc work was done."
         }
       ]
     },
@@ -874,11 +880,11 @@
       "title": "v0.7.17 synthetic packet fixture matrix",
       "risk": "medium",
       "summary": "Add a synthetic-only in-memory fixture matrix with PASS/WARN/FAIL classes and unsafe examples for path-shaped, recursive, broad, private-source, queue-015 unblock, multiple-doc, multiple-gate, and upload/OCR/indexing/vector wording without packet loaders or user paths.",
-      "next_action": "Ready for separate closeout/push review as part of the v0.7.16-to-v0.8.0 synthetic governance bundle; queue-015 remains blocked and no real-doc implementation is approved.",
-      "status": "ready_to_push",
+      "next_action": "Accepted after closeout validation, operator QA PASS, and bundle push; queue-015 remains blocked and no real-doc implementation is approved.",
+      "status": "accepted",
       "model": "GPT/Codex $100 coding plan",
       "created_at": "2026-06-26T14:35:00.000Z",
-      "updated_at": "2026-06-26T15:19:54.441Z",
+      "updated_at": "2026-06-26T17:59:15.138Z",
       "history": [
         {
           "at": "2026-06-26T14:35:00.000Z",
@@ -891,6 +897,12 @@
           "from": "needs_review",
           "to": "ready_to_push",
           "note": "Operator QA PASS accepted the v0.7.16-to-v0.8.0 synthetic governance bundle for closeout review; validation stayed PASS, queue-015 stayed blocked, product/prompt unchanged, no real-doc implementation is approved, and no push was performed."
+        },
+        {
+          "at": "2026-06-26T17:59:15.138Z",
+          "from": "ready_to_push",
+          "to": "accepted",
+          "note": "Accepted after v0.8.0 synthetic governance bundle closeout validation, operator QA PASS, and git push gate. queue-015 remains blocked, product/prompt unchanged, no real-doc implementation is approved, and no real-doc work was done."
         }
       ]
     },
@@ -900,11 +912,11 @@
       "title": "v0.7.18 synthetic governance bundle report",
       "risk": "medium",
       "summary": "Add a GitHub-safe synthetic governance report command that summarizes validator, packet report, safety guard, and fixture matrix outputs using built-in fixtures and fixed repo-owned metadata only.",
-      "next_action": "Ready for separate closeout/push review as part of the v0.7.16-to-v0.8.0 synthetic governance bundle; queue-015 remains blocked and no real-doc implementation is approved.",
-      "status": "ready_to_push",
+      "next_action": "Accepted after closeout validation, operator QA PASS, and bundle push; queue-015 remains blocked and no real-doc implementation is approved.",
+      "status": "accepted",
       "model": "GPT/Codex $100 coding plan",
       "created_at": "2026-06-26T14:35:00.000Z",
-      "updated_at": "2026-06-26T15:19:58.757Z",
+      "updated_at": "2026-06-26T17:59:15.138Z",
       "history": [
         {
           "at": "2026-06-26T14:35:00.000Z",
@@ -917,6 +929,12 @@
           "from": "needs_review",
           "to": "ready_to_push",
           "note": "Operator QA PASS accepted the v0.7.16-to-v0.8.0 synthetic governance bundle for closeout review; validation stayed PASS, queue-015 stayed blocked, product/prompt unchanged, no real-doc implementation is approved, and no push was performed."
+        },
+        {
+          "at": "2026-06-26T17:59:15.138Z",
+          "from": "ready_to_push",
+          "to": "accepted",
+          "note": "Accepted after v0.8.0 synthetic governance bundle closeout validation, operator QA PASS, and git push gate. queue-015 remains blocked, product/prompt unchanged, no real-doc implementation is approved, and no real-doc work was done."
         }
       ]
     },
@@ -926,11 +944,11 @@
       "title": "v0.7.19 bundled operator QA pack",
       "risk": "low",
       "summary": "Create one operator QA checklist and copy-ready OPERATOR_QA_PASS template for v0.7.16 through v0.7.19 synthetic governance bundle review without approving real-doc work.",
-      "next_action": "Ready for separate closeout/push review as part of the v0.7.16-to-v0.8.0 synthetic governance bundle; queue-015 remains blocked and no real-doc implementation is approved.",
-      "status": "ready_to_push",
+      "next_action": "Accepted after closeout validation, operator QA PASS, and bundle push; queue-015 remains blocked and no real-doc implementation is approved.",
+      "status": "accepted",
       "model": "GPT/Codex $100 coding plan",
       "created_at": "2026-06-26T14:35:00.000Z",
-      "updated_at": "2026-06-26T15:20:03.289Z",
+      "updated_at": "2026-06-26T17:59:15.138Z",
       "history": [
         {
           "at": "2026-06-26T14:35:00.000Z",
@@ -943,6 +961,12 @@
           "from": "needs_review",
           "to": "ready_to_push",
           "note": "Operator QA PASS accepted the v0.7.16-to-v0.8.0 synthetic governance bundle for closeout review; validation stayed PASS, queue-015 stayed blocked, product/prompt unchanged, no real-doc implementation is approved, and no push was performed."
+        },
+        {
+          "at": "2026-06-26T17:59:15.138Z",
+          "from": "ready_to_push",
+          "to": "accepted",
+          "note": "Accepted after v0.8.0 synthetic governance bundle closeout validation, operator QA PASS, and git push gate. queue-015 remains blocked, product/prompt unchanged, no real-doc implementation is approved, and no real-doc work was done."
         }
       ]
     },
@@ -952,11 +976,11 @@
       "title": "v0.8.0 synthetic governance checkpoint plan",
       "risk": "low",
       "summary": "Record a synthetic governance checkpoint plan summarizing v0.7.13 through v0.7.19 while keeping productVersion 0.7.0, promptVersion unchanged, queue-015 remains blocked, and real-doc implementation not approved.",
-      "next_action": "Ready for separate closeout/push review as part of the v0.7.16-to-v0.8.0 synthetic governance bundle; queue-015 remains blocked and no real-doc implementation is approved.",
-      "status": "ready_to_push",
+      "next_action": "Accepted after closeout validation, operator QA PASS, and bundle push; queue-015 remains blocked and no real-doc implementation is approved.",
+      "status": "accepted",
       "model": "GPT/Codex $100 coding plan",
       "created_at": "2026-06-26T14:35:00.000Z",
-      "updated_at": "2026-06-26T15:20:08.624Z",
+      "updated_at": "2026-06-26T17:59:15.138Z",
       "history": [
         {
           "at": "2026-06-26T14:35:00.000Z",
@@ -969,6 +993,12 @@
           "from": "needs_review",
           "to": "ready_to_push",
           "note": "Operator QA PASS accepted the v0.7.16-to-v0.8.0 synthetic governance bundle for closeout review; validation stayed PASS, queue-015 stayed blocked, product/prompt unchanged, no real-doc implementation is approved, and no push was performed."
+        },
+        {
+          "at": "2026-06-26T17:59:15.138Z",
+          "from": "ready_to_push",
+          "to": "accepted",
+          "note": "Accepted after v0.8.0 synthetic governance bundle closeout validation, operator QA PASS, and git push gate. queue-015 remains blocked, product/prompt unchanged, no real-doc implementation is approved, and no real-doc work was done."
         }
       ]
     }

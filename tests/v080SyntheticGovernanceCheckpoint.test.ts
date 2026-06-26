@@ -67,23 +67,23 @@ describe("v0.8.0 synthetic governance checkpoint plan", () => {
 
     expect(featureList.phase).toBe(phase);
     expect(featureList.release_readiness.phase).toBe(phase);
-    expect(featureList.release_readiness.status).toBe("v080_synthetic_governance_bundle_ready_to_push");
+    expect(featureList.release_readiness.status).toBe("v080_synthetic_governance_bundle_accepted");
     expect(featureList.release_readiness.package_version).toBe(productVersion);
     expect(featureList.release_readiness.product_version).toBe(productVersion);
     expect(featureList.release_readiness.prompt_version).toBe(promptVersion);
     expect(featureList.v080_synthetic_governance_checkpoint_plan.phase).toBe(phase);
-    expect(featureList.v080_synthetic_governance_checkpoint_plan.status).toBe("ready_to_push_after_operator_bundle_qa_pass");
+    expect(featureList.v080_synthetic_governance_checkpoint_plan.status).toBe("accepted_after_closeout_push");
     expect(featureList.v080_synthetic_governance_checkpoint_plan.product_version).toBe(productVersion);
     expect(featureList.v080_synthetic_governance_checkpoint_plan.prompt_version).toBe(promptVersion);
     expect(featureList.v080_synthetic_governance_checkpoint_plan.queue_015_status).toBe("blocked");
-    expect(featureList.v080_synthetic_governance_checkpoint_plan.queue_035_status).toBe("ready_to_push");
+    expect(featureList.v080_synthetic_governance_checkpoint_plan.queue_035_status).toBe("accepted");
     expect(featureList.v080_synthetic_governance_checkpoint_plan.authorizes_product_version_bump).toBe(false);
     expect(featureList.v080_synthetic_governance_checkpoint_plan.authorizes_real_doc_work).toBe(false);
     expect(featureList.v080_synthetic_governance_checkpoint_plan.real_document_access).toBe(false);
-    expect(featureList.v080_synthetic_governance_checkpoint_plan.push_performed).toBe(false);
+    expect(featureList.v080_synthetic_governance_checkpoint_plan.push_performed).toBe(true);
     expect(q015?.status).toBe("blocked");
     expect(q035?.phase).toBe(phase);
-    expect(q035?.status).toBe("ready_to_push");
+    expect(q035?.status).toBe("accepted");
     expect(`${q035?.summary}\n${q035?.next_action}`).toContain("synthetic governance");
     expect(`${q035?.summary}\n${q035?.next_action}`).toContain("queue-015 remains blocked");
   });
