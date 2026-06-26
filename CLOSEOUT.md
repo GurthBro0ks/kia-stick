@@ -1,5 +1,36 @@
 # KIA Stick Closeout
 
+## v0.7.11 Persistent Proof Index and Review Guide
+
+- Phase: `KIA-Stick-v0.7.11-persistent-proof-index-and-review-guide`
+- Baseline: accepted pushed v0.7.10b state at `2d20a45`
+- Scope: fake-proof metadata docs/tests/tooling for persistent proof discoverability and operator review.
+- Product version: `0.7.0`
+- Package version: `0.7.0`
+- Prompt version: `prompt.fake-docs.v0.5-import-wizard-hardening`
+- Guide document: `docs/v0.7.11-persistent-proof-index-review-guide.md`
+- Local helper: `scripts/local-proof-index.mjs`
+- NPM script: `npm run proof:index`
+- Persistent proof root: `/home/mint/kia-stick-local-proofs`
+- Desktop pointer file: `/home/mint/Desktop/kia-stick-proofs/LATEST_KIA_PROOF.txt`
+- Latest accepted proof used for guide: `/home/mint/kia-stick-local-proofs/proof_kia_stick_v0_7_10b_operator_smoke_evidence_20260626T090618Z`
+- Queue state: `queue-025-v0711-persistent-proof-index-review-guide` is ready for the local commit/push decision after validation; `queue-024-v0710b-persistent-smoke-evidence-closeout` remains accepted; `queue-023-v079-operator-qa-smoke-pack` remains accepted; `queue-015-v07-first-real-doc-gate-request` remains blocked.
+- Real document access: none
+- Private vault inspected: no
+- Skills installed: no
+- Global agent config changed: no
+- Runtime UI changed: no
+- Product or prompt version changed: no
+- Validation: PASS for focused local proof index/state tests, operator smoke, design check, release check, full QA gate, proof helpers, queue next, fake-doc scan, privacy scan, safety scans, and `git diff --check`.
+- Manual QA status: pending operator review
+- Push performed: no; this phase must not push without explicit approval.
+
+## v0.7.11 Safety Boundary
+
+This phase does not approve real-doc work. It does not add file pickers, directory pickers, drag/drop import zones, path readers, file reads over real documents, copying, OCR, upload handlers, real redaction, embeddings, indexing, vector stores, private-vault inspection, service changes, credentials, skills, global agent config, or real-document access. `productVersion` remains `0.7.0` and `promptVersion` remains unchanged.
+
+---
+
 ## v0.7.10b Persistent Smoke Evidence Closeout
 
 - Phase: `KIA-Stick-v0.7.10b-closeout-project-state-update`

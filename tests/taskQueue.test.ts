@@ -51,7 +51,7 @@ describe("task-queue", () => {
     const queue = mod.loadQueue(resolve("."));
 
     expect(queue.schema).toBe("kia-stick-local-task-queue.v1");
-    expect(queue.items).toHaveLength(24);
+    expect(queue.items).toHaveLength(25);
     expect(queue.items.map((item) => item.id)).toEqual([
       "queue-001-closeout-helper-hardening",
       "queue-002-fake-redaction-metadata-depth",
@@ -77,6 +77,7 @@ describe("task-queue", () => {
       "queue-022-v078-v07-release-state-closeout",
       "queue-023-v079-operator-qa-smoke-pack",
       "queue-024-v0710b-persistent-smoke-evidence-closeout",
+      "queue-025-v0711-persistent-proof-index-review-guide",
     ]);
     expect(queue.items.slice(0, 10).every((item) => item.status === "accepted")).toBe(true);
     expect(queue.items[10].status).toBe("planned");
@@ -93,6 +94,7 @@ describe("task-queue", () => {
     expect(queue.items[21].status).toBe("accepted");
     expect(queue.items[22].status).toBe("accepted");
     expect(queue.items[23].status).toBe("accepted");
+    expect(queue.items[24].status).toBe("ready_to_push");
     expect(queue.items.every((item) => item.history.length > 0)).toBe(true);
     expect(mod.validateQueue(queue)).toBe(true);
   });
@@ -154,7 +156,7 @@ describe("task-queue", () => {
     expect(text).not.toMatch(/\bshowOpenFilePicker\b|\bFileReader\b|\breadAsText\b|\breadAsArrayBuffer\b/i);
   });
 
-  it("tracks accepted v0.7.3 through v0.7.10b state", async () => {
+  it("tracks accepted v0.7.3 through v0.7.10b state and v0.7.11 ready-to-push state", async () => {
     const mod = await loadModule();
     const queue = mod.loadQueue(resolve("."));
     const triage = queue.items.find((item) => item.id === "queue-017-v073-fake-only-ux-triage");
@@ -165,6 +167,7 @@ describe("task-queue", () => {
     const v078 = queue.items.find((item) => item.id === "queue-022-v078-v07-release-state-closeout");
     const nextChunk = queue.items.find((item) => item.id === "queue-023-v079-operator-qa-smoke-pack");
     const persistentSmokeEvidence = queue.items.find((item) => item.id === "queue-024-v0710b-persistent-smoke-evidence-closeout");
+    const persistentProofIndex = queue.items.find((item) => item.id === "queue-025-v0711-persistent-proof-index-review-guide");
     const realDocGate = queue.items.find((item) => item.id === "queue-015-v07-first-real-doc-gate-request");
 
     expect(triage?.phase).toBe("KIA-Stick-v0.7.3-fake-only-ux-triage-and-stabilization-plan");
@@ -210,6 +213,13 @@ describe("task-queue", () => {
     expect(`${persistentSmokeEvidence?.summary}\n${persistentSmokeEvidence?.next_action}`).toContain("zero file inputs");
     expect(`${persistentSmokeEvidence?.summary}\n${persistentSmokeEvidence?.next_action}`).toContain("zero file chooser events");
     expect(`${persistentSmokeEvidence?.summary}\n${persistentSmokeEvidence?.next_action}`).toContain("queue-015 remains blocked");
+
+    expect(persistentProofIndex?.phase).toBe("KIA-Stick-v0.7.11-persistent-proof-index-and-review-guide");
+    expect(persistentProofIndex?.status).toBe("ready_to_push");
+    expect(`${persistentProofIndex?.summary}\n${persistentProofIndex?.next_action}`).toContain("persistent proof folders");
+    expect(`${persistentProofIndex?.summary}\n${persistentProofIndex?.next_action}`).toContain("RESULT.md is missing");
+    expect(`${persistentProofIndex?.summary}\n${persistentProofIndex?.next_action}`).toContain("manual QA pending");
+    expect(`${persistentProofIndex?.summary}\n${persistentProofIndex?.next_action}`).toContain("Do not push");
     expect(realDocGate?.status).toBe("blocked");
 
     const joined = [triage, v074, v077, v078, nextChunk].map((item) => `${item?.summary}\n${item?.next_action}`).join("\n");

@@ -2,10 +2,37 @@
 
 ## Current Phase
 
-- Phase: `KIA-Stick-v0.7.10b-closeout-project-state-update`
+- Phase: `KIA-Stick-v0.7.11-persistent-proof-index-and-review-guide`
 - Target: `USER_LAPTOP_ONLY`
 - Provider: `local-fake-deterministic`
-- Status: recording accepted persistent v0.7.10b smoke evidence for the existing fake-only v0.7.9 operator QA smoke pack; docs/tests/state closeout only.
+- Status: implementing fake-proof metadata docs/tests/tooling for persistent proof discoverability; no push without explicit approval.
+
+## v0.7.11 Persistent Proof Index and Review Guide State
+
+- Phase: `KIA-Stick-v0.7.11-persistent-proof-index-and-review-guide`
+- Baseline: origin/main and HEAD verified at accepted pushed v0.7.10b commit `2d20a454261084f73b133b3a84652798e21a9be5`.
+- Scope: fake-proof metadata docs/tests/tooling for persistent proof discoverability and operator review; no runtime UX change.
+- Product version: `0.7.0`
+- Prompt version: `prompt.fake-docs.v0.5-import-wizard-hardening`
+- Persistent proof root: `/home/mint/kia-stick-local-proofs`
+- Desktop pointer file: `/home/mint/Desktop/kia-stick-proofs/LATEST_KIA_PROOF.txt`
+- Latest accepted proof used for guide: `/home/mint/kia-stick-local-proofs/proof_kia_stick_v0_7_10b_operator_smoke_evidence_20260626T090618Z`
+- Guide document: `docs/v0.7.11-persistent-proof-index-review-guide.md`
+- Helper: `scripts/local-proof-index.mjs`
+- NPM script: `proof:index`
+- Helper contract: default to the persistent proof root, list KIA proof dirs newest-first, show newest proof, show newest review-ready proof, report `RESULT.md`, report `OPEN_THIS_FOLDER.txt`, count files under `screenshots/`, and mark missing `RESULT.md` as `WARN_MISSING_RESULT`.
+- Queue state: `queue-025-v0711-persistent-proof-index-review-guide` is ready for validation and manual operator review; `queue-024-v0710b-persistent-smoke-evidence-closeout` remains accepted; `queue-015-v07-first-real-doc-gate-request` remains `blocked`.
+- Real/private document access: none.
+- Private vault inspected: no.
+- Skills installed: no.
+- Global agent config changed: no.
+- Runtime UI changed: no.
+- Commands run so far: missing `/home/slimy/*` bootstrap checks, git status/ref before-state capture, memory quick pass, proof/tooling/docs/state/test inspection, scoped helper/docs/state/test edits, `npm run proof:index -- write`, focused `npm run test -- tests/localProofIndex.test.ts tests/operatorQaSmokePack.test.ts tests/v07ReleaseStateCloseout.test.ts tests/designContractCheck.test.ts tests/taskQueue.test.ts tests/fakeOnlyUxStabilizationPlan.test.ts tests/productVersionContractBump.test.ts`, `npm run operator:smoke`, `npm run design:check`, `npm run release:check`, `PROOF_DIR=/tmp/proof_kia_stick_v0_7_11_persistent_proof_index_20260626T100231Z npm run qa`, `npm run proof:latest`, `npm run queue:next`, `npm run closeout:review`, `npm run closeout:summary`, `npm run scan:fake`, `npm run scan:privacy`, `git diff --check`, `git status --short`, `npm run proof:index -- latest`, and safety scans.
+- Files changed so far: `scripts/local-proof-index.mjs`, `docs/v0.7.11-persistent-proof-index-review-guide.md`, `tests/localProofIndex.test.ts`, `package.json`, `feature_list.json`, `docs/phase-backlog.json`, `README.md`, `CLOSEOUT.md`, `claude-progress.md`, `tests/taskQueue.test.ts`, and `tests/operatorQaSmokePack.test.ts`.
+- Proof directory for this phase: `/tmp/proof_kia_stick_v0_7_11_persistent_proof_index_20260626T100231Z`
+- Validation: PASS.
+- Manual QA status: pending operator review.
+- Remaining unknowns: operator manual QA and push approval.
 
 ## v0.7.10b Persistent Smoke Evidence Closeout State
 

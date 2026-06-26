@@ -12,6 +12,16 @@ KIA Stick separates milestone semver from build identity:
 
 `/health`, `/version`, the app header, settings, answer footer, and saved answer metadata expose the current `displayVersion`.
 
+## v0.7.11 Persistent Proof Index and Review Guide
+
+Phase: `KIA-Stick-v0.7.11-persistent-proof-index-and-review-guide`.
+
+`docs/v0.7.11-persistent-proof-index-review-guide.md` documents the persistent proof review flow for `/home/mint/kia-stick-local-proofs`, including `/home/mint/Desktop/kia-stick-proofs/LATEST_KIA_PROOF.txt`, latest-proof review, screenshot QA, and why `/tmp` proof alone is not enough for final operator acceptance.
+
+`scripts/local-proof-index.mjs` adds the local-only `npm run proof:index` helper. It lists KIA proof directories newest-first, reports the newest proof and newest review-ready proof, checks whether `RESULT.md` and `OPEN_THIS_FOLDER.txt` exist, counts screenshots under `screenshots/`, and marks missing `RESULT.md` as `WARN_MISSING_RESULT`.
+
+This is **fake-proof metadata docs/tests/tooling work only**. It does not change runtime UX, product version, prompt version, file affordances, real upload behavior, OCR, embeddings, indexing, vector stores, private-vault inspection, services, skills, global agent config, or real-document capability. `queue-015-v07-first-real-doc-gate-request` remains blocked.
+
 ## v0.7.10b Persistent Smoke Evidence Closeout
 
 Phase: `KIA-Stick-v0.7.10b-closeout-project-state-update`.
