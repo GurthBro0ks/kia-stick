@@ -8,6 +8,7 @@ import { createRuntimeVersion } from "@/lib/version";
 import { createInitialVaultState, laneCounts, workflowStateCounts } from "@/lib/vaultModel";
 
 const phase = "KIA-Stick-v0.7.12-fake-only-polish-and-real-doc-gate-planning";
+const currentPhase = "KIA-Stick-v0.7.12-operator-qa-closeout-and-push";
 const docPath = "docs/v0.7.12-fake-only-polish-and-real-doc-gate-planning.md";
 const productVersion = "0.7.0";
 const promptVersion = "prompt.fake-docs.v0.5-import-wizard-hardening";
@@ -141,15 +142,15 @@ describe("v0.7.12 fake-only polish and real-doc gate planning", () => {
     const realDocGate = queue.items.find((item) => item.id === "queue-015-v07-first-real-doc-gate-request");
     const v0712 = queue.items.find((item) => item.id === "queue-026-v0712-fake-only-polish-and-real-doc-gate-planning");
 
-    expect(featureList.phase).toBe(phase);
-    expect(featureList.release_readiness.phase).toBe(phase);
+    expect(featureList.phase).toBe(currentPhase);
+    expect(featureList.release_readiness.phase).toBe(currentPhase);
     expect(featureList.release_readiness.product_version).toBe(productVersion);
     expect(featureList.release_readiness.package_version).toBe(productVersion);
     expect(featureList.release_readiness.prompt_version).toBe(promptVersion);
 
     const state = featureList.v0712_fake_only_polish_and_real_doc_gate_planning;
     expect(state.phase).toBe(phase);
-    expect(state.status).toBe("ready_to_push_validation_passed_manual_qa_pending");
+    expect(state.status).toBe("accepted_after_operator_qa_pass_push_verified");
     expect(state.product_version).toBe(productVersion);
     expect(state.package_version).toBe(productVersion);
     expect(state.prompt_version).toBe(promptVersion);
@@ -157,7 +158,7 @@ describe("v0.7.12 fake-only polish and real-doc gate planning", () => {
     expect(state.runtime_capability_changed).toBe(false);
     expect(state.docs_tests_checklists_only_for_real_doc_gate).toBe(true);
     expect(state.queue_015_status).toBe("blocked");
-    expect(state.queue_026_status).toBe("ready_to_push");
+    expect(state.queue_026_status).toBe("accepted");
     expect(state.authorizes_real_doc_work).toBe(false);
     expect(state.real_document_access).toBe(false);
     expect(state.private_vault_inspected).toBe(false);
@@ -166,15 +167,15 @@ describe("v0.7.12 fake-only polish and real-doc gate planning", () => {
     expect(state.ocr_added).toBe(false);
     expect(state.embeddings_added).toBe(false);
     expect(state.vector_store_added).toBe(false);
-    expect(state.manual_qa_status).toBe("pending_operator_review");
-    expect(state.push_performed).toBe(false);
+    expect(state.manual_qa_status).toBe("PASS");
+    expect(state.push_performed).toBe(true);
 
     expect(realDocGate?.status).toBe("blocked");
     expect(v0712?.phase).toBe(phase);
-    expect(v0712?.status).toBe("ready_to_push");
+    expect(v0712?.status).toBe("accepted");
     expect(`${v0712?.summary}\n${v0712?.next_action}`).toContain("fake-only UI copy");
     expect(`${v0712?.summary}\n${v0712?.next_action}`).toContain("planning-only");
-    expect(`${v0712?.summary}\n${v0712?.next_action}`).toContain("Do not push");
+    expect(`${v0712?.summary}\n${v0712?.next_action}`).toContain("operator QA PASS");
     expect(qaGate).toContain("Review Chat, Sources, Saved, Upload, Import, Vault, Settings, /version, and /health.");
     expect(qaGate).toContain("Confirm queue-015 remains blocked.");
   });

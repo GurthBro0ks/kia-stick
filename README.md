@@ -12,6 +12,16 @@ KIA Stick separates milestone semver from build identity:
 
 `/health`, `/version`, the app header, settings, answer footer, and saved answer metadata expose the current `displayVersion`.
 
+## v0.7.12 Operator QA Closeout And Push
+
+Phase: `KIA-Stick-v0.7.12-operator-qa-closeout-and-push`.
+
+This closeout records operator QA PASS for the local v0.7.11 persistent proof-index work and v0.7.12 fake-only polish/gate-planning work. The accepted pre-closeout local commits are `b4b3b0f7c8788bacb974f41b2ae039ea32e86498` for v0.7.11 and `b2ff99d42acd7e740edeb17ed64a20ff5fc7beae` for v0.7.12.
+
+`queue-025-v0711-persistent-proof-index-review-guide`, `queue-026-v0712-fake-only-polish-and-real-doc-gate-planning`, and `queue-027-v0712-operator-qa-closeout-and-push` are accepted after operator QA PASS and closeout validation. `queue-015-v07-first-real-doc-gate-request` remains blocked.
+
+This is **closeout/state/test work only**. It does not add real-doc capability, file pickers, directory pickers, path readers, uploads, OCR, redaction, embeddings, indexing, vector stores, private-vault inspection, services, secrets, Discord, skills, global config, or system changes.
+
 ## v0.7.12 Fake-Only Polish And Real-Doc Gate Planning
 
 Phase: `KIA-Stick-v0.7.12-fake-only-polish-and-real-doc-gate-planning`.
