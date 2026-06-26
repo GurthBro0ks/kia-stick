@@ -60,18 +60,15 @@ cat >"$PROOF_DIR/RESULT.md" <<RESULT
 
 ## Manual QA Checklist
 
-- Chat view opens on mobile-sized viewport.
-- Bottom nav shows Chat, Sources, Saved, Upload, Settings.
-- Mode, Scope, and Detail selectors are visible.
-- Annual leave prompt returns controlling citations and version footer.
-- Steward request prompt separates MOU/joint interpretation from controlling sources.
-- Step 1 evidence prompt shows evidence checklist and no-answer behavior when controlling language is absent.
-- Attendance/sleeping bathroom prompt separates persuasive authority, evidence, and notes.
-- One-click lunch prompt disables best guess for unverified source.
-- Saved answer persists in local storage.
-- Upload intake queues fake review item only and does not persist files server-side.
-- /health returns full product/build/corpus/index/prompt/provider version payload.
-- /version displays display/product/build/corpus/index/prompt/provider metadata.
+- Review Chat, Sources, Saved, Upload, Import, Vault, Settings, /version, and /health.
+- Confirm fake-only language is clear and does not imply real document intake.
+- Confirm Upload remains fake metadata only and opens no file chooser.
+- Confirm Import says no real import path exists.
+- Confirm Vault blocks real docs, OCR, source text, uploads, and indexing.
+- Confirm mobile bottom nav remains readable with Chat, Sources, Saved, Upload, Vault, Import, and Settings.
+- Confirm proof index/review docs remain accurate when proof metadata changes.
+- Confirm real-doc gate planning is docs/tests/checklists only.
+- Confirm queue-015 remains blocked.
 RESULT
 
 echo "$PROOF_DIR"

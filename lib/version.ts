@@ -13,7 +13,7 @@ export interface RuntimeVersion {
 }
 
 export const PRODUCT_VERSION = "0.7.0";
-export const CURRENT_PHASE = "KIA-Stick-v0.7.9-fake-only-operator-qa-smoke-pack";
+export const CURRENT_PHASE = "KIA-Stick-v0.7.12-fake-only-polish-and-real-doc-gate-planning";
 export const DEFAULT_CHANNEL = "dev";
 export const PROMPT_VERSION = "prompt.fake-docs.v0.5-import-wizard-hardening";
 export const DEFAULT_PROVIDER = "local-fake-deterministic";

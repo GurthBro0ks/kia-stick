@@ -51,7 +51,7 @@ describe("task-queue", () => {
     const queue = mod.loadQueue(resolve("."));
 
     expect(queue.schema).toBe("kia-stick-local-task-queue.v1");
-    expect(queue.items).toHaveLength(25);
+    expect(queue.items).toHaveLength(26);
     expect(queue.items.map((item) => item.id)).toEqual([
       "queue-001-closeout-helper-hardening",
       "queue-002-fake-redaction-metadata-depth",
@@ -78,6 +78,7 @@ describe("task-queue", () => {
       "queue-023-v079-operator-qa-smoke-pack",
       "queue-024-v0710b-persistent-smoke-evidence-closeout",
       "queue-025-v0711-persistent-proof-index-review-guide",
+      "queue-026-v0712-fake-only-polish-and-real-doc-gate-planning",
     ]);
     expect(queue.items.slice(0, 10).every((item) => item.status === "accepted")).toBe(true);
     expect(queue.items[10].status).toBe("planned");
@@ -95,6 +96,7 @@ describe("task-queue", () => {
     expect(queue.items[22].status).toBe("accepted");
     expect(queue.items[23].status).toBe("accepted");
     expect(queue.items[24].status).toBe("ready_to_push");
+    expect(queue.items[25].status).toBe("ready_to_push");
     expect(queue.items.every((item) => item.history.length > 0)).toBe(true);
     expect(mod.validateQueue(queue)).toBe(true);
   });
@@ -156,7 +158,7 @@ describe("task-queue", () => {
     expect(text).not.toMatch(/\bshowOpenFilePicker\b|\bFileReader\b|\breadAsText\b|\breadAsArrayBuffer\b/i);
   });
 
-  it("tracks accepted v0.7.3 through v0.7.10b state and v0.7.11 ready-to-push state", async () => {
+  it("tracks accepted v0.7.3 through v0.7.10b state and v0.7.11/v0.7.12 ready-to-push state", async () => {
     const mod = await loadModule();
     const queue = mod.loadQueue(resolve("."));
     const triage = queue.items.find((item) => item.id === "queue-017-v073-fake-only-ux-triage");
@@ -168,6 +170,7 @@ describe("task-queue", () => {
     const nextChunk = queue.items.find((item) => item.id === "queue-023-v079-operator-qa-smoke-pack");
     const persistentSmokeEvidence = queue.items.find((item) => item.id === "queue-024-v0710b-persistent-smoke-evidence-closeout");
     const persistentProofIndex = queue.items.find((item) => item.id === "queue-025-v0711-persistent-proof-index-review-guide");
+    const fakeOnlyPolish = queue.items.find((item) => item.id === "queue-026-v0712-fake-only-polish-and-real-doc-gate-planning");
     const realDocGate = queue.items.find((item) => item.id === "queue-015-v07-first-real-doc-gate-request");
 
     expect(triage?.phase).toBe("KIA-Stick-v0.7.3-fake-only-ux-triage-and-stabilization-plan");
@@ -220,9 +223,14 @@ describe("task-queue", () => {
     expect(`${persistentProofIndex?.summary}\n${persistentProofIndex?.next_action}`).toContain("RESULT.md is missing");
     expect(`${persistentProofIndex?.summary}\n${persistentProofIndex?.next_action}`).toContain("manual QA pending");
     expect(`${persistentProofIndex?.summary}\n${persistentProofIndex?.next_action}`).toContain("Do not push");
+    expect(fakeOnlyPolish?.phase).toBe("KIA-Stick-v0.7.12-fake-only-polish-and-real-doc-gate-planning");
+    expect(fakeOnlyPolish?.status).toBe("ready_to_push");
+    expect(`${fakeOnlyPolish?.summary}\n${fakeOnlyPolish?.next_action}`).toContain("fake-only UI copy");
+    expect(`${fakeOnlyPolish?.summary}\n${fakeOnlyPolish?.next_action}`).toContain("planning-only");
+    expect(`${fakeOnlyPolish?.summary}\n${fakeOnlyPolish?.next_action}`).toContain("Do not push");
     expect(realDocGate?.status).toBe("blocked");
 
-    const joined = [triage, v074, v077, v078, nextChunk].map((item) => `${item?.summary}\n${item?.next_action}`).join("\n");
+    const joined = [triage, v074, v077, v078, nextChunk, fakeOnlyPolish].map((item) => `${item?.summary}\n${item?.next_action}`).join("\n");
     expect(joined).not.toMatch(/<input[^>]*type=["']file/i);
     expect(joined).not.toMatch(/\bshowOpenFilePicker\b|\bFileReader\b|\breadAsText\b|\breadAsArrayBuffer\b/i);
   });

@@ -3,6 +3,8 @@ import { spawnSync } from "node:child_process";
 import { describe, expect, it } from "vitest";
 
 const phase = "KIA-Stick-v0.7.9-fake-only-operator-qa-smoke-pack";
+const currentPhase = "KIA-Stick-v0.7.12-fake-only-polish-and-real-doc-gate-planning";
+const currentStatus = "v0712_fake_only_polish_ready_manual_qa_pending";
 const docPath = "docs/v0.7.9-operator-qa-smoke-pack.md";
 const scriptPath = "scripts/operator-qa-smoke.mjs";
 const productVersion = "0.7.0";
@@ -160,9 +162,9 @@ describe("v0.7.9 fake-only operator QA smoke pack", () => {
       };
     };
 
-    expect(featureList.phase).toBe(phase);
-    expect(featureList.release_readiness.phase).toBe(phase);
-    expect(featureList.release_readiness.status).toBe("v0710b_persistent_smoke_evidence_accepted");
+    expect(featureList.phase).toBe(currentPhase);
+    expect(featureList.release_readiness.phase).toBe(currentPhase);
+    expect(featureList.release_readiness.status).toBe(currentStatus);
     expect(featureList.release_readiness.product_version).toBe(productVersion);
     expect(featureList.release_readiness.package_version).toBe(productVersion);
     expect(featureList.release_readiness.prompt_version).toBe(promptVersion);

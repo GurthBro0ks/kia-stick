@@ -1,5 +1,37 @@
 # KIA Stick Closeout
 
+## v0.7.12 Fake-Only Polish And Real-Doc Gate Planning
+
+- Phase: `KIA-Stick-v0.7.12-fake-only-polish-and-real-doc-gate-planning`
+- Baseline: local v0.7.11 proof-index commit `b4b3b0f7c8788bacb974f41b2ae039ea32e86498`; accepted pushed state remains `2d20a454261084f73b133b3a84652798e21a9be5`
+- Scope: fake-only UI copy clarity, QA checklist wording, screenshot/report readability prompts, local proof inspection checklist, operator guide cleanup, mobile/narrow review prompts, and planning-only real-doc gate checklist documentation.
+- Product version: `0.7.0`
+- Package version: `0.7.0`
+- Prompt version: `prompt.fake-docs.v0.5-import-wizard-hardening`
+- Planning/review document: `docs/v0.7.12-fake-only-polish-and-real-doc-gate-planning.md`
+- Runtime copy changed: yes, copy only
+- `/health` phase metadata changed: yes, to the v0.7.12 phase
+- Runtime capability changed: no
+- QA gate manual checklist changed: yes
+- Queue state: `queue-026-v0712-fake-only-polish-and-real-doc-gate-planning` is ready for the local commit/push decision after validation; `queue-025-v0711-persistent-proof-index-review-guide` remains ready to push; `queue-015-v07-first-real-doc-gate-request` remains blocked.
+- Real document access: none
+- Private vault inspected: no
+- Skills installed: no
+- Global agent config changed: no
+- Services restarted: no
+- Cron/timer/tmux/Caddy/DNS changed: no
+- Secrets printed: no
+- Discord sent: no
+- Validation: PASS for focused v0.7.12/state tests, operator smoke, design check, release check, full QA gate, proof latest, queue next, fake-doc scan, privacy scan, exact runtime affordance/private-boundary safety scans, tracked artifact scan, and `git diff --check`.
+- Manual QA status: pending operator review
+- Push performed: no; this phase must not push without explicit approval.
+
+## v0.7.12 Safety Boundary
+
+This phase does not approve real-doc work. It does not add file pickers, directory pickers, drag/drop import zones, path readers, file reads over real documents, copying, OCR, upload handlers, real redaction, embeddings, indexing, vector stores, private-vault inspection, service changes, credentials, skills, global agent config, or real-document access. `productVersion` remains `0.7.0` and `promptVersion` remains unchanged.
+
+---
+
 ## v0.7.11 Persistent Proof Index and Review Guide
 
 - Phase: `KIA-Stick-v0.7.11-persistent-proof-index-and-review-guide`

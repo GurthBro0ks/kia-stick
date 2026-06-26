@@ -3,7 +3,7 @@ import { describe, expect, it } from "vitest";
 
 const targetProductVersion = "0.7.0";
 const promptVersion = "prompt.fake-docs.v0.5-import-wizard-hardening";
-const currentPhase = "KIA-Stick-v0.7.9-fake-only-operator-qa-smoke-pack";
+const currentPhase = "KIA-Stick-v0.7.12-fake-only-polish-and-real-doc-gate-planning";
 
 function constantValue(source: string, name: string): string {
   const match = source.match(new RegExp(`export\\s+const\\s+${name}\\s*=\\s*"([^"]+)"`));

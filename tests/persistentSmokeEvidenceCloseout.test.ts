@@ -3,7 +3,8 @@ import { describe, expect, it } from "vitest";
 
 const phase = "KIA-Stick-v0.7.10b-closeout-project-state-update";
 const evidencePhase = "KIA-Stick-v0.7.10b-persistent-smoke-evidence-rerun";
-const currentRuntimeSmokePhase = "KIA-Stick-v0.7.9-fake-only-operator-qa-smoke-pack";
+const currentPhase = "KIA-Stick-v0.7.12-fake-only-polish-and-real-doc-gate-planning";
+const currentStatus = "v0712_fake_only_polish_ready_manual_qa_pending";
 const docPath = "docs/v0.7.10b-persistent-smoke-evidence-closeout.md";
 const proofDir = "/home/mint/kia-stick-local-proofs/proof_kia_stick_v0_7_10b_operator_smoke_evidence_20260626T090618Z";
 const desktopPointer = "/home/mint/Desktop/kia-stick-proofs/LATEST_KIA_PROOF.txt";
@@ -76,9 +77,9 @@ describe("v0.7.10b persistent smoke evidence closeout", () => {
       };
     };
 
-    expect(featureList.phase).toBe(currentRuntimeSmokePhase);
-    expect(featureList.release_readiness.phase).toBe(currentRuntimeSmokePhase);
-    expect(featureList.release_readiness.status).toBe("v0710b_persistent_smoke_evidence_accepted");
+    expect(featureList.phase).toBe(currentPhase);
+    expect(featureList.release_readiness.phase).toBe(currentPhase);
+    expect(featureList.release_readiness.status).toBe(currentStatus);
     expect(featureList.release_readiness.product_version).toBe(productVersion);
     expect(featureList.release_readiness.package_version).toBe(productVersion);
     expect(featureList.release_readiness.prompt_version).toBe(promptVersion);

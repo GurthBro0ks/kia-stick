@@ -12,6 +12,16 @@ KIA Stick separates milestone semver from build identity:
 
 `/health`, `/version`, the app header, settings, answer footer, and saved answer metadata expose the current `displayVersion`.
 
+## v0.7.12 Fake-Only Polish And Real-Doc Gate Planning
+
+Phase: `KIA-Stick-v0.7.12-fake-only-polish-and-real-doc-gate-planning`.
+
+`docs/v0.7.12-fake-only-polish-and-real-doc-gate-planning.md` documents the fake-only copy audit, PASS/WARN/FAIL operator QA labels, mobile/narrow screenshot checklist, local proof inspection checklist, and planning-only future real-doc gate requirements.
+
+Runtime copy was tightened to say no cloud/API keys are required, Upload/Import have no real path, Vault blocks any real-doc gate, and Settings is not an approval surface. `/health` phase metadata now points at v0.7.12, and `scripts/qa_gate.sh` emits the matching manual QA checklist in generated proof results.
+
+This is **fake-only UI copy, docs, tests, and checklist work**. It does not change product version, prompt version, runtime capability, file affordances, real uploads, OCR, embeddings, indexing, vector stores, private-vault inspection, services, skills, global agent config, secrets, Discord, or real-document access. `queue-015-v07-first-real-doc-gate-request` remains blocked.
+
 ## v0.7.11 Persistent Proof Index and Review Guide
 
 Phase: `KIA-Stick-v0.7.11-persistent-proof-index-and-review-guide`.

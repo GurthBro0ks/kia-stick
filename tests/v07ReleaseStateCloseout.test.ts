@@ -2,7 +2,7 @@ import { existsSync, readFileSync } from "node:fs";
 import { describe, expect, it } from "vitest";
 
 const phase = "KIA-Stick-v0.7.8-v0.7-release-state-closeout";
-const currentPhase = "KIA-Stick-v0.7.9-fake-only-operator-qa-smoke-pack";
+const currentPhase = "KIA-Stick-v0.7.12-fake-only-polish-and-real-doc-gate-planning";
 const closeoutPath = "docs/RELEASE_v0.7-closeout.md";
 const productVersion = "0.7.0";
 const promptVersion = "prompt.fake-docs.v0.5-import-wizard-hardening";
@@ -90,7 +90,7 @@ describe("v0.7.8 release-state closeout", () => {
     }
   });
 
-  it("keeps the v0.7.8 closeout traceable after v0.7.9 becomes current", () => {
+  it("keeps the v0.7.8 closeout traceable after later v0.7 phases become current", () => {
     const featureList = JSON.parse(readFileSync("feature_list.json", "utf8")) as {
       phase: string;
       release_readiness: {

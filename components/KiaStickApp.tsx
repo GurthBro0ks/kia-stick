@@ -397,7 +397,7 @@ export function KiaStickApp({ runtimeVersion = clientVersion }: { runtimeVersion
 
       <div className="fakeNotice" role="status">
         <AlertTriangle size={16} />
-        <span>Fake sample mode only. Real APWU/USPS/member/local docs stay out of this app.</span>
+        <span>Fake sample mode only. No cloud keys, real uploads, or real-doc gate are active.</span>
       </div>
 
       <main className={tab === "chat" ? "mainArea chatMain" : "mainArea"} ref={chatScrollRef}>
@@ -477,7 +477,7 @@ export function KiaStickApp({ runtimeVersion = clientVersion }: { runtimeVersion
                 KIA Stick answers from the bundled fake corpus only. Chat threads, Saved Answers, quarantine metadata, and Vault review state stay in this browser unless you clear them.
               </p>
               <p>
-                This build does not read private folders, real APWU/USPS/member/local/case documents, cloud services, or external APIs.
+                This build does not read private folders, real APWU/USPS/member/local/case documents, cloud services, or external APIs. The real-doc gate remains blocked until a future operator-approved phase.
               </p>
             </section>
             <dl className="settingsGrid">
@@ -655,7 +655,7 @@ export function FakeUploadPanel(props: {
             Queue fake batch metadata
           </button>
         </div>
-        <p className="emptyState">No file picker is present. Buttons queue synthetic names, sizes, and timestamps only.</p>
+        <p className="emptyState">No file picker is present. No cloud/API key is required. Buttons queue synthetic names, sizes, and timestamps only.</p>
         <div className="sourceCards">
           {props.quarantine.length === 0 && <p className="emptyState">No queued fake samples. Confirm fake sample metadata only, then queue a sample or batch.</p>}
           {props.quarantine.map((item) => (
@@ -840,7 +840,7 @@ export function VaultPanel(props: {
             Synthetic titles, fake hashes, fake review notes, and build identity are safe to display and export.
           </GuideItem>
           <GuideItem title="What is blocked">
-            Real documents, private paths, uploads, OCR, source text, and indexing are blocked in this MVP.
+            Real documents, private paths, uploads, OCR, source text, indexing, and any real-doc gate are blocked in this MVP.
           </GuideItem>
           <GuideItem title="What happens next">
             Review fake redaction, review fake metadata, then mark fake-only eligibility or reject the row.
@@ -1002,7 +1002,7 @@ export function ImportWizardPanel(props: {
         </div>
         <div className="guideGrid">
           <GuideItem title="Selection is not import">
-            This tab has no file picker and no source-path reader. It uses one synthetic candidate only.
+            This tab has no file picker, no source-path reader, and no cloud/API key requirement. It uses one synthetic candidate only.
           </GuideItem>
           <GuideItem title="Quarantine is not indexable">
             The quarantine screen is a mock consent gate. It never creates, copies, or indexes files.

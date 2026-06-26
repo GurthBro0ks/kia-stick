@@ -2,10 +2,35 @@
 
 ## Current Phase
 
-- Phase: `KIA-Stick-v0.7.11-persistent-proof-index-and-review-guide`
+- Phase: `KIA-Stick-v0.7.12-fake-only-polish-and-real-doc-gate-planning`
 - Target: `USER_LAPTOP_ONLY`
 - Provider: `local-fake-deterministic`
-- Status: implementing fake-proof metadata docs/tests/tooling for persistent proof discoverability; no push without explicit approval.
+- Status: implementing fake-only polish and planning-only real-doc gate docs/tests/checklists; no push without explicit approval.
+
+## v0.7.12 Fake-Only Polish And Real-Doc Gate Planning State
+
+- Phase: `KIA-Stick-v0.7.12-fake-only-polish-and-real-doc-gate-planning`
+- Baseline: local v0.7.11 proof-index commit `b4b3b0f7c8788bacb974f41b2ae039ea32e86498`; accepted pushed state remains `2d20a454261084f73b133b3a84652798e21a9be5`.
+- Scope: fake-only UI copy clarity, QA checklist wording, screenshot/report readability prompts, local proof inspection checklist, operator guide cleanup, mobile/narrow review prompts, and planning-only real-doc gate checklist documentation.
+- Product version: `0.7.0`
+- Prompt version: `prompt.fake-docs.v0.5-import-wizard-hardening`
+- Planning/review document: `docs/v0.7.12-fake-only-polish-and-real-doc-gate-planning.md`
+- Runtime copy changed: yes, copy only.
+- `/health` phase metadata changed: yes, to the v0.7.12 phase.
+- Runtime capability changed: no.
+- Queue state: `queue-026-v0712-fake-only-polish-and-real-doc-gate-planning` is ready for validation and manual operator review; `queue-025-v0711-persistent-proof-index-review-guide` remains ready to push; `queue-015-v07-first-real-doc-gate-request` remains blocked.
+- Real/private document access: none.
+- Private vault inspected: no.
+- Skills installed: no.
+- Global agent config changed: no.
+- Services/cron/timers/tmux/Caddy/DNS changed: no.
+- Discord sent: no.
+- Commands run so far: missing `/home/slimy/*` bootstrap checks, local harness inspection, `source ./init.sh`, git status/log before-state capture, memory quick pass, DESIGN.md and v0.7.3 plan inspection, UI/test/state inspection, scoped UI copy/docs/test/state edits, focused v0.7.12/state tests, `npm run operator:smoke`, `npm run design:check`, `npm run release:check`, `PROOF_DIR=/tmp/proof_kia_stick_v0_7_12_fake_only_polish_20260626T101543Z npm run qa`, `npm run scan:fake`, `npm run scan:privacy`, `npm run proof:latest`, `npm run queue:next`, `npm run closeout:review`, `npm run closeout:summary`, exact runtime affordance/private-boundary safety scans, tracked artifact scan, and `git diff --check`.
+- Files changed so far: `components/KiaStickApp.tsx`, `lib/version.ts`, `scripts/operator-qa-smoke.mjs`, `scripts/qa_gate.sh`, `docs/v0.7.12-fake-only-polish-and-real-doc-gate-planning.md`, `tests/fakeOnlyPolishRealDocGatePlanning.test.ts`, `tests/productVersionContractBump.test.ts`, `tests/v07ReleaseStateCloseout.test.ts`, `tests/fakeOnlyUxStabilizationPlan.test.ts`, `tests/persistentSmokeEvidenceCloseout.test.ts`, `tests/operatorQaSmokePack.test.ts`, `tests/taskQueue.test.ts`, `feature_list.json`, `docs/phase-backlog.json`, `README.md`, `CLOSEOUT.md`, and `claude-progress.md`.
+- Proof directory for this phase: `/tmp/proof_kia_stick_v0_7_12_fake_only_polish_20260626T101543Z`
+- Validation: PASS.
+- Manual QA status: pending operator review.
+- Remaining unknowns: operator manual QA and push approval.
 
 ## v0.7.11 Persistent Proof Index and Review Guide State
 

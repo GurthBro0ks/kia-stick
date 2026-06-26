@@ -3,7 +3,7 @@ import { describe, expect, it } from "vitest";
 
 const phase = "KIA-Stick-v0.7.3-fake-only-ux-triage-and-stabilization-plan";
 const v074Phase = "KIA-Stick-v0.7.4-chat-saved-upload-stabilization";
-const currentPhase = "KIA-Stick-v0.7.9-fake-only-operator-qa-smoke-pack";
+const currentPhase = "KIA-Stick-v0.7.12-fake-only-polish-and-real-doc-gate-planning";
 const acceptedPlanCommit = "38bff5f";
 const promptVersion = "prompt.fake-docs.v0.5-import-wizard-hardening";
 const planPath = "docs/v0.7.3-fake-only-ux-stabilization-plan.md";
@@ -37,7 +37,7 @@ function readRuntimeSources(): string {
 }
 
 describe("v0.7.3 fake-only UX stabilization plan", () => {
-  it("keeps the accepted v0.7.3 plan traceable while v0.7.9 is current", () => {
+  it("keeps the accepted v0.7.3 plan traceable while later v0.7 phases are current", () => {
     const featureList = JSON.parse(readFileSync("feature_list.json", "utf8")) as {
       phase: string;
       release_readiness: {
@@ -152,7 +152,7 @@ describe("v0.7.3 fake-only UX stabilization plan", () => {
     expect(v078?.status).toBe("accepted");
     expect(`${v078?.summary}\n${v078?.next_action}`).toContain("release-state closeout");
     expect(`${v078?.summary}\n${v078?.next_action}`).toContain("b28a803");
-    expect(v079?.phase).toBe(currentPhase);
+    expect(v079?.phase).toBe("KIA-Stick-v0.7.9-fake-only-operator-qa-smoke-pack");
     expect(v079?.status).toBe("accepted");
     expect(`${v079?.summary}\n${v079?.next_action}`).toContain("operator QA smoke");
     expect(`${v079?.summary}\n${v079?.next_action}`).toContain("936ae5a");

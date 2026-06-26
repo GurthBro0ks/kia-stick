@@ -3,7 +3,8 @@ import { existsSync, readFileSync, statSync } from "node:fs";
 import path from "node:path";
 
 const DEFAULT_BASE_URL = "http://127.0.0.1:3000";
-const phase = "KIA-Stick-v0.7.9-fake-only-operator-qa-smoke-pack";
+const operatorSmokePhase = "KIA-Stick-v0.7.9-fake-only-operator-qa-smoke-pack";
+const expectedCurrentPhase = "KIA-Stick-v0.7.12-fake-only-polish-and-real-doc-gate-planning";
 const productVersion = "0.7.0";
 const promptVersion = "prompt.fake-docs.v0.5-import-wizard-hardening";
 
@@ -96,7 +97,7 @@ function checkStaticContracts(root, problems) {
   const featureList = readJson(root, "feature_list.json", problems);
   const packageJson = readJson(root, "package.json", problems);
 
-  requireContains(problems, "smoke doc", doc, phase);
+  requireContains(problems, "smoke doc", doc, operatorSmokePhase);
   requireContains(problems, "smoke doc", doc, `Product version: \`${productVersion}\``);
   requireContains(problems, "smoke doc", doc, `Prompt version: \`${promptVersion}\``);
   for (const surface of ["Chat", "Sources", "Saved", "Upload", "Import", "Vault", "Settings", "`/health`", "`/version`", "Mobile / Narrow View"]) {
@@ -128,10 +129,12 @@ function checkStaticContracts(root, problems) {
 
   const actualProductVersion = constantValue(versionSource, "PRODUCT_VERSION", problems);
   const actualPromptVersion = constantValue(versionSource, "PROMPT_VERSION", problems);
-  const currentPhase = constantValue(versionSource, "CURRENT_PHASE", problems);
+  const actualCurrentPhase = constantValue(versionSource, "CURRENT_PHASE", problems);
   if (actualProductVersion !== productVersion) problems.push(`PRODUCT_VERSION must be ${productVersion}; found ${actualProductVersion || "missing"}`);
   if (actualPromptVersion !== promptVersion) problems.push(`PROMPT_VERSION must be ${promptVersion}; found ${actualPromptVersion || "missing"}`);
-  if (currentPhase !== phase) problems.push(`CURRENT_PHASE must be ${phase}; found ${currentPhase || "missing"}`);
+  if (actualCurrentPhase !== expectedCurrentPhase) {
+    problems.push(`CURRENT_PHASE must be ${expectedCurrentPhase}; found ${actualCurrentPhase || "missing"}`);
+  }
   if (packageJson?.scripts?.["operator:smoke"] !== "node scripts/operator-qa-smoke.mjs") problems.push("package.json must expose operator:smoke");
 
   const queue015 = queue?.items?.find?.((item) => item.id === "queue-015-v07-first-real-doc-gate-request");
@@ -141,7 +144,7 @@ function checkStaticContracts(root, problems) {
     problems.push(`queue-023 must be ready_to_push or accepted; found ${queue023?.status ?? "missing"}`);
   }
 
-  if (featureList?.phase !== phase) problems.push(`feature_list phase must be ${phase}`);
+  if (featureList?.phase !== expectedCurrentPhase) problems.push(`feature_list phase must be ${expectedCurrentPhase}`);
   if (featureList?.release_readiness?.product_version !== productVersion) problems.push("feature_list product version drifted");
   if (featureList?.release_readiness?.prompt_version !== promptVersion) problems.push("feature_list prompt version drifted");
   if (featureList?.v079_operator_qa_smoke_pack?.queue_015_status !== "blocked") problems.push("v0.7.9 feature state must keep queue-015 blocked");
@@ -161,7 +164,7 @@ async function checkLiveRoutes(baseUrl, requireServer, problems, notes) {
     return;
   }
 
-  if (healthJson.phase !== phase) problems.push(`/health phase mismatch: ${healthJson.phase}`);
+  if (healthJson.phase !== expectedCurrentPhase) problems.push(`/health phase mismatch: ${healthJson.phase}`);
   if (healthJson.productVersion !== productVersion) problems.push(`/health productVersion mismatch: ${healthJson.productVersion}`);
   if (healthJson.promptVersion !== promptVersion) problems.push(`/health promptVersion mismatch: ${healthJson.promptVersion}`);
   if (healthJson.fakeOnly !== true) problems.push("/health fakeOnly must be true");
@@ -214,7 +217,7 @@ async function main() {
     console.log("Operator QA smoke PASS");
     console.log(`Root: ${result.root}`);
     console.log(`Base URL: ${result.baseUrl}`);
-    console.log(`Phase: ${phase}`);
+    console.log(`Phase: ${expectedCurrentPhase}`);
     console.log(`Product version: ${productVersion}`);
     console.log(`Prompt version: ${promptVersion}`);
     for (const note of result.notes) console.log(note);
