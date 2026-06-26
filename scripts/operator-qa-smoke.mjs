@@ -1,0 +1,228 @@
+#!/usr/bin/env node
+import { existsSync, readFileSync, statSync } from "node:fs";
+import path from "node:path";
+
+const DEFAULT_BASE_URL = "http://127.0.0.1:3000";
+const phase = "KIA-Stick-v0.7.9-fake-only-operator-qa-smoke-pack";
+const productVersion = "0.7.0";
+const promptVersion = "prompt.fake-docs.v0.5-import-wizard-hardening";
+
+function parseArgs(argv) {
+  const result = {
+    baseUrl: DEFAULT_BASE_URL,
+    requireServer: false,
+    root: process.cwd(),
+  };
+
+  for (let index = 0; index < argv.length; index += 1) {
+    const arg = argv[index];
+    if (arg === "--base-url" && argv[index + 1]) {
+      result.baseUrl = argv[index + 1];
+      index += 1;
+    } else if (arg === "--require-server") {
+      result.requireServer = true;
+    } else if (arg === "--root" && argv[index + 1]) {
+      result.root = argv[index + 1];
+      index += 1;
+    } else if (/^https?:\/\//i.test(arg)) {
+      result.baseUrl = arg;
+    }
+  }
+
+  result.root = path.resolve(result.root);
+  return result;
+}
+
+function localBaseUrl(value) {
+  const parsed = new URL(value);
+  const host = parsed.hostname.toLowerCase();
+  if (!["127.0.0.1", "localhost", "::1"].includes(host)) {
+    throw new Error(`Base URL must stay on loopback; received ${value}`);
+  }
+  if (!["http:", "https:"].includes(parsed.protocol)) {
+    throw new Error(`Base URL must be http or https; received ${value}`);
+  }
+  parsed.pathname = parsed.pathname.replace(/\/+$/, "");
+  parsed.search = "";
+  parsed.hash = "";
+  return parsed;
+}
+
+function readText(root, file, problems) {
+  const target = path.join(root, file);
+  if (!existsSync(target)) {
+    problems.push(`Missing ${file}`);
+    return "";
+  }
+  if (!statSync(target).isFile()) {
+    problems.push(`${file} is not a file`);
+    return "";
+  }
+  return readFileSync(target, "utf8");
+}
+
+function readJson(root, file, problems) {
+  const text = readText(root, file, problems);
+  if (!text) return null;
+  try {
+    return JSON.parse(text);
+  } catch (error) {
+    problems.push(`Invalid JSON in ${file}: ${error instanceof Error ? error.message : String(error)}`);
+    return null;
+  }
+}
+
+function requireContains(problems, label, text, needle) {
+  if (!text.includes(needle)) problems.push(`${label} must contain ${needle}`);
+}
+
+function constantValue(source, name, problems) {
+  const escaped = name.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+  const match = source.match(new RegExp(`export\\s+const\\s+${escaped}\\s*=\\s*"([^"]+)"`));
+  if (!match) {
+    problems.push(`Missing ${name}`);
+    return "";
+  }
+  return match[1];
+}
+
+function checkStaticContracts(root, problems) {
+  const doc = readText(root, "docs/v0.7.9-operator-qa-smoke-pack.md", problems);
+  const component = readText(root, "components/KiaStickApp.tsx", problems);
+  const health = readText(root, "app/health/route.ts", problems);
+  const versionPage = readText(root, "app/version/page.tsx", problems);
+  const versionSource = readText(root, "lib/version.ts", problems);
+  const queue = readJson(root, "docs/phase-backlog.json", problems);
+  const featureList = readJson(root, "feature_list.json", problems);
+  const packageJson = readJson(root, "package.json", problems);
+
+  requireContains(problems, "smoke doc", doc, phase);
+  requireContains(problems, "smoke doc", doc, `Product version: \`${productVersion}\``);
+  requireContains(problems, "smoke doc", doc, `Prompt version: \`${promptVersion}\``);
+  for (const surface of ["Chat", "Sources", "Saved", "Upload", "Import", "Vault", "Settings", "`/health`", "`/version`", "Mobile / Narrow View"]) {
+    requireContains(problems, "smoke doc", doc, surface);
+  }
+  for (const marker of ["fake-only", "queue-015", "blocked", "operator:smoke", "no chooser opens", "no bytes are read"]) {
+    requireContains(problems, "smoke doc", doc, marker);
+  }
+
+  for (const marker of [
+    "Queue fake sample metadata",
+    "Queue fake batch metadata",
+    "No Saved record is created for no-answer responses.",
+    "fake source IDs",
+    "metadata and guard flags only",
+    "fake metadata rows",
+    "promptVersion",
+    "provider",
+  ]) {
+    requireContains(problems, "KiaStickApp", component, marker);
+  }
+
+  for (const marker of ["phase", "fakeOnly", "realDbTouched", "productVersion", "displayVersion", "promptVersion", "provider", "corpusVersion", "indexVersion", "gitSha"]) {
+    requireContains(problems, "health route", health, marker);
+  }
+  for (const marker of ["Display Version", "Product Version", "Build Date", "Git SHA", "Corpus", "Index", "Prompt", "Provider"]) {
+    requireContains(problems, "version page", versionPage, marker);
+  }
+
+  const actualProductVersion = constantValue(versionSource, "PRODUCT_VERSION", problems);
+  const actualPromptVersion = constantValue(versionSource, "PROMPT_VERSION", problems);
+  const currentPhase = constantValue(versionSource, "CURRENT_PHASE", problems);
+  if (actualProductVersion !== productVersion) problems.push(`PRODUCT_VERSION must be ${productVersion}; found ${actualProductVersion || "missing"}`);
+  if (actualPromptVersion !== promptVersion) problems.push(`PROMPT_VERSION must be ${promptVersion}; found ${actualPromptVersion || "missing"}`);
+  if (currentPhase !== phase) problems.push(`CURRENT_PHASE must be ${phase}; found ${currentPhase || "missing"}`);
+  if (packageJson?.scripts?.["operator:smoke"] !== "node scripts/operator-qa-smoke.mjs") problems.push("package.json must expose operator:smoke");
+
+  const queue015 = queue?.items?.find?.((item) => item.id === "queue-015-v07-first-real-doc-gate-request");
+  const queue023 = queue?.items?.find?.((item) => item.id === "queue-023-v079-operator-qa-smoke-pack");
+  if (queue015?.status !== "blocked") problems.push(`queue-015 must stay blocked; found ${queue015?.status ?? "missing"}`);
+  if (queue023?.status !== "ready_to_push") problems.push(`queue-023 must be ready_to_push; found ${queue023?.status ?? "missing"}`);
+
+  if (featureList?.phase !== phase) problems.push(`feature_list phase must be ${phase}`);
+  if (featureList?.release_readiness?.product_version !== productVersion) problems.push("feature_list product version drifted");
+  if (featureList?.release_readiness?.prompt_version !== promptVersion) problems.push("feature_list prompt version drifted");
+  if (featureList?.v079_operator_qa_smoke_pack?.queue_015_status !== "blocked") problems.push("v0.7.9 feature state must keep queue-015 blocked");
+}
+
+async function checkLiveRoutes(baseUrl, requireServer, problems, notes) {
+  let healthJson;
+  try {
+    const healthUrl = new URL("/health", baseUrl);
+    const healthResponse = await fetch(healthUrl, { signal: AbortSignal.timeout(1500) });
+    if (!healthResponse.ok) throw new Error(`HTTP ${healthResponse.status}`);
+    healthJson = await healthResponse.json();
+  } catch (error) {
+    const message = `local_route_checks=SKIPPED_SERVER_UNAVAILABLE (${error instanceof Error ? error.message : String(error)})`;
+    if (requireServer) problems.push(message);
+    else notes.push(message);
+    return;
+  }
+
+  if (healthJson.phase !== phase) problems.push(`/health phase mismatch: ${healthJson.phase}`);
+  if (healthJson.productVersion !== productVersion) problems.push(`/health productVersion mismatch: ${healthJson.productVersion}`);
+  if (healthJson.promptVersion !== promptVersion) problems.push(`/health promptVersion mismatch: ${healthJson.promptVersion}`);
+  if (healthJson.fakeOnly !== true) problems.push("/health fakeOnly must be true");
+  if (healthJson.realDbTouched !== false) problems.push("/health realDbTouched must be false");
+
+  try {
+    const versionUrl = new URL("/version", baseUrl);
+    const versionResponse = await fetch(versionUrl, { signal: AbortSignal.timeout(1500) });
+    if (!versionResponse.ok) throw new Error(`HTTP ${versionResponse.status}`);
+    const versionHtml = await versionResponse.text();
+    for (const marker of ["Display Version", "Product Version", "Build Date", "Git SHA", "Prompt", "Provider"]) {
+      if (!versionHtml.includes(marker)) problems.push(`/version must include ${marker}`);
+    }
+    notes.push("local_route_checks=PASS");
+  } catch (error) {
+    problems.push(`/version route check failed: ${error instanceof Error ? error.message : String(error)}`);
+  }
+}
+
+export async function runOperatorQaSmoke(options = {}) {
+  const root = path.resolve(options.root ?? process.cwd());
+  const baseUrl = localBaseUrl(options.baseUrl ?? DEFAULT_BASE_URL);
+  const problems = [];
+  const notes = [];
+
+  checkStaticContracts(root, problems);
+  await checkLiveRoutes(baseUrl, Boolean(options.requireServer), problems, notes);
+
+  return {
+    ok: problems.length === 0,
+    root,
+    baseUrl: baseUrl.toString(),
+    problems,
+    notes,
+  };
+}
+
+async function main() {
+  try {
+    const args = parseArgs(process.argv.slice(2));
+    const result = await runOperatorQaSmoke(args);
+    if (!result.ok) {
+      console.error("Operator QA smoke FAIL");
+      console.error(`Root: ${result.root}`);
+      console.error(`Base URL: ${result.baseUrl}`);
+      for (const problem of result.problems) console.error(`- ${problem}`);
+      process.exit(1);
+    }
+
+    console.log("Operator QA smoke PASS");
+    console.log(`Root: ${result.root}`);
+    console.log(`Base URL: ${result.baseUrl}`);
+    console.log(`Phase: ${phase}`);
+    console.log(`Product version: ${productVersion}`);
+    console.log(`Prompt version: ${promptVersion}`);
+    for (const note of result.notes) console.log(note);
+  } catch (error) {
+    console.error("Operator QA smoke ERROR");
+    console.error(error instanceof Error ? error.message : String(error));
+    process.exit(1);
+  }
+}
+
+if (import.meta.url === `file://${process.argv[1]}`) {
+  await main();
+}

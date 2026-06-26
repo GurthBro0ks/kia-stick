@@ -51,7 +51,7 @@ describe("task-queue", () => {
     const queue = mod.loadQueue(resolve("."));
 
     expect(queue.schema).toBe("kia-stick-local-task-queue.v1");
-    expect(queue.items).toHaveLength(22);
+    expect(queue.items).toHaveLength(23);
     expect(queue.items.map((item) => item.id)).toEqual([
       "queue-001-closeout-helper-hardening",
       "queue-002-fake-redaction-metadata-depth",
@@ -75,6 +75,7 @@ describe("task-queue", () => {
       "queue-020-v076-design-md-fake-only-ux-contract",
       "queue-021-v077-design-contract-drift-guard",
       "queue-022-v078-v07-release-state-closeout",
+      "queue-023-v079-operator-qa-smoke-pack",
     ]);
     expect(queue.items.slice(0, 10).every((item) => item.status === "accepted")).toBe(true);
     expect(queue.items[10].status).toBe("planned");
@@ -88,7 +89,8 @@ describe("task-queue", () => {
     expect(queue.items[18].status).toBe("accepted");
     expect(queue.items[19].status).toBe("accepted");
     expect(queue.items[20].status).toBe("accepted");
-    expect(queue.items[21].status).toBe("ready_to_push");
+    expect(queue.items[21].status).toBe("accepted");
+    expect(queue.items[22].status).toBe("ready_to_push");
     expect(queue.items.every((item) => item.history.length > 0)).toBe(true);
     expect(mod.validateQueue(queue)).toBe(true);
   });
@@ -150,7 +152,7 @@ describe("task-queue", () => {
     expect(text).not.toMatch(/\bshowOpenFilePicker\b|\bFileReader\b|\breadAsText\b|\breadAsArrayBuffer\b/i);
   });
 
-  it("tracks accepted v0.7.3 through v0.7.7 state and the active v0.7.8 closeout", async () => {
+  it("tracks accepted v0.7.3 through v0.7.8 state and the active v0.7.9 smoke pack", async () => {
     const mod = await loadModule();
     const queue = mod.loadQueue(resolve("."));
     const triage = queue.items.find((item) => item.id === "queue-017-v073-fake-only-ux-triage");
@@ -158,7 +160,8 @@ describe("task-queue", () => {
     const v075 = queue.items.find((item) => item.id === "queue-019-v075-sources-vault-import-polish");
     const v076 = queue.items.find((item) => item.id === "queue-020-v076-design-md-fake-only-ux-contract");
     const v077 = queue.items.find((item) => item.id === "queue-021-v077-design-contract-drift-guard");
-    const nextChunk = queue.items.find((item) => item.id === "queue-022-v078-v07-release-state-closeout");
+    const v078 = queue.items.find((item) => item.id === "queue-022-v078-v07-release-state-closeout");
+    const nextChunk = queue.items.find((item) => item.id === "queue-023-v079-operator-qa-smoke-pack");
     const realDocGate = queue.items.find((item) => item.id === "queue-015-v07-first-real-doc-gate-request");
 
     expect(triage?.phase).toBe("KIA-Stick-v0.7.3-fake-only-ux-triage-and-stabilization-plan");
@@ -184,15 +187,21 @@ describe("task-queue", () => {
     expect(`${v077?.summary}\n${v077?.next_action}`).toContain("design:check");
     expect(`${v077?.summary}\n${v077?.next_action}`).toContain("b086f85");
 
-    expect(nextChunk?.phase).toBe("KIA-Stick-v0.7.8-v0.7-release-state-closeout");
+    expect(v078?.phase).toBe("KIA-Stick-v0.7.8-v0.7-release-state-closeout");
+    expect(v078?.status).toBe("accepted");
+    expect(`${v078?.summary}\n${v078?.next_action}`).toContain("release-state closeout");
+    expect(`${v078?.summary}\n${v078?.next_action}`).toContain("b28a803");
+
+    expect(nextChunk?.phase).toBe("KIA-Stick-v0.7.9-fake-only-operator-qa-smoke-pack");
     expect(nextChunk?.status).toBe("ready_to_push");
-    expect(`${nextChunk?.summary}\n${nextChunk?.next_action}`).toContain("accepted v0.7.2 through v0.7.7 state");
-    expect(`${nextChunk?.summary}\n${nextChunk?.next_action}`).toContain("release-state closeout");
+    expect(`${nextChunk?.summary}\n${nextChunk?.next_action}`).toContain("operator QA smoke");
+    expect(`${nextChunk?.summary}\n${nextChunk?.next_action}`).toContain("/health");
+    expect(`${nextChunk?.summary}\n${nextChunk?.next_action}`).toContain("/version");
     expect(`${nextChunk?.summary}\n${nextChunk?.next_action}`).toContain("queue-015 remains blocked");
-    expect(`${nextChunk?.summary}\n${nextChunk?.next_action}`).toContain("no prohibited file or document capability");
+    expect(`${nextChunk?.summary}\n${nextChunk?.next_action}`).toContain("no prohibited real-doc capability");
     expect(realDocGate?.status).toBe("blocked");
 
-    const joined = [triage, v074, v077, nextChunk].map((item) => `${item?.summary}\n${item?.next_action}`).join("\n");
+    const joined = [triage, v074, v077, v078, nextChunk].map((item) => `${item?.summary}\n${item?.next_action}`).join("\n");
     expect(joined).not.toMatch(/<input[^>]*type=["']file/i);
     expect(joined).not.toMatch(/\bshowOpenFilePicker\b|\bFileReader\b|\breadAsText\b|\breadAsArrayBuffer\b/i);
   });

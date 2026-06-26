@@ -2,6 +2,7 @@ import { existsSync, readFileSync } from "node:fs";
 import { describe, expect, it } from "vitest";
 
 const phase = "KIA-Stick-v0.7.8-v0.7-release-state-closeout";
+const currentPhase = "KIA-Stick-v0.7.9-fake-only-operator-qa-smoke-pack";
 const closeoutPath = "docs/RELEASE_v0.7-closeout.md";
 const productVersion = "0.7.0";
 const promptVersion = "prompt.fake-docs.v0.5-import-wizard-hardening";
@@ -67,7 +68,7 @@ describe("v0.7.8 release-state closeout", () => {
 
     expect(realDocGate?.status).toBe("blocked");
     expect(releaseCloseout?.phase).toBe(phase);
-    expect(releaseCloseout?.status).toBe("ready_to_push");
+    expect(releaseCloseout?.status).toBe("accepted");
     expect(closeout).toContain("queue-015-v07-first-real-doc-gate-request");
     expect(closeout).toContain("remains `blocked`");
 
@@ -89,7 +90,7 @@ describe("v0.7.8 release-state closeout", () => {
     }
   });
 
-  it("advances feature state without changing product or prompt identity", () => {
+  it("keeps the v0.7.8 closeout traceable after v0.7.9 becomes current", () => {
     const featureList = JSON.parse(readFileSync("feature_list.json", "utf8")) as {
       phase: string;
       release_readiness: {
@@ -115,25 +116,27 @@ describe("v0.7.8 release-state closeout", () => {
         authorizes_real_doc_work: boolean;
         real_document_access: boolean;
         private_vault_inspected: boolean;
+        accepted_commit: string;
       };
     };
 
-    expect(featureList.phase).toBe(phase);
-    expect(featureList.release_readiness.phase).toBe(phase);
+    expect(featureList.phase).toBe(currentPhase);
+    expect(featureList.release_readiness.phase).toBe(currentPhase);
     expect(featureList.release_readiness.product_version).toBe(productVersion);
     expect(featureList.release_readiness.package_version).toBe(productVersion);
     expect(featureList.release_readiness.prompt_version).toBe(promptVersion);
     expect(featureList.v077_design_contract_drift_guard.status).toBe("accepted_after_push_verified");
     expect(featureList.v077_design_contract_drift_guard.accepted_commit).toBe("b086f85");
     expect(featureList.v078_v07_release_state_closeout.phase).toBe(phase);
-    expect(featureList.v078_v07_release_state_closeout.status).toBe("validation_passed");
+    expect(featureList.v078_v07_release_state_closeout.status).toBe("accepted_after_push_verified");
+    expect(featureList.v078_v07_release_state_closeout.accepted_commit).toBe("b28a803");
     expect(featureList.v078_v07_release_state_closeout.product_version).toBe(productVersion);
     expect(featureList.v078_v07_release_state_closeout.package_version).toBe(productVersion);
     expect(featureList.v078_v07_release_state_closeout.prompt_version).toBe(promptVersion);
     expect(featureList.v078_v07_release_state_closeout.previous_accepted_commit).toBe("b086f85");
     expect(featureList.v078_v07_release_state_closeout.queue_015_status).toBe("blocked");
     expect(featureList.v078_v07_release_state_closeout.queue_021_status).toBe("accepted_after_push_verified");
-    expect(featureList.v078_v07_release_state_closeout.queue_022_status).toBe("ready_to_push_after_validation_passed");
+    expect(featureList.v078_v07_release_state_closeout.queue_022_status).toBe("accepted_after_push_verified");
     expect(featureList.v078_v07_release_state_closeout.authorizes_real_doc_work).toBe(false);
     expect(featureList.v078_v07_release_state_closeout.real_document_access).toBe(false);
     expect(featureList.v078_v07_release_state_closeout.private_vault_inspected).toBe(false);

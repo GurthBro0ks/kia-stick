@@ -1,5 +1,33 @@
 # KIA Stick Closeout
 
+## v0.7.9 Fake-Only Operator QA Smoke Pack
+
+- Phase: `KIA-Stick-v0.7.9-fake-only-operator-qa-smoke-pack`
+- Baseline: accepted pushed v0.7.8 state at `b28a803`
+- Origin/main verified: `b28a803`
+- Scope: fake-only docs/tests/tooling smoke pack for repeatable operator QA across Chat, Sources, Saved, Upload, Import, Vault, Settings, `/health`, `/version`, and mobile/narrow review.
+- Product version: `0.7.0`
+- Package version: `0.7.0`
+- Prompt version: `prompt.fake-docs.v0.5-import-wizard-hardening`
+- Smoke checklist: `docs/v0.7.9-operator-qa-smoke-pack.md`
+- Smoke helper: `scripts/operator-qa-smoke.mjs`
+- NPM script: `npm run operator:smoke`
+- Tests added: `tests/operatorQaSmokePack.test.ts`
+- Proof directory: `/tmp/proof_kia_stick_v0_7_9_operator_qa_smoke_pack_20260626T012924Z`
+- Validation: PASS for operator smoke, design check, release check, QA, proof latest, queue next, closeout helper proof read, fake-doc scan, privacy scan, focused smoke/closeout/guard/queue/version tests, exact safety scans, `git diff --check`, and `git status --short`.
+- Queue state: `queue-022-v078-v07-release-state-closeout` accepted after pushed baseline `b28a803`; `queue-023-v079-operator-qa-smoke-pack` is ready for the task prompt auto-push gate; `queue-015-v07-first-real-doc-gate-request` remains blocked.
+- Real document access: none
+- Private vault inspected: no
+- Skills installed: no
+- Global agent config changed: no
+- Push performed: auto-push only if the task prompt's validation gates pass.
+
+## v0.7.9 Safety Boundary
+
+This phase does not approve real-doc work. It does not add file pickers, directory pickers, drag/drop import zones, path readers, file reads, copying, OCR, upload handlers, real redaction, embeddings, indexing, vector stores, private-vault inspection, service changes, credentials, skills, global agent config, or real-document access. `productVersion` remains `0.7.0` and `promptVersion` remains unchanged.
+
+---
+
 ## v0.7.8 v0.7 Release-State Closeout
 
 - Phase: `KIA-Stick-v0.7.8-v0.7-release-state-closeout`

@@ -12,6 +12,16 @@ KIA Stick separates milestone semver from build identity:
 
 `/health`, `/version`, the app header, settings, answer footer, and saved answer metadata expose the current `displayVersion`.
 
+## v0.7.9 Fake-Only Operator QA Smoke Pack
+
+Phase: `KIA-Stick-v0.7.9-fake-only-operator-qa-smoke-pack`.
+
+`docs/v0.7.9-operator-qa-smoke-pack.md` adds a repeatable fake-only operator QA checklist for Chat, Sources, Saved, Upload, Import, Vault, Settings, `/health`, `/version`, and mobile/narrow review. `scripts/operator-qa-smoke.mjs` adds a no-new-dependency local smoke helper exposed as `npm run operator:smoke`.
+
+`productVersion` stays `0.7.0`, `promptVersion` stays `prompt.fake-docs.v0.5-import-wizard-hardening`, and `queue-015-v07-first-real-doc-gate-request` remains blocked.
+
+This is **fake-only docs/tests/tooling work**. It does not change runtime UX, add file pickers, directory pickers, drag/drop import zones, path readers, uploads, OCR, real redaction, embeddings, indexing, vector stores, private-vault inspection, services, skills, global agent config, or real-document access.
+
 ## v0.7.8 v0.7 Release-State Closeout
 
 Phase: `KIA-Stick-v0.7.8-v0.7-release-state-closeout`.
