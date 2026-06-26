@@ -1,6 +1,6 @@
 {
   "schema": "kia-stick-local-task-queue.v1",
-  "updated_at": "2026-06-26T01:53:19.000Z",
+  "updated_at": "2026-06-26T09:33:56.000Z",
   "items": [
     {
       "id": "queue-001-closeout-helper-hardening",
@@ -639,6 +639,26 @@
           "from": "ready_to_push",
           "to": "accepted",
           "note": "v0.7.9 fake-only operator QA smoke pack accepted after pushed task commit 936ae5a and validation were verified; no runtime UI change or real-doc work approved."
+        }
+      ]
+    },
+    {
+      "id": "queue-024-v0710b-persistent-smoke-evidence-closeout",
+      "phase": "KIA-Stick-v0.7.10b-closeout-project-state-update",
+      "title": "v0.7.10b persistent smoke evidence closeout",
+      "status": "accepted",
+      "model": "GPT/Codex $100",
+      "risk": "low",
+      "summary": "Record accepted persistent operator smoke evidence for the fake-only v0.7.9 smoke pack, including the persistent proof folder, desktop pointer, 8 accepted screenshots, zero file inputs, zero file chooser events, and unchanged product/prompt identity.",
+      "next_action": "Accepted persistent smoke evidence verified at /home/mint/kia-stick-local-proofs/proof_kia_stick_v0_7_10b_operator_smoke_evidence_20260626T090618Z; queue-015 remains blocked and the next choice stays operator-selected.",
+      "created_at": "2026-06-26T09:33:56.000Z",
+      "updated_at": "2026-06-26T09:33:56.000Z",
+      "history": [
+        {
+          "at": "2026-06-26T09:33:56.000Z",
+          "from": "planned",
+          "to": "accepted",
+          "note": "v0.7.10b persistent smoke evidence accepted after operator QA PASS; docs/tests/state closeout only, no runtime UI change, no product/prompt change, and no real-doc work approved."
         }
       ]
     }

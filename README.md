@@ -12,6 +12,16 @@ KIA Stick separates milestone semver from build identity:
 
 `/health`, `/version`, the app header, settings, answer footer, and saved answer metadata expose the current `displayVersion`.
 
+## v0.7.10b Persistent Smoke Evidence Closeout
+
+Phase: `KIA-Stick-v0.7.10b-closeout-project-state-update`.
+
+`docs/v0.7.10b-persistent-smoke-evidence-closeout.md` records the accepted persistent operator smoke evidence for the existing fake-only v0.7.9 smoke pack. The accepted proof is `/home/mint/kia-stick-local-proofs/proof_kia_stick_v0_7_10b_operator_smoke_evidence_20260626T090618Z`, and `/home/mint/Desktop/kia-stick-proofs/LATEST_KIA_PROOF.txt` points to that proof folder.
+
+Operator QA is accepted as `PASS` for this persistent proof. The closeout records 8 accepted screenshots, `FILE_INPUT_COUNT=0`, `FILE_CHOOSER_EVENTS=0`, local/static smoke PASS, `productVersion` `0.7.0`, and `promptVersion` `prompt.fake-docs.v0.5-import-wizard-hardening`.
+
+This is **docs/tests/state closeout work only**. It does not change runtime UX, product version, prompt version, file affordances, real upload behavior, OCR, embeddings, indexing, vector stores, private-vault inspection, skills, global agent config, or real-document capability. `queue-015-v07-first-real-doc-gate-request` remains blocked.
+
 ## v0.7.9 Fake-Only Operator QA Smoke Pack
 
 Phase: `KIA-Stick-v0.7.9-fake-only-operator-qa-smoke-pack`.

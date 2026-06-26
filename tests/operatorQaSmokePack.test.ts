@@ -124,6 +124,7 @@ describe("v0.7.9 fake-only operator QA smoke pack", () => {
       phase: string;
       release_readiness: {
         phase: string;
+        status: string;
         product_version: string;
         package_version: string;
         prompt_version: string;
@@ -146,10 +147,22 @@ describe("v0.7.9 fake-only operator QA smoke pack", () => {
         private_vault_inspected: boolean;
         runtime_ui_changed: boolean;
       };
+      v0710b_persistent_smoke_evidence_closeout: {
+        phase: string;
+        status: string;
+        operator_qa_status: string;
+        screenshots_accepted: number;
+        file_input_count: number;
+        file_chooser_events: number;
+        queue_015_status: string;
+        runtime_ui_changed: boolean;
+        authorizes_real_doc_work: boolean;
+      };
     };
 
     expect(featureList.phase).toBe(phase);
     expect(featureList.release_readiness.phase).toBe(phase);
+    expect(featureList.release_readiness.status).toBe("v0710b_persistent_smoke_evidence_accepted");
     expect(featureList.release_readiness.product_version).toBe(productVersion);
     expect(featureList.release_readiness.package_version).toBe(productVersion);
     expect(featureList.release_readiness.prompt_version).toBe(promptVersion);
@@ -167,5 +180,14 @@ describe("v0.7.9 fake-only operator QA smoke pack", () => {
     expect(featureList.v079_operator_qa_smoke_pack.real_document_access).toBe(false);
     expect(featureList.v079_operator_qa_smoke_pack.private_vault_inspected).toBe(false);
     expect(featureList.v079_operator_qa_smoke_pack.runtime_ui_changed).toBe(false);
+    expect(featureList.v0710b_persistent_smoke_evidence_closeout.phase).toBe("KIA-Stick-v0.7.10b-closeout-project-state-update");
+    expect(featureList.v0710b_persistent_smoke_evidence_closeout.status).toBe("accepted_after_operator_qa_pass");
+    expect(featureList.v0710b_persistent_smoke_evidence_closeout.operator_qa_status).toBe("PASS");
+    expect(featureList.v0710b_persistent_smoke_evidence_closeout.screenshots_accepted).toBe(8);
+    expect(featureList.v0710b_persistent_smoke_evidence_closeout.file_input_count).toBe(0);
+    expect(featureList.v0710b_persistent_smoke_evidence_closeout.file_chooser_events).toBe(0);
+    expect(featureList.v0710b_persistent_smoke_evidence_closeout.queue_015_status).toBe("blocked");
+    expect(featureList.v0710b_persistent_smoke_evidence_closeout.runtime_ui_changed).toBe(false);
+    expect(featureList.v0710b_persistent_smoke_evidence_closeout.authorizes_real_doc_work).toBe(false);
   });
 });

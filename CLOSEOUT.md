@@ -1,5 +1,40 @@
 # KIA Stick Closeout
 
+## v0.7.10b Persistent Smoke Evidence Closeout
+
+- Phase: `KIA-Stick-v0.7.10b-closeout-project-state-update`
+- Evidence phase: `KIA-Stick-v0.7.10b-persistent-smoke-evidence-rerun`
+- Baseline before closeout: accepted pushed v0.7.9 state at `01de2397f75bd714d1e7a670e09e9dffbb3f2761`
+- Scope: docs/tests/state closeout recording accepted persistent smoke evidence for the fake-only v0.7.9 operator QA smoke pack.
+- Product version: `0.7.0`
+- Package version: `0.7.0`
+- Prompt version: `prompt.fake-docs.v0.5-import-wizard-hardening`
+- Closeout document: `docs/v0.7.10b-persistent-smoke-evidence-closeout.md`
+- Persistent evidence proof directory: `/home/mint/kia-stick-local-proofs/proof_kia_stick_v0_7_10b_operator_smoke_evidence_20260626T090618Z`
+- Desktop pointer file: `/home/mint/Desktop/kia-stick-proofs/LATEST_KIA_PROOF.txt`
+- Operator QA status: `PASS`
+- Manual QA status: `PASS`
+- Screenshots accepted: `8`
+- File input count: `0`
+- File chooser events: `0`
+- Local route smoke: PASS
+- Static operator smoke: PASS
+- Queue state: `queue-023-v079-operator-qa-smoke-pack` remains accepted; `queue-024-v0710b-persistent-smoke-evidence-closeout` records this evidence closeout as accepted; `queue-015-v07-first-real-doc-gate-request` remains blocked.
+- Real document access: none
+- Private vault inspected: no
+- Skills installed: no
+- Global agent config changed: no
+- Runtime UI changed: no
+- Product or prompt version changed: no
+- Validation: PASS for focused closeout/state tests, operator smoke, design check, release check, full QA gate, proof latest, queue next, fake-doc scan, privacy scan, and `git diff --check`.
+- Push performed: yes after validation, using the task-scoped closeout commit.
+
+## v0.7.10b Safety Boundary
+
+This closeout does not approve real-doc work. It does not add file pickers, directory pickers, drag/drop import zones, path readers, file reads, copying, OCR, upload handlers, real redaction, embeddings, indexing, vector stores, private-vault inspection, service changes, credentials, skills, global agent config, or real-document access. `productVersion` remains `0.7.0` and `promptVersion` remains unchanged.
+
+---
+
 ## v0.7.9 Fake-Only Operator QA Smoke Pack
 
 - Phase: `KIA-Stick-v0.7.9-fake-only-operator-qa-smoke-pack`

@@ -2,10 +2,39 @@
 
 ## Current Phase
 
-- Phase: `KIA-Stick-v0.7.9-fake-only-operator-qa-smoke-pack`
+- Phase: `KIA-Stick-v0.7.10b-closeout-project-state-update`
 - Target: `USER_LAPTOP_ONLY`
 - Provider: `local-fake-deterministic`
-- Status: accepted after pushed v0.7.9 task commit `936ae5a` and validation were verified; docs/tests/tooling only.
+- Status: recording accepted persistent v0.7.10b smoke evidence for the existing fake-only v0.7.9 operator QA smoke pack; docs/tests/state closeout only.
+
+## v0.7.10b Persistent Smoke Evidence Closeout State
+
+- Phase: `KIA-Stick-v0.7.10b-closeout-project-state-update`
+- Evidence phase: `KIA-Stick-v0.7.10b-persistent-smoke-evidence-rerun`
+- Baseline: origin/main and HEAD verified at accepted pushed state `01de2397f75bd714d1e7a670e09e9dffbb3f2761`.
+- Scope: docs/tests/state closeout recording accepted persistent operator smoke evidence; no runtime UX change.
+- Product version: `0.7.0`
+- Prompt version: `prompt.fake-docs.v0.5-import-wizard-hardening`
+- Persistent evidence proof directory: `/home/mint/kia-stick-local-proofs/proof_kia_stick_v0_7_10b_operator_smoke_evidence_20260626T090618Z`
+- Desktop pointer file: `/home/mint/Desktop/kia-stick-proofs/LATEST_KIA_PROOF.txt`
+- Operator QA status: `PASS`
+- Manual QA status: `PASS`
+- Screenshots accepted: `8`
+- File input count: `0`
+- File chooser events: `0`
+- Local route smoke: PASS
+- Static operator smoke: PASS
+- Queue state: `queue-023-v079-operator-qa-smoke-pack` remains accepted; `queue-024-v0710b-persistent-smoke-evidence-closeout` records this closeout as accepted; `queue-015-v07-first-real-doc-gate-request` remains `blocked`.
+- Real/private document access: none.
+- Private vault inspected: no.
+- Skills installed: no.
+- Global agent config changed: no.
+- Runtime UI changed: no.
+- Commands run so far: missing `/home/slimy/*` bootstrap checks, git status/ref before-state capture, persistent proof and desktop pointer checks, accepted proof result/screenshot/browser-evidence inspection, README/CLOSEOUT/progress/feature/queue/test inspection, scoped closeout docs/state/test edits, JSON parse checks, focused `npm run test -- tests/persistentSmokeEvidenceCloseout.test.ts tests/operatorQaSmokePack.test.ts tests/taskQueue.test.ts tests/fakeOnlyUxStabilizationPlan.test.ts tests/productVersionContractBump.test.ts tests/v07ReleaseStateCloseout.test.ts`, `npm run operator:smoke`, `npm run design:check`, `npm run release:check`, `PROOF_DIR=/tmp/proof_kia_stick_v0_7_10b_closeout_project_state_20260626T093141Z npm run qa`, `npm run proof:latest`, `npm run queue:next`, `npm run scan:fake`, `npm run scan:privacy`, `git diff --check`, pre-commit `npm run closeout:review`, and pre-commit `npm run closeout:summary`.
+- Files changed so far: `docs/v0.7.10b-persistent-smoke-evidence-closeout.md`, `feature_list.json`, `docs/phase-backlog.json`, `README.md`, `CLOSEOUT.md`, `claude-progress.md`, `tests/persistentSmokeEvidenceCloseout.test.ts`, `tests/operatorQaSmokePack.test.ts`, `tests/fakeOnlyUxStabilizationPlan.test.ts`, and `tests/taskQueue.test.ts`.
+- Proof directory for this repository closeout: `/tmp/proof_kia_stick_v0_7_10b_closeout_project_state_20260626T093141Z`
+- Validation: PASS. Pre-commit closeout helper WARN is expected until task-scoped changes are committed.
+- Remaining unknowns: final closeout commit SHA and push verification.
 
 ## v0.7.9 Fake-Only Operator QA Smoke Pack State
 

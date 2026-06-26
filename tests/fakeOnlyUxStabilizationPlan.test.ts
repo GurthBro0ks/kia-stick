@@ -113,7 +113,7 @@ describe("v0.7.3 fake-only UX stabilization plan", () => {
     expect(plan).not.toContain(privateVault);
   });
 
-  it("records v0.7.3 through v0.7.9 as accepted", () => {
+  it("records v0.7.3 through v0.7.10b as accepted", () => {
     const queue = JSON.parse(readFileSync("docs/phase-backlog.json", "utf8")) as {
       items: Array<{ id: string; phase: string; status: string; summary: string; next_action: string }>;
     };
@@ -125,6 +125,7 @@ describe("v0.7.3 fake-only UX stabilization plan", () => {
     const v077 = queue.items.find((item) => item.id === "queue-021-v077-design-contract-drift-guard");
     const v078 = queue.items.find((item) => item.id === "queue-022-v078-v07-release-state-closeout");
     const v079 = queue.items.find((item) => item.id === "queue-023-v079-operator-qa-smoke-pack");
+    const v0710b = queue.items.find((item) => item.id === "queue-024-v0710b-persistent-smoke-evidence-closeout");
 
     expect(v072?.status).toBe("accepted");
     expect(v072?.next_action).toContain("179f883");
@@ -156,6 +157,11 @@ describe("v0.7.3 fake-only UX stabilization plan", () => {
     expect(`${v079?.summary}\n${v079?.next_action}`).toContain("operator QA smoke");
     expect(`${v079?.summary}\n${v079?.next_action}`).toContain("936ae5a");
     expect(`${v079?.summary}\n${v079?.next_action}`).toContain("queue-015 remains blocked");
+    expect(v0710b?.phase).toBe("KIA-Stick-v0.7.10b-closeout-project-state-update");
+    expect(v0710b?.status).toBe("accepted");
+    expect(`${v0710b?.summary}\n${v0710b?.next_action}`).toContain("persistent operator smoke evidence");
+    expect(`${v0710b?.summary}\n${v0710b?.next_action}`).toContain("zero file inputs");
+    expect(`${v0710b?.summary}\n${v0710b?.next_action}`).toContain("queue-015 remains blocked");
   });
 
   it("does not add file input, picker, reader, OCR, upload, vector, or real-doc runtime code paths", () => {
