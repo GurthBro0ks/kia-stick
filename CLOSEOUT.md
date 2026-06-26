@@ -13,11 +13,12 @@
 - NPM script: `npm run packet:report`
 - Proof directory: `/tmp/proof_kia_stick_v0_7_15_synthetic_packet_report_runner_20260626T132621Z`
 - Operator QA PASS proof directory: `/tmp/proof_kia_stick_v0_7_15_operator_qa_pass_20260626T134540Z`
+- Closeout push proof directory: `/tmp/proof_kia_stick_v0_7_15_operator_qa_closeout_push_20260626T135213Z`
 - Runtime UI changed: no
 - Runtime capability changed: no
 - Validation tooling changed: yes, a local synthetic-only report runner was added for built-in fixtures.
 - Validation: PASS for packet report output, focused report/current-state tests, design check, release check, full QA gate, queue check, fake-doc scan, privacy scan, safety-boundary scans, `git diff --check`, and git status capture.
-- Queue state: `queue-030-v0715-synthetic-packet-report-runner` ready for closeout review after operator QA PASS; `queue-029-v0714-synthetic-approval-packet-validator` remains accepted; `queue-015-v07-first-real-doc-gate-request` remains blocked.
+- Queue state: `queue-030-v0715-synthetic-packet-report-runner` accepted after closeout validation and push; `queue-029-v0714-synthetic-approval-packet-validator` remains accepted; `queue-015-v07-first-real-doc-gate-request` remains blocked.
 - Manual QA status: PASS by operator prompt on 2026-06-26
 - Real document access: none
 - Real document named: no
@@ -28,8 +29,8 @@
 - Cron/timer/tmux/Caddy/DNS changed: no
 - Secrets printed: no
 - Discord sent: no
-- Push performed: no
-- HEAD/origin equality: not expected after the local validation commit until a later operator closeout authorizes push.
+- Push performed: yes, after closeout validation and task-scoped commit.
+- HEAD/origin equality: verified after push by the closeout proof.
 
 ## v0.7.15 Operator QA PASS Findings
 

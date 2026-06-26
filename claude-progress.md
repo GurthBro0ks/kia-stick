@@ -5,7 +5,7 @@
 - Phase: `KIA-Stick-v0.7.15-synthetic-packet-report-runner`
 - Target: `USER_LAPTOP_ONLY`
 - Provider: `local-fake-deterministic`
-- Status: validation PASS and operator QA PASS. Ready for closeout review. No push performed.
+- Status: accepted after validation PASS, operator QA PASS, and push. HEAD equals origin/main. Phase closed.
 
 ## v0.7.15 Synthetic Packet Report Runner State
 
@@ -17,7 +17,7 @@
 - Planning/review document: `docs/v0.7.15-synthetic-packet-report-runner.md`
 - Report helper: `scripts/synthetic-packet-report.mjs`
 - NPM script: `npm run packet:report`
-- Queue state: `queue-030-v0715-synthetic-packet-report-runner` ready for closeout review after operator QA PASS; `queue-029-v0714-synthetic-approval-packet-validator` remains accepted; `queue-015-v07-first-real-doc-gate-request` remains blocked.
+- Queue state: `queue-030-v0715-synthetic-packet-report-runner` accepted after push; `queue-029-v0714-synthetic-approval-packet-validator` remains accepted; `queue-015-v07-first-real-doc-gate-request` remains blocked.
 - Runtime UI changed: no
 - Runtime capability changed: no
 - Real/private document access: none
@@ -28,12 +28,13 @@
 - Discord sent: no
 - Proof directory for this phase: `/tmp/proof_kia_stick_v0_7_15_synthetic_packet_report_runner_20260626T132621Z`
 - Operator QA PASS proof directory: `/tmp/proof_kia_stick_v0_7_15_operator_qa_pass_20260626T134540Z`
-- Commands run so far: missing `/home/slimy/*` context handled by local repo state, git status before-state capture, attached prompt inspection, local AGENTS/progress inspection, scoped synthetic-only report helper/doc/state/test edits, JSON parse checks, packet report output, focused report/current-state tests, `npm run design:check`, `npm run release:check`, `PROOF_DIR=/tmp/proof_kia_stick_v0_7_15_synthetic_packet_report_runner_20260626T132621Z npm run qa`, `npm run queue:next`, `npm run scan:fake`, `npm run scan:privacy`, safety-boundary scans, `git diff --check`, git status capture, operator QA PASS recording, and queue-030 ready-to-push state update.
+- Closeout push proof directory: `/tmp/proof_kia_stick_v0_7_15_operator_qa_closeout_push_20260626T135213Z`
+- Commands run so far: missing `/home/slimy/*` context handled by local repo state, git status before-state capture, attached prompt inspection, local AGENTS/progress inspection, scoped synthetic-only report helper/doc/state/test edits, JSON parse checks, packet report output, focused report/current-state tests, `npm run design:check`, `npm run release:check`, `PROOF_DIR=/tmp/proof_kia_stick_v0_7_15_synthetic_packet_report_runner_20260626T132621Z npm run qa`, `npm run queue:next`, `npm run scan:fake`, `npm run scan:privacy`, safety-boundary scans, `git diff --check`, git status capture, operator QA PASS recording, queue-030 ready-to-push state update, closeout proof setup, closeout validation, queue-030 acceptance, task-scoped closeout commit, git push, and HEAD/origin equality proof.
 - Files changed so far: `docs/v0.7.15-synthetic-packet-report-runner.md`, `scripts/synthetic-packet-report.mjs`, `tests/syntheticPacketReportRunner.test.ts`, `docs/phase-backlog.json`, `feature_list.json`, `package.json`, `README.md`, `CLOSEOUT.md`, `claude-progress.md`, `scripts/operator-qa-smoke.mjs`, `tests/syntheticApprovalPacketValidator.test.ts`, `tests/planningOnlyRealDocGateRehearsal.test.ts`, `tests/taskQueue.test.ts`, `tests/operatorQaSmokePack.test.ts`, `tests/persistentSmokeEvidenceCloseout.test.ts`, `tests/v07ReleaseStateCloseout.test.ts`, `tests/productVersionContractBump.test.ts`, `tests/fakeOnlyPolishRealDocGatePlanning.test.ts`, and `tests/fakeOnlyUxStabilizationPlan.test.ts`.
 - Validation: PASS.
 - Manual QA status: PASS by operator prompt on 2026-06-26.
-- Push status: not performed; push requires a separate operator QA closeout prompt.
-- Remaining unknowns: closeout review and push approval.
+- Push status: performed after closeout validation PASS, operator QA PASS, and task-scoped commit; HEAD equals origin/main.
+- Remaining unknowns: none. Phase is fully closed.
 
 ## v0.7.14 Synthetic Approval-Packet Validator State
 
