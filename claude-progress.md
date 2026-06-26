@@ -5,7 +5,7 @@
 - Phase: `KIA-Stick-v0.7.14-synthetic-approval-packet-validator`
 - Target: `USER_LAPTOP_ONLY`
 - Provider: `local-fake-deterministic`
-- Status: validation PASS and operator QA PASS; ready for separate closeout review. No push.
+- Status: accepted after validation PASS, operator QA PASS, and push. HEAD equals origin/main. Phase closed.
 
 ## v0.7.14 Synthetic Approval-Packet Validator State
 
@@ -16,7 +16,7 @@
 - Prompt version: `prompt.fake-docs.v0.5-import-wizard-hardening`
 - Planning/review document: `docs/v0.7.14-synthetic-approval-packet-validator.md`
 - Validator module: `lib/syntheticApprovalPacketValidator.ts`
-- Queue state: `queue-029-v0714-synthetic-approval-packet-validator` ready to push after operator QA PASS; `queue-015-v07-first-real-doc-gate-request` remains blocked.
+- Queue state: `queue-029-v0714-synthetic-approval-packet-validator` accepted after push; `queue-015-v07-first-real-doc-gate-request` remains blocked.
 - Runtime UI changed: no
 - Runtime capability changed: no
 - Real/private document access: none
@@ -31,8 +31,8 @@
 - Files changed so far: `docs/v0.7.14-synthetic-approval-packet-validator.md`, `lib/syntheticApprovalPacketValidator.ts`, `tests/syntheticApprovalPacketValidator.test.ts`, `docs/phase-backlog.json`, `feature_list.json`, `README.md`, `CLOSEOUT.md`, `claude-progress.md`, `scripts/operator-qa-smoke.mjs`, `tests/planningOnlyRealDocGateRehearsal.test.ts`, `tests/taskQueue.test.ts`, `tests/operatorQaSmokePack.test.ts`, `tests/persistentSmokeEvidenceCloseout.test.ts`, `tests/v07ReleaseStateCloseout.test.ts`, `tests/productVersionContractBump.test.ts`, `tests/fakeOnlyPolishRealDocGatePlanning.test.ts`, and `tests/fakeOnlyUxStabilizationPlan.test.ts`.
 - Validation: PASS.
 - Manual QA status: PASS by operator prompt on 2026-06-26.
-- Push status: not pushed; push requires separate operator QA closeout prompt.
-- Remaining unknowns: separate closeout review and push authorization.
+- Push status: performed after closeout validation PASS, operator QA PASS, and task-scoped commit; HEAD equals origin/main.
+- Remaining unknowns: none. Phase is fully closed.
 
 ## v0.7.13 Planning-Only Real-Doc Gate Rehearsal State
 

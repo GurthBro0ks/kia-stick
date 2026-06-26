@@ -102,7 +102,7 @@ describe("task-queue", () => {
     expect(queue.items[25].status).toBe("accepted");
     expect(queue.items[26].status).toBe("accepted");
     expect(queue.items[27].status).toBe("accepted");
-    expect(queue.items[28].status).toBe("ready_to_push");
+    expect(queue.items[28].status).toBe("accepted");
     expect(queue.items.every((item) => item.history.length > 0)).toBe(true);
     expect(mod.validateQueue(queue)).toBe(true);
   });
@@ -246,7 +246,7 @@ describe("task-queue", () => {
     expect(`${rehearsal?.summary}\n${rehearsal?.next_action}`).toContain("synthetic-only");
     expect(`${rehearsal?.summary}\n${rehearsal?.next_action}`).toContain("queue-015 blocked");
     expect(validator?.phase).toBe("KIA-Stick-v0.7.14-synthetic-approval-packet-validator");
-    expect(validator?.status).toBe("ready_to_push");
+    expect(validator?.status).toBe("accepted");
     expect(`${validator?.summary}\n${validator?.next_action}`).toContain("synthetic-only");
     expect(`${validator?.summary}\n${validator?.next_action}`).toContain("queue-015 remains blocked");
     expect(realDocGate?.status).toBe("blocked");

@@ -16,7 +16,7 @@
 - Runtime capability changed: no
 - Validation tooling changed: yes, a pure in-memory synthetic packet validator was added.
 - Validation: PASS for focused validator/current-state tests, operator smoke static checks, design check, release check, full QA gate, queue check, fake-doc scan, privacy scan, safety-boundary scans, `git diff --check`, and git status capture.
-- Queue state: `queue-029-v0714-synthetic-approval-packet-validator` ready to push after operator QA PASS; `queue-015-v07-first-real-doc-gate-request` remains blocked.
+- Queue state: `queue-029-v0714-synthetic-approval-packet-validator` accepted after push; `queue-015-v07-first-real-doc-gate-request` remains blocked.
 - Manual QA status: PASS by operator prompt on 2026-06-26
 - Real document access: none
 - Real document named: no
@@ -27,7 +27,8 @@
 - Cron/timer/tmux/Caddy/DNS changed: no
 - Secrets printed: no
 - Discord sent: no
-- Push performed: no
+- Push performed: yes, after closeout validation and task-scoped commit.
+- HEAD/origin equality: verified after push by the closeout proof.
 
 ## v0.7.14 Operator QA PASS Findings
 

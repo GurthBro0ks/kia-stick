@@ -4,7 +4,7 @@ import { describe, expect, it } from "vitest";
 
 const phase = "KIA-Stick-v0.7.9-fake-only-operator-qa-smoke-pack";
 const currentPhase = "KIA-Stick-v0.7.14-synthetic-approval-packet-validator";
-const currentStatus = "v0714_synthetic_approval_packet_validator_operator_qa_pass_ready_for_closeout";
+const currentStatus = "v0714_synthetic_approval_packet_validator_accepted_after_push";
 const docPath = "docs/v0.7.9-operator-qa-smoke-pack.md";
 const scriptPath = "scripts/operator-qa-smoke.mjs";
 const productVersion = "0.7.0";

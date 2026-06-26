@@ -225,7 +225,7 @@
   ],
   "release_readiness": {
     "phase": "KIA-Stick-v0.7.14-synthetic-approval-packet-validator",
-    "status": "v0714_synthetic_approval_packet_validator_operator_qa_pass_ready_for_closeout",
+    "status": "v0714_synthetic_approval_packet_validator_accepted_after_push",
     "package_version": "0.7.0",
     "product_version": "0.7.0",
     "prompt_version": "prompt.fake-docs.v0.5-import-wizard-hardening",
@@ -2674,7 +2674,7 @@
   },
   "v0714_synthetic_approval_packet_validator": {
     "phase": "KIA-Stick-v0.7.14-synthetic-approval-packet-validator",
-    "status": "operator_qa_pass_ready_for_closeout",
+    "status": "accepted_after_push",
     "document": "docs/v0.7.14-synthetic-approval-packet-validator.md",
     "baseline": "f41109d064dcf9ca29188ecd3ffa19763eccc0d9",
     "proof_dir": "/tmp/proof_kia_stick_v0_7_14_synthetic_approval_packet_validator_20260626T121841Z",
@@ -2734,7 +2734,7 @@
     "notify_mode": "disabled_user_laptop",
     "dedupe_result": "not_applicable",
     "queue_015_status": "blocked",
-    "queue_029_status": "ready_to_push",
+    "queue_029_status": "accepted",
     "future_gate_rule": {
       "exactly_one_document": true,
       "exactly_one_gate": true,
