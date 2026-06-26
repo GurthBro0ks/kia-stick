@@ -12,6 +12,16 @@ KIA Stick separates milestone semver from build identity:
 
 `/health`, `/version`, the app header, settings, answer footer, and saved answer metadata expose the current `displayVersion`.
 
+## v0.8.0 Synthetic Governance Checkpoint Plan
+
+Phase: `KIA-Stick-v0.8.0-synthetic-governance-checkpoint-plan`.
+
+This checkpoint bundles the synthetic governance lane from v0.7.16 through v0.8.0 for one operator review. It adds the v0.7.17 synthetic packet fixture matrix, v0.7.18 `npm run governance:report` helper, v0.7.19 bundled operator QA pack, and v0.8.0 checkpoint plan.
+
+This is **synthetic-only docs/tests/tooling/state work**. It does not approve implementation, name or touch a real document, add runtime capability, change product version, change prompt version, accept arbitrary path input, read user-provided packet files, scan directories, add file pickers, directory pickers, drag/drop import zones, path readers, uploads, OCR, real redaction, text extraction, summarization, embeddings, indexing, vector stores, private-source inspection, services, secrets, Discord, skills, global config, or system changes.
+
+Final local validation is PASS. `queue-031-v0716-synthetic-packet-safety-drift-guard` through `queue-035-v080-synthetic-governance-checkpoint-plan` are `needs_review` for one bundle operator QA decision. `queue-030-v0715-synthetic-packet-report-runner` remains accepted. `queue-015-v07-first-real-doc-gate-request` remains blocked. Product version remains `0.7.0`; prompt version remains `prompt.fake-docs.v0.5-import-wizard-hardening`. No push is authorized by this batch.
+
 ## v0.7.16 Synthetic Packet Safety Drift Guard
 
 Phase: `KIA-Stick-v0.7.16-synthetic-packet-safety-drift-guard`.

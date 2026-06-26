@@ -4,6 +4,7 @@ import { pathToFileURL } from "node:url";
 import { describe, expect, it } from "vitest";
 
 const phase = "KIA-Stick-v0.7.16-synthetic-packet-safety-drift-guard";
+const currentPhase = "KIA-Stick-v0.8.0-synthetic-governance-checkpoint-plan";
 const reportPhase = "KIA-Stick-v0.7.15-synthetic-packet-report-runner";
 const docPath = "docs/v0.7.16-synthetic-packet-safety-drift-guard.md";
 const scriptPath = "scripts/synthetic-packet-safety-guard.mjs";
@@ -184,14 +185,14 @@ describe("v0.7.16 synthetic packet safety drift guard", () => {
     expect(packageJson.scripts["packet:report"]).toBe("node scripts/synthetic-packet-report.mjs");
     expect(packageJson.scripts["packet:guard"]).toBe("node scripts/synthetic-packet-safety-guard.mjs");
     expect(packageJson.version).toBe(productVersion);
-    expect(featureList.phase).toBe(phase);
-    expect(featureList.release_readiness.phase).toBe(phase);
-    expect(featureList.release_readiness.status).toBe("v0716_synthetic_packet_safety_drift_guard_needs_review");
+    expect(featureList.phase).toBe(currentPhase);
+    expect(featureList.release_readiness.phase).toBe(currentPhase);
+    expect(featureList.release_readiness.status).toBe("v080_synthetic_governance_bundle_needs_operator_review");
     expect(featureList.release_readiness.package_version).toBe(productVersion);
     expect(featureList.release_readiness.product_version).toBe(productVersion);
     expect(featureList.release_readiness.prompt_version).toBe(promptVersion);
     expect(featureList.v0716_synthetic_packet_safety_drift_guard.phase).toBe(phase);
-    expect(featureList.v0716_synthetic_packet_safety_drift_guard.status).toBe("validation_pass_needs_operator_review");
+    expect(featureList.v0716_synthetic_packet_safety_drift_guard.status).toBe("ready_for_operator_bundle_review");
     expect(featureList.v0716_synthetic_packet_safety_drift_guard.product_version).toBe(productVersion);
     expect(featureList.v0716_synthetic_packet_safety_drift_guard.package_version).toBe(productVersion);
     expect(featureList.v0716_synthetic_packet_safety_drift_guard.prompt_version).toBe(promptVersion);

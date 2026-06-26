@@ -51,7 +51,7 @@ describe("task-queue", () => {
     const queue = mod.loadQueue(resolve("."));
 
     expect(queue.schema).toBe("kia-stick-local-task-queue.v1");
-    expect(queue.items).toHaveLength(31);
+    expect(queue.items).toHaveLength(35);
     expect(queue.items.map((item) => item.id)).toEqual([
       "queue-001-closeout-helper-hardening",
       "queue-002-fake-redaction-metadata-depth",
@@ -84,6 +84,10 @@ describe("task-queue", () => {
       "queue-029-v0714-synthetic-approval-packet-validator",
       "queue-030-v0715-synthetic-packet-report-runner",
       "queue-031-v0716-synthetic-packet-safety-drift-guard",
+      "queue-032-v0717-synthetic-packet-fixture-matrix",
+      "queue-033-v0718-synthetic-governance-bundle-report",
+      "queue-034-v0719-bundled-operator-qa-pack",
+      "queue-035-v080-synthetic-governance-checkpoint-plan",
     ]);
     expect(queue.items.slice(0, 10).every((item) => item.status === "accepted")).toBe(true);
     expect(queue.items[10].status).toBe("planned");
@@ -107,6 +111,10 @@ describe("task-queue", () => {
     expect(queue.items[28].status).toBe("accepted");
     expect(queue.items[29].status).toBe("accepted");
     expect(queue.items[30].status).toBe("needs_review");
+    expect(queue.items[31].status).toBe("needs_review");
+    expect(queue.items[32].status).toBe("needs_review");
+    expect(queue.items[33].status).toBe("needs_review");
+    expect(queue.items[34].status).toBe("needs_review");
     expect(queue.items.every((item) => item.history.length > 0)).toBe(true);
     expect(mod.validateQueue(queue)).toBe(true);
   });
@@ -168,7 +176,7 @@ describe("task-queue", () => {
     expect(text).not.toMatch(/\bshowOpenFilePicker\b|\bFileReader\b|\breadAsText\b|\breadAsArrayBuffer\b/i);
   });
 
-  it("tracks accepted v0.7.3 through v0.7.16 safety drift guard state", async () => {
+  it("tracks accepted v0.7.3 through v0.8.0 synthetic governance bundle state", async () => {
     const mod = await loadModule();
     const queue = mod.loadQueue(resolve("."));
     const triage = queue.items.find((item) => item.id === "queue-017-v073-fake-only-ux-triage");
@@ -186,6 +194,10 @@ describe("task-queue", () => {
     const validator = queue.items.find((item) => item.id === "queue-029-v0714-synthetic-approval-packet-validator");
     const reportRunner = queue.items.find((item) => item.id === "queue-030-v0715-synthetic-packet-report-runner");
     const safetyGuard = queue.items.find((item) => item.id === "queue-031-v0716-synthetic-packet-safety-drift-guard");
+    const fixtureMatrix = queue.items.find((item) => item.id === "queue-032-v0717-synthetic-packet-fixture-matrix");
+    const governanceReport = queue.items.find((item) => item.id === "queue-033-v0718-synthetic-governance-bundle-report");
+    const bundledQa = queue.items.find((item) => item.id === "queue-034-v0719-bundled-operator-qa-pack");
+    const checkpoint = queue.items.find((item) => item.id === "queue-035-v080-synthetic-governance-checkpoint-plan");
     const realDocGate = queue.items.find((item) => item.id === "queue-015-v07-first-real-doc-gate-request");
 
     expect(triage?.phase).toBe("KIA-Stick-v0.7.3-fake-only-ux-triage-and-stabilization-plan");
@@ -263,9 +275,41 @@ describe("task-queue", () => {
     expect(safetyGuard?.status).toBe("needs_review");
     expect(`${safetyGuard?.summary}\n${safetyGuard?.next_action}`).toContain("fixed allowlist");
     expect(`${safetyGuard?.summary}\n${safetyGuard?.next_action}`).toContain("queue-015 remains blocked");
+    expect(fixtureMatrix?.phase).toBe("KIA-Stick-v0.7.17-synthetic-packet-fixture-matrix");
+    expect(fixtureMatrix?.status).toBe("needs_review");
+    expect(`${fixtureMatrix?.summary}\n${fixtureMatrix?.next_action}`).toContain("synthetic-only");
+    expect(`${fixtureMatrix?.summary}\n${fixtureMatrix?.next_action}`).toContain("queue-015 remains blocked");
+    expect(governanceReport?.phase).toBe("KIA-Stick-v0.7.18-synthetic-governance-bundle-report");
+    expect(governanceReport?.status).toBe("needs_review");
+    expect(`${governanceReport?.summary}\n${governanceReport?.next_action}`).toContain("GitHub-safe");
+    expect(`${governanceReport?.summary}\n${governanceReport?.next_action}`).toContain("queue-015 remains blocked");
+    expect(bundledQa?.phase).toBe("KIA-Stick-v0.7.19-bundled-operator-qa-pack");
+    expect(bundledQa?.status).toBe("needs_review");
+    expect(`${bundledQa?.summary}\n${bundledQa?.next_action}`).toContain("operator QA");
+    expect(`${bundledQa?.summary}\n${bundledQa?.next_action}`).toContain("queue-015 remains blocked");
+    expect(checkpoint?.phase).toBe("KIA-Stick-v0.8.0-synthetic-governance-checkpoint-plan");
+    expect(checkpoint?.status).toBe("needs_review");
+    expect(`${checkpoint?.summary}\n${checkpoint?.next_action}`).toContain("synthetic governance");
+    expect(`${checkpoint?.summary}\n${checkpoint?.next_action}`).toContain("queue-015 remains blocked");
     expect(realDocGate?.status).toBe("blocked");
 
-    const joined = [triage, v074, v077, v078, nextChunk, fakeOnlyPolish, operatorCloseout, rehearsal, validator, reportRunner, safetyGuard]
+    const joined = [
+      triage,
+      v074,
+      v077,
+      v078,
+      nextChunk,
+      fakeOnlyPolish,
+      operatorCloseout,
+      rehearsal,
+      validator,
+      reportRunner,
+      safetyGuard,
+      fixtureMatrix,
+      governanceReport,
+      bundledQa,
+      checkpoint,
+    ]
       .map((item) => `${item?.summary}\n${item?.next_action}`)
       .join("\n");
     expect(joined).not.toMatch(/<input[^>]*type=["']file/i);

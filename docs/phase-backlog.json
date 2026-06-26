@@ -1,6 +1,6 @@
 {
   "schema": "kia-stick-local-task-queue.v1",
-  "updated_at": "2026-06-26T14:18:30.000Z",
+  "updated_at": "2026-06-26T14:35:00.000Z",
   "items": [
     {
       "id": "queue-001-closeout-helper-hardening",
@@ -838,9 +838,9 @@
       "model": "GPT/Codex $100 coding plan",
       "risk": "medium",
       "summary": "Add a synthetic-only safety drift guard that reads a fixed allowlist of repo-owned validator/report-runner/state files and fails on drift toward path args, user-file reads, directory scans, file picker/upload/OCR/indexing/vector/private-source, or queue-015 unblock capability.",
-      "next_action": "Operator review requested after local validation PASS. Keep synthetic-only fixed allowlist guard; queue-015 remains blocked; do not push or approve real-doc implementation without a separate closeout.",
+      "next_action": "Included in the v0.7.16-to-v0.8.0 synthetic governance bundle for one operator QA decision; queue-015 remains blocked and no push is authorized.",
       "created_at": "2026-06-26T14:09:33.000Z",
-      "updated_at": "2026-06-26T14:18:30.000Z",
+      "updated_at": "2026-06-26T14:35:00.000Z",
       "history": [
         {
           "at": "2026-06-26T14:09:33.000Z",
@@ -853,6 +853,92 @@
           "from": "needs_review",
           "to": "needs_review",
           "note": "v0.7.16 synthetic packet safety drift guard validation PASS recorded with queue-015 still blocked, product/prompt unchanged, no runtime or real-doc capability approved, and no push performed."
+        },
+        {
+          "at": "2026-06-26T14:35:00.000Z",
+          "from": "needs_review",
+          "to": "needs_review",
+          "note": "Included in the v0.7.16-to-v0.8.0 synthetic governance bundle after validation PASS; queue-015 remains blocked and no push was performed."
+        }
+      ]
+    },
+    {
+      "id": "queue-032-v0717-synthetic-packet-fixture-matrix",
+      "phase": "KIA-Stick-v0.7.17-synthetic-packet-fixture-matrix",
+      "title": "v0.7.17 synthetic packet fixture matrix",
+      "risk": "medium",
+      "summary": "Add a synthetic-only in-memory fixture matrix with PASS/WARN/FAIL classes and unsafe examples for path-shaped, recursive, broad, private-source, queue-015 unblock, multiple-doc, multiple-gate, and upload/OCR/indexing/vector wording without packet loaders or user paths.",
+      "next_action": "Bundle operator review requested after final validation PASS; synthetic-only fixture matrix remains local, queue-015 remains blocked, and no push is authorized.",
+      "status": "needs_review",
+      "model": "GPT/Codex $100 coding plan",
+      "created_at": "2026-06-26T14:35:00.000Z",
+      "updated_at": "2026-06-26T14:35:00.000Z",
+      "history": [
+        {
+          "at": "2026-06-26T14:35:00.000Z",
+          "from": "planned",
+          "to": "needs_review",
+          "note": "KIA-Stick-v0.7.17-synthetic-packet-fixture-matrix prepared for synthetic governance bundle operator review; queue-015 remains blocked, product/prompt unchanged, no runtime or real-doc capability approved, and no push performed."
+        }
+      ]
+    },
+    {
+      "id": "queue-033-v0718-synthetic-governance-bundle-report",
+      "phase": "KIA-Stick-v0.7.18-synthetic-governance-bundle-report",
+      "title": "v0.7.18 synthetic governance bundle report",
+      "risk": "medium",
+      "summary": "Add a GitHub-safe synthetic governance report command that summarizes validator, packet report, safety guard, and fixture matrix outputs using built-in fixtures and fixed repo-owned metadata only.",
+      "next_action": "Bundle operator review requested after final validation PASS; governance report remains synthetic-only, queue-015 remains blocked, and no push is authorized.",
+      "status": "needs_review",
+      "model": "GPT/Codex $100 coding plan",
+      "created_at": "2026-06-26T14:35:00.000Z",
+      "updated_at": "2026-06-26T14:35:00.000Z",
+      "history": [
+        {
+          "at": "2026-06-26T14:35:00.000Z",
+          "from": "planned",
+          "to": "needs_review",
+          "note": "KIA-Stick-v0.7.18-synthetic-governance-bundle-report prepared for synthetic governance bundle operator review; queue-015 remains blocked, product/prompt unchanged, no runtime or real-doc capability approved, and no push performed."
+        }
+      ]
+    },
+    {
+      "id": "queue-034-v0719-bundled-operator-qa-pack",
+      "phase": "KIA-Stick-v0.7.19-bundled-operator-qa-pack",
+      "title": "v0.7.19 bundled operator QA pack",
+      "risk": "low",
+      "summary": "Create one operator QA checklist and copy-ready OPERATOR_QA_PASS template for v0.7.16 through v0.7.19 synthetic governance bundle review without approving real-doc work.",
+      "next_action": "Operator should review the full bundle proof and either provide bundle OPERATOR_QA_PASS or return WARN/FAIL findings; queue-015 remains blocked and no push is authorized.",
+      "status": "needs_review",
+      "model": "GPT/Codex $100 coding plan",
+      "created_at": "2026-06-26T14:35:00.000Z",
+      "updated_at": "2026-06-26T14:35:00.000Z",
+      "history": [
+        {
+          "at": "2026-06-26T14:35:00.000Z",
+          "from": "planned",
+          "to": "needs_review",
+          "note": "KIA-Stick-v0.7.19-bundled-operator-qa-pack prepared for synthetic governance bundle operator review; queue-015 remains blocked, product/prompt unchanged, no runtime or real-doc capability approved, and no push performed."
+        }
+      ]
+    },
+    {
+      "id": "queue-035-v080-synthetic-governance-checkpoint-plan",
+      "phase": "KIA-Stick-v0.8.0-synthetic-governance-checkpoint-plan",
+      "title": "v0.8.0 synthetic governance checkpoint plan",
+      "risk": "low",
+      "summary": "Record a synthetic governance checkpoint plan summarizing v0.7.13 through v0.7.19 while keeping productVersion 0.7.0, promptVersion unchanged, queue-015 remains blocked, and real-doc implementation not approved.",
+      "next_action": "Bundle operator review requested after final validation PASS; queue-015 remains blocked, then use a separate closeout prompt if accepted.",
+      "status": "needs_review",
+      "model": "GPT/Codex $100 coding plan",
+      "created_at": "2026-06-26T14:35:00.000Z",
+      "updated_at": "2026-06-26T14:35:00.000Z",
+      "history": [
+        {
+          "at": "2026-06-26T14:35:00.000Z",
+          "from": "planned",
+          "to": "needs_review",
+          "note": "KIA-Stick-v0.8.0-synthetic-governance-checkpoint-plan prepared for synthetic governance bundle operator review; queue-015 remains blocked, product/prompt unchanged, no runtime or real-doc capability approved, and no push performed."
         }
       ]
     }

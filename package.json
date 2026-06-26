@@ -21,6 +21,7 @@
     "design:check": "node scripts/design-contract-check.mjs",
     "packet:report": "node scripts/synthetic-packet-report.mjs",
     "packet:guard": "node scripts/synthetic-packet-safety-guard.mjs",
+    "governance:report": "node scripts/synthetic-governance-report.mjs",
     "operator:smoke": "node scripts/operator-qa-smoke.mjs",
     "phase:run": "node scripts/phase-runner.mjs",
     "proof:list": "node scripts/proof-index.mjs list",

@@ -2,10 +2,38 @@
 
 ## Current Phase
 
-- Phase: `KIA-Stick-v0.7.16-synthetic-packet-safety-drift-guard`
+- Phase: `KIA-Stick-v0.8.0-synthetic-governance-checkpoint-plan`
 - Target: `USER_LAPTOP_ONLY`
 - Provider: `local-fake-deterministic`
-- Status: validation PASS; queue-031 needs operator review; no push authorized.
+- Status: validation PASS; queue-031 through queue-035 need operator bundle review; no push authorized.
+
+## v0.7.16 to v0.8.0 Synthetic Governance Bundle State
+
+- Bundle phase: `KIA-Stick-v0.7.16-to-v0.8.0-synthetic-governance-bundle`
+- Current phase: `KIA-Stick-v0.8.0-synthetic-governance-checkpoint-plan`
+- Baseline: local v0.7.16 validation commit `634fb72796bddac486513ac16fbea8270fab2130`
+- Scope: synthetic-only governance lane covering v0.7.16 safety drift guard, v0.7.17 fixture matrix, v0.7.18 governance report, v0.7.19 bundled operator QA pack, and v0.8.0 checkpoint plan.
+- Product version: `0.7.0`
+- Prompt version: `prompt.fake-docs.v0.5-import-wizard-hardening`
+- New/updated docs: `docs/v0.7.17-synthetic-packet-fixture-matrix.md`, `docs/v0.7.18-synthetic-governance-bundle-report.md`, `docs/v0.7.19-bundled-operator-qa-pack.md`, `docs/v0.8.0-synthetic-governance-checkpoint-plan.md`
+- New helpers/modules: `lib/syntheticPacketFixtures.ts`, `scripts/synthetic-governance-report.mjs`
+- New npm script: `npm run governance:report`
+- Queue state: `queue-031` through `queue-035` need one operator bundle review; `queue-030` remains accepted; `queue-015-v07-first-real-doc-gate-request` remains blocked.
+- Runtime UI changed: no
+- Runtime capability changed: no
+- Real/private document access: none
+- Private source folders inspected: no
+- Skills installed: no
+- Global agent config changed: no
+- Services/cron/timers/tmux/Caddy/DNS changed: no
+- Discord sent: no
+- Proof directory for this bundle: `/tmp/proof_kia_stick_v0_7_16_to_v0_8_0_synthetic_governance_bundle_20260626T142836Z`
+- Commands run so far: attached prompt inspection, local harness/progress inspection, `source ./init.sh`, memory quick pass, git status/log before-state capture, v0.7.16 packet guard/report precheck, scoped synthetic-only bundle docs/tooling/state/test edits, `npm run governance:report`, focused bundle tests, `npm run packet:guard`, `npm run packet:report`, full final validation matrix, exact safety-boundary scan, `git diff --check`, and git status capture.
+- Files changed so far: `docs/v0.7.17-synthetic-packet-fixture-matrix.md`, `lib/syntheticPacketFixtures.ts`, `tests/syntheticPacketFixtureMatrix.test.ts`, `docs/v0.7.18-synthetic-governance-bundle-report.md`, `scripts/synthetic-governance-report.mjs`, `tests/syntheticGovernanceReport.test.ts`, `docs/v0.7.19-bundled-operator-qa-pack.md`, `tests/bundledOperatorQaPack.test.ts`, `docs/v0.8.0-synthetic-governance-checkpoint-plan.md`, `tests/v080SyntheticGovernanceCheckpoint.test.ts`, `docs/phase-backlog.json`, `feature_list.json`, `package.json`, `README.md`, `CLOSEOUT.md`, `claude-progress.md`, `scripts/operator-qa-smoke.mjs`, and current-phase tests.
+- Validation: PASS.
+- Manual QA status: pending operator bundle review.
+- Push status: not pushed; final local commit only if validation PASS.
+- Remaining unknowns: bundle local commit SHA and operator bundle QA decision.
 
 ## v0.7.16 Synthetic Packet Safety Drift Guard State
 

@@ -2,8 +2,8 @@ import { existsSync, readFileSync } from "node:fs";
 import { describe, expect, it } from "vitest";
 
 const phase = "KIA-Stick-v0.7.13-planning-only-real-doc-gate-rehearsal";
-const currentPhase = "KIA-Stick-v0.7.16-synthetic-packet-safety-drift-guard";
-const currentStatus = "v0716_synthetic_packet_safety_drift_guard_needs_review";
+const currentPhase = "KIA-Stick-v0.8.0-synthetic-governance-checkpoint-plan";
+const currentStatus = "v080_synthetic_governance_bundle_needs_operator_review";
 const docPath = "docs/v0.7.13-planning-only-real-doc-gate-rehearsal.md";
 const productVersion = "0.7.0";
 const promptVersion = "prompt.fake-docs.v0.5-import-wizard-hardening";
