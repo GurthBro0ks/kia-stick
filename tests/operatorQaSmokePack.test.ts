@@ -52,7 +52,7 @@ describe("v0.7.9 fake-only operator QA smoke pack", () => {
 
     expect(realDocGate?.status).toBe("blocked");
     expect(smokePack?.phase).toBe(phase);
-    expect(smokePack?.status).toBe("ready_to_push");
+    expect(smokePack?.status).toBe("accepted");
     expect(`${smokePack?.next_action}`).toContain("operator:smoke");
 
     for (const forbidden of [
@@ -156,13 +156,13 @@ describe("v0.7.9 fake-only operator QA smoke pack", () => {
     expect(featureList.v078_v07_release_state_closeout.status).toBe("accepted_after_push_verified");
     expect(featureList.v078_v07_release_state_closeout.accepted_commit).toBe("b28a803");
     expect(featureList.v079_operator_qa_smoke_pack.phase).toBe(phase);
-    expect(featureList.v079_operator_qa_smoke_pack.status).toBe("validation_passed");
+    expect(featureList.v079_operator_qa_smoke_pack.status).toBe("accepted_after_push_verified");
     expect(featureList.v079_operator_qa_smoke_pack.product_version).toBe(productVersion);
     expect(featureList.v079_operator_qa_smoke_pack.package_version).toBe(productVersion);
     expect(featureList.v079_operator_qa_smoke_pack.prompt_version).toBe(promptVersion);
     expect(featureList.v079_operator_qa_smoke_pack.queue_015_status).toBe("blocked");
     expect(featureList.v079_operator_qa_smoke_pack.queue_022_status).toBe("accepted_after_push_verified");
-    expect(featureList.v079_operator_qa_smoke_pack.queue_023_status).toBe("ready_to_push_after_validation_passed");
+    expect(featureList.v079_operator_qa_smoke_pack.queue_023_status).toBe("accepted_after_push_verified");
     expect(featureList.v079_operator_qa_smoke_pack.authorizes_real_doc_work).toBe(false);
     expect(featureList.v079_operator_qa_smoke_pack.real_document_access).toBe(false);
     expect(featureList.v079_operator_qa_smoke_pack.private_vault_inspected).toBe(false);

@@ -18,7 +18,7 @@ Phase: `KIA-Stick-v0.7.9-fake-only-operator-qa-smoke-pack`.
 
 `docs/v0.7.9-operator-qa-smoke-pack.md` adds a repeatable fake-only operator QA checklist for Chat, Sources, Saved, Upload, Import, Vault, Settings, `/health`, `/version`, and mobile/narrow review. `scripts/operator-qa-smoke.mjs` adds a no-new-dependency local smoke helper exposed as `npm run operator:smoke`.
 
-`productVersion` stays `0.7.0`, `promptVersion` stays `prompt.fake-docs.v0.5-import-wizard-hardening`, and `queue-015-v07-first-real-doc-gate-request` remains blocked.
+The pushed task commit `936ae5a` is accepted by the v0.7.9 acceptance closeout. `productVersion` stays `0.7.0`, `promptVersion` stays `prompt.fake-docs.v0.5-import-wizard-hardening`, `queue-023-v079-operator-qa-smoke-pack` is accepted, and `queue-015-v07-first-real-doc-gate-request` remains blocked.
 
 This is **fake-only docs/tests/tooling work**. It does not change runtime UX, add file pickers, directory pickers, drag/drop import zones, path readers, uploads, OCR, real redaction, embeddings, indexing, vector stores, private-vault inspection, services, skills, global agent config, or real-document access.
 

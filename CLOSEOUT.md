@@ -4,7 +4,7 @@
 
 - Phase: `KIA-Stick-v0.7.9-fake-only-operator-qa-smoke-pack`
 - Baseline: accepted pushed v0.7.8 state at `b28a803`
-- Origin/main verified: `b28a803`
+- Accepted pushed task commit verified: `936ae5a`
 - Scope: fake-only docs/tests/tooling smoke pack for repeatable operator QA across Chat, Sources, Saved, Upload, Import, Vault, Settings, `/health`, `/version`, and mobile/narrow review.
 - Product version: `0.7.0`
 - Package version: `0.7.0`
@@ -15,12 +15,12 @@
 - Tests added: `tests/operatorQaSmokePack.test.ts`
 - Proof directory: `/tmp/proof_kia_stick_v0_7_9_operator_qa_smoke_pack_20260626T012924Z`
 - Validation: PASS for operator smoke, design check, release check, QA, proof latest, queue next, closeout helper proof read, fake-doc scan, privacy scan, focused smoke/closeout/guard/queue/version tests, exact safety scans, `git diff --check`, and `git status --short`.
-- Queue state: `queue-022-v078-v07-release-state-closeout` accepted after pushed baseline `b28a803`; `queue-023-v079-operator-qa-smoke-pack` is ready for the task prompt auto-push gate; `queue-015-v07-first-real-doc-gate-request` remains blocked.
+- Queue state: `queue-022-v078-v07-release-state-closeout` accepted after pushed baseline `b28a803`; `queue-023-v079-operator-qa-smoke-pack` accepted after pushed task commit `936ae5a` and validation were verified; `queue-015-v07-first-real-doc-gate-request` remains blocked.
 - Real document access: none
 - Private vault inspected: no
 - Skills installed: no
 - Global agent config changed: no
-- Push performed: auto-push only if the task prompt's validation gates pass.
+- Push performed: yes for the v0.7.9 smoke pack; acceptance closeout proof records final post-push equality.
 
 ## v0.7.9 Safety Boundary
 

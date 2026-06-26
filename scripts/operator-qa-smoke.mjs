@@ -137,7 +137,9 @@ function checkStaticContracts(root, problems) {
   const queue015 = queue?.items?.find?.((item) => item.id === "queue-015-v07-first-real-doc-gate-request");
   const queue023 = queue?.items?.find?.((item) => item.id === "queue-023-v079-operator-qa-smoke-pack");
   if (queue015?.status !== "blocked") problems.push(`queue-015 must stay blocked; found ${queue015?.status ?? "missing"}`);
-  if (queue023?.status !== "ready_to_push") problems.push(`queue-023 must be ready_to_push; found ${queue023?.status ?? "missing"}`);
+  if (!["ready_to_push", "accepted"].includes(queue023?.status)) {
+    problems.push(`queue-023 must be ready_to_push or accepted; found ${queue023?.status ?? "missing"}`);
+  }
 
   if (featureList?.phase !== phase) problems.push(`feature_list phase must be ${phase}`);
   if (featureList?.release_readiness?.product_version !== productVersion) problems.push("feature_list product version drifted");

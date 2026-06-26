@@ -1,6 +1,6 @@
 {
   "schema": "kia-stick-local-task-queue.v1",
-  "updated_at": "2026-06-26T01:29:24.000Z",
+  "updated_at": "2026-06-26T01:53:19.000Z",
   "items": [
     {
       "id": "queue-001-closeout-helper-hardening",
@@ -620,19 +620,25 @@
       "id": "queue-023-v079-operator-qa-smoke-pack",
       "phase": "KIA-Stick-v0.7.9-fake-only-operator-qa-smoke-pack",
       "title": "v0.7.9 fake-only operator QA smoke pack",
-      "status": "ready_to_push",
+      "status": "accepted",
       "model": "GPT/Codex $100",
       "risk": "low",
       "summary": "Add a fake-only operator QA smoke checklist and no-new-dependency local smoke helper covering Chat, Sources, Saved, Upload, Import, Vault, Settings, /health, /version, and mobile/narrow review.",
-      "next_action": "Auto-push this docs/tests/tooling commit only if validation passes, queue-015 remains blocked, no prohibited real-doc capability is added, operator:smoke passes, and final HEAD equals origin/main after push.",
+      "next_action": "Accepted pushed state verified at 936ae5a by the v0.7.9 acceptance closeout after operator:smoke and validation passed; queue-015 remains blocked and the next choice stays operator-selected.",
       "created_at": "2026-06-26T01:29:24.000Z",
-      "updated_at": "2026-06-26T01:29:24.000Z",
+      "updated_at": "2026-06-26T01:53:19.000Z",
       "history": [
         {
           "at": "2026-06-26T01:29:24.000Z",
           "from": "planned",
           "to": "ready_to_push",
           "note": "v0.7.9 fake-only operator QA smoke pack seeded after accepted pushed v0.7.8 baseline b28a803; no runtime UI change or real-doc work approved."
+        },
+        {
+          "at": "2026-06-26T01:53:19.000Z",
+          "from": "ready_to_push",
+          "to": "accepted",
+          "note": "v0.7.9 fake-only operator QA smoke pack accepted after pushed task commit 936ae5a and validation were verified; no runtime UI change or real-doc work approved."
         }
       ]
     }

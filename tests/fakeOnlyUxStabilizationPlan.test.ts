@@ -113,7 +113,7 @@ describe("v0.7.3 fake-only UX stabilization plan", () => {
     expect(plan).not.toContain(privateVault);
   });
 
-  it("records v0.7.3 through v0.7.8 as accepted and advances v0.7.9 to the validation push gate", () => {
+  it("records v0.7.3 through v0.7.9 as accepted", () => {
     const queue = JSON.parse(readFileSync("docs/phase-backlog.json", "utf8")) as {
       items: Array<{ id: string; phase: string; status: string; summary: string; next_action: string }>;
     };
@@ -152,8 +152,9 @@ describe("v0.7.3 fake-only UX stabilization plan", () => {
     expect(`${v078?.summary}\n${v078?.next_action}`).toContain("release-state closeout");
     expect(`${v078?.summary}\n${v078?.next_action}`).toContain("b28a803");
     expect(v079?.phase).toBe(currentPhase);
-    expect(v079?.status).toBe("ready_to_push");
+    expect(v079?.status).toBe("accepted");
     expect(`${v079?.summary}\n${v079?.next_action}`).toContain("operator QA smoke");
+    expect(`${v079?.summary}\n${v079?.next_action}`).toContain("936ae5a");
     expect(`${v079?.summary}\n${v079?.next_action}`).toContain("queue-015 remains blocked");
   });
 

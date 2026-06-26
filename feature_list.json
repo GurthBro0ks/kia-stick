@@ -202,7 +202,7 @@
   ],
   "release_readiness": {
     "phase": "KIA-Stick-v0.7.9-fake-only-operator-qa-smoke-pack",
-    "status": "v079_operator_qa_smoke_pack_validation_passed",
+    "status": "v079_operator_qa_smoke_pack_accepted_after_push_verified",
     "package_version": "0.7.0",
     "product_version": "0.7.0",
     "prompt_version": "prompt.fake-docs.v0.5-import-wizard-hardening",
@@ -2243,7 +2243,7 @@
   },
   "v079_operator_qa_smoke_pack": {
     "phase": "KIA-Stick-v0.7.9-fake-only-operator-qa-smoke-pack",
-    "status": "validation_passed",
+    "status": "accepted_after_push_verified",
     "document": "docs/v0.7.9-operator-qa-smoke-pack.md",
     "script": "scripts/operator-qa-smoke.mjs",
     "npm_script": "operator:smoke",
@@ -2251,7 +2251,9 @@
     "selected_queue_item": "queue-023-v079-operator-qa-smoke-pack",
     "previous_accepted_phase": "KIA-Stick-v0.7.8-v0.7-release-state-closeout",
     "previous_accepted_commit": "b28a803",
+    "accepted_task_commit": "936ae5a",
     "proof_dir": "/tmp/proof_kia_stick_v0_7_9_operator_qa_smoke_pack_20260626T012924Z",
+    "acceptance_proof_dir": "/tmp/proof_kia_stick_v0_7_9_acceptance_closeout_20260626T015117Z",
     "product_version": "0.7.0",
     "package_version": "0.7.0",
     "prompt_version": "prompt.fake-docs.v0.5-import-wizard-hardening",
@@ -2289,7 +2291,7 @@
     ],
     "queue_015_status": "blocked",
     "queue_022_status": "accepted_after_push_verified",
-    "queue_023_status": "ready_to_push_after_validation_passed",
+    "queue_023_status": "accepted_after_push_verified",
     "authorizes_runtime_bump": false,
     "authorizes_prompt_bump": false,
     "authorizes_real_doc_work": false,
@@ -2305,7 +2307,7 @@
     "skills_installed": false,
     "symlinks_created": false,
     "global_agent_config_changed": false,
-    "push_performed": false,
+    "push_performed": true,
     "real_db_boundary": "real-doc source mount untouched"
   }
 }

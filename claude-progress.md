@@ -5,12 +5,13 @@
 - Phase: `KIA-Stick-v0.7.9-fake-only-operator-qa-smoke-pack`
 - Target: `USER_LAPTOP_ONLY`
 - Provider: `local-fake-deterministic`
-- Status: validation PASS for fake-only operator QA smoke pack from accepted pushed v0.7.8 baseline `b28a803`; docs/tests/tooling only, auto-pushed only if all gates PASS.
+- Status: accepted after pushed v0.7.9 task commit `936ae5a` and validation were verified; docs/tests/tooling only.
 
 ## v0.7.9 Fake-Only Operator QA Smoke Pack State
 
 - Phase: `KIA-Stick-v0.7.9-fake-only-operator-qa-smoke-pack`
-- Baseline: origin/main and HEAD verified at `b28a803`.
+- Baseline: origin/main and HEAD verified at accepted pushed v0.7.8 commit `b28a803`.
+- v0.7.9 task commit: pushed and verified at `936ae5a`.
 - v0.7.8 pushed state: recorded as accepted pushed commit `b28a803`.
 - Scope: fake-only operator QA smoke checklist and local-only smoke helper covering Chat, Sources, Saved, Upload, Import, Vault, Settings, `/health`, `/version`, and mobile/narrow review.
 - Product version: `0.7.0`
@@ -18,7 +19,7 @@
 - Smoke checklist: `docs/v0.7.9-operator-qa-smoke-pack.md`
 - Smoke helper: `scripts/operator-qa-smoke.mjs`
 - NPM script: `operator:smoke`
-- Queue state: `queue-022-v078-v07-release-state-closeout` accepted after pushed baseline `b28a803`; `queue-023-v079-operator-qa-smoke-pack` marked `ready_to_push`; `queue-015-v07-first-real-doc-gate-request` remains `blocked`.
+- Queue state: `queue-022-v078-v07-release-state-closeout` accepted after pushed baseline `b28a803`; `queue-023-v079-operator-qa-smoke-pack` accepted after pushed task commit `936ae5a` and validation were verified; `queue-015-v07-first-real-doc-gate-request` remains `blocked`.
 - Real/private document access: none.
 - Private vault inspected: no.
 - Skills installed: no.
@@ -27,7 +28,7 @@
 - Files changed so far: `docs/v0.7.9-operator-qa-smoke-pack.md`, `scripts/operator-qa-smoke.mjs`, `package.json`, `lib/version.ts`, `feature_list.json`, `docs/phase-backlog.json`, `README.md`, `CLOSEOUT.md`, `claude-progress.md`, `tests/operatorQaSmokePack.test.ts`, `tests/v07ReleaseStateCloseout.test.ts`, `tests/fakeOnlyUxStabilizationPlan.test.ts`, `tests/productVersionContractBump.test.ts`, and `tests/taskQueue.test.ts`.
 - Proof directory: `/tmp/proof_kia_stick_v0_7_9_operator_qa_smoke_pack_20260626T012924Z`
 - Validation: PASS.
-- Remaining unknowns: final commit SHA, post-commit closeout review, and push verification.
+- Remaining unknowns: final acceptance closeout commit SHA is recorded in the external proof result after push verification.
 
 ## v0.7.8 v0.7 Release-State Closeout State
 

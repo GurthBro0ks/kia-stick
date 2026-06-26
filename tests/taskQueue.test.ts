@@ -90,7 +90,7 @@ describe("task-queue", () => {
     expect(queue.items[19].status).toBe("accepted");
     expect(queue.items[20].status).toBe("accepted");
     expect(queue.items[21].status).toBe("accepted");
-    expect(queue.items[22].status).toBe("ready_to_push");
+    expect(queue.items[22].status).toBe("accepted");
     expect(queue.items.every((item) => item.history.length > 0)).toBe(true);
     expect(mod.validateQueue(queue)).toBe(true);
   });
@@ -152,7 +152,7 @@ describe("task-queue", () => {
     expect(text).not.toMatch(/\bshowOpenFilePicker\b|\bFileReader\b|\breadAsText\b|\breadAsArrayBuffer\b/i);
   });
 
-  it("tracks accepted v0.7.3 through v0.7.8 state and the active v0.7.9 smoke pack", async () => {
+  it("tracks accepted v0.7.3 through v0.7.9 state", async () => {
     const mod = await loadModule();
     const queue = mod.loadQueue(resolve("."));
     const triage = queue.items.find((item) => item.id === "queue-017-v073-fake-only-ux-triage");
@@ -193,12 +193,12 @@ describe("task-queue", () => {
     expect(`${v078?.summary}\n${v078?.next_action}`).toContain("b28a803");
 
     expect(nextChunk?.phase).toBe("KIA-Stick-v0.7.9-fake-only-operator-qa-smoke-pack");
-    expect(nextChunk?.status).toBe("ready_to_push");
+    expect(nextChunk?.status).toBe("accepted");
     expect(`${nextChunk?.summary}\n${nextChunk?.next_action}`).toContain("operator QA smoke");
     expect(`${nextChunk?.summary}\n${nextChunk?.next_action}`).toContain("/health");
     expect(`${nextChunk?.summary}\n${nextChunk?.next_action}`).toContain("/version");
+    expect(`${nextChunk?.summary}\n${nextChunk?.next_action}`).toContain("936ae5a");
     expect(`${nextChunk?.summary}\n${nextChunk?.next_action}`).toContain("queue-015 remains blocked");
-    expect(`${nextChunk?.summary}\n${nextChunk?.next_action}`).toContain("no prohibited real-doc capability");
     expect(realDocGate?.status).toBe("blocked");
 
     const joined = [triage, v074, v077, v078, nextChunk].map((item) => `${item?.summary}\n${item?.next_action}`).join("\n");
