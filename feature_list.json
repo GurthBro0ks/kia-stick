@@ -421,9 +421,9 @@
     "closeout_push_proof_dir": "/tmp/proof_kia_stick_v0_9_6_to_v0_9_10_synthetic_governance_hardening_closeout_push_20260627T131000Z",
     "head_equals_origin_main": true,
     "accepted_after_closeout_at": "2026-06-27T13:11:34.174Z",
-    "accepted_pushed_state": "verified_HEAD_equals_origin_main_after_closeout_push",
-    "status_notes": "KIA-Stick-v0.9.6-to-v0.9.10-synthetic-governance-hardening-bundle accepted after closeout validation PASS and operator QA PASS. Closeout/push proof: /tmp/proof_kia_stick_v0_9_6_to_v0_9_10_synthetic_governance_hardening_closeout_push_20260627T131000Z. queue-015 remains blocked, queue-051 through queue-055 are accepted, product/prompt unchanged, no real-doc implementation is approved, and push is authorized by this closeout gate.",
-    "pushed_commit_sha": "pending_closeout_commit_until_push",
+    "accepted_pushed_state": "accepted_closeout_push_verified_HEAD_equals_origin_main",
+    "status_notes": "KIA-Stick-v0.9.6-to-v0.9.10-synthetic-governance-hardening-bundle accepted after closeout validation PASS and operator QA PASS. Accepted closeout push commit: bb585ae3417084c5a57d1c572565fa4350247967. Closeout/push proof: /tmp/proof_kia_stick_v0_9_6_to_v0_9_10_synthetic_governance_hardening_closeout_push_20260627T131000Z. queue-015 remains blocked, queue-051 through queue-055 are accepted, product/prompt unchanged, no real-doc implementation is approved, and push is verified by this closeout gate.",
+    "pushed_commit_sha": "bb585ae3417084c5a57d1c572565fa4350247967",
     "proof_dir": "/tmp/proof_kia_stick_v0_9_6_to_v0_9_10_synthetic_governance_hardening_bundle_20260627T123948Z",
     "validation_outputs": [
       "focused-tests.txt",
@@ -458,12 +458,12 @@
     "original_bundle_proof_dir_status": "missing_replaced_by_closeout_validation",
     "replacement_proof_mode": false,
     "vault_fix_proof_dir": "/tmp/proof_kia_stick_v0_9_0_vault_client_exception_fix_20260627T091255Z",
-    "pushed_at": "pending_final_push_verification",
+    "pushed_at": "2026-06-27T13:21:56.116Z",
     "head_equals_origin_main_proof": "/tmp/proof_kia_stick_v0_9_6_to_v0_9_10_synthetic_governance_hardening_closeout_push_20260627T131000Z/head-origin-after-accepted-push.txt",
     "final_head_equals_origin_main_proof": "/tmp/proof_kia_stick_v0_9_6_to_v0_9_10_synthetic_governance_hardening_closeout_push_20260627T131000Z/head-origin-final.txt",
     "latest_accepted_pushed_phase": "KIA-Stick-v0.9.6-to-v0.9.10-synthetic-governance-hardening-closeout-and-push",
-    "accepted_closeout_push_commit": "pending_closeout_commit_until_push",
-    "final_pushed_state_commit": "pending_final_pushed_state_commit_until_push",
+    "accepted_closeout_push_commit": "bb585ae3417084c5a57d1c572565fa4350247967",
+    "final_pushed_state_commit": "bb585ae3417084c5a57d1c572565fa4350247967",
     "replacement_proof_dir": "not_needed_existing_bundle_and_closeout_proofs_present",
     "replacement_proof_status": "not_needed_existing_bundle_and_closeout_proofs_present",
     "persistent_proof_pointer_status": "updated",
@@ -4627,8 +4627,11 @@
     "closeout_validation": "PASS",
     "closeout_push_proof_dir": "/tmp/proof_kia_stick_v0_9_6_to_v0_9_10_synthetic_governance_hardening_closeout_push_20260627T131000Z",
     "accepted_after_closeout_at": "2026-06-27T13:11:34.174Z",
-    "accepted_pushed_state": "verified_HEAD_equals_origin_main_after_closeout_push",
-    "head_equals_origin_main": true
+    "accepted_pushed_state": "accepted_closeout_push_verified_HEAD_equals_origin_main",
+    "head_equals_origin_main": true,
+    "pushed_commit_sha": "bb585ae3417084c5a57d1c572565fa4350247967",
+    "accepted_closeout_push_commit": "bb585ae3417084c5a57d1c572565fa4350247967",
+    "pushed_at": "2026-06-27T13:21:56.116Z"
   },
   "v097_synthetic_approval_negative_fixtures": {
     "phase": "KIA-Stick-v0.9.7-synthetic-approval-negative-fixtures",
@@ -4689,8 +4692,11 @@
     "closeout_validation": "PASS",
     "closeout_push_proof_dir": "/tmp/proof_kia_stick_v0_9_6_to_v0_9_10_synthetic_governance_hardening_closeout_push_20260627T131000Z",
     "accepted_after_closeout_at": "2026-06-27T13:11:34.174Z",
-    "accepted_pushed_state": "verified_HEAD_equals_origin_main_after_closeout_push",
-    "head_equals_origin_main": true
+    "accepted_pushed_state": "accepted_closeout_push_verified_HEAD_equals_origin_main",
+    "head_equals_origin_main": true,
+    "pushed_commit_sha": "bb585ae3417084c5a57d1c572565fa4350247967",
+    "accepted_closeout_push_commit": "bb585ae3417084c5a57d1c572565fa4350247967",
+    "pushed_at": "2026-06-27T13:21:56.116Z"
   },
   "v098_synthetic_governance_report_hardening": {
     "phase": "KIA-Stick-v0.9.8-synthetic-governance-report-hardening",
@@ -4749,8 +4755,11 @@
     "closeout_validation": "PASS",
     "closeout_push_proof_dir": "/tmp/proof_kia_stick_v0_9_6_to_v0_9_10_synthetic_governance_hardening_closeout_push_20260627T131000Z",
     "accepted_after_closeout_at": "2026-06-27T13:11:34.174Z",
-    "accepted_pushed_state": "verified_HEAD_equals_origin_main_after_closeout_push",
-    "head_equals_origin_main": true
+    "accepted_pushed_state": "accepted_closeout_push_verified_HEAD_equals_origin_main",
+    "head_equals_origin_main": true,
+    "pushed_commit_sha": "bb585ae3417084c5a57d1c572565fa4350247967",
+    "accepted_closeout_push_commit": "bb585ae3417084c5a57d1c572565fa4350247967",
+    "pushed_at": "2026-06-27T13:21:56.116Z"
   },
   "v099_stop_on_warn_fail_closeout_guard": {
     "phase": "KIA-Stick-v0.9.9-stop-on-warn-fail-closeout-guard",
@@ -4809,8 +4818,11 @@
     "closeout_validation": "PASS",
     "closeout_push_proof_dir": "/tmp/proof_kia_stick_v0_9_6_to_v0_9_10_synthetic_governance_hardening_closeout_push_20260627T131000Z",
     "accepted_after_closeout_at": "2026-06-27T13:11:34.174Z",
-    "accepted_pushed_state": "verified_HEAD_equals_origin_main_after_closeout_push",
-    "head_equals_origin_main": true
+    "accepted_pushed_state": "accepted_closeout_push_verified_HEAD_equals_origin_main",
+    "head_equals_origin_main": true,
+    "pushed_commit_sha": "bb585ae3417084c5a57d1c572565fa4350247967",
+    "accepted_closeout_push_commit": "bb585ae3417084c5a57d1c572565fa4350247967",
+    "pushed_at": "2026-06-27T13:21:56.116Z"
   },
   "v0910_synthetic_governance_hardening_checkpoint": {
     "phase": "KIA-Stick-v0.9.10-synthetic-governance-hardening-checkpoint",
@@ -4872,7 +4884,10 @@
     "closeout_validation": "PASS",
     "closeout_push_proof_dir": "/tmp/proof_kia_stick_v0_9_6_to_v0_9_10_synthetic_governance_hardening_closeout_push_20260627T131000Z",
     "accepted_after_closeout_at": "2026-06-27T13:11:34.174Z",
-    "accepted_pushed_state": "verified_HEAD_equals_origin_main_after_closeout_push",
-    "head_equals_origin_main": true
+    "accepted_pushed_state": "accepted_closeout_push_verified_HEAD_equals_origin_main",
+    "head_equals_origin_main": true,
+    "pushed_commit_sha": "bb585ae3417084c5a57d1c572565fa4350247967",
+    "accepted_closeout_push_commit": "bb585ae3417084c5a57d1c572565fa4350247967",
+    "pushed_at": "2026-06-27T13:21:56.116Z"
   }
 }

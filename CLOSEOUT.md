@@ -5,6 +5,7 @@
 - Phase: `KIA-Stick-v0.9.6-to-v0.9.10-synthetic-governance-hardening-bundle`
 - Current project phase: `KIA-Stick-v0.9.10-synthetic-governance-hardening-checkpoint`
 - Baseline: accepted pushed v0.9.1-to-v0.9.5 closeout state at `3a6e28bb07f6c06883e4abda8f9e30c95f9549d0`
+- Accepted closeout push commit: `bb585ae3417084c5a57d1c572565fa4350247967`
 - Scope: synthetic-only docs/tests/tooling/state hardening for governance reality audit, approval-packet negative fixtures, packet/governance report output, stop-on-WARN/FAIL closeout guidance, and next-step checkpointing.
 - Product version: `0.7.0`
 - Package version: `0.7.0`
