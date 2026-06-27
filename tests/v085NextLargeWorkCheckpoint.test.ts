@@ -58,14 +58,14 @@ describe("v0.8.5 next large work checkpoint", () => {
 
     expect(featureList.phase).toBe(phase);
     expect(featureList.release_readiness.phase).toBe(phase);
-    expect(featureList.release_readiness.status).toBe("v081_v085_backlog_reconciliation_bundle_accepted_pending_push");
+    expect(featureList.release_readiness.status).toBe("v081_v085_backlog_reconciliation_bundle_accepted_after_closeout_push");
     expect(featureList.release_readiness.product_version).toBe(productVersion);
     expect(featureList.release_readiness.package_version).toBe(productVersion);
     expect(featureList.release_readiness.prompt_version).toBe(promptVersion);
     expect(featureList.release_readiness.manual_qa_status).toBe("PASS");
-    expect(featureList.release_readiness.push_performed).toBe(false);
+    expect(featureList.release_readiness.push_performed).toBe(true);
     expect(featureList.v085_next_large_work_checkpoint.phase).toBe(phase);
-    expect(featureList.v085_next_large_work_checkpoint.status).toBe("accepted_pending_closeout_push");
+    expect(featureList.v085_next_large_work_checkpoint.status).toBe("accepted_after_closeout_push");
     expect(featureList.v085_next_large_work_checkpoint.recommended_next_options).toHaveLength(4);
     expect(featureList.v085_next_large_work_checkpoint.queue_015_status).toBe("blocked");
     expect(featureList.v085_next_large_work_checkpoint.authorizes_product_version_bump).toBe(false);

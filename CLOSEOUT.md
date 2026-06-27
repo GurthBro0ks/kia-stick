@@ -11,12 +11,13 @@
 - Prompt version: `prompt.fake-docs.v0.5-import-wizard-hardening`
 - Proof directory: `/tmp/proof_kia_stick_v0_8_1_to_v0_8_5_backlog_reconciliation_bundle_20260626T214423Z`
 - Operator QA PASS proof directory: `/tmp/proof_kia_stick_v0_8_1_to_v0_8_5_operator_qa_pass_20260627T011147Z`
+- Closeout push proof directory: `/tmp/proof_kia_stick_v0_8_1_to_v0_8_5_backlog_reconciliation_bundle_closeout_push_20260627T013346Z`
 - Operator QA PASS source: `OPERATOR_QA_PASS` prompt on 2026-06-26
 - Runtime UI changed: no
 - Runtime capability changed: no
 - Validation tooling changed: yes, `npm run queue:next` now skips accepted, blocked, and parked queue items.
 - Validation: PASS for focused tests, full test suite, design check, release check with scoped v0.8.x product-version hold, full QA gate, queue list/next, fake-doc scan, privacy scan, exact safety-boundary scan, `git diff --check`, and git status capture.
-- Queue state: `queue-011` through `queue-014` are reconciled as accepted historical work; `queue-015-v07-first-real-doc-gate-request` remains blocked; `queue-036` through `queue-040` are `accepted` after closeout validation and operator QA PASS; pushed-state recording is pending.
+- Queue state: `queue-011` through `queue-014` are reconciled as accepted historical work; `queue-015-v07-first-real-doc-gate-request` remains blocked; `queue-036` through `queue-040` are `accepted` after closeout validation and operator QA PASS.
 - Manual QA status: PASS
 - Real document access: none
 - Real document named: no
@@ -27,8 +28,8 @@
 - Cron/timer/tmux/Caddy/DNS changed: no
 - Secrets printed: no
 - Discord sent: no
-- Push performed: no
-- Local commit: recorded in proof `local-commits.txt` after validation-gated commit
+- Push performed: yes, after closeout validation and operator QA PASS
+- Accepted pushed state: `cbf84827b4fa067b2e7ba68983f05a237e746e5b`; proof records `HEAD` equals `origin/main` after push.
 
 ## v0.8.1 to v0.8.5 Safety Boundary
 

@@ -5,7 +5,7 @@
 - Phase: `KIA-Stick-v0.8.5-next-large-work-checkpoint`
 - Target: `USER_LAPTOP_ONLY`
 - Provider: `local-fake-deterministic`
-- Status: validation PASS and operator QA PASS for v0.8.1 through v0.8.5 backlog reconciliation bundle; stale v0.7 queue placeholders reconciled, queue-next contract hardened, queue-036 through queue-040 accepted after closeout validation and operator QA PASS, closeout push pending, and no real-doc implementation approved.
+- Status: validation PASS and operator QA PASS for v0.8.1 through v0.8.5 backlog reconciliation bundle; stale v0.7 queue placeholders reconciled, queue-next contract hardened, queue-036 through queue-040 accepted after closeout validation and operator QA PASS, closeout push verified `HEAD` equals `origin/main` at `cbf84827b4fa067b2e7ba68983f05a237e746e5b`, and no real-doc implementation approved.
 
 ## v0.8.1 to v0.8.5 Backlog Reconciliation Bundle State
 
@@ -27,12 +27,12 @@
 - Services/cron/timers/tmux/Caddy/DNS changed: no
 - Discord sent: no
 - Proof directory for this bundle: `/tmp/proof_kia_stick_v0_8_1_to_v0_8_5_backlog_reconciliation_bundle_20260626T214423Z`
-- Commands run so far: attached prompt inspection, local harness/progress inspection, `source ./init.sh`, memory quick pass, git status and queue before-state capture, queue/tooling/test inspection, scoped docs/tests/tooling/state edits, focused tests, full test suite, `npm run queue:list`, `npm run queue:next`, `npm run design:check`, `npm run release:check`, `PROOF_DIR=/tmp/proof_kia_stick_v0_8_1_to_v0_8_5_backlog_reconciliation_bundle_20260626T214423Z npm run qa`, `npm run scan:fake`, `npm run scan:privacy`, exact safety-boundary scan, `git diff --check`, git status capture, operator QA PASS recording, queue-036 through queue-040 transition to `ready_to_push`, closeout validation setup, and queue-036 through queue-040 transition to `accepted`.
+- Commands run so far: attached prompt inspection, local harness/progress inspection, `source ./init.sh`, memory quick pass, git status and queue before-state capture, queue/tooling/test inspection, scoped docs/tests/tooling/state edits, focused tests, full test suite, `npm run queue:list`, `npm run queue:next`, `npm run design:check`, `npm run release:check`, `PROOF_DIR=/tmp/proof_kia_stick_v0_8_1_to_v0_8_5_backlog_reconciliation_bundle_20260626T214423Z npm run qa`, `npm run scan:fake`, `npm run scan:privacy`, exact safety-boundary scan, `git diff --check`, git status capture, operator QA PASS recording, queue-036 through queue-040 transition to `ready_to_push`, closeout validation setup, queue-036 through queue-040 transition to `accepted`, first closeout push, fetch, and `HEAD`/`origin/main` equality proof.
 - Files changed so far: `docs/v0.8.1-queue-reality-audit.md`, `tests/queueRealityAudit.test.ts`, `docs/v0.8.2-v07-v08-backlog-reconciliation.md`, `tests/v078BacklogReconciliation.test.ts`, `docs/v0.8.3-queue-next-contract-hardening.md`, `tests/queueNextContractHardening.test.ts`, `docs/v0.8.4-large-bundle-operator-workflow.md`, `tests/largeBundleOperatorWorkflow.test.ts`, `docs/v0.8.5-next-large-work-checkpoint.md`, `tests/v085NextLargeWorkCheckpoint.test.ts`, `docs/phase-backlog.json`, `feature_list.json`, `README.md`, `CLOSEOUT.md`, `claude-progress.md`, `scripts/task-queue.mjs`, `scripts/operator-qa-smoke.mjs`, and current-phase tests.
 - Validation: PASS.
 - Manual QA status: PASS by operator prompt on 2026-06-26.
-- Push status: closeout push pending.
-- Remaining unknowns: push result and pushed-state recording.
+- Push status: pushed and verified at `cbf84827b4fa067b2e7ba68983f05a237e746e5b`; pushed-state recording commit pending.
+- Remaining unknowns: final pushed-state recording commit push result.
 
 ## v0.7.16 to v0.8.0 Synthetic Governance Bundle State
 
