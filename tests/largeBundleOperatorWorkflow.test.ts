@@ -41,11 +41,11 @@ describe("v0.8.4 large bundle operator workflow", () => {
     const item = queue.items.find((candidate) => candidate.id === "queue-039-v084-large-bundle-operator-workflow");
 
     expect(featureList.v084_large_bundle_operator_workflow.phase).toBe(phase);
-    expect(featureList.v084_large_bundle_operator_workflow.status).toBe("operator_qa_pass_ready_to_push");
+    expect(featureList.v084_large_bundle_operator_workflow.status).toBe("accepted_pending_closeout_push");
     expect(featureList.v084_large_bundle_operator_workflow.push_performed).toBe(false);
     expect(featureList.v084_large_bundle_operator_workflow.authorizes_real_doc_work).toBe(false);
     expect(item?.phase).toBe(phase);
-    expect(item?.status).toBe("ready_to_push");
+    expect(item?.status).toBe("accepted");
     expect(`${item?.summary}\n${item?.next_action}`).toContain("one bundle operator QA");
   });
 });

@@ -1,6 +1,6 @@
 {
   "schema": "kia-stick-local-task-queue.v1",
-  "updated_at": "2026-06-27T01:12:07.709Z",
+  "updated_at": "2026-06-27T01:34:40.454Z",
   "items": [
     {
       "id": "queue-001-closeout-helper-hardening",
@@ -1036,13 +1036,13 @@
       "id": "queue-036-v081-queue-reality-audit",
       "phase": "KIA-Stick-v0.8.1-queue-reality-audit",
       "title": "v0.8.1 queue reality audit",
-      "status": "ready_to_push",
+      "status": "accepted",
       "model": "GPT/Codex $100",
       "risk": "low",
       "summary": "Audit why queue:next selected stale v0.7 placeholders after accepted v0.7.13 through v0.8.0 work; fake/synthetic docs/tests/state only.",
-      "next_action": "Ready for separate closeout/push review after operator QA PASS; do not push without explicit approval.",
+      "next_action": "Accepted for closeout push; this queue item is closed after push proof records HEAD equals origin/main.",
       "created_at": "2026-06-26T21:50:56.172Z",
-      "updated_at": "2026-06-27T01:12:07.508Z",
+      "updated_at": "2026-06-27T01:34:40.310Z",
       "history": [
         {
           "at": "2026-06-26T21:50:56.172Z",
@@ -1061,6 +1061,12 @@
           "from": "needs_review",
           "to": "ready_to_push",
           "note": "OPERATOR_QA_PASS recorded for the v0.8.1-to-v0.8.5 backlog reconciliation bundle; validation PASS, product/prompt unchanged, queue-015 remains blocked, no real-doc implementation approved, and no push performed."
+        },
+        {
+          "at": "2026-06-27T01:34:40.310Z",
+          "from": "ready_to_push",
+          "to": "accepted",
+          "note": "Accepted after v0.8.1-to-v0.8.5 closeout validation PASS and operator QA PASS. queue-015 remains blocked, product/prompt unchanged, no real-doc implementation is approved, and push is authorized by this closeout gate."
         }
       ]
     },
@@ -1068,13 +1074,13 @@
       "id": "queue-037-v082-v07-v08-backlog-reconciliation",
       "phase": "KIA-Stick-v0.8.2-v07-v08-backlog-reconciliation",
       "title": "v0.8.2 v0.7-v0.8 backlog reconciliation",
-      "status": "ready_to_push",
+      "status": "accepted",
       "model": "GPT/Codex $100",
       "risk": "medium",
       "summary": "Reconcile queue-011 through queue-014 using accepted repo evidence while preserving queue-015 as blocked.",
-      "next_action": "Ready for separate closeout/push review after operator QA PASS; queue-015 remains blocked.",
+      "next_action": "Accepted for closeout push; queue-011 through queue-014 remain accepted and queue-015 remains blocked.",
       "created_at": "2026-06-26T21:50:56.172Z",
-      "updated_at": "2026-06-27T01:12:07.556Z",
+      "updated_at": "2026-06-27T01:34:40.343Z",
       "history": [
         {
           "at": "2026-06-26T21:50:56.172Z",
@@ -1093,6 +1099,12 @@
           "from": "needs_review",
           "to": "ready_to_push",
           "note": "OPERATOR_QA_PASS recorded for the v0.8.1-to-v0.8.5 backlog reconciliation bundle; validation PASS, product/prompt unchanged, queue-015 remains blocked, no real-doc implementation approved, and no push performed."
+        },
+        {
+          "at": "2026-06-27T01:34:40.343Z",
+          "from": "ready_to_push",
+          "to": "accepted",
+          "note": "Accepted after v0.8.1-to-v0.8.5 closeout validation PASS and operator QA PASS. queue-015 remains blocked, product/prompt unchanged, no real-doc implementation is approved, and push is authorized by this closeout gate."
         }
       ]
     },
@@ -1100,13 +1112,13 @@
       "id": "queue-038-v083-queue-next-contract-hardening",
       "phase": "KIA-Stick-v0.8.3-queue-next-contract-hardening",
       "title": "v0.8.3 queue-next contract hardening",
-      "status": "ready_to_push",
+      "status": "accepted",
       "model": "GPT/Codex $100",
       "risk": "medium",
       "summary": "Harden queue:next so accepted, blocked, and parked items do not hide the next actionable planned/running/review/push task.",
-      "next_action": "Ready for separate closeout/push review after operator QA PASS; queue:next hardening is validated and no-push.",
+      "next_action": "Accepted for closeout push; queue:next hardening is closed after push proof.",
       "created_at": "2026-06-26T21:50:56.172Z",
-      "updated_at": "2026-06-27T01:12:07.609Z",
+      "updated_at": "2026-06-27T01:34:40.376Z",
       "history": [
         {
           "at": "2026-06-26T21:50:56.172Z",
@@ -1125,6 +1137,12 @@
           "from": "needs_review",
           "to": "ready_to_push",
           "note": "OPERATOR_QA_PASS recorded for the v0.8.1-to-v0.8.5 backlog reconciliation bundle; validation PASS, product/prompt unchanged, queue-015 remains blocked, no real-doc implementation approved, and no push performed."
+        },
+        {
+          "at": "2026-06-27T01:34:40.376Z",
+          "from": "ready_to_push",
+          "to": "accepted",
+          "note": "Accepted after v0.8.1-to-v0.8.5 closeout validation PASS and operator QA PASS. queue-015 remains blocked, product/prompt unchanged, no real-doc implementation is approved, and push is authorized by this closeout gate."
         }
       ]
     },
@@ -1132,13 +1150,13 @@
       "id": "queue-039-v084-large-bundle-operator-workflow",
       "phase": "KIA-Stick-v0.8.4-large-bundle-operator-workflow",
       "title": "v0.8.4 large bundle operator workflow",
-      "status": "ready_to_push",
+      "status": "accepted",
       "model": "GPT/Codex $100",
       "risk": "low",
       "summary": "Document one bundle operator QA workflow for multiple fake/synthetic subphases with stop-on-WARN/FAIL/safety rules and separate closeout/push.",
-      "next_action": "Ready for separate closeout/push review after operator QA PASS; one-bundle workflow is documented.",
+      "next_action": "Accepted for closeout push; large-bundle workflow documentation is closed after push proof.",
       "created_at": "2026-06-26T21:50:56.172Z",
-      "updated_at": "2026-06-27T01:12:07.657Z",
+      "updated_at": "2026-06-27T01:34:40.411Z",
       "history": [
         {
           "at": "2026-06-26T21:50:56.172Z",
@@ -1157,6 +1175,12 @@
           "from": "needs_review",
           "to": "ready_to_push",
           "note": "OPERATOR_QA_PASS recorded for the v0.8.1-to-v0.8.5 backlog reconciliation bundle; validation PASS, product/prompt unchanged, queue-015 remains blocked, no real-doc implementation approved, and no push performed."
+        },
+        {
+          "at": "2026-06-27T01:34:40.411Z",
+          "from": "ready_to_push",
+          "to": "accepted",
+          "note": "Accepted after v0.8.1-to-v0.8.5 closeout validation PASS and operator QA PASS. queue-015 remains blocked, product/prompt unchanged, no real-doc implementation is approved, and push is authorized by this closeout gate."
         }
       ]
     },
@@ -1164,13 +1188,13 @@
       "id": "queue-040-v085-next-large-work-checkpoint",
       "phase": "KIA-Stick-v0.8.5-next-large-work-checkpoint",
       "title": "v0.8.5 next large work checkpoint",
-      "status": "ready_to_push",
+      "status": "accepted",
       "model": "GPT/Codex $100",
       "risk": "low",
       "summary": "Create next large work options for fake-only UX polish, synthetic governance hardening, planning-only real-doc packet preparation, and release-state consolidation.",
-      "next_action": "Ready for separate closeout/push review after operator QA PASS; choose the next large work option only after this bundle is closed.",
+      "next_action": "Accepted for closeout push; choose the next large work option only after pushed state is recorded.",
       "created_at": "2026-06-26T21:50:56.172Z",
-      "updated_at": "2026-06-27T01:12:07.709Z",
+      "updated_at": "2026-06-27T01:34:40.454Z",
       "history": [
         {
           "at": "2026-06-26T21:50:56.172Z",
@@ -1189,6 +1213,12 @@
           "from": "needs_review",
           "to": "ready_to_push",
           "note": "OPERATOR_QA_PASS recorded for the v0.8.1-to-v0.8.5 backlog reconciliation bundle; validation PASS, product/prompt unchanged, queue-015 remains blocked, no real-doc implementation approved, and no push performed."
+        },
+        {
+          "at": "2026-06-27T01:34:40.454Z",
+          "from": "ready_to_push",
+          "to": "accepted",
+          "note": "Accepted after v0.8.1-to-v0.8.5 closeout validation PASS and operator QA PASS. queue-015 remains blocked, product/prompt unchanged, no real-doc implementation is approved, and push is authorized by this closeout gate."
         }
       ]
     }

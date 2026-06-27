@@ -16,7 +16,7 @@
 - Runtime capability changed: no
 - Validation tooling changed: yes, `npm run queue:next` now skips accepted, blocked, and parked queue items.
 - Validation: PASS for focused tests, full test suite, design check, release check with scoped v0.8.x product-version hold, full QA gate, queue list/next, fake-doc scan, privacy scan, exact safety-boundary scan, `git diff --check`, and git status capture.
-- Queue state: `queue-011` through `queue-014` are reconciled as accepted historical work; `queue-015-v07-first-real-doc-gate-request` remains blocked; `queue-036` through `queue-040` are `ready_to_push` after operator QA PASS and pending separate closeout/push review.
+- Queue state: `queue-011` through `queue-014` are reconciled as accepted historical work; `queue-015-v07-first-real-doc-gate-request` remains blocked; `queue-036` through `queue-040` are `accepted` after closeout validation and operator QA PASS; pushed-state recording is pending.
 - Manual QA status: PASS
 - Real document access: none
 - Real document named: no

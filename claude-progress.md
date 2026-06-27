@@ -5,7 +5,7 @@
 - Phase: `KIA-Stick-v0.8.5-next-large-work-checkpoint`
 - Target: `USER_LAPTOP_ONLY`
 - Provider: `local-fake-deterministic`
-- Status: validation PASS and operator QA PASS for v0.8.1 through v0.8.5 backlog reconciliation bundle; stale v0.7 queue placeholders reconciled, queue-next contract hardened, queue-036 through queue-040 ready_to_push, no push performed, and no real-doc implementation approved.
+- Status: validation PASS and operator QA PASS for v0.8.1 through v0.8.5 backlog reconciliation bundle; stale v0.7 queue placeholders reconciled, queue-next contract hardened, queue-036 through queue-040 accepted after closeout validation and operator QA PASS, closeout push pending, and no real-doc implementation approved.
 
 ## v0.8.1 to v0.8.5 Backlog Reconciliation Bundle State
 
@@ -17,7 +17,7 @@
 - Prompt version: `prompt.fake-docs.v0.5-import-wizard-hardening`
 - New/updated docs: `docs/v0.8.1-queue-reality-audit.md`, `docs/v0.8.2-v07-v08-backlog-reconciliation.md`, `docs/v0.8.3-queue-next-contract-hardening.md`, `docs/v0.8.4-large-bundle-operator-workflow.md`, `docs/v0.8.5-next-large-work-checkpoint.md`
 - New/updated tooling: `scripts/task-queue.mjs`
-- Queue state: `queue-011` through `queue-014` reconciled as accepted from repo-owned evidence; `queue-015-v07-first-real-doc-gate-request` remains blocked; `queue-036` through `queue-040` are `ready_to_push` after operator QA PASS.
+- Queue state: `queue-011` through `queue-014` reconciled as accepted from repo-owned evidence; `queue-015-v07-first-real-doc-gate-request` remains blocked; `queue-036` through `queue-040` are `accepted` after closeout validation and operator QA PASS.
 - Runtime UI changed: no
 - Runtime capability changed: no
 - Real/private document access: none
@@ -27,12 +27,12 @@
 - Services/cron/timers/tmux/Caddy/DNS changed: no
 - Discord sent: no
 - Proof directory for this bundle: `/tmp/proof_kia_stick_v0_8_1_to_v0_8_5_backlog_reconciliation_bundle_20260626T214423Z`
-- Commands run so far: attached prompt inspection, local harness/progress inspection, `source ./init.sh`, memory quick pass, git status and queue before-state capture, queue/tooling/test inspection, scoped docs/tests/tooling/state edits, focused tests, full test suite, `npm run queue:list`, `npm run queue:next`, `npm run design:check`, `npm run release:check`, `PROOF_DIR=/tmp/proof_kia_stick_v0_8_1_to_v0_8_5_backlog_reconciliation_bundle_20260626T214423Z npm run qa`, `npm run scan:fake`, `npm run scan:privacy`, exact safety-boundary scan, `git diff --check`, git status capture, operator QA PASS recording, and queue-036 through queue-040 transition to `ready_to_push`.
+- Commands run so far: attached prompt inspection, local harness/progress inspection, `source ./init.sh`, memory quick pass, git status and queue before-state capture, queue/tooling/test inspection, scoped docs/tests/tooling/state edits, focused tests, full test suite, `npm run queue:list`, `npm run queue:next`, `npm run design:check`, `npm run release:check`, `PROOF_DIR=/tmp/proof_kia_stick_v0_8_1_to_v0_8_5_backlog_reconciliation_bundle_20260626T214423Z npm run qa`, `npm run scan:fake`, `npm run scan:privacy`, exact safety-boundary scan, `git diff --check`, git status capture, operator QA PASS recording, queue-036 through queue-040 transition to `ready_to_push`, closeout validation setup, and queue-036 through queue-040 transition to `accepted`.
 - Files changed so far: `docs/v0.8.1-queue-reality-audit.md`, `tests/queueRealityAudit.test.ts`, `docs/v0.8.2-v07-v08-backlog-reconciliation.md`, `tests/v078BacklogReconciliation.test.ts`, `docs/v0.8.3-queue-next-contract-hardening.md`, `tests/queueNextContractHardening.test.ts`, `docs/v0.8.4-large-bundle-operator-workflow.md`, `tests/largeBundleOperatorWorkflow.test.ts`, `docs/v0.8.5-next-large-work-checkpoint.md`, `tests/v085NextLargeWorkCheckpoint.test.ts`, `docs/phase-backlog.json`, `feature_list.json`, `README.md`, `CLOSEOUT.md`, `claude-progress.md`, `scripts/task-queue.mjs`, `scripts/operator-qa-smoke.mjs`, and current-phase tests.
 - Validation: PASS.
 - Manual QA status: PASS by operator prompt on 2026-06-26.
-- Push status: not pushed.
-- Remaining unknowns: separate closeout/push decision.
+- Push status: closeout push pending.
+- Remaining unknowns: push result and pushed-state recording.
 
 ## v0.7.16 to v0.8.0 Synthetic Governance Bundle State
 

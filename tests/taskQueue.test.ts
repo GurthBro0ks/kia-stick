@@ -120,7 +120,7 @@ describe("task-queue", () => {
     expect(queue.items[32].status).toBe("accepted");
     expect(queue.items[33].status).toBe("accepted");
     expect(queue.items[34].status).toBe("accepted");
-    expect(queue.items.slice(35).every((item) => item.status === "ready_to_push")).toBe(true);
+    expect(queue.items.slice(35).every((item) => item.status === "accepted")).toBe(true);
     expect(queue.items.every((item) => item.history.length > 0)).toBe(true);
     expect(mod.validateQueue(queue)).toBe(true);
   });
@@ -132,6 +132,7 @@ describe("task-queue", () => {
       queue.items[index].status = "accepted";
     }
     queue.items[14].status = "blocked";
+    queue.items[35].status = "ready_to_push";
 
     expect(mod.selectNextItem(queue)?.id).toBe("queue-036-v081-queue-reality-audit");
   });
@@ -417,9 +418,9 @@ describe("task-queue", () => {
     const result = spawnSync("node", [scriptPath, "next"], { cwd: resolve("."), encoding: "utf8" });
 
     expect(result.status).toBe(0);
-    expect(result.stdout).toContain("id=queue-036-v081-queue-reality-audit");
-    expect(result.stdout).toContain("Codex-ready summary:");
-    expect(result.stdout).toContain("KIA-Stick-v0.8.1-queue-reality-audit");
+    expect(result.stdout).toContain("No actionable queue items");
+    expect(result.stdout).not.toContain("Codex-ready summary:");
+    expect(result.stdout).not.toContain("id=queue-015-v07-first-real-doc-gate-request");
   });
 
   it("does not execute git push from queue commands", () => {
