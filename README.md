@@ -34,6 +34,16 @@ This planning-only phase captures npm audit evidence and records a future depend
 
 `docs/v0.9.11-dependency-security-triage-plan.md` records the risk matrix, runtime/dev/build/test impact, no-fix decision, and recommended future phase `KIA-Stick-v0.9.12-dependency-security-fix-plan-or-implementation`. `package.json` and `package-lock.json` are unchanged. Product/package version remains `0.7.0`; prompt version remains `prompt.fake-docs.v0.5-import-wizard-hardening`; `queue-015-v07-first-real-doc-gate-request` remains blocked. No runtime code, dependency version, real-doc capability, service, Discord, or system change is approved.
 
+## v0.9.12A Vitest Dev/Test Security Fix
+
+Phase: `KIA-Stick-v0.9.12A-vitest-dev-test-security-fix`.
+
+This implementation phase handles only the Vitest dev/test dependency security path from the accepted v0.9.11 triage. It updates direct dev dependency `vitest` from `^2.1.8` / lockfile `2.1.9` to `^3.2.6` / lockfile `3.2.6` with the targeted command `npm install --save-dev vitest@3.2.6`. The resulting dev/test chain is `vite@7.3.6`, `vite-node@3.2.4`, `@vitest/mocker@3.2.6`, and `esbuild@0.28.1`.
+
+After the targeted update, npm audit reports no remaining `vitest`, `vite`, `vite-node`, `@vitest/mocker`, or `esbuild` advisory entries. Remaining audit work is the deferred Next/runtime path: `next` and transitive `postcss`, tracked for `KIA-Stick-v0.9.12B-next-runtime-framework-security-plan`.
+
+`package.json` and `package-lock.json` changed only for the targeted Vitest dev/test update. `next`, `react`, `react-dom`, and top-level `postcss` package-lock versions are unchanged. Product/package version remains `0.7.0`; prompt version remains `prompt.fake-docs.v0.5-import-wizard-hardening`; `queue-015-v07-first-real-doc-gate-request` remains blocked. No runtime code, real-doc capability, service, Discord, system change, `npm audit fix`, `npm update`, or push is approved by this phase.
+
 ## v0.9.1 to v0.9.5 Release-State Consolidation and Proof Durability Bundle
 
 Phase: `KIA-Stick-v0.9.1-to-v0.9.5-release-state-consolidation-and-proof-durability-bundle`.

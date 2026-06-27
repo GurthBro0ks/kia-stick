@@ -5,7 +5,29 @@
 - Phase: `KIA-Stick-v0.9.6-to-v0.9.10-synthetic-governance-hardening-closeout-and-push`
 - Target: `USER_LAPTOP_ONLY`
 - Provider: `local-fake-deterministic`
-- Status: v0.9.6 through v0.9.10 synthetic governance hardening bundle has operator QA PASS and closeout validation PASS recorded; queue-051 through queue-055 are accepted, queue-015 remains blocked, product/prompt unchanged, accepted state is pushed at `48abdbe`, and no real-doc implementation is approved. Post-closeout snapshot/mobile proof is accepted with operator QA PASS, and v0.9.11 dependency/security triage planning is recorded without package or runtime changes.
+- Status: v0.9.6 through v0.9.10 synthetic governance hardening bundle has operator QA PASS and closeout validation PASS recorded; queue-051 through queue-055 are accepted, queue-015 remains blocked, product/prompt unchanged, accepted state is pushed at `48abdbe`, and no real-doc implementation is approved. Post-closeout snapshot/mobile proof is accepted with operator QA PASS, v0.9.11 dependency/security triage planning is pushed at `915b819`, and v0.9.12A Vitest/dev-test security implementation is local pending operator review without Next/runtime changes.
+
+## v0.9.12A Vitest Dev/Test Security Fix
+
+- Phase: `KIA-Stick-v0.9.12A-vitest-dev-test-security-fix`
+- Target machine: `USER_LAPTOP_ONLY`
+- Accepted baseline commit: `915b819cf9fdd9e688c62c210bf523c5e34741a0`
+- Proof directory: `/home/mint/kia-stick-local-proofs/proof_kia_stick_v0_9_12A_vitest_dev_test_security_fix_20260627T153005Z`
+- Scope: Vitest/dev-test dependency security path only.
+- Targeted command: `npm install --save-dev vitest@3.2.6`
+- Direct package updated: `vitest` from lockfile `2.1.9` to `3.2.6`.
+- Updated dev/test chain: `vite@7.3.6`, `vite-node@3.2.4`, `@vitest/mocker@3.2.6`, `esbuild@0.28.1`.
+- Vitest-chain audit status after update: no remaining `vitest`, `vite`, `vite-node`, `@vitest/mocker`, or `esbuild` vulnerability entries.
+- Remaining audit work: `next` and transitive `postcss`, deferred to `KIA-Stick-v0.9.12B-next-runtime-framework-security-plan`.
+- Version state: product/package version remain `0.7.0`; prompt version remains `prompt.fake-docs.v0.5-import-wizard-hardening`.
+- Queue state: `queue-015-v07-first-real-doc-gate-request` remains blocked.
+- Next/runtime dependency path changed: no.
+- Runtime code changed: no.
+- Real-doc capability found/approved: no.
+- Services/cron/timers/tmux/Caddy/DNS changed: no.
+- Discord sent: no.
+- Push status: not pushed.
+- Manual QA status: pending operator review.
 
 ## v0.9.11 Dependency Security Triage Plan
 

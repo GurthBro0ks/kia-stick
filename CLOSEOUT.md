@@ -1,5 +1,38 @@
 # KIA Stick Closeout
 
+## v0.9.12A Vitest Dev/Test Security Fix
+
+- Phase: `KIA-Stick-v0.9.12A-vitest-dev-test-security-fix`
+- Target machine: `USER_LAPTOP_ONLY`
+- Accepted baseline commit: `915b819cf9fdd9e688c62c210bf523c5e34741a0`
+- Proof directory: `/home/mint/kia-stick-local-proofs/proof_kia_stick_v0_9_12A_vitest_dev_test_security_fix_20260627T153005Z`
+- Scope: Vitest/dev-test dependency security path only.
+- Targeted command: `npm install --save-dev vitest@3.2.6`
+- Direct package updated: `vitest` from lockfile `2.1.9` to `3.2.6`
+- Dev/test transitive path after update: `vite@7.3.6`, `vite-node@3.2.4`, `@vitest/mocker@3.2.6`, `esbuild@0.28.1`
+- Vitest-chain audit status after update: no remaining `vitest`, `vite`, `vite-node`, `@vitest/mocker`, or `esbuild` vulnerability entries.
+- Remaining audit work: `next` and transitive `postcss`, deferred to `KIA-Stick-v0.9.12B-next-runtime-framework-security-plan`.
+- Product version: `0.7.0`
+- Package version: `0.7.0`
+- Prompt version: `prompt.fake-docs.v0.5-import-wizard-hardening`
+- Queue state: `queue-015-v07-first-real-doc-gate-request` remains blocked.
+- Next/runtime dependency path changed: no
+- Runtime code changed: no
+- Runtime capability changed: no
+- Real document implementation approved: no
+- Real document access: none
+- Private source folders inspected: no
+- File picker/FileReader/OCR/indexing/embedding/vector capability added: no
+- `npm audit fix` run: no
+- `npm update` run: no
+- Services restarted: no
+- Cron/timer/tmux/Caddy/DNS changed: no
+- Secrets printed: no
+- Discord sent: no
+- Push performed: no
+
+This implementation record is pending operator review. It does not change Next, direct `postcss`, runtime code, productVersion, promptVersion, queue-015, real-doc approval, file pickers, directory pickers, drag/drop import zones, browser File objects, FileReader, path readers, user-provided packet reads, OCR, upload handlers, text extraction, summarization, embeddings, indexing, vector stores, private-source inspection, services, credentials, Discord, skills, global config, or real-document access.
+
 ## v0.9.11 Dependency Security Triage Plan
 
 - Phase: `KIA-Stick-v0.9.11-dependency-security-triage-plan`
