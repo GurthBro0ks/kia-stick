@@ -5,7 +5,7 @@
 - Phase: `KIA-Stick-v0.9.13-to-v0.9.17-large-fake-only-stabilization-bundle`
 - Target: `USER_LAPTOP_ONLY`
 - Provider: `local-fake-deterministic`
-- Status: local v0.9.13-to-v0.9.17 large fake-only stabilization bundle is in progress after accepted pushed v0.9.12B WARN closeout. The bundle records post-security accepted state, improves fake-only operator proof/readability guidance, polishes Chat/Sources/Saved and Upload/Import/Vault safety copy, and records next large safe options. Next/PostCSS remains parked as `WARN_SAFE_NEXT_TARGET_UNCLEAR`; v0.9.12C remains blocked pending an exact target; queue-015 remains blocked; product/prompt unchanged; no dependency or real-doc implementation is approved.
+- Status: local v0.9.13-to-v0.9.17 large fake-only stabilization bundle has `OPERATOR_QA_PASS` recorded for `/home/mint/kia-stick-local-proofs/proof_kia_stick_v0_9_13_to_v0_9_17_large_fake_only_stabilization_bundle_20260627T164301Z` and is ready for a separate closeout/push prompt. The bundle records post-security accepted state, improves fake-only operator proof/readability guidance, polishes Chat/Sources/Saved and Upload/Import/Vault safety copy, and records next large safe options. Next/PostCSS remains parked as `WARN_SAFE_NEXT_TARGET_UNCLEAR`; v0.9.12C remains blocked pending an exact target; queue-015 remains blocked; product/prompt unchanged; no dependency or real-doc implementation is approved.
 
 ## v0.9.13 to v0.9.17 Large Fake-Only Stabilization Bundle
 
@@ -26,7 +26,8 @@
 - Queue state: `queue-015-v07-first-real-doc-gate-request` remains blocked.
 - Real-doc capability found/approved: no.
 - Push status: not pushed.
-- Manual QA status: PENDING.
+- Manual QA status: PASS.
+- Operator QA proof: `/home/mint/kia-stick-local-proofs/proof_kia_stick_v0_9_13_to_v0_9_17_large_fake_only_stabilization_bundle_20260627T164301Z`
 
 ## v0.9.12B Next Runtime Framework Security Plan
 

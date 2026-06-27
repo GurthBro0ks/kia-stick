@@ -47,17 +47,19 @@ describe("v0.9.16 Upload/Import/Vault safety polish", () => {
         package_lock_changed: boolean;
         runtime_capability_changed: boolean;
         queue_015_status: string;
+        manual_qa_status: string;
       };
     };
     const state = featureList.v0916_upload_import_vault_safety_polish;
 
     expect(state.phase).toBe(phase);
-    expect(state.status).toBe("needs_review");
+    expect(state.status).toBe("ready_to_push");
     expect(state.upload_button_only_synthetic_metadata).toBe(true);
     expect(state.import_fake_scaffold_only).toBe(true);
     expect(state.vault_fake_metadata_only).toBe(true);
     expect(state.package_lock_changed).toBe(false);
     expect(state.runtime_capability_changed).toBe(false);
     expect(state.queue_015_status).toBe("blocked");
+    expect(state.manual_qa_status).toBe("PASS");
   });
 });

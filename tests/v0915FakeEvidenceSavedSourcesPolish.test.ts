@@ -40,17 +40,19 @@ describe("v0.9.15 fake evidence/Saved/Sources polish", () => {
         prompt_version: string;
         queue_015_status: string;
         real_doc_implementation_approved: boolean;
+        manual_qa_status: string;
       };
     };
     const state = featureList.v0915_fake_evidence_saved_sources_polish;
 
     expect(state.phase).toBe(phase);
-    expect(state.status).toBe("needs_review");
+    expect(state.status).toBe("ready_to_push");
     expect(state.runtime_ui_copy_changed).toBe(true);
     expect(state.runtime_capability_changed).toBe(false);
     expect(state.product_version).toBe("0.7.0");
     expect(state.prompt_version).toBe("prompt.fake-docs.v0.5-import-wizard-hardening");
     expect(state.queue_015_status).toBe("blocked");
     expect(state.real_doc_implementation_approved).toBe(false);
+    expect(state.manual_qa_status).toBe("PASS");
   });
 });

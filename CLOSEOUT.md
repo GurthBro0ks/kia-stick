@@ -25,9 +25,10 @@
 - Secrets printed: no
 - Discord sent: no
 - Push performed: no
-- Manual QA status: PENDING
+- Manual QA status: PASS
+- Operator QA proof: `/home/mint/kia-stick-local-proofs/proof_kia_stick_v0_9_13_to_v0_9_17_large_fake_only_stabilization_bundle_20260627T164301Z`
 
-This bundle is local fake-only stabilization work. It does not select a Next target, does not override PostCSS, does not unblock real-doc work, and does not add upload/read/index/OCR/vector behavior.
+This bundle is local fake-only stabilization work. It does not select a Next target, does not override PostCSS, does not unblock real-doc work, and does not add upload/read/index/OCR/vector behavior. `OPERATOR_QA_PASS` has been recorded locally; push still requires a separate closeout/push phase.
 
 ## v0.9.12B Next Runtime Framework Security Plan
 

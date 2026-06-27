@@ -41,12 +41,12 @@ describe("v0.9.14 operator QA/report readability polish", () => {
     const state = featureList.v0914_operator_qa_report_readability_polish;
 
     expect(state.phase).toBe(phase);
-    expect(state.status).toBe("needs_review");
+    expect(state.status).toBe("ready_to_push");
     expect(state.warn_wording_honest).toBe(true);
     expect(state.smoke_claims_security_fix).toBe(false);
     expect(state.next_postcss_advisories_fixed).toBe(false);
     expect(state.package_lock_changed).toBe(false);
     expect(state.queue_015_status).toBe("blocked");
-    expect(state.manual_qa_status).toBe("PENDING");
+    expect(state.manual_qa_status).toBe("PASS");
   });
 });

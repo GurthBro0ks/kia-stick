@@ -15,7 +15,7 @@ describe("v0.9.17 next large-work checkpoint", () => {
       "Next/PostCSS advisories remain parked as `WARN_SAFE_NEXT_TARGET_UNCLEAR`.",
       "Real-doc gate remains blocked.",
       "`queue-015-v07-first-real-doc-gate-request` remains blocked.",
-      "Manual QA status is `PENDING`",
+      "Manual QA status is `PASS`",
       "Push requires a separate closeout/push phase",
     ]) {
       expect(doc).toContain(required);
@@ -41,13 +41,13 @@ describe("v0.9.17 next large-work checkpoint", () => {
     const state = featureList.v0917_next_large_work_checkpoint;
 
     expect(state.phase).toBe(phase);
-    expect(state.status).toBe("needs_review");
+    expect(state.status).toBe("ready_to_push");
     expect(state.default_next_option).toBe("continue fake-only UX/tooling bundle work");
     expect(state.next_runtime_implementation_blocked).toBe(true);
     expect(state.real_doc_gate_blocked).toBe(true);
     expect(state.queue_015_status).toBe("blocked");
     expect(state.pushed).toBe(false);
-    expect(state.manual_qa_status).toBe("PENDING");
+    expect(state.manual_qa_status).toBe("PASS");
     expect(queue.items.find((item) => item.id === "queue-015-v07-first-real-doc-gate-request")?.status).toBe("blocked");
   });
 });

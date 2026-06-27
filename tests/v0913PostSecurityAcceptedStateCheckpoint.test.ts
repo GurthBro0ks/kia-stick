@@ -48,14 +48,14 @@ describe("v0.9.13 post-security accepted-state checkpoint", () => {
     const state = featureList.v0913_post_security_accepted_state_checkpoint;
 
     expect(state.phase).toBe(phase);
-    expect(state.status).toBe("needs_review");
+    expect(state.status).toBe("ready_to_push");
     expect(state.vitest_dev_test_path_fixed).toBe(true);
     expect(state.next_runtime_path_status).toBe("WARN_SAFE_NEXT_TARGET_UNCLEAR");
     expect(state.next_postcss_advisories_fixed).toBe(false);
     expect(state.v0912c_blocked_pending_exact_target).toBe(true);
     expect(state.package_lock_changed).toBe(false);
     expect(state.queue_015_status).toBe("blocked");
-    expect(state.manual_qa_status).toBe("PENDING");
+    expect(state.manual_qa_status).toBe("PASS");
     expect(realDocGate?.status).toBe("blocked");
   });
 });
