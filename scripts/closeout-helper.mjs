@@ -153,6 +153,8 @@ export function assessCloseout({ proof, git, queue }) {
     status,
     issues,
     nextAction,
+    stopOnWarnFail: status !== "PASS",
+    queueAcceptanceAllowed: status === "PASS",
     suggestedQueueCommand: queue.item ? suggestedQueueCommand(queue.item) : "none",
   };
 }
@@ -189,6 +191,8 @@ function printReview(options) {
   console.log(`git_ahead_origin_main=${state.git.ahead}`);
   console.log(`queue_id=${state.queue.item?.id || "none"}`);
   console.log(`queue_status=${state.queue.item?.status || "none"}`);
+  console.log(`stop_on_warn_fail=${state.assessment.stopOnWarnFail}`);
+  console.log(`queue_acceptance_allowed=${state.assessment.queueAcceptanceAllowed}`);
   console.log(`suggested_queue_command=${state.assessment.suggestedQueueCommand}`);
   console.log(`next_action=${state.assessment.nextAction}`);
   if (state.assessment.issues.length > 0) {
@@ -226,6 +230,8 @@ function printSummary(options) {
     PROOF_DIR: state.proof.path || "missing",
     VALIDATION: validation,
     CLOSEOUT_HELPER_RESULT: `${state.assessment.status}; ${state.assessment.nextAction}`,
+    STOP_ON_WARN_FAIL_STATUS: state.assessment.stopOnWarnFail ? "STOP_REQUIRED" : "CLEAR",
+    QUEUE_ACCEPTANCE_ALLOWED: state.assessment.queueAcceptanceAllowed ? "yes" : "no",
     TESTS_ADDED: "tests/closeoutHelper.test.ts",
     MANUAL_QA_STATUS: "pending operator review",
     DISCORD_SENT: "no",

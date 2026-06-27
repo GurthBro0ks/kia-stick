@@ -8,7 +8,7 @@ import { createRuntimeVersion } from "@/lib/version";
 import { createInitialVaultState, laneCounts, workflowStateCounts } from "@/lib/vaultModel";
 
 const phase = "KIA-Stick-v0.7.12-fake-only-polish-and-real-doc-gate-planning";
-const currentPhase = "KIA-Stick-v0.9.5-next-work-decision-checkpoint";
+const currentPhase = "KIA-Stick-v0.9.10-synthetic-governance-hardening-checkpoint";
 const docPath = "docs/v0.7.12-fake-only-polish-and-real-doc-gate-planning.md";
 const productVersion = "0.7.0";
 const promptVersion = "prompt.fake-docs.v0.5-import-wizard-hardening";

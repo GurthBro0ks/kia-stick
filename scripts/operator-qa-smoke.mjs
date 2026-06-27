@@ -4,7 +4,7 @@ import path from "node:path";
 
 const DEFAULT_BASE_URL = "http://127.0.0.1:3000";
 const operatorSmokePhase = "KIA-Stick-v0.7.9-fake-only-operator-qa-smoke-pack";
-const expectedProjectPhase = "KIA-Stick-v0.9.5-next-work-decision-checkpoint";
+const expectedProjectPhase = "KIA-Stick-v0.9.10-synthetic-governance-hardening-checkpoint";
 const expectedRuntimePhase = "KIA-Stick-v0.7.12-operator-qa-closeout-and-push";
 const productVersion = "0.7.0";
 const promptVersion = "prompt.fake-docs.v0.5-import-wizard-hardening";

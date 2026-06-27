@@ -164,6 +164,15 @@ export function validateSyntheticApprovalPacket(packet: SyntheticApprovalPacket)
   if (!packet.deletionRetentionPlan?.trim()) {
     addReason(reasons, "WARN", "missing_retention_placeholder", "deletionRetentionPlan", "Deletion/retention placeholder is missing; packet is safe but incomplete.");
   }
+  if (!packet.redactionPrivacyPolicyResult?.trim()) {
+    addReason(
+      reasons,
+      "WARN",
+      "missing_redaction_policy_result",
+      "redactionPrivacyPolicyResult",
+      "Redaction/privacy policy result placeholder is missing; packet is safe but incomplete."
+    );
+  }
 
   for (const field of flattenStrings(packet)) {
     for (const reject of hardRejectPatterns) {

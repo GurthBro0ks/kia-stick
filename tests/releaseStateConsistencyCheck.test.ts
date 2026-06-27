@@ -2,8 +2,8 @@ import { readFileSync } from "node:fs";
 import { describe, expect, it } from "vitest";
 
 const phase = "KIA-Stick-v0.9.3-release-state-consistency-check";
-const currentPhase = "KIA-Stick-v0.9.5-next-work-decision-checkpoint";
-const currentStatus = "v091_v095_release_state_consolidation_bundle_accepted_after_closeout_push";
+const currentPhase = "KIA-Stick-v0.9.10-synthetic-governance-hardening-checkpoint";
+const currentStatus = "v096_v0910_synthetic_governance_hardening_bundle_pending_operator_review";
 const productVersion = "0.7.0";
 const promptVersion = "prompt.fake-docs.v0.5-import-wizard-hardening";
 const acceptedCloseoutCommit = "8044eaf6756c5e8303483d44017a29cf9514ed44";
@@ -13,7 +13,7 @@ describe("v0.9.3 release-state consistency check", () => {
     const doc = readFileSync("docs/v0.9.3-release-state-consistency-check.md", "utf8");
 
     expect(doc).toContain(phase);
-    expect(doc).toContain(currentPhase.replace("KIA-Stick-v0.9.5-next-work-decision-checkpoint", "KIA-Stick-v0.9.1-to-v0.9.5-release-state-consolidation-and-proof-durability-bundle"));
+    expect(doc).toContain(currentPhase.replace("KIA-Stick-v0.9.10-synthetic-governance-hardening-checkpoint", "KIA-Stick-v0.9.1-to-v0.9.5-release-state-consolidation-and-proof-durability-bundle"));
     expect(doc).toContain(acceptedCloseoutCommit);
     expect(doc).toContain(`Product version remains \`${productVersion}\``);
     expect(doc).toContain(`Prompt version remains \`${promptVersion}\``);

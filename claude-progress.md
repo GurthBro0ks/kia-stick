@@ -2,10 +2,35 @@
 
 ## Current Phase
 
-- Phase: `KIA-Stick-v0.9.1-to-v0.9.5-release-state-consolidation-and-proof-durability-bundle`
+- Phase: `KIA-Stick-v0.9.6-to-v0.9.10-synthetic-governance-hardening-bundle`
 - Target: `USER_LAPTOP_ONLY`
 - Provider: `local-fake-deterministic`
-- Status: v0.9.1 through v0.9.5 release-state consolidation and proof durability bundle is local and pending one bundle operator QA review; queue-046 through queue-050 are `needs_review`, queue-015 remains blocked, product/prompt unchanged, no push performed, and no real-doc implementation approved.
+- Status: v0.9.6 through v0.9.10 synthetic governance hardening bundle is local and pending one bundle operator QA review; queue-051 through queue-055 are `needs_review`, queue-015 remains blocked, product/prompt unchanged, no push performed, and no real-doc implementation approved.
+
+## v0.9.6 to v0.9.10 Synthetic Governance Hardening Bundle State
+
+- Bundle phase: `KIA-Stick-v0.9.6-to-v0.9.10-synthetic-governance-hardening-bundle`
+- Current project phase: `KIA-Stick-v0.9.10-synthetic-governance-hardening-checkpoint`
+- Target machine: `USER_LAPTOP_LINUX_MINT`
+- Baseline: accepted pushed v0.9.1-to-v0.9.5 closeout state at `3a6e28bb07f6c06883e4abda8f9e30c95f9549d0`
+- Scope: synthetic-only governance reality audit, approval-packet negative fixtures, packet/governance report hardening, stop-on-WARN/FAIL closeout guidance, and next safe options checkpoint.
+- Product version: `0.7.0`
+- Prompt version: `prompt.fake-docs.v0.5-import-wizard-hardening`
+- New docs: `docs/v0.9.6-synthetic-governance-reality-audit.md`, `docs/v0.9.7-synthetic-approval-negative-fixtures.md`, `docs/v0.9.8-synthetic-governance-report-hardening.md`, `docs/v0.9.9-stop-on-warn-fail-closeout-guard.md`, `docs/v0.9.10-synthetic-governance-hardening-checkpoint.md`
+- New tests: `tests/v096SyntheticGovernanceRealityAudit.test.ts`, `tests/v097SyntheticApprovalNegativeFixtures.test.ts`, `tests/v098SyntheticGovernanceReportHardening.test.ts`, `tests/v099StopOnWarnFailCloseoutGuard.test.ts`, `tests/v0910SyntheticGovernanceHardeningCheckpoint.test.ts`
+- Updated tooling: `lib/syntheticApprovalPacketValidator.ts`, `lib/syntheticPacketFixtures.ts`, `scripts/synthetic-packet-report.mjs`, `scripts/synthetic-governance-report.mjs`, `scripts/closeout-helper.mjs`, `scripts/operator-qa-smoke.mjs`
+- Queue state: `queue-015-v07-first-real-doc-gate-request` remains blocked; `queue-041` through `queue-050` remain accepted; `queue-051` through `queue-055` are `needs_review` pending one operator bundle QA decision.
+- Proof directory: `/tmp/proof_kia_stick_v0_9_6_to_v0_9_10_synthetic_governance_hardening_bundle_20260627T123948Z`
+- Runtime UI changed: no
+- Runtime capability changed: no
+- Real/private document access: none
+- Private source folders inspected: no
+- Services/cron/timers/tmux/Caddy/DNS changed: no
+- Discord sent: no
+- Commands run so far: attached prompt inspection, local harness/progress inspection, git status/log before-state capture, queue:list before, queue:next before, synthetic governance tooling/docs/tests/state edits, and focused pre-validation inspection.
+- Manual QA status: pending operator bundle review.
+- Push status: not pushed.
+- Remaining unknowns: final validation result, local commit SHA after validation PASS, operator bundle QA decision, and separate closeout/push prompt.
 
 ## v0.9.1 to v0.9.5 Release-State Consolidation Bundle State
 

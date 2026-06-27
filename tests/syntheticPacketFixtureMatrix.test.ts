@@ -4,7 +4,7 @@ import { validateSyntheticApprovalPacket } from "@/lib/syntheticApprovalPacketVa
 import { summarizeSyntheticPacketFixtureMatrix, syntheticPacketFixtureMatrix } from "@/lib/syntheticPacketFixtures";
 
 const phase = "KIA-Stick-v0.7.17-synthetic-packet-fixture-matrix";
-const currentPhase = "KIA-Stick-v0.9.5-next-work-decision-checkpoint";
+const currentPhase = "KIA-Stick-v0.9.10-synthetic-governance-hardening-checkpoint";
 const docPath = "docs/v0.7.17-synthetic-packet-fixture-matrix.md";
 const productVersion = "0.7.0";
 const promptVersion = "prompt.fake-docs.v0.5-import-wizard-hardening";
@@ -29,16 +29,21 @@ describe("v0.7.17 synthetic packet fixture matrix", () => {
     expect(summary.total).toBeGreaterThanOrEqual(10);
     expect(summary.pass).toBeGreaterThanOrEqual(1);
     expect(summary.warn).toBeGreaterThanOrEqual(1);
-    expect(summary.fail).toBeGreaterThanOrEqual(8);
+    expect(summary.warn).toBeGreaterThanOrEqual(3);
+    expect(summary.fail).toBeGreaterThanOrEqual(12);
     expect(summary.unsafeClasses).toEqual(
       expect.arrayContaining([
         "path-shaped",
+        "private-path-wording",
         "recursive",
+        "too-broad-scope",
         "broad-source",
         "private-source",
         "queue-015-unblock",
         "multiple-docs",
         "multiple-gates",
+        "missing-rollback",
+        "unsafe-proof-output",
         "upload-ocr-indexing-vector",
       ])
     );

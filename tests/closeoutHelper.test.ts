@@ -13,7 +13,7 @@ interface CloseoutModule {
     proof: { exists: boolean; result: string; warnFailFree: boolean; flags: string[] };
     git: { dirty: boolean; ahead: number; branch: string };
     queue: { ok: boolean; item: { id: string; status: string } | null; error?: string };
-  }): { status: string; nextAction: string; issues: Array<{ code: string }> };
+  }): { status: string; nextAction: string; stopOnWarnFail: boolean; queueAcceptanceAllowed: boolean; issues: Array<{ code: string }> };
   parseGitState(root?: string): { dirty: boolean; ahead: number; head: string; originMain: string };
   readLatestProof(root?: string): { exists: boolean; result: string; phase: string; warnFailFree: boolean; flags: string[] };
   resultHasWarnFail(markdown: string): boolean;
@@ -132,6 +132,8 @@ describe("closeout-helper", () => {
 
     expect(assessment.status).toBe("PASS");
     expect(assessment.nextAction).toContain("No push needed");
+    expect(assessment.stopOnWarnFail).toBe(false);
+    expect(assessment.queueAcceptanceAllowed).toBe(true);
   });
 
   it("warns when proof is missing", async () => {
@@ -146,7 +148,24 @@ describe("closeout-helper", () => {
 
     expect(assessment.status).toBe("WARN");
     expect(assessment.issues.map((issue) => issue.code)).toContain("proof_missing");
+    expect(assessment.stopOnWarnFail).toBe(true);
+    expect(assessment.queueAcceptanceAllowed).toBe(false);
     expect(assessment.nextAction).toContain("create a proof directory");
+  });
+
+  it("blocks queue acceptance guidance while proof WARN/FAIL text exists", async () => {
+    const mod = await loadModule();
+    const assessment = mod.assessCloseout({
+      proof: { exists: true, result: "PASS", warnFailFree: false, flags: [] },
+      git: { dirty: false, ahead: 0, branch: "main" },
+      queue: { ok: true, item: { id: "queue-001-closeout-helper-hardening", status: "ready_to_push" } },
+    });
+
+    expect(assessment.status).toBe("WARN");
+    expect(assessment.issues.map((issue) => issue.code)).toContain("proof_warn_fail_text");
+    expect(assessment.stopOnWarnFail).toBe(true);
+    expect(assessment.queueAcceptanceAllowed).toBe(false);
+    expect(assessment.nextAction).toContain("fix proof warnings");
   });
 
   it("detects local-ahead and dirty git states", async () => {
@@ -180,6 +199,8 @@ describe("closeout-helper", () => {
 
     expect(review.status).toBe(0);
     expect(review.stdout).toContain("Closeout review: WARN");
+    expect(review.stdout).toContain("stop_on_warn_fail=true");
+    expect(review.stdout).toContain("queue_acceptance_allowed=false");
     expect(review.stdout).toContain("suggested_queue_command=npm run queue:set");
     expect(summary.status).toBe(0);
     expect(summary.stdout).toContain("CLOSEOUT_HELPER_RESULT=WARN");

@@ -2,6 +2,7 @@ import { readFileSync } from "node:fs";
 import { describe, expect, it } from "vitest";
 
 const phase = "KIA-Stick-v0.9.5-next-work-decision-checkpoint";
+const currentPhase = "KIA-Stick-v0.9.10-synthetic-governance-hardening-checkpoint";
 const docPath = "docs/v0.9.5-next-work-decision-checkpoint.md";
 
 describe("v0.9.5 next-work decision checkpoint", () => {
@@ -34,7 +35,7 @@ describe("v0.9.5 next-work decision checkpoint", () => {
       items: Array<{ id: string; phase: string; status: string }>;
     };
 
-    expect(featureList.phase).toBe(phase);
+    expect(featureList.phase).toBe(currentPhase);
     expect(featureList.v095_next_work_decision_checkpoint.phase).toBe(phase);
     expect(featureList.v095_next_work_decision_checkpoint.status).toBe("accepted_after_closeout_push");
     expect(featureList.v095_next_work_decision_checkpoint.queue_050_status).toBe("accepted");

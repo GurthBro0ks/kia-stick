@@ -1,5 +1,33 @@
 # KIA Stick Closeout
 
+## v0.9.6 to v0.9.10 Synthetic Governance Hardening Bundle
+
+- Phase: `KIA-Stick-v0.9.6-to-v0.9.10-synthetic-governance-hardening-bundle`
+- Current project phase: `KIA-Stick-v0.9.10-synthetic-governance-hardening-checkpoint`
+- Baseline: accepted pushed v0.9.1-to-v0.9.5 closeout state at `3a6e28bb07f6c06883e4abda8f9e30c95f9549d0`
+- Scope: synthetic-only docs/tests/tooling/state hardening for governance reality audit, approval-packet negative fixtures, packet/governance report output, stop-on-WARN/FAIL closeout guidance, and next-step checkpointing.
+- Product version: `0.7.0`
+- Package version: `0.7.0`
+- Prompt version: `prompt.fake-docs.v0.5-import-wizard-hardening`
+- Proof directory: `/tmp/proof_kia_stick_v0_9_6_to_v0_9_10_synthetic_governance_hardening_bundle_20260627T123948Z`
+- Queue state: `queue-015-v07-first-real-doc-gate-request` remains blocked; `queue-041` through `queue-050` remain accepted; `queue-051` through `queue-055` are `needs_review` pending one operator bundle QA decision.
+- Manual QA status: pending operator bundle review
+- Runtime UI changed: no
+- Runtime capability changed: no
+- Real document implementation approved: no
+- Real document access: none
+- Real document named: no
+- Private source folders inspected: no
+- Skills installed: no
+- Global agent config changed: no
+- Services restarted: no
+- Cron/timer/tmux/Caddy/DNS changed: no
+- Secrets printed: no
+- Discord sent: no
+- Push performed: no
+
+This bundle does not approve real-doc work. It does not add file pickers, directory pickers, drag/drop import zones, browser File objects, FileReader, path readers, user-provided packet reads, file reads over real documents, copying, hashing real files, OCR, upload handlers, real redaction, text extraction, summarization, embeddings, indexing, vector stores, quarantine writes, private-source inspection, service changes, credentials, skills, global agent config, or real-document access.
+
 ## v0.9.1 to v0.9.5 Release-State Consolidation and Proof Durability Bundle
 
 - Phase: `KIA-Stick-v0.9.1-to-v0.9.5-release-state-consolidation-and-proof-durability-bundle`

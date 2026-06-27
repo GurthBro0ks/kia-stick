@@ -59,6 +59,26 @@ export const syntheticPacketFixtureMatrix: SyntheticPacketFixture[] = [
     expectedReasonCodes: ["missing_reviewer_placeholder", "missing_retention_placeholder"],
   },
   {
+    id: "matrix-warn-missing-operator-signature",
+    title: "operator signature placeholder missing",
+    expectedStatus: "WARN",
+    className: "WARN",
+    packet: completeSyntheticPacket({
+      reviewerPlaceholder: undefined,
+    }),
+    expectedReasonCodes: ["missing_reviewer_placeholder"],
+  },
+  {
+    id: "matrix-warn-missing-redaction-policy-result",
+    title: "redaction policy result placeholder missing",
+    expectedStatus: "WARN",
+    className: "WARN",
+    packet: completeSyntheticPacket({
+      redactionPrivacyPolicyResult: undefined,
+    }),
+    expectedReasonCodes: ["missing_redaction_policy_result"],
+  },
+  {
     id: "matrix-fail-path-shaped",
     title: "path-shaped placeholder rejected",
     expectedStatus: "FAIL",
@@ -70,6 +90,18 @@ export const syntheticPacketFixtureMatrix: SyntheticPacketFixture[] = [
     expectedReasonCodes: ["path_shaped_value", "non_synthetic_id"],
   },
   {
+    id: "matrix-fail-private-path-wording",
+    title: "private/path-shaped wording rejected",
+    expectedStatus: "FAIL",
+    className: "FAIL",
+    unsafeClass: "private-path-wording",
+    packet: completeSyntheticPacket({
+      futureDocumentPlaceholders: ["/home/mint/example.pdf"],
+      allowedAction: "inspect private source path label",
+    }),
+    expectedReasonCodes: ["path_shaped_value", "home_path_marker", "private_marker", "source_path_wording", "non_synthetic_id"],
+  },
+  {
     id: "matrix-fail-recursive",
     title: "recursive scope wording rejected",
     expectedStatus: "FAIL",
@@ -79,6 +111,17 @@ export const syntheticPacketFixtureMatrix: SyntheticPacketFixture[] = [
       allowedAction: "scan everything recursively from source path labels",
     }),
     expectedReasonCodes: ["recursive_scope", "broad_source_scope", "source_path_wording"],
+  },
+  {
+    id: "matrix-fail-too-broad-scope",
+    title: "too-broad scope wording rejected",
+    expectedStatus: "FAIL",
+    className: "FAIL",
+    unsafeClass: "too-broad-scope",
+    packet: completeSyntheticPacket({
+      allowedAction: "review all documents",
+    }),
+    expectedReasonCodes: ["broad_source_scope"],
   },
   {
     id: "matrix-fail-broad-source",
@@ -134,6 +177,28 @@ export const syntheticPacketFixtureMatrix: SyntheticPacketFixture[] = [
       futureGatePlaceholders: ["SYNTH-GATE-METADATA-ONLY", "SYNTH-GATE-SECOND"],
     }),
     expectedReasonCodes: ["gate_placeholder_count"],
+  },
+  {
+    id: "matrix-fail-missing-rollback",
+    title: "missing rollback plan rejected",
+    expectedStatus: "FAIL",
+    className: "FAIL",
+    unsafeClass: "missing-rollback",
+    packet: completeSyntheticPacket({
+      rollbackPlan: undefined,
+    }),
+    expectedReasonCodes: ["missing_rollback_plan"],
+  },
+  {
+    id: "matrix-fail-unsafe-proof-output",
+    title: "unsafe proof output agreement rejected",
+    expectedStatus: "FAIL",
+    className: "FAIL",
+    unsafeClass: "unsafe-proof-output",
+    packet: completeSyntheticPacket({
+      proofSafeOutputAgreement: false,
+    }),
+    expectedReasonCodes: ["missing_proof_safe_agreement"],
   },
   {
     id: "matrix-fail-upload-ocr-index-vector",

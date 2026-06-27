@@ -2,7 +2,7 @@ import { existsSync, readFileSync } from "node:fs";
 import { describe, expect, it } from "vitest";
 
 const phase = "KIA-Stick-v0.9.0-fake-runtime-ux-checkpoint";
-const currentPhase = "KIA-Stick-v0.9.5-next-work-decision-checkpoint";
+const currentPhase = "KIA-Stick-v0.9.10-synthetic-governance-hardening-checkpoint";
 const docPath = "docs/v0.9.0-fake-runtime-ux-checkpoint.md";
 const productVersion = "0.7.0";
 const promptVersion = "prompt.fake-docs.v0.5-import-wizard-hardening";
@@ -77,12 +77,12 @@ describe("v0.9.0 fake runtime UX checkpoint", () => {
 
     expect(featureList.phase).toBe(currentPhase);
     expect(featureList.release_readiness.phase).toBe(currentPhase);
-    expect(featureList.release_readiness.status).toBe("v091_v095_release_state_consolidation_bundle_accepted_after_closeout_push");
+    expect(featureList.release_readiness.status).toBe("v096_v0910_synthetic_governance_hardening_bundle_pending_operator_review");
     expect(featureList.release_readiness.package_version).toBe(productVersion);
     expect(featureList.release_readiness.product_version).toBe(productVersion);
     expect(featureList.release_readiness.prompt_version).toBe(promptVersion);
-    expect(featureList.release_readiness.manual_qa_status).toBe("PASS");
-    expect(featureList.release_readiness.push_performed).toBe(true);
+    expect(featureList.release_readiness.manual_qa_status).toBe("pending_operator_bundle_review");
+    expect(featureList.release_readiness.push_performed).toBe(false);
     expect(featureList.release_readiness.queue_015_status).toBe("blocked");
     expect(featureList.release_readiness.queue_041_status).toBe("accepted");
     expect(featureList.release_readiness.queue_045_status).toBe("accepted");

@@ -51,7 +51,7 @@ describe("task-queue", () => {
     const queue = mod.loadQueue(resolve("."));
 
     expect(queue.schema).toBe("kia-stick-local-task-queue.v1");
-    expect(queue.items).toHaveLength(50);
+    expect(queue.items).toHaveLength(55);
     expect(queue.items.map((item) => item.id)).toEqual([
       "queue-001-closeout-helper-hardening",
       "queue-002-fake-redaction-metadata-depth",
@@ -103,6 +103,11 @@ describe("task-queue", () => {
       "queue-048-v093-release-state-consistency-check",
       "queue-049-v094-persistent-proof-pointer-update",
       "queue-050-v095-next-work-decision-checkpoint",
+      "queue-051-v096-synthetic-governance-reality-audit",
+      "queue-052-v097-synthetic-approval-negative-fixtures",
+      "queue-053-v098-synthetic-governance-report-hardening",
+      "queue-054-v099-stop-on-warn-fail-closeout-guard",
+      "queue-055-v0910-synthetic-governance-hardening-checkpoint",
     ]);
     expect(queue.items.slice(0, 14).every((item) => item.status === "accepted")).toBe(true);
     expect(queue.items[10].status).toBe("accepted");
@@ -132,7 +137,8 @@ describe("task-queue", () => {
     expect(queue.items[34].status).toBe("accepted");
     expect(queue.items.slice(35, 40).every((item) => item.status === "accepted")).toBe(true);
     expect(queue.items.slice(40, 45).every((item) => item.status === "accepted")).toBe(true);
-    expect(queue.items.slice(45).every((item) => item.status === "accepted")).toBe(true);
+    expect(queue.items.slice(45, 50).every((item) => item.status === "accepted")).toBe(true);
+    expect(queue.items.slice(50).every((item) => item.status === "needs_review")).toBe(true);
     expect(queue.items.every((item) => item.history.length > 0)).toBe(true);
     expect(mod.validateQueue(queue)).toBe(true);
   });
@@ -430,8 +436,9 @@ describe("task-queue", () => {
     const result = spawnSync("node", [scriptPath, "next"], { cwd: resolve("."), encoding: "utf8" });
 
     expect(result.status).toBe(0);
-    expect(result.stdout).toContain("No actionable queue items");
-    expect(result.stdout).toContain("Blocked and parked items are intentionally skipped.");
+    expect(result.stdout).toContain("id=queue-051-v096-synthetic-governance-reality-audit");
+    expect(result.stdout).toContain("status=needs_review");
+    expect(result.stdout).toContain("Codex-ready summary:");
     expect(result.stdout).not.toContain("id=queue-015-v07-first-real-doc-gate-request");
   });
 
