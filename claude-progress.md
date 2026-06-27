@@ -2,10 +2,38 @@
 
 ## Current Phase
 
-- Phase: `KIA-Stick-v0.9.6-to-v0.9.10-synthetic-governance-hardening-closeout-and-push`
+- Phase: `KIA-Stick-v0.9.12B-next-runtime-framework-security-plan`
 - Target: `USER_LAPTOP_ONLY`
 - Provider: `local-fake-deterministic`
-- Status: v0.9.6 through v0.9.10 synthetic governance hardening bundle has operator QA PASS and closeout validation PASS recorded; queue-051 through queue-055 are accepted, queue-015 remains blocked, product/prompt unchanged, accepted state is pushed at `48abdbe`, and no real-doc implementation is approved. Post-closeout snapshot/mobile proof is accepted with operator QA PASS, v0.9.11 dependency/security triage planning is pushed at `915b819`, and v0.9.12A Vitest/dev-test security implementation has local operator QA PASS and is ready for a separate closeout/push prompt without Next/runtime changes.
+- Status: v0.9.12B planning-only Next/runtime framework security review is recorded from accepted pushed baseline `f412bcf8e802f3ef0a800d46a0ab6b32da7f4da3`. Current audit still reports `next` and transitive `postcss`; the safe Next target is unclear because audit suggests a forced downgrade to `next@9.3.3`. Package files, dependency versions, runtime code, product/prompt versions, queue-015, and real-doc capability remain unchanged. Result is `WARN_SAFE_NEXT_TARGET_UNCLEAR`; future work should use the separate `KIA-Stick-v0.9.12C-next-runtime-framework-security-implementation` gate.
+
+## v0.9.12B Next Runtime Framework Security Plan
+
+- Phase: `KIA-Stick-v0.9.12B-next-runtime-framework-security-plan`
+- Target machine: `USER_LAPTOP_ONLY`
+- Accepted pushed baseline commit: `f412bcf8e802f3ef0a800d46a0ab6b32da7f4da3`
+- Proof directory: `/home/mint/kia-stick-local-proofs/proof_kia_stick_v0_9_12B_next_runtime_framework_security_plan_20260627T155320Z`
+- Scope: planning-only Next/runtime framework security path after v0.9.12A.
+- Current package state: `next` package.json `^15.1.3`; lockfile `next@15.5.19`, `react@19.2.7`, `react-dom@19.2.7`, top-level `postcss@8.4.31`, nested Vite `postcss@8.5.15`.
+- Remaining audit work: 2 moderate advisories, direct `next` and transitive `postcss`.
+- Safe Next target status: unclear from current `npm audit` and `npm view` evidence.
+- Audit fix suggestion: forced semver-major downgrade to `next@9.3.3`; not applied.
+- Recommended next phase: `KIA-Stick-v0.9.12C-next-runtime-framework-security-implementation`.
+- Future command shape: `npm install --save-exact next@<operator-approved-version>`.
+- Version state: product/package version remain `0.7.0`; prompt version remains `prompt.fake-docs.v0.5-import-wizard-hardening`.
+- Queue state: `queue-015-v07-first-real-doc-gate-request` remains blocked.
+- Package files changed: no.
+- Dependency versions changed: no.
+- Runtime code changed: no.
+- Real-doc capability found/approved: no.
+- Services/cron/timers/tmux/Caddy/DNS changed: no.
+- Discord sent: no.
+- Push status: not pushed.
+- Manual QA status: pending operator review.
+- Result: `WARN_SAFE_NEXT_TARGET_UNCLEAR`.
+- Commands run: baseline `git status`/`git rev-parse`/package hash checks; `npm audit --json`; `npm view` for Next/React/PostCSS candidates; focused test `npm run test -- tests/v0912BNextRuntimeFrameworkSecurityPlan.test.ts`; full validation with `npm run lint`, `npm run typecheck`, `npm test`, `npm run build`, `npm run release:check`, `npm run governance:report`, `npm run queue:next`, `npm run closeout:summary`, `npm run scan:fake`, `npm run scan:privacy`, `git diff --check`, and `PROOF_DIR=/home/mint/kia-stick-local-proofs/proof_kia_stick_v0_9_12B_next_runtime_framework_security_plan_20260627T155320Z npm run qa`.
+- Files changed: `docs/v0.9.12B-next-runtime-framework-security-plan.md`, `tests/v0912BNextRuntimeFrameworkSecurityPlan.test.ts`, `README.md`, `CLOSEOUT.md`, `claude-progress.md`, and `feature_list.json`.
+- Remaining unknowns: operator-approved exact Next target for a future implementation phase.
 
 ## v0.9.12A Vitest Dev/Test Security Fix
 

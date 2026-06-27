@@ -1,5 +1,46 @@
 # KIA Stick Closeout
 
+## v0.9.12B Next Runtime Framework Security Plan
+
+- Phase: `KIA-Stick-v0.9.12B-next-runtime-framework-security-plan`
+- Target machine: `USER_LAPTOP_ONLY`
+- Accepted pushed baseline commit: `f412bcf8e802f3ef0a800d46a0ab6b32da7f4da3`
+- Proof directory: `/home/mint/kia-stick-local-proofs/proof_kia_stick_v0_9_12B_next_runtime_framework_security_plan_20260627T155320Z`
+- Scope: planning-only Next/runtime framework security path.
+- Current direct runtime dependency: `next` package.json `^15.1.3`, lockfile `15.5.19`.
+- Current React runtime dependencies: `react@19.2.7`, `react-dom@19.2.7`.
+- Current PostCSS paths: top-level `postcss@8.4.31` through Next; nested Vite `postcss@8.5.15` on the dev/test path.
+- Remaining audit work: `next` and transitive `postcss`; 2 moderate advisories.
+- Safe Next target status: unclear from current `npm audit` and `npm view` evidence.
+- Audit fix suggestion: forced semver-major downgrade to `next@9.3.3`, not applied.
+- Recommended next phase: `KIA-Stick-v0.9.12C-next-runtime-framework-security-implementation`
+- Future implementation command shape: `npm install --save-exact next@<operator-approved-version>`
+- Product version: `0.7.0`
+- Package version: `0.7.0`
+- Prompt version: `prompt.fake-docs.v0.5-import-wizard-hardening`
+- Queue state: `queue-015-v07-first-real-doc-gate-request` remains blocked.
+- Dependency versions changed: no
+- `package.json` changed: no
+- `package-lock.json` changed: no
+- Runtime code changed: no
+- Runtime capability changed: no
+- Real document implementation approved: no
+- Real document access: none
+- Private source folders inspected: no
+- File picker/FileReader/OCR/indexing/embedding/vector capability added: no
+- `npm audit fix` run: no
+- `npm update` run: no
+- `npm install` run: no
+- Manual QA status: pending operator review
+- Services restarted: no
+- Cron/timer/tmux/Caddy/DNS changed: no
+- Secrets printed: no
+- Discord sent: no
+- Push performed: no
+- Result: `WARN_SAFE_NEXT_TARGET_UNCLEAR`
+
+This planning record does not implement a Next upgrade. It stops before package mutation because the safe framework target is unclear from current audit evidence. It does not change runtime code, productVersion, promptVersion, queue-015, real-doc approval, file pickers, directory pickers, drag/drop import zones, browser File objects, FileReader, path readers, user-provided packet reads, OCR, upload handlers, text extraction, summarization, embeddings, indexing, vector stores, private-source inspection, services, credentials, Discord, skills, global config, or real-document access.
+
 ## v0.9.12A Vitest Dev/Test Security Fix
 
 - Phase: `KIA-Stick-v0.9.12A-vitest-dev-test-security-fix`

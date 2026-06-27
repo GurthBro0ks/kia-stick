@@ -44,6 +44,16 @@ After the targeted update, npm audit reports no remaining `vitest`, `vite`, `vit
 
 `package.json` and `package-lock.json` changed only for the targeted Vitest dev/test update. `next`, `react`, `react-dom`, and top-level `postcss` package-lock versions are unchanged. Product/package version remains `0.7.0`; prompt version remains `prompt.fake-docs.v0.5-import-wizard-hardening`; `queue-015-v07-first-real-doc-gate-request` remains blocked. Operator QA PASS is recorded for the proof directory, making this local state ready for a separate closeout/push prompt. No runtime code, real-doc capability, service, Discord, system change, `npm audit fix`, `npm update`, or push is approved by this phase.
 
+## v0.9.12B Next Runtime Framework Security Plan
+
+Phase: `KIA-Stick-v0.9.12B-next-runtime-framework-security-plan`.
+
+This planning-only phase inspects the remaining runtime audit advisories after the accepted v0.9.12A Vitest fix. Current lockfile state remains `next@15.5.19`, `react@19.2.7`, `react-dom@19.2.7`, top-level `postcss@8.4.31`, and nested Vite `postcss@8.5.15`. `npm audit` reports 2 remaining moderate advisories: direct `next` and transitive `postcss` through Next.
+
+The safe Next target is unclear from current `npm audit` and `npm view` evidence. Audit suggests a forced semver-major downgrade to `next@9.3.3`, while current stable/candidate Next metadata does not prove a clean target from audit alone. `docs/v0.9.12B-next-runtime-framework-security-plan.md` records the risk matrix and recommends a separate implementation gate, `KIA-Stick-v0.9.12C-next-runtime-framework-security-implementation`, with an operator-approved command shape of `npm install --save-exact next@<operator-approved-version>`.
+
+`package.json` and `package-lock.json` are unchanged. No dependency versions, runtime code, product/package version, prompt version, queue state, real-doc capability, service, Discord, system change, `npm audit fix`, `npm update`, `npm install`, or push is approved by this phase. Product/package version remains `0.7.0`; prompt version remains `prompt.fake-docs.v0.5-import-wizard-hardening`; `queue-015-v07-first-real-doc-gate-request` remains blocked.
+
 ## v0.9.1 to v0.9.5 Release-State Consolidation and Proof Durability Bundle
 
 Phase: `KIA-Stick-v0.9.1-to-v0.9.5-release-state-consolidation-and-proof-durability-bundle`.
