@@ -5147,9 +5147,10 @@
   },
   "v0912b_next_runtime_framework_security_plan": {
     "phase": "KIA-Stick-v0.9.12B-next-runtime-framework-security-plan",
-    "status": "needs_operator_review",
+    "status": "accepted_warn_parked_after_closeout_push",
     "document": "docs/v0.9.12B-next-runtime-framework-security-plan.md",
     "proof_dir": "/home/mint/kia-stick-local-proofs/proof_kia_stick_v0_9_12B_next_runtime_framework_security_plan_20260627T155320Z",
+    "closeout_push_proof_dir": "/home/mint/kia-stick-local-proofs/proof_kia_stick_v0_9_12B_next_runtime_framework_security_plan_20260627T155320Z/warn_closeout_push_20260627T162001Z",
     "accepted_baseline_commit": "f412bcf8e802f3ef0a800d46a0ab6b32da7f4da3",
     "planning_only": true,
     "safe_next_target_status": "unclear_from_npm_audit",
@@ -5206,9 +5207,12 @@
     "dns_changed": false,
     "discord_sent": false,
     "secrets_printed": false,
-    "manual_qa_status": "pending",
-    "pushed": false,
+    "manual_qa_status": "PASS_ACCEPTED_WARN",
+    "operator_qa_accepted_warn_proof_dir": "/home/mint/kia-stick-local-proofs/proof_kia_stick_v0_9_12B_next_runtime_framework_security_plan_20260627T155320Z",
+    "operator_qa_acceptance_text": "OPERATOR_QA_ACCEPTED_WARN for /home/mint/kia-stick-local-proofs/proof_kia_stick_v0_9_12B_next_runtime_framework_security_plan_20260627T155320Z",
+    "pushed": true,
+    "accepted_meaning": "Park v0.9.12B as a known blocked planning result; do not implement Next until v0.9.12C gets separate target approval.",
     "result": "WARN_SAFE_NEXT_TARGET_UNCLEAR",
-    "notes": "Planning-only Next/runtime security phase. Current npm audit/npm view evidence does not prove a safe Next target, so implementation is deferred to a separate operator-approved phase."
+    "notes": "Planning-only Next/runtime security phase accepted as WARN/parked. Current npm audit/npm view evidence does not prove a safe Next target, so implementation is deferred to a separate operator-approved v0.9.12C phase."
   }
 }

@@ -5,7 +5,7 @@
 - Phase: `KIA-Stick-v0.9.12B-next-runtime-framework-security-plan`
 - Target: `USER_LAPTOP_ONLY`
 - Provider: `local-fake-deterministic`
-- Status: v0.9.12B planning-only Next/runtime framework security review is recorded from accepted pushed baseline `f412bcf8e802f3ef0a800d46a0ab6b32da7f4da3`. Current audit still reports `next` and transitive `postcss`; the safe Next target is unclear because audit suggests a forced downgrade to `next@9.3.3`. Package files, dependency versions, runtime code, product/prompt versions, queue-015, and real-doc capability remain unchanged. Result is `WARN_SAFE_NEXT_TARGET_UNCLEAR`; future work should use the separate `KIA-Stick-v0.9.12C-next-runtime-framework-security-implementation` gate.
+- Status: v0.9.12B planning-only Next/runtime framework security review is accepted as WARN/parked from accepted pushed baseline `f412bcf8e802f3ef0a800d46a0ab6b32da7f4da3`. Current audit still reports `next` and transitive `postcss`; the safe Next target is unclear because audit suggests a forced downgrade to `next@9.3.3`. Package files, dependency versions, runtime code, product/prompt versions, queue-015, and real-doc capability remain unchanged. Result is `WARN_SAFE_NEXT_TARGET_UNCLEAR`; future work must use the separate `KIA-Stick-v0.9.12C-next-runtime-framework-security-implementation` gate with an operator-approved exact target.
 
 ## v0.9.12B Next Runtime Framework Security Plan
 
@@ -28,8 +28,9 @@
 - Real-doc capability found/approved: no.
 - Services/cron/timers/tmux/Caddy/DNS changed: no.
 - Discord sent: no.
-- Push status: not pushed.
-- Manual QA status: pending operator review.
+- Push status: pushed by WARN closeout after validation and scope checks.
+- Manual QA status: PASS_ACCEPTED_WARN by operator prompt: `OPERATOR_QA_ACCEPTED_WARN for /home/mint/kia-stick-local-proofs/proof_kia_stick_v0_9_12B_next_runtime_framework_security_plan_20260627T155320Z`.
+- Closeout/push proof directory: `/home/mint/kia-stick-local-proofs/proof_kia_stick_v0_9_12B_next_runtime_framework_security_plan_20260627T155320Z/warn_closeout_push_20260627T162001Z`.
 - Result: `WARN_SAFE_NEXT_TARGET_UNCLEAR`.
 - Commands run: baseline `git status`/`git rev-parse`/package hash checks; `npm audit --json`; `npm view` for Next/React/PostCSS candidates; focused test `npm run test -- tests/v0912BNextRuntimeFrameworkSecurityPlan.test.ts`; full validation with `npm run lint`, `npm run typecheck`, `npm test`, `npm run build`, `npm run release:check`, `npm run governance:report`, `npm run queue:next`, `npm run closeout:summary`, `npm run scan:fake`, `npm run scan:privacy`, `git diff --check`, and `PROOF_DIR=/home/mint/kia-stick-local-proofs/proof_kia_stick_v0_9_12B_next_runtime_framework_security_plan_20260627T155320Z npm run qa`.
 - Files changed: `docs/v0.9.12B-next-runtime-framework-security-plan.md`, `tests/v0912BNextRuntimeFrameworkSecurityPlan.test.ts`, `README.md`, `CLOSEOUT.md`, `claude-progress.md`, and `feature_list.json`.

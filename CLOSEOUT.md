@@ -31,15 +31,17 @@
 - `npm audit fix` run: no
 - `npm update` run: no
 - `npm install` run: no
-- Manual QA status: pending operator review
+- Manual QA status: PASS_ACCEPTED_WARN by operator prompt: `OPERATOR_QA_ACCEPTED_WARN for /home/mint/kia-stick-local-proofs/proof_kia_stick_v0_9_12B_next_runtime_framework_security_plan_20260627T155320Z`
+- Accepted meaning: v0.9.12B is parked as a known WARN/blocked planning result; Next implementation remains blocked until v0.9.12C gets a separately approved exact target.
+- Closeout/push proof directory: `/home/mint/kia-stick-local-proofs/proof_kia_stick_v0_9_12B_next_runtime_framework_security_plan_20260627T155320Z/warn_closeout_push_20260627T162001Z`
 - Services restarted: no
 - Cron/timer/tmux/Caddy/DNS changed: no
 - Secrets printed: no
 - Discord sent: no
-- Push performed: no
+- Push performed: yes by this WARN closeout after validation and scope checks
 - Result: `WARN_SAFE_NEXT_TARGET_UNCLEAR`
 
-This planning record does not implement a Next upgrade. It stops before package mutation because the safe framework target is unclear from current audit evidence. It does not change runtime code, productVersion, promptVersion, queue-015, real-doc approval, file pickers, directory pickers, drag/drop import zones, browser File objects, FileReader, path readers, user-provided packet reads, OCR, upload handlers, text extraction, summarization, embeddings, indexing, vector stores, private-source inspection, services, credentials, Discord, skills, global config, or real-document access.
+This planning record is accepted as WARN/parked and does not implement a Next upgrade. It stops before package mutation because the safe framework target is unclear from current audit evidence. It does not claim the Next/PostCSS advisories are fixed, and it does not change runtime code, productVersion, promptVersion, queue-015, real-doc approval, file pickers, directory pickers, drag/drop import zones, browser File objects, FileReader, path readers, user-provided packet reads, OCR, upload handlers, text extraction, summarization, embeddings, indexing, vector stores, private-source inspection, services, credentials, Discord, skills, global config, or real-document access.
 
 ## v0.9.12A Vitest Dev/Test Security Fix
 

@@ -72,6 +72,7 @@ describe("v0.9.12B Next runtime framework security plan", () => {
         status: string;
         document: string;
         proof_dir: string;
+        closeout_push_proof_dir: string;
         accepted_baseline_commit: string;
         planning_only: boolean;
         safe_next_target_status: string;
@@ -95,6 +96,7 @@ describe("v0.9.12B Next runtime framework security plan", () => {
         queue_015_status: string;
         real_doc_implementation_approved: boolean;
         manual_qa_status: string;
+        operator_qa_acceptance_text: string;
         pushed: boolean;
       };
     };
@@ -118,9 +120,10 @@ describe("v0.9.12B Next runtime framework security plan", () => {
 
     const state = featureList.v0912b_next_runtime_framework_security_plan;
     expect(state.phase).toBe(phase);
-    expect(state.status).toBe("needs_operator_review");
+    expect(state.status).toBe("accepted_warn_parked_after_closeout_push");
     expect(state.document).toBe(docPath);
     expect(state.proof_dir).toBe(proofDir);
+    expect(state.closeout_push_proof_dir).toBe(`${proofDir}/warn_closeout_push_20260627T162001Z`);
     expect(state.accepted_baseline_commit).toBe("f412bcf8e802f3ef0a800d46a0ab6b32da7f4da3");
     expect(state.planning_only).toBe(true);
     expect(state.safe_next_target_status).toBe("unclear_from_npm_audit");
@@ -143,8 +146,9 @@ describe("v0.9.12B Next runtime framework security plan", () => {
     expect(state.npm_install_run).toBe(false);
     expect(state.queue_015_status).toBe("blocked");
     expect(state.real_doc_implementation_approved).toBe(false);
-    expect(state.manual_qa_status).toBe("pending");
-    expect(state.pushed).toBe(false);
+    expect(state.manual_qa_status).toBe("PASS_ACCEPTED_WARN");
+    expect(state.operator_qa_acceptance_text).toBe(`OPERATOR_QA_ACCEPTED_WARN for ${proofDir}`);
+    expect(state.pushed).toBe(true);
     expect(queue.items.find((item) => item.id === "queue-015-v07-first-real-doc-gate-request")?.status).toBe("blocked");
   });
 });
