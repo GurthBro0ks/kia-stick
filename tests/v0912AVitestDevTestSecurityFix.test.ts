@@ -60,6 +60,9 @@ describe("v0.9.12A Vitest dev/test security fix", () => {
         runtime_code_changed: boolean;
         queue_015_status: string;
         real_doc_implementation_approved: boolean;
+        manual_qa_status: string;
+        operator_qa_pass_proof_dir: string;
+        ready_to_push: boolean;
         pushed: boolean;
       };
     };
@@ -83,7 +86,7 @@ describe("v0.9.12A Vitest dev/test security fix", () => {
     expect(featureList.release_readiness.prompt_version).toBe(promptVersion);
     expect(featureList.release_readiness.queue_015_status).toBe("blocked");
     expect(featureList.v0912a_vitest_dev_test_security_fix.phase).toBe(phase);
-    expect(featureList.v0912a_vitest_dev_test_security_fix.status).toBe("needs_operator_review");
+    expect(featureList.v0912a_vitest_dev_test_security_fix.status).toBe("ready_to_push");
     expect(featureList.v0912a_vitest_dev_test_security_fix.direct_package_updated).toBe("vitest");
     expect(featureList.v0912a_vitest_dev_test_security_fix.direct_version_before).toBe("2.1.9");
     expect(featureList.v0912a_vitest_dev_test_security_fix.direct_version_after).toBe("3.2.6");
@@ -93,6 +96,9 @@ describe("v0.9.12A Vitest dev/test security fix", () => {
     expect(featureList.v0912a_vitest_dev_test_security_fix.runtime_code_changed).toBe(false);
     expect(featureList.v0912a_vitest_dev_test_security_fix.queue_015_status).toBe("blocked");
     expect(featureList.v0912a_vitest_dev_test_security_fix.real_doc_implementation_approved).toBe(false);
+    expect(featureList.v0912a_vitest_dev_test_security_fix.manual_qa_status).toBe("PASS");
+    expect(featureList.v0912a_vitest_dev_test_security_fix.operator_qa_pass_proof_dir).toBe("/home/mint/kia-stick-local-proofs/proof_kia_stick_v0_9_12A_vitest_dev_test_security_fix_20260627T153005Z");
+    expect(featureList.v0912a_vitest_dev_test_security_fix.ready_to_push).toBe(true);
     expect(featureList.v0912a_vitest_dev_test_security_fix.pushed).toBe(false);
     expect(queue.items.find((item) => item.id === "queue-015-v07-first-real-doc-gate-request")?.status).toBe("blocked");
   });

@@ -25,13 +25,14 @@
 - File picker/FileReader/OCR/indexing/embedding/vector capability added: no
 - `npm audit fix` run: no
 - `npm update` run: no
+- Manual QA status: PASS by operator prompt for `/home/mint/kia-stick-local-proofs/proof_kia_stick_v0_9_12A_vitest_dev_test_security_fix_20260627T153005Z`
 - Services restarted: no
 - Cron/timer/tmux/Caddy/DNS changed: no
 - Secrets printed: no
 - Discord sent: no
 - Push performed: no
 
-This implementation record is pending operator review. It does not change Next, direct `postcss`, runtime code, productVersion, promptVersion, queue-015, real-doc approval, file pickers, directory pickers, drag/drop import zones, browser File objects, FileReader, path readers, user-provided packet reads, OCR, upload handlers, text extraction, summarization, embeddings, indexing, vector stores, private-source inspection, services, credentials, Discord, skills, global config, or real-document access.
+This implementation record is accepted for local closeout state after operator QA PASS and is ready for a separate closeout/push prompt. It does not change Next, direct `postcss`, runtime code, productVersion, promptVersion, queue-015, real-doc approval, file pickers, directory pickers, drag/drop import zones, browser File objects, FileReader, path readers, user-provided packet reads, OCR, upload handlers, text extraction, summarization, embeddings, indexing, vector stores, private-source inspection, services, credentials, Discord, skills, global config, or real-document access.
 
 ## v0.9.11 Dependency Security Triage Plan
 

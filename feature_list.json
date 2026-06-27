@@ -5067,7 +5067,7 @@
   },
   "v0912a_vitest_dev_test_security_fix": {
     "phase": "KIA-Stick-v0.9.12A-vitest-dev-test-security-fix",
-    "status": "needs_operator_review",
+    "status": "ready_to_push",
     "document": "docs/v0.9.12A-vitest-dev-test-security-fix.md",
     "proof_dir": "/home/mint/kia-stick-local-proofs/proof_kia_stick_v0_9_12A_vitest_dev_test_security_fix_20260627T153005Z",
     "accepted_baseline_commit": "915b819cf9fdd9e688c62c210bf523c5e34741a0",
@@ -5138,7 +5138,9 @@
     "discord_sent": false,
     "secrets_printed": false,
     "pushed": false,
-    "manual_qa_status": "pending",
+    "manual_qa_status": "PASS",
+    "operator_qa_pass_proof_dir": "/home/mint/kia-stick-local-proofs/proof_kia_stick_v0_9_12A_vitest_dev_test_security_fix_20260627T153005Z",
+    "ready_to_push": true,
     "recommended_next_phase": "KIA-Stick-v0.9.12B-next-runtime-framework-security-plan",
     "notes": "Targeted Vitest dev/test dependency update only. Remaining npm audit advisories are deferred Next/runtime work."
   }
