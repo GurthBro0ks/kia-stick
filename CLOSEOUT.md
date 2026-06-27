@@ -1,5 +1,34 @@
 # KIA Stick Closeout
 
+## v0.9.13 to v0.9.17 Large Fake-Only Stabilization Bundle
+
+- Phase: `KIA-Stick-v0.9.13-to-v0.9.17-large-fake-only-stabilization-bundle`
+- Target machine: `USER_LAPTOP_ONLY`
+- Baseline: accepted pushed v0.9.12B WARN closeout at `dd20bf72fc00bb9d69c0d116009ef392e9948218`
+- Scope: fake-only docs/tests/state plus copy-only UI safety/evidence polish.
+- Included subphases: v0.9.13 post-security accepted-state checkpoint; v0.9.14 operator QA/report readability polish; v0.9.15 fake evidence/Saved/Sources polish; v0.9.16 Upload/Import/Vault safety polish; v0.9.17 next large-work checkpoint.
+- Vitest/dev-test security path: fixed by v0.9.12A.
+- Next/PostCSS runtime security path: parked as `WARN_SAFE_NEXT_TARGET_UNCLEAR`; not fixed by this bundle.
+- v0.9.12C implementation: blocked until an exact Next target is separately approved.
+- Product version: `0.7.0`
+- Package version: `0.7.0`
+- Prompt version: `prompt.fake-docs.v0.5-import-wizard-hardening`
+- Queue state: `queue-015-v07-first-real-doc-gate-request` remains blocked.
+- `package-lock.json` changed: no
+- Dependency versions changed: no
+- Runtime capability changed: no
+- Real document implementation approved: no
+- Real document access: none
+- File picker/FileReader/OCR/indexing/embedding/vector capability added: no
+- Services restarted: no
+- Cron/timer/tmux/Caddy/DNS changed: no
+- Secrets printed: no
+- Discord sent: no
+- Push performed: no
+- Manual QA status: PENDING
+
+This bundle is local fake-only stabilization work. It does not select a Next target, does not override PostCSS, does not unblock real-doc work, and does not add upload/read/index/OCR/vector behavior.
+
 ## v0.9.12B Next Runtime Framework Security Plan
 
 - Phase: `KIA-Stick-v0.9.12B-next-runtime-framework-security-plan`

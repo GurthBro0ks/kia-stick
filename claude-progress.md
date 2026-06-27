@@ -2,10 +2,31 @@
 
 ## Current Phase
 
-- Phase: `KIA-Stick-v0.9.12B-next-runtime-framework-security-plan`
+- Phase: `KIA-Stick-v0.9.13-to-v0.9.17-large-fake-only-stabilization-bundle`
 - Target: `USER_LAPTOP_ONLY`
 - Provider: `local-fake-deterministic`
-- Status: v0.9.12B planning-only Next/runtime framework security review is accepted as WARN/parked from accepted pushed baseline `f412bcf8e802f3ef0a800d46a0ab6b32da7f4da3`. Current audit still reports `next` and transitive `postcss`; the safe Next target is unclear because audit suggests a forced downgrade to `next@9.3.3`. Package files, dependency versions, runtime code, product/prompt versions, queue-015, and real-doc capability remain unchanged. Result is `WARN_SAFE_NEXT_TARGET_UNCLEAR`; future work must use the separate `KIA-Stick-v0.9.12C-next-runtime-framework-security-implementation` gate with an operator-approved exact target.
+- Status: local v0.9.13-to-v0.9.17 large fake-only stabilization bundle is in progress after accepted pushed v0.9.12B WARN closeout. The bundle records post-security accepted state, improves fake-only operator proof/readability guidance, polishes Chat/Sources/Saved and Upload/Import/Vault safety copy, and records next large safe options. Next/PostCSS remains parked as `WARN_SAFE_NEXT_TARGET_UNCLEAR`; v0.9.12C remains blocked pending an exact target; queue-015 remains blocked; product/prompt unchanged; no dependency or real-doc implementation is approved.
+
+## v0.9.13 to v0.9.17 Large Fake-Only Stabilization Bundle
+
+- Phase: `KIA-Stick-v0.9.13-to-v0.9.17-large-fake-only-stabilization-bundle`
+- Target machine: `USER_LAPTOP_ONLY`
+- Baseline: accepted pushed v0.9.12B WARN closeout at `dd20bf72fc00bb9d69c0d116009ef392e9948218`
+- Scope: fake-only docs/tests/state plus copy-only UI safety/evidence polish.
+- New docs: `docs/v0.9.13-post-security-accepted-state-checkpoint.md`, `docs/v0.9.14-operator-qa-report-readability-polish.md`, `docs/v0.9.15-fake-evidence-saved-sources-polish.md`, `docs/v0.9.16-upload-import-vault-safety-polish.md`, `docs/v0.9.17-next-large-work-checkpoint.md`
+- New tests: `tests/v0913PostSecurityAcceptedStateCheckpoint.test.ts`, `tests/v0914OperatorQaReportReadabilityPolish.test.ts`, `tests/v0915FakeEvidenceSavedSourcesPolish.test.ts`, `tests/v0916UploadImportVaultSafetyPolish.test.ts`, `tests/v0917NextLargeWorkCheckpoint.test.ts`
+- Runtime UI changed: copy-only fake evidence/safety clarity in existing surfaces.
+- Runtime capability changed: no.
+- Dependency versions changed: no.
+- `package-lock.json` changed: no.
+- Vitest/dev-test security path: fixed by v0.9.12A.
+- Next/PostCSS runtime path: parked as `WARN_SAFE_NEXT_TARGET_UNCLEAR`, not fixed.
+- v0.9.12C implementation: blocked until exact Next target approval.
+- Version state: product/package version remain `0.7.0`; prompt version remains `prompt.fake-docs.v0.5-import-wizard-hardening`.
+- Queue state: `queue-015-v07-first-real-doc-gate-request` remains blocked.
+- Real-doc capability found/approved: no.
+- Push status: not pushed.
+- Manual QA status: PENDING.
 
 ## v0.9.12B Next Runtime Framework Security Plan
 

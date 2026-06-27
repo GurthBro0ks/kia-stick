@@ -651,6 +651,7 @@ export function FakeUploadPanel(props: {
         <div className="qaCueRail" aria-label="Upload fake-only checks">
           <span>metadata buttons only</span>
           <span>no file chooser</span>
+          <span>review fixtures, not files</span>
           <span>{formatCount(props.quarantine.length, "queued fake row")}</span>
         </div>
         <label className="checkboxRow">
@@ -671,7 +672,7 @@ export function FakeUploadPanel(props: {
             Queue fake batch metadata
           </button>
         </div>
-        <p className="emptyState">No file picker is present. No cloud/API key is required. Buttons queue synthetic names, sizes, and timestamps only.</p>
+        <p className="emptyState">No file picker is present. No cloud/API key is required. Buttons queue synthetic names, sizes, and timestamps only; review labels are synthetic.</p>
         <div className="sourceCards">
           {props.quarantine.length === 0 && <p className="emptyState">No queued fake samples. Confirm fake sample metadata only, then queue a sample or batch.</p>}
           {props.quarantine.map((item) => (
@@ -712,6 +713,7 @@ export function SourcesPanel({
         <strong>{totalSources} fake sources</strong>
         <span>{citableSources} citable in answer citations</span>
         <span>{contextOnlySources} context-only guardrails</span>
+        <span>source IDs visible on every row</span>
         <span>Prompt {runtimeVersion.promptVersion}</span>
         <span>Build {runtimeVersion.displayVersion}</span>
       </div>
@@ -756,7 +758,7 @@ export function SavedAnswersPanel(props: { saved: SavedAnswer[]; onDelete: (id: 
       <div className="sourceCards">
         {props.saved.length === 0 && (
           <p className="emptyState">
-            No saved fake answers yet. Save a cited Chat answer to review local version, prompt, provider, and citation metadata here. No-answer Chat cards are blocked from Saved.
+            No saved fake answers yet. Save a cited Chat answer to review local version, prompt, provider, citation count, and fake build metadata here. No-answer Chat cards are blocked from Saved.
           </p>
         )}
         {props.saved.map((item) => (
@@ -963,7 +965,7 @@ export function VaultPanel(props: {
           <section className="auditExportPanel">
             <div>
               <h3>Fake audit export</h3>
-              <p>Exports include fake metadata, audit events, build identity, redaction labels, and guard flags only. Private paths, file content, OCR, uploads, and vectors are excluded.</p>
+              <p>Exports include fake metadata, audit events, build identity, redaction labels, and guard flags only. Private paths, file content, source text, OCR, uploads, and vectors are excluded.</p>
             </div>
             <div className="vaultActions">
               <DownloadLink fileName="kia-stick-fake-vault-audit.json" label="JSON" mimeType="application/json" text={jsonExport} />
@@ -1163,7 +1165,7 @@ export function ImportWizardPanel(props: {
       <section className="auditExportPanel">
         <div>
           <h3>Fake import proof</h3>
-          <p>Exports include fake wizard state, fake redaction metadata labels, fake audit events, and build identity only. They exclude private paths, snippets, OCR text, real identifiers, and file content.</p>
+          <p>Exports include fake wizard state, fake redaction metadata labels, fake audit events, and build identity only. They exclude private paths, snippets, OCR text, real identifiers, file content, uploads, embeddings, and indexes.</p>
         </div>
         <div className="vaultActions">
           <DownloadLink fileName="kia-stick-fake-import-wizard-audit.json" label="JSON" mimeType="application/json" text={jsonExport} />
@@ -1534,7 +1536,7 @@ export function AssistantMessageCard({
               <h2>{intentLabels[answer.intent]}</h2>
             </div>
             <span className={answer.noAnswer ? "statusPill warning" : "statusPill ok"}>
-              {answer.noAnswer ? "Unsaved no-answer" : `${answer.citations.length} citations`}
+              {answer.noAnswer ? "Unsaved no-answer; context-only trail" : `${answer.citations.length} citations`}
             </span>
           </div>
 
@@ -1578,7 +1580,7 @@ export function AssistantMessageCard({
               {answer.noAnswer ? "No answer to save" : "Save to Saved"}
             </button>
             {answer.citations.length === 0 ? (
-              <p className="emptyState">No Saved record is created for no-answer responses. Context-only fake sources can still be reviewed in the full packet.</p>
+              <p className="emptyState">No Saved record is created for no-answer responses. Context-only fake sources can still be reviewed in the full packet. Prompt and provider metadata remain visible there.</p>
             ) : (
               <button
                 aria-expanded={citationsOpen}

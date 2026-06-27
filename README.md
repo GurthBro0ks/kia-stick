@@ -54,6 +54,14 @@ The safe Next target is unclear from current `npm audit` and `npm view` evidence
 
 Operator WARN acceptance parks v0.9.12B as a known blocked planning result: `OPERATOR_QA_ACCEPTED_WARN for /home/mint/kia-stick-local-proofs/proof_kia_stick_v0_9_12B_next_runtime_framework_security_plan_20260627T155320Z`. `package.json` and `package-lock.json` are unchanged. No dependency versions, runtime code, product/package version, prompt version, queue state, real-doc capability, service, Discord, system change, `npm audit fix`, `npm update`, or `npm install` is approved by this phase. Product/package version remains `0.7.0`; prompt version remains `prompt.fake-docs.v0.5-import-wizard-hardening`; `queue-015-v07-first-real-doc-gate-request` remains blocked. The v0.9.12B plan is accepted as WARN/parked; v0.9.12C remains blocked until a safe exact Next target is separately approved.
 
+## v0.9.13 to v0.9.17 Large Fake-Only Stabilization Bundle
+
+Phase: `KIA-Stick-v0.9.13-to-v0.9.17-large-fake-only-stabilization-bundle`.
+
+This local bundle returns to larger safe fake-only work after the v0.9.12B WARN closeout. It adds post-security accepted-state recording, operator QA/report readability guidance, fake-only Chat/Sources/Saved evidence clarity, Upload/Import/Vault safety copy polish, and a next-large-work checkpoint. The default next safe option is to continue fake-only UX/tooling bundle work.
+
+The bundle does not implement Next/runtime security work. The Vitest/dev-test path remains fixed, the Next/PostCSS runtime path remains parked as `WARN_SAFE_NEXT_TARGET_UNCLEAR`, and `KIA-Stick-v0.9.12C-next-runtime-framework-security-implementation` remains blocked until an exact Next target is separately approved. `package-lock.json` is unchanged. Product/package version remains `0.7.0`; prompt version remains `prompt.fake-docs.v0.5-import-wizard-hardening`; `queue-015-v07-first-real-doc-gate-request` remains blocked. Manual QA is pending and no push is approved by this local bundle.
+
 ## v0.9.1 to v0.9.5 Release-State Consolidation and Proof Durability Bundle
 
 Phase: `KIA-Stick-v0.9.1-to-v0.9.5-release-state-consolidation-and-proof-durability-bundle`.
