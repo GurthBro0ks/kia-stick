@@ -12,6 +12,18 @@ KIA Stick separates milestone semver from build identity:
 
 `/health`, `/version`, the app header, settings, answer footer, and saved answer metadata expose the current `displayVersion`.
 
+## v0.9.1 to v0.9.5 Release-State Consolidation and Proof Durability Bundle
+
+Phase: `KIA-Stick-v0.9.1-to-v0.9.5-release-state-consolidation-and-proof-durability-bundle`.
+
+Current project phase: `KIA-Stick-v0.9.5-next-work-decision-checkpoint`.
+
+This local bundle consolidates the accepted v0.9.0 pushed state and hardens proof durability after the original v0.8.6-to-v0.9.0 bundle proof directory was missing at closeout time. It adds `docs/v0.9.1-accepted-state-reality-audit.md`, `docs/v0.9.2-proof-durability-contract.md`, `docs/v0.9.3-release-state-consistency-check.md`, `docs/v0.9.4-persistent-proof-pointer-update.md`, and `docs/v0.9.5-next-work-decision-checkpoint.md` with focused tests.
+
+Latest accepted pushed phase remains `KIA-Stick-v0.8.6-to-v0.9.0-fake-runtime-ux-bundle-plus-vault-fix-closeout-and-push`; accepted closeout push commit remains `8044eaf6756c5e8303483d44017a29cf9514ed44`. `queue-015-v07-first-real-doc-gate-request` remains blocked. `queue-041` through `queue-045` remain accepted. `queue-046` through `queue-050` are `needs_review` pending one bundle operator QA decision. Product version remains `0.7.0`; prompt version remains `prompt.fake-docs.v0.5-import-wizard-hardening`.
+
+This is **docs/tests/tooling/state work with a local proof pointer update only**. It does not add runtime feature work, approve implementation for real documents, name or touch a real document, accept arbitrary path input, read user-provided packet files, scan private folders, add file pickers, directory pickers, drag/drop import zones, browser File objects, FileReader, path readers, uploads, OCR, real redaction, text extraction over real documents, summarization, embeddings, indexing, vector stores, private-source inspection, services, secrets, Discord, skills, global config, or system changes. No push is approved by this bundle.
+
 ## v0.8.6 to v0.9.0 Fake Runtime UX Polish Bundle
 
 Phase: `KIA-Stick-v0.9.0-fake-runtime-ux-checkpoint`.

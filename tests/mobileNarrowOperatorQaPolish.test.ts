@@ -33,7 +33,7 @@ describe("v0.8.9 mobile/narrow operator QA polish", () => {
 
     expect(result.status).toBe(0);
     expect(result.stdout).toContain("Operator QA smoke PASS");
-    expect(result.stdout).toContain("Project phase: KIA-Stick-v0.9.0-fake-runtime-ux-checkpoint");
+    expect(result.stdout).toContain("Project phase: KIA-Stick-v0.9.5-next-work-decision-checkpoint");
     expect(result.stdout).toContain("Runtime phase: KIA-Stick-v0.7.12-operator-qa-closeout-and-push");
     expect(result.stdout).toContain("Bundle smoke surfaces:");
     for (const surface of [

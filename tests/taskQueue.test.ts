@@ -51,7 +51,7 @@ describe("task-queue", () => {
     const queue = mod.loadQueue(resolve("."));
 
     expect(queue.schema).toBe("kia-stick-local-task-queue.v1");
-    expect(queue.items).toHaveLength(45);
+    expect(queue.items).toHaveLength(50);
     expect(queue.items.map((item) => item.id)).toEqual([
       "queue-001-closeout-helper-hardening",
       "queue-002-fake-redaction-metadata-depth",
@@ -98,6 +98,11 @@ describe("task-queue", () => {
       "queue-043-v088-sources-upload-import-vault-polish",
       "queue-044-v089-mobile-narrow-operator-qa-polish",
       "queue-045-v090-fake-runtime-ux-checkpoint",
+      "queue-046-v091-accepted-state-reality-audit",
+      "queue-047-v092-proof-durability-contract",
+      "queue-048-v093-release-state-consistency-check",
+      "queue-049-v094-persistent-proof-pointer-update",
+      "queue-050-v095-next-work-decision-checkpoint",
     ]);
     expect(queue.items.slice(0, 14).every((item) => item.status === "accepted")).toBe(true);
     expect(queue.items[10].status).toBe("accepted");
@@ -126,7 +131,8 @@ describe("task-queue", () => {
     expect(queue.items[33].status).toBe("accepted");
     expect(queue.items[34].status).toBe("accepted");
     expect(queue.items.slice(35, 40).every((item) => item.status === "accepted")).toBe(true);
-    expect(queue.items.slice(40).every((item) => item.status === "accepted")).toBe(true);
+    expect(queue.items.slice(40, 45).every((item) => item.status === "accepted")).toBe(true);
+    expect(queue.items.slice(45).every((item) => item.status === "needs_review")).toBe(true);
     expect(queue.items.every((item) => item.history.length > 0)).toBe(true);
     expect(mod.validateQueue(queue)).toBe(true);
   });
@@ -424,7 +430,9 @@ describe("task-queue", () => {
     const result = spawnSync("node", [scriptPath, "next"], { cwd: resolve("."), encoding: "utf8" });
 
     expect(result.status).toBe(0);
-    expect(result.stdout).toContain("No actionable queue items");
+    expect(result.stdout).toContain("id=queue-046-v091-accepted-state-reality-audit");
+    expect(result.stdout).toContain("status=needs_review");
+    expect(result.stdout).toContain("Codex-ready summary:");
     expect(result.stdout).not.toContain("id=queue-015-v07-first-real-doc-gate-request");
   });
 

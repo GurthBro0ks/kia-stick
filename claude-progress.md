@@ -2,10 +2,36 @@
 
 ## Current Phase
 
-- Phase: `KIA-Stick-v0.8.6-to-v0.9.0-fake-runtime-ux-bundle-plus-vault-fix-closeout-and-push`
+- Phase: `KIA-Stick-v0.9.1-to-v0.9.5-release-state-consolidation-and-proof-durability-bundle`
 - Target: `USER_LAPTOP_ONLY`
 - Provider: `local-fake-deterministic`
-- Status: closeout validation PASS, operator QA PASS, push, and `HEAD`/`origin/main` equality proof recorded for v0.8.6 through v0.9.0 fake-only runtime UX polish bundle plus Vault client exception fix; queue-041 through queue-045 are accepted, queue-015 remains blocked, and no real-doc implementation approved.
+- Status: v0.9.1 through v0.9.5 release-state consolidation and proof durability bundle is local and pending one bundle operator QA review; queue-046 through queue-050 are `needs_review`, queue-015 remains blocked, product/prompt unchanged, no push performed, and no real-doc implementation approved.
+
+## v0.9.1 to v0.9.5 Release-State Consolidation Bundle State
+
+- Bundle phase: `KIA-Stick-v0.9.1-to-v0.9.5-release-state-consolidation-and-proof-durability-bundle`
+- Current project phase: `KIA-Stick-v0.9.5-next-work-decision-checkpoint`
+- Target machine: `USER_LAPTOP_LINUX_MINT`
+- Baseline: accepted pushed v0.9.0 closeout state at `b23f794a06331966454ef06f165b3983d7fd256f`
+- Accepted closeout push commit: `8044eaf6756c5e8303483d44017a29cf9514ed44`
+- Scope: docs/tests/tooling/state release-state consolidation, proof durability contract, consistency checks, local proof pointer update, and next-work checkpoint.
+- Product version: `0.7.0`
+- Prompt version: `prompt.fake-docs.v0.5-import-wizard-hardening`
+- New docs: `docs/v0.9.1-accepted-state-reality-audit.md`, `docs/v0.9.2-proof-durability-contract.md`, `docs/v0.9.3-release-state-consistency-check.md`, `docs/v0.9.4-persistent-proof-pointer-update.md`, `docs/v0.9.5-next-work-decision-checkpoint.md`
+- Queue state: `queue-015-v07-first-real-doc-gate-request` remains blocked; `queue-041` through `queue-045` remain accepted; `queue-046` through `queue-050` are `needs_review` pending one bundle operator QA decision.
+- Original v0.9.0 bundle proof directory status: missing at closeout time; replacement proof mode recorded.
+- Replacement proof directory: `/tmp/proof_kia_stick_v0_8_6_to_v0_9_0_fake_runtime_ux_bundle_plus_vault_fix_closeout_push_20260627T103128Z`
+- Current proof directory: `/tmp/proof_kia_stick_v0_9_1_to_v0_9_5_release_state_consolidation_bundle_20260627T105926Z`
+- Persistent proof pointer: `/home/mint/Desktop/kia-stick-proofs/LATEST_KIA_PROOF.txt`
+- Runtime UI changed: no
+- Runtime capability changed: no
+- Real/private document access: none
+- Private source folders inspected: no
+- Services/cron/timers/tmux/Caddy/DNS changed: no
+- Discord sent: no
+- Manual QA status: pending operator bundle review.
+- Push status: not pushed.
+- Remaining unknowns: operator bundle QA decision and separate closeout/push prompt.
 
 ## v0.9.0 Vault Client Exception Fix State
 

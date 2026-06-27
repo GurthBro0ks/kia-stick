@@ -5,6 +5,7 @@ import { spawnSync } from "node:child_process";
 
 const DEFAULT_PROOF_ROOT = "/tmp";
 const PROOF_PREFIX = "proof_kia_stick_";
+const DURABILITY_SAFE_ROOTS = ["/tmp", "/home/mint/kia-stick-local-proofs"];
 
 function fieldValue(text, field) {
   const escaped = field.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
@@ -125,6 +126,97 @@ export function discoverProofDirs(root = DEFAULT_PROOF_ROOT) {
 
 export function selectLatestProof(proofs) {
   return proofs[0] || null;
+}
+
+function safeProofPath(proofPath) {
+  if (!proofPath || typeof proofPath !== "string") return false;
+  const resolved = path.resolve(proofPath);
+  const base = path.basename(resolved);
+  return base.startsWith(PROOF_PREFIX) && DURABILITY_SAFE_ROOTS.some((root) => {
+    const relative = path.relative(path.resolve(root), resolved);
+    return relative === "" || (!relative.startsWith("..") && !path.isAbsolute(relative));
+  });
+}
+
+export function assessProofDurability(record = {}) {
+  const issues = [];
+  const originalProofDir = record.originalProofDir || "";
+  const replacementProofDir = record.replacementProofDir || "";
+  const originalSafe = safeProofPath(originalProofDir);
+  const replacementSafe = safeProofPath(replacementProofDir);
+  const originalExists = originalSafe && existsSync(originalProofDir);
+
+  if (!originalSafe) {
+    issues.push({
+      severity: "WARN",
+      code: "original_proof_path_not_repo_safe",
+      message: "Original proof path is absent or outside an allowed proof root.",
+    });
+  }
+
+  if (originalExists) {
+    return {
+      status: "PASS",
+      originalProofDirStatus: "available",
+      replacementProofStatus: "not_required",
+      issues: [],
+    };
+  }
+
+  if (!replacementProofDir) {
+    issues.push({
+      severity: "WARN",
+      code: "missing_original_without_replacement",
+      message: "Original proof is missing and no replacement proof was recorded.",
+    });
+  } else if (!replacementSafe) {
+    issues.push({
+      severity: "FAIL",
+      code: "replacement_proof_path_not_repo_safe",
+      message: "Replacement proof path is outside an allowed proof root.",
+    });
+  } else if (!existsSync(replacementProofDir)) {
+    issues.push({
+      severity: "WARN",
+      code: "replacement_proof_missing",
+      message: "Replacement proof path was recorded but does not currently exist.",
+    });
+  }
+
+  const requiredFields = [
+    "originalProofDir",
+    "replacementProofDir",
+    "validationStatus",
+    "queueStatus",
+    "pushStatus",
+    "headEqualsOriginMain",
+  ];
+  for (const field of requiredFields) {
+    if (!record[field]) {
+      issues.push({
+        severity: "WARN",
+        code: `replacement_field_missing_${field}`,
+        message: `Replacement proof record is missing ${field}.`,
+      });
+    }
+  }
+
+  if (record.validationStatus && record.validationStatus !== "PASS") {
+    issues.push({
+      severity: "WARN",
+      code: "replacement_validation_not_pass",
+      message: `Replacement validation status is ${record.validationStatus}.`,
+    });
+  }
+
+  const status = issues.some((issue) => issue.severity === "FAIL") ? "FAIL" : issues.length > 0 ? "WARN" : "PASS";
+
+  return {
+    status,
+    originalProofDirStatus: "missing",
+    replacementProofStatus: status === "PASS" ? "recorded_validation_passed" : "incomplete",
+    issues,
+  };
 }
 
 function gitOutput(root, args) {

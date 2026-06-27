@@ -48,7 +48,9 @@ describe("v0.8.3 queue next contract hardening", () => {
     const result = spawnSync("node", [scriptPath, "next"], { cwd: resolve("."), encoding: "utf8" });
 
     expect(result.status).toBe(0);
-    expect(result.stdout).toContain("No actionable queue items");
+    expect(result.stdout).toContain("id=queue-046-v091-accepted-state-reality-audit");
+    expect(result.stdout).toContain("status=needs_review");
+    expect(result.stdout).toContain("Codex-ready summary:");
     expect(result.stdout).not.toContain("id=queue-015-v07-first-real-doc-gate-request");
   });
 

@@ -1,5 +1,36 @@
 # KIA Stick Closeout
 
+## v0.9.1 to v0.9.5 Release-State Consolidation and Proof Durability Bundle
+
+- Phase: `KIA-Stick-v0.9.1-to-v0.9.5-release-state-consolidation-and-proof-durability-bundle`
+- Current project phase: `KIA-Stick-v0.9.5-next-work-decision-checkpoint`
+- Baseline: accepted pushed v0.9.0 closeout state at `b23f794a06331966454ef06f165b3983d7fd256f`
+- Accepted closeout push commit: `8044eaf6756c5e8303483d44017a29cf9514ed44`
+- Scope: docs/tests/tooling/state release-state consolidation, proof durability contract, consistency checks, local proof pointer update, and next-work checkpoint.
+- Product version: `0.7.0`
+- Package version: `0.7.0`
+- Prompt version: `prompt.fake-docs.v0.5-import-wizard-hardening`
+- Proof directory: `/tmp/proof_kia_stick_v0_9_1_to_v0_9_5_release_state_consolidation_bundle_20260627T105926Z`
+- Original v0.9.0 bundle proof directory status: missing at closeout time, replaced by explicit closeout validation proof.
+- Replacement proof directory: `/tmp/proof_kia_stick_v0_8_6_to_v0_9_0_fake_runtime_ux_bundle_plus_vault_fix_closeout_push_20260627T103128Z`
+- Persistent proof pointer: `/home/mint/Desktop/kia-stick-proofs/LATEST_KIA_PROOF.txt`
+- Queue state: `queue-015-v07-first-real-doc-gate-request` remains blocked; `queue-041` through `queue-045` remain accepted; `queue-046` through `queue-050` are `needs_review` pending one bundle operator QA decision.
+- Manual QA status: pending operator bundle review
+- Runtime UI changed: no
+- Runtime capability changed: no
+- Real document access: none
+- Real document named: no
+- Private source folders inspected: no
+- Skills installed: no
+- Global agent config changed: no
+- Services restarted: no
+- Cron/timer/tmux/Caddy/DNS changed: no
+- Secrets printed: no
+- Discord sent: no
+- Push performed: no
+
+This bundle does not approve real-doc work. It does not add file pickers, directory pickers, drag/drop import zones, browser File objects, FileReader, path readers, user-provided packet reads, file reads over real documents, copying, hashing real files, OCR, upload handlers, real redaction, text extraction, summarization, embeddings, indexing, vector stores, quarantine writes, private-source inspection, service changes, credentials, skills, global agent config, or real-document access.
+
 ## v0.8.6 to v0.9.0 Fake Runtime UX Polish Bundle
 
 - Phase: `KIA-Stick-v0.9.0-fake-runtime-ux-checkpoint`

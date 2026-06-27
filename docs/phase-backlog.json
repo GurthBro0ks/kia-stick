@@ -1,6 +1,6 @@
 {
   "schema": "kia-stick-local-task-queue.v1",
-  "updated_at": "2026-06-27T10:34:44.000Z",
+  "updated_at": "2026-06-27T10:59:26.000Z",
   "items": [
     {
       "id": "queue-001-closeout-helper-hardening",
@@ -1379,6 +1379,106 @@
           "from": "ready_to_push",
           "to": "accepted",
           "note": "Accepted after closeout validation PASS and operator QA PASS for KIA-Stick-v0.8.6-to-v0.9.0 fake-only runtime UX bundle plus Vault client exception fix. Original bundle proof dir was missing at closeout time, so replacement proof was generated in /tmp/proof_kia_stick_v0_8_6_to_v0_9_0_fake_runtime_ux_bundle_plus_vault_fix_closeout_push_20260627T103128Z. queue-015 remains blocked, product/prompt unchanged, no real-doc implementation is approved, and push is authorized by this closeout gate."
+        }
+      ]
+    },
+    {
+      "id": "queue-046-v091-accepted-state-reality-audit",
+      "phase": "KIA-Stick-v0.9.1-accepted-state-reality-audit",
+      "title": "v0.9.1 accepted-state reality audit",
+      "status": "needs_review",
+      "model": "GPT/Codex $100 coding plan",
+      "risk": "low",
+      "summary": "Audit the accepted v0.9.0 pushed state, queue boundaries, product/prompt identity, and replacement-proof situation.",
+      "next_action": "Review the v0.9.1-to-v0.9.5 bundle as one operator QA packet; do not push or accept until OPERATOR_QA_PASS is provided.",
+      "created_at": "2026-06-27T10:59:26.000Z",
+      "updated_at": "2026-06-27T10:59:26.000Z",
+      "history": [
+        {
+          "at": "2026-06-27T10:59:26.000Z",
+          "from": "planned",
+          "to": "needs_review",
+          "note": "KIA-Stick-v0.9.1-accepted-state-reality-audit completed locally in the KIA-Stick-v0.9.1-to-v0.9.5-release-state-consolidation-and-proof-durability-bundle; pending one bundle operator QA review, queue-015 remains blocked, product/prompt unchanged, no real-doc implementation is approved, and no push performed."
+        }
+      ]
+    },
+    {
+      "id": "queue-047-v092-proof-durability-contract",
+      "phase": "KIA-Stick-v0.9.2-proof-durability-contract",
+      "title": "v0.9.2 proof durability contract",
+      "status": "needs_review",
+      "model": "GPT/Codex $100 coding plan",
+      "risk": "medium",
+      "summary": "Document and test missing-proof and replacement-proof durability rules for GitHub-safe closeouts.",
+      "next_action": "Review proof durability contract with the full bundle; missing original proof stays explicit and replacement proof must remain recorded.",
+      "created_at": "2026-06-27T10:59:26.000Z",
+      "updated_at": "2026-06-27T10:59:26.000Z",
+      "history": [
+        {
+          "at": "2026-06-27T10:59:26.000Z",
+          "from": "planned",
+          "to": "needs_review",
+          "note": "KIA-Stick-v0.9.2-proof-durability-contract completed locally in the KIA-Stick-v0.9.1-to-v0.9.5-release-state-consolidation-and-proof-durability-bundle; pending one bundle operator QA review, queue-015 remains blocked, product/prompt unchanged, no real-doc implementation is approved, and no push performed."
+        }
+      ]
+    },
+    {
+      "id": "queue-048-v093-release-state-consistency-check",
+      "phase": "KIA-Stick-v0.9.3-release-state-consistency-check",
+      "title": "v0.9.3 release-state consistency check",
+      "status": "needs_review",
+      "model": "GPT/Codex $100 coding plan",
+      "risk": "low",
+      "summary": "Harden consistency across README, CLOSEOUT, claude-progress, feature_list, and queue state.",
+      "next_action": "Review release-state consistency with the full bundle; queue-015 remains blocked and product/prompt stay unchanged.",
+      "created_at": "2026-06-27T10:59:26.000Z",
+      "updated_at": "2026-06-27T10:59:26.000Z",
+      "history": [
+        {
+          "at": "2026-06-27T10:59:26.000Z",
+          "from": "planned",
+          "to": "needs_review",
+          "note": "KIA-Stick-v0.9.3-release-state-consistency-check completed locally in the KIA-Stick-v0.9.1-to-v0.9.5-release-state-consolidation-and-proof-durability-bundle; pending one bundle operator QA review, queue-015 remains blocked, product/prompt unchanged, no real-doc implementation is approved, and no push performed."
+        }
+      ]
+    },
+    {
+      "id": "queue-049-v094-persistent-proof-pointer-update",
+      "phase": "KIA-Stick-v0.9.4-persistent-proof-pointer-update",
+      "title": "v0.9.4 persistent proof pointer update",
+      "status": "needs_review",
+      "model": "GPT/Codex $100 coding plan",
+      "risk": "medium",
+      "summary": "Update local proof discoverability for the accepted v0.9.0 replacement closeout proof using GitHub-safe pointer metadata only.",
+      "next_action": "Review the local proof pointer update with the full bundle; no real docs, private files, or secrets are copied.",
+      "created_at": "2026-06-27T10:59:26.000Z",
+      "updated_at": "2026-06-27T10:59:26.000Z",
+      "history": [
+        {
+          "at": "2026-06-27T10:59:26.000Z",
+          "from": "planned",
+          "to": "needs_review",
+          "note": "KIA-Stick-v0.9.4-persistent-proof-pointer-update completed locally in the KIA-Stick-v0.9.1-to-v0.9.5-release-state-consolidation-and-proof-durability-bundle; pending one bundle operator QA review, queue-015 remains blocked, product/prompt unchanged, no real-doc implementation is approved, and no push performed."
+        }
+      ]
+    },
+    {
+      "id": "queue-050-v095-next-work-decision-checkpoint",
+      "phase": "KIA-Stick-v0.9.5-next-work-decision-checkpoint",
+      "title": "v0.9.5 next work decision checkpoint",
+      "status": "needs_review",
+      "model": "GPT/Codex $100 coding plan",
+      "risk": "low",
+      "summary": "Record next safe work options after release-state consolidation and proof durability hardening.",
+      "next_action": "Review next-work options with the full bundle; no real-doc implementation is approved.",
+      "created_at": "2026-06-27T10:59:26.000Z",
+      "updated_at": "2026-06-27T10:59:26.000Z",
+      "history": [
+        {
+          "at": "2026-06-27T10:59:26.000Z",
+          "from": "planned",
+          "to": "needs_review",
+          "note": "KIA-Stick-v0.9.5-next-work-decision-checkpoint completed locally in the KIA-Stick-v0.9.1-to-v0.9.5-release-state-consolidation-and-proof-durability-bundle; pending one bundle operator QA review, queue-015 remains blocked, product/prompt unchanged, no real-doc implementation is approved, and no push performed."
         }
       ]
     }
