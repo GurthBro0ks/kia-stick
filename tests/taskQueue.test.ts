@@ -132,7 +132,7 @@ describe("task-queue", () => {
     expect(queue.items[34].status).toBe("accepted");
     expect(queue.items.slice(35, 40).every((item) => item.status === "accepted")).toBe(true);
     expect(queue.items.slice(40, 45).every((item) => item.status === "accepted")).toBe(true);
-    expect(queue.items.slice(45).every((item) => item.status === "needs_review")).toBe(true);
+    expect(queue.items.slice(45).every((item) => item.status === "accepted")).toBe(true);
     expect(queue.items.every((item) => item.history.length > 0)).toBe(true);
     expect(mod.validateQueue(queue)).toBe(true);
   });
@@ -430,9 +430,8 @@ describe("task-queue", () => {
     const result = spawnSync("node", [scriptPath, "next"], { cwd: resolve("."), encoding: "utf8" });
 
     expect(result.status).toBe(0);
-    expect(result.stdout).toContain("id=queue-046-v091-accepted-state-reality-audit");
-    expect(result.stdout).toContain("status=needs_review");
-    expect(result.stdout).toContain("Codex-ready summary:");
+    expect(result.stdout).toContain("No actionable queue items");
+    expect(result.stdout).toContain("Blocked and parked items are intentionally skipped.");
     expect(result.stdout).not.toContain("id=queue-015-v07-first-real-doc-gate-request");
   });
 

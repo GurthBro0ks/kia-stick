@@ -3,7 +3,7 @@ import { describe, expect, it } from "vitest";
 
 const phase = "KIA-Stick-v0.8.5-next-large-work-checkpoint";
 const currentPhase = "KIA-Stick-v0.9.5-next-work-decision-checkpoint";
-const currentStatus = "v091_v095_release_state_consolidation_bundle_pending_operator_review";
+const currentStatus = "v091_v095_release_state_consolidation_bundle_accepted_after_closeout_push";
 const docPath = "docs/v0.8.5-next-large-work-checkpoint.md";
 const productVersion = "0.7.0";
 const promptVersion = "prompt.fake-docs.v0.5-import-wizard-hardening";
@@ -64,8 +64,8 @@ describe("v0.8.5 next large work checkpoint", () => {
     expect(featureList.release_readiness.product_version).toBe(productVersion);
     expect(featureList.release_readiness.package_version).toBe(productVersion);
     expect(featureList.release_readiness.prompt_version).toBe(promptVersion);
-    expect(featureList.release_readiness.manual_qa_status).toBe("pending_operator_bundle_review");
-    expect(featureList.release_readiness.push_performed).toBe(false);
+    expect(featureList.release_readiness.manual_qa_status).toBe("PASS");
+    expect(featureList.release_readiness.push_performed).toBe(true);
     expect(featureList.v085_next_large_work_checkpoint.phase).toBe(phase);
     expect(featureList.v085_next_large_work_checkpoint.status).toBe("accepted_after_closeout_push");
     expect(featureList.v085_next_large_work_checkpoint.recommended_next_options).toHaveLength(4);

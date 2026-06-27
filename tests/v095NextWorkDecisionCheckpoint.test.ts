@@ -17,7 +17,7 @@ describe("v0.9.5 next-work decision checkpoint", () => {
     expect(doc).toContain("does not unblock `queue-015-v07-first-real-doc-gate-request`");
   });
 
-  it("tracks the final subphase as pending operator bundle review", () => {
+  it("tracks the final subphase as accepted after closeout push", () => {
     const featureList = JSON.parse(readFileSync("feature_list.json", "utf8")) as {
       phase: string;
       v095_next_work_decision_checkpoint: {
@@ -36,8 +36,8 @@ describe("v0.9.5 next-work decision checkpoint", () => {
 
     expect(featureList.phase).toBe(phase);
     expect(featureList.v095_next_work_decision_checkpoint.phase).toBe(phase);
-    expect(featureList.v095_next_work_decision_checkpoint.status).toBe("pending_operator_bundle_review");
-    expect(featureList.v095_next_work_decision_checkpoint.queue_050_status).toBe("needs_review");
+    expect(featureList.v095_next_work_decision_checkpoint.status).toBe("accepted_after_closeout_push");
+    expect(featureList.v095_next_work_decision_checkpoint.queue_050_status).toBe("accepted");
     expect(featureList.v095_next_work_decision_checkpoint.recommended_next_options).toEqual([
       "synthetic governance hardening bundle",
       "focused mobile screenshot proof",
@@ -47,6 +47,6 @@ describe("v0.9.5 next-work decision checkpoint", () => {
     expect(featureList.v095_next_work_decision_checkpoint.queue_015_status).toBe("blocked");
     expect(featureList.v095_next_work_decision_checkpoint.authorizes_real_doc_work).toBe(false);
     expect(featureList.v095_next_work_decision_checkpoint.real_doc_implementation_approved).toBe(false);
-    expect(queue.items.find((item) => item.id === "queue-050-v095-next-work-decision-checkpoint")?.status).toBe("needs_review");
+    expect(queue.items.find((item) => item.id === "queue-050-v095-next-work-decision-checkpoint")?.status).toBe("accepted");
   });
 });

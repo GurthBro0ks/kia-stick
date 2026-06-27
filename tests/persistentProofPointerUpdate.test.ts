@@ -6,7 +6,6 @@ const docPath = "docs/v0.9.4-persistent-proof-pointer-update.md";
 const desktopPointer = "/home/mint/Desktop/kia-stick-proofs/LATEST_KIA_PROOF.txt";
 const localProofRoot = "/home/mint/kia-stick-local-proofs";
 const generatedProofDir = "/tmp/proof_kia_stick_v0_9_1_to_v0_9_5_release_state_consolidation_bundle_20260627T105926Z";
-const acceptedCloseoutCommit = "8044eaf6756c5e8303483d44017a29cf9514ed44";
 
 describe("v0.9.4 persistent proof pointer update", () => {
   it("documents the local pointer and GitHub-safe pointer payload", () => {
@@ -38,8 +37,8 @@ describe("v0.9.4 persistent proof pointer update", () => {
     const state = featureList.v094_persistent_proof_pointer_update;
 
     expect(state.phase).toBe(phase);
-    expect(state.status).toBe("pending_operator_bundle_review");
-    expect(state.queue_049_status).toBe("needs_review");
+    expect(state.status).toBe("accepted_after_closeout_push");
+    expect(state.queue_049_status).toBe("accepted");
     expect(state.desktop_pointer_file).toBe(desktopPointer);
     expect(state.local_proof_summary_dir).toContain(localProofRoot);
     expect(state.persistent_proof_pointer_status).toBe("updated");
@@ -51,11 +50,14 @@ describe("v0.9.4 persistent proof pointer update", () => {
   it("updates the local desktop pointer with safe metadata only", () => {
     expect(existsSync(desktopPointer)).toBe(true);
     const pointer = readFileSync(desktopPointer, "utf8");
+    const featureList = JSON.parse(readFileSync("feature_list.json", "utf8")) as {
+      release_readiness: { closeout_push_proof_dir: string };
+    };
 
-    expect(pointer).toContain(generatedProofDir);
-    expect(pointer).toContain("KIA-Stick-v0.9.1-to-v0.9.5-release-state-consolidation-and-proof-durability-bundle");
-    expect(pointer).toContain(acceptedCloseoutCommit);
+    expect(pointer).toContain(featureList.release_readiness.closeout_push_proof_dir);
+    expect(pointer).toContain("KIA-Stick-v0.9.1-to-v0.9.5-release-state-consolidation-proof-durability-closeout-and-push");
     expect(pointer).toContain("QUEUE_015_STATUS=blocked");
+    expect(pointer).toContain("QUEUE_046_TO_050_STATUS=accepted");
     expect(pointer).toContain("PRODUCT_VERSION=0.7.0");
     expect(pointer).toContain("PROMPT_VERSION=prompt.fake-docs.v0.5-import-wizard-hardening");
     expect(pointer).not.toMatch(/(?:token|cookie|authorization|secret)\s*[:=]\s*[A-Za-z0-9._+/\-=]{8,}|\/media\/mint\/SHARED\/APWU/i);

@@ -53,8 +53,8 @@ describe("v0.8.6 runtime UX reality audit", () => {
     const item = queue.items.find((candidate) => candidate.id === "queue-041-v086-runtime-ux-reality-audit");
 
     expect(featureList.phase).toBe("KIA-Stick-v0.9.5-next-work-decision-checkpoint");
-    expect(featureList.release_readiness.status).toBe("v091_v095_release_state_consolidation_bundle_pending_operator_review");
-    expect(featureList.release_readiness.manual_qa_status).toBe("pending_operator_bundle_review");
+    expect(featureList.release_readiness.status).toBe("v091_v095_release_state_consolidation_bundle_accepted_after_closeout_push");
+    expect(featureList.release_readiness.manual_qa_status).toBe("PASS");
     expect(featureList.release_readiness.queue_015_status).toBe("blocked");
     expect(featureList.release_readiness.queue_041_status).toBe("accepted");
     expect(featureList.v086_runtime_ux_reality_audit.phase).toBe(phase);

@@ -3,7 +3,7 @@ import { describe, expect, it } from "vitest";
 
 const phase = "KIA-Stick-v0.9.3-release-state-consistency-check";
 const currentPhase = "KIA-Stick-v0.9.5-next-work-decision-checkpoint";
-const currentStatus = "v091_v095_release_state_consolidation_bundle_pending_operator_review";
+const currentStatus = "v091_v095_release_state_consolidation_bundle_accepted_after_closeout_push";
 const productVersion = "0.7.0";
 const promptVersion = "prompt.fake-docs.v0.5-import-wizard-hardening";
 const acceptedCloseoutCommit = "8044eaf6756c5e8303483d44017a29cf9514ed44";
@@ -61,12 +61,12 @@ describe("v0.9.3 release-state consistency check", () => {
     expect(featureList.release_readiness.queue_015_status).toBe("blocked");
     expect(featureList.release_readiness.queue_041_status).toBe("accepted");
     expect(featureList.release_readiness.queue_045_status).toBe("accepted");
-    expect(featureList.release_readiness.queue_046_status).toBe("needs_review");
-    expect(featureList.release_readiness.queue_050_status).toBe("needs_review");
+    expect(featureList.release_readiness.queue_046_status).toBe("accepted");
+    expect(featureList.release_readiness.queue_050_status).toBe("accepted");
     expect(queue.items.find((item) => item.id === "queue-015-v07-first-real-doc-gate-request")?.status).toBe("blocked");
     expect(queue.items.find((item) => item.id === "queue-041-v086-runtime-ux-reality-audit")?.status).toBe("accepted");
     expect(queue.items.find((item) => item.id === "queue-045-v090-fake-runtime-ux-checkpoint")?.status).toBe("accepted");
-    expect(queue.items.find((item) => item.id === "queue-046-v091-accepted-state-reality-audit")?.status).toBe("needs_review");
-    expect(queue.items.find((item) => item.id === "queue-050-v095-next-work-decision-checkpoint")?.status).toBe("needs_review");
+    expect(queue.items.find((item) => item.id === "queue-046-v091-accepted-state-reality-audit")?.status).toBe("accepted");
+    expect(queue.items.find((item) => item.id === "queue-050-v095-next-work-decision-checkpoint")?.status).toBe("accepted");
   });
 });

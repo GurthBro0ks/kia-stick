@@ -4,7 +4,7 @@ import { describe, expect, it } from "vitest";
 const phase = "KIA-Stick-v0.7.10b-closeout-project-state-update";
 const evidencePhase = "KIA-Stick-v0.7.10b-persistent-smoke-evidence-rerun";
 const currentPhase = "KIA-Stick-v0.9.5-next-work-decision-checkpoint";
-const currentStatus = "v091_v095_release_state_consolidation_bundle_pending_operator_review";
+const currentStatus = "v091_v095_release_state_consolidation_bundle_accepted_after_closeout_push";
 const docPath = "docs/v0.7.10b-persistent-smoke-evidence-closeout.md";
 const proofDir = "/home/mint/kia-stick-local-proofs/proof_kia_stick_v0_7_10b_operator_smoke_evidence_20260626T090618Z";
 const desktopPointer = "/home/mint/Desktop/kia-stick-proofs/LATEST_KIA_PROOF.txt";

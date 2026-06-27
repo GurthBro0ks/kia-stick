@@ -14,7 +14,7 @@
 - Original v0.9.0 bundle proof directory status: missing at closeout time, replaced by explicit closeout validation proof.
 - Replacement proof directory: `/tmp/proof_kia_stick_v0_8_6_to_v0_9_0_fake_runtime_ux_bundle_plus_vault_fix_closeout_push_20260627T103128Z`
 - Persistent proof pointer: `/home/mint/Desktop/kia-stick-proofs/LATEST_KIA_PROOF.txt`
-- Queue state: `queue-015-v07-first-real-doc-gate-request` remains blocked; `queue-041` through `queue-045` remain accepted; `queue-046` through `queue-050` are `needs_review` pending one bundle operator QA decision.
+- Queue state: `queue-015-v07-first-real-doc-gate-request` remains blocked; `queue-041` through `queue-045` remain accepted; `queue-046` through `queue-050` are accepted after operator QA PASS and closeout validation.
 - Manual QA status: pending operator bundle review
 - Runtime UI changed: no
 - Runtime capability changed: no
