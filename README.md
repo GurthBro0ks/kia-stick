@@ -26,6 +26,14 @@ Post-closeout snapshot/mobile proof is accepted with operator QA PASS in `/home/
 
 This is **synthetic-only docs/tests/tooling/state work**. It does not add runtime UI work, runtime capability, product version changes, prompt version changes, real-doc approval, real-doc implementation, file pickers, directory pickers, drag/drop import zones, browser File objects, FileReader, path readers, uploads, OCR, real redaction, text extraction over real documents, summarization, embeddings, indexing, vector stores, private-source inspection, services, secrets, Discord, skills, global config, or system changes. Push is authorized only by the separate closeout gate after validation PASS and operator QA PASS.
 
+## v0.9.11 Dependency Security Triage Plan
+
+Phase: `KIA-Stick-v0.9.11-dependency-security-triage-plan`.
+
+This planning-only phase captures npm audit evidence and records a future dependency/security fix plan without applying package changes. Audit evidence reported 7 vulnerable package entries: direct `next` on the runtime/build path, direct `vitest` on the dev/test path, and transitive `postcss`, `vite`, `vite-node`, `@vitest/mocker`, and `esbuild` entries. npm audit reported forced fix suggestions, so no safe non-breaking fix is applied or proven here.
+
+`docs/v0.9.11-dependency-security-triage-plan.md` records the risk matrix, runtime/dev/build/test impact, no-fix decision, and recommended future phase `KIA-Stick-v0.9.12-dependency-security-fix-plan-or-implementation`. `package.json` and `package-lock.json` are unchanged. Product/package version remains `0.7.0`; prompt version remains `prompt.fake-docs.v0.5-import-wizard-hardening`; `queue-015-v07-first-real-doc-gate-request` remains blocked. No runtime code, dependency version, real-doc capability, service, Discord, or system change is approved.
+
 ## v0.9.1 to v0.9.5 Release-State Consolidation and Proof Durability Bundle
 
 Phase: `KIA-Stick-v0.9.1-to-v0.9.5-release-state-consolidation-and-proof-durability-bundle`.

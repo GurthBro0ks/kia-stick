@@ -1,5 +1,39 @@
 # KIA Stick Closeout
 
+## v0.9.11 Dependency Security Triage Plan
+
+- Phase: `KIA-Stick-v0.9.11-dependency-security-triage-plan`
+- Target machine: `USER_LAPTOP_ONLY`
+- Accepted baseline commit: `48abdbeafd14dd5729bab9d6460d35e457f01eae`
+- Proof directory: `/home/mint/kia-stick-local-proofs/proof_kia_stick_v0_9_11_dependency_security_triage_plan_20260627T144429Z`
+- Scope: npm audit triage planning only.
+- Audit summary: 7 vulnerable package entries; 5 moderate, 1 high, 1 critical.
+- Direct vulnerable packages: `next` and `vitest`.
+- Runtime/build path: `next` and transitive `postcss`.
+- Dev/test path: `vitest`, `vite`, `vite-node`, `@vitest/mocker`, and `esbuild`.
+- Safe non-breaking fix proven: no.
+- Future phase recommended: `KIA-Stick-v0.9.12-dependency-security-fix-plan-or-implementation`.
+- Product version: `0.7.0`
+- Package version: `0.7.0`
+- Prompt version: `prompt.fake-docs.v0.5-import-wizard-hardening`
+- Queue state: `queue-015-v07-first-real-doc-gate-request` remains blocked.
+- Dependency versions changed: no
+- `package.json` changed: no
+- `package-lock.json` changed: no
+- Runtime code changed: no
+- Runtime capability changed: no
+- Real document implementation approved: no
+- Real document access: none
+- Private source folders inspected: no
+- File picker/FileReader/OCR/indexing/embedding/vector capability added: no
+- Services restarted: no
+- Cron/timer/tmux/Caddy/DNS changed: no
+- Secrets printed: no
+- Discord sent: no
+- Push performed: no
+
+This closeout records a dependency/security triage plan only. It does not run `npm audit fix`, run `npm update`, alter dependency manifests, implement runtime features, unblock `queue-015-v07-first-real-doc-gate-request`, approve real-doc work, change productVersion, change promptVersion, add file pickers, directory pickers, drag/drop import zones, browser File objects, FileReader, path readers, user-provided packet reads, OCR, upload handlers, text extraction, summarization, embeddings, indexing, vector stores, private-source inspection, service changes, credentials, Discord, skills, global config, or real-document access.
+
 ## v0.9.10 Post-Closeout Snapshot/Mobile Proof Operator QA Closeout
 
 - Phase: `KIA-Stick-v0.9.10-post-closeout-mobile-proof-operator-qa-closeout`

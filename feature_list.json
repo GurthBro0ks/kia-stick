@@ -271,6 +271,7 @@
     "v099_stop_on_warn_fail_closeout_guard",
     "v0910_synthetic_governance_hardening_checkpoint",
     "v0910_post_closeout_mobile_proof_operator_qa_closeout",
+    "v0911_dependency_security_triage_plan",
     "synthetic_negative_fixture_expansion",
     "governance_report_stop_on_warn_fail_signal",
     "closeout_stop_on_warn_fail_guard"
@@ -4959,5 +4960,109 @@
     "notify_mode": "disabled_user_laptop",
     "dedupe_result": "not_applicable",
     "next_step": "remain at accepted clean state unless operator explicitly approves a closeout docs/state push"
+  },
+  "v0911_dependency_security_triage_plan": {
+    "phase": "KIA-Stick-v0.9.11-dependency-security-triage-plan",
+    "status": "needs_operator_review",
+    "document": "docs/v0.9.11-dependency-security-triage-plan.md",
+    "proof_dir": "/home/mint/kia-stick-local-proofs/proof_kia_stick_v0_9_11_dependency_security_triage_plan_20260627T144429Z",
+    "accepted_baseline_commit": "48abdbeafd14dd5729bab9d6460d35e457f01eae",
+    "audit_total_dependencies": 265,
+    "audit_vulnerability_counts": {
+      "info": 0,
+      "low": 0,
+      "moderate": 5,
+      "high": 1,
+      "critical": 1,
+      "total": 7
+    },
+    "vulnerable_packages": [
+      {
+        "name": "next",
+        "severity": "moderate",
+        "direct": true,
+        "impact": "runtime_build",
+        "safe_non_breaking_fix_proven": false
+      },
+      {
+        "name": "postcss",
+        "severity": "moderate",
+        "direct": false,
+        "impact": "runtime_build_transitive_via_next",
+        "safe_non_breaking_fix_proven": false
+      },
+      {
+        "name": "vitest",
+        "severity": "critical",
+        "direct": true,
+        "impact": "dev_test",
+        "safe_non_breaking_fix_proven": false
+      },
+      {
+        "name": "vite",
+        "severity": "high",
+        "direct": false,
+        "impact": "dev_test_transitive_via_vitest",
+        "safe_non_breaking_fix_proven": false
+      },
+      {
+        "name": "vite-node",
+        "severity": "moderate",
+        "direct": false,
+        "impact": "dev_test_transitive_via_vitest",
+        "safe_non_breaking_fix_proven": false
+      },
+      {
+        "name": "@vitest/mocker",
+        "severity": "moderate",
+        "direct": false,
+        "impact": "dev_test_transitive_via_vitest",
+        "safe_non_breaking_fix_proven": false
+      },
+      {
+        "name": "esbuild",
+        "severity": "moderate",
+        "direct": false,
+        "impact": "dev_test_build_tooling_transitive_via_vite",
+        "safe_non_breaking_fix_proven": false
+      }
+    ],
+    "package_json_changed": false,
+    "package_lock_changed": false,
+    "dependency_versions_changed": false,
+    "npm_audit_fix_run": false,
+    "npm_update_run": false,
+    "runtime_code_changed": false,
+    "product_version": "0.7.0",
+    "package_version": "0.7.0",
+    "prompt_version": "prompt.fake-docs.v0.5-import-wizard-hardening",
+    "queue_015_status": "blocked",
+    "authorizes_real_doc_work": false,
+    "real_doc_implementation_approved": false,
+    "real_document_access": false,
+    "private_vault_inspected": false,
+    "file_picker_added": false,
+    "directory_picker_added": false,
+    "drag_drop_import_zone_added": false,
+    "file_reader_added": false,
+    "path_reader_added": false,
+    "upload_handler_added": false,
+    "ocr_added": false,
+    "text_extraction_added": false,
+    "summarization_added": false,
+    "embeddings_added": false,
+    "indexing_added": false,
+    "vector_store_added": false,
+    "services_restarted": false,
+    "cron_changed": false,
+    "timer_changed": false,
+    "tmux_changed": false,
+    "caddy_changed": false,
+    "dns_changed": false,
+    "discord_sent": false,
+    "secrets_printed": false,
+    "recommended_future_phase": "KIA-Stick-v0.9.12-dependency-security-fix-plan-or-implementation",
+    "future_phase_needed": true,
+    "notes": "Triage-only phase. npm audit reported forced fix suggestions for direct next and vitest dependencies; no safe non-breaking fix was applied or proven."
   }
 }
