@@ -260,7 +260,7 @@
   ],
   "release_readiness": {
     "phase": "KIA-Stick-v0.9.0-fake-runtime-ux-checkpoint",
-    "status": "v086_v090_fake_runtime_ux_bundle_needs_operator_qa",
+    "status": "v086_v090_fake_runtime_ux_bundle_operator_qa_passed_ready_to_push",
     "package_version": "0.7.0",
     "product_version": "0.7.0",
     "prompt_version": "prompt.fake-docs.v0.5-import-wizard-hardening",
@@ -381,12 +381,12 @@
     "push_performed": false,
     "real_db_boundary": "/media/mint/SHARED/APWU untouched",
     "validation": "PASS",
-    "manual_qa_status": "pending_operator_bundle_review",
+    "manual_qa_status": "PASS",
     "closeout_push_proof_dir": "/tmp/proof_kia_stick_v0_8_6_to_v0_9_0_fake_runtime_ux_polish_bundle_20260627T015134Z",
     "head_equals_origin_main": false,
     "accepted_after_closeout_at": "2026-06-27T01:40:37.000Z",
-    "accepted_pushed_state": "not_pushed_current_bundle_pending_operator_qa",
-    "status_notes": "v0.8.6 through v0.9.0 fake-only runtime UX polish bundle validation PASS locally and pending one operator QA review. queue-015 remains blocked. No push performed.",
+    "accepted_pushed_state": "not_pushed_current_bundle_operator_qa_passed_ready_to_push",
+    "status_notes": "Operator QA PASS recorded for v0.8.6 through v0.9.0 fake-only runtime UX polish bundle plus v0.9.0 Vault client exception fix. queue-015 remains blocked. queue-041 through queue-045 are ready_to_push pending separate closeout/push review. No push performed.",
     "pushed_commit_sha": "cbf84827b4fa067b2e7ba68983f05a237e746e5b",
     "proof_dir": "/tmp/proof_kia_stick_v0_8_6_to_v0_9_0_fake_runtime_ux_polish_bundle_20260627T015134Z",
     "validation_outputs": [
@@ -406,17 +406,17 @@
       "git-diff-check.txt",
       "git-status-after.txt"
     ],
-    "operator_qa_pass_source": "OPERATOR_QA_PASS prompt on 2026-06-26",
-    "operator_qa_pass_proof_dir": "/tmp/proof_kia_stick_v0_8_1_to_v0_8_5_operator_qa_pass_20260627T011147Z",
-    "closeout_validation": "PASS",
+    "operator_qa_pass_source": "OPERATOR_QA_PASS prompt on 2026-06-27 for v0.8.6-to-v0.9.0 bundle plus v0.9.0 Vault client exception fix",
+    "operator_qa_pass_proof_dir": "/tmp/proof_kia_stick_v0_9_0_operator_qa_pass_20260627T100826Z",
+    "closeout_validation": "pending_closeout_push_review",
     "bundle_phase": "KIA-Stick-v0.8.6-to-v0.9.0-fake-only-runtime-ux-polish-bundle",
     "real_doc_implementation_approved": false,
     "queue_015_status": "blocked",
-    "queue_041_status": "needs_review",
-    "queue_042_status": "needs_review",
-    "queue_043_status": "needs_review",
-    "queue_044_status": "needs_review",
-    "queue_045_status": "needs_review"
+    "queue_041_status": "ready_to_push",
+    "queue_042_status": "ready_to_push",
+    "queue_043_status": "ready_to_push",
+    "queue_044_status": "ready_to_push",
+    "queue_045_status": "ready_to_push"
   },
   "phase_runner": {
     "phase": "KIA-Stick-v0.5.4-local-phase-runner-proof-pack",
@@ -3733,10 +3733,10 @@
   },
   "v086_runtime_ux_reality_audit": {
     "phase": "KIA-Stick-v0.8.6-runtime-ux-reality-audit",
-    "status": "needs_operator_bundle_review",
+    "status": "operator_qa_passed_ready_to_push",
     "document": "docs/v0.8.6-runtime-ux-reality-audit.md",
     "selected_queue_item": "queue-041-v086-runtime-ux-reality-audit",
-    "queue_041_status": "needs_review",
+    "queue_041_status": "ready_to_push",
     "docs_tests_state_only": true,
     "runtime_ui_changed": false,
     "runtime_capability_changed": false,
@@ -3793,7 +3793,7 @@
     "dns_changed": false,
     "push_performed": false,
     "queue_015_status": "blocked",
-    "manual_qa_status": "pending_operator_bundle_review",
+    "manual_qa_status": "PASS",
     "validation": "PASS",
     "notify_mode": "disabled_user_laptop",
     "dedupe_result": "not_applicable",
@@ -3813,14 +3813,16 @@
       "safety-boundary-scan.txt",
       "git-diff-check.txt",
       "git-status-after.txt"
-    ]
+    ],
+    "operator_qa_pass_source": "OPERATOR_QA_PASS prompt on 2026-06-27 for v0.8.6-to-v0.9.0 bundle plus v0.9.0 Vault client exception fix",
+    "operator_qa_pass_proof_dir": "/tmp/proof_kia_stick_v0_9_0_operator_qa_pass_20260627T100826Z"
   },
   "v087_chat_saved_no_answer_polish": {
     "phase": "KIA-Stick-v0.8.7-chat-saved-no-answer-polish",
-    "status": "needs_operator_bundle_review",
+    "status": "operator_qa_passed_ready_to_push",
     "document": "docs/v0.8.7-chat-saved-no-answer-polish.md",
     "selected_queue_item": "queue-042-v087-chat-saved-no-answer-polish",
-    "queue_042_status": "needs_review",
+    "queue_042_status": "ready_to_push",
     "no_answer_save_notice_added": true,
     "saved_empty_state_clarified": true,
     "citations_context_copy_clarified": true,
@@ -3864,7 +3866,7 @@
     "dns_changed": false,
     "push_performed": false,
     "queue_015_status": "blocked",
-    "manual_qa_status": "pending_operator_bundle_review",
+    "manual_qa_status": "PASS",
     "validation": "PASS",
     "notify_mode": "disabled_user_laptop",
     "dedupe_result": "not_applicable",
@@ -3884,14 +3886,16 @@
       "safety-boundary-scan.txt",
       "git-diff-check.txt",
       "git-status-after.txt"
-    ]
+    ],
+    "operator_qa_pass_source": "OPERATOR_QA_PASS prompt on 2026-06-27 for v0.8.6-to-v0.9.0 bundle plus v0.9.0 Vault client exception fix",
+    "operator_qa_pass_proof_dir": "/tmp/proof_kia_stick_v0_9_0_operator_qa_pass_20260627T100826Z"
   },
   "v088_sources_upload_import_vault_polish": {
     "phase": "KIA-Stick-v0.8.8-sources-upload-import-vault-polish",
-    "status": "needs_operator_bundle_review",
+    "status": "operator_qa_passed_ready_to_push",
     "document": "docs/v0.8.8-sources-upload-import-vault-polish.md",
     "selected_queue_item": "queue-043-v088-sources-upload-import-vault-polish",
-    "queue_043_status": "needs_review",
+    "queue_043_status": "ready_to_push",
     "sources_citable_context_counts": true,
     "upload_fake_metadata_cue_rail": true,
     "import_fake_state_cue_rail": true,
@@ -3938,7 +3942,7 @@
     "dns_changed": false,
     "push_performed": false,
     "queue_015_status": "blocked",
-    "manual_qa_status": "pending_operator_bundle_review",
+    "manual_qa_status": "PASS",
     "validation": "PASS",
     "notify_mode": "disabled_user_laptop",
     "dedupe_result": "not_applicable",
@@ -3958,14 +3962,16 @@
       "safety-boundary-scan.txt",
       "git-diff-check.txt",
       "git-status-after.txt"
-    ]
+    ],
+    "operator_qa_pass_source": "OPERATOR_QA_PASS prompt on 2026-06-27 for v0.8.6-to-v0.9.0 bundle plus v0.9.0 Vault client exception fix",
+    "operator_qa_pass_proof_dir": "/tmp/proof_kia_stick_v0_9_0_operator_qa_pass_20260627T100826Z"
   },
   "v089_mobile_narrow_operator_qa_polish": {
     "phase": "KIA-Stick-v0.8.9-mobile-narrow-operator-qa-polish",
-    "status": "needs_operator_bundle_review",
+    "status": "operator_qa_passed_ready_to_push",
     "document": "docs/v0.8.9-mobile-narrow-operator-qa-polish.md",
     "selected_queue_item": "queue-044-v089-mobile-narrow-operator-qa-polish",
-    "queue_044_status": "needs_review",
+    "queue_044_status": "ready_to_push",
     "mobile_narrow_layout_polish": true,
     "operator_smoke_surface_list_added": true,
     "local_loopback_only_smoke": true,
@@ -4008,7 +4014,7 @@
     "dns_changed": false,
     "push_performed": false,
     "queue_015_status": "blocked",
-    "manual_qa_status": "pending_operator_bundle_review",
+    "manual_qa_status": "PASS",
     "validation": "PASS",
     "notify_mode": "disabled_user_laptop",
     "dedupe_result": "not_applicable",
@@ -4028,18 +4034,20 @@
       "safety-boundary-scan.txt",
       "git-diff-check.txt",
       "git-status-after.txt"
-    ]
+    ],
+    "operator_qa_pass_source": "OPERATOR_QA_PASS prompt on 2026-06-27 for v0.8.6-to-v0.9.0 bundle plus v0.9.0 Vault client exception fix",
+    "operator_qa_pass_proof_dir": "/tmp/proof_kia_stick_v0_9_0_operator_qa_pass_20260627T100826Z"
   },
   "v090_fake_runtime_ux_checkpoint": {
     "phase": "KIA-Stick-v0.9.0-fake-runtime-ux-checkpoint",
-    "status": "needs_operator_bundle_review",
+    "status": "operator_qa_passed_ready_to_push",
     "document": "docs/v0.9.0-fake-runtime-ux-checkpoint.md",
     "selected_queue_item": "queue-045-v090-fake-runtime-ux-checkpoint",
-    "queue_041_status": "needs_review",
-    "queue_042_status": "needs_review",
-    "queue_043_status": "needs_review",
-    "queue_044_status": "needs_review",
-    "queue_045_status": "needs_review",
+    "queue_041_status": "ready_to_push",
+    "queue_042_status": "ready_to_push",
+    "queue_043_status": "ready_to_push",
+    "queue_044_status": "ready_to_push",
+    "queue_045_status": "ready_to_push",
     "recommended_next_options": [
       "synthetic governance hardening bundle",
       "release-state consolidation bundle",
@@ -4087,7 +4095,7 @@
     "dns_changed": false,
     "push_performed": false,
     "queue_015_status": "blocked",
-    "manual_qa_status": "pending_operator_bundle_review",
+    "manual_qa_status": "PASS",
     "validation": "PASS",
     "notify_mode": "disabled_user_laptop",
     "dedupe_result": "not_applicable",
@@ -4107,6 +4115,10 @@
       "safety-boundary-scan.txt",
       "git-diff-check.txt",
       "git-status-after.txt"
-    ]
+    ],
+    "operator_qa_pass_source": "OPERATOR_QA_PASS prompt on 2026-06-27 for v0.8.6-to-v0.9.0 bundle plus v0.9.0 Vault client exception fix",
+    "operator_qa_pass_proof_dir": "/tmp/proof_kia_stick_v0_9_0_operator_qa_pass_20260627T100826Z",
+    "vault_client_exception_fix_commit": "ed447ccce74578b872b4567b4645b3543e201162",
+    "vault_exception_fixed": true
   }
 }

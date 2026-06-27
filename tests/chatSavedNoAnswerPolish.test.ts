@@ -50,8 +50,8 @@ describe("v0.8.7 Chat/Saved no-answer polish", () => {
     const item = queue.items.find((candidate) => candidate.id === "queue-042-v087-chat-saved-no-answer-polish");
 
     expect(featureList.v087_chat_saved_no_answer_polish.phase).toBe(phase);
-    expect(featureList.v087_chat_saved_no_answer_polish.status).toBe("needs_operator_bundle_review");
-    expect(featureList.v087_chat_saved_no_answer_polish.queue_042_status).toBe("needs_review");
+    expect(featureList.v087_chat_saved_no_answer_polish.status).toBe("operator_qa_passed_ready_to_push");
+    expect(featureList.v087_chat_saved_no_answer_polish.queue_042_status).toBe("ready_to_push");
     expect(featureList.v087_chat_saved_no_answer_polish.no_answer_save_notice_added).toBe(true);
     expect(featureList.v087_chat_saved_no_answer_polish.saved_empty_state_clarified).toBe(true);
     expect(featureList.v087_chat_saved_no_answer_polish.deterministic_fake_behavior_preserved).toBe(true);
@@ -59,6 +59,6 @@ describe("v0.8.7 Chat/Saved no-answer polish", () => {
     expect(featureList.v087_chat_saved_no_answer_polish.real_document_access).toBe(false);
     expect(featureList.v087_chat_saved_no_answer_polish.queue_015_status).toBe("blocked");
     expect(item?.phase).toBe(phase);
-    expect(item?.status).toBe("needs_review");
+    expect(item?.status).toBe("ready_to_push");
   });
 });

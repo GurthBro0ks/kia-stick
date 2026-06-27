@@ -166,8 +166,8 @@ function checkStaticContracts(root, problems) {
   if (featureList?.release_readiness?.product_version !== productVersion) problems.push("feature_list product version drifted");
   if (featureList?.release_readiness?.prompt_version !== promptVersion) problems.push("feature_list prompt version drifted");
   if (featureList?.v090_fake_runtime_ux_checkpoint?.queue_015_status !== "blocked") problems.push("v0.9.0 feature state must keep queue-015 blocked");
-  if (featureList?.v090_fake_runtime_ux_checkpoint?.manual_qa_status !== "pending_operator_bundle_review") {
-    problems.push("v0.9.0 feature state must wait for bundle operator QA");
+  if (!["pending_operator_bundle_review", "PASS"].includes(featureList?.v090_fake_runtime_ux_checkpoint?.manual_qa_status)) {
+    problems.push("v0.9.0 feature state must be pending bundle operator QA or PASS");
   }
   if (featureList?.v079_operator_qa_smoke_pack?.queue_015_status !== "blocked") problems.push("v0.7.9 feature state must keep queue-015 blocked");
 }

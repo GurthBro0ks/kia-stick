@@ -18,7 +18,7 @@ Phase: `KIA-Stick-v0.9.0-fake-runtime-ux-checkpoint`.
 
 This local bundle audits and polishes fake-only runtime UX for Chat, Sources, Saved, Upload, Import, Vault, Settings, `/health`, and `/version`. It adds `docs/v0.8.6-runtime-ux-reality-audit.md`, `docs/v0.8.7-chat-saved-no-answer-polish.md`, `docs/v0.8.8-sources-upload-import-vault-polish.md`, `docs/v0.8.9-mobile-narrow-operator-qa-polish.md`, and `docs/v0.9.0-fake-runtime-ux-checkpoint.md` with focused tests.
 
-Local validation is PASS and the bundle is pending one operator QA review. `queue-015-v07-first-real-doc-gate-request` remains blocked. `queue-041` through `queue-045` are `needs_review` pending the single bundle operator QA decision. Product version remains `0.7.0`; prompt version remains `prompt.fake-docs.v0.5-import-wizard-hardening`.
+Local validation is PASS and operator QA PASS is recorded after the Vault client exception fix. `queue-015-v07-first-real-doc-gate-request` remains blocked. `queue-041` through `queue-045` are `ready_to_push` pending a separate closeout/push review. Product version remains `0.7.0`; prompt version remains `prompt.fake-docs.v0.5-import-wizard-hardening`.
 
 This is **fake-only runtime UX/docs/tests/tooling/state work only**. It does not approve implementation for real documents, name or touch a real document, accept arbitrary path input, read user-provided packet files, scan private folders, add file pickers, directory pickers, drag/drop import zones, path readers, uploads, OCR, real redaction, text extraction over real documents, summarization, embeddings, indexing, vector stores, private-source inspection, services, secrets, Discord, skills, global config, or system changes. No push is approved by this bundle.
 

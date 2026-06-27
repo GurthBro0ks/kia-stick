@@ -76,22 +76,22 @@ describe("v0.9.0 fake runtime UX checkpoint", () => {
 
     expect(featureList.phase).toBe(phase);
     expect(featureList.release_readiness.phase).toBe(phase);
-    expect(featureList.release_readiness.status).toBe("v086_v090_fake_runtime_ux_bundle_needs_operator_qa");
+    expect(featureList.release_readiness.status).toBe("v086_v090_fake_runtime_ux_bundle_operator_qa_passed_ready_to_push");
     expect(featureList.release_readiness.package_version).toBe(productVersion);
     expect(featureList.release_readiness.product_version).toBe(productVersion);
     expect(featureList.release_readiness.prompt_version).toBe(promptVersion);
-    expect(featureList.release_readiness.manual_qa_status).toBe("pending_operator_bundle_review");
+    expect(featureList.release_readiness.manual_qa_status).toBe("PASS");
     expect(featureList.release_readiness.push_performed).toBe(false);
     expect(featureList.release_readiness.queue_015_status).toBe("blocked");
-    expect(featureList.release_readiness.queue_041_status).toBe("needs_review");
-    expect(featureList.release_readiness.queue_045_status).toBe("needs_review");
+    expect(featureList.release_readiness.queue_041_status).toBe("ready_to_push");
+    expect(featureList.release_readiness.queue_045_status).toBe("ready_to_push");
     expect(featureList.v090_fake_runtime_ux_checkpoint.phase).toBe(phase);
-    expect(featureList.v090_fake_runtime_ux_checkpoint.status).toBe("needs_operator_bundle_review");
-    expect(featureList.v090_fake_runtime_ux_checkpoint.queue_041_status).toBe("needs_review");
-    expect(featureList.v090_fake_runtime_ux_checkpoint.queue_042_status).toBe("needs_review");
-    expect(featureList.v090_fake_runtime_ux_checkpoint.queue_043_status).toBe("needs_review");
-    expect(featureList.v090_fake_runtime_ux_checkpoint.queue_044_status).toBe("needs_review");
-    expect(featureList.v090_fake_runtime_ux_checkpoint.queue_045_status).toBe("needs_review");
+    expect(featureList.v090_fake_runtime_ux_checkpoint.status).toBe("operator_qa_passed_ready_to_push");
+    expect(featureList.v090_fake_runtime_ux_checkpoint.queue_041_status).toBe("ready_to_push");
+    expect(featureList.v090_fake_runtime_ux_checkpoint.queue_042_status).toBe("ready_to_push");
+    expect(featureList.v090_fake_runtime_ux_checkpoint.queue_043_status).toBe("ready_to_push");
+    expect(featureList.v090_fake_runtime_ux_checkpoint.queue_044_status).toBe("ready_to_push");
+    expect(featureList.v090_fake_runtime_ux_checkpoint.queue_045_status).toBe("ready_to_push");
     expect(featureList.v090_fake_runtime_ux_checkpoint.operator_qa_template_included).toBe(true);
     expect(featureList.v090_fake_runtime_ux_checkpoint.product_version_bump_approved).toBe(false);
     expect(featureList.v090_fake_runtime_ux_checkpoint.authorizes_real_doc_work).toBe(false);
@@ -105,7 +105,7 @@ describe("v0.9.0 fake runtime UX checkpoint", () => {
       "queue-044-v089-mobile-narrow-operator-qa-polish",
       "queue-045-v090-fake-runtime-ux-checkpoint",
     ]) {
-      expect(byId[id]?.status).toBe("needs_review");
+      expect(byId[id]?.status).toBe("ready_to_push");
     }
   });
 

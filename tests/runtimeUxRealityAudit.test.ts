@@ -53,18 +53,18 @@ describe("v0.8.6 runtime UX reality audit", () => {
     const item = queue.items.find((candidate) => candidate.id === "queue-041-v086-runtime-ux-reality-audit");
 
     expect(featureList.phase).toBe("KIA-Stick-v0.9.0-fake-runtime-ux-checkpoint");
-    expect(featureList.release_readiness.status).toBe("v086_v090_fake_runtime_ux_bundle_needs_operator_qa");
-    expect(featureList.release_readiness.manual_qa_status).toBe("pending_operator_bundle_review");
+    expect(featureList.release_readiness.status).toBe("v086_v090_fake_runtime_ux_bundle_operator_qa_passed_ready_to_push");
+    expect(featureList.release_readiness.manual_qa_status).toBe("PASS");
     expect(featureList.release_readiness.queue_015_status).toBe("blocked");
-    expect(featureList.release_readiness.queue_041_status).toBe("needs_review");
+    expect(featureList.release_readiness.queue_041_status).toBe("ready_to_push");
     expect(featureList.v086_runtime_ux_reality_audit.phase).toBe(phase);
-    expect(featureList.v086_runtime_ux_reality_audit.status).toBe("needs_operator_bundle_review");
-    expect(featureList.v086_runtime_ux_reality_audit.queue_041_status).toBe("needs_review");
+    expect(featureList.v086_runtime_ux_reality_audit.status).toBe("operator_qa_passed_ready_to_push");
+    expect(featureList.v086_runtime_ux_reality_audit.queue_041_status).toBe("ready_to_push");
     expect(featureList.v086_runtime_ux_reality_audit.runtime_ui_changed).toBe(false);
     expect(featureList.v086_runtime_ux_reality_audit.runtime_capability_changed).toBe(false);
     expect(featureList.v086_runtime_ux_reality_audit.queue_015_status).toBe("blocked");
     expect(item?.phase).toBe(phase);
-    expect(item?.status).toBe("needs_review");
+    expect(item?.status).toBe("ready_to_push");
     expect(`${item?.summary}\n${item?.next_action}`).toContain("repo-owned fake-only evidence");
   });
 

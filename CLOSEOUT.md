@@ -13,8 +13,10 @@
 - Runtime UI changed: yes, fake-only polish in allowed surfaces.
 - Runtime capability changed: no
 - Validation: PASS for focused tests, full test suite, design check, release check with scoped v0.9.0 product-version hold, operator smoke, full QA gate, queue list/next, fake-doc scan, privacy scan, exact safety-boundary scan, `git diff --check`, and git status capture.
-- Queue state: `queue-011` through `queue-014` and `queue-028` through `queue-040` remain accepted; `queue-015-v07-first-real-doc-gate-request` remains blocked; `queue-041` through `queue-045` are `needs_review` pending one bundle operator QA.
-- Manual QA status: pending operator bundle review
+- Operator QA PASS proof directory: `/tmp/proof_kia_stick_v0_9_0_operator_qa_pass_20260627T100826Z`
+- Vault fix proof directory: `/tmp/proof_kia_stick_v0_9_0_vault_client_exception_fix_20260627T091255Z`
+- Queue state: `queue-011` through `queue-014` and `queue-028` through `queue-040` remain accepted; `queue-015-v07-first-real-doc-gate-request` remains blocked; `queue-041` through `queue-045` are `ready_to_push` pending separate closeout/push review.
+- Manual QA status: PASS
 - Real document access: none
 - Real document named: no
 - Private source folders inspected: no

@@ -65,8 +65,8 @@ describe("v0.8.8 Sources/Upload/Import/Vault polish", () => {
     const state = featureList.v088_sources_upload_import_vault_polish;
 
     expect(state.phase).toBe(phase);
-    expect(state.status).toBe("needs_operator_bundle_review");
-    expect(state.queue_043_status).toBe("needs_review");
+    expect(state.status).toBe("operator_qa_passed_ready_to_push");
+    expect(state.queue_043_status).toBe("ready_to_push");
     expect(state.sources_citable_context_counts).toBe(true);
     expect(state.upload_fake_metadata_cue_rail).toBe(true);
     expect(state.import_fake_state_cue_rail).toBe(true);
@@ -76,7 +76,7 @@ describe("v0.8.8 Sources/Upload/Import/Vault polish", () => {
     expect(state.vault_remains_fake_governance_only).toBe(true);
     expect(state.queue_015_status).toBe("blocked");
     expect(item?.phase).toBe(phase);
-    expect(item?.status).toBe("needs_review");
+    expect(item?.status).toBe("ready_to_push");
   });
 
   it("migrates stale Vault browser state before render/export arrays are used", () => {
