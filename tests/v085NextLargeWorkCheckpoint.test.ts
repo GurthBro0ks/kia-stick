@@ -30,7 +30,7 @@ describe("v0.8.5 next large work checkpoint", () => {
     expect(doc).toContain("does not approve real-doc implementation");
     expect(doc).toContain("does not unblock `queue-015-v07-first-real-doc-gate-request`");
     expect(queue.items.find((item) => item.id === "queue-015-v07-first-real-doc-gate-request")?.status).toBe("blocked");
-    expect(queue.items.find((item) => item.id === "queue-040-v085-next-large-work-checkpoint")?.status).toBe("needs_review");
+    expect(queue.items.find((item) => item.id === "queue-040-v085-next-large-work-checkpoint")?.status).toBe("ready_to_push");
   });
 
   it("tracks current release state for the v0.8.1-v0.8.5 bundle", () => {
@@ -58,14 +58,14 @@ describe("v0.8.5 next large work checkpoint", () => {
 
     expect(featureList.phase).toBe(phase);
     expect(featureList.release_readiness.phase).toBe(phase);
-    expect(featureList.release_readiness.status).toBe("v081_v085_backlog_reconciliation_needs_operator_qa");
+    expect(featureList.release_readiness.status).toBe("v081_v085_backlog_reconciliation_operator_qa_pass_ready_to_push");
     expect(featureList.release_readiness.product_version).toBe(productVersion);
     expect(featureList.release_readiness.package_version).toBe(productVersion);
     expect(featureList.release_readiness.prompt_version).toBe(promptVersion);
-    expect(featureList.release_readiness.manual_qa_status).toBe("pending");
+    expect(featureList.release_readiness.manual_qa_status).toBe("PASS");
     expect(featureList.release_readiness.push_performed).toBe(false);
     expect(featureList.v085_next_large_work_checkpoint.phase).toBe(phase);
-    expect(featureList.v085_next_large_work_checkpoint.status).toBe("needs_operator_review_after_validation");
+    expect(featureList.v085_next_large_work_checkpoint.status).toBe("operator_qa_pass_ready_to_push");
     expect(featureList.v085_next_large_work_checkpoint.recommended_next_options).toHaveLength(4);
     expect(featureList.v085_next_large_work_checkpoint.queue_015_status).toBe("blocked");
     expect(featureList.v085_next_large_work_checkpoint.authorizes_product_version_bump).toBe(false);

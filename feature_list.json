@@ -250,7 +250,7 @@
   ],
   "release_readiness": {
     "phase": "KIA-Stick-v0.8.5-next-large-work-checkpoint",
-    "status": "v081_v085_backlog_reconciliation_needs_operator_qa",
+    "status": "v081_v085_backlog_reconciliation_operator_qa_pass_ready_to_push",
     "package_version": "0.7.0",
     "product_version": "0.7.0",
     "prompt_version": "prompt.fake-docs.v0.5-import-wizard-hardening",
@@ -354,12 +354,12 @@
     "push_performed": false,
     "real_db_boundary": "/media/mint/SHARED/APWU untouched",
     "validation": "PASS",
-    "manual_qa_status": "pending",
+    "manual_qa_status": "PASS",
     "closeout_push_proof_dir": "/tmp/proof_kia_stick_v0_8_0_synthetic_governance_bundle_closeout_push_20260626T175722Z",
     "head_equals_origin_main": false,
     "accepted_after_closeout_at": "2026-06-26T17:59:15.138Z",
     "accepted_pushed_state": "not_pushed_current_bundle_pending_operator_qa",
-    "status_notes": "v0.8.1 through v0.8.5 backlog reconciliation bundle is local only and pending one bundle operator QA. queue-015 remains blocked.",
+    "status_notes": "Operator QA PASS recorded for v0.8.1 through v0.8.5 backlog reconciliation bundle. Queues 036 through 040 are ready_to_push; queue-015 remains blocked; no push performed.",
     "pushed_commit_sha": "9fda0fe822c8da9eba6f96832992b89e543cdfe7",
     "proof_dir": "/tmp/proof_kia_stick_v0_8_1_to_v0_8_5_backlog_reconciliation_bundle_20260626T214423Z",
     "validation_outputs": [
@@ -377,7 +377,9 @@
       "safety-boundary-scan.txt",
       "git-diff-check.txt",
       "git-status-after-validation.txt"
-    ]
+    ],
+    "operator_qa_pass_source": "OPERATOR_QA_PASS prompt on 2026-06-26",
+    "operator_qa_pass_proof_dir": "/tmp/proof_kia_stick_v0_8_1_to_v0_8_5_operator_qa_pass_20260627T011147Z"
   },
   "phase_runner": {
     "phase": "KIA-Stick-v0.5.4-local-phase-runner-proof-pack",
@@ -3367,10 +3369,10 @@
   },
   "v081_queue_reality_audit": {
     "phase": "KIA-Stick-v0.8.1-queue-reality-audit",
-    "status": "needs_operator_review_after_validation",
+    "status": "operator_qa_pass_ready_to_push",
     "document": "docs/v0.8.1-queue-reality-audit.md",
     "selected_queue_item": "queue-036-v081-queue-reality-audit",
-    "queue_036_status": "needs_review",
+    "queue_036_status": "ready_to_push",
     "stale_queue_root_cause": "queue_next_selected_first_non_accepted_item",
     "queue_011_before_status": "planned",
     "queue_013_before_status": "planned",
@@ -3400,7 +3402,7 @@
     "discord_sent": false,
     "push_performed": false,
     "queue_015_status": "blocked",
-    "manual_qa_status": "pending",
+    "manual_qa_status": "PASS",
     "validation": "PASS",
     "validation_outputs": [
       "focused-tests.txt",
@@ -3417,18 +3419,20 @@
       "safety-boundary-scan.txt",
       "git-diff-check.txt",
       "git-status-after-validation.txt"
-    ]
+    ],
+    "operator_qa_pass_source": "OPERATOR_QA_PASS prompt on 2026-06-26",
+    "operator_qa_pass_proof_dir": "/tmp/proof_kia_stick_v0_8_1_to_v0_8_5_operator_qa_pass_20260627T011147Z"
   },
   "v082_v07_v08_backlog_reconciliation": {
     "phase": "KIA-Stick-v0.8.2-v07-v08-backlog-reconciliation",
-    "status": "needs_operator_review_after_validation",
+    "status": "operator_qa_pass_ready_to_push",
     "document": "docs/v0.8.2-v07-v08-backlog-reconciliation.md",
     "selected_queue_item": "queue-037-v082-v07-v08-backlog-reconciliation",
     "queue_011_status": "accepted",
     "queue_012_status": "accepted",
     "queue_013_status": "accepted",
     "queue_014_status": "accepted",
-    "queue_037_status": "needs_review",
+    "queue_037_status": "ready_to_push",
     "product_version": "0.7.0",
     "package_version": "0.7.0",
     "prompt_version": "prompt.fake-docs.v0.5-import-wizard-hardening",
@@ -3454,7 +3458,7 @@
     "discord_sent": false,
     "push_performed": false,
     "queue_015_status": "blocked",
-    "manual_qa_status": "pending",
+    "manual_qa_status": "PASS",
     "validation": "PASS",
     "validation_outputs": [
       "focused-tests.txt",
@@ -3471,14 +3475,16 @@
       "safety-boundary-scan.txt",
       "git-diff-check.txt",
       "git-status-after-validation.txt"
-    ]
+    ],
+    "operator_qa_pass_source": "OPERATOR_QA_PASS prompt on 2026-06-26",
+    "operator_qa_pass_proof_dir": "/tmp/proof_kia_stick_v0_8_1_to_v0_8_5_operator_qa_pass_20260627T011147Z"
   },
   "v083_queue_next_contract_hardening": {
     "phase": "KIA-Stick-v0.8.3-queue-next-contract-hardening",
-    "status": "needs_operator_review_after_validation",
+    "status": "operator_qa_pass_ready_to_push",
     "document": "docs/v0.8.3-queue-next-contract-hardening.md",
     "selected_queue_item": "queue-038-v083-queue-next-contract-hardening",
-    "queue_038_status": "needs_review",
+    "queue_038_status": "ready_to_push",
     "queue_next_skips_accepted": true,
     "queue_next_skips_blocked": true,
     "queue_next_skips_parked": true,
@@ -3508,7 +3514,7 @@
     "discord_sent": false,
     "push_performed": false,
     "queue_015_status": "blocked",
-    "manual_qa_status": "pending",
+    "manual_qa_status": "PASS",
     "validation": "PASS",
     "validation_outputs": [
       "focused-tests.txt",
@@ -3525,14 +3531,16 @@
       "safety-boundary-scan.txt",
       "git-diff-check.txt",
       "git-status-after-validation.txt"
-    ]
+    ],
+    "operator_qa_pass_source": "OPERATOR_QA_PASS prompt on 2026-06-26",
+    "operator_qa_pass_proof_dir": "/tmp/proof_kia_stick_v0_8_1_to_v0_8_5_operator_qa_pass_20260627T011147Z"
   },
   "v084_large_bundle_operator_workflow": {
     "phase": "KIA-Stick-v0.8.4-large-bundle-operator-workflow",
-    "status": "needs_operator_review_after_validation",
+    "status": "operator_qa_pass_ready_to_push",
     "document": "docs/v0.8.4-large-bundle-operator-workflow.md",
     "selected_queue_item": "queue-039-v084-large-bundle-operator-workflow",
-    "queue_039_status": "needs_review",
+    "queue_039_status": "ready_to_push",
     "one_bundle_operator_qa": true,
     "stop_on_warn_fail": true,
     "real_doc_work_separate": true,
@@ -3561,7 +3569,7 @@
     "discord_sent": false,
     "push_performed": false,
     "queue_015_status": "blocked",
-    "manual_qa_status": "pending",
+    "manual_qa_status": "PASS",
     "validation": "PASS",
     "validation_outputs": [
       "focused-tests.txt",
@@ -3578,14 +3586,16 @@
       "safety-boundary-scan.txt",
       "git-diff-check.txt",
       "git-status-after-validation.txt"
-    ]
+    ],
+    "operator_qa_pass_source": "OPERATOR_QA_PASS prompt on 2026-06-26",
+    "operator_qa_pass_proof_dir": "/tmp/proof_kia_stick_v0_8_1_to_v0_8_5_operator_qa_pass_20260627T011147Z"
   },
   "v085_next_large_work_checkpoint": {
     "phase": "KIA-Stick-v0.8.5-next-large-work-checkpoint",
-    "status": "needs_operator_review_after_validation",
+    "status": "operator_qa_pass_ready_to_push",
     "document": "docs/v0.8.5-next-large-work-checkpoint.md",
     "selected_queue_item": "queue-040-v085-next-large-work-checkpoint",
-    "queue_040_status": "needs_review",
+    "queue_040_status": "ready_to_push",
     "recommended_next_options": [
       "fake-only runtime UX polish bundle",
       "synthetic governance hardening bundle",
@@ -3618,7 +3628,7 @@
     "discord_sent": false,
     "push_performed": false,
     "queue_015_status": "blocked",
-    "manual_qa_status": "pending",
+    "manual_qa_status": "PASS",
     "validation": "PASS",
     "validation_outputs": [
       "focused-tests.txt",
@@ -3635,6 +3645,8 @@
       "safety-boundary-scan.txt",
       "git-diff-check.txt",
       "git-status-after-validation.txt"
-    ]
+    ],
+    "operator_qa_pass_source": "OPERATOR_QA_PASS prompt on 2026-06-26",
+    "operator_qa_pass_proof_dir": "/tmp/proof_kia_stick_v0_8_1_to_v0_8_5_operator_qa_pass_20260627T011147Z"
   }
 }
