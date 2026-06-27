@@ -2,7 +2,7 @@ import { existsSync, readFileSync } from "node:fs";
 import { describe, expect, it } from "vitest";
 
 const phase = "KIA-Stick-v0.7.19-bundled-operator-qa-pack";
-const currentPhase = "KIA-Stick-v0.8.5-next-large-work-checkpoint";
+const currentPhase = "KIA-Stick-v0.9.0-fake-runtime-ux-checkpoint";
 const docPath = "docs/v0.7.19-bundled-operator-qa-pack.md";
 const productVersion = "0.7.0";
 const promptVersion = "prompt.fake-docs.v0.5-import-wizard-hardening";

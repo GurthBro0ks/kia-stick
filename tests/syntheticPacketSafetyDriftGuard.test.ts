@@ -4,7 +4,7 @@ import { pathToFileURL } from "node:url";
 import { describe, expect, it } from "vitest";
 
 const phase = "KIA-Stick-v0.7.16-synthetic-packet-safety-drift-guard";
-const currentPhase = "KIA-Stick-v0.8.5-next-large-work-checkpoint";
+const currentPhase = "KIA-Stick-v0.9.0-fake-runtime-ux-checkpoint";
 const reportPhase = "KIA-Stick-v0.7.15-synthetic-packet-report-runner";
 const docPath = "docs/v0.7.16-synthetic-packet-safety-drift-guard.md";
 const scriptPath = "scripts/synthetic-packet-safety-guard.mjs";
@@ -187,7 +187,7 @@ describe("v0.7.16 synthetic packet safety drift guard", () => {
     expect(packageJson.version).toBe(productVersion);
     expect(featureList.phase).toBe(currentPhase);
     expect(featureList.release_readiness.phase).toBe(currentPhase);
-    expect(featureList.release_readiness.status).toBe("v081_v085_backlog_reconciliation_bundle_accepted_after_closeout_push");
+    expect(featureList.release_readiness.status).toBe("v086_v090_fake_runtime_ux_bundle_needs_operator_qa");
     expect(featureList.release_readiness.package_version).toBe(productVersion);
     expect(featureList.release_readiness.product_version).toBe(productVersion);
     expect(featureList.release_readiness.prompt_version).toBe(promptVersion);

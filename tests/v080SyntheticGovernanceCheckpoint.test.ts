@@ -2,7 +2,7 @@ import { existsSync, readFileSync } from "node:fs";
 import { describe, expect, it } from "vitest";
 
 const phase = "KIA-Stick-v0.8.0-synthetic-governance-checkpoint-plan";
-const currentPhase = "KIA-Stick-v0.8.5-next-large-work-checkpoint";
+const currentPhase = "KIA-Stick-v0.9.0-fake-runtime-ux-checkpoint";
 const docPath = "docs/v0.8.0-synthetic-governance-checkpoint-plan.md";
 const productVersion = "0.7.0";
 const promptVersion = "prompt.fake-docs.v0.5-import-wizard-hardening";
@@ -68,7 +68,7 @@ describe("v0.8.0 synthetic governance checkpoint plan", () => {
 
     expect(featureList.phase).toBe(currentPhase);
     expect(featureList.release_readiness.phase).toBe(currentPhase);
-    expect(featureList.release_readiness.status).toBe("v081_v085_backlog_reconciliation_bundle_accepted_after_closeout_push");
+    expect(featureList.release_readiness.status).toBe("v086_v090_fake_runtime_ux_bundle_needs_operator_qa");
     expect(featureList.release_readiness.package_version).toBe(productVersion);
     expect(featureList.release_readiness.product_version).toBe(productVersion);
     expect(featureList.release_readiness.prompt_version).toBe(promptVersion);

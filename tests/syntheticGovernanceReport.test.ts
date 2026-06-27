@@ -3,7 +3,7 @@ import { existsSync, readFileSync } from "node:fs";
 import { describe, expect, it } from "vitest";
 
 const phase = "KIA-Stick-v0.7.18-synthetic-governance-bundle-report";
-const currentPhase = "KIA-Stick-v0.8.5-next-large-work-checkpoint";
+const currentPhase = "KIA-Stick-v0.9.0-fake-runtime-ux-checkpoint";
 const docPath = "docs/v0.7.18-synthetic-governance-bundle-report.md";
 const scriptPath = "scripts/synthetic-governance-report.mjs";
 const productVersion = "0.7.0";

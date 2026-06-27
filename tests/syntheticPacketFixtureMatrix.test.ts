@@ -4,7 +4,7 @@ import { validateSyntheticApprovalPacket } from "@/lib/syntheticApprovalPacketVa
 import { summarizeSyntheticPacketFixtureMatrix, syntheticPacketFixtureMatrix } from "@/lib/syntheticPacketFixtures";
 
 const phase = "KIA-Stick-v0.7.17-synthetic-packet-fixture-matrix";
-const currentPhase = "KIA-Stick-v0.8.5-next-large-work-checkpoint";
+const currentPhase = "KIA-Stick-v0.9.0-fake-runtime-ux-checkpoint";
 const docPath = "docs/v0.7.17-synthetic-packet-fixture-matrix.md";
 const productVersion = "0.7.0";
 const promptVersion = "prompt.fake-docs.v0.5-import-wizard-hardening";

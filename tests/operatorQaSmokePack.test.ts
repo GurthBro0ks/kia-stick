@@ -3,8 +3,8 @@ import { spawnSync } from "node:child_process";
 import { describe, expect, it } from "vitest";
 
 const phase = "KIA-Stick-v0.7.9-fake-only-operator-qa-smoke-pack";
-const currentPhase = "KIA-Stick-v0.8.5-next-large-work-checkpoint";
-const currentStatus = "v081_v085_backlog_reconciliation_bundle_accepted_after_closeout_push";
+const currentPhase = "KIA-Stick-v0.9.0-fake-runtime-ux-checkpoint";
+const currentStatus = "v086_v090_fake_runtime_ux_bundle_needs_operator_qa";
 const docPath = "docs/v0.7.9-operator-qa-smoke-pack.md";
 const scriptPath = "scripts/operator-qa-smoke.mjs";
 const productVersion = "0.7.0";

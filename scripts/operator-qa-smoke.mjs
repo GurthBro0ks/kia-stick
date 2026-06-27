@@ -4,10 +4,22 @@ import path from "node:path";
 
 const DEFAULT_BASE_URL = "http://127.0.0.1:3000";
 const operatorSmokePhase = "KIA-Stick-v0.7.9-fake-only-operator-qa-smoke-pack";
-const expectedProjectPhase = "KIA-Stick-v0.8.5-next-large-work-checkpoint";
+const expectedProjectPhase = "KIA-Stick-v0.9.0-fake-runtime-ux-checkpoint";
 const expectedRuntimePhase = "KIA-Stick-v0.7.12-operator-qa-closeout-and-push";
 const productVersion = "0.7.0";
 const promptVersion = "prompt.fake-docs.v0.5-import-wizard-hardening";
+const smokeSurfaces = [
+  "Chat no-answer save blocking",
+  "Sources citable/context labels",
+  "Saved empty/detail/version metadata",
+  "Upload fake metadata buttons only",
+  "Import fake state machine",
+  "Vault fake governance workflow",
+  "Settings version identity",
+  "/health local route",
+  "/version local route",
+  "Mobile narrow layout",
+];
 
 function parseArgs(argv) {
   const result = {
@@ -112,6 +124,11 @@ function checkStaticContracts(root, problems) {
     "Queue fake sample metadata",
     "Queue fake batch metadata",
     "No Saved record is created for no-answer responses.",
+    "No-answer responses stay out of Saved.",
+    "Context-only fake sources",
+    "Upload fake-only checks",
+    "Vault operator QA summary",
+    "Import wizard operator QA summary",
     "fake source IDs",
     "metadata and guard flags only",
     "fake metadata rows",
@@ -148,6 +165,10 @@ function checkStaticContracts(root, problems) {
   if (featureList?.phase !== expectedProjectPhase) problems.push(`feature_list phase must be ${expectedProjectPhase}`);
   if (featureList?.release_readiness?.product_version !== productVersion) problems.push("feature_list product version drifted");
   if (featureList?.release_readiness?.prompt_version !== promptVersion) problems.push("feature_list prompt version drifted");
+  if (featureList?.v090_fake_runtime_ux_checkpoint?.queue_015_status !== "blocked") problems.push("v0.9.0 feature state must keep queue-015 blocked");
+  if (featureList?.v090_fake_runtime_ux_checkpoint?.manual_qa_status !== "pending_operator_bundle_review") {
+    problems.push("v0.9.0 feature state must wait for bundle operator QA");
+  }
   if (featureList?.v079_operator_qa_smoke_pack?.queue_015_status !== "blocked") problems.push("v0.7.9 feature state must keep queue-015 blocked");
 }
 
@@ -222,6 +243,8 @@ async function main() {
     console.log(`Runtime phase: ${expectedRuntimePhase}`);
     console.log(`Product version: ${productVersion}`);
     console.log(`Prompt version: ${promptVersion}`);
+    console.log("Bundle smoke surfaces:");
+    for (const surface of smokeSurfaces) console.log(`- ${surface}`);
     for (const note of result.notes) console.log(note);
   } catch (error) {
     console.error("Operator QA smoke ERROR");

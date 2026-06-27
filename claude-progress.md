@@ -2,10 +2,36 @@
 
 ## Current Phase
 
-- Phase: `KIA-Stick-v0.8.5-next-large-work-checkpoint`
+- Phase: `KIA-Stick-v0.9.0-fake-runtime-ux-checkpoint`
 - Target: `USER_LAPTOP_ONLY`
 - Provider: `local-fake-deterministic`
-- Status: validation PASS and operator QA PASS for v0.8.1 through v0.8.5 backlog reconciliation bundle; stale v0.7 queue placeholders reconciled, queue-next contract hardened, queue-036 through queue-040 accepted after closeout validation and operator QA PASS, closeout push verified `HEAD` equals `origin/main` at `cbf84827b4fa067b2e7ba68983f05a237e746e5b`, pushed-state recording completed, and no real-doc implementation approved.
+- Status: validation PASS for v0.8.6 through v0.9.0 fake-only runtime UX polish bundle; queue-041 through queue-045 are `needs_review` pending one bundle operator QA, no push performed, queue-015 remains blocked, and no real-doc implementation approved.
+
+## v0.8.6 to v0.9.0 Fake Runtime UX Polish Bundle State
+
+- Bundle phase: `KIA-Stick-v0.8.6-to-v0.9.0-fake-only-runtime-ux-polish-bundle`
+- Current phase: `KIA-Stick-v0.9.0-fake-runtime-ux-checkpoint`
+- Baseline: accepted pushed v0.8.5 closeout state at `6c3514ef9e5e803f8bdfa74aba93142d73bfd97b`
+- Scope: fake-only runtime UX/docs/tests/tooling/state bundle covering Chat, Sources, Saved, Upload, Import, Vault, Settings, `/health`, and `/version`.
+- Product version: `0.7.0`
+- Prompt version: `prompt.fake-docs.v0.5-import-wizard-hardening`
+- New/updated docs: `docs/v0.8.6-runtime-ux-reality-audit.md`, `docs/v0.8.7-chat-saved-no-answer-polish.md`, `docs/v0.8.8-sources-upload-import-vault-polish.md`, `docs/v0.8.9-mobile-narrow-operator-qa-polish.md`, `docs/v0.9.0-fake-runtime-ux-checkpoint.md`
+- New/updated runtime/tooling: `components/KiaStickApp.tsx`, `app/globals.css`, `scripts/operator-qa-smoke.mjs`
+- Queue state: `queue-015-v07-first-real-doc-gate-request` remains blocked; `queue-041` through `queue-045` are `needs_review` pending one bundle operator QA.
+- Runtime UI changed: yes, fake-only polish only.
+- Runtime capability changed: no
+- Real/private document access: none
+- Private source folders inspected: no
+- Skills installed: no
+- Global agent config changed: no
+- Services/cron/timers/tmux/Caddy/DNS changed: no
+- Discord sent: no
+- Proof directory for this bundle: `/tmp/proof_kia_stick_v0_8_6_to_v0_9_0_fake_runtime_ux_polish_bundle_20260627T015134Z`
+- Commands run so far: attached prompt inspection, local harness/progress inspection, memory quick pass, git status/log before-state capture, queue:list before, queue:next before, repo UI/test/tooling inspection, scoped fake-only runtime UX/docs/tooling/state edits, focused tests, full test suite, `npm run design:check`, `npm run release:check`, `npm run operator:smoke`, `npm run qa`, `npm run scan:fake`, `npm run scan:privacy`, exact safety-boundary scan, and git diff/status checks.
+- Validation: PASS.
+- Manual QA status: pending operator bundle review.
+- Push status: not pushed.
+- Remaining unknowns: local commit SHA.
 
 ## v0.8.1 to v0.8.5 Backlog Reconciliation Bundle State
 

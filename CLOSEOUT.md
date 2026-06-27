@@ -1,5 +1,37 @@
 # KIA Stick Closeout
 
+## v0.8.6 to v0.9.0 Fake Runtime UX Polish Bundle
+
+- Phase: `KIA-Stick-v0.9.0-fake-runtime-ux-checkpoint`
+- Bundle: `KIA-Stick-v0.8.6-to-v0.9.0-fake-only-runtime-ux-polish-bundle`
+- Baseline: accepted pushed v0.8.5 closeout state at `6c3514ef9e5e803f8bdfa74aba93142d73bfd97b`
+- Scope: fake-only runtime UX/docs/tests/tooling/state bundle for Chat, Sources, Saved, Upload, Import, Vault, Settings, `/health`, and `/version`.
+- Product version: `0.7.0`
+- Package version: `0.7.0`
+- Prompt version: `prompt.fake-docs.v0.5-import-wizard-hardening`
+- Proof directory: `/tmp/proof_kia_stick_v0_8_6_to_v0_9_0_fake_runtime_ux_polish_bundle_20260627T015134Z`
+- Runtime UI changed: yes, fake-only polish in allowed surfaces.
+- Runtime capability changed: no
+- Validation: PASS for focused tests, full test suite, design check, release check with scoped v0.9.0 product-version hold, operator smoke, full QA gate, queue list/next, fake-doc scan, privacy scan, exact safety-boundary scan, `git diff --check`, and git status capture.
+- Queue state: `queue-011` through `queue-014` and `queue-028` through `queue-040` remain accepted; `queue-015-v07-first-real-doc-gate-request` remains blocked; `queue-041` through `queue-045` are `needs_review` pending one bundle operator QA.
+- Manual QA status: pending operator bundle review
+- Real document access: none
+- Real document named: no
+- Private source folders inspected: no
+- Skills installed: no
+- Global agent config changed: no
+- Services restarted: no
+- Cron/timer/tmux/Caddy/DNS changed: no
+- Secrets printed: no
+- Discord sent: no
+- Push performed: no
+
+## v0.8.6 to v0.9.0 Safety Boundary
+
+This bundle does not approve real-doc work. It does not add file pickers, directory pickers, drag/drop import zones, path readers, user-provided packet reads, file reads over real documents, copying, hashing real files, OCR, upload handlers, real redaction, text extraction, summarization, embeddings, indexing, vector stores, quarantine writes, private-source inspection, service changes, credentials, skills, global agent config, or real-document access. `productVersion` remains `0.7.0`, `promptVersion` remains unchanged, and `queue-015-v07-first-real-doc-gate-request` remains blocked.
+
+---
+
 ## v0.8.1 to v0.8.5 Backlog Reconciliation Bundle
 
 - Phase: `KIA-Stick-v0.8.5-next-large-work-checkpoint`

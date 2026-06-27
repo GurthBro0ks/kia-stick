@@ -145,6 +145,10 @@ function saveStatusText(status: SaveAnswerStatus): string {
   return "Already saved. No duplicate Saved record was created.";
 }
 
+function formatCount(count: number, singular: string, plural = `${singular}s`): string {
+  return `${count} ${count === 1 ? singular : plural}`;
+}
+
 export function KiaStickApp({ runtimeVersion = clientVersion }: { runtimeVersion?: RuntimeVersion }) {
   const [tab, setTab] = useState<Tab>("chat");
   const [mode, setMode] = useState<Mode>("Strict Research");
@@ -312,7 +316,13 @@ export function KiaStickApp({ runtimeVersion = clientVersion }: { runtimeVersion
 
   function saveAssistantAnswer(message: AssistantMessage) {
     if (message.status !== "complete") return;
-    if (message.answer.noAnswer) return;
+    if (message.answer.noAnswer) {
+      setSaveNotice({
+        status: "duplicate",
+        text: "No-answer responses stay out of Saved. Review the context-only fake trail instead.",
+      });
+      return;
+    }
     const record = createSavedAnswerRecord({
       answer: message.answer,
       mode: message.modeScopeDetail.mode,
@@ -521,7 +531,7 @@ export function KiaStickApp({ runtimeVersion = clientVersion }: { runtimeVersion
                 New fake chat
               </button>
               <span className={latestAssistant?.answer.noAnswer ? "statusPill warning" : "statusPill ok"}>
-                {isSending ? "Checking fake sources" : latestAssistant?.answer.noAnswer ? "No controlling hit" : latestAssistant ? "Fake thread ready" : "Ready"}
+                {isSending ? "Checking fake sources" : latestAssistant?.answer.noAnswer ? "No-answer unsaved" : latestAssistant ? "Fake thread ready" : "Ready"}
               </span>
             </div>
           </div>
@@ -637,6 +647,11 @@ export function FakeUploadPanel(props: {
     <section className="tabPanel">
       <PanelHeader title="Upload" meta="fake metadata quarantine only" />
       <div className="uploadPanel">
+        <div className="qaCueRail" aria-label="Upload fake-only checks">
+          <span>metadata buttons only</span>
+          <span>no file chooser</span>
+          <span>{formatCount(props.quarantine.length, "queued fake row")}</span>
+        </div>
         <label className="checkboxRow">
           <input
             type="checkbox"
@@ -687,6 +702,7 @@ export function SourcesPanel({
 }) {
   const totalSources = sourceHierarchyGroups.reduce((total, group) => total + group.docs.length, 0);
   const citableSources = sourceHierarchyGroups.flatMap((group) => group.docs).filter((doc) => doc.citable).length;
+  const contextOnlySources = totalSources - citableSources;
 
   return (
     <section className="tabPanel">
@@ -694,6 +710,7 @@ export function SourcesPanel({
       <div className="traceSummary" aria-label="source traceability summary">
         <strong>{totalSources} fake sources</strong>
         <span>{citableSources} citable in answer citations</span>
+        <span>{contextOnlySources} context-only guardrails</span>
         <span>Prompt {runtimeVersion.promptVersion}</span>
         <span>Build {runtimeVersion.displayVersion}</span>
       </div>
@@ -703,8 +720,12 @@ export function SourcesPanel({
             <div>
               <h3>{label}</h3>
               <p>
-                Rank {index + 1} in the fake citation hierarchy. Citation labels trace back to these fake source IDs and page tags.
+                Rank {index + 1} in the fake citation hierarchy. Citation labels trace back to fake source IDs, page tags, and citable/context-only status.
               </p>
+            </div>
+            <div className="qaCueRail compact" aria-label={`${label} citation role counts`}>
+              <span>{formatCount(docs.filter((doc) => doc.citable).length, "citable fake source")}</span>
+              <span>{formatCount(docs.filter((doc) => !doc.citable).length, "context-only source")}</span>
             </div>
             <div className="hierarchyDocList">
               {docs.map((doc) => (
@@ -734,7 +755,7 @@ export function SavedAnswersPanel(props: { saved: SavedAnswer[]; onDelete: (id: 
       <div className="sourceCards">
         {props.saved.length === 0 && (
           <p className="emptyState">
-            No saved fake answers yet. Save a cited Chat answer to review its local metadata here.
+            No saved fake answers yet. Save a cited Chat answer to review local version, prompt, provider, and citation metadata here. No-answer Chat cards are blocked from Saved.
           </p>
         )}
         {props.saved.map((item) => (
@@ -856,6 +877,13 @@ export function VaultPanel(props: {
           {technicalOpen ? "Hide technical details" : "Show technical details"}
         </button>
       </section>
+
+      <div className="qaCueRail" aria-label="Vault operator QA summary">
+        <span>{formatCount(props.state.records.length, "fake metadata row")}</span>
+        <span>{formatCount(props.workflowCounts.redaction_required, "redaction review")}</span>
+        <span>{formatCount(props.workflowCounts.metadata_required, "metadata review")}</span>
+        <span>index still gated</span>
+      </div>
 
       <div className="boundaryGrid" aria-label="private vault boundaries">
         <NoticeBox tone="warning" title="Fake metadata only">
@@ -1015,6 +1043,13 @@ export function ImportWizardPanel(props: {
           </GuideItem>
         </div>
       </section>
+
+      <div className="qaCueRail" aria-label="Import wizard operator QA summary">
+        <span>synthetic candidate only</span>
+        <span>{props.state.currentStep.replaceAll("_", " ")}</span>
+        <span>{props.state.record.indexDecision}</span>
+        <span>real actions disabled</span>
+      </div>
 
       <div className="boundaryGrid" aria-label="import wizard boundaries">
         <NoticeBox tone="warning" title="Fake fixtures only">
@@ -1498,7 +1533,7 @@ export function AssistantMessageCard({
               <h2>{intentLabels[answer.intent]}</h2>
             </div>
             <span className={answer.noAnswer ? "statusPill warning" : "statusPill ok"}>
-              {answer.noAnswer ? "Best guess disabled" : `${answer.citations.length} citations`}
+              {answer.noAnswer ? "Unsaved no-answer" : `${answer.citations.length} citations`}
             </span>
           </div>
 
@@ -1542,7 +1577,7 @@ export function AssistantMessageCard({
               {answer.noAnswer ? "No answer to save" : "Save to Saved"}
             </button>
             {answer.citations.length === 0 ? (
-              <p className="emptyState">No Saved record is created for no-answer responses.</p>
+              <p className="emptyState">No Saved record is created for no-answer responses. Context-only fake sources can still be reviewed in the full packet.</p>
             ) : (
               <button
                 aria-expanded={citationsOpen}

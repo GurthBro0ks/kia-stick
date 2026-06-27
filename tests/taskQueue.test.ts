@@ -51,7 +51,7 @@ describe("task-queue", () => {
     const queue = mod.loadQueue(resolve("."));
 
     expect(queue.schema).toBe("kia-stick-local-task-queue.v1");
-    expect(queue.items).toHaveLength(40);
+    expect(queue.items).toHaveLength(45);
     expect(queue.items.map((item) => item.id)).toEqual([
       "queue-001-closeout-helper-hardening",
       "queue-002-fake-redaction-metadata-depth",
@@ -93,6 +93,11 @@ describe("task-queue", () => {
       "queue-038-v083-queue-next-contract-hardening",
       "queue-039-v084-large-bundle-operator-workflow",
       "queue-040-v085-next-large-work-checkpoint",
+      "queue-041-v086-runtime-ux-reality-audit",
+      "queue-042-v087-chat-saved-no-answer-polish",
+      "queue-043-v088-sources-upload-import-vault-polish",
+      "queue-044-v089-mobile-narrow-operator-qa-polish",
+      "queue-045-v090-fake-runtime-ux-checkpoint",
     ]);
     expect(queue.items.slice(0, 14).every((item) => item.status === "accepted")).toBe(true);
     expect(queue.items[10].status).toBe("accepted");
@@ -120,7 +125,8 @@ describe("task-queue", () => {
     expect(queue.items[32].status).toBe("accepted");
     expect(queue.items[33].status).toBe("accepted");
     expect(queue.items[34].status).toBe("accepted");
-    expect(queue.items.slice(35).every((item) => item.status === "accepted")).toBe(true);
+    expect(queue.items.slice(35, 40).every((item) => item.status === "accepted")).toBe(true);
+    expect(queue.items.slice(40).every((item) => item.status === "needs_review")).toBe(true);
     expect(queue.items.every((item) => item.history.length > 0)).toBe(true);
     expect(mod.validateQueue(queue)).toBe(true);
   });
@@ -418,8 +424,9 @@ describe("task-queue", () => {
     const result = spawnSync("node", [scriptPath, "next"], { cwd: resolve("."), encoding: "utf8" });
 
     expect(result.status).toBe(0);
-    expect(result.stdout).toContain("No actionable queue items");
-    expect(result.stdout).not.toContain("Codex-ready summary:");
+    expect(result.stdout).toContain("id=queue-041-v086-runtime-ux-reality-audit");
+    expect(result.stdout).toContain("KIA-Stick-v0.8.6-runtime-ux-reality-audit");
+    expect(result.stdout).toContain("Codex-ready summary:");
     expect(result.stdout).not.toContain("id=queue-015-v07-first-real-doc-gate-request");
   });
 
