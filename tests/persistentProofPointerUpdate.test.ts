@@ -55,9 +55,9 @@ describe("v0.9.4 persistent proof pointer update", () => {
     };
 
     expect(pointer).toContain(featureList.release_readiness.closeout_push_proof_dir);
-    expect(pointer).toContain("KIA-Stick-v0.9.1-to-v0.9.5-release-state-consolidation-proof-durability-closeout-and-push");
+    expect(pointer).toContain("KIA-Stick-v0.9.6-to-v0.9.10-synthetic-governance-hardening-closeout-and-push");
     expect(pointer).toContain("QUEUE_015_STATUS=blocked");
-    expect(pointer).toContain("QUEUE_046_TO_050_STATUS=accepted");
+    expect(pointer).toContain("QUEUE_051_TO_055_STATUS=accepted");
     expect(pointer).toContain("PRODUCT_VERSION=0.7.0");
     expect(pointer).toContain("PROMPT_VERSION=prompt.fake-docs.v0.5-import-wizard-hardening");
     expect(pointer).not.toMatch(/(?:token|cookie|authorization|secret)\s*[:=]\s*[A-Za-z0-9._+/\-=]{8,}|\/media\/mint\/SHARED\/APWU/i);

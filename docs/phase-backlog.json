@@ -1,6 +1,6 @@
 {
   "schema": "kia-stick-local-task-queue.v1",
-  "updated_at": "2026-06-27T13:03:21.501Z",
+  "updated_at": "2026-06-27T13:11:34.174Z",
   "items": [
     {
       "id": "queue-001-closeout-helper-hardening",
@@ -1516,13 +1516,13 @@
       "id": "queue-051-v096-synthetic-governance-reality-audit",
       "phase": "KIA-Stick-v0.9.6-synthetic-governance-reality-audit",
       "title": "v0.9.6 synthetic governance reality audit",
-      "status": "ready_to_push",
+      "status": "accepted",
       "model": "GPT/Codex $100 coding plan",
       "risk": "low",
       "summary": "Audit current synthetic governance helpers, fixtures, reports, proof durability, queue state, and closeout guards after the accepted v0.9.5 closeout.",
-      "next_action": "Ready for separate closeout review after operator QA PASS; do not accept or push until a closeout/push gate is explicitly requested.",
+      "next_action": "Accepted by closeout validation and operator QA PASS; no next queue item started by this closeout. Separate future prompt required for any new work.",
       "created_at": "2026-06-27T12:45:25.894Z",
-      "updated_at": "2026-06-27T13:03:21.501Z",
+      "updated_at": "2026-06-27T13:11:34.174Z",
       "history": [
         {
           "at": "2026-06-27T12:45:25.894Z",
@@ -1535,6 +1535,12 @@
           "from": "needs_review",
           "to": "ready_to_push",
           "note": "OPERATOR_QA_PASS recorded for the v0.9.6-to-v0.9.10 synthetic governance hardening bundle; validation PASS, product/prompt unchanged, queue-015 remains blocked, no real-doc implementation approved, and no push performed."
+        },
+        {
+          "at": "2026-06-27T13:11:34.174Z",
+          "from": "ready_to_push",
+          "to": "accepted",
+          "note": "Accepted after closeout validation PASS and operator QA PASS for KIA-Stick-v0.9.6-to-v0.9.10-synthetic-governance-hardening-bundle. Closeout/push proof: /tmp/proof_kia_stick_v0_9_6_to_v0_9_10_synthetic_governance_hardening_closeout_push_20260627T131000Z. queue-015 remains blocked, product/prompt unchanged, no real-doc implementation is approved, and push is authorized by this closeout gate."
         }
       ]
     },
@@ -1542,13 +1548,13 @@
       "id": "queue-052-v097-synthetic-approval-negative-fixtures",
       "phase": "KIA-Stick-v0.9.7-synthetic-approval-negative-fixtures",
       "title": "v0.9.7 synthetic approval negative fixtures",
-      "status": "ready_to_push",
+      "status": "accepted",
       "model": "GPT/Codex $100 coding plan",
       "risk": "medium",
       "summary": "Expand in-memory synthetic PASS/WARN/FAIL negative fixtures for approval-packet review without path input or user-file reads.",
-      "next_action": "Ready for separate closeout review after operator QA PASS; do not accept or push until a closeout/push gate is explicitly requested.",
+      "next_action": "Accepted by closeout validation and operator QA PASS; no next queue item started by this closeout. Separate future prompt required for any new work.",
       "created_at": "2026-06-27T12:45:25.894Z",
-      "updated_at": "2026-06-27T13:03:21.501Z",
+      "updated_at": "2026-06-27T13:11:34.174Z",
       "history": [
         {
           "at": "2026-06-27T12:45:25.894Z",
@@ -1561,6 +1567,12 @@
           "from": "needs_review",
           "to": "ready_to_push",
           "note": "OPERATOR_QA_PASS recorded for the v0.9.6-to-v0.9.10 synthetic governance hardening bundle; validation PASS, product/prompt unchanged, queue-015 remains blocked, no real-doc implementation approved, and no push performed."
+        },
+        {
+          "at": "2026-06-27T13:11:34.174Z",
+          "from": "ready_to_push",
+          "to": "accepted",
+          "note": "Accepted after closeout validation PASS and operator QA PASS for KIA-Stick-v0.9.6-to-v0.9.10-synthetic-governance-hardening-bundle. Closeout/push proof: /tmp/proof_kia_stick_v0_9_6_to_v0_9_10_synthetic_governance_hardening_closeout_push_20260627T131000Z. queue-015 remains blocked, product/prompt unchanged, no real-doc implementation is approved, and push is authorized by this closeout gate."
         }
       ]
     },
@@ -1568,13 +1580,13 @@
       "id": "queue-053-v098-synthetic-governance-report-hardening",
       "phase": "KIA-Stick-v0.9.8-synthetic-governance-report-hardening",
       "title": "v0.9.8 synthetic governance report hardening",
-      "status": "ready_to_push",
+      "status": "accepted",
       "model": "GPT/Codex $100 coding plan",
       "risk": "medium",
       "summary": "Harden synthetic governance report output so PASS/WARN/FAIL counts, queue guards, and synthetic-only proof fields are clear.",
-      "next_action": "Ready for separate closeout review after operator QA PASS; do not accept or push until a closeout/push gate is explicitly requested.",
+      "next_action": "Accepted by closeout validation and operator QA PASS; no next queue item started by this closeout. Separate future prompt required for any new work.",
       "created_at": "2026-06-27T12:45:25.894Z",
-      "updated_at": "2026-06-27T13:03:21.501Z",
+      "updated_at": "2026-06-27T13:11:34.174Z",
       "history": [
         {
           "at": "2026-06-27T12:45:25.894Z",
@@ -1587,6 +1599,12 @@
           "from": "needs_review",
           "to": "ready_to_push",
           "note": "OPERATOR_QA_PASS recorded for the v0.9.6-to-v0.9.10 synthetic governance hardening bundle; validation PASS, product/prompt unchanged, queue-015 remains blocked, no real-doc implementation approved, and no push performed."
+        },
+        {
+          "at": "2026-06-27T13:11:34.174Z",
+          "from": "ready_to_push",
+          "to": "accepted",
+          "note": "Accepted after closeout validation PASS and operator QA PASS for KIA-Stick-v0.9.6-to-v0.9.10-synthetic-governance-hardening-bundle. Closeout/push proof: /tmp/proof_kia_stick_v0_9_6_to_v0_9_10_synthetic_governance_hardening_closeout_push_20260627T131000Z. queue-015 remains blocked, product/prompt unchanged, no real-doc implementation is approved, and push is authorized by this closeout gate."
         }
       ]
     },
@@ -1594,13 +1612,13 @@
       "id": "queue-054-v099-stop-on-warn-fail-closeout-guard",
       "phase": "KIA-Stick-v0.9.9-stop-on-warn-fail-closeout-guard",
       "title": "v0.9.9 stop-on-WARN/FAIL closeout guard",
-      "status": "ready_to_push",
+      "status": "accepted",
       "model": "GPT/Codex $100 coding plan",
       "risk": "medium",
       "summary": "Reinforce closeout stop behavior when proof, report, queue, validation, or safety evidence contains WARN or FAIL.",
-      "next_action": "Ready for separate closeout review after operator QA PASS; do not accept or push until a closeout/push gate is explicitly requested.",
+      "next_action": "Accepted by closeout validation and operator QA PASS; no next queue item started by this closeout. Separate future prompt required for any new work.",
       "created_at": "2026-06-27T12:45:25.894Z",
-      "updated_at": "2026-06-27T13:03:21.501Z",
+      "updated_at": "2026-06-27T13:11:34.174Z",
       "history": [
         {
           "at": "2026-06-27T12:45:25.894Z",
@@ -1613,6 +1631,12 @@
           "from": "needs_review",
           "to": "ready_to_push",
           "note": "OPERATOR_QA_PASS recorded for the v0.9.6-to-v0.9.10 synthetic governance hardening bundle; validation PASS, product/prompt unchanged, queue-015 remains blocked, no real-doc implementation approved, and no push performed."
+        },
+        {
+          "at": "2026-06-27T13:11:34.174Z",
+          "from": "ready_to_push",
+          "to": "accepted",
+          "note": "Accepted after closeout validation PASS and operator QA PASS for KIA-Stick-v0.9.6-to-v0.9.10-synthetic-governance-hardening-bundle. Closeout/push proof: /tmp/proof_kia_stick_v0_9_6_to_v0_9_10_synthetic_governance_hardening_closeout_push_20260627T131000Z. queue-015 remains blocked, product/prompt unchanged, no real-doc implementation is approved, and push is authorized by this closeout gate."
         }
       ]
     },
@@ -1620,13 +1644,13 @@
       "id": "queue-055-v0910-synthetic-governance-hardening-checkpoint",
       "phase": "KIA-Stick-v0.9.10-synthetic-governance-hardening-checkpoint",
       "title": "v0.9.10 synthetic governance hardening checkpoint",
-      "status": "ready_to_push",
+      "status": "accepted",
       "model": "GPT/Codex $100 coding plan",
       "risk": "low",
       "summary": "Record the synthetic governance hardening checkpoint and next safe options without approving real-doc implementation.",
-      "next_action": "Ready for separate closeout review after operator QA PASS; do not accept or push until a closeout/push gate is explicitly requested.",
+      "next_action": "Accepted by closeout validation and operator QA PASS; no next queue item started by this closeout. Separate future prompt required for any new work.",
       "created_at": "2026-06-27T12:45:25.894Z",
-      "updated_at": "2026-06-27T13:03:21.501Z",
+      "updated_at": "2026-06-27T13:11:34.174Z",
       "history": [
         {
           "at": "2026-06-27T12:45:25.894Z",
@@ -1639,6 +1663,12 @@
           "from": "needs_review",
           "to": "ready_to_push",
           "note": "OPERATOR_QA_PASS recorded for the v0.9.6-to-v0.9.10 synthetic governance hardening bundle; validation PASS, product/prompt unchanged, queue-015 remains blocked, no real-doc implementation approved, and no push performed."
+        },
+        {
+          "at": "2026-06-27T13:11:34.174Z",
+          "from": "ready_to_push",
+          "to": "accepted",
+          "note": "Accepted after closeout validation PASS and operator QA PASS for KIA-Stick-v0.9.6-to-v0.9.10-synthetic-governance-hardening-bundle. Closeout/push proof: /tmp/proof_kia_stick_v0_9_6_to_v0_9_10_synthetic_governance_hardening_closeout_push_20260627T131000Z. queue-015 remains blocked, product/prompt unchanged, no real-doc implementation is approved, and push is authorized by this closeout gate."
         }
       ]
     }
