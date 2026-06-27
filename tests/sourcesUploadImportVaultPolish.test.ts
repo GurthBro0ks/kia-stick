@@ -65,7 +65,7 @@ describe("v0.8.8 Sources/Upload/Import/Vault polish", () => {
     const state = featureList.v088_sources_upload_import_vault_polish;
 
     expect(state.phase).toBe(phase);
-    expect(state.status).toBe("accepted_after_closeout_validation_pending_push");
+    expect(state.status).toBe("accepted_after_closeout_push");
     expect(state.queue_043_status).toBe("accepted");
     expect(state.sources_citable_context_counts).toBe(true);
     expect(state.upload_fake_metadata_cue_rail).toBe(true);

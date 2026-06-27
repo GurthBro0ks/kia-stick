@@ -16,7 +16,7 @@
 - Validation: PASS for focused tests, full test suite, design check, release check with scoped v0.9.0 product-version hold, operator smoke, full QA gate, queue list/next, fake-doc scan, privacy scan, exact safety-boundary scan, `git diff --check`, and git status capture.
 - Operator QA PASS proof directory: `/tmp/proof_kia_stick_v0_9_0_operator_qa_pass_20260627T100826Z`
 - Vault fix proof directory: `/tmp/proof_kia_stick_v0_9_0_vault_client_exception_fix_20260627T091255Z`
-- Queue state: `queue-011` through `queue-014` and `queue-028` through `queue-040` remain accepted; `queue-015-v07-first-real-doc-gate-request` remains blocked; `queue-041` through `queue-045` are accepted after closeout validation and operator QA PASS, pending push proof.
+- Queue state: `queue-011` through `queue-014` and `queue-028` through `queue-040` remain accepted; `queue-015-v07-first-real-doc-gate-request` remains blocked; `queue-041` through `queue-045` are accepted after closeout validation, operator QA PASS, push, and `HEAD`/`origin/main` equality proof.
 - Manual QA status: PASS
 - Real document access: none
 - Real document named: no
@@ -27,7 +27,8 @@
 - Cron/timer/tmux/Caddy/DNS changed: no
 - Secrets printed: no
 - Discord sent: no
-- Push performed: pending
+- Push performed: yes
+- Accepted closeout push commit: `8044eaf6756c5e8303483d44017a29cf9514ed44`
 
 ## v0.8.6 to v0.9.0 Safety Boundary
 

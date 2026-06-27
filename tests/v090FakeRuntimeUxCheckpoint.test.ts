@@ -76,17 +76,17 @@ describe("v0.9.0 fake runtime UX checkpoint", () => {
 
     expect(featureList.phase).toBe(phase);
     expect(featureList.release_readiness.phase).toBe(phase);
-    expect(featureList.release_readiness.status).toBe("v086_v090_fake_runtime_ux_bundle_closeout_accepted_pending_push");
+    expect(featureList.release_readiness.status).toBe("v086_v090_fake_runtime_ux_bundle_accepted_pushed");
     expect(featureList.release_readiness.package_version).toBe(productVersion);
     expect(featureList.release_readiness.product_version).toBe(productVersion);
     expect(featureList.release_readiness.prompt_version).toBe(promptVersion);
     expect(featureList.release_readiness.manual_qa_status).toBe("PASS");
-    expect(featureList.release_readiness.push_performed).toBe(false);
+    expect(featureList.release_readiness.push_performed).toBe(true);
     expect(featureList.release_readiness.queue_015_status).toBe("blocked");
     expect(featureList.release_readiness.queue_041_status).toBe("accepted");
     expect(featureList.release_readiness.queue_045_status).toBe("accepted");
     expect(featureList.v090_fake_runtime_ux_checkpoint.phase).toBe(phase);
-    expect(featureList.v090_fake_runtime_ux_checkpoint.status).toBe("accepted_after_closeout_validation_pending_push");
+    expect(featureList.v090_fake_runtime_ux_checkpoint.status).toBe("accepted_after_closeout_push");
     expect(featureList.v090_fake_runtime_ux_checkpoint.queue_041_status).toBe("accepted");
     expect(featureList.v090_fake_runtime_ux_checkpoint.queue_042_status).toBe("accepted");
     expect(featureList.v090_fake_runtime_ux_checkpoint.queue_043_status).toBe("accepted");
@@ -96,7 +96,7 @@ describe("v0.9.0 fake runtime UX checkpoint", () => {
     expect(featureList.v090_fake_runtime_ux_checkpoint.product_version_bump_approved).toBe(false);
     expect(featureList.v090_fake_runtime_ux_checkpoint.authorizes_real_doc_work).toBe(false);
     expect(featureList.v090_fake_runtime_ux_checkpoint.queue_015_status).toBe("blocked");
-    expect(featureList.v090_fake_runtime_ux_checkpoint.push_performed).toBe(false);
+    expect(featureList.v090_fake_runtime_ux_checkpoint.push_performed).toBe(true);
     expect(byId["queue-015-v07-first-real-doc-gate-request"]?.status).toBe("blocked");
     for (const id of [
       "queue-041-v086-runtime-ux-reality-audit",

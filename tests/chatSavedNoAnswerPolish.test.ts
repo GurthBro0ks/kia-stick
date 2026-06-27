@@ -50,7 +50,7 @@ describe("v0.8.7 Chat/Saved no-answer polish", () => {
     const item = queue.items.find((candidate) => candidate.id === "queue-042-v087-chat-saved-no-answer-polish");
 
     expect(featureList.v087_chat_saved_no_answer_polish.phase).toBe(phase);
-    expect(featureList.v087_chat_saved_no_answer_polish.status).toBe("accepted_after_closeout_validation_pending_push");
+    expect(featureList.v087_chat_saved_no_answer_polish.status).toBe("accepted_after_closeout_push");
     expect(featureList.v087_chat_saved_no_answer_polish.queue_042_status).toBe("accepted");
     expect(featureList.v087_chat_saved_no_answer_polish.no_answer_save_notice_added).toBe(true);
     expect(featureList.v087_chat_saved_no_answer_polish.saved_empty_state_clarified).toBe(true);

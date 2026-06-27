@@ -77,7 +77,7 @@ describe("v0.8.9 mobile/narrow operator QA polish", () => {
     const state = featureList.v089_mobile_narrow_operator_qa_polish;
 
     expect(state.phase).toBe(phase);
-    expect(state.status).toBe("accepted_after_closeout_validation_pending_push");
+    expect(state.status).toBe("accepted_after_closeout_push");
     expect(state.queue_044_status).toBe("accepted");
     expect(state.mobile_narrow_layout_polish).toBe(true);
     expect(state.operator_smoke_surface_list_added).toBe(true);

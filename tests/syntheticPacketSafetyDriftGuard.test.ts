@@ -187,7 +187,7 @@ describe("v0.7.16 synthetic packet safety drift guard", () => {
     expect(packageJson.version).toBe(productVersion);
     expect(featureList.phase).toBe(currentPhase);
     expect(featureList.release_readiness.phase).toBe(currentPhase);
-    expect(featureList.release_readiness.status).toBe("v086_v090_fake_runtime_ux_bundle_closeout_accepted_pending_push");
+    expect(featureList.release_readiness.status).toBe("v086_v090_fake_runtime_ux_bundle_accepted_pushed");
     expect(featureList.release_readiness.package_version).toBe(productVersion);
     expect(featureList.release_readiness.product_version).toBe(productVersion);
     expect(featureList.release_readiness.prompt_version).toBe(promptVersion);
