@@ -72,6 +72,7 @@ import {
   laneLabels,
   lifecycleLabels,
   lifecycleSteps,
+  migrateVaultState,
   workflowStateCounts,
   workflowStateLabels,
   type FakeVaultRecord,
@@ -172,7 +173,7 @@ export function KiaStickApp({ runtimeVersion = clientVersion }: { runtimeVersion
     setSaved(migrateSavedAnswers(loadJson<unknown[]>(savedKey, [])));
     setThread(migrateConversationThread(loadJson<unknown>(threadKey, null)) ?? createConversationThread());
     setQuarantine(loadJson<QuarantineItem[]>(quarantineKey, []));
-    setVaultState(loadJson<VaultState>(vaultKey, createInitialVaultState()));
+    setVaultState(migrateVaultState(loadJson<unknown>(vaultKey, null)));
     setImportWizardState(loadJson<ImportWizardState>(importWizardKey, createInitialImportWizardState()));
     setHydrated(true);
 

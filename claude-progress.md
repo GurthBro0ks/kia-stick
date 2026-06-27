@@ -2,10 +2,33 @@
 
 ## Current Phase
 
-- Phase: `KIA-Stick-v0.9.0-fake-runtime-ux-checkpoint`
+- Phase: `KIA-Stick-v0.9.0-vault-client-exception-fix`
 - Target: `USER_LAPTOP_ONLY`
 - Provider: `local-fake-deterministic`
-- Status: validation PASS for v0.8.6 through v0.9.0 fake-only runtime UX polish bundle; queue-041 through queue-045 are `needs_review` pending one bundle operator QA, no push performed, queue-015 remains blocked, and no real-doc implementation approved.
+- Status: validation PASS for Vault tab client-side exception fix; queue-041 through queue-045 remain `needs_review`, no push performed, queue-015 remains blocked, and no real-doc implementation approved.
+
+## v0.9.0 Vault Client Exception Fix State
+
+- Phase: `KIA-Stick-v0.9.0-vault-client-exception-fix`
+- Target machine: `USER_LAPTOP_LINUX_MINT`
+- Baseline: local fake runtime UX bundle commit `d61184d725ef017c1d5a9f3e4ce6b4dc37134c09`
+- Scope: Vault tab stale fake-state crash fix only.
+- Root cause: stale browser Vault state could be missing newer redaction array fields; the Vault render/export path expected arrays and crashed before operator QA could finish.
+- Runtime UI changed: no intentional UI redesign; Vault now survives stale fake browser state.
+- Runtime capability changed: no
+- Real/private document access: none
+- Private source folders inspected: no
+- Services/cron/timers/tmux/Caddy/DNS changed: no
+- Discord sent: no
+- Queue state: `queue-015-v07-first-real-doc-gate-request` remains blocked; `queue-041` through `queue-045` remain `needs_review` pending operator QA.
+- Product version: `0.7.0`
+- Prompt version: `prompt.fake-docs.v0.5-import-wizard-hardening`
+- Proof directory for this fix: `/tmp/proof_kia_stick_v0_9_0_vault_client_exception_fix_20260627T091255Z`
+- Commands run so far: attached prompt inspection, memory quick pass, git status/log before-state capture, bundle commit presence check, Vault render/model inspection, temporary stale-state crash repro, focused regression test update, focused tests for `tests/sourcesUploadImportVaultPolish.test.ts`, `tests/v090FakeRuntimeUxCheckpoint.test.ts`, and `tests/answerGovernor.test.ts`, full test suite, `npm run design:check`, `npm run release:check`, `npm run operator:smoke`, `npm run qa`, `npm run scan:fake`, `npm run scan:privacy`, Chrome CDP Vault browser smoke with stale fake localStorage, safety-boundary scan, and `git diff --check`.
+- Validation: PASS.
+- Manual QA status: pending operator bundle review.
+- Push status: not pushed.
+- Remaining unknowns: operator QA review for the v0.8.6 through v0.9.0 bundle.
 
 ## v0.8.6 to v0.9.0 Fake Runtime UX Polish Bundle State
 

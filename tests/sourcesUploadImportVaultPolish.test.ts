@@ -1,5 +1,10 @@
 import { existsSync, readFileSync } from "node:fs";
+import React from "react";
+import { renderToStaticMarkup } from "react-dom/server";
 import { describe, expect, it } from "vitest";
+import { VaultPanel } from "@/components/KiaStickApp";
+import { createRuntimeVersion } from "@/lib/version";
+import { laneCounts, migrateVaultState, workflowStateCounts } from "@/lib/vaultModel";
 
 const phase = "KIA-Stick-v0.8.8-sources-upload-import-vault-polish";
 const docPath = "docs/v0.8.8-sources-upload-import-vault-polish.md";
@@ -72,5 +77,51 @@ describe("v0.8.8 Sources/Upload/Import/Vault polish", () => {
     expect(state.queue_015_status).toBe("blocked");
     expect(item?.phase).toBe(phase);
     expect(item?.status).toBe("needs_review");
+  });
+
+  it("migrates stale Vault browser state before render/export arrays are used", () => {
+    const staleState = {
+      records: [
+        {
+          id: "fake-vault-member-only",
+          lifecycleStep: "redaction_review",
+          redactionStatus: "review_needed",
+          metadataStatus: "needs_changes",
+          lastBlockedReason: "stale fake browser state with no redaction arrays",
+        },
+      ],
+      auditLog: [],
+    };
+
+    const state = migrateVaultState(staleState);
+    const memberOnly = state.records.find((record) => record.id === "fake-vault-member-only");
+
+    expect(memberOnly?.redactionFlags).toEqual(["fake-member-only-label"]);
+    expect(memberOnly?.redactionMetadata).toHaveLength(1);
+    expect(() =>
+      renderToStaticMarkup(React.createElement(VaultPanel, {
+        counts: laneCounts(state.records),
+        workflowCounts: workflowStateCounts(state.records),
+        state,
+        view: "vault",
+        runtimeVersion: createRuntimeVersion({ buildDate: "20260627", gitSha: "vaultfix" }),
+        setView: () => undefined,
+        onAction: () => undefined,
+      }))
+    ).not.toThrow();
+
+    const html = renderToStaticMarkup(React.createElement(VaultPanel, {
+      counts: laneCounts(state.records),
+      workflowCounts: workflowStateCounts(state.records),
+      state,
+      view: "vault",
+      runtimeVersion: createRuntimeVersion({ buildDate: "20260627", gitSha: "vaultfix" }),
+      setView: () => undefined,
+      onAction: () => undefined,
+    }));
+
+    expect(html).toContain("Vault operator QA summary");
+    expect(html).toContain("fake metadata rows");
+    expect(html).not.toContain("type=\"file\"");
   });
 });

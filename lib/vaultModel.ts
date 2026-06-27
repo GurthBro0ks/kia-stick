@@ -48,6 +48,14 @@ export type VaultWorkflowState =
   | "review_rejected"
   | "eligible_fake_only";
 
+const authorityLevels: readonly AuthorityLevel[] = ["controlling", "official", "local_official", "persuasive", "steward_note", "example", "unknown"];
+const sourceStatuses: readonly SourceStatus[] = ["public", "member_only", "local_private", "steward_private", "restricted", "unknown"];
+const sensitivities: readonly Sensitivity[] = ["low", "moderate", "high", "restricted_sensitive", "unknown"];
+const redactionStatuses: readonly RedactionStatus[] = ["not_started", "detection_flagged", "review_needed", "approved_redacted", "rejected", "restricted"];
+const metadataStatuses: readonly MetadataStatus[] = ["not_reviewed", "needs_changes", "reviewed", "rejected"];
+const redactionReviewOutcomes: readonly FakeRedactionReviewOutcome[] = ["approve_redaction", "needs_more_redaction", "reject_sensitive", "metadata_incomplete"];
+const redactionEligibilityImpacts: readonly FakeEligibilityImpact[] = ["none", "metadata_required", "redaction_required", "not_indexable"];
+
 export interface FakeVaultRecord {
   id: string;
   title: string;
@@ -449,10 +457,17 @@ const workflowStateOrder: VaultWorkflowState[] = [
 ];
 
 function cloneRecord(record: FakeVaultRecord): FakeVaultRecord {
+  const recordLike = record as FakeVaultRecord & { redactionFlags?: unknown; redactionMetadata?: unknown };
+  const fallbackMetadata = fakeVaultRedactionMetadataByRecord[record.id] ?? [];
+  const sourceMetadata = Array.isArray(recordLike.redactionMetadata) ? recordLike.redactionMetadata as FakeRedactionMetadata[] : fallbackMetadata;
+  const redactionMetadata = cloneRedactionMetadata(sourceMetadata);
+  const redactionFlags = Array.isArray(recordLike.redactionFlags)
+    ? recordLike.redactionFlags.filter((flag): flag is string => typeof flag === "string")
+    : redactionMetadataCategoryLabels(redactionMetadata);
   return {
     ...record,
-    redactionFlags: [...record.redactionFlags],
-    redactionMetadata: cloneRedactionMetadata(record.redactionMetadata),
+    redactionFlags,
+    redactionMetadata,
   };
 }
 
@@ -490,6 +505,84 @@ export function createInitialVaultState(now = "2026-06-20T00:00:00.000Z"): Vault
         "system"
       ),
     ],
+  };
+}
+
+function isRecord(value: unknown): value is Record<string, unknown> {
+  return Boolean(value) && typeof value === "object" && !Array.isArray(value);
+}
+
+function textValue(value: unknown, fallback: string): string {
+  return typeof value === "string" ? value : fallback;
+}
+
+function booleanValue(value: unknown, fallback: boolean): boolean {
+  return typeof value === "boolean" ? value : fallback;
+}
+
+function stringArray(value: unknown, fallback: readonly string[]): string[] {
+  return Array.isArray(value) ? value.filter((item): item is string => typeof item === "string") : [...fallback];
+}
+
+function enumValue<T extends string>(value: unknown, allowed: readonly T[], fallback: T): T {
+  return typeof value === "string" && allowed.includes(value as T) ? value as T : fallback;
+}
+
+function normalizeVaultRecord(value: unknown, fallback: FakeVaultRecord): FakeVaultRecord {
+  if (!isRecord(value)) return cloneRecord(fallback);
+
+  const fallbackMetadata = cloneRedactionMetadata(fakeVaultRedactionMetadataByRecord[fallback.id] ?? []);
+  const normalized: FakeVaultRecord = {
+    ...cloneRecord(fallback),
+    lifecycleStep: enumValue(value.lifecycleStep, lifecycleSteps, fallback.lifecycleStep),
+    authorityLevel: enumValue(value.authorityLevel, authorityLevels, fallback.authorityLevel),
+    sourceStatus: enumValue(value.sourceStatus, sourceStatuses, fallback.sourceStatus),
+    sensitivity: enumValue(value.sensitivity, sensitivities, fallback.sensitivity),
+    redactionStatus: enumValue(value.redactionStatus, redactionStatuses, fallback.redactionStatus),
+    metadataStatus: enumValue(value.metadataStatus, metadataStatuses, fallback.metadataStatus),
+    indexReason: textValue(value.indexReason, fallback.indexReason),
+    lastBlockedReason: textValue(value.lastBlockedReason, ""),
+    reviewer: textValue(value.reviewer, fallback.reviewer),
+    reviewedAt: textValue(value.reviewedAt, fallback.reviewedAt),
+    redactionFlags: stringArray(value.redactionFlags, redactionMetadataCategoryLabels(fallbackMetadata)),
+    redactionMetadata: fallbackMetadata,
+    redactionReviewOutcome: enumValue(value.redactionReviewOutcome, redactionReviewOutcomes, fallback.redactionReviewOutcome),
+    redactionEligibilityImpact: enumValue(value.redactionEligibilityImpact, redactionEligibilityImpacts, fallback.redactionEligibilityImpact),
+    githubSafe: booleanValue(value.githubSafe, fallback.githubSafe),
+  };
+
+  return refreshRecordState(normalized, normalized.lastBlockedReason);
+}
+
+function normalizeAuditEntry(value: unknown): VaultAuditEntry | null {
+  if (!isRecord(value)) return null;
+  const id = textValue(value.id, "");
+  const recordId = textValue(value.recordId, "");
+  const action = textValue(value.action, "");
+  const actor = textValue(value.actor, "");
+  const at = textValue(value.at, "");
+  const note = textValue(value.note, "");
+  if (!id || !recordId || !action || !actor || !at || !note) return null;
+  return { id, recordId, action, actor, at, note };
+}
+
+export function migrateVaultState(value: unknown, now = "2026-06-20T00:00:00.000Z"): VaultState {
+  const initial = createInitialVaultState(now);
+  if (!isRecord(value)) return initial;
+
+  const persistedRecords = Array.isArray(value.records) ? value.records : [];
+  const persistedById = new Map<string, unknown>();
+  for (const record of persistedRecords) {
+    if (isRecord(record) && typeof record.id === "string") persistedById.set(record.id, record);
+  }
+
+  const auditLog = Array.isArray(value.auditLog)
+    ? value.auditLog.map(normalizeAuditEntry).filter((entry): entry is VaultAuditEntry => Boolean(entry))
+    : [];
+
+  return {
+    records: initial.records.map((fallback) => normalizeVaultRecord(persistedById.get(fallback.id), fallback)),
+    auditLog: auditLog.length > 0 ? auditLog.map(cloneAudit) : initial.auditLog.map(cloneAudit),
   };
 }
 
@@ -831,34 +924,39 @@ export function workflowStateCounts(records: FakeVaultRecord[]): Record<VaultWor
 }
 
 function exportRecord(record: FakeVaultRecord): VaultAuditExport["records"][number] {
+  const safeRecord = cloneRecord(record);
   return {
-    id: record.id,
-    title: record.title,
-    lane: record.lane,
-    lifecycleStep: record.lifecycleStep,
-    authorityLevel: record.authorityLevel,
-    sourceStatus: record.sourceStatus,
-    sensitivity: record.sensitivity,
-    redactionStatus: record.redactionStatus,
-    metadataStatus: record.metadataStatus,
-    workflowState: record.workflowState,
-    indexReason: record.indexReason,
-    reviewer: record.reviewer,
-    reviewedAt: record.reviewedAt,
-    fakeSourceRef: record.fakeSourceRef,
-    fakeHash: record.fakeHash,
-    fakeProvenance: record.fakeProvenance,
-    fakeSummary: record.fakeSummary,
-    redactionFlags: [...record.redactionFlags],
-    redactionMetadata: cloneRedactionMetadata(record.redactionMetadata),
-    redactionReviewOutcome: record.redactionReviewOutcome,
-    redactionEligibilityImpact: record.redactionEligibilityImpact,
-    githubSafe: record.githubSafe,
+    id: safeRecord.id,
+    title: safeRecord.title,
+    lane: safeRecord.lane,
+    lifecycleStep: safeRecord.lifecycleStep,
+    authorityLevel: safeRecord.authorityLevel,
+    sourceStatus: safeRecord.sourceStatus,
+    sensitivity: safeRecord.sensitivity,
+    redactionStatus: safeRecord.redactionStatus,
+    metadataStatus: safeRecord.metadataStatus,
+    workflowState: safeRecord.workflowState,
+    indexReason: safeRecord.indexReason,
+    reviewer: safeRecord.reviewer,
+    reviewedAt: safeRecord.reviewedAt,
+    fakeSourceRef: safeRecord.fakeSourceRef,
+    fakeHash: safeRecord.fakeHash,
+    fakeProvenance: safeRecord.fakeProvenance,
+    fakeSummary: safeRecord.fakeSummary,
+    redactionFlags: [...safeRecord.redactionFlags],
+    redactionMetadata: cloneRedactionMetadata(safeRecord.redactionMetadata),
+    redactionReviewOutcome: safeRecord.redactionReviewOutcome,
+    redactionEligibilityImpact: safeRecord.redactionEligibilityImpact,
+    githubSafe: safeRecord.githubSafe,
   };
 }
 
 export function buildVaultAuditExport(state: VaultState, version: RuntimeVersion, generatedAt = new Date().toISOString()): VaultAuditExport {
-  const sanitizedRecords = state.records.map(exportRecord);
+  const fallbackState = createInitialVaultState(generatedAt);
+  const stateLike = state as VaultState & { records?: unknown; auditLog?: unknown };
+  const records = Array.isArray(stateLike.records) ? stateLike.records as FakeVaultRecord[] : fallbackState.records;
+  const auditLog = Array.isArray(stateLike.auditLog) ? stateLike.auditLog as VaultAuditEntry[] : fallbackState.auditLog;
+  const sanitizedRecords = records.map(exportRecord);
   const exportPayload: VaultAuditExport = {
     exportType: "kia-stick-fake-vault-audit",
     generatedAt,
@@ -873,18 +971,19 @@ export function buildVaultAuditExport(state: VaultState, version: RuntimeVersion
       exportContainsOnlySyntheticMetadata: true,
     },
     summary: {
-      records: state.records.length,
-      auditEntries: state.auditLog.length,
-      workflowStates: workflowStateCounts(state.records),
+      records: records.length,
+      auditEntries: auditLog.length,
+      workflowStates: workflowStateCounts(records),
     },
     records: sanitizedRecords,
-    auditLog: state.auditLog.map(cloneAudit),
+    auditLog: auditLog.map(cloneAudit),
   };
 
   const guard = assertFakeMetadataOnly(exportPayload);
+  const redactionChecks = records.map((record) => assertFakeRedactionMetadataSafe(cloneRecord(record).redactionMetadata));
   const redactionGuard = {
-    ok: state.records.every((record) => assertFakeRedactionMetadataSafe(record.redactionMetadata).ok),
-    reasons: state.records.flatMap((record) => assertFakeRedactionMetadataSafe(record.redactionMetadata).reasons),
+    ok: redactionChecks.every((check) => check.ok),
+    reasons: redactionChecks.flatMap((check) => check.reasons),
   };
   if (!guard.ok || !redactionGuard.ok) {
     return {
