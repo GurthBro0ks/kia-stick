@@ -5,7 +5,26 @@
 - Phase: `KIA-Stick-v0.9.6-to-v0.9.10-synthetic-governance-hardening-closeout-and-push`
 - Target: `USER_LAPTOP_ONLY`
 - Provider: `local-fake-deterministic`
-- Status: v0.9.6 through v0.9.10 synthetic governance hardening bundle has operator QA PASS and closeout validation PASS recorded; queue-051 through queue-055 are accepted, queue-015 remains blocked, product/prompt unchanged, push is authorized by the closeout gate, and no real-doc implementation is approved.
+- Status: v0.9.6 through v0.9.10 synthetic governance hardening bundle has operator QA PASS and closeout validation PASS recorded; queue-051 through queue-055 are accepted, queue-015 remains blocked, product/prompt unchanged, accepted state is pushed at `441de89`, and no real-doc implementation is approved. Post-closeout snapshot/mobile proof is also accepted with operator QA PASS in `/home/mint/kia-stick-local-proofs/proof_kia_stick_v0_9_10_post_closeout_snapshot_mobile_20260627T140516Z`.
+
+## v0.9.10 Post-Closeout Snapshot/Mobile Proof Operator QA Closeout
+
+- Phase: `KIA-Stick-v0.9.10-post-closeout-mobile-proof-operator-qa-closeout`
+- Target machine: `USER_LAPTOP_ONLY`
+- Accepted repo HEAD: `441de89`
+- Proof directory: `/home/mint/kia-stick-local-proofs/proof_kia_stick_v0_9_10_post_closeout_snapshot_mobile_20260627T140516Z`
+- Operator QA acceptance: `OPERATOR_QA_PASS for /home/mint/kia-stick-local-proofs/proof_kia_stick_v0_9_10_post_closeout_snapshot_mobile_20260627T140516Z`
+- Automated validation: PASS.
+- Browser/mobile proof: PASS.
+- Manual QA status: PASS.
+- Screenshots captured: Chat, Sources, Saved, Upload, Import, Vault, Settings, `/version`, desktop sanity, cited Chat answer, Saved metadata detail, and no-answer unsavable state.
+- Queue state: `queue-015-v07-first-real-doc-gate-request` remains blocked; queue-051 through queue-055 remain accepted.
+- Version state: product/package version remain `0.7.0`; prompt version remains `prompt.fake-docs.v0.5-import-wizard-hardening`.
+- Runtime capability changed: no.
+- Real-doc capability found: no file picker, FileReader, OCR, indexing, embeddings, vector store, upload handler, path reader, or real-doc implementation found.
+- Proof phase changed repo files: none.
+- Proof phase commit/push: none.
+- Closeout docs/state update: records accepted proof state only; no runtime implementation, queue unblock, productVersion bump, promptVersion bump, service change, Discord send, or push is approved by this note.
 
 ## v0.9.6 to v0.9.10 Synthetic Governance Hardening Bundle State
 
