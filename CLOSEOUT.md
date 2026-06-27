@@ -9,13 +9,14 @@
 - Product version: `0.7.0`
 - Package version: `0.7.0`
 - Prompt version: `prompt.fake-docs.v0.5-import-wizard-hardening`
-- Proof directory: `/tmp/proof_kia_stick_v0_8_6_to_v0_9_0_fake_runtime_ux_polish_bundle_20260627T015134Z`
+- Original bundle proof directory: `/tmp/proof_kia_stick_v0_8_6_to_v0_9_0_fake_runtime_ux_polish_bundle_20260627T015134Z` (missing at closeout time)
+- Closeout replacement proof directory: `/tmp/proof_kia_stick_v0_8_6_to_v0_9_0_fake_runtime_ux_bundle_plus_vault_fix_closeout_push_20260627T103128Z`
 - Runtime UI changed: yes, fake-only polish in allowed surfaces.
 - Runtime capability changed: no
 - Validation: PASS for focused tests, full test suite, design check, release check with scoped v0.9.0 product-version hold, operator smoke, full QA gate, queue list/next, fake-doc scan, privacy scan, exact safety-boundary scan, `git diff --check`, and git status capture.
 - Operator QA PASS proof directory: `/tmp/proof_kia_stick_v0_9_0_operator_qa_pass_20260627T100826Z`
 - Vault fix proof directory: `/tmp/proof_kia_stick_v0_9_0_vault_client_exception_fix_20260627T091255Z`
-- Queue state: `queue-011` through `queue-014` and `queue-028` through `queue-040` remain accepted; `queue-015-v07-first-real-doc-gate-request` remains blocked; `queue-041` through `queue-045` are `ready_to_push` pending separate closeout/push review.
+- Queue state: `queue-011` through `queue-014` and `queue-028` through `queue-040` remain accepted; `queue-015-v07-first-real-doc-gate-request` remains blocked; `queue-041` through `queue-045` are accepted after closeout validation and operator QA PASS, pending push proof.
 - Manual QA status: PASS
 - Real document access: none
 - Real document named: no
@@ -26,7 +27,7 @@
 - Cron/timer/tmux/Caddy/DNS changed: no
 - Secrets printed: no
 - Discord sent: no
-- Push performed: no
+- Push performed: pending
 
 ## v0.8.6 to v0.9.0 Safety Boundary
 

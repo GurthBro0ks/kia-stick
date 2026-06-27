@@ -126,7 +126,7 @@ describe("task-queue", () => {
     expect(queue.items[33].status).toBe("accepted");
     expect(queue.items[34].status).toBe("accepted");
     expect(queue.items.slice(35, 40).every((item) => item.status === "accepted")).toBe(true);
-    expect(queue.items.slice(40).every((item) => item.status === "ready_to_push")).toBe(true);
+    expect(queue.items.slice(40).every((item) => item.status === "accepted")).toBe(true);
     expect(queue.items.every((item) => item.history.length > 0)).toBe(true);
     expect(mod.validateQueue(queue)).toBe(true);
   });
@@ -424,9 +424,7 @@ describe("task-queue", () => {
     const result = spawnSync("node", [scriptPath, "next"], { cwd: resolve("."), encoding: "utf8" });
 
     expect(result.status).toBe(0);
-    expect(result.stdout).toContain("id=queue-041-v086-runtime-ux-reality-audit");
-    expect(result.stdout).toContain("KIA-Stick-v0.8.6-runtime-ux-reality-audit");
-    expect(result.stdout).toContain("Codex-ready summary:");
+    expect(result.stdout).toContain("No actionable queue items");
     expect(result.stdout).not.toContain("id=queue-015-v07-first-real-doc-gate-request");
   });
 

@@ -1,6 +1,6 @@
 {
   "schema": "kia-stick-local-task-queue.v1",
-  "updated_at": "2026-06-27T10:09:15.410Z",
+  "updated_at": "2026-06-27T10:34:44.000Z",
   "items": [
     {
       "id": "queue-001-closeout-helper-hardening",
@@ -1228,11 +1228,11 @@
       "title": "v0.8.6 runtime UX reality audit",
       "risk": "low",
       "summary": "Audit Chat, Sources, Saved, Upload, Import, Vault, Settings, /health, and /version using repo-owned fake-only evidence.",
-      "next_action": "Ready for separate closeout/push review after operator QA PASS; queue-015 remains blocked, no real-doc implementation is approved, and no push is performed by this state update.",
-      "status": "ready_to_push",
+      "next_action": "Accepted by closeout validation; no next queue item started by this closeout. Separate future prompt required for any new work.",
+      "status": "accepted",
       "model": "GPT/Codex $100 coding plan",
       "created_at": "2026-06-27T01:55:20.116Z",
-      "updated_at": "2026-06-27T10:09:15.410Z",
+      "updated_at": "2026-06-27T10:34:44.000Z",
       "history": [
         {
           "at": "2026-06-27T01:55:20.116Z",
@@ -1245,6 +1245,12 @@
           "from": "needs_review",
           "to": "ready_to_push",
           "note": "Operator QA PASS recorded for KIA-Stick-v0.8.6-to-v0.9.0 fake-only runtime UX polish bundle plus v0.9.0 Vault client exception fix. queue-015 remains blocked, product/prompt unchanged, no real-doc implementation is approved, and no push performed."
+        },
+        {
+          "at": "2026-06-27T10:34:44.000Z",
+          "from": "ready_to_push",
+          "to": "accepted",
+          "note": "Accepted after closeout validation PASS and operator QA PASS for KIA-Stick-v0.8.6-to-v0.9.0 fake-only runtime UX bundle plus Vault client exception fix. Original bundle proof dir was missing at closeout time, so replacement proof was generated in /tmp/proof_kia_stick_v0_8_6_to_v0_9_0_fake_runtime_ux_bundle_plus_vault_fix_closeout_push_20260627T103128Z. queue-015 remains blocked, product/prompt unchanged, no real-doc implementation is approved, and push is authorized by this closeout gate."
         }
       ]
     },
@@ -1254,11 +1260,11 @@
       "title": "v0.8.7 Chat/Saved no-answer polish",
       "risk": "low",
       "summary": "Improve fake-only Chat and Saved no-answer, save-status, citation, version, and operator-clarity cues without changing deterministic answer behavior.",
-      "next_action": "Ready for separate closeout/push review after operator QA PASS; queue-015 remains blocked, no real-doc implementation is approved, and no push is performed by this state update.",
-      "status": "ready_to_push",
+      "next_action": "Accepted by closeout validation; no next queue item started by this closeout. Separate future prompt required for any new work.",
+      "status": "accepted",
       "model": "GPT/Codex $100 coding plan",
       "created_at": "2026-06-27T01:55:20.116Z",
-      "updated_at": "2026-06-27T10:09:15.410Z",
+      "updated_at": "2026-06-27T10:34:44.000Z",
       "history": [
         {
           "at": "2026-06-27T01:55:20.116Z",
@@ -1271,6 +1277,12 @@
           "from": "needs_review",
           "to": "ready_to_push",
           "note": "Operator QA PASS recorded for KIA-Stick-v0.8.6-to-v0.9.0 fake-only runtime UX polish bundle plus v0.9.0 Vault client exception fix. queue-015 remains blocked, product/prompt unchanged, no real-doc implementation is approved, and no push performed."
+        },
+        {
+          "at": "2026-06-27T10:34:44.000Z",
+          "from": "ready_to_push",
+          "to": "accepted",
+          "note": "Accepted after closeout validation PASS and operator QA PASS for KIA-Stick-v0.8.6-to-v0.9.0 fake-only runtime UX bundle plus Vault client exception fix. Original bundle proof dir was missing at closeout time, so replacement proof was generated in /tmp/proof_kia_stick_v0_8_6_to_v0_9_0_fake_runtime_ux_bundle_plus_vault_fix_closeout_push_20260627T103128Z. queue-015 remains blocked, product/prompt unchanged, no real-doc implementation is approved, and push is authorized by this closeout gate."
         }
       ]
     },
@@ -1280,11 +1292,11 @@
       "title": "v0.8.8 Sources/Upload/Import/Vault polish",
       "risk": "medium",
       "summary": "Improve fake-only scan density and operator labels in Sources, Upload, Import, and Vault while preserving metadata-only workflows.",
-      "next_action": "Ready for separate closeout/push review after operator QA PASS; queue-015 remains blocked, no real-doc implementation is approved, and no push is performed by this state update.",
-      "status": "ready_to_push",
+      "next_action": "Accepted by closeout validation; no next queue item started by this closeout. Separate future prompt required for any new work.",
+      "status": "accepted",
       "model": "GPT/Codex $100 coding plan",
       "created_at": "2026-06-27T01:55:20.116Z",
-      "updated_at": "2026-06-27T10:09:15.410Z",
+      "updated_at": "2026-06-27T10:34:44.000Z",
       "history": [
         {
           "at": "2026-06-27T01:55:20.116Z",
@@ -1297,6 +1309,12 @@
           "from": "needs_review",
           "to": "ready_to_push",
           "note": "Operator QA PASS recorded for KIA-Stick-v0.8.6-to-v0.9.0 fake-only runtime UX polish bundle plus v0.9.0 Vault client exception fix. queue-015 remains blocked, product/prompt unchanged, no real-doc implementation is approved, and no push performed."
+        },
+        {
+          "at": "2026-06-27T10:34:44.000Z",
+          "from": "ready_to_push",
+          "to": "accepted",
+          "note": "Accepted after closeout validation PASS and operator QA PASS for KIA-Stick-v0.8.6-to-v0.9.0 fake-only runtime UX bundle plus Vault client exception fix. Original bundle proof dir was missing at closeout time, so replacement proof was generated in /tmp/proof_kia_stick_v0_8_6_to_v0_9_0_fake_runtime_ux_bundle_plus_vault_fix_closeout_push_20260627T103128Z. queue-015 remains blocked, product/prompt unchanged, no real-doc implementation is approved, and push is authorized by this closeout gate."
         }
       ]
     },
@@ -1306,11 +1324,11 @@
       "title": "v0.8.9 mobile/narrow operator QA polish",
       "risk": "low",
       "summary": "Improve narrow-layout operator QA support and local smoke output for fake-only runtime surfaces.",
-      "next_action": "Ready for separate closeout/push review after operator QA PASS; queue-015 remains blocked, no real-doc implementation is approved, and no push is performed by this state update.",
-      "status": "ready_to_push",
+      "next_action": "Accepted by closeout validation; no next queue item started by this closeout. Separate future prompt required for any new work.",
+      "status": "accepted",
       "model": "GPT/Codex $100 coding plan",
       "created_at": "2026-06-27T01:55:20.116Z",
-      "updated_at": "2026-06-27T10:09:15.410Z",
+      "updated_at": "2026-06-27T10:34:44.000Z",
       "history": [
         {
           "at": "2026-06-27T01:55:20.116Z",
@@ -1323,6 +1341,12 @@
           "from": "needs_review",
           "to": "ready_to_push",
           "note": "Operator QA PASS recorded for KIA-Stick-v0.8.6-to-v0.9.0 fake-only runtime UX polish bundle plus v0.9.0 Vault client exception fix. queue-015 remains blocked, product/prompt unchanged, no real-doc implementation is approved, and no push performed."
+        },
+        {
+          "at": "2026-06-27T10:34:44.000Z",
+          "from": "ready_to_push",
+          "to": "accepted",
+          "note": "Accepted after closeout validation PASS and operator QA PASS for KIA-Stick-v0.8.6-to-v0.9.0 fake-only runtime UX bundle plus Vault client exception fix. Original bundle proof dir was missing at closeout time, so replacement proof was generated in /tmp/proof_kia_stick_v0_8_6_to_v0_9_0_fake_runtime_ux_bundle_plus_vault_fix_closeout_push_20260627T103128Z. queue-015 remains blocked, product/prompt unchanged, no real-doc implementation is approved, and push is authorized by this closeout gate."
         }
       ]
     },
@@ -1332,11 +1356,11 @@
       "title": "v0.9.0 fake runtime UX checkpoint",
       "risk": "low",
       "summary": "Record a fake runtime UX checkpoint and one bundled operator QA pack without productVersion, promptVersion, real-doc, or push approval.",
-      "next_action": "Ready for separate closeout/push review after operator QA PASS; queue-015 remains blocked, no real-doc implementation is approved, and no push is performed by this state update.",
-      "status": "ready_to_push",
+      "next_action": "Accepted by closeout validation; no next queue item started by this closeout. Separate future prompt required for any new work.",
+      "status": "accepted",
       "model": "GPT/Codex $100 coding plan",
       "created_at": "2026-06-27T01:55:20.116Z",
-      "updated_at": "2026-06-27T10:09:15.410Z",
+      "updated_at": "2026-06-27T10:34:44.000Z",
       "history": [
         {
           "at": "2026-06-27T01:55:20.116Z",
@@ -1349,6 +1373,12 @@
           "from": "needs_review",
           "to": "ready_to_push",
           "note": "Operator QA PASS recorded for KIA-Stick-v0.8.6-to-v0.9.0 fake-only runtime UX polish bundle plus v0.9.0 Vault client exception fix. queue-015 remains blocked, product/prompt unchanged, no real-doc implementation is approved, and no push performed."
+        },
+        {
+          "at": "2026-06-27T10:34:44.000Z",
+          "from": "ready_to_push",
+          "to": "accepted",
+          "note": "Accepted after closeout validation PASS and operator QA PASS for KIA-Stick-v0.8.6-to-v0.9.0 fake-only runtime UX bundle plus Vault client exception fix. Original bundle proof dir was missing at closeout time, so replacement proof was generated in /tmp/proof_kia_stick_v0_8_6_to_v0_9_0_fake_runtime_ux_bundle_plus_vault_fix_closeout_push_20260627T103128Z. queue-015 remains blocked, product/prompt unchanged, no real-doc implementation is approved, and push is authorized by this closeout gate."
         }
       ]
     }

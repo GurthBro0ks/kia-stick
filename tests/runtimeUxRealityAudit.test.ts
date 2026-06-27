@@ -34,7 +34,7 @@ describe("v0.8.6 runtime UX reality audit", () => {
     expect(doc).toContain("Update the smoke helper");
   });
 
-  it("tracks queue and feature state pending operator bundle review", () => {
+  it("tracks queue and feature state accepted after closeout validation", () => {
     const queue = JSON.parse(readFileSync("docs/phase-backlog.json", "utf8")) as {
       items: Array<{ id: string; phase: string; status: string; summary: string; next_action: string }>;
     };
@@ -53,18 +53,18 @@ describe("v0.8.6 runtime UX reality audit", () => {
     const item = queue.items.find((candidate) => candidate.id === "queue-041-v086-runtime-ux-reality-audit");
 
     expect(featureList.phase).toBe("KIA-Stick-v0.9.0-fake-runtime-ux-checkpoint");
-    expect(featureList.release_readiness.status).toBe("v086_v090_fake_runtime_ux_bundle_operator_qa_passed_ready_to_push");
+    expect(featureList.release_readiness.status).toBe("v086_v090_fake_runtime_ux_bundle_closeout_accepted_pending_push");
     expect(featureList.release_readiness.manual_qa_status).toBe("PASS");
     expect(featureList.release_readiness.queue_015_status).toBe("blocked");
-    expect(featureList.release_readiness.queue_041_status).toBe("ready_to_push");
+    expect(featureList.release_readiness.queue_041_status).toBe("accepted");
     expect(featureList.v086_runtime_ux_reality_audit.phase).toBe(phase);
-    expect(featureList.v086_runtime_ux_reality_audit.status).toBe("operator_qa_passed_ready_to_push");
-    expect(featureList.v086_runtime_ux_reality_audit.queue_041_status).toBe("ready_to_push");
+    expect(featureList.v086_runtime_ux_reality_audit.status).toBe("accepted_after_closeout_validation_pending_push");
+    expect(featureList.v086_runtime_ux_reality_audit.queue_041_status).toBe("accepted");
     expect(featureList.v086_runtime_ux_reality_audit.runtime_ui_changed).toBe(false);
     expect(featureList.v086_runtime_ux_reality_audit.runtime_capability_changed).toBe(false);
     expect(featureList.v086_runtime_ux_reality_audit.queue_015_status).toBe("blocked");
     expect(item?.phase).toBe(phase);
-    expect(item?.status).toBe("ready_to_push");
+    expect(item?.status).toBe("accepted");
     expect(`${item?.summary}\n${item?.next_action}`).toContain("repo-owned fake-only evidence");
   });
 

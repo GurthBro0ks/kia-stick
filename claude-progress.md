@@ -2,10 +2,10 @@
 
 ## Current Phase
 
-- Phase: `KIA-Stick-v0.9.0-vault-client-exception-fix`
+- Phase: `KIA-Stick-v0.8.6-to-v0.9.0-fake-runtime-ux-bundle-plus-vault-fix-closeout-and-push`
 - Target: `USER_LAPTOP_ONLY`
 - Provider: `local-fake-deterministic`
-- Status: operator QA PASS recorded for v0.8.6 through v0.9.0 fake-only runtime UX polish bundle plus Vault client exception fix; queue-041 through queue-045 are `ready_to_push`, no push performed, queue-015 remains blocked, and no real-doc implementation approved.
+- Status: closeout validation PASS state recorded for v0.8.6 through v0.9.0 fake-only runtime UX polish bundle plus Vault client exception fix; queue-041 through queue-045 are accepted pending push proof, queue-015 remains blocked, and no real-doc implementation approved.
 
 ## v0.9.0 Vault Client Exception Fix State
 
@@ -20,15 +20,17 @@
 - Private source folders inspected: no
 - Services/cron/timers/tmux/Caddy/DNS changed: no
 - Discord sent: no
-- Queue state: `queue-015-v07-first-real-doc-gate-request` remains blocked; `queue-041` through `queue-045` are `ready_to_push` pending separate closeout/push review.
+- Queue state: `queue-015-v07-first-real-doc-gate-request` remains blocked; `queue-041` through `queue-045` are accepted after closeout validation and operator QA PASS, pending push proof.
 - Product version: `0.7.0`
 - Prompt version: `prompt.fake-docs.v0.5-import-wizard-hardening`
 - Proof directory for this fix: `/tmp/proof_kia_stick_v0_9_0_vault_client_exception_fix_20260627T091255Z`
 - Commands run so far: attached prompt inspection, memory quick pass, git status/log before-state capture, bundle commit presence check, Vault render/model inspection, temporary stale-state crash repro, focused regression test update, focused tests for `tests/sourcesUploadImportVaultPolish.test.ts`, `tests/v090FakeRuntimeUxCheckpoint.test.ts`, and `tests/answerGovernor.test.ts`, full test suite, `npm run design:check`, `npm run release:check`, `npm run operator:smoke`, `npm run qa`, `npm run scan:fake`, `npm run scan:privacy`, Chrome CDP Vault browser smoke with stale fake localStorage, safety-boundary scan, and `git diff --check`.
 - Validation: PASS.
 - Manual QA status: PASS.
-- Push status: not pushed.
-- Remaining unknowns: separate closeout/push review.
+- Closeout replacement proof directory: `/tmp/proof_kia_stick_v0_8_6_to_v0_9_0_fake_runtime_ux_bundle_plus_vault_fix_closeout_push_20260627T103128Z`
+- Original bundle proof directory status: missing at closeout time; replacement proof mode active.
+- Push status: pending.
+- Remaining unknowns: push proof and `HEAD`/`origin/main` equality proof.
 
 ## v0.8.6 to v0.9.0 Fake Runtime UX Polish Bundle State
 
@@ -40,7 +42,7 @@
 - Prompt version: `prompt.fake-docs.v0.5-import-wizard-hardening`
 - New/updated docs: `docs/v0.8.6-runtime-ux-reality-audit.md`, `docs/v0.8.7-chat-saved-no-answer-polish.md`, `docs/v0.8.8-sources-upload-import-vault-polish.md`, `docs/v0.8.9-mobile-narrow-operator-qa-polish.md`, `docs/v0.9.0-fake-runtime-ux-checkpoint.md`
 - New/updated runtime/tooling: `components/KiaStickApp.tsx`, `app/globals.css`, `scripts/operator-qa-smoke.mjs`
-- Queue state: `queue-015-v07-first-real-doc-gate-request` remains blocked; `queue-041` through `queue-045` are `ready_to_push` after operator QA PASS and pending separate closeout/push review.
+- Queue state: `queue-015-v07-first-real-doc-gate-request` remains blocked; `queue-041` through `queue-045` are accepted after closeout validation and operator QA PASS, pending push proof.
 - Runtime UI changed: yes, fake-only polish only.
 - Runtime capability changed: no
 - Real/private document access: none
