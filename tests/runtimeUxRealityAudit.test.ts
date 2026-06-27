@@ -53,8 +53,8 @@ describe("v0.8.6 runtime UX reality audit", () => {
     const item = queue.items.find((candidate) => candidate.id === "queue-041-v086-runtime-ux-reality-audit");
 
     expect(featureList.phase).toBe("KIA-Stick-v0.9.10-synthetic-governance-hardening-checkpoint");
-    expect(featureList.release_readiness.status).toBe("v096_v0910_synthetic_governance_hardening_bundle_pending_operator_review");
-    expect(featureList.release_readiness.manual_qa_status).toBe("pending_operator_bundle_review");
+    expect(featureList.release_readiness.status).toBe("v096_v0910_synthetic_governance_hardening_bundle_operator_qa_pass_ready_for_closeout");
+    expect(featureList.release_readiness.manual_qa_status).toBe("PASS");
     expect(featureList.release_readiness.queue_015_status).toBe("blocked");
     expect(featureList.release_readiness.queue_041_status).toBe("accepted");
     expect(featureList.v086_runtime_ux_reality_audit.phase).toBe(phase);

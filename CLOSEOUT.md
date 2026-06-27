@@ -10,8 +10,9 @@
 - Package version: `0.7.0`
 - Prompt version: `prompt.fake-docs.v0.5-import-wizard-hardening`
 - Proof directory: `/tmp/proof_kia_stick_v0_9_6_to_v0_9_10_synthetic_governance_hardening_bundle_20260627T123948Z`
-- Queue state: `queue-015-v07-first-real-doc-gate-request` remains blocked; `queue-041` through `queue-050` remain accepted; `queue-051` through `queue-055` are `needs_review` pending one operator bundle QA decision.
-- Manual QA status: pending operator bundle review
+- Operator QA PASS proof directory: `/tmp/proof_kia_stick_v0_9_6_to_v0_9_10_operator_qa_pass_20260627T130309Z`
+- Queue state: `queue-015-v07-first-real-doc-gate-request` remains blocked; `queue-041` through `queue-050` remain accepted; `queue-051` through `queue-055` are `ready_to_push` for separate closeout review after operator QA PASS.
+- Manual QA status: PASS
 - Runtime UI changed: no
 - Runtime capability changed: no
 - Real document implementation approved: no
@@ -26,7 +27,7 @@
 - Discord sent: no
 - Push performed: no
 
-This bundle does not approve real-doc work. It does not add file pickers, directory pickers, drag/drop import zones, browser File objects, FileReader, path readers, user-provided packet reads, file reads over real documents, copying, hashing real files, OCR, upload handlers, real redaction, text extraction, summarization, embeddings, indexing, vector stores, quarantine writes, private-source inspection, service changes, credentials, skills, global agent config, or real-document access.
+This bundle does not approve real-doc work or push by itself. It does not add file pickers, directory pickers, drag/drop import zones, browser File objects, FileReader, path readers, user-provided packet reads, file reads over real documents, copying, hashing real files, OCR, upload handlers, real redaction, text extraction, summarization, embeddings, indexing, vector stores, quarantine writes, private-source inspection, service changes, credentials, skills, global agent config, or real-document access.
 
 ## v0.9.1 to v0.9.5 Release-State Consolidation and Proof Durability Bundle
 

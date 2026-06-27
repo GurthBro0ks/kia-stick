@@ -68,7 +68,7 @@ describe("v0.8.0 synthetic governance checkpoint plan", () => {
 
     expect(featureList.phase).toBe(currentPhase);
     expect(featureList.release_readiness.phase).toBe(currentPhase);
-    expect(featureList.release_readiness.status).toBe("v096_v0910_synthetic_governance_hardening_bundle_pending_operator_review");
+    expect(featureList.release_readiness.status).toBe("v096_v0910_synthetic_governance_hardening_bundle_operator_qa_pass_ready_for_closeout");
     expect(featureList.release_readiness.package_version).toBe(productVersion);
     expect(featureList.release_readiness.product_version).toBe(productVersion);
     expect(featureList.release_readiness.prompt_version).toBe(promptVersion);

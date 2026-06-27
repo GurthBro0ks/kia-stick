@@ -138,7 +138,7 @@ describe("task-queue", () => {
     expect(queue.items.slice(35, 40).every((item) => item.status === "accepted")).toBe(true);
     expect(queue.items.slice(40, 45).every((item) => item.status === "accepted")).toBe(true);
     expect(queue.items.slice(45, 50).every((item) => item.status === "accepted")).toBe(true);
-    expect(queue.items.slice(50).every((item) => item.status === "needs_review")).toBe(true);
+    expect(queue.items.slice(50).every((item) => item.status === "ready_to_push")).toBe(true);
     expect(queue.items.every((item) => item.history.length > 0)).toBe(true);
     expect(mod.validateQueue(queue)).toBe(true);
   });
@@ -437,7 +437,7 @@ describe("task-queue", () => {
 
     expect(result.status).toBe(0);
     expect(result.stdout).toContain("id=queue-051-v096-synthetic-governance-reality-audit");
-    expect(result.stdout).toContain("status=needs_review");
+    expect(result.stdout).toContain("status=ready_to_push");
     expect(result.stdout).toContain("Codex-ready summary:");
     expect(result.stdout).not.toContain("id=queue-015-v07-first-real-doc-gate-request");
   });

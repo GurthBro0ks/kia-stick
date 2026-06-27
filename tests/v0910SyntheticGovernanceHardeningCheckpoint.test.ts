@@ -24,7 +24,7 @@ describe("v0.9.10 synthetic governance hardening checkpoint", () => {
     }
   });
 
-  it("tracks the final subphase as pending one operator bundle review", () => {
+  it("tracks the final subphase as ready for closeout after operator QA PASS", () => {
     const featureList = JSON.parse(readFileSync("feature_list.json", "utf8")) as {
       phase: string;
       release_readiness: {
@@ -52,16 +52,16 @@ describe("v0.9.10 synthetic governance hardening checkpoint", () => {
 
     expect(featureList.phase).toBe(phase);
     expect(featureList.release_readiness.phase).toBe(phase);
-    expect(featureList.release_readiness.status).toBe("v096_v0910_synthetic_governance_hardening_bundle_pending_operator_review");
-    expect(featureList.release_readiness.manual_qa_status).toBe("pending_operator_bundle_review");
+    expect(featureList.release_readiness.status).toBe("v096_v0910_synthetic_governance_hardening_bundle_operator_qa_pass_ready_for_closeout");
+    expect(featureList.release_readiness.manual_qa_status).toBe("PASS");
     expect(featureList.release_readiness.push_performed).toBe(false);
     expect(featureList.release_readiness.queue_015_status).toBe("blocked");
-    expect(featureList.release_readiness.queue_051_status).toBe("needs_review");
-    expect(featureList.release_readiness.queue_055_status).toBe("needs_review");
+    expect(featureList.release_readiness.queue_051_status).toBe("ready_to_push");
+    expect(featureList.release_readiness.queue_055_status).toBe("ready_to_push");
     expect(featureList.release_readiness.real_doc_implementation_approved).toBe(false);
     expect(featureList.v0910_synthetic_governance_hardening_checkpoint.phase).toBe(phase);
-    expect(featureList.v0910_synthetic_governance_hardening_checkpoint.status).toBe("pending_operator_bundle_review");
-    expect(featureList.v0910_synthetic_governance_hardening_checkpoint.queue_055_status).toBe("needs_review");
+    expect(featureList.v0910_synthetic_governance_hardening_checkpoint.status).toBe("operator_qa_pass_ready_for_closeout");
+    expect(featureList.v0910_synthetic_governance_hardening_checkpoint.queue_055_status).toBe("ready_to_push");
     expect(featureList.v0910_synthetic_governance_hardening_checkpoint.recommended_next_options).toEqual([
       "focused mobile screenshot proof",
       "release-state consolidation if needed",
@@ -71,7 +71,7 @@ describe("v0.9.10 synthetic governance hardening checkpoint", () => {
     expect(featureList.v0910_synthetic_governance_hardening_checkpoint.authorizes_real_doc_work).toBe(false);
     expect(featureList.v0910_synthetic_governance_hardening_checkpoint.real_doc_implementation_approved).toBe(false);
     expect(queue.items.find((item) => item.id === "queue-015-v07-first-real-doc-gate-request")?.status).toBe("blocked");
-    expect(queue.items.find((item) => item.id === "queue-051-v096-synthetic-governance-reality-audit")?.status).toBe("needs_review");
-    expect(queue.items.find((item) => item.id === "queue-055-v0910-synthetic-governance-hardening-checkpoint")?.status).toBe("needs_review");
+    expect(queue.items.find((item) => item.id === "queue-051-v096-synthetic-governance-reality-audit")?.status).toBe("ready_to_push");
+    expect(queue.items.find((item) => item.id === "queue-055-v0910-synthetic-governance-hardening-checkpoint")?.status).toBe("ready_to_push");
   });
 });

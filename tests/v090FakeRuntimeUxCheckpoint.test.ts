@@ -77,11 +77,11 @@ describe("v0.9.0 fake runtime UX checkpoint", () => {
 
     expect(featureList.phase).toBe(currentPhase);
     expect(featureList.release_readiness.phase).toBe(currentPhase);
-    expect(featureList.release_readiness.status).toBe("v096_v0910_synthetic_governance_hardening_bundle_pending_operator_review");
+    expect(featureList.release_readiness.status).toBe("v096_v0910_synthetic_governance_hardening_bundle_operator_qa_pass_ready_for_closeout");
     expect(featureList.release_readiness.package_version).toBe(productVersion);
     expect(featureList.release_readiness.product_version).toBe(productVersion);
     expect(featureList.release_readiness.prompt_version).toBe(promptVersion);
-    expect(featureList.release_readiness.manual_qa_status).toBe("pending_operator_bundle_review");
+    expect(featureList.release_readiness.manual_qa_status).toBe("PASS");
     expect(featureList.release_readiness.push_performed).toBe(false);
     expect(featureList.release_readiness.queue_015_status).toBe("blocked");
     expect(featureList.release_readiness.queue_041_status).toBe("accepted");
