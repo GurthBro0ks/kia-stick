@@ -1,5 +1,37 @@
 # KIA Stick Closeout
 
+## v0.9.33 to v0.9.37 Accepted-WARN State / Fake Proof Report / Operator UX Bundle
+
+- Phase: `KIA-Stick-v0.9.33-to-v0.9.37-accepted-warn-state-and-fake-only-proof-report-operator-ux-bundle`
+- Target machine: `USER_LAPTOP_ONLY`
+- Baseline: accepted pushed WARN v0.9.28-to-v0.9.32 closeout at `beea159bb44ecc35ed8cb9b5a55aa1c0f3f217f6`
+- Prior proof directory: `/home/mint/kia-stick-local-proofs/proof_kia_stick_v0_9_28_to_v0_9_32_accepted_state_research_only_next_target_discovery_20260628T145445Z/warn_closeout_push_20260628T155630Z`
+- Prior validation/manual QA: PASS/ACCEPTED_WARN
+- Scope: fake-only docs/tests/tooling/status polish for accepted-WARN proof readability and operator status visibility.
+- Included subphases: v0.9.33 accepted pushed WARN state checkpoint; v0.9.34 proof/report readability polish; v0.9.35 fake operator status polish; v0.9.36 proof helper WARN edge-case tests; v0.9.37 next large-work checkpoint.
+- Next/PostCSS runtime security path: remains parked as `WARN_SAFE_NEXT_TARGET_UNCLEAR`.
+- v0.9.12C implementation: blocked until an exact Next target is separately approved.
+- Product version: `0.7.0`
+- Package version: `0.7.0`
+- Prompt version: `prompt.fake-docs.v0.5-import-wizard-hardening`
+- Queue state: `queue-015-v07-first-real-doc-gate-request` remains blocked.
+- `package.json` changed: no
+- `package-lock.json` changed: no
+- Dependency versions changed: no
+- Runtime capability changed: no intake or real-doc capability; Settings copy/status only.
+- Real document implementation approved: no
+- Real document access: none
+- File picker/FileReader/OCR/indexing/embedding/vector capability added: no
+- Services restarted: no
+- Cron/timer/tmux/Caddy/DNS changed: no
+- Secrets printed: no
+- Discord sent: no
+- Push performed: no
+- Manual QA status: PASS
+- Operator QA proof: `/home/mint/kia-stick-local-proofs/proof_kia_stick_v0_9_33_to_v0_9_37_accepted_warn_state_fake_proof_report_operator_ux_bundle_20260628T160846Z`
+
+This bundle records the accepted pushed WARN baseline and makes proof/report/operator status output clearer. Accepted WARN remains parked and unresolved; it does not approve a Next/PostCSS implementation. Operator QA passed for this local fake-only bundle; any closeout/push remains separate.
+
 ## v0.9.28 to v0.9.32 Accepted State / Research-Only Next Target Discovery
 
 - Phase: `KIA-Stick-v0.9.28-to-v0.9.32-accepted-state-and-research-only-next-target-discovery`

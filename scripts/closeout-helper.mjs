@@ -30,6 +30,10 @@ export function resultHasWarnFail(markdown) {
   return /\b(?:WARN|FAIL)\b/i.test(withoutResultLine);
 }
 
+export function proofHasAcceptedWarn(markdown) {
+  return /^(?:-\s*)?RESULT[:=]\s*WARN$/im.test(markdown) && /\b(?:ACCEPTED_WARN|OPERATOR_QA_ACCEPTED_WARN)\b/.test(markdown);
+}
+
 export function parseGitState(root = process.cwd()) {
   const statusShort = gitOutput(root, ["status", "--short"]);
   const branch = gitOutput(root, ["branch", "--show-current"]) || "HEAD";
@@ -83,6 +87,7 @@ export function readLatestProof(proofRoot = DEFAULT_PROOF_ROOT) {
     markdown,
     redactedMarkdown: redacted.text,
     warnFailFree: markdown.length > 0 && !resultHasWarnFail(markdown),
+    acceptedWarn: proofHasAcceptedWarn(markdown),
     flags: redacted.flags,
   };
 }
@@ -124,8 +129,14 @@ export function assessCloseout({ proof, git, queue }) {
   }
 
   if (!proof.exists) warn("proof_missing", "Latest proof directory or RESULT.md is missing.");
-  else if (proof.result !== "PASS") warn("proof_result_not_pass", `Latest proof RESULT is ${proof.result}.`);
-  if (proof.exists && !proof.warnFailFree) warn("proof_warn_fail_text", "WARN/FAIL text appears in RESULT.md beyond the RESULT line.");
+  else if (proof.result !== "PASS") {
+    if (proof.acceptedWarn) warn("proof_result_accepted_warn", "Latest proof RESULT is WARN with explicit ACCEPTED_WARN parked-state acceptance.");
+    else warn("proof_result_not_pass", `Latest proof RESULT is ${proof.result}.`);
+  }
+  if (proof.exists && !proof.warnFailFree) {
+    if (proof.acceptedWarn) warn("proof_accepted_warn_text", "Accepted-WARN proof text is present; review as parked WARN, not as PASS or FAIL.");
+    else warn("proof_warn_fail_text", "WARN/FAIL text appears in RESULT.md beyond the RESULT line.");
+  }
   if (proof.flags.length > 0) warn("proof_redaction_flags", `Proof summary contains redaction flags: ${proof.flags.join(",")}.`);
 
   if (git.dirty) warn("worktree_dirty", "Worktree has uncommitted changes.");
@@ -144,6 +155,7 @@ export function assessCloseout({ proof, git, queue }) {
 
   if (status === "FAIL") nextAction = "Fix FAIL items before manual push or closeout.";
   else if (!proof.exists) nextAction = "Run the phase validation to create a proof directory, then rerun closeout:review.";
+  else if (proof.acceptedWarn) nextAction = "Review accepted-WARN parked state; push only through an explicit WARN closeout gate.";
   else if (proof.result !== "PASS" || !proof.warnFailFree) nextAction = "Review RESULT.md and fix proof warnings before manual push.";
   else if (git.dirty) nextAction = "Commit reviewed local changes after validation, then rerun closeout:review.";
   else if (queue.ok && queue.item && !readyQueueStatuses.has(queue.item.status)) nextAction = `Review queue state, then run: ${suggestedQueueCommand(queue.item)}`;
@@ -183,6 +195,7 @@ function printReview(options) {
   console.log(`phase=${state.phase}`);
   console.log(`proof_dir=${state.proof.path || "missing"}`);
   console.log(`proof_result=${state.proof.result}`);
+  console.log(`proof_accepted_warn=${state.proof.acceptedWarn ? "yes" : "no"}`);
   console.log(`proof_warn_fail_free=${state.proof.warnFailFree}`);
   console.log(`git_branch=${state.git.branch}`);
   console.log(`git_head=${state.git.head}`);
@@ -230,6 +243,7 @@ function printSummary(options) {
     PROOF_DIR: state.proof.path || "missing",
     VALIDATION: validation,
     CLOSEOUT_HELPER_RESULT: `${state.assessment.status}; ${state.assessment.nextAction}`,
+    ACCEPTED_WARN_STATUS: state.proof.acceptedWarn ? "accepted_warn_parked" : "not_accepted_warn",
     STOP_ON_WARN_FAIL_STATUS: state.assessment.stopOnWarnFail ? "STOP_REQUIRED" : "CLEAR",
     QUEUE_ACCEPTANCE_ALLOWED: state.assessment.queueAcceptanceAllowed ? "yes" : "no",
     TESTS_ADDED: "tests/closeoutHelper.test.ts",

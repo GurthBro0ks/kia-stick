@@ -116,12 +116,16 @@ const vaultViews: { id: VaultView; label: string; meta: string }[] = [
 ];
 
 const acceptedOperatorCheckpoint = [
-  { label: "Accepted commit", value: "c5d12a004f4c9d270260ee860781b99421a938dd" },
-  { label: "Accepted proof", value: "/home/mint/kia-stick-local-proofs/proof_kia_stick_v0_9_18_to_v0_9_22_fake_only_qa_evidence_proof_readiness_bundle_20260628T111708Z/closeout_push_20260628T120057Z" },
-  { label: "Baseline QA", value: "validation PASS / manual QA PASS / pushed" },
-  { label: "Current QA", value: "manual QA PASS for v0.9.23-to-v0.9.27" },
+  { label: "Accepted WARN commit", value: "beea159bb44ecc35ed8cb9b5a55aa1c0f3f217f6" },
+  { label: "Accepted WARN proof", value: "/home/mint/kia-stick-local-proofs/proof_kia_stick_v0_9_28_to_v0_9_32_accepted_state_research_only_next_target_discovery_20260628T145445Z/warn_closeout_push_20260628T155630Z" },
+  { label: "Accepted WARN QA", value: "validation PASS / manual QA ACCEPTED_WARN / pushed" },
+  { label: "Prior PASS commit", value: "c5d12a004f4c9d270260ee860781b99421a938dd" },
+  { label: "Prior PASS QA", value: "manual QA PASS for v0.9.23-to-v0.9.27" },
+  { label: "Current bundle QA", value: "manual QA PASS for v0.9.33-to-v0.9.37; pushed no" },
   { label: "Real-doc gate", value: "queue-015 blocked; no real-doc capability" },
-  { label: "Next/PostCSS", value: "WARN_SAFE_NEXT_TARGET_UNCLEAR" },
+  { label: "Next/PostCSS", value: "WARN_SAFE_NEXT_TARGET_UNCLEAR; parked, not fixed" },
+  { label: "v0.9.12C", value: "blocked pending exact operator-approved Next target" },
+  { label: "Package lock", value: "unchanged; no install/update/audit-fix/dedupe/prune" },
 ];
 
 const intentLabels: Record<AnswerResult["intent"], string> = {
@@ -502,9 +506,9 @@ export function KiaStickApp({ runtimeVersion = clientVersion }: { runtimeVersion
             </section>
             <section className="aboutPanel" aria-label="Fake-only operator status">
               <span className="sectionKicker">Operator status</span>
-              <h3>Accepted pushed checkpoint visible</h3>
+              <h3>Accepted pushed checkpoint visible: WARN latest</h3>
               <p>
-                The last accepted pushed fake-only proof is recorded for operator review. This local bundle adds status visibility only; manual QA remains pending and no push is claimed here.
+                Accepted pushed WARN checkpoint visible. The latest accepted pushed WARN proof is recorded for operator review. This status block is copy-only; Next/PostCSS is parked, manual QA for the current bundle is passed, and no real-doc capability is approved.
               </p>
               <dl className="settingsGrid">
                 {acceptedOperatorCheckpoint.map((row) => (

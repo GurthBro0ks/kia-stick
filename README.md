@@ -12,6 +12,18 @@ KIA Stick separates milestone semver from build identity:
 
 `/health`, `/version`, the app header, settings, answer footer, and saved answer metadata expose the current `displayVersion`.
 
+## v0.9.33 to v0.9.37 Accepted-WARN State / Fake Proof Report / Operator UX Bundle
+
+Phase: `KIA-Stick-v0.9.33-to-v0.9.37-accepted-warn-state-and-fake-only-proof-report-operator-ux-bundle`.
+
+This local bundle starts from accepted pushed WARN v0.9.28-to-v0.9.32 state at `beea159bb44ecc35ed8cb9b5a55aa1c0f3f217f6`. WARN closeout proof is recorded at `/home/mint/kia-stick-local-proofs/proof_kia_stick_v0_9_28_to_v0_9_32_accepted_state_research_only_next_target_discovery_20260628T145445Z/warn_closeout_push_20260628T155630Z` with validation PASS, manual QA `ACCEPTED_WARN`, push yes, and `HEAD == origin/main`.
+
+The bundle adds `docs/v0.9.33-accepted-pushed-warn-state-checkpoint.md`, `docs/v0.9.34-proof-report-readability-polish.md`, `docs/v0.9.35-fake-operator-status-polish.md`, `docs/v0.9.36-proof-helper-warn-edge-case-tests.md`, and `docs/v0.9.37-next-large-work-checkpoint.md` with focused tests. It also adds accepted-WARN readability labels to local proof/closeout helpers and updates Settings operator status copy to show the latest accepted pushed WARN checkpoint.
+
+This is fake-only docs/tests/tooling/status work. Manual QA for this new bundle is `PASS` by `OPERATOR_QA_PASS for /home/mint/kia-stick-local-proofs/proof_kia_stick_v0_9_33_to_v0_9_37_accepted_warn_state_fake_proof_report_operator_ux_bundle_20260628T160846Z`; no push is claimed or performed. Next/PostCSS remains parked as `WARN_SAFE_NEXT_TARGET_UNCLEAR`, not fixed. `KIA-Stick-v0.9.12C-next-runtime-framework-security-implementation` remains blocked pending exact target approval, and `queue-015-v07-first-real-doc-gate-request` remains blocked. `package.json` and `package-lock.json` remain unchanged. Product/package version remains `0.7.0`; prompt version remains `prompt.fake-docs.v0.5-import-wizard-hardening`.
+
+No real-doc implementation is approved. The bundle does not add file pickers, FileReader, path readers, uploads, OCR, real redaction, text extraction, summarization, embeddings, indexing, vector stores, private-source inspection, services, secrets, Discord, global config, or system changes.
+
 ## v0.9.28 to v0.9.32 Accepted State / Research-Only Next Target Discovery
 
 Phase: `KIA-Stick-v0.9.28-to-v0.9.32-accepted-state-and-research-only-next-target-discovery`.

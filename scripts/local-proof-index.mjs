@@ -74,12 +74,27 @@ function parseResult(resultMarkdown) {
   return fieldValue(resultMarkdown, "RESULT") || fieldValue(resultMarkdown, "QA status") || "UNKNOWN";
 }
 
+function hasAcceptedWarn(resultMarkdown) {
+  if (!resultMarkdown) return false;
+  return parseResult(resultMarkdown) === "WARN" && /\b(?:ACCEPTED_WARN|OPERATOR_QA_ACCEPTED_WARN)\b/.test(resultMarkdown);
+}
+
+function reviewStateFor(result, acceptedWarn) {
+  if (acceptedWarn) return "ACCEPTED_WARN_PARKED";
+  if (result === "PASS") return "PASS_REVIEW_READY_CANDIDATE";
+  if (result === "WARN_MISSING_RESULT") return "WARN_MISSING_RESULT";
+  if (result === "WARN") return "WARN_REVIEW_REQUIRED";
+  if (result === "FAIL") return "FAIL_STOP_REQUIRED";
+  return "UNKNOWN_REVIEW_REQUIRED";
+}
+
 export function inspectLocalProof(proofPath) {
   const parsed = parseLocalProofDirName(proofPath);
   const resultMarkdown = readSafeMetadataFile(proofPath, "RESULT.md");
   const openThisFolder = readSafeMetadataFile(proofPath, "OPEN_THIS_FOLDER.txt");
   const stat = statSync(proofPath);
   const result = parseResult(resultMarkdown);
+  const acceptedWarn = hasAcceptedWarn(resultMarkdown);
   const warnings = [];
   if (!resultMarkdown) warnings.push("WARN_MISSING_RESULT");
 
@@ -90,6 +105,8 @@ export function inspectLocalProof(proofPath) {
     timestamp: parsed?.timestamp || "",
     mtimeMs: stat.mtimeMs,
     result,
+    acceptedWarn,
+    reviewState: reviewStateFor(result, acceptedWarn),
     resultMdExists: Boolean(resultMarkdown),
     openThisFolderExists: Boolean(openThisFolder),
     screenshotsCount: countScreenshots(proofPath),
@@ -128,6 +145,7 @@ function formatProofLine(proof) {
   return [
     `timestamp=${proof.timestamp || "unknown"}`,
     `result=${proof.result}`,
+    `review_state=${proof.reviewState}`,
     `result_md=${proof.resultMdExists ? "yes" : "no"}`,
     `open_this_folder=${proof.openThisFolderExists ? "yes" : "no"}`,
     `screenshots=${proof.screenshotsCount}`,
@@ -147,18 +165,19 @@ export function renderMarkdownIndex(proofs, root) {
     latest ? `Latest proof: \`${latest.path}\`` : "Latest proof: none",
     latestReviewReady ? `Latest review-ready proof: \`${latestReviewReady.path}\`` : "Latest review-ready proof: none",
     "",
-    "| Timestamp | Result | RESULT.md | OPEN_THIS_FOLDER.txt | Screenshots | Warnings | Path |",
-    "| --- | --- | --- | --- | ---: | --- | --- |",
+    "| Timestamp | Result | Review State | RESULT.md | OPEN_THIS_FOLDER.txt | Screenshots | Warnings | Path |",
+    "| --- | --- | --- | --- | --- | ---: | --- | --- |",
   ];
 
   for (const proof of proofs) {
     const warnings = proof.warnings.length > 0 ? proof.warnings.join(", ") : "none";
     lines.push(
-      `| ${proof.timestamp || "unknown"} | ${proof.result} | ${proof.resultMdExists ? "yes" : "no"} | ${proof.openThisFolderExists ? "yes" : "no"} | ${proof.screenshotsCount} | ${warnings} | \`${proof.path}\` |`
+      `| ${proof.timestamp || "unknown"} | ${proof.result} | ${proof.reviewState} | ${proof.resultMdExists ? "yes" : "no"} | ${proof.openThisFolderExists ? "yes" : "no"} | ${proof.screenshotsCount} | ${warnings} | \`${proof.path}\` |`
     );
   }
   lines.push("");
   lines.push("Review rule: missing RESULT.md is WARN and must not be treated as accepted proof.");
+  lines.push("Accepted-WARN rule: RESULT=WARN is parked, not PASS, only when RESULT.md explicitly records ACCEPTED_WARN or OPERATOR_QA_ACCEPTED_WARN.");
   lines.push("Boundary: this index reads only proof directory names plus RESULT.md, OPEN_THIS_FOLDER.txt, and screenshots/ filenames.");
   return `${lines.join("\n")}\n`;
 }
