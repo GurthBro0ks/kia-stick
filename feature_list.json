@@ -5319,7 +5319,7 @@
   },
   "v0918_accepted_pushed_state_checkpoint": {
     "phase": "KIA-Stick-v0.9.18-accepted-pushed-state-checkpoint",
-    "status": "needs_review",
+    "status": "ready_to_push",
     "document": "docs/v0.9.18-accepted-pushed-state-checkpoint.md",
     "selected_queue_item": "not_added_local_bundle_pending_operator_review",
     "prior_bundle_phase": "KIA-Stick-v0.9.13-to-v0.9.17-large-fake-only-stabilization-bundle",
@@ -5339,12 +5339,14 @@
     "real_doc_implementation_approved": false,
     "runtime_capability_changed": false,
     "pushed": false,
-    "manual_qa_status": "PENDING",
-    "proof_dir": "/home/mint/kia-stick-local-proofs/proof_kia_stick_v0_9_18_to_v0_9_22_fake_only_qa_evidence_proof_readiness_bundle_20260628T111708Z"
+    "manual_qa_status": "PASS",
+    "proof_dir": "/home/mint/kia-stick-local-proofs/proof_kia_stick_v0_9_18_to_v0_9_22_fake_only_qa_evidence_proof_readiness_bundle_20260628T111708Z",
+    "operator_qa_pass_source": "OPERATOR_QA_PASS for /home/mint/kia-stick-local-proofs/proof_kia_stick_v0_9_18_to_v0_9_22_fake_only_qa_evidence_proof_readiness_bundle_20260628T111708Z",
+    "ready_to_push": true
   },
   "v0919_fake_browser_qa_evidence_helper": {
     "phase": "KIA-Stick-v0.9.19-fake-browser-qa-evidence-helper",
-    "status": "needs_review",
+    "status": "ready_to_push",
     "document": "docs/v0.9.19-fake-browser-qa-evidence-helper.md",
     "selected_queue_item": "not_added_local_bundle_pending_operator_review",
     "helper": "scripts/fake-browser-qa-evidence.mjs",
@@ -5369,13 +5371,15 @@
     "queue_015_status": "blocked",
     "product_version": "0.7.0",
     "prompt_version": "prompt.fake-docs.v0.5-import-wizard-hardening",
-    "manual_qa_status": "PENDING",
+    "manual_qa_status": "PASS",
     "pushed": false,
-    "proof_dir": "/home/mint/kia-stick-local-proofs/proof_kia_stick_v0_9_18_to_v0_9_22_fake_only_qa_evidence_proof_readiness_bundle_20260628T111708Z"
+    "proof_dir": "/home/mint/kia-stick-local-proofs/proof_kia_stick_v0_9_18_to_v0_9_22_fake_only_qa_evidence_proof_readiness_bundle_20260628T111708Z",
+    "operator_qa_pass_source": "OPERATOR_QA_PASS for /home/mint/kia-stick-local-proofs/proof_kia_stick_v0_9_18_to_v0_9_22_fake_only_qa_evidence_proof_readiness_bundle_20260628T111708Z",
+    "ready_to_push": true
   },
   "v0920_no_answer_saved_state_qa_hardening": {
     "phase": "KIA-Stick-v0.9.20-no-answer-saved-state-qa-hardening",
-    "status": "needs_review",
+    "status": "ready_to_push",
     "document": "docs/v0.9.20-no-answer-saved-state-qa-hardening.md",
     "selected_queue_item": "not_added_local_bundle_pending_operator_review",
     "no_answer_saved_blocked": true,
@@ -5390,13 +5394,15 @@
     "prompt_version": "prompt.fake-docs.v0.5-import-wizard-hardening",
     "queue_015_status": "blocked",
     "real_doc_implementation_approved": false,
-    "manual_qa_status": "PENDING",
+    "manual_qa_status": "PASS",
     "pushed": false,
-    "proof_dir": "/home/mint/kia-stick-local-proofs/proof_kia_stick_v0_9_18_to_v0_9_22_fake_only_qa_evidence_proof_readiness_bundle_20260628T111708Z"
+    "proof_dir": "/home/mint/kia-stick-local-proofs/proof_kia_stick_v0_9_18_to_v0_9_22_fake_only_qa_evidence_proof_readiness_bundle_20260628T111708Z",
+    "operator_qa_pass_source": "OPERATOR_QA_PASS for /home/mint/kia-stick-local-proofs/proof_kia_stick_v0_9_18_to_v0_9_22_fake_only_qa_evidence_proof_readiness_bundle_20260628T111708Z",
+    "ready_to_push": true
   },
   "v0921_proof_acceptance_readiness_helper": {
     "phase": "KIA-Stick-v0.9.21-proof-acceptance-readiness-helper",
-    "status": "needs_review",
+    "status": "ready_to_push",
     "document": "docs/v0.9.21-proof-acceptance-readiness-helper.md",
     "selected_queue_item": "not_added_local_bundle_pending_operator_review",
     "helper": "scripts/fake-browser-qa-evidence.mjs",
@@ -5414,13 +5420,15 @@
     "product_version": "0.7.0",
     "prompt_version": "prompt.fake-docs.v0.5-import-wizard-hardening",
     "queue_015_status": "blocked",
-    "manual_qa_status": "PENDING",
+    "manual_qa_status": "PASS",
     "pushed": false,
-    "proof_dir": "/home/mint/kia-stick-local-proofs/proof_kia_stick_v0_9_18_to_v0_9_22_fake_only_qa_evidence_proof_readiness_bundle_20260628T111708Z"
+    "proof_dir": "/home/mint/kia-stick-local-proofs/proof_kia_stick_v0_9_18_to_v0_9_22_fake_only_qa_evidence_proof_readiness_bundle_20260628T111708Z",
+    "operator_qa_pass_source": "OPERATOR_QA_PASS for /home/mint/kia-stick-local-proofs/proof_kia_stick_v0_9_18_to_v0_9_22_fake_only_qa_evidence_proof_readiness_bundle_20260628T111708Z",
+    "ready_to_push": true
   },
   "v0922_next_large_work_checkpoint": {
     "phase": "KIA-Stick-v0.9.22-next-large-work-checkpoint",
-    "status": "needs_review",
+    "status": "ready_to_push",
     "document": "docs/v0.9.22-next-large-work-checkpoint.md",
     "selected_queue_item": "not_added_local_bundle_pending_operator_review",
     "default_next_option": "continue larger fake-only UX/tooling work",
@@ -5434,8 +5442,10 @@
     "product_version": "0.7.0",
     "prompt_version": "prompt.fake-docs.v0.5-import-wizard-hardening",
     "queue_015_status": "blocked",
-    "manual_qa_status": "PENDING",
+    "manual_qa_status": "PASS",
     "pushed": false,
-    "proof_dir": "/home/mint/kia-stick-local-proofs/proof_kia_stick_v0_9_18_to_v0_9_22_fake_only_qa_evidence_proof_readiness_bundle_20260628T111708Z"
+    "proof_dir": "/home/mint/kia-stick-local-proofs/proof_kia_stick_v0_9_18_to_v0_9_22_fake_only_qa_evidence_proof_readiness_bundle_20260628T111708Z",
+    "operator_qa_pass_source": "OPERATOR_QA_PASS for /home/mint/kia-stick-local-proofs/proof_kia_stick_v0_9_18_to_v0_9_22_fake_only_qa_evidence_proof_readiness_bundle_20260628T111708Z",
+    "ready_to_push": true
   }
 }

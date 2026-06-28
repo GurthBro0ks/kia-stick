@@ -43,7 +43,7 @@ describe("v0.9.21 proof acceptance readiness helper", () => {
       "WARN_SAFE_NEXT_TARGET_UNCLEAR",
       "real-doc and browser file capability blocked status",
       "local-only and no-push",
-      "Manual QA remains `PENDING`",
+      "Manual QA is `PASS`",
     ]) {
       expect(doc).toContain(required);
     }
@@ -69,8 +69,8 @@ describe("v0.9.21 proof acceptance readiness helper", () => {
     const state = featureList.v0921_proof_acceptance_readiness_helper;
 
     expect(packet.phase).toBe(phase);
-    expect(packet.proofReviewField).toBe("PENDING_OPERATOR_REVIEW");
-    expect(packet.manualQaStatus).toBe("PENDING");
+    expect(packet.proofReviewField).toBe("PASS_READY_FOR_CLOSEOUT_REVIEW");
+    expect(packet.manualQaStatus).toBe("PASS");
     expect(packet.pushedState).toBe("no");
     expect(packet.dirtyState).toBe("operator_must_check_git_status");
     expect(packet.packageLockUnchangedExpected).toBe(true);
@@ -82,13 +82,13 @@ describe("v0.9.21 proof acceptance readiness helper", () => {
     expect(markdown).toContain("PUSHED_STATE=no");
     expect(markdown).toContain("NEXT_POSTCSS_STATUS=WARN_SAFE_NEXT_TARGET_UNCLEAR");
     expect(state.phase).toBe(phase);
-    expect(state.status).toBe("needs_review");
+    expect(state.status).toBe("ready_to_push");
     expect(state.proof_pass_warn_fail_field).toBe(true);
     expect(state.pushed_state_field).toBe(true);
     expect(state.dirty_state_field).toBe(true);
     expect(state.package_lock_unchanged_field).toBe(true);
     expect(state.next_postcss_parked_field).toBe("WARN_SAFE_NEXT_TARGET_UNCLEAR");
     expect(state.real_doc_capability_blocked_field).toBe(true);
-    expect(state.manual_qa_status).toBe("PENDING");
+    expect(state.manual_qa_status).toBe("PASS");
   });
 });

@@ -45,14 +45,14 @@ describe("v0.9.20 no-answer/Saved-state QA hardening", () => {
     expect(component).toContain("Context-only fake sources");
     expect(component).toContain("citation count, and fake build metadata");
     expect(state.phase).toBe(phase);
-    expect(state.status).toBe("needs_review");
+    expect(state.status).toBe("ready_to_push");
     expect(state.no_answer_saved_blocked).toBe(true);
     expect(state.repeated_saves_dedupe).toBe(true);
     expect(state.saved_metadata_fake_only).toBe(true);
     expect(state.saved_metadata_includes_product_prompt_build_provider_citation_count).toBe(true);
     expect(state.citable_context_only_evidence_visible).toBe(true);
     expect(state.runtime_capability_changed).toBe(false);
-    expect(state.manual_qa_status).toBe("PENDING");
+    expect(state.manual_qa_status).toBe("PASS");
     expect(state.queue_015_status).toBe("blocked");
   });
 });

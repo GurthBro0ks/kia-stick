@@ -86,14 +86,17 @@ export function buildFakeBrowserQaEvidence(options = {}) {
   const featureList = readJson(root, "feature_list.json") || {};
   const queue = readJson(root, "docs/phase-backlog.json") || {};
   const queue015Status = queueStatus(queue, "queue-015-v07-first-real-doc-gate-request");
+  const bundleState = featureList.v0922_next_large_work_checkpoint || featureList.v0921_proof_acceptance_readiness_helper || {};
+  const manualQaStatus = bundleState.manual_qa_status || "PENDING";
+  const proofReviewField = manualQaStatus === "PASS" ? "PASS_READY_FOR_CLOSEOUT_REVIEW" : "PENDING_OPERATOR_REVIEW";
 
   return {
     phase,
     targetMachine: "USER_LAPTOP_ONLY",
     targetRepo: root,
     browserAutomationStatus: "manual_checklist_export",
-    proofReviewField: "PENDING_OPERATOR_REVIEW",
-    manualQaStatus: "PENDING",
+    proofReviewField,
+    manualQaStatus,
     pushedState: "no",
     dirtyState: "operator_must_check_git_status",
     packageLockUnchangedExpected: packageLockUnchanged(root),

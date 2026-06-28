@@ -56,7 +56,7 @@ describe("v0.9.19 fake browser QA evidence helper", () => {
     const script = readFileSync(scriptPath, "utf8");
 
     expect(packet.browserAutomationStatus).toBe("manual_checklist_export");
-    expect(packet.manualQaStatus).toBe("PENDING");
+    expect(packet.manualQaStatus).toBe("PASS");
     expect(packet.queue015Status).toBe("blocked");
     expect(packet.realDocCapabilityBlocked).toBe(true);
     expect(packet.browserDocumentIntakeBlocked).toBe(true);

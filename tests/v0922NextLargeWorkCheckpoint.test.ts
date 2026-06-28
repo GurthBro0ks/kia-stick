@@ -16,7 +16,7 @@ describe("v0.9.22 next large-work checkpoint", () => {
       "Next implementation remains blocked.",
       "Next/PostCSS remains parked as `WARN_SAFE_NEXT_TARGET_UNCLEAR`.",
       "`queue-015-v07-first-real-doc-gate-request` remains blocked.",
-      "Manual QA status is `PENDING`",
+      "Manual QA status is `PASS`",
       "Closeout/push requires a separate prompt",
     ]) {
       expect(doc).toContain(required);
@@ -40,14 +40,14 @@ describe("v0.9.22 next large-work checkpoint", () => {
     const state = featureList.v0922_next_large_work_checkpoint;
 
     expect(state.phase).toBe(phase);
-    expect(state.status).toBe("needs_review");
+    expect(state.status).toBe("ready_to_push");
     expect(state.default_next_option).toBe("continue larger fake-only UX/tooling work");
     expect(state.research_only_next_target_discovery_allowed).toBe(true);
     expect(state.next_implementation_blocked).toBe(true);
     expect(state.real_doc_gate_blocked).toBe(true);
     expect(state.queue_015_status).toBe("blocked");
     expect(state.pushed).toBe(false);
-    expect(state.manual_qa_status).toBe("PENDING");
+    expect(state.manual_qa_status).toBe("PASS");
     const queue = JSON.parse(readFileSync("docs/phase-backlog.json", "utf8")) as {
       items: Array<{ id: string; phase: string; status: string }>;
     };

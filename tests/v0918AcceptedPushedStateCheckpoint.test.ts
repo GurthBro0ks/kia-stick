@@ -24,7 +24,7 @@ describe("v0.9.18 accepted pushed state checkpoint", () => {
     }
   });
 
-  it("tracks prior accepted pushed state while this bundle remains pending manual QA", () => {
+  it("tracks prior accepted pushed state and operator QA acceptance", () => {
     const featureList = JSON.parse(readFileSync("feature_list.json", "utf8")) as {
       v0918_accepted_pushed_state_checkpoint: {
         phase: string;
@@ -45,7 +45,7 @@ describe("v0.9.18 accepted pushed state checkpoint", () => {
     const state = featureList.v0918_accepted_pushed_state_checkpoint;
 
     expect(state.phase).toBe(phase);
-    expect(state.status).toBe("needs_review");
+    expect(state.status).toBe("ready_to_push");
     expect(state.prior_bundle_accepted_pushed_commit).toBe("67d7a314868b312f4b44f5adb2c0bdec24175b6d");
     expect(state.prior_bundle_validation).toBe("PASS");
     expect(state.prior_bundle_manual_qa_status).toBe("PASS");
@@ -53,7 +53,7 @@ describe("v0.9.18 accepted pushed state checkpoint", () => {
     expect(state.v0912c_blocked_pending_exact_target).toBe(true);
     expect(state.package_lock_changed).toBe(false);
     expect(state.queue_015_status).toBe("blocked");
-    expect(state.manual_qa_status).toBe("PENDING");
+    expect(state.manual_qa_status).toBe("PASS");
     expect(queue.items.find((item) => item.id === "queue-015-v07-first-real-doc-gate-request")?.status).toBe("blocked");
   });
 });
