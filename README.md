@@ -12,6 +12,18 @@ KIA Stick separates milestone semver from build identity:
 
 `/health`, `/version`, the app header, settings, answer footer, and saved answer metadata expose the current `displayVersion`.
 
+## v0.9.18 to v0.9.22 Fake-Only QA Evidence / Proof Readiness Bundle
+
+Phase: `KIA-Stick-v0.9.18-to-v0.9.22-fake-only-qa-evidence-and-proof-readiness-bundle`.
+
+This local bundle starts from the accepted pushed v0.9.13-to-v0.9.17 stabilization baseline at `67d7a314868b312f4b44f5adb2c0bdec24175b6d`. Accepted proof is recorded at `/home/mint/kia-stick-local-proofs/proof_kia_stick_v0_9_13_to_v0_9_17_large_fake_only_stabilization_bundle_20260627T164301Z/closeout_push_20260627T172850Z` with validation PASS and manual QA PASS.
+
+The bundle adds `docs/v0.9.18-accepted-pushed-state-checkpoint.md`, `docs/v0.9.19-fake-browser-qa-evidence-helper.md`, `docs/v0.9.20-no-answer-saved-state-qa-hardening.md`, `docs/v0.9.21-proof-acceptance-readiness-helper.md`, and `docs/v0.9.22-next-large-work-checkpoint.md` with focused tests. It also adds `scripts/fake-browser-qa-evidence.mjs`, a no-new-dependency local checklist/export helper for proof-safe Chat, Sources, Saved, Upload, Vault, Import, Settings, `/version`, and `/health` QA evidence.
+
+This bundle is fake-only docs/tests/tooling/state work. Browser automation is recorded as `manual_checklist_export`; no Playwright/Puppeteer dependency or browser capture workflow is added. `package.json` and `package-lock.json` remain unchanged. Product/package version remains `0.7.0`; prompt version remains `prompt.fake-docs.v0.5-import-wizard-hardening`; `queue-015-v07-first-real-doc-gate-request` remains blocked. Next/PostCSS remains parked as `WARN_SAFE_NEXT_TARGET_UNCLEAR`; `KIA-Stick-v0.9.12C-next-runtime-framework-security-implementation` remains blocked until an exact operator-approved Next target exists. Manual QA for this new bundle is `PENDING`; closeout/push requires a separate operator-approved phase.
+
+No real-doc implementation is approved. The bundle does not add file pickers, FileReader, path readers, uploads, OCR, real redaction, text extraction, summarization, embeddings, indexing, vector stores, private-source inspection, services, secrets, Discord, global config, or system changes.
+
 ## v0.9.6 to v0.9.10 Synthetic Governance Hardening Bundle
 
 Phase: `KIA-Stick-v0.9.6-to-v0.9.10-synthetic-governance-hardening-bundle`.

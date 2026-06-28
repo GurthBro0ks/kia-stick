@@ -2,10 +2,36 @@
 
 ## Current Phase
 
-- Phase: `KIA-Stick-v0.9.13-to-v0.9.17-large-fake-only-stabilization-bundle`
+- Phase: `KIA-Stick-v0.9.18-to-v0.9.22-fake-only-qa-evidence-and-proof-readiness-bundle`
 - Target: `USER_LAPTOP_ONLY`
 - Provider: `local-fake-deterministic`
-- Status: local v0.9.13-to-v0.9.17 large fake-only stabilization bundle has `OPERATOR_QA_PASS` recorded for `/home/mint/kia-stick-local-proofs/proof_kia_stick_v0_9_13_to_v0_9_17_large_fake_only_stabilization_bundle_20260627T164301Z` and is ready for a separate closeout/push prompt. The bundle records post-security accepted state, improves fake-only operator proof/readability guidance, polishes Chat/Sources/Saved and Upload/Import/Vault safety copy, and records next large safe options. Next/PostCSS remains parked as `WARN_SAFE_NEXT_TARGET_UNCLEAR`; v0.9.12C remains blocked pending an exact target; queue-015 remains blocked; product/prompt unchanged; no dependency or real-doc implementation is approved.
+- Status: local v0.9.18-to-v0.9.22 fake-only QA evidence/proof readiness bundle is in progress after accepted pushed v0.9.13-to-v0.9.17 baseline `67d7a314868b312f4b44f5adb2c0bdec24175b6d`. The bundle records accepted pushed state, adds a deterministic fake browser QA evidence checklist/export helper, hardens no-answer/Saved-state QA coverage, improves proof readiness output, and records next large safe options. Manual QA is PENDING until operator review. Next/PostCSS remains parked as `WARN_SAFE_NEXT_TARGET_UNCLEAR`; v0.9.12C remains blocked pending an exact target; queue-015 remains blocked; product/prompt unchanged; no dependency or real-doc implementation is approved.
+
+## v0.9.18 to v0.9.22 Fake-Only QA Evidence / Proof Readiness Bundle
+
+- Phase: `KIA-Stick-v0.9.18-to-v0.9.22-fake-only-qa-evidence-and-proof-readiness-bundle`
+- Target machine: `USER_LAPTOP_ONLY`
+- Baseline: accepted pushed v0.9.13-to-v0.9.17 closeout at `67d7a314868b312f4b44f5adb2c0bdec24175b6d`
+- Prior accepted proof: `/home/mint/kia-stick-local-proofs/proof_kia_stick_v0_9_13_to_v0_9_17_large_fake_only_stabilization_bundle_20260627T164301Z/closeout_push_20260627T172850Z`
+- Prior validation/manual QA: PASS/PASS
+- Scope: fake-only docs/tests/tooling/state; no runtime UI capability change.
+- New docs: `docs/v0.9.18-accepted-pushed-state-checkpoint.md`, `docs/v0.9.19-fake-browser-qa-evidence-helper.md`, `docs/v0.9.20-no-answer-saved-state-qa-hardening.md`, `docs/v0.9.21-proof-acceptance-readiness-helper.md`, `docs/v0.9.22-next-large-work-checkpoint.md`
+- New tests: `tests/v0918AcceptedPushedStateCheckpoint.test.ts`, `tests/v0919FakeBrowserQaEvidenceHelper.test.ts`, `tests/v0920NoAnswerSavedStateQaHardening.test.ts`, `tests/v0921ProofAcceptanceReadinessHelper.test.ts`, `tests/v0922NextLargeWorkCheckpoint.test.ts`
+- New helper: `scripts/fake-browser-qa-evidence.mjs`
+- Browser automation status: `manual_checklist_export`
+- Runtime capability changed: no.
+- Dependency versions changed: no.
+- `package-lock.json` changed: no.
+- Next/PostCSS runtime path: parked as `WARN_SAFE_NEXT_TARGET_UNCLEAR`, not fixed.
+- v0.9.12C implementation: blocked until exact Next target approval.
+- Version state: product/package version remain `0.7.0`; prompt version remains `prompt.fake-docs.v0.5-import-wizard-hardening`.
+- Queue state: `queue-015-v07-first-real-doc-gate-request` remains blocked.
+- Real-doc capability found/approved: no.
+- Push status: not pushed.
+- Manual QA status: PENDING.
+- Commands run: baseline `git status`/`git rev-parse`/package hash capture, repo docs/tests/scripts inspection, scoped fake-only docs/tests/tooling/state edits, focused v0.9.18-to-v0.9.22 tests, full validation, helper proof export, governance/operator/queue/proof scans, fake scan, and privacy scan.
+- Validation: PASS.
+- Remaining unknowns: operator manual QA decision and separate closeout/push approval.
 
 ## v0.9.13 to v0.9.17 Large Fake-Only Stabilization Bundle
 
