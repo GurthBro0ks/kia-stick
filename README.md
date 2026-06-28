@@ -12,6 +12,18 @@ KIA Stick separates milestone semver from build identity:
 
 `/health`, `/version`, the app header, settings, answer footer, and saved answer metadata expose the current `displayVersion`.
 
+## v0.9.38 to v0.9.42 Accepted State / Proof Helper Closeout Usability Bundle
+
+Phase: `KIA-Stick-v0.9.38-to-v0.9.42-accepted-state-and-proof-helper-closeout-usability-bundle`.
+
+This local bundle starts from accepted pushed v0.9.33-to-v0.9.37 state at `12aca976c85b3c45a9dc06a33fef31f36074ae96`. Closeout/push proof is recorded at `/home/mint/kia-stick-local-proofs/proof_kia_stick_v0_9_33_to_v0_9_37_accepted_warn_state_fake_proof_report_operator_ux_bundle_20260628T160846Z/closeout_push_20260628T165303Z` with validation PASS, manual QA PASS, push yes, and `HEAD == origin/main`.
+
+The bundle adds `docs/v0.9.38-accepted-pushed-state-checkpoint.md`, `docs/v0.9.39-closeout-summary-proof-dir-usability.md`, `docs/v0.9.40-secret-scan-fixture-readability-polish.md`, `docs/v0.9.41-accepted-pushed-closeout-packet-checklist.md`, and `docs/v0.9.42-next-large-work-checkpoint.md` with focused tests. It also improves `scripts/closeout-helper.mjs` so explicit `--proof-dir` review is labeled separately from default latest-proof discovery, accepted proof metadata is reflected in summaries, known synthetic secret-looking fixtures get conservative labels, and closeout review prints a proof-safe packet checklist.
+
+This is fake-only docs/tests/tooling/status work. Manual QA for this new bundle is `PASS` by `OPERATOR_QA_PASS for /home/mint/kia-stick-local-proofs/proof_kia_stick_v0_9_38_to_v0_9_42_accepted_state_proof_helper_closeout_usability_bundle_20260628T170309Z`; no push is claimed or performed. Next/PostCSS remains parked as `WARN_SAFE_NEXT_TARGET_UNCLEAR`, not fixed. `KIA-Stick-v0.9.12C-next-runtime-framework-security-implementation` remains blocked pending exact target approval, and `queue-015-v07-first-real-doc-gate-request` remains blocked. `package.json` and `package-lock.json` remain unchanged. Product/package version remains `0.7.0`; prompt version remains `prompt.fake-docs.v0.5-import-wizard-hardening`.
+
+No real-doc implementation is approved. The bundle does not add file pickers, FileReader, path readers, uploads, OCR, real redaction, text extraction, summarization, embeddings, indexing, vector stores, private-source inspection, services, secrets, Discord, global config, or system changes.
+
 ## v0.9.33 to v0.9.37 Accepted-WARN State / Fake Proof Report / Operator UX Bundle
 
 Phase: `KIA-Stick-v0.9.33-to-v0.9.37-accepted-warn-state-and-fake-only-proof-report-operator-ux-bundle`.

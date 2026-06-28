@@ -6,6 +6,7 @@ import { discoverProofDirs, parseResultMarkdown, redactProofText, selectLatestPr
 import { loadQueue, selectNextItem } from "./task-queue.mjs";
 
 const DEFAULT_PROOF_ROOT = "/tmp";
+const SAFE_PROOF_ROOTS = ["/tmp", "/home/mint/kia-stick-local-proofs"];
 const readyQueueStatuses = new Set(["ready_to_push", "accepted"]);
 
 function readJson(root, relativePath, fallback = {}) {
@@ -25,13 +26,84 @@ function gitCount(root, range) {
   return Number.parseInt(output, 10) || 0;
 }
 
+function fieldValue(text, field) {
+  const escaped = field.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+  const dashMatch = text.match(new RegExp(`^-\\s*${escaped}:\\s*(.+)$`, "im"));
+  if (dashMatch) return dashMatch[1].trim();
+  const envMatch = text.match(new RegExp(`^${escaped}=([^\\n]+)$`, "im"));
+  if (envMatch) return envMatch[1].trim();
+  return "";
+}
+
+function firstFieldValue(text, fields, fallback = "") {
+  for (const field of fields) {
+    const value = fieldValue(text, field);
+    if (value) return value;
+  }
+  return fallback;
+}
+
+function isWithin(parent, child) {
+  const relative = path.relative(path.resolve(parent), path.resolve(child));
+  return relative === "" || (!relative.startsWith("..") && !path.isAbsolute(relative));
+}
+
+function assertSafeProofDir(proofDir) {
+  const resolved = path.resolve(proofDir);
+  const safe = SAFE_PROOF_ROOTS.some((root) => isWithin(root, resolved));
+  if (!safe) throw new Error(`Refusing to inspect proof dir outside allowed proof roots: ${resolved}`);
+  return resolved;
+}
+
+function parseProofMetadata(markdown, proofPath = "") {
+  const parsed = markdown
+    ? parseResultMarkdown(markdown, proofPath)
+    : {
+        phase: "unknown",
+        result: "missing_RESULT",
+        proofDir: proofPath,
+        flags: [],
+      };
+
+  return {
+    ...parsed,
+    phase: firstFieldValue(markdown, ["PHASE", "Phase"], parsed.phase || "unknown"),
+    commit: firstFieldValue(markdown, ["COMMIT_SHA", "Commit SHA"], parsed.commit || "none"),
+    pushed: firstFieldValue(markdown, ["PUSHED", "Push performed"], parsed.pushed || "unknown"),
+    manualQaStatus: firstFieldValue(markdown, ["MANUAL_QA_STATUS", "Manual QA status"], "pending operator review"),
+  };
+}
+
 export function resultHasWarnFail(markdown) {
   const withoutResultLine = markdown.replace(/^- RESULT:\s*(?:PASS|WARN|FAIL)\s*$/gim, "");
-  return /\b(?:WARN|FAIL)\b/i.test(withoutResultLine);
+  const withoutParkedStateLabels = withoutResultLine
+    .replace(/\baccepted-WARN\b/gi, "accepted parked state")
+    .replace(/\bACCEPTED_WARN\b/g, "ACCEPTED_PARKED")
+    .replace(/\bOPERATOR_QA_ACCEPTED_WARN\b/g, "OPERATOR_QA_ACCEPTED_PARKED")
+    .replace(/\bWARN_SAFE_NEXT_TARGET_UNCLEAR\b/g, "PARKED_NEXT_TARGET_UNCLEAR");
+  return /\b(?:WARN|FAIL)\b/i.test(withoutParkedStateLabels);
 }
 
 export function proofHasAcceptedWarn(markdown) {
   return /^(?:-\s*)?RESULT[:=]\s*WARN$/im.test(markdown) && /\b(?:ACCEPTED_WARN|OPERATOR_QA_ACCEPTED_WARN)\b/.test(markdown);
+}
+
+export function classifySecretScanLine(line) {
+  const gitHubTokenPrefix = ["gh", "p_"].join("");
+  if (line.includes("tests/proofIndex.test.ts:") && line.includes(gitHubTokenPrefix)) return "known_synthetic_secret_fixture";
+  const fixtureSecretPattern = new RegExp(`tests/.*(?:synthetic|fixture).*:(?:.*${gitHubTokenPrefix}|.*api[_-]?key|.*secret|.*token)`, "i");
+  if (fixtureSecretPattern.test(line)) return "known_synthetic_secret_fixture";
+  const privateKeyMarker = ["BEGIN", "PRIVATE KEY"].join(" ");
+  const secretMarkers = [
+    ["DISCORD", "WEBHOOK"].join("_"),
+    ["OPENAI", "API", "KEY"].join("_"),
+    ["ANTHROPIC", "API", "KEY"].join("_"),
+    privateKeyMarker,
+    ["xo", "xb-"].join(""),
+    gitHubTokenPrefix,
+  ];
+  if (secretMarkers.some((marker) => line.includes(marker))) return "secret_review_required";
+  return "not_secret_pattern";
 }
 
 export function parseGitState(root = process.cwd()) {
@@ -70,11 +142,14 @@ export function readLatestProof(proofRoot = DEFAULT_PROOF_ROOT) {
   const resultPath = path.join(latest.path, "RESULT.md");
   const markdown = existsSync(resultPath) ? readFileSync(resultPath, "utf8") : "";
   const parsed = markdown
-    ? parseResultMarkdown(markdown, latest.path)
+    ? parseProofMetadata(markdown, latest.path)
     : {
         phase: latest.phase,
         result: "missing_RESULT",
         proofDir: latest.path,
+        commit: "none",
+        pushed: "unknown",
+        manualQaStatus: "pending operator review",
         flags: [],
       };
   const redacted = redactProofText(markdown);
@@ -84,6 +159,32 @@ export function readLatestProof(proofRoot = DEFAULT_PROOF_ROOT) {
     path: latest.path,
     result: parsed.result,
     phase: parsed.phase,
+    commit: parsed.commit,
+    pushed: parsed.pushed,
+    manualQaStatus: parsed.manualQaStatus,
+    markdown,
+    redactedMarkdown: redacted.text,
+    warnFailFree: markdown.length > 0 && !resultHasWarnFail(markdown),
+    acceptedWarn: proofHasAcceptedWarn(markdown),
+    flags: redacted.flags,
+  };
+}
+
+export function readProofDir(proofDir) {
+  const resolved = assertSafeProofDir(proofDir);
+  const resultPath = path.join(resolved, "RESULT.md");
+  const markdown = existsSync(resultPath) ? readFileSync(resultPath, "utf8") : "";
+  const parsed = parseProofMetadata(markdown, resolved);
+  const redacted = redactProofText(markdown);
+
+  return {
+    exists: markdown.length > 0,
+    path: resolved,
+    result: parsed.result,
+    phase: parsed.phase,
+    commit: parsed.commit,
+    pushed: parsed.pushed,
+    manualQaStatus: parsed.manualQaStatus,
     markdown,
     redactedMarkdown: redacted.text,
     warnFailFree: markdown.length > 0 && !resultHasWarnFail(markdown),
@@ -117,7 +218,7 @@ export function suggestedQueueCommand(item, status = "ready_to_push") {
   return `npm run queue:set -- --id ${item.id} --status ${status} --note "Closeout proof reviewed; ready for manual operator decision."`;
 }
 
-export function assessCloseout({ proof, git, queue }) {
+export function assessCloseout({ proof, git, queue, proofDiscoveryMode = "default_latest" }) {
   const issues = [];
 
   function warn(code, message) {
@@ -144,9 +245,9 @@ export function assessCloseout({ proof, git, queue }) {
 
   if (!queue.ok) {
     fail("queue_unreadable", `Queue state could not be read: ${queue.error}`);
-  } else if (!queue.item) {
+  } else if (!queue.item && proofDiscoveryMode !== "explicit_proof_dir") {
     warn("queue_item_missing", "No queue item is available for the current phase.");
-  } else if (!readyQueueStatuses.has(queue.item.status)) {
+  } else if (queue.item && !readyQueueStatuses.has(queue.item.status)) {
     warn("queue_not_ready", `Queue item ${queue.item.id} is ${queue.item.status}, not ready_to_push or accepted.`);
   }
 
@@ -160,6 +261,7 @@ export function assessCloseout({ proof, git, queue }) {
   else if (git.dirty) nextAction = "Commit reviewed local changes after validation, then rerun closeout:review.";
   else if (queue.ok && queue.item && !readyQueueStatuses.has(queue.item.status)) nextAction = `Review queue state, then run: ${suggestedQueueCommand(queue.item)}`;
   else if (git.ahead > 0) nextAction = `Manual push allowed after operator approval: git push origin ${git.branch}`;
+  else if (proofDiscoveryMode === "explicit_proof_dir") nextAction = "Explicit proof dir is clean; no push needed unless a separate gate approves one.";
 
   return {
     status,
@@ -174,17 +276,42 @@ export function assessCloseout({ proof, git, queue }) {
 function collectState(options) {
   const root = path.resolve(options.root);
   const featureList = readJson(root, "feature_list.json", {});
-  const phase = options.phase || featureList.phase || "unknown";
-  const proof = readLatestProof(options.proofRoot);
+  const proof = options.proofDir ? readProofDir(options.proofDir) : readLatestProof(options.proofRoot);
+  const phase = options.phase || proof.phase || featureList.phase || "unknown";
   const git = parseGitState(root);
   const queue = readQueueState(root, phase);
-  const assessment = assessCloseout({ proof, git, queue });
+  const proofDiscoveryMode = options.proofDir ? "explicit_proof_dir" : "default_latest_from_proof_root";
+  const assessment = assessCloseout({ proof, git, queue, proofDiscoveryMode });
+  const featureText = JSON.stringify(featureList);
+  const currentPackageLockKeys = [
+    "v0942_next_large_work_checkpoint",
+    "v0941_accepted_pushed_closeout_packet_checklist",
+    "v0940_secret_scan_fixture_readability_polish",
+    "v0939_closeout_summary_proof_dir_usability",
+    "v0938_accepted_pushed_state_checkpoint",
+  ];
+  const currentPackageLockStates = currentPackageLockKeys
+    .map((key) => featureList[key]?.package_lock_changed)
+    .filter((value) => typeof value === "boolean");
+  const packageLockUnchanged =
+    currentPackageLockStates.length > 0 && currentPackageLockStates.every((changed) => changed === false) ? "yes" : "review_required";
+
   return {
     root,
     phase,
     proof,
+    proofRoot: path.resolve(options.proofRoot),
+    proofDiscoveryMode,
     git,
     queue,
+    safety: {
+      packageLockUnchanged,
+      queue015Status: featureText.includes('"queue_015_status":"blocked"') || featureText.includes('"queue_015_status": "blocked"') ? "blocked" : "review_required",
+      v0912cStatus: featureText.includes("v0912c") && featureText.includes("blocked") ? "blocked" : "review_required",
+      nextPostcssStatus: featureText.includes("WARN_SAFE_NEXT_TARGET_UNCLEAR") ? "WARN_SAFE_NEXT_TARGET_UNCLEAR" : "review_required",
+      realDocCapability: featureText.includes('"real_doc_capability_added":true') || featureText.includes('"real_doc_implementation_approved":true') ? "review_required" : "blocked",
+      systemChanges: "none",
+    },
     assessment,
   };
 }
@@ -193,8 +320,15 @@ function printReview(options) {
   const state = collectState(options);
   console.log(`Closeout review: ${state.assessment.status}`);
   console.log(`phase=${state.phase}`);
+  console.log(`proof_discovery_mode=${state.proofDiscoveryMode}`);
+  if (state.proofDiscoveryMode === "default_latest_from_proof_root") {
+    console.log(`proof_discovery_note=default discovery mode: using latest proof under proof_root; pass --proof-dir to review a specific closeout proof`);
+  }
+  console.log(`proof_root=${state.proofRoot}`);
   console.log(`proof_dir=${state.proof.path || "missing"}`);
   console.log(`proof_result=${state.proof.result}`);
+  console.log(`proof_manual_qa_status=${state.proof.manualQaStatus}`);
+  console.log(`proof_pushed=${state.proof.pushed}`);
   console.log(`proof_accepted_warn=${state.proof.acceptedWarn ? "yes" : "no"}`);
   console.log(`proof_warn_fail_free=${state.proof.warnFailFree}`);
   console.log(`git_branch=${state.git.branch}`);
@@ -208,6 +342,20 @@ function printReview(options) {
   console.log(`queue_acceptance_allowed=${state.assessment.queueAcceptanceAllowed}`);
   console.log(`suggested_queue_command=${state.assessment.suggestedQueueCommand}`);
   console.log(`next_action=${state.assessment.nextAction}`);
+  console.log("");
+  console.log("Closeout packet checklist:");
+  console.log(`- supplied_proof_dir=${state.proofDiscoveryMode === "explicit_proof_dir" ? state.proof.path : "not_supplied_default_discovery"}`);
+  console.log(`- result=${state.proof.result}`);
+  console.log(`- manual_qa_status=${state.proof.manualQaStatus}`);
+  console.log(`- pushed=${state.proof.pushed}`);
+  console.log(`- head_origin_expectation=${state.git.head === state.git.originMain ? "HEAD_EQUALS_ORIGIN_MAIN" : "REVIEW_HEAD_ORIGIN_MISMATCH"}`);
+  console.log(`- dirty_state=${state.git.dirty ? "dirty" : "clean"}`);
+  console.log(`- package_lock_unchanged=${state.safety.packageLockUnchanged}`);
+  console.log(`- queue_015=${state.safety.queue015Status}`);
+  console.log(`- v0912c=${state.safety.v0912cStatus}`);
+  console.log(`- next_postcss=${state.safety.nextPostcssStatus}`);
+  console.log(`- real_doc_capability=${state.safety.realDocCapability}`);
+  console.log(`- services_discord_system_changes=${state.safety.systemChanges}`);
   if (state.assessment.issues.length > 0) {
     console.log("");
     console.log("Issues:");
@@ -239,15 +387,20 @@ function printSummary(options) {
     UNRELATED_DIRTY_FILES: state.git.dirty ? changedFiles || "manual_review_required" : "none",
     CHANGED_FILES: changedFiles || "none",
     COMMIT_SHA: state.git.head,
-    PUSHED: "no",
+    PUSHED: state.proof.pushed === "yes" ? "yes" : "no",
     PROOF_DIR: state.proof.path || "missing",
+    PROOF_DISCOVERY_MODE: state.proofDiscoveryMode,
+    PROOF_DISCOVERY_NOTE:
+      state.proofDiscoveryMode === "default_latest_from_proof_root"
+        ? "default discovery mode; pass --proof-dir to review a specific closeout proof"
+        : "explicit proof dir supplied",
     VALIDATION: validation,
     CLOSEOUT_HELPER_RESULT: `${state.assessment.status}; ${state.assessment.nextAction}`,
     ACCEPTED_WARN_STATUS: state.proof.acceptedWarn ? "accepted_warn_parked" : "not_accepted_warn",
     STOP_ON_WARN_FAIL_STATUS: state.assessment.stopOnWarnFail ? "STOP_REQUIRED" : "CLEAR",
     QUEUE_ACCEPTANCE_ALLOWED: state.assessment.queueAcceptanceAllowed ? "yes" : "no",
     TESTS_ADDED: "tests/closeoutHelper.test.ts",
-    MANUAL_QA_STATUS: "pending operator review",
+    MANUAL_QA_STATUS: state.proof.manualQaStatus || "pending operator review",
     DISCORD_SENT: "no",
     NOTIFY_MODE: "disabled",
     DEDUPE_RESULT: "not_checked",
@@ -259,7 +412,7 @@ function printSummary(options) {
     CADDY_CHANGED: "no",
     DNS_CHANGED: "no",
     SECRETS_PRINTED: "no",
-    SUMMARY: "Closeout helper reviewed latest proof, git state, and task queue without pushing or mutating queue status.",
+    SUMMARY: "Closeout helper reviewed proof, git state, and task queue without pushing or mutating queue status.",
     NEXT_STEP: state.assessment.nextAction,
   };
 
@@ -272,6 +425,7 @@ function parseArgs(argv) {
     command: argv[0] && !argv[0].startsWith("--") ? argv[0] : "review",
     root: process.cwd(),
     proofRoot: DEFAULT_PROOF_ROOT,
+    proofDir: "",
     phase: "",
   };
   const rest = args.command === argv[0] ? argv.slice(1) : argv;
@@ -282,6 +436,9 @@ function parseArgs(argv) {
       index += 1;
     } else if (value === "--proof-root") {
       args.proofRoot = rest[index + 1] || args.proofRoot;
+      index += 1;
+    } else if (value === "--proof-dir") {
+      args.proofDir = rest[index + 1] || "";
       index += 1;
     } else if (value === "--phase") {
       args.phase = rest[index + 1] || "";

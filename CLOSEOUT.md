@@ -1,5 +1,38 @@
 # KIA Stick Closeout
 
+## v0.9.38 to v0.9.42 Accepted State / Proof Helper Closeout Usability Bundle
+
+- Phase: `KIA-Stick-v0.9.38-to-v0.9.42-accepted-state-and-proof-helper-closeout-usability-bundle`
+- Target machine: `USER_LAPTOP_ONLY`
+- Baseline: accepted pushed v0.9.33-to-v0.9.37 closeout at `12aca976c85b3c45a9dc06a33fef31f36074ae96`
+- Prior proof directory: `/home/mint/kia-stick-local-proofs/proof_kia_stick_v0_9_33_to_v0_9_37_accepted_warn_state_fake_proof_report_operator_ux_bundle_20260628T160846Z/closeout_push_20260628T165303Z`
+- Prior validation/manual QA: PASS/PASS
+- Scope: fake-only docs/tests/tooling/status polish for accepted pushed state recording and closeout/proof helper usability.
+- Included subphases: v0.9.38 accepted pushed state checkpoint; v0.9.39 closeout summary proof-dir usability; v0.9.40 secret-scan fixture readability polish; v0.9.41 accepted pushed closeout packet checklist; v0.9.42 next large-work checkpoint.
+- Closeout helper: explicit `--proof-dir` mode, labeled default latest-proof discovery, proof metadata in summary output, conservative synthetic secret fixture labels, and proof-safe closeout packet checklist output.
+- Next/PostCSS runtime security path: remains parked as `WARN_SAFE_NEXT_TARGET_UNCLEAR`.
+- v0.9.12C implementation: blocked until an exact Next target is separately approved.
+- Product version: `0.7.0`
+- Package version: `0.7.0`
+- Prompt version: `prompt.fake-docs.v0.5-import-wizard-hardening`
+- Queue state: `queue-015-v07-first-real-doc-gate-request` remains blocked.
+- `package.json` changed: no
+- `package-lock.json` changed: no
+- Dependency versions changed: no
+- Runtime capability changed: no intake or real-doc capability; proof helper output only.
+- Real document implementation approved: no
+- Real document access: none
+- File picker/FileReader/OCR/indexing/embedding/vector capability added: no
+- Services restarted: no
+- Cron/timer/tmux/Caddy/DNS changed: no
+- Secrets printed: no
+- Discord sent: no
+- Push performed: no
+- Manual QA status: PASS
+- Operator QA proof: `/home/mint/kia-stick-local-proofs/proof_kia_stick_v0_9_38_to_v0_9_42_accepted_state_proof_helper_closeout_usability_bundle_20260628T170309Z`
+
+This local bundle records the accepted pushed v0.9.37 baseline and makes closeout/proof helper output clearer. Operator QA passed for this local fake-only bundle; any closeout/push remains separate.
+
 ## v0.9.33 to v0.9.37 Accepted-WARN State / Fake Proof Report / Operator UX Bundle
 
 - Phase: `KIA-Stick-v0.9.33-to-v0.9.37-accepted-warn-state-and-fake-only-proof-report-operator-ux-bundle`

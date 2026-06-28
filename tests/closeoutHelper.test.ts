@@ -13,9 +13,12 @@ interface CloseoutModule {
     proof: { exists: boolean; result: string; warnFailFree: boolean; flags: string[] };
     git: { dirty: boolean; ahead: number; branch: string };
     queue: { ok: boolean; item: { id: string; status: string } | null; error?: string };
+    proofDiscoveryMode?: string;
   }): { status: string; nextAction: string; stopOnWarnFail: boolean; queueAcceptanceAllowed: boolean; issues: Array<{ code: string }> };
+  classifySecretScanLine(line: string): string;
   parseGitState(root?: string): { dirty: boolean; ahead: number; head: string; originMain: string };
   readLatestProof(root?: string): { exists: boolean; result: string; phase: string; warnFailFree: boolean; flags: string[] };
+  readProofDir(root: string): { exists: boolean; result: string; phase: string; manualQaStatus: string; pushed: string; warnFailFree: boolean; flags: string[] };
   resultHasWarnFail(markdown: string): boolean;
 }
 
@@ -242,5 +245,64 @@ describe("closeout-helper", () => {
 
     expect(result.status).toBe(0);
     expect(existsSync(logPath) ? readFileSync(logPath, "utf8") : "").not.toMatch(/^push\b/m);
+  });
+
+  it("reviews an explicit proof dir without falling back to generic latest-proof discovery", async () => {
+    const mod = await loadModule();
+    const root = createRepoFixture("accepted");
+    const proofRoot = mkdtempSync(join(tmpdir(), "kia-closeout-explicit-proof-"));
+    const proofDir = createProof(
+      proofRoot,
+      "proof_kia_stick_v0_9_37_closeout_20260628T165303Z",
+      [
+        "PHASE=KIA-Stick-v0.9.33-to-v0.9.37-accepted-warn-state-and-fake-only-proof-report-operator-ux-bundle-closeout-and-push",
+        "RESULT=PASS",
+        "COMMIT_SHA=12aca976c85b3c45a9dc06a33fef31f36074ae96",
+        "PUSHED=yes",
+        "MANUAL_QA_STATUS=PASS",
+      ].join("\n")
+    );
+
+    const proof = mod.readProofDir(proofDir);
+    const review = spawnSync("node", [scriptPath, "review", "--root", root, "--proof-dir", proofDir], { encoding: "utf8" });
+    const summary = spawnSync("node", [scriptPath, "summary", "--root", root, "--proof-dir", proofDir], { encoding: "utf8" });
+
+    expect(proof.phase).toContain("v0.9.33-to-v0.9.37");
+    expect(proof.manualQaStatus).toBe("PASS");
+    expect(proof.pushed).toBe("yes");
+    expect(review.status).toBe(0);
+    expect(review.stdout).toContain("proof_discovery_mode=explicit_proof_dir");
+    expect(review.stdout).toContain(`supplied_proof_dir=${proofDir}`);
+    expect(review.stdout).toContain("manual_qa_status=PASS");
+    expect(review.stdout).toContain("pushed=yes");
+    expect(summary.stdout).toContain("RESULT=PASS");
+    expect(summary.stdout).toContain("PROOF_DISCOVERY_MODE=explicit_proof_dir");
+    expect(summary.stdout).toContain("PUSHED=yes");
+    expect(summary.stdout).toContain("MANUAL_QA_STATUS=PASS");
+  });
+
+  it("labels default proof discovery so operators know summary output may be generic", () => {
+    const root = createRepoFixture("accepted");
+    const proofRoot = mkdtempSync(join(tmpdir(), "kia-closeout-default-proof-"));
+    createProof(
+      proofRoot,
+      "proof_kia_stick_v0_5_7_default_20260620T220500Z",
+      ["RESULT=PASS", `PHASE=${phase}`, "PUSHED=no", "MANUAL_QA_STATUS=PENDING"].join("\n")
+    );
+
+    const summary = spawnSync("node", [scriptPath, "summary", "--root", root, "--proof-root", proofRoot], { encoding: "utf8" });
+
+    expect(summary.status).toBe(0);
+    expect(summary.stdout).toContain(`PHASE=${phase}`);
+    expect(summary.stdout).toContain("PROOF_DISCOVERY_MODE=default_latest_from_proof_root");
+    expect(summary.stdout).toContain("PROOF_DISCOVERY_NOTE=default discovery mode; pass --proof-dir");
+  });
+
+  it("keeps synthetic secret fixture hits visible while classifying real-looking hits for review", async () => {
+    const mod = await loadModule();
+
+    const syntheticFixtureLine = ['tests/proofIndex.test.ts:81: const syntheticToken = ["to", "ken=', "gh", 'p_", "abcdefghijkl"].join("");'].join("");
+    expect(mod.classifySecretScanLine(syntheticFixtureLine)).toBe("known_synthetic_secret_fixture");
+    expect(mod.classifySecretScanLine(["docs/example.md:1: ", "gh", "p_actuallookingtokenvalue"].join(""))).toBe("secret_review_required");
   });
 });
