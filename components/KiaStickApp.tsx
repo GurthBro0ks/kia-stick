@@ -119,7 +119,7 @@ const acceptedOperatorCheckpoint = [
   { label: "Accepted commit", value: "c5d12a004f4c9d270260ee860781b99421a938dd" },
   { label: "Accepted proof", value: "/home/mint/kia-stick-local-proofs/proof_kia_stick_v0_9_18_to_v0_9_22_fake_only_qa_evidence_proof_readiness_bundle_20260628T111708Z/closeout_push_20260628T120057Z" },
   { label: "Baseline QA", value: "validation PASS / manual QA PASS / pushed" },
-  { label: "Current QA", value: "manual QA PENDING for v0.9.23-to-v0.9.27" },
+  { label: "Current QA", value: "manual QA PASS for v0.9.23-to-v0.9.27" },
   { label: "Real-doc gate", value: "queue-015 blocked; no real-doc capability" },
   { label: "Next/PostCSS", value: "WARN_SAFE_NEXT_TARGET_UNCLEAR" },
 ];

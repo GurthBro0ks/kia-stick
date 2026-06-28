@@ -13,11 +13,11 @@ describe("v0.9.27 next large-work checkpoint", () => {
       "Run manual browser screenshot QA using the fake-only Settings and helper evidence surfaces.",
       "Continue fake-only operator UX polish without new intake paths.",
       "research-only Next target discovery without installing or implementing a target",
-      "Manual QA remains `PENDING`",
+      "Manual QA is `PASS`",
       "Push is not performed by this local bundle.",
       "Next/PostCSS remains parked as `WARN_SAFE_NEXT_TARGET_UNCLEAR`.",
       "`queue-015-v07-first-real-doc-gate-request` remains blocked.",
-      "Operator acceptance and closeout/push require separate prompts",
+      "Closeout/push requires a separate prompt",
     ]) {
       expect(doc).toContain(required);
     }
@@ -44,14 +44,14 @@ describe("v0.9.27 next large-work checkpoint", () => {
     };
 
     expect(state.phase).toBe(phase);
-    expect(state.status).toBe("needs_review");
+    expect(state.status).toBe("ready_to_push");
     expect(state.default_next_option).toBe("manual browser screenshot QA using fake-only Settings/helper evidence surfaces");
     expect(state.manual_screenshot_qa_default).toBe(true);
     expect(state.research_only_next_target_discovery_allowed).toBe(true);
     expect(state.next_implementation_blocked).toBe(true);
     expect(state.real_doc_gate_blocked).toBe(true);
     expect(state.queue_015_status).toBe("blocked");
-    expect(state.current_manual_qa_status).toBe("PENDING");
+    expect(state.current_manual_qa_status).toBe("PASS");
     expect(state.pushed).toBe(false);
     expect(queue.items.find((item) => item.id === "queue-015-v07-first-real-doc-gate-request")?.status).toBe("blocked");
     expect(queue.items.find((item) => item.phase === phase)).toBeUndefined();

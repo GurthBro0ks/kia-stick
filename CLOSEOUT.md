@@ -28,10 +28,11 @@
 - Secrets printed: no
 - Discord sent: no
 - Push performed: no
-- Manual QA status: PENDING
+- Manual QA status: PASS
+- Operator QA proof: `/home/mint/kia-stick-local-proofs/proof_kia_stick_v0_9_23_to_v0_9_27_accepted_state_fake_operator_ux_tooling_bundle_20260628T120936Z`
 - Proof directory: `/home/mint/kia-stick-local-proofs/proof_kia_stick_v0_9_23_to_v0_9_27_accepted_state_fake_operator_ux_tooling_bundle_20260628T120936Z`
 
-This bundle is local fake-only operator review work. It makes the accepted pushed baseline visible in Settings and fake browser QA evidence, records current manual QA as pending, keeps queue-015 blocked, and does not add upload/read/index/OCR/vector behavior. Operator review and any push remain separate.
+This bundle is local fake-only operator review work. It makes the accepted pushed baseline visible in Settings and fake browser QA evidence, records manual QA PASS, keeps queue-015 blocked, and does not add upload/read/index/OCR/vector behavior. Any closeout/push remains separate.
 
 ## v0.9.18 to v0.9.22 Fake-Only QA Evidence / Proof Readiness Bundle
 

@@ -22,16 +22,16 @@ async function loadModule(): Promise<QaModule> {
 }
 
 describe("v0.9.26 cross-surface review clarity", () => {
-  it("documents the same accepted baseline and current local pending state across surfaces", () => {
+  it("documents the same accepted baseline and current local PASS state across surfaces", () => {
     const doc = readFileSync(docPath, "utf8");
 
     for (const required of [
       phase,
-      "Settings shows the accepted pushed checkpoint and current manual QA `PENDING`.",
+      "Settings shows the accepted pushed checkpoint and current manual QA `PASS`.",
       "`scripts/fake-browser-qa-evidence.mjs` exports the same accepted pushed commit",
       "`feature_list.json` records v0.9.23-to-v0.9.27 as local implementation work with no push claimed.",
       acceptedCommit,
-      "separate operator prompts required for manual QA acceptance, closeout, and push",
+      "separate operator prompts required for closeout and push",
     ]) {
       expect(doc).toContain(required);
     }
@@ -57,18 +57,18 @@ describe("v0.9.26 cross-surface review clarity", () => {
     const state = featureList.v0926_cross_surface_review_clarity;
 
     expect(component).toContain(acceptedCommit);
-    expect(component).toContain("manual QA PENDING for v0.9.23-to-v0.9.27");
+    expect(component).toContain("manual QA PASS for v0.9.23-to-v0.9.27");
     expect(packet.acceptedPushedCommit).toBe(acceptedCommit);
     expect(packet.operatorStatusSurface).toBe("Settings");
-    expect(packet.manualQaStatus).toBe("PENDING");
+    expect(packet.manualQaStatus).toBe("PASS");
     expect(packet.queue015Status).toBe("blocked");
     expect(state.phase).toBe(phase);
-    expect(state.status).toBe("needs_review");
+    expect(state.status).toBe("ready_to_push");
     expect(state.settings_surface_aligned).toBe(true);
     expect(state.helper_surface_aligned).toBe(true);
     expect(state.docs_surface_aligned).toBe(true);
     expect(state.feature_state_aligned).toBe(true);
-    expect(state.current_manual_qa_status).toBe("PENDING");
+    expect(state.current_manual_qa_status).toBe("PASS");
     expect(state.pushed).toBe(false);
     expect(state.queue_015_status).toBe("blocked");
   });

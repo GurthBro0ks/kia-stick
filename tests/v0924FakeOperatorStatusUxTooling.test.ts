@@ -20,7 +20,7 @@ describe("v0.9.24 fake operator status UX/tooling", () => {
       "`Next/PostCSS`",
       "read-only display copy",
       "does not browse local paths",
-      "Manual QA `PENDING`",
+      "Manual QA `PASS`",
     ]) {
       expect(doc).toContain(required);
     }
@@ -44,14 +44,14 @@ describe("v0.9.24 fake operator status UX/tooling", () => {
     expect(component).toContain("Fake-only operator status");
     expect(component).toContain("Accepted pushed checkpoint visible");
     expect(component).toContain(acceptedCommit);
-    expect(component).toContain("manual QA PENDING for v0.9.23-to-v0.9.27");
+    expect(component).toContain("manual QA PASS for v0.9.23-to-v0.9.27");
     expect(component).toContain("queue-015 blocked; no real-doc capability");
     expect(component).toContain("WARN_SAFE_NEXT_TARGET_UNCLEAR");
     expect(component).not.toMatch(/showOpenFilePicker|showDirectoryPicker|webkitdirectory|readAsText|readAsArrayBuffer|browser File object/i);
     expect(state.phase).toBe(phase);
-    expect(state.status).toBe("needs_review");
+    expect(state.status).toBe("ready_to_push");
     expect(state.settings_operator_status_visible).toBe(true);
-    expect(state.current_manual_qa_status).toBe("PENDING");
+    expect(state.current_manual_qa_status).toBe("PASS");
     expect(state.package_json_changed).toBe(false);
     expect(state.package_lock_changed).toBe(false);
     expect(state.browser_document_intake_blocked).toBe(true);

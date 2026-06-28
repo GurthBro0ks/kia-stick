@@ -43,7 +43,7 @@ describe("v0.9.25 fake operator status helper", () => {
       "accepted pushed commit",
       "accepted pushed closeout proof directory",
       "operator status surface: `Settings`",
-      "Manual QA is `PENDING`",
+      "Manual QA is `PASS`",
       "writes only under `/home/mint/kia-stick-local-proofs` or the system temp directory",
     ]) {
       expect(doc).toContain(required);
@@ -56,8 +56,8 @@ describe("v0.9.25 fake operator status helper", () => {
     const markdown = mod.renderMarkdownEvidence(packet);
     const outDir = mkdtempSync(join(tmpdir(), "kia-v0925-helper-"));
 
-    expect(packet.proofReviewField).toBe("PENDING_OPERATOR_REVIEW");
-    expect(packet.manualQaStatus).toBe("PENDING");
+    expect(packet.proofReviewField).toBe("PASS_READY_FOR_CLOSEOUT_REVIEW");
+    expect(packet.manualQaStatus).toBe("PASS");
     expect(packet.pushedState).toBe("no");
     expect(packet.acceptedPushedCommit).toBe(acceptedCommit);
     expect(packet.acceptedPushedProofDir).toBe(acceptedProofDir);
