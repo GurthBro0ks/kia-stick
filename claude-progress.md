@@ -2,10 +2,37 @@
 
 ## Current Phase
 
-- Phase: `KIA-Stick-v0.9.23-to-v0.9.27-accepted-state-and-fake-only-operator-ux-tooling-bundle`
+- Phase: `KIA-Stick-v0.9.28-to-v0.9.32-accepted-state-and-research-only-next-target-discovery`
 - Target: `USER_LAPTOP_ONLY`
 - Provider: `local-fake-deterministic`
-- Status: local v0.9.23-to-v0.9.27 accepted-state/fake operator UX tooling bundle has validation `PASS` and manual QA `PASS`, and is ready for a separate closeout/push gate. The accepted pushed v0.9.18-to-v0.9.22 checkpoint is recorded at `c5d12a004f4c9d270260ee860781b99421a938dd` with closeout proof `/home/mint/kia-stick-local-proofs/proof_kia_stick_v0_9_18_to_v0_9_22_fake_only_qa_evidence_proof_readiness_bundle_20260628T111708Z/closeout_push_20260628T120057Z`. Settings and the fake browser QA evidence helper expose the accepted baseline for review. Next/PostCSS remains parked as `WARN_SAFE_NEXT_TARGET_UNCLEAR`; v0.9.12C remains blocked pending an exact target; queue-015 remains blocked; product/prompt unchanged; no dependency or real-doc implementation is approved.
+- Status: local v0.9.28-to-v0.9.32 accepted-state/research-only Next target discovery bundle has operator QA `ACCEPTED_WARN` for proof `/home/mint/kia-stick-local-proofs/proof_kia_stick_v0_9_28_to_v0_9_32_accepted_state_research_only_next_target_discovery_20260628T145445Z`. The accepted pushed v0.9.23-to-v0.9.27 checkpoint is recorded at `3b121e5997f26d1e859b565fe2a7e4a4d8a3b0e3` with closeout proof `/home/mint/kia-stick-local-proofs/proof_kia_stick_v0_9_23_to_v0_9_27_accepted_state_fake_operator_ux_tooling_bundle_20260628T120936Z/closeout_push_20260628T143958Z`. Read-only npm audit/view evidence was refreshed; no exact clean Next target is proven, so Next/PostCSS remains parked as `WARN_SAFE_NEXT_TARGET_UNCLEAR`; v0.9.12C remains blocked pending exact target approval; queue-015 remains blocked; product/prompt unchanged; no dependency or real-doc implementation is approved.
+
+## v0.9.28 to v0.9.32 Accepted State / Research-Only Next Target Discovery
+
+- Phase: `KIA-Stick-v0.9.28-to-v0.9.32-accepted-state-and-research-only-next-target-discovery`
+- Target machine: `USER_LAPTOP_ONLY`
+- Baseline: accepted pushed v0.9.23-to-v0.9.27 closeout at `3b121e5997f26d1e859b565fe2a7e4a4d8a3b0e3`
+- Prior accepted proof: `/home/mint/kia-stick-local-proofs/proof_kia_stick_v0_9_23_to_v0_9_27_accepted_state_fake_operator_ux_tooling_bundle_20260628T120936Z/closeout_push_20260628T143958Z`
+- Prior validation/manual QA: PASS/PASS
+- Scope: docs/tests/state plus read-only npm audit and npm view research; no dependency, lockfile, runtime, service, notification, or real-doc change.
+- New docs: `docs/v0.9.28-accepted-pushed-state-checkpoint.md`, `docs/v0.9.29-current-next-audit-evidence-refresh.md`, `docs/v0.9.30-exact-next-target-candidate-matrix.md`, `docs/v0.9.31-future-next-implementation-gate-packet.md`, `docs/v0.9.32-next-large-work-checkpoint.md`
+- New tests: `tests/v0928AcceptedPushedStateCheckpoint.test.ts`, `tests/v0929CurrentNextAuditEvidenceRefresh.test.ts`, `tests/v0930ExactNextTargetCandidateMatrix.test.ts`, `tests/v0931FutureNextImplementationGatePacket.test.ts`, `tests/v0932NextLargeWorkCheckpoint.test.ts`
+- Read-only commands: `npm ls next react react-dom postcss --all`, `npm audit --json`, `npm view next version`, `npm view next dist-tags --json`, `npm view next@latest version peerDependencies dependencies --json`, `npm view react version`, `npm view react-dom version`, and `npm view postcss version`.
+- Current package state: `next@15.5.19`, `react@19.2.7`, `react-dom@19.2.7`, Next transitive `postcss@8.4.31`, Vite nested `postcss@8.5.15`.
+- Audit state: `npm audit --json` exits 1 with two moderate findings for `next` via `postcss` and `postcss <8.5.10`.
+- npm metadata state: `next@latest` is `16.2.9`, React/React-DOM latest are `19.2.7`, PostCSS latest is `8.5.15`; `next@latest` metadata still lists dependency `postcss@8.4.31`.
+- Candidate result: no exact clean Next target is proven; `next@16.2.9` is `not_proven_clean`; `next@9.3.3` remains a blocked forced semver-major downgrade.
+- Next/PostCSS runtime path: parked as `WARN_SAFE_NEXT_TARGET_UNCLEAR`, not fixed.
+- v0.9.12C implementation: blocked until exact Next target approval.
+- Version state: product/package version remain `0.7.0`; prompt version remains `prompt.fake-docs.v0.5-import-wizard-hardening`.
+- Queue state: `queue-015-v07-first-real-doc-gate-request` remains blocked.
+- Real-doc capability found/approved: no.
+- Push status: not pushed.
+- Manual QA status: ACCEPTED_WARN by `OPERATOR_QA_ACCEPTED_WARN for /home/mint/kia-stick-local-proofs/proof_kia_stick_v0_9_28_to_v0_9_32_accepted_state_research_only_next_target_discovery_20260628T145445Z`.
+- Proof directory: `/home/mint/kia-stick-local-proofs/proof_kia_stick_v0_9_28_to_v0_9_32_accepted_state_research_only_next_target_discovery_20260628T145445Z`
+- Commands run: local harness/progress inspection, baseline git/head/package hash capture, implementation plan proof write, read-only npm audit/view evidence capture, scoped docs/tests/state edits, package mutation check, focused v0.9.28-to-v0.9.32 tests, full lint/typecheck/test/build/design/release/governance/operator-smoke validation, queue/proof/closeout helper checks, fake/privacy scans, and safety-boundary scans.
+- Validation: PASS for required local gates; proof index result is WARN because no exact clean Next target is proven.
+- Remaining unknowns: separate closeout/push approval and exact operator-approved Next target.
 
 ## v0.9.23 to v0.9.27 Accepted State / Fake Operator UX Tooling Bundle
 

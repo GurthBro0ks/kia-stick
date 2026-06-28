@@ -1,5 +1,42 @@
 # KIA Stick Closeout
 
+## v0.9.28 to v0.9.32 Accepted State / Research-Only Next Target Discovery
+
+- Phase: `KIA-Stick-v0.9.28-to-v0.9.32-accepted-state-and-research-only-next-target-discovery`
+- Target machine: `USER_LAPTOP_ONLY`
+- Baseline: accepted pushed v0.9.23-to-v0.9.27 closeout at `3b121e5997f26d1e859b565fe2a7e4a4d8a3b0e3`
+- Prior proof directory: `/home/mint/kia-stick-local-proofs/proof_kia_stick_v0_9_23_to_v0_9_27_accepted_state_fake_operator_ux_tooling_bundle_20260628T120936Z/closeout_push_20260628T143958Z`
+- Prior validation/manual QA: PASS/PASS
+- Scope: docs/tests/state and read-only npm audit/metadata research for the parked Next/PostCSS path.
+- Included subphases: v0.9.28 accepted pushed state checkpoint; v0.9.29 current Next audit evidence refresh; v0.9.30 exact Next target candidate matrix; v0.9.31 future Next implementation gate packet; v0.9.32 next large-work checkpoint.
+- Current package state: `next@15.5.19`, `react@19.2.7`, `react-dom@19.2.7`, Next transitive `postcss@8.4.31`, Vite nested `postcss@8.5.15`.
+- npm metadata status: PASS.
+- npm audit status: exit status 1 with `2 moderate` findings.
+- npm latest Next metadata: `next@16.2.9`; peer range includes React 19, but metadata still lists `postcss@8.4.31`.
+- Candidate matrix result: no exact clean target proven.
+- Next/PostCSS runtime security path: remains parked as `WARN_SAFE_NEXT_TARGET_UNCLEAR`.
+- v0.9.12C implementation: blocked until an exact Next target is separately approved.
+- Product version: `0.7.0`
+- Package version: `0.7.0`
+- Prompt version: `prompt.fake-docs.v0.5-import-wizard-hardening`
+- Queue state: `queue-015-v07-first-real-doc-gate-request` remains blocked.
+- `package.json` changed: no
+- `package-lock.json` changed: no
+- Dependency versions changed: no
+- Runtime capability changed: no
+- Real document implementation approved: no
+- Real document access: none
+- File picker/FileReader/OCR/indexing/embedding/vector capability added: no
+- Services restarted: no
+- Cron/timer/tmux/Caddy/DNS changed: no
+- Secrets printed: no
+- Discord sent: no
+- Push performed: no
+- Manual QA status: ACCEPTED_WARN
+- Operator QA proof: `/home/mint/kia-stick-local-proofs/proof_kia_stick_v0_9_28_to_v0_9_32_accepted_state_research_only_next_target_discovery_20260628T145445Z`
+
+This bundle is local research-only Next target discovery work. It refreshes audit/registry evidence and drafts a future implementation packet, but it does not install, update, audit-fix, approve an exact target, mutate package files, or implement runtime changes. Operator QA accepted the WARN outcome; any closeout/push remains separate.
+
 ## v0.9.23 to v0.9.27 Accepted State / Fake Operator UX Tooling Bundle
 
 - Phase: `KIA-Stick-v0.9.23-to-v0.9.27-accepted-state-and-fake-only-operator-ux-tooling-bundle`
