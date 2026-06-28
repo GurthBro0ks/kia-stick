@@ -3,11 +3,19 @@ import { existsSync, mkdirSync, readFileSync, writeFileSync } from "node:fs";
 import { tmpdir } from "node:os";
 import path from "node:path";
 
-const DEFAULT_PHASE = "KIA-Stick-v0.9.18-to-v0.9.22-fake-only-qa-evidence-and-proof-readiness-bundle";
+const DEFAULT_PHASE = "KIA-Stick-v0.9.23-to-v0.9.27-accepted-state-and-fake-only-operator-ux-tooling-bundle";
 const PRODUCT_VERSION = "0.7.0";
 const PROMPT_VERSION = "prompt.fake-docs.v0.5-import-wizard-hardening";
 const PROOF_ROOT = "/home/mint/kia-stick-local-proofs";
 const NEXT_POSTCSS_STATUS = "WARN_SAFE_NEXT_TARGET_UNCLEAR";
+const ACCEPTED_PUSHED_BASELINE = {
+  phase: "KIA-Stick-v0.9.18-to-v0.9.22-fake-only-qa-evidence-and-proof-readiness-bundle-closeout-and-push",
+  commit: "c5d12a004f4c9d270260ee860781b99421a938dd",
+  proofDir: "/home/mint/kia-stick-local-proofs/proof_kia_stick_v0_9_18_to_v0_9_22_fake_only_qa_evidence_proof_readiness_bundle_20260628T111708Z/closeout_push_20260628T120057Z",
+  validation: "PASS",
+  manualQaStatus: "PASS",
+  pushed: true,
+};
 
 const qaSurfaces = [
   { name: "Chat", check: "No-answer save blocking, cited fake answer save path, context-only fake source trail." },
@@ -16,7 +24,7 @@ const qaSurfaces = [
   { name: "Upload", check: "Synthetic metadata controls only; no browser document intake." },
   { name: "Vault", check: "Fake governance workflow and metadata-only review state." },
   { name: "Import", check: "Fake state-machine transitions and blocked reasons only." },
-  { name: "Settings", check: "Version identity and fake-only provider metadata." },
+  { name: "Settings", check: "Version identity, fake-only provider metadata, and accepted pushed operator checkpoint." },
   { name: "/version", check: "Display, product, build, prompt, provider, corpus, and index identity." },
   { name: "/health", check: "Loopback route can be checked manually; fakeOnly true and realDbTouched false." },
 ];
@@ -86,7 +94,9 @@ export function buildFakeBrowserQaEvidence(options = {}) {
   const featureList = readJson(root, "feature_list.json") || {};
   const queue = readJson(root, "docs/phase-backlog.json") || {};
   const queue015Status = queueStatus(queue, "queue-015-v07-first-real-doc-gate-request");
-  const bundleState = featureList.v0922_next_large_work_checkpoint || featureList.v0921_proof_acceptance_readiness_helper || {};
+  const currentBundleState = featureList.v0927_next_large_work_checkpoint || {};
+  const acceptedBundleState = featureList.v0922_next_large_work_checkpoint || featureList.v0921_proof_acceptance_readiness_helper || {};
+  const bundleState = phase === DEFAULT_PHASE ? currentBundleState : acceptedBundleState;
   const manualQaStatus = bundleState.manual_qa_status || "PENDING";
   const proofReviewField = manualQaStatus === "PASS" ? "PASS_READY_FOR_CLOSEOUT_REVIEW" : "PENDING_OPERATOR_REVIEW";
 
@@ -97,7 +107,13 @@ export function buildFakeBrowserQaEvidence(options = {}) {
     browserAutomationStatus: "manual_checklist_export",
     proofReviewField,
     manualQaStatus,
-    pushedState: "no",
+    pushedState: bundleState.pushed ? "yes" : "no",
+    acceptedPushedBaseline: ACCEPTED_PUSHED_BASELINE,
+    acceptedPushedCommit: ACCEPTED_PUSHED_BASELINE.commit,
+    acceptedPushedProofDir: ACCEPTED_PUSHED_BASELINE.proofDir,
+    acceptedPushedValidation: ACCEPTED_PUSHED_BASELINE.validation,
+    acceptedPushedManualQaStatus: ACCEPTED_PUSHED_BASELINE.manualQaStatus,
+    operatorStatusSurface: "Settings",
     dirtyState: "operator_must_check_git_status",
     packageLockUnchangedExpected: packageLockUnchanged(root),
     productVersion: packageJson.version || PRODUCT_VERSION,
@@ -134,6 +150,12 @@ export function renderMarkdownEvidence(packet) {
     `PROOF_PASS_WARN_FAIL_FIELD=${packet.proofReviewField}`,
     `MANUAL_QA_STATUS=${packet.manualQaStatus}`,
     `PUSHED_STATE=${packet.pushedState}`,
+    `ACCEPTED_PUSHED_BASELINE_PHASE=${packet.acceptedPushedBaseline.phase}`,
+    `ACCEPTED_PUSHED_COMMIT=${packet.acceptedPushedCommit}`,
+    `ACCEPTED_PUSHED_PROOF_DIR=${packet.acceptedPushedProofDir}`,
+    `ACCEPTED_PUSHED_VALIDATION=${packet.acceptedPushedValidation}`,
+    `ACCEPTED_PUSHED_MANUAL_QA_STATUS=${packet.acceptedPushedManualQaStatus}`,
+    `OPERATOR_STATUS_SURFACE=${packet.operatorStatusSurface}`,
     `DIRTY_STATE=${packet.dirtyState}`,
     `PACKAGE_LOCK_UNCHANGED_EXPECTED=${packet.packageLockUnchangedExpected ? "yes" : "no"}`,
     `PRODUCT_VERSION=${packet.productVersion}`,

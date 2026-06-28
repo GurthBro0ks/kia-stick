@@ -115,6 +115,15 @@ const vaultViews: { id: VaultView; label: string; meta: string }[] = [
   { id: "audit", label: "Audit Log", meta: "safe fake export" },
 ];
 
+const acceptedOperatorCheckpoint = [
+  { label: "Accepted commit", value: "c5d12a004f4c9d270260ee860781b99421a938dd" },
+  { label: "Accepted proof", value: "/home/mint/kia-stick-local-proofs/proof_kia_stick_v0_9_18_to_v0_9_22_fake_only_qa_evidence_proof_readiness_bundle_20260628T111708Z/closeout_push_20260628T120057Z" },
+  { label: "Baseline QA", value: "validation PASS / manual QA PASS / pushed" },
+  { label: "Current QA", value: "manual QA PENDING for v0.9.23-to-v0.9.27" },
+  { label: "Real-doc gate", value: "queue-015 blocked; no real-doc capability" },
+  { label: "Next/PostCSS", value: "WARN_SAFE_NEXT_TARGET_UNCLEAR" },
+];
+
 const intentLabels: Record<AnswerResult["intent"], string> = {
   annual_leave: "Annual leave",
   steward_request: "Steward request",
@@ -490,6 +499,21 @@ export function KiaStickApp({ runtimeVersion = clientVersion }: { runtimeVersion
               <p>
                 This build does not read private folders, real APWU/USPS/member/local/case documents, cloud services, or external APIs. The real-doc gate remains blocked until a future operator-approved phase.
               </p>
+            </section>
+            <section className="aboutPanel" aria-label="Fake-only operator status">
+              <span className="sectionKicker">Operator status</span>
+              <h3>Accepted pushed checkpoint visible</h3>
+              <p>
+                The last accepted pushed fake-only proof is recorded for operator review. This local bundle adds status visibility only; manual QA remains pending and no push is claimed here.
+              </p>
+              <dl className="settingsGrid">
+                {acceptedOperatorCheckpoint.map((row) => (
+                  <React.Fragment key={row.label}>
+                    <dt>{row.label}</dt>
+                    <dd>{row.value}</dd>
+                  </React.Fragment>
+                ))}
+              </dl>
             </section>
             <dl className="settingsGrid">
               <dt>Display</dt>

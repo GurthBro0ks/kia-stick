@@ -1,5 +1,38 @@
 # KIA Stick Closeout
 
+## v0.9.23 to v0.9.27 Accepted State / Fake Operator UX Tooling Bundle
+
+- Phase: `KIA-Stick-v0.9.23-to-v0.9.27-accepted-state-and-fake-only-operator-ux-tooling-bundle`
+- Target machine: `USER_LAPTOP_ONLY`
+- Baseline: accepted pushed v0.9.18-to-v0.9.22 closeout at `c5d12a004f4c9d270260ee860781b99421a938dd`
+- Prior proof directory: `/home/mint/kia-stick-local-proofs/proof_kia_stick_v0_9_18_to_v0_9_22_fake_only_qa_evidence_proof_readiness_bundle_20260628T111708Z/closeout_push_20260628T120057Z`
+- Prior validation/manual QA: PASS/PASS
+- Scope: fake-only docs/tests/tooling/UI visibility for accepted-state and operator status review.
+- Included subphases: v0.9.23 accepted pushed state checkpoint; v0.9.24 fake operator status UX/tooling; v0.9.25 fake operator status helper; v0.9.26 cross-surface review clarity; v0.9.27 next large-work checkpoint.
+- Helper extended: `scripts/fake-browser-qa-evidence.mjs`
+- Browser automation status: `manual_checklist_export`
+- Next/PostCSS runtime security path: parked as `WARN_SAFE_NEXT_TARGET_UNCLEAR`; not fixed by this bundle.
+- v0.9.12C implementation: blocked until an exact Next target is separately approved.
+- Product version: `0.7.0`
+- Package version: `0.7.0`
+- Prompt version: `prompt.fake-docs.v0.5-import-wizard-hardening`
+- Queue state: `queue-015-v07-first-real-doc-gate-request` remains blocked.
+- `package-lock.json` changed: no
+- Dependency versions changed: no
+- Runtime capability changed: no
+- Real document implementation approved: no
+- Real document access: none
+- File picker/FileReader/OCR/indexing/embedding/vector capability added: no
+- Services restarted: no
+- Cron/timer/tmux/Caddy/DNS changed: no
+- Secrets printed: no
+- Discord sent: no
+- Push performed: no
+- Manual QA status: PENDING
+- Proof directory: `/home/mint/kia-stick-local-proofs/proof_kia_stick_v0_9_23_to_v0_9_27_accepted_state_fake_operator_ux_tooling_bundle_20260628T120936Z`
+
+This bundle is local fake-only operator review work. It makes the accepted pushed baseline visible in Settings and fake browser QA evidence, records current manual QA as pending, keeps queue-015 blocked, and does not add upload/read/index/OCR/vector behavior. Operator review and any push remain separate.
+
 ## v0.9.18 to v0.9.22 Fake-Only QA Evidence / Proof Readiness Bundle
 
 - Phase: `KIA-Stick-v0.9.18-to-v0.9.22-fake-only-qa-evidence-and-proof-readiness-bundle`

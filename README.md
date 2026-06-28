@@ -12,6 +12,18 @@ KIA Stick separates milestone semver from build identity:
 
 `/health`, `/version`, the app header, settings, answer footer, and saved answer metadata expose the current `displayVersion`.
 
+## v0.9.23 to v0.9.27 Accepted State / Fake Operator UX Tooling Bundle
+
+Phase: `KIA-Stick-v0.9.23-to-v0.9.27-accepted-state-and-fake-only-operator-ux-tooling-bundle`.
+
+This local bundle starts from the accepted pushed v0.9.18-to-v0.9.22 closeout at `c5d12a004f4c9d270260ee860781b99421a938dd`. Accepted proof is recorded at `/home/mint/kia-stick-local-proofs/proof_kia_stick_v0_9_18_to_v0_9_22_fake_only_qa_evidence_proof_readiness_bundle_20260628T111708Z/closeout_push_20260628T120057Z` with validation PASS, manual QA PASS, and `HEAD == origin/main`.
+
+The bundle adds `docs/v0.9.23-accepted-pushed-state-checkpoint.md`, `docs/v0.9.24-fake-operator-status-ux-tooling.md`, `docs/v0.9.25-fake-operator-status-helper.md`, `docs/v0.9.26-cross-surface-review-clarity.md`, and `docs/v0.9.27-next-large-work-checkpoint.md` with focused tests. Settings now shows a read-only fake-only operator status block, and `scripts/fake-browser-qa-evidence.mjs` exports the same accepted pushed baseline fields for proof review.
+
+This bundle is local fake-only docs/tests/tooling/UI visibility work. Manual QA for this new bundle remains `PENDING`; no push is claimed or performed. `package.json` and `package-lock.json` remain unchanged. Product/package version remains `0.7.0`; prompt version remains `prompt.fake-docs.v0.5-import-wizard-hardening`; `queue-015-v07-first-real-doc-gate-request` remains blocked. Next/PostCSS remains parked as `WARN_SAFE_NEXT_TARGET_UNCLEAR`; `KIA-Stick-v0.9.12C-next-runtime-framework-security-implementation` remains blocked until an exact operator-approved Next target exists.
+
+No real-doc implementation is approved. The bundle does not add file pickers, FileReader, path readers, uploads, OCR, real redaction, text extraction, summarization, embeddings, indexing, vector stores, private-source inspection, services, secrets, Discord, global config, or system changes.
+
 ## v0.9.18 to v0.9.22 Fake-Only QA Evidence / Proof Readiness Bundle
 
 Phase: `KIA-Stick-v0.9.18-to-v0.9.22-fake-only-qa-evidence-and-proof-readiness-bundle`.
