@@ -218,6 +218,60 @@ export function suggestedQueueCommand(item, status = "ready_to_push") {
   return `npm run queue:set -- --id ${item.id} --status ${status} --note "Closeout proof reviewed; ready for manual operator decision."`;
 }
 
+function manualQaPassed(status = "PASS") {
+  return /^(?:PASS|ACCEPTED_WARN|PASS_ACCEPTED_WARN)$/i.test(status.trim());
+}
+
+function currentPackageLockUnchanged(featureList) {
+  const currentPackageLockKeys = [
+    "v0947_next_large_work_checkpoint",
+    "v0946_fake_operator_status_copy_polish",
+    "v0945_next_action_decision_clarity",
+    "v0944_proof_chain_readability_helper",
+    "v0943_accepted_pushed_state_checkpoint",
+    "v0942_next_large_work_checkpoint",
+    "v0941_accepted_pushed_closeout_packet_checklist",
+    "v0940_secret_scan_fixture_readability_polish",
+    "v0939_closeout_summary_proof_dir_usability",
+    "v0938_accepted_pushed_state_checkpoint",
+  ];
+  const states = currentPackageLockKeys.map((key) => featureList[key]?.package_lock_changed).filter((value) => typeof value === "boolean");
+  return states.length > 0 && states.every((changed) => changed === false) ? "yes" : "review_required";
+}
+
+function collectProofChain(featureList) {
+  const accepted = featureList.v0943_accepted_pushed_state_checkpoint || {};
+  const priorAccepted = featureList.v0938_accepted_pushed_state_checkpoint || {};
+  const acceptedWarn = featureList.v0933_accepted_pushed_warn_state_checkpoint || {};
+  const current = featureList.v0947_next_large_work_checkpoint || {};
+
+  return {
+    acceptedPushedCheckpoint:
+      accepted.accepted_pushed_short_commit || accepted.accepted_pushed_commit || priorAccepted.accepted_pushed_short_commit || priorAccepted.accepted_pushed_commit || "review_required",
+    localImplementationProof:
+      accepted.local_implementation_proof_dir || accepted.operator_qa_proof_dir || priorAccepted.operator_qa_pass_proof_dir || "review_required",
+    operatorQaProof: accepted.operator_qa_proof_dir || priorAccepted.operator_qa_pass_proof_dir || "review_required",
+    closeoutPushProof: accepted.closeout_push_proof_dir || priorAccepted.closeout_push_proof_dir || "review_required",
+    acceptedWarnCheckpoint:
+      acceptedWarn.accepted_pushed_warn_short_commit || acceptedWarn.accepted_pushed_warn_commit || "review_required",
+    pendingLocalBundle: current.current_bundle_manual_qa_status || "PENDING",
+  };
+}
+
+function nextActionState({ proof, git, queue, safety }) {
+  if (safety.packageLockUnchanged !== "yes") return "blocked_package_lock_changed";
+  if (safety.queue015Status !== "blocked" || safety.v0912cStatus !== "blocked" || safety.nextPostcssStatus !== "WARN_SAFE_NEXT_TARGET_UNCLEAR") {
+    return "blocked_safety_state";
+  }
+  if (proof.acceptedWarn) return "warn_accepted_parked";
+  if (!proof.exists) return "operator_qa_needed";
+  if (proof.result !== "PASS" || !proof.warnFailFree || proof.flags.length > 0) return "operator_qa_needed";
+  if (!manualQaPassed(proof.manualQaStatus)) return "operator_qa_needed";
+  if (proof.pushed !== "yes" || git.ahead > 0) return "closeout_push_needed";
+  if (queue.ok && queue.item && !readyQueueStatuses.has(queue.item.status)) return "operator_qa_needed";
+  return "accepted_pushed_state_recorded";
+}
+
 export function assessCloseout({ proof, git, queue, proofDiscoveryMode = "default_latest" }) {
   const issues = [];
 
@@ -237,6 +291,9 @@ export function assessCloseout({ proof, git, queue, proofDiscoveryMode = "defaul
   if (proof.exists && !proof.warnFailFree) {
     if (proof.acceptedWarn) warn("proof_accepted_warn_text", "Accepted-WARN proof text is present; review as parked WARN, not as PASS or FAIL.");
     else warn("proof_warn_fail_text", "WARN/FAIL text appears in RESULT.md beyond the RESULT line.");
+  }
+  if (proof.exists && proof.result === "PASS" && !manualQaPassed(proof.manualQaStatus)) {
+    warn("manual_qa_pending", `Manual QA status is ${proof.manualQaStatus || "pending operator review"}.`);
   }
   if (proof.flags.length > 0) warn("proof_redaction_flags", `Proof summary contains redaction flags: ${proof.flags.join(",")}.`);
 
@@ -258,6 +315,7 @@ export function assessCloseout({ proof, git, queue, proofDiscoveryMode = "defaul
   else if (!proof.exists) nextAction = "Run the phase validation to create a proof directory, then rerun closeout:review.";
   else if (proof.acceptedWarn) nextAction = "Review accepted-WARN parked state; push only through an explicit WARN closeout gate.";
   else if (proof.result !== "PASS" || !proof.warnFailFree) nextAction = "Review RESULT.md and fix proof warnings before manual push.";
+  else if (!manualQaPassed(proof.manualQaStatus)) nextAction = "Operator manual QA review is required before closeout/push.";
   else if (git.dirty) nextAction = "Commit reviewed local changes after validation, then rerun closeout:review.";
   else if (queue.ok && queue.item && !readyQueueStatuses.has(queue.item.status)) nextAction = `Review queue state, then run: ${suggestedQueueCommand(queue.item)}`;
   else if (git.ahead > 0) nextAction = `Manual push allowed after operator approval: git push origin ${git.branch}`;
@@ -283,18 +341,16 @@ function collectState(options) {
   const proofDiscoveryMode = options.proofDir ? "explicit_proof_dir" : "default_latest_from_proof_root";
   const assessment = assessCloseout({ proof, git, queue, proofDiscoveryMode });
   const featureText = JSON.stringify(featureList);
-  const currentPackageLockKeys = [
-    "v0942_next_large_work_checkpoint",
-    "v0941_accepted_pushed_closeout_packet_checklist",
-    "v0940_secret_scan_fixture_readability_polish",
-    "v0939_closeout_summary_proof_dir_usability",
-    "v0938_accepted_pushed_state_checkpoint",
-  ];
-  const currentPackageLockStates = currentPackageLockKeys
-    .map((key) => featureList[key]?.package_lock_changed)
-    .filter((value) => typeof value === "boolean");
-  const packageLockUnchanged =
-    currentPackageLockStates.length > 0 && currentPackageLockStates.every((changed) => changed === false) ? "yes" : "review_required";
+  const packageLockUnchanged = currentPackageLockUnchanged(featureList);
+  const proofChain = collectProofChain(featureList);
+  const safety = {
+    packageLockUnchanged,
+    queue015Status: featureText.includes('"queue_015_status":"blocked"') || featureText.includes('"queue_015_status": "blocked"') ? "blocked" : "review_required",
+    v0912cStatus: featureText.includes("v0912c") && featureText.includes("blocked") ? "blocked" : "review_required",
+    nextPostcssStatus: featureText.includes("WARN_SAFE_NEXT_TARGET_UNCLEAR") ? "WARN_SAFE_NEXT_TARGET_UNCLEAR" : "review_required",
+    realDocCapability: featureText.includes('"real_doc_capability_added":true') || featureText.includes('"real_doc_implementation_approved":true') ? "review_required" : "blocked",
+    systemChanges: "none",
+  };
 
   return {
     root,
@@ -304,14 +360,9 @@ function collectState(options) {
     proofDiscoveryMode,
     git,
     queue,
-    safety: {
-      packageLockUnchanged,
-      queue015Status: featureText.includes('"queue_015_status":"blocked"') || featureText.includes('"queue_015_status": "blocked"') ? "blocked" : "review_required",
-      v0912cStatus: featureText.includes("v0912c") && featureText.includes("blocked") ? "blocked" : "review_required",
-      nextPostcssStatus: featureText.includes("WARN_SAFE_NEXT_TARGET_UNCLEAR") ? "WARN_SAFE_NEXT_TARGET_UNCLEAR" : "review_required",
-      realDocCapability: featureText.includes('"real_doc_capability_added":true') || featureText.includes('"real_doc_implementation_approved":true') ? "review_required" : "blocked",
-      systemChanges: "none",
-    },
+    safety,
+    proofChain,
+    nextActionState: nextActionState({ proof, git, queue, safety }),
     assessment,
   };
 }
@@ -341,7 +392,16 @@ function printReview(options) {
   console.log(`stop_on_warn_fail=${state.assessment.stopOnWarnFail}`);
   console.log(`queue_acceptance_allowed=${state.assessment.queueAcceptanceAllowed}`);
   console.log(`suggested_queue_command=${state.assessment.suggestedQueueCommand}`);
+  console.log(`next_action_state=${state.nextActionState}`);
   console.log(`next_action=${state.assessment.nextAction}`);
+  console.log("");
+  console.log("Proof chain summary:");
+  console.log(`- accepted_pushed_checkpoint=${state.proofChain.acceptedPushedCheckpoint}`);
+  console.log(`- local_implementation_proof=${state.proofChain.localImplementationProof}`);
+  console.log(`- operator_qa_proof=${state.proofChain.operatorQaProof}`);
+  console.log(`- closeout_push_proof=${state.proofChain.closeoutPushProof}`);
+  console.log(`- accepted_warn_checkpoint=${state.proofChain.acceptedWarnCheckpoint}`);
+  console.log(`- pending_local_bundle=${state.proofChain.pendingLocalBundle}`);
   console.log("");
   console.log("Closeout packet checklist:");
   console.log(`- supplied_proof_dir=${state.proofDiscoveryMode === "explicit_proof_dir" ? state.proof.path : "not_supplied_default_discovery"}`);
@@ -396,6 +456,13 @@ function printSummary(options) {
         : "explicit proof dir supplied",
     VALIDATION: validation,
     CLOSEOUT_HELPER_RESULT: `${state.assessment.status}; ${state.assessment.nextAction}`,
+    NEXT_ACTION_STATE: state.nextActionState,
+    PROOF_CHAIN_ACCEPTED_PUSHED_CHECKPOINT: state.proofChain.acceptedPushedCheckpoint,
+    PROOF_CHAIN_LOCAL_IMPLEMENTATION_PROOF: state.proofChain.localImplementationProof,
+    PROOF_CHAIN_OPERATOR_QA_PROOF: state.proofChain.operatorQaProof,
+    PROOF_CHAIN_CLOSEOUT_PUSH_PROOF: state.proofChain.closeoutPushProof,
+    PROOF_CHAIN_ACCEPTED_WARN_CHECKPOINT: state.proofChain.acceptedWarnCheckpoint,
+    PROOF_CHAIN_PENDING_LOCAL_BUNDLE: state.proofChain.pendingLocalBundle,
     ACCEPTED_WARN_STATUS: state.proof.acceptedWarn ? "accepted_warn_parked" : "not_accepted_warn",
     STOP_ON_WARN_FAIL_STATUS: state.assessment.stopOnWarnFail ? "STOP_REQUIRED" : "CLEAR",
     QUEUE_ACCEPTANCE_ALLOWED: state.assessment.queueAcceptanceAllowed ? "yes" : "no",

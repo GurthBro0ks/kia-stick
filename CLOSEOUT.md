@@ -1,5 +1,38 @@
 # KIA Stick Closeout
 
+## v0.9.43 to v0.9.47 Accepted State / Fake Proof Chain Operator UX Bundle
+
+- Phase: `KIA-Stick-v0.9.43-to-v0.9.47-accepted-state-and-fake-only-proof-chain-operator-ux-bundle`
+- Target machine: `USER_LAPTOP_ONLY`
+- Baseline: accepted pushed v0.9.38-to-v0.9.42 closeout at `8358e6352557c4af05d9c40401691d2bf73f06ef`
+- Prior proof directory: `/home/mint/kia-stick-local-proofs/proof_kia_stick_v0_9_38_to_v0_9_42_accepted_state_proof_helper_closeout_usability_bundle_20260628T170309Z/closeout_push_20260629T210458Z`
+- Prior validation/manual QA: PASS/PASS
+- Scope: fake-only docs/tests/tooling/status polish for accepted pushed proof-chain visibility and operator next-action review.
+- Included subphases: v0.9.43 accepted pushed state checkpoint; v0.9.44 proof chain readability helper; v0.9.45 next-action decision clarity; v0.9.46 fake operator status copy polish; v0.9.47 next large-work checkpoint.
+- Closeout helper: proof-chain summary output and explicit next-action state labels.
+- Settings copy: latest accepted pushed checkpoint `8358e63`, accepted WARN checkpoint `beea159`, current bundle `PENDING`, and blocked real-doc/Next state.
+- Next/PostCSS runtime security path: remains parked as `WARN_SAFE_NEXT_TARGET_UNCLEAR`.
+- v0.9.12C implementation: blocked until an exact Next target is separately approved.
+- Product version: `0.7.0`
+- Package version: `0.7.0`
+- Prompt version: `prompt.fake-docs.v0.5-import-wizard-hardening`
+- Queue state: `queue-015-v07-first-real-doc-gate-request` remains blocked.
+- `package.json` changed: no
+- `package-lock.json` changed: no
+- Dependency versions changed: no
+- Runtime capability changed: no intake or real-doc capability; helper and copy/status output only.
+- Real document implementation approved: no
+- Real document access: none
+- File picker/FileReader/OCR/indexing/embedding/vector capability added: no
+- Services restarted: no
+- Cron/timer/tmux/Caddy/DNS changed: no
+- Secrets printed: no
+- Discord sent: no
+- Push performed: no
+- Manual QA status: PENDING
+
+This local bundle records the accepted pushed v0.9.42 baseline and makes proof-chain/next-action/operator status output clearer. Operator review and any closeout/push remain separate.
+
 ## v0.9.38 to v0.9.42 Accepted State / Proof Helper Closeout Usability Bundle
 
 - Phase: `KIA-Stick-v0.9.38-to-v0.9.42-accepted-state-and-proof-helper-closeout-usability-bundle`
