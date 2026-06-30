@@ -298,6 +298,22 @@ describe("closeout-helper", () => {
     expect(summary.stdout).toContain("PROOF_DISCOVERY_NOTE=default discovery mode; pass --proof-dir");
   });
 
+  it("reports the current v0.9.48 baseline instead of the stale v0.9.42 checkpoint", () => {
+    const currentResearchProof =
+      "/home/mint/kia-stick-local-proofs/proof_kia_stick_v0_9_48_to_v0_9_52_accepted_state_official_next_postcss_research_refresh_bundle_20260630T170813Z";
+    const acceptedCloseoutProof =
+      "/home/mint/kia-stick-local-proofs/proof_kia_stick_v0_9_43_to_v0_9_47_operator_qa_pass_recording_20260630T044306Z/closeout_push_20260630T071740Z";
+
+    const summary = spawnSync("node", [scriptPath, "summary", "--proof-dir", currentResearchProof], { encoding: "utf8" });
+
+    expect(summary.status).toBe(0);
+    expect(summary.stdout).toContain("PROOF_CHAIN_ACCEPTED_PUSHED_CHECKPOINT=928c614");
+    expect(summary.stdout).toContain(`PROOF_CHAIN_CLOSEOUT_PUSH_PROOF=${acceptedCloseoutProof}`);
+    expect(summary.stdout).toContain(`PROOF_CHAIN_LOCAL_IMPLEMENTATION_PROOF=${currentResearchProof}`);
+    expect(summary.stdout).toContain("PROOF_CHAIN_PENDING_LOCAL_BUNDLE=KIA-Stick-v0.9.52-next-large-work-checkpoint; result=WARN_SAFE_NEXT_TARGET_UNCLEAR; manual_qa=PENDING; pushed=no");
+    expect(summary.stdout).not.toContain("PROOF_CHAIN_ACCEPTED_PUSHED_CHECKPOINT=8358e63");
+  });
+
   it("keeps synthetic secret fixture hits visible while classifying real-looking hits for review", async () => {
     const mod = await loadModule();
 

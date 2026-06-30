@@ -25,10 +25,11 @@ describe("v0.9.46 fake operator status copy polish", () => {
   it("updates Settings copy without adding file intake wording", () => {
     const component = readFileSync(componentPath, "utf8");
 
-    expect(component).toContain("Accepted pushed checkpoint visible: 8358e63");
+    expect(component).toContain("Accepted pushed checkpoint visible: 928c614");
     expect(component).toContain("Accepted pushed commit");
-    expect(component).toContain("8358e6352557c4af05d9c40401691d2bf73f06ef");
-    expect(component).toContain("manual QA PASS for v0.9.43-to-v0.9.47; pushed no");
+    expect(component).toContain("928c614d0fcafb64b6ad79770c8d55a3b662b153");
+    expect(component).toContain("manual QA PASS for v0.9.43-to-v0.9.47; pushed yes");
+    expect(component).toContain("manual QA PENDING; pushed no");
     expect(component).toContain("queue-015 blocked; no real-doc capability");
     expect(component).not.toMatch(/<input[^>]+type=["']file["']/);
     expect(component).not.toContain("FileReader");

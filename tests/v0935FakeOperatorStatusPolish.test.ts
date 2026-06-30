@@ -44,7 +44,8 @@ describe("v0.9.35 fake operator status polish", () => {
     expect(component).toContain("Accepted pushed WARN checkpoint visible");
     expect(component).toContain("beea159bb44ecc35ed8cb9b5a55aa1c0f3f217f6");
     expect(component).toContain("manual QA ACCEPTED_WARN");
-    expect(component).toContain("manual QA PASS for v0.9.33-to-v0.9.37; pushed no");
+    expect(component).toContain("manual QA PASS for v0.9.43-to-v0.9.47; pushed yes");
+    expect(component).toContain("manual QA PENDING; pushed no");
     expect(component).toContain("WARN_SAFE_NEXT_TARGET_UNCLEAR; parked, not fixed");
     expect(component).toContain("blocked pending exact operator-approved Next target");
     expect(component).not.toContain("<input type=\"file\"");

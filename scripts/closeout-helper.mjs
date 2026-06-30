@@ -224,6 +224,11 @@ function manualQaPassed(status = "PASS") {
 
 function currentPackageLockUnchanged(featureList) {
   const currentPackageLockKeys = [
+    "v0952_next_large_work_checkpoint",
+    "v0951_future_next_implementation_gate_packet_refresh",
+    "v0950_exact_next_target_candidate_matrix_refresh",
+    "v0949_official_next_postcss_evidence_refresh",
+    "v0948_accepted_pushed_state_checkpoint",
     "v0947_next_large_work_checkpoint",
     "v0946_fake_operator_status_copy_polish",
     "v0945_next_action_decision_clarity",
@@ -239,22 +244,53 @@ function currentPackageLockUnchanged(featureList) {
   return states.length > 0 && states.every((changed) => changed === false) ? "yes" : "review_required";
 }
 
-function collectProofChain(featureList) {
-  const accepted = featureList.v0943_accepted_pushed_state_checkpoint || {};
-  const priorAccepted = featureList.v0938_accepted_pushed_state_checkpoint || {};
+function yesNo(value, fallback = "review_required") {
+  if (value === true) return "yes";
+  if (value === false) return "no";
+  return fallback;
+}
+
+function shouldUseHistoricalProofChain(proof) {
+  const text = `${proof?.phase || ""} ${proof?.path || ""}`;
+  return /v0[._]9[._](3[8-9]|4[0-7])|v0\.9\.(3[8-9]|4[0-7])/.test(text);
+}
+
+function collectProofChain(featureList, proof = {}) {
+  const useHistorical = shouldUseHistoricalProofChain(proof);
+  const accepted =
+    !useHistorical && featureList.v0948_accepted_pushed_state_checkpoint
+      ? featureList.v0948_accepted_pushed_state_checkpoint
+      : featureList.v0943_accepted_pushed_state_checkpoint || {};
+  const priorAccepted =
+    !useHistorical && featureList.v0943_accepted_pushed_state_checkpoint
+      ? featureList.v0943_accepted_pushed_state_checkpoint
+      : featureList.v0938_accepted_pushed_state_checkpoint || {};
   const acceptedWarn = featureList.v0933_accepted_pushed_warn_state_checkpoint || {};
-  const current = featureList.v0947_next_large_work_checkpoint || {};
+  const current =
+    !useHistorical && featureList.v0952_next_large_work_checkpoint
+      ? featureList.v0952_next_large_work_checkpoint
+      : featureList.v0947_next_large_work_checkpoint || {};
+  const currentManualQa = current.current_bundle_manual_qa_status || accepted.current_bundle_manual_qa_status || "PENDING";
+  const currentResult = current.result || accepted.next_postcss_status || "review_required";
+  const currentPushed = yesNo(current.pushed, "review_required");
+  const currentBundle =
+    current.phase || accepted.current_local_bundle || accepted.phase || "review_required";
 
   return {
     acceptedPushedCheckpoint:
       accepted.accepted_pushed_short_commit || accepted.accepted_pushed_commit || priorAccepted.accepted_pushed_short_commit || priorAccepted.accepted_pushed_commit || "review_required",
     localImplementationProof:
-      accepted.local_implementation_proof_dir || accepted.operator_qa_proof_dir || priorAccepted.operator_qa_pass_proof_dir || "review_required",
-    operatorQaProof: accepted.operator_qa_proof_dir || priorAccepted.operator_qa_pass_proof_dir || "review_required",
+      current.local_research_proof_dir ||
+      accepted.local_research_proof_dir ||
+      accepted.local_implementation_proof_dir ||
+      accepted.operator_qa_proof_dir ||
+      priorAccepted.operator_qa_pass_proof_dir ||
+      "review_required",
+    operatorQaProof: current.operator_qa_proof_dir || accepted.operator_qa_proof_dir || priorAccepted.operator_qa_pass_proof_dir || currentManualQa,
     closeoutPushProof: accepted.closeout_push_proof_dir || priorAccepted.closeout_push_proof_dir || "review_required",
     acceptedWarnCheckpoint:
       acceptedWarn.accepted_pushed_warn_short_commit || acceptedWarn.accepted_pushed_warn_commit || "review_required",
-    pendingLocalBundle: current.current_bundle_manual_qa_status || "PENDING",
+    pendingLocalBundle: `${currentBundle}; result=${currentResult}; manual_qa=${currentManualQa}; pushed=${currentPushed}`,
   };
 }
 
@@ -342,7 +378,7 @@ function collectState(options) {
   const assessment = assessCloseout({ proof, git, queue, proofDiscoveryMode });
   const featureText = JSON.stringify(featureList);
   const packageLockUnchanged = currentPackageLockUnchanged(featureList);
-  const proofChain = collectProofChain(featureList);
+  const proofChain = collectProofChain(featureList, proof);
   const safety = {
     packageLockUnchanged,
     queue015Status: featureText.includes('"queue_015_status":"blocked"') || featureText.includes('"queue_015_status": "blocked"') ? "blocked" : "review_required",

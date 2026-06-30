@@ -36,6 +36,6 @@ describe("v0.9.44 proof chain readability helper", () => {
     expect(result.stdout).toContain("accepted_pushed_checkpoint=8358e63");
     expect(result.stdout).toContain(`closeout_push_proof=${closeoutProof}`);
     expect(result.stdout).toContain("accepted_warn_checkpoint=beea159");
-    expect(result.stdout).toContain("pending_local_bundle=PASS");
+    expect(result.stdout).toContain("pending_local_bundle=KIA-Stick-v0.9.47-next-large-work-checkpoint; result=WARN_SAFE_NEXT_TARGET_UNCLEAR; manual_qa=PASS; pushed=no");
   });
 });
