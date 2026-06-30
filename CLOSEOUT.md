@@ -10,7 +10,7 @@
 - Scope: fake-only docs/tests/tooling/status polish for accepted pushed proof-chain visibility and operator next-action review.
 - Included subphases: v0.9.43 accepted pushed state checkpoint; v0.9.44 proof chain readability helper; v0.9.45 next-action decision clarity; v0.9.46 fake operator status copy polish; v0.9.47 next large-work checkpoint.
 - Closeout helper: proof-chain summary output and explicit next-action state labels.
-- Settings copy: latest accepted pushed checkpoint `8358e63`, accepted WARN checkpoint `beea159`, current bundle `PENDING`, and blocked real-doc/Next state.
+- Settings copy: latest accepted pushed checkpoint `8358e63`, accepted WARN checkpoint `beea159`, current bundle `PASS`, and blocked real-doc/Next state.
 - Next/PostCSS runtime security path: remains parked as `WARN_SAFE_NEXT_TARGET_UNCLEAR`.
 - v0.9.12C implementation: blocked until an exact Next target is separately approved.
 - Product version: `0.7.0`
@@ -29,9 +29,10 @@
 - Secrets printed: no
 - Discord sent: no
 - Push performed: no
-- Manual QA status: PENDING
+- Manual QA status: PASS
+- Operator QA proof: `/home/mint/kia-stick-local-proofs/proof_kia_stick_v0_9_43_to_v0_9_47_accepted_state_fake_proof_chain_operator_ux_bundle_20260629T212105Z`
 
-This local bundle records the accepted pushed v0.9.42 baseline and makes proof-chain/next-action/operator status output clearer. Operator review and any closeout/push remain separate.
+This local bundle records the accepted pushed v0.9.42 baseline and makes proof-chain/next-action/operator status output clearer. Operator QA passed for this local fake-only bundle; any closeout/push remains separate.
 
 ## v0.9.38 to v0.9.42 Accepted State / Proof Helper Closeout Usability Bundle
 

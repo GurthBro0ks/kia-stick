@@ -125,7 +125,7 @@ const acceptedOperatorCheckpoint = [
   { label: "Prior PASS commit", value: "c5d12a004f4c9d270260ee860781b99421a938dd" },
   { label: "Prior PASS QA", value: "manual QA PASS for v0.9.23-to-v0.9.27" },
   { label: "Previous bundle QA", value: "manual QA PASS for v0.9.33-to-v0.9.37; pushed no" },
-  { label: "Current bundle QA", value: "manual QA PENDING for v0.9.43-to-v0.9.47; pushed no" },
+  { label: "Current bundle QA", value: "manual QA PASS for v0.9.43-to-v0.9.47; pushed no" },
   { label: "Real-doc gate", value: "queue-015 blocked; no real-doc capability" },
   { label: "Next/PostCSS", value: "WARN_SAFE_NEXT_TARGET_UNCLEAR; parked, not fixed" },
   { label: "v0.9.12C", value: "blocked pending exact operator-approved Next target" },
@@ -512,7 +512,7 @@ export function KiaStickApp({ runtimeVersion = clientVersion }: { runtimeVersion
               <span className="sectionKicker">Operator status</span>
               <h3>Accepted pushed checkpoint visible: 8358e63</h3>
               <p>
-                Accepted pushed checkpoint 8358e63 is recorded for operator review. Accepted pushed WARN checkpoint visible: beea159 remains parked. This status block is copy-only; Next/PostCSS is parked, manual QA for the current bundle is pending, and no real-doc capability is approved.
+                Accepted pushed checkpoint 8358e63 is recorded for operator review. Accepted pushed WARN checkpoint visible: beea159 remains parked. This status block is copy-only; Next/PostCSS is parked, manual QA for the current bundle passed, and no real-doc capability is approved.
               </p>
               <dl className="settingsGrid">
                 {acceptedOperatorCheckpoint.map((row) => (

@@ -36,6 +36,6 @@ describe("v0.9.44 proof chain readability helper", () => {
     expect(result.stdout).toContain("accepted_pushed_checkpoint=8358e63");
     expect(result.stdout).toContain(`closeout_push_proof=${closeoutProof}`);
     expect(result.stdout).toContain("accepted_warn_checkpoint=beea159");
-    expect(result.stdout).toContain("pending_local_bundle=PENDING");
+    expect(result.stdout).toContain("pending_local_bundle=PASS");
   });
 });

@@ -5,7 +5,7 @@
 - Phase: `KIA-Stick-v0.9.43-to-v0.9.47-accepted-state-and-fake-only-proof-chain-operator-ux-bundle`
 - Target: `USER_LAPTOP_ONLY`
 - Provider: `local-fake-deterministic`
-- Status: local v0.9.43-to-v0.9.47 accepted-state and fake-only proof-chain/operator UX bundle is in progress with manual QA `PENDING`. The accepted pushed v0.9.38-to-v0.9.42 checkpoint is recorded at `8358e6352557c4af05d9c40401691d2bf73f06ef` with closeout proof `/home/mint/kia-stick-local-proofs/proof_kia_stick_v0_9_38_to_v0_9_42_accepted_state_proof_helper_closeout_usability_bundle_20260628T170309Z/closeout_push_20260629T210458Z`. Next/PostCSS remains parked as `WARN_SAFE_NEXT_TARGET_UNCLEAR`; v0.9.12C remains blocked pending exact target approval; queue-015 remains blocked; product/prompt unchanged; no dependency or real-doc implementation is approved.
+- Status: local v0.9.43-to-v0.9.47 accepted-state and fake-only proof-chain/operator UX bundle has manual QA `PASS` by `OPERATOR_QA_PASS for /home/mint/kia-stick-local-proofs/proof_kia_stick_v0_9_43_to_v0_9_47_accepted_state_fake_proof_chain_operator_ux_bundle_20260629T212105Z`. The accepted pushed v0.9.38-to-v0.9.42 checkpoint is recorded at `8358e6352557c4af05d9c40401691d2bf73f06ef` with closeout proof `/home/mint/kia-stick-local-proofs/proof_kia_stick_v0_9_38_to_v0_9_42_accepted_state_proof_helper_closeout_usability_bundle_20260628T170309Z/closeout_push_20260629T210458Z`. Next/PostCSS remains parked as `WARN_SAFE_NEXT_TARGET_UNCLEAR`; v0.9.12C remains blocked pending exact target approval; queue-015 remains blocked; product/prompt unchanged; no dependency or real-doc implementation is approved.
 
 ## v0.9.43 to v0.9.47 Accepted State / Fake Proof Chain Operator UX Bundle
 
@@ -24,11 +24,11 @@
 - Queue state: `queue-015-v07-first-real-doc-gate-request` remains blocked.
 - Real-doc capability found/approved: no.
 - Push status: not pushed.
-- Manual QA status: PENDING.
-- Proof directory: pending validation proof for this local bundle.
+- Manual QA status: PASS by `OPERATOR_QA_PASS for /home/mint/kia-stick-local-proofs/proof_kia_stick_v0_9_43_to_v0_9_47_accepted_state_fake_proof_chain_operator_ux_bundle_20260629T212105Z`.
+- Proof directory: `/home/mint/kia-stick-local-proofs/proof_kia_stick_v0_9_43_to_v0_9_47_accepted_state_fake_proof_chain_operator_ux_bundle_20260629T212105Z`
 - Commands run: baseline harness/git/package checks, repo docs/tests/helper/UI inspection, implementation plan proof write, and scoped docs/tests/tooling/status edits.
-- Validation: pending.
-- Remaining unknowns: manual operator QA, separate closeout/push approval, and exact operator-approved Next target.
+- Validation: PASS for required local gates.
+- Remaining unknowns: separate closeout/push approval and exact operator-approved Next target.
 
 ## v0.9.38 to v0.9.42 Accepted State / Proof Helper Closeout Usability Bundle
 

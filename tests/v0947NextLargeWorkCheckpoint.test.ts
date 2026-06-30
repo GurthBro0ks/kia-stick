@@ -20,7 +20,7 @@ describe("v0.9.47 next large-work checkpoint", () => {
       "`queue-015-v07-first-real-doc-gate-request` remains blocked.",
       "Run deeper official advisory/release-note research only",
       "Keep real-doc gate blocked",
-      "Manual QA remains `PENDING`",
+      "Manual QA is `PASS`",
     ]) {
       expect(doc).toContain(required);
     }
@@ -44,8 +44,8 @@ describe("v0.9.47 next large-work checkpoint", () => {
     const state = featureList.v0947_next_large_work_checkpoint;
 
     expect(state.phase).toBe(phase);
-    expect(state.status).toBe("needs_review");
-    expect(state.current_bundle_manual_qa_status).toBe("PENDING");
+    expect(state.status).toBe("accepted");
+    expect(state.current_bundle_manual_qa_status).toBe("PASS");
     expect(state.pushed).toBe(false);
     expect(state.package_json_changed).toBe(false);
     expect(state.package_lock_changed).toBe(false);

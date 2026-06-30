@@ -24,7 +24,7 @@ describe("v0.9.43 accepted pushed state checkpoint", () => {
       "`queue-015-v07-first-real-doc-gate-request` remains blocked.",
       "Product/package version remains `0.7.0`.",
       "Prompt version remains `prompt.fake-docs.v0.5-import-wizard-hardening`.",
-      "Manual QA remains `PENDING`",
+      "Manual QA is `PASS`",
     ]) {
       expect(doc).toContain(required);
     }
@@ -49,12 +49,12 @@ describe("v0.9.43 accepted pushed state checkpoint", () => {
     const state = featureList.v0943_accepted_pushed_state_checkpoint;
 
     expect(state.phase).toBe(phase);
-    expect(state.status).toBe("needs_review");
+    expect(state.status).toBe("accepted");
     expect(state.accepted_pushed_commit).toBe(acceptedCommit);
     expect(state.closeout_push_proof_dir).toBe(closeoutProof);
     expect(state.accepted_manual_qa_status).toBe("PASS");
     expect(state.accepted_push_status).toBe("yes");
-    expect(state.current_bundle_manual_qa_status).toBe("PENDING");
+    expect(state.current_bundle_manual_qa_status).toBe("PASS");
     expect(state.next_postcss_status).toBe("WARN_SAFE_NEXT_TARGET_UNCLEAR");
     expect(state.queue_015_status).toBe("blocked");
     expect(state.package_lock_changed).toBe(false);
