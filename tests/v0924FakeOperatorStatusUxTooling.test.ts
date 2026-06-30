@@ -42,7 +42,7 @@ describe("v0.9.24 fake operator status UX/tooling", () => {
     const state = featureList.v0924_fake_operator_status_ux_tooling;
 
     expect(component).toContain("Fake-only operator status");
-    expect(component).toContain("Accepted pushed checkpoint visible");
+    expect(component).toContain("Accepted pushed WARN checkpoint visible");
     expect(component).toContain(acceptedCommit);
     expect(component).toContain("manual QA PASS for v0.9.23-to-v0.9.27");
     expect(component).toContain("queue-015 blocked; no real-doc capability");

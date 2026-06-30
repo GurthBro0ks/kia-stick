@@ -224,6 +224,11 @@ function manualQaPassed(status = "PASS") {
 
 function currentPackageLockUnchanged(featureList) {
   const currentPackageLockKeys = [
+    "v0957_next_large_work_checkpoint",
+    "v0956_fake_operator_status_accepted_warn_push_polish",
+    "v0955_no_actionable_queue_operator_guidance",
+    "v0954_accepted_warn_report_readability_polish",
+    "v0953_accepted_pushed_warn_state_checkpoint",
     "v0952_next_large_work_checkpoint",
     "v0951_future_next_implementation_gate_packet_refresh",
     "v0950_exact_next_target_candidate_matrix_refresh",
@@ -258,19 +263,26 @@ function shouldUseHistoricalProofChain(proof) {
 function collectProofChain(featureList, proof = {}) {
   const useHistorical = shouldUseHistoricalProofChain(proof);
   const accepted =
-    !useHistorical && featureList.v0948_accepted_pushed_state_checkpoint
+    !useHistorical && featureList.v0953_accepted_pushed_warn_state_checkpoint
+      ? featureList.v0953_accepted_pushed_warn_state_checkpoint
+      : !useHistorical && featureList.v0948_accepted_pushed_state_checkpoint
       ? featureList.v0948_accepted_pushed_state_checkpoint
       : featureList.v0943_accepted_pushed_state_checkpoint || {};
   const priorAccepted =
     !useHistorical && featureList.v0943_accepted_pushed_state_checkpoint
       ? featureList.v0943_accepted_pushed_state_checkpoint
       : featureList.v0938_accepted_pushed_state_checkpoint || {};
-  const acceptedWarn = featureList.v0933_accepted_pushed_warn_state_checkpoint || {};
+  const acceptedWarn =
+    !useHistorical && featureList.v0953_accepted_pushed_warn_state_checkpoint
+      ? featureList.v0953_accepted_pushed_warn_state_checkpoint
+      : featureList.v0933_accepted_pushed_warn_state_checkpoint || {};
   const current =
-    !useHistorical && featureList.v0952_next_large_work_checkpoint
+    !useHistorical && featureList.v0957_next_large_work_checkpoint
+      ? featureList.v0957_next_large_work_checkpoint
+      : !useHistorical && featureList.v0952_next_large_work_checkpoint
       ? featureList.v0952_next_large_work_checkpoint
       : featureList.v0947_next_large_work_checkpoint || {};
-  const currentManualQa = current.current_bundle_manual_qa_status || accepted.current_bundle_manual_qa_status || "PENDING";
+  const currentManualQa = current.manual_qa_status || current.current_bundle_manual_qa_status || accepted.current_bundle_manual_qa_status || "PENDING";
   const currentResult = current.result || accepted.next_postcss_status || "review_required";
   const currentPushed = yesNo(current.pushed, "review_required");
   const currentBundle =
@@ -280,13 +292,20 @@ function collectProofChain(featureList, proof = {}) {
     acceptedPushedCheckpoint:
       accepted.accepted_pushed_short_commit || accepted.accepted_pushed_commit || priorAccepted.accepted_pushed_short_commit || priorAccepted.accepted_pushed_commit || "review_required",
     localImplementationProof:
+      current.local_bundle_proof_dir ||
       current.local_research_proof_dir ||
       accepted.local_research_proof_dir ||
       accepted.local_implementation_proof_dir ||
       accepted.operator_qa_proof_dir ||
       priorAccepted.operator_qa_pass_proof_dir ||
       "review_required",
-    operatorQaProof: current.operator_qa_proof_dir || accepted.operator_qa_proof_dir || priorAccepted.operator_qa_pass_proof_dir || currentManualQa,
+    operatorQaProof:
+      current.operator_qa_pass_proof_dir ||
+      current.operator_qa_proof_dir ||
+      accepted.operator_qa_pass_proof_dir ||
+      accepted.operator_qa_proof_dir ||
+      priorAccepted.operator_qa_pass_proof_dir ||
+      currentManualQa,
     closeoutPushProof: accepted.closeout_push_proof_dir || priorAccepted.closeout_push_proof_dir || "review_required",
     acceptedWarnCheckpoint:
       acceptedWarn.accepted_pushed_warn_short_commit || acceptedWarn.accepted_pushed_warn_commit || "review_required",
@@ -306,6 +325,28 @@ function nextActionState({ proof, git, queue, safety }) {
   if (proof.pushed !== "yes" || git.ahead > 0) return "closeout_push_needed";
   if (queue.ok && queue.item && !readyQueueStatuses.has(queue.item.status)) return "operator_qa_needed";
   return "accepted_pushed_state_recorded";
+}
+
+function acceptedWarnMeaning(proof, featureList = {}) {
+  const latestWarn =
+    featureList.v0953_accepted_pushed_warn_state_checkpoint ||
+    featureList.v0952_next_large_work_checkpoint ||
+    featureList.v0948_accepted_pushed_state_checkpoint ||
+    {};
+  const hasAcceptedWarn =
+    proof.acceptedWarn ||
+    latestWarn.manual_qa_status === "ACCEPTED_WARN" ||
+    latestWarn.current_bundle_manual_qa_status === "ACCEPTED_WARN" ||
+    latestWarn.result === "WARN_SAFE_NEXT_TARGET_UNCLEAR";
+  if (!hasAcceptedWarn) return "not_applicable";
+  return "operator_accepted_parked_warn_not_fixed; exact_next_target_not_proven; no_package_mutation; v0912c_blocked; queue_015_blocked";
+}
+
+function noActionableQueueGuidance(queue) {
+  if (queue.ok && !queue.item) {
+    return "No actionable queue items. Blocked and parked items are intentionally skipped. Safe next choices: continue fake-only proof/report/operator UX polish; repeat official-source research later; request exact Next target approval only if a clean target is proven; keep the real-doc gate blocked.";
+  }
+  return "not_applicable";
 }
 
 export function assessCloseout({ proof, git, queue, proofDiscoveryMode = "default_latest" }) {
@@ -387,6 +428,8 @@ function collectState(options) {
     realDocCapability: featureText.includes('"real_doc_capability_added":true') || featureText.includes('"real_doc_implementation_approved":true') ? "review_required" : "blocked",
     systemChanges: "none",
   };
+  const acceptedWarnStatusMeaning = acceptedWarnMeaning(proof, featureList);
+  const queueGuidance = noActionableQueueGuidance(queue);
 
   return {
     root,
@@ -398,6 +441,8 @@ function collectState(options) {
     queue,
     safety,
     proofChain,
+    acceptedWarnStatusMeaning,
+    queueGuidance,
     nextActionState: nextActionState({ proof, git, queue, safety }),
     assessment,
   };
@@ -425,6 +470,8 @@ function printReview(options) {
   console.log(`git_ahead_origin_main=${state.git.ahead}`);
   console.log(`queue_id=${state.queue.item?.id || "none"}`);
   console.log(`queue_status=${state.queue.item?.status || "none"}`);
+  console.log(`no_actionable_queue_guidance=${state.queueGuidance}`);
+  console.log(`accepted_warn_meaning=${state.acceptedWarnStatusMeaning}`);
   console.log(`stop_on_warn_fail=${state.assessment.stopOnWarnFail}`);
   console.log(`queue_acceptance_allowed=${state.assessment.queueAcceptanceAllowed}`);
   console.log(`suggested_queue_command=${state.assessment.suggestedQueueCommand}`);
@@ -500,6 +547,8 @@ function printSummary(options) {
     PROOF_CHAIN_ACCEPTED_WARN_CHECKPOINT: state.proofChain.acceptedWarnCheckpoint,
     PROOF_CHAIN_PENDING_LOCAL_BUNDLE: state.proofChain.pendingLocalBundle,
     ACCEPTED_WARN_STATUS: state.proof.acceptedWarn ? "accepted_warn_parked" : "not_accepted_warn",
+    ACCEPTED_WARN_MEANING: state.acceptedWarnStatusMeaning,
+    NO_ACTIONABLE_QUEUE_GUIDANCE: state.queueGuidance,
     STOP_ON_WARN_FAIL_STATUS: state.assessment.stopOnWarnFail ? "STOP_REQUIRED" : "CLEAR",
     QUEUE_ACCEPTANCE_ALLOWED: state.assessment.queueAcceptanceAllowed ? "yes" : "no",
     TESTS_ADDED: "tests/closeoutHelper.test.ts",

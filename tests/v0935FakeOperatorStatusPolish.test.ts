@@ -45,7 +45,6 @@ describe("v0.9.35 fake operator status polish", () => {
     expect(component).toContain("beea159bb44ecc35ed8cb9b5a55aa1c0f3f217f6");
     expect(component).toContain("manual QA ACCEPTED_WARN");
     expect(component).toContain("manual QA PASS for v0.9.43-to-v0.9.47; pushed yes");
-    expect(component).toContain("manual QA ACCEPTED_WARN; pushed no");
     expect(component).toContain("manual QA PASS; pushed no");
     expect(component).toContain("WARN_SAFE_NEXT_TARGET_UNCLEAR; parked, not fixed");
     expect(component).toContain("blocked pending exact operator-approved Next target");

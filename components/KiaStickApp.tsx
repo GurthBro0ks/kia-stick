@@ -116,18 +116,20 @@ const vaultViews: { id: VaultView; label: string; meta: string }[] = [
 ];
 
 const acceptedOperatorCheckpoint = [
+  { label: "Accepted pushed WARN commit", value: "3b9fef5282e84f78453402cb10a37398300ae9c1" },
+  { label: "Accepted pushed WARN proof", value: "/home/mint/kia-stick-local-proofs/proof_kia_stick_v0_9_48_to_v0_9_52_operator_qa_acceptance_recording_20260630T183635Z/warn_closeout_push_20260630T185549Z" },
+  { label: "Accepted pushed WARN QA", value: "validation PASS / manual QA ACCEPTED_WARN / pushed yes" },
   { label: "Accepted pushed commit", value: "928c614d0fcafb64b6ad79770c8d55a3b662b153" },
-  { label: "Accepted pushed proof", value: "/home/mint/kia-stick-local-proofs/proof_kia_stick_v0_9_43_to_v0_9_47_operator_qa_pass_recording_20260630T044306Z/closeout_push_20260630T071740Z" },
-  { label: "Accepted pushed QA", value: "validation PASS / manual QA PASS / pushed" },
+  { label: "Accepted pushed QA", value: "manual QA PASS for v0.9.43-to-v0.9.47; pushed yes" },
   { label: "Accepted WARN commit", value: "beea159bb44ecc35ed8cb9b5a55aa1c0f3f217f6" },
   { label: "Accepted WARN proof", value: "/home/mint/kia-stick-local-proofs/proof_kia_stick_v0_9_28_to_v0_9_32_accepted_state_research_only_next_target_discovery_20260628T145445Z/warn_closeout_push_20260628T155630Z" },
   { label: "Accepted WARN QA", value: "validation PASS / manual QA ACCEPTED_WARN / pushed" },
   { label: "Prior PASS commit", value: "c5d12a004f4c9d270260ee860781b99421a938dd" },
   { label: "Prior PASS QA", value: "manual QA PASS for v0.9.23-to-v0.9.27" },
   { label: "Previous bundle QA", value: "manual QA PASS for v0.9.43-to-v0.9.47; pushed yes" },
-  { label: "Current local bundle", value: "v0.9.48-to-v0.9.52 research refresh" },
+  { label: "Current local bundle", value: "v0.9.53-to-v0.9.57 local polish manual QA PASS" },
   { label: "Current bundle result", value: "WARN_SAFE_NEXT_TARGET_UNCLEAR" },
-  { label: "Current bundle QA", value: "manual QA ACCEPTED_WARN; pushed no" },
+  { label: "Current bundle QA", value: "manual QA PASS; pushed no" },
   { label: "Baseline alignment patch QA", value: "manual QA PASS; pushed no" },
   { label: "Real-doc gate", value: "queue-015 blocked; no real-doc capability" },
   { label: "Next/PostCSS", value: "WARN_SAFE_NEXT_TARGET_UNCLEAR; parked, not fixed" },
@@ -513,9 +515,9 @@ export function KiaStickApp({ runtimeVersion = clientVersion }: { runtimeVersion
             </section>
             <section className="aboutPanel" aria-label="Fake-only operator status">
               <span className="sectionKicker">Operator status</span>
-              <h3>Accepted pushed checkpoint visible: 928c614</h3>
+              <h3>Accepted pushed WARN checkpoint visible: 3b9fef5</h3>
               <p>
-                Accepted pushed checkpoint 928c614 is recorded for operator review. Accepted pushed WARN checkpoint visible: beea159 remains parked. This status block is copy-only; the current v0.9.48-to-v0.9.52 research bundle remains WARN_SAFE_NEXT_TARGET_UNCLEAR with manual QA accepted as WARN, pushed no, and no real-doc capability approved.
+                Accepted pushed WARN checkpoint 3b9fef5 is recorded as accepted-WARN parked, not fixed. This status block is copy-only; Next/PostCSS remains WARN_SAFE_NEXT_TARGET_UNCLEAR, v0.9.12C remains blocked, queue-015 remains blocked, package lock is unchanged, and no real-doc capability is approved.
               </p>
               <dl className="settingsGrid">
                 {acceptedOperatorCheckpoint.map((row) => (
