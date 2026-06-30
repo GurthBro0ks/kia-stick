@@ -15,7 +15,11 @@ interface LocalProofIndexModule {
   discoverLocalProofs(root?: string): Array<{
     path: string;
     timestamp: string;
+    kind: string;
     result: string;
+    manualQaStatus: string;
+    pushed: string;
+    acceptedWarn: boolean;
     resultMdExists: boolean;
     openThisFolderExists: boolean;
     screenshotsCount: number;
@@ -23,6 +27,13 @@ interface LocalProofIndexModule {
   }>;
   selectLatestLocalProof<T>(proofs: T[]): T | null;
   selectLatestReviewReadyProof<T extends { result: string; resultMdExists: boolean; openThisFolderExists: boolean; screenshotsCount: number }>(
+    proofs: T[]
+  ): T | null;
+  selectLatestAcceptedPushedCloseoutProof<T extends { result: string; pushed: string; kind: string; phase?: string; name?: string }>(
+    proofs: T[]
+  ): T | null;
+  selectLatestOperatorQaPassProof<T extends { result: string; manualQaStatus: string; kind: string }>(proofs: T[]): T | null;
+  selectLatestAcceptedWarnProof<T extends { acceptedWarn: boolean; phaseSlug?: string; phase?: string; manualQaStatus: string; result: string }>(
     proofs: T[]
   ): T | null;
   writeLocalProofIndex(root?: string, outDir?: string): {
@@ -40,10 +51,19 @@ function makeProofRoot(): string {
   return mkdtempSync(join(tmpdir(), "kia-local-proof-index-"));
 }
 
-function makeProof(root: string, name: string, options: { result?: string; open?: boolean; screenshots?: number } = {}): string {
+function makeProof(
+  root: string,
+  name: string,
+  options: { result?: string; manualQa?: string; pushed?: string; open?: boolean; screenshots?: number } = {}
+): string {
   const dir = join(root, name);
   mkdirSync(dir, { recursive: true });
-  if (options.result !== undefined) writeFileSync(join(dir, "RESULT.md"), options.result);
+  if (options.result !== undefined) {
+    const lines = [options.result.trimEnd()];
+    if (options.manualQa) lines.push(`MANUAL_QA_STATUS=${options.manualQa}`);
+    if (options.pushed) lines.push(`PUSHED=${options.pushed}`);
+    writeFileSync(join(dir, "RESULT.md"), `${lines.join("\n")}\n`);
+  }
   if (options.open) writeFileSync(join(dir, "OPEN_THIS_FOLDER.txt"), "Open this proof folder.\n");
   if (options.screenshots) {
     const screenshotsDir = join(dir, "screenshots");
@@ -81,6 +101,7 @@ describe("local proof index", () => {
     expect(proofs[0].resultMdExists).toBe(true);
     expect(proofs[0].openThisFolderExists).toBe(true);
     expect(proofs[0].screenshotsCount).toBe(8);
+    expect(proofs[0].kind).toBe("proof");
     expect(proofs[0].warnings).toEqual([]);
   });
 
@@ -119,6 +140,10 @@ describe("local proof index", () => {
       proofRoot: string;
       latestProof: string;
       latestReviewReadyProof: string;
+      latestAcceptedPushedCloseoutProof: string | null;
+      latestOperatorQaPassProof: string | null;
+      latestAcceptedWarnProof: string | null;
+      reviewReadyExplanation: string;
       proofs: Array<{ screenshotsCount: number }>;
     };
 
@@ -126,10 +151,55 @@ describe("local proof index", () => {
     expect(existsSync(output.jsonPath)).toBe(true);
     expect(markdown).toContain("KIA Stick Local Proof Index");
     expect(markdown).toContain("WARN");
+    expect(markdown).toContain("Latest accepted pushed closeout proof:");
+    expect(markdown).toContain("Latest operator QA PASS proof:");
+    expect(markdown).toContain("Latest accepted-WARN proof:");
+    expect(markdown).toContain("Latest screenshot review-ready candidate:");
+    expect(markdown).toContain("Review-ready candidate criteria:");
     expect(json.proofRoot).toBe(resolve(root));
     expect(json.latestProof).toContain("proof_kia_stick_v0_7_10b_operator_smoke_evidence_20260626T090618Z");
     expect(json).toHaveProperty("latestReviewReadyProof");
+    expect(json).toHaveProperty("latestAcceptedPushedCloseoutProof");
+    expect(json).toHaveProperty("latestOperatorQaPassProof");
+    expect(json).toHaveProperty("latestAcceptedWarnProof");
+    expect(json.reviewReadyExplanation).toContain("Review-ready candidate criteria:");
     expect(json.proofs[0].screenshotsCount).toBe(8);
+  });
+
+  it("labels latest proof, accepted pushed closeout, operator QA PASS, accepted-WARN, and screenshot-gated candidates separately", async () => {
+    const mod = await loadModule();
+    const root = makeProofRoot();
+    const reviewReady = makeProof(root, "proof_kia_stick_v0_7_10b_operator_smoke_evidence_20260626T090618Z", {
+      result: "RESULT=PASS\n",
+      manualQa: "PASS",
+      pushed: "yes",
+      open: true,
+      screenshots: 8,
+    });
+    const acceptedWarn = makeProof(root, "proof_kia_stick_v0_9_48_to_v0_9_52_accepted_state_20260630T170813Z", {
+      result: "RESULT=WARN\nOPERATOR_QA_ACCEPTED_WARN=fixture\n",
+      manualQa: "ACCEPTED_WARN",
+      pushed: "no",
+    });
+    const operatorQa = makeProof(root, "proof_kia_stick_v0_9_53_to_v0_9_57_operator_qa_pass_recording_20260630T195543Z", {
+      result: "RESULT=PASS\n",
+      manualQa: "PASS",
+      pushed: "no",
+    });
+    const closeout = makeProof(operatorQa, "closeout_push_20260630T204915Z", {
+      result: "RESULT=PASS\n",
+      manualQa: "PASS",
+      pushed: "yes",
+    });
+    const latestInProgress = makeProof(root, "proof_kia_stick_v0_9_58_to_v0_9_62_in_progress_20260630T205845Z");
+
+    const proofs = mod.discoverLocalProofs(root);
+
+    expect(mod.selectLatestLocalProof(proofs)?.path).toBe(latestInProgress);
+    expect(mod.selectLatestAcceptedPushedCloseoutProof(proofs)?.path).toBe(closeout);
+    expect(mod.selectLatestOperatorQaPassProof(proofs)?.path).toBe(operatorQa);
+    expect(mod.selectLatestAcceptedWarnProof(proofs)?.path).toBe(acceptedWarn);
+    expect(mod.selectLatestReviewReadyProof(proofs)?.path).toBe(reviewReady);
   });
 
   it("prints readable helper output from the npm-facing script", () => {
@@ -144,8 +214,15 @@ describe("local proof index", () => {
 
     expect(result.status).toBe(0);
     expect(result.stdout).toContain("Latest proof:");
+    expect(result.stdout).toContain("Latest accepted pushed closeout proof:");
+    expect(result.stdout).toContain("Latest operator QA PASS proof:");
+    expect(result.stdout).toContain("Latest accepted-WARN proof:");
+    expect(result.stdout).toContain("Latest screenshot review-ready candidate:");
     expect(result.stdout).toContain("Latest review-ready proof:");
+    expect(result.stdout).toContain("Review-ready candidate criteria:");
     expect(result.stdout).toContain("result=PASS");
+    expect(result.stdout).toContain("manual_qa=unknown");
+    expect(result.stdout).toContain("pushed=unknown");
     expect(result.stdout).toContain("open_this_folder=yes");
     expect(result.stdout).toContain("screenshots=8");
   });

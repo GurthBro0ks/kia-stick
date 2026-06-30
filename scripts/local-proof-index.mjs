@@ -32,13 +32,25 @@ export function assertSafeProofRoot(root) {
 
 export function parseLocalProofDirName(proofPath) {
   const base = path.basename(proofPath);
-  if (!base.startsWith(PROOF_PREFIX)) return null;
+  const parent = path.basename(path.dirname(proofPath));
+  if (!base.startsWith(PROOF_PREFIX)) {
+    const closeoutMatch = base.match(/^(?:warn_)?closeout_push_(\d{8}T\d{6}Z)$/);
+    if (!closeoutMatch || !parent.startsWith(PROOF_PREFIX)) return null;
+    const parentParsed = parseLocalProofDirName(path.dirname(proofPath));
+    return {
+      phaseSlug: `${parentParsed?.phaseSlug || parent}/${base}`,
+      timestamp: closeoutMatch[1],
+      path: proofPath,
+      kind: base.startsWith("warn_") ? "accepted_warn_closeout_push" : "closeout_push",
+    };
+  }
   const rest = base.slice(PROOF_PREFIX.length);
   const match = rest.match(/^(.*)_(\d{8}T\d{6}Z)$/);
   return {
     phaseSlug: match ? match[1] : rest,
     timestamp: match ? match[2] : "",
     path: proofPath,
+    kind: "proof",
   };
 }
 
@@ -76,12 +88,17 @@ function parseResult(resultMarkdown) {
 
 function hasAcceptedWarn(resultMarkdown) {
   if (!resultMarkdown) return false;
-  return parseResult(resultMarkdown) === "WARN" && /\b(?:ACCEPTED_WARN|OPERATOR_QA_ACCEPTED_WARN)\b/.test(resultMarkdown);
+  const result = parseResult(resultMarkdown);
+  return (
+    result === "PASS_ACCEPTED_WARN" ||
+    (result === "WARN" && /\b(?:ACCEPTED_WARN|OPERATOR_QA_ACCEPTED_WARN)\b/.test(resultMarkdown)) ||
+    /^MANUAL_QA_STATUS=ACCEPTED_WARN$/im.test(resultMarkdown)
+  );
 }
 
 function reviewStateFor(result, acceptedWarn) {
   if (acceptedWarn) return "ACCEPTED_WARN_PARKED";
-  if (result === "PASS") return "PASS_REVIEW_READY_CANDIDATE";
+  if (result === "PASS") return "PASS_METADATA_ACCEPTED";
   if (result === "WARN_MISSING_RESULT") return "WARN_MISSING_RESULT";
   if (result === "WARN") return "WARN_REVIEW_REQUIRED";
   if (result === "FAIL") return "FAIL_STOP_REQUIRED";
@@ -95,6 +112,9 @@ export function inspectLocalProof(proofPath) {
   const stat = statSync(proofPath);
   const result = parseResult(resultMarkdown);
   const acceptedWarn = hasAcceptedWarn(resultMarkdown);
+  const manualQaStatus = fieldValue(resultMarkdown, "MANUAL_QA_STATUS") || fieldValue(resultMarkdown, "Manual QA status") || "";
+  const pushed = fieldValue(resultMarkdown, "PUSHED") || fieldValue(resultMarkdown, "Push performed") || "";
+  const phase = fieldValue(resultMarkdown, "PHASE") || fieldValue(resultMarkdown, "Phase") || parsed?.phaseSlug || "unknown";
   const warnings = [];
   if (!resultMarkdown) warnings.push("WARN_MISSING_RESULT");
 
@@ -103,8 +123,12 @@ export function inspectLocalProof(proofPath) {
     name: path.basename(proofPath),
     phaseSlug: parsed?.phaseSlug || "unknown",
     timestamp: parsed?.timestamp || "",
+    kind: parsed?.kind || "proof",
     mtimeMs: stat.mtimeMs,
+    phase,
     result,
+    manualQaStatus,
+    pushed,
     acceptedWarn,
     reviewState: reviewStateFor(result, acceptedWarn),
     resultMdExists: Boolean(resultMarkdown),
@@ -117,7 +141,7 @@ export function inspectLocalProof(proofPath) {
 export function discoverLocalProofs(root = DEFAULT_LOCAL_PROOF_ROOT) {
   const resolvedRoot = assertSafeProofRoot(root);
   if (!existsSync(resolvedRoot)) return [];
-  return readdirSync(resolvedRoot)
+  const topLevelProofDirs = readdirSync(resolvedRoot)
     .filter((entry) => entry.startsWith(PROOF_PREFIX))
     .map((entry) => path.join(resolvedRoot, entry))
     .filter((entryPath) => {
@@ -127,7 +151,25 @@ export function discoverLocalProofs(root = DEFAULT_LOCAL_PROOF_ROOT) {
       } catch {
         return false;
       }
-    })
+    });
+  const closeoutProofDirs = topLevelProofDirs.flatMap((proofDir) => {
+    try {
+      return readdirSync(proofDir)
+        .filter((entry) => /^(?:warn_)?closeout_push_\d{8}T\d{6}Z$/.test(entry))
+        .map((entry) => path.join(proofDir, entry))
+        .filter((entryPath) => {
+          try {
+            const stat = lstatSync(entryPath);
+            return stat.isDirectory() && !stat.isSymbolicLink();
+          } catch {
+            return false;
+          }
+        });
+    } catch {
+      return [];
+    }
+  });
+  return [...topLevelProofDirs, ...closeoutProofDirs]
     .map((entryPath) => inspectLocalProof(entryPath))
     .sort((a, b) => b.timestamp.localeCompare(a.timestamp) || b.mtimeMs - a.mtimeMs);
 }
@@ -140,11 +182,54 @@ export function selectLatestReviewReadyProof(proofs) {
   return proofs.find((proof) => proof.result === "PASS" && proof.resultMdExists && proof.openThisFolderExists && proof.screenshotsCount > 0) || null;
 }
 
+export function selectLatestAcceptedPushedCloseoutProof(proofs) {
+  return (
+    proofs.find(
+      (proof) =>
+        proof.result === "PASS" &&
+        proof.pushed === "yes" &&
+        (proof.kind.includes("closeout_push") || /closeout.*push/i.test(`${proof.phase} ${proof.name}`))
+    ) || null
+  );
+}
+
+export function selectLatestOperatorQaPassProof(proofs) {
+  return proofs.find((proof) => proof.result === "PASS" && /^PASS$/i.test(proof.manualQaStatus) && !proof.kind.includes("closeout_push")) || null;
+}
+
+export function selectLatestAcceptedWarnProof(proofs) {
+  return (
+    proofs.find(
+      (proof) =>
+        proof.acceptedWarn ||
+        /accepted[_-]?warn/i.test(`${proof.phaseSlug} ${proof.phase}`) ||
+        /^ACCEPTED_WARN$/i.test(proof.manualQaStatus) ||
+        proof.result === "PASS_ACCEPTED_WARN"
+    ) || null
+  );
+}
+
+function reviewReadyExplanation(latest, latestReviewReady) {
+  const criteria = "requires RESULT=PASS, OPEN_THIS_FOLDER.txt, and at least one screenshot filename under screenshots/";
+  if (!latest) return `Review-ready candidate criteria: ${criteria}. No proofs found.`;
+  if (!latestReviewReady) return `Review-ready candidate criteria: ${criteria}. No proof currently satisfies all criteria.`;
+  if (latest.path === latestReviewReady.path) return `Review-ready candidate criteria: ${criteria}. Latest proof satisfies the screenshot-gated criteria.`;
+  const reasons = [];
+  if (latest.result !== "PASS") reasons.push(`latest result is ${latest.result}`);
+  if (!latest.resultMdExists) reasons.push("latest RESULT.md is missing");
+  if (!latest.openThisFolderExists) reasons.push("latest OPEN_THIS_FOLDER.txt is missing");
+  if (latest.screenshotsCount < 1) reasons.push("latest screenshot count is 0");
+  return `Review-ready candidate criteria: ${criteria}. Older proof selected because ${reasons.join("; ")}.`;
+}
+
 function formatProofLine(proof) {
   const warnings = proof.warnings.length > 0 ? proof.warnings.join(",") : "none";
   return [
     `timestamp=${proof.timestamp || "unknown"}`,
+    `kind=${proof.kind}`,
     `result=${proof.result}`,
+    `manual_qa=${proof.manualQaStatus || "unknown"}`,
+    `pushed=${proof.pushed || "unknown"}`,
     `review_state=${proof.reviewState}`,
     `result_md=${proof.resultMdExists ? "yes" : "no"}`,
     `open_this_folder=${proof.openThisFolderExists ? "yes" : "no"}`,
@@ -157,28 +242,41 @@ function formatProofLine(proof) {
 export function renderMarkdownIndex(proofs, root) {
   const latest = selectLatestLocalProof(proofs);
   const latestReviewReady = selectLatestReviewReadyProof(proofs);
+  const latestAcceptedPushedCloseout = selectLatestAcceptedPushedCloseoutProof(proofs);
+  const latestOperatorQaPass = selectLatestOperatorQaPassProof(proofs);
+  const latestAcceptedWarn = selectLatestAcceptedWarnProof(proofs);
   const lines = [
     "# KIA Stick Local Proof Index",
     "",
     `Proof root: \`${path.resolve(root)}\``,
     `Generated at: \`${new Date().toISOString()}\``,
     latest ? `Latest proof: \`${latest.path}\`` : "Latest proof: none",
+    latestAcceptedPushedCloseout
+      ? `Latest accepted pushed closeout proof: \`${latestAcceptedPushedCloseout.path}\``
+      : "Latest accepted pushed closeout proof: none",
+    latestOperatorQaPass ? `Latest operator QA PASS proof: \`${latestOperatorQaPass.path}\`` : "Latest operator QA PASS proof: none",
+    latestAcceptedWarn ? `Latest accepted-WARN proof: \`${latestAcceptedWarn.path}\`` : "Latest accepted-WARN proof: none",
+    latestReviewReady
+      ? `Latest screenshot review-ready candidate: \`${latestReviewReady.path}\``
+      : "Latest screenshot review-ready candidate: none",
     latestReviewReady ? `Latest review-ready proof: \`${latestReviewReady.path}\`` : "Latest review-ready proof: none",
+    reviewReadyExplanation(latest, latestReviewReady),
     "",
-    "| Timestamp | Result | Review State | RESULT.md | OPEN_THIS_FOLDER.txt | Screenshots | Warnings | Path |",
-    "| --- | --- | --- | --- | --- | ---: | --- | --- |",
+    "| Timestamp | Kind | Result | Manual QA | Pushed | Review State | RESULT.md | OPEN_THIS_FOLDER.txt | Screenshots | Warnings | Path |",
+    "| --- | --- | --- | --- | --- | --- | --- | --- | ---: | --- | --- |",
   ];
 
   for (const proof of proofs) {
     const warnings = proof.warnings.length > 0 ? proof.warnings.join(", ") : "none";
     lines.push(
-      `| ${proof.timestamp || "unknown"} | ${proof.result} | ${proof.reviewState} | ${proof.resultMdExists ? "yes" : "no"} | ${proof.openThisFolderExists ? "yes" : "no"} | ${proof.screenshotsCount} | ${warnings} | \`${proof.path}\` |`
+      `| ${proof.timestamp || "unknown"} | ${proof.kind} | ${proof.result} | ${proof.manualQaStatus || "unknown"} | ${proof.pushed || "unknown"} | ${proof.reviewState} | ${proof.resultMdExists ? "yes" : "no"} | ${proof.openThisFolderExists ? "yes" : "no"} | ${proof.screenshotsCount} | ${warnings} | \`${proof.path}\` |`
     );
   }
   lines.push("");
   lines.push("Review rule: missing RESULT.md is WARN and must not be treated as accepted proof.");
   lines.push("Accepted-WARN rule: RESULT=WARN is parked, not PASS, only when RESULT.md explicitly records ACCEPTED_WARN or OPERATOR_QA_ACCEPTED_WARN.");
-  lines.push("Boundary: this index reads only proof directory names plus RESULT.md, OPEN_THIS_FOLDER.txt, and screenshots/ filenames.");
+  lines.push("Review-ready candidate rule: screenshot review-ready remains stricter than acceptance; closeout proof can be accepted/pushed without screenshots when RESULT, manual QA, and push metadata prove it.");
+  lines.push("Boundary: this index reads only proof directory names plus RESULT.md, OPEN_THIS_FOLDER.txt, and screenshots/ filenames inside the supplied proof root.");
   return `${lines.join("\n")}\n`;
 }
 
@@ -201,6 +299,10 @@ export function writeLocalProofIndex(root = DEFAULT_LOCAL_PROOF_ROOT, outDir = r
         generatedAt: new Date().toISOString(),
         latestProof: selectLatestLocalProof(proofs)?.path || null,
         latestReviewReadyProof: selectLatestReviewReadyProof(proofs)?.path || null,
+        latestAcceptedPushedCloseoutProof: selectLatestAcceptedPushedCloseoutProof(proofs)?.path || null,
+        latestOperatorQaPassProof: selectLatestOperatorQaPassProof(proofs)?.path || null,
+        latestAcceptedWarnProof: selectLatestAcceptedWarnProof(proofs)?.path || null,
+        reviewReadyExplanation: reviewReadyExplanation(selectLatestLocalProof(proofs), selectLatestReviewReadyProof(proofs)),
         proofs,
       },
       null,
@@ -244,8 +346,16 @@ function printList(options) {
   console.log(`Local proof root: ${path.resolve(options.root)}`);
   const latest = selectLatestLocalProof(proofs);
   const latestReviewReady = selectLatestReviewReadyProof(proofs);
+  const latestAcceptedPushedCloseout = selectLatestAcceptedPushedCloseoutProof(proofs);
+  const latestOperatorQaPass = selectLatestOperatorQaPassProof(proofs);
+  const latestAcceptedWarn = selectLatestAcceptedWarnProof(proofs);
   console.log(`Latest proof: ${latest?.path || "none"}`);
+  console.log(`Latest accepted pushed closeout proof: ${latestAcceptedPushedCloseout?.path || "none"}`);
+  console.log(`Latest operator QA PASS proof: ${latestOperatorQaPass?.path || "none"}`);
+  console.log(`Latest accepted-WARN proof: ${latestAcceptedWarn?.path || "none"}`);
+  console.log(`Latest screenshot review-ready candidate: ${latestReviewReady?.path || "none"}`);
   console.log(`Latest review-ready proof: ${latestReviewReady?.path || "none"}`);
+  console.log(reviewReadyExplanation(latest, latestReviewReady));
   for (const proof of proofs) console.log(formatProofLine(proof));
   return proofs.length > 0 ? 0 : 1;
 }
@@ -259,7 +369,12 @@ function printLatest(options) {
     return 1;
   }
   console.log(`Latest proof: ${latest.path}`);
+  console.log(`Latest accepted pushed closeout proof: ${selectLatestAcceptedPushedCloseoutProof(proofs)?.path || "none"}`);
+  console.log(`Latest operator QA PASS proof: ${selectLatestOperatorQaPassProof(proofs)?.path || "none"}`);
+  console.log(`Latest accepted-WARN proof: ${selectLatestAcceptedWarnProof(proofs)?.path || "none"}`);
+  console.log(`Latest screenshot review-ready candidate: ${latestReviewReady?.path || "none"}`);
   console.log(`Latest review-ready proof: ${latestReviewReady?.path || "none"}`);
+  console.log(reviewReadyExplanation(latest, latestReviewReady));
   console.log(formatProofLine(latest));
   return 0;
 }

@@ -224,6 +224,11 @@ function manualQaPassed(status = "PASS") {
 
 function currentPackageLockUnchanged(featureList) {
   const currentPackageLockKeys = [
+    "v0962_next_large_work_checkpoint",
+    "v0961_closeout_proof_index_cross_check_output",
+    "v0960_proof_index_accepted_closeout_freshness_polish",
+    "v0959_proof_index_review_ready_freshness_audit",
+    "v0958_accepted_pushed_state_checkpoint",
     "v0957_next_large_work_checkpoint",
     "v0956_fake_operator_status_accepted_warn_push_polish",
     "v0955_no_actionable_queue_operator_guidance",
@@ -263,7 +268,9 @@ function shouldUseHistoricalProofChain(proof) {
 function collectProofChain(featureList, proof = {}) {
   const useHistorical = shouldUseHistoricalProofChain(proof);
   const accepted =
-    !useHistorical && featureList.v0953_accepted_pushed_warn_state_checkpoint
+    !useHistorical && featureList.v0958_accepted_pushed_state_checkpoint
+      ? featureList.v0958_accepted_pushed_state_checkpoint
+      : !useHistorical && featureList.v0953_accepted_pushed_warn_state_checkpoint
       ? featureList.v0953_accepted_pushed_warn_state_checkpoint
       : !useHistorical && featureList.v0948_accepted_pushed_state_checkpoint
       ? featureList.v0948_accepted_pushed_state_checkpoint
@@ -277,7 +284,9 @@ function collectProofChain(featureList, proof = {}) {
       ? featureList.v0953_accepted_pushed_warn_state_checkpoint
       : featureList.v0933_accepted_pushed_warn_state_checkpoint || {};
   const current =
-    !useHistorical && featureList.v0957_next_large_work_checkpoint
+    !useHistorical && featureList.v0962_next_large_work_checkpoint
+      ? featureList.v0962_next_large_work_checkpoint
+      : !useHistorical && featureList.v0957_next_large_work_checkpoint
       ? featureList.v0957_next_large_work_checkpoint
       : !useHistorical && featureList.v0952_next_large_work_checkpoint
       ? featureList.v0952_next_large_work_checkpoint

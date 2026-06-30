@@ -1,5 +1,40 @@
 # KIA Stick Closeout
 
+## v0.9.58 to v0.9.62 Accepted State / Proof Index Review-Ready Freshness Bundle
+
+- Phase: `KIA-Stick-v0.9.58-to-v0.9.62-accepted-state-and-proof-index-review-ready-freshness-bundle`
+- Target machine: `USER_LAPTOP_ONLY`
+- Baseline: accepted pushed v0.9.53-to-v0.9.57 closeout at `40935306504d2746f1bae92b21893b13024f91c3`
+- Prior proof directory: `/home/mint/kia-stick-local-proofs/proof_kia_stick_v0_9_53_to_v0_9_57_operator_qa_pass_recording_20260630T195543Z/closeout_push_20260630T204915Z`
+- Prior validation/manual QA: PASS/PASS
+- Prior push status: yes, with `HEAD == origin/main` at `4093530`
+- Scope: fake-only docs/tests/tooling/status polish for accepted pushed state recording and proof-index review-ready freshness labels.
+- Included subphases: v0.9.58 accepted pushed state checkpoint; v0.9.59 proof-index review-ready freshness audit; v0.9.60 proof-index accepted closeout freshness polish; v0.9.61 closeout/proof-index cross-check output; v0.9.62 next large-work checkpoint.
+- Proof index helper: separates latest proof, accepted pushed closeout proof, operator QA PASS proof, accepted-WARN proof, screenshot review-ready candidate, and why an older screenshot-gated proof is selected.
+- Closeout helper: proof-chain summary prefers the v0.9.58 accepted pushed checkpoint and v0.9.62 current local bundle metadata.
+- Next/PostCSS runtime security path: remains parked as `WARN_SAFE_NEXT_TARGET_UNCLEAR`.
+- v0.9.12C implementation: blocked until an exact Next target is separately approved.
+- Product version: `0.7.0`
+- Package version: `0.7.0`
+- Prompt version: `prompt.fake-docs.v0.5-import-wizard-hardening`
+- Queue state: `queue-015-v07-first-real-doc-gate-request` remains blocked.
+- `package.json` changed: no
+- `package-lock.json` changed: no
+- Dependency versions changed: no
+- Runtime capability changed: no intake or real-doc capability; helper and docs/status output only.
+- Real document implementation approved: no
+- Real document access: none
+- File picker/FileReader/OCR/indexing/embedding/vector capability added: no
+- Services restarted: no
+- Cron/timer/tmux/Caddy/DNS changed: no
+- Secrets printed: no
+- Discord sent: no
+- Push performed: no
+- Manual QA status: PENDING
+- Proof directory: `/home/mint/kia-stick-local-proofs/proof_kia_stick_v0_9_58_to_v0_9_62_accepted_state_proof_index_review_ready_freshness_bundle_20260630T205845Z`
+
+This local bundle records the accepted pushed v0.9.57 baseline and makes proof-index/review-ready freshness output clearer. Operator manual QA and any closeout/push remain separate.
+
 ## v0.9.53 to v0.9.57 Accepted-WARN State / Proof Report Operator UX Polish Bundle
 
 - Phase: `KIA-Stick-v0.9.53-to-v0.9.57-accepted-warn-state-and-proof-report-operator-ux-polish-bundle`

@@ -12,6 +12,18 @@ KIA Stick separates milestone semver from build identity:
 
 `/health`, `/version`, the app header, settings, answer footer, and saved answer metadata expose the current `displayVersion`.
 
+## v0.9.58 to v0.9.62 Accepted State / Proof Index Review-Ready Freshness Bundle
+
+Phase: `KIA-Stick-v0.9.58-to-v0.9.62-accepted-state-and-proof-index-review-ready-freshness-bundle`.
+
+This local fake-only bundle starts from the accepted pushed v0.9.53-to-v0.9.57 closeout at `40935306504d2746f1bae92b21893b13024f91c3`. Closeout/push proof is recorded at `/home/mint/kia-stick-local-proofs/proof_kia_stick_v0_9_53_to_v0_9_57_operator_qa_pass_recording_20260630T195543Z/closeout_push_20260630T204915Z` with validation PASS, manual QA PASS, push yes, and `HEAD == origin/main`.
+
+The bundle adds `docs/v0.9.58-accepted-pushed-state-checkpoint.md`, `docs/v0.9.59-proof-index-review-ready-freshness-audit.md`, `docs/v0.9.60-proof-index-accepted-closeout-freshness-polish.md`, `docs/v0.9.61-closeout-proof-index-cross-check-output.md`, and `docs/v0.9.62-next-large-work-checkpoint.md` with focused tests. It also improves `scripts/local-proof-index.mjs` so latest proof, latest accepted pushed closeout proof, latest operator QA PASS proof, latest accepted-WARN proof, and latest screenshot review-ready candidate are labeled separately, and updates `scripts/closeout-helper.mjs` to prefer the v0.9.58 accepted pushed checkpoint in proof-chain output.
+
+This is fake-only docs/tests/tooling/status work. Manual QA for this new local bundle is `PENDING`; no push is claimed or performed. Next/PostCSS remains `WARN_SAFE_NEXT_TARGET_UNCLEAR`, `KIA-Stick-v0.9.12C-next-runtime-framework-security-implementation` remains blocked pending exact target approval, and `queue-015-v07-first-real-doc-gate-request` remains blocked. `package.json` and `package-lock.json` remain unchanged. Product/package version remains `0.7.0`; prompt version remains `prompt.fake-docs.v0.5-import-wizard-hardening`.
+
+No real-doc implementation is approved. The bundle does not add file pickers, FileReader, path readers, uploads, OCR, real redaction, text extraction, summarization, embeddings, indexing, vector stores, private-source inspection, services, secrets, Discord, global config, or system changes.
+
 ## v0.9.53 to v0.9.57 Accepted-WARN State / Proof Report Operator UX Polish Bundle
 
 Phase: `KIA-Stick-v0.9.53-to-v0.9.57-accepted-warn-state-and-proof-report-operator-ux-polish-bundle`.
