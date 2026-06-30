@@ -5912,7 +5912,10 @@
     "closeout_helper_default_discovery_labeled": true,
     "accepted_warn_remains_warn": true,
     "does_not_execute_git_push": true,
-    "safe_proof_roots": ["/tmp", "/home/mint/kia-stick-local-proofs"],
+    "safe_proof_roots": [
+      "/tmp",
+      "/home/mint/kia-stick-local-proofs"
+    ],
     "package_lock_changed": false,
     "real_doc_implementation_approved": false
   },
@@ -6390,5 +6393,109 @@
       "separate exact Next target approval only if a clean target is proven later",
       "keep real-doc gate blocked unless separately approved"
     ]
+  },
+  "v0963_accepted_pushed_state_checkpoint": {
+    "phase": "KIA-Stick-v0.9.63-accepted-pushed-state-checkpoint",
+    "status": "accepted_pushed_recorded",
+    "document": "docs/v0.9.63-accepted-pushed-state-checkpoint.md",
+    "accepted_pushed_phase": "KIA-Stick-v0.9.58-to-v0.9.62-operator-qa-pass-closeout-and-push",
+    "accepted_pushed_commit": "d1a31cdb0dea70a09d62a27e59351b8ab356dfad",
+    "accepted_pushed_short_commit": "d1a31cd",
+    "local_implementation_proof_dir": "/home/mint/kia-stick-local-proofs/proof_kia_stick_v0_9_58_to_v0_9_62_accepted_state_proof_index_review_ready_freshness_bundle_20260630T205845Z",
+    "operator_qa_pass_proof_dir": "/home/mint/kia-stick-local-proofs/proof_kia_stick_v0_9_58_to_v0_9_62_operator_qa_pass_recording_20260630T213116Z",
+    "closeout_push_proof_dir": "/home/mint/kia-stick-local-proofs/proof_kia_stick_v0_9_58_to_v0_9_62_operator_qa_pass_recording_20260630T213116Z/closeout_push_20260630T214918Z",
+    "accepted_validation": "PASS",
+    "manual_qa_status": "PASS",
+    "pushed": true,
+    "head_equals_origin_main_after_push": true,
+    "next_postcss_status": "WARN_SAFE_NEXT_TARGET_UNCLEAR",
+    "exact_next_target_proven": false,
+    "v0912c_blocked_pending_exact_target": true,
+    "queue_015_status": "blocked",
+    "product_version": "0.7.0",
+    "package_version": "0.7.0",
+    "prompt_version": "prompt.fake-docs.v0.5-import-wizard-hardening",
+    "package_json_changed": false,
+    "package_lock_changed": false,
+    "dependency_versions_changed": false,
+    "real_doc_implementation_approved": false
+  },
+  "v0964_no_actionable_queue_decision_clarity": {
+    "phase": "KIA-Stick-v0.9.64-no-actionable-queue-decision-clarity",
+    "status": "accepted",
+    "document": "docs/v0.9.64-no-actionable-queue-decision-clarity.md",
+    "guidance": "No actionable queue items. Accepted, blocked, and parked items are intentionally skipped; this does not approve blocked work.",
+    "queue_status_changed": false,
+    "queue_015_status": "blocked",
+    "v0912c_blocked_pending_exact_target": true,
+    "next_postcss_status": "WARN_SAFE_NEXT_TARGET_UNCLEAR",
+    "blocked_work_approved_by_no_actionable_output": false,
+    "safe_next_choices": [
+      "continue fake-only proof/report/operator UX polish",
+      "repeat official-source research later if evidence changes",
+      "request exact Next target approval only if a clean target is proven",
+      "keep real-doc gate blocked unless separately approved"
+    ],
+    "package_json_changed": false,
+    "package_lock_changed": false,
+    "real_doc_implementation_approved": false
+  },
+  "v0965_safe_next_work_selector_polish": {
+    "phase": "KIA-Stick-v0.9.65-safe-next-work-selector-polish",
+    "status": "accepted",
+    "document": "docs/v0.9.65-safe-next-work-selector-polish.md",
+    "safe_next_choices": [
+      "continue fake-only proof/report/operator UX polish",
+      "repeat official-source research later if evidence changes",
+      "request exact Next target approval only if a clean target is proven",
+      "keep real-doc gate blocked unless separately approved"
+    ],
+    "exact_next_target_approved": false,
+    "real_doc_gate_unblocked": false,
+    "queue_015_status": "blocked",
+    "v0912c_blocked_pending_exact_target": true,
+    "next_postcss_status": "WARN_SAFE_NEXT_TARGET_UNCLEAR",
+    "package_json_changed": false,
+    "package_lock_changed": false,
+    "real_doc_capability_added": false
+  },
+  "v0966_accepted_pushed_proof_closeout_discovery_checkpoint": {
+    "phase": "KIA-Stick-v0.9.66-accepted-pushed-proof-closeout-discovery-checkpoint",
+    "status": "accepted",
+    "document": "docs/v0.9.66-accepted-pushed-proof-closeout-discovery-checkpoint.md",
+    "closeout_helper": "scripts/closeout-helper.mjs",
+    "proof_index_script": "scripts/local-proof-index.mjs",
+    "latest_accepted_pushed_short_commit": "d1a31cd",
+    "closeout_push_proof_dir": "/home/mint/kia-stick-local-proofs/proof_kia_stick_v0_9_58_to_v0_9_62_operator_qa_pass_recording_20260630T213116Z/closeout_push_20260630T214918Z",
+    "local_implementation_proof_dir": "/home/mint/kia-stick-local-proofs/proof_kia_stick_v0_9_58_to_v0_9_62_accepted_state_proof_index_review_ready_freshness_bundle_20260630T205845Z",
+    "operator_qa_pass_proof_dir": "/home/mint/kia-stick-local-proofs/proof_kia_stick_v0_9_58_to_v0_9_62_operator_qa_pass_recording_20260630T213116Z",
+    "proof_directories_mutated": false,
+    "package_json_changed": false,
+    "package_lock_changed": false,
+    "real_doc_capability_added": false
+  },
+  "v0967_next_large_work_checkpoint": {
+    "phase": "KIA-Stick-v0.9.67-next-large-work-checkpoint",
+    "status": "accepted",
+    "document": "docs/v0.9.67-next-large-work-checkpoint.md",
+    "current_bundle_manual_qa_status": "PENDING",
+    "pushed": false,
+    "next_postcss_status": "WARN_SAFE_NEXT_TARGET_UNCLEAR",
+    "next_implementation_blocked": true,
+    "real_doc_gate_blocked": true,
+    "queue_015_status": "blocked",
+    "product_version": "0.7.0",
+    "package_version": "0.7.0",
+    "prompt_version": "prompt.fake-docs.v0.5-import-wizard-hardening",
+    "package_json_changed": false,
+    "package_lock_changed": false,
+    "dependency_versions_changed": false,
+    "safe_next_choices": [
+      "continue fake-only proof/report/operator UX polish",
+      "repeat official-source research later if evidence changes",
+      "separate exact Next target approval only if a clean target is proven later",
+      "keep real-doc gate blocked unless separately approved"
+    ],
+    "local_bundle_proof_dir": "/home/mint/kia-stick-local-proofs/proof_kia_stick_v0_9_63_to_v0_9_67_accepted_pushed_state_next_work_decision_clarity_bundle_20260630T215804Z"
   }
 }

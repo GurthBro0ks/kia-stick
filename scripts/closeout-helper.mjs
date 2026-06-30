@@ -224,6 +224,11 @@ function manualQaPassed(status = "PASS") {
 
 function currentPackageLockUnchanged(featureList) {
   const currentPackageLockKeys = [
+    "v0967_next_large_work_checkpoint",
+    "v0966_accepted_pushed_proof_closeout_discovery_checkpoint",
+    "v0965_safe_next_work_selector_polish",
+    "v0964_no_actionable_queue_decision_clarity",
+    "v0963_accepted_pushed_state_checkpoint",
     "v0962_next_large_work_checkpoint",
     "v0961_closeout_proof_index_cross_check_output",
     "v0960_proof_index_accepted_closeout_freshness_polish",
@@ -268,7 +273,9 @@ function shouldUseHistoricalProofChain(proof) {
 function collectProofChain(featureList, proof = {}) {
   const useHistorical = shouldUseHistoricalProofChain(proof);
   const accepted =
-    !useHistorical && featureList.v0958_accepted_pushed_state_checkpoint
+    !useHistorical && featureList.v0963_accepted_pushed_state_checkpoint
+      ? featureList.v0963_accepted_pushed_state_checkpoint
+      : !useHistorical && featureList.v0958_accepted_pushed_state_checkpoint
       ? featureList.v0958_accepted_pushed_state_checkpoint
       : !useHistorical && featureList.v0953_accepted_pushed_warn_state_checkpoint
       ? featureList.v0953_accepted_pushed_warn_state_checkpoint
@@ -284,7 +291,9 @@ function collectProofChain(featureList, proof = {}) {
       ? featureList.v0953_accepted_pushed_warn_state_checkpoint
       : featureList.v0933_accepted_pushed_warn_state_checkpoint || {};
   const current =
-    !useHistorical && featureList.v0962_next_large_work_checkpoint
+    !useHistorical && featureList.v0967_next_large_work_checkpoint
+      ? featureList.v0967_next_large_work_checkpoint
+      : !useHistorical && featureList.v0962_next_large_work_checkpoint
       ? featureList.v0962_next_large_work_checkpoint
       : !useHistorical && featureList.v0957_next_large_work_checkpoint
       ? featureList.v0957_next_large_work_checkpoint
@@ -353,7 +362,7 @@ function acceptedWarnMeaning(proof, featureList = {}) {
 
 function noActionableQueueGuidance(queue) {
   if (queue.ok && !queue.item) {
-    return "No actionable queue items. Blocked and parked items are intentionally skipped. Safe next choices: continue fake-only proof/report/operator UX polish; repeat official-source research later; request exact Next target approval only if a clean target is proven; keep the real-doc gate blocked.";
+    return "No actionable queue items. Accepted, blocked, and parked items are intentionally skipped; this does not approve blocked work. Safe next choices: continue fake-only proof/report/operator UX polish; repeat official-source research later if evidence changes; request exact Next target approval only if a clean target is proven; keep the real-doc gate blocked unless a separate one-document, one-gate approval packet is explicitly approved.";
   }
   return "not_applicable";
 }

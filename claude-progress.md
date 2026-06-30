@@ -2,10 +2,34 @@
 
 ## Current Phase
 
-- Phase: `KIA-Stick-v0.9.58-to-v0.9.62-accepted-state-and-proof-index-review-ready-freshness-bundle`
+- Phase: `KIA-Stick-v0.9.63-to-v0.9.67-accepted-pushed-state-and-next-work-decision-clarity-bundle`
 - Target: `USER_LAPTOP_ONLY`
 - Provider: `local-fake-deterministic`
-- Status: local v0.9.58-to-v0.9.62 fake-only accepted-state and proof-index review-ready freshness bundle has operator manual QA `PASS` and push `no`. The accepted pushed v0.9.53-to-v0.9.57 closeout is recorded at `40935306504d2746f1bae92b21893b13024f91c3` with proof `/home/mint/kia-stick-local-proofs/proof_kia_stick_v0_9_53_to_v0_9_57_operator_qa_pass_recording_20260630T195543Z/closeout_push_20260630T204915Z`. Next/PostCSS remains parked as `WARN_SAFE_NEXT_TARGET_UNCLEAR`; v0.9.12C remains blocked pending exact target approval; queue-015 remains blocked; product/prompt unchanged; no dependency or real-doc implementation is approved.
+- Status: local v0.9.63-to-v0.9.67 fake-only accepted pushed state and next-work decision clarity bundle has validation `PASS`, manual QA `PENDING`, and push `no`. The accepted pushed v0.9.58-to-v0.9.62 closeout is recorded at `d1a31cdb0dea70a09d62a27e59351b8ab356dfad` with proof `/home/mint/kia-stick-local-proofs/proof_kia_stick_v0_9_58_to_v0_9_62_operator_qa_pass_recording_20260630T213116Z/closeout_push_20260630T214918Z`. Next/PostCSS remains parked as `WARN_SAFE_NEXT_TARGET_UNCLEAR`; v0.9.12C remains blocked pending exact target approval; queue-015 remains blocked; product/prompt unchanged; no dependency or real-doc implementation is approved.
+
+## v0.9.63 to v0.9.67 Accepted Pushed State / Next-Work Decision Clarity Bundle
+
+- Phase: `KIA-Stick-v0.9.63-to-v0.9.67-accepted-pushed-state-and-next-work-decision-clarity-bundle`
+- Target machine: `USER_LAPTOP_ONLY`
+- Baseline: accepted pushed v0.9.58-to-v0.9.62 closeout at `d1a31cdb0dea70a09d62a27e59351b8ab356dfad`
+- Prior accepted proof: `/home/mint/kia-stick-local-proofs/proof_kia_stick_v0_9_58_to_v0_9_62_operator_qa_pass_recording_20260630T213116Z/closeout_push_20260630T214918Z`
+- Prior validation/manual QA: PASS/PASS
+- Prior push status: yes, with `HEAD == origin/main` at `d1a31cd`
+- Scope: fake-only docs/tests/tooling/status; no dependency, lockfile, runtime intake, service, notification, or real-doc change.
+- New docs: `docs/v0.9.63-accepted-pushed-state-checkpoint.md`, `docs/v0.9.64-no-actionable-queue-decision-clarity.md`, `docs/v0.9.65-safe-next-work-selector-polish.md`, `docs/v0.9.66-accepted-pushed-proof-closeout-discovery-checkpoint.md`, `docs/v0.9.67-next-large-work-checkpoint.md`
+- New tests: `tests/v0963AcceptedPushedStateCheckpoint.test.ts`, `tests/v0964NoActionableQueueDecisionClarity.test.ts`, `tests/v0965SafeNextWorkSelectorPolish.test.ts`, `tests/v0966AcceptedPushedProofCloseoutDiscoveryCheckpoint.test.ts`, `tests/v0967NextLargeWorkCheckpoint.test.ts`
+- Helper/status changes: no-actionable queue wording and closeout proof-chain preference for v0.9.63/v0.9.67 state.
+- Next/PostCSS runtime path: parked as `WARN_SAFE_NEXT_TARGET_UNCLEAR`, not fixed.
+- v0.9.12C implementation: blocked until exact target approval.
+- Version state: product/package version remain `0.7.0`; prompt version remains `prompt.fake-docs.v0.5-import-wizard-hardening`.
+- Queue state: `queue-015-v07-first-real-doc-gate-request` remains blocked.
+- Real-doc capability found/approved: no.
+- Push status: not pushed.
+- Manual QA status: PENDING.
+- Proof directory: `/home/mint/kia-stick-local-proofs/proof_kia_stick_v0_9_63_to_v0_9_67_accepted_pushed_state_next_work_decision_clarity_bundle_20260630T215804Z`
+- Commands run: baseline harness/git/package checks, implementation plan proof write, repo docs/tests/helper inspection, scoped docs/tests/tooling/status edits, focused v0.9.63-to-v0.9.67/helper tests, full lint/typecheck/test/build/design/release validation, QA gate, queue/proof/closeout helper checks, fake/privacy scans, package mutation checks, and scope checks.
+- Validation: PASS for required local gates.
+- Remaining unknowns: operator manual QA and separate closeout/push approval.
 
 ## v0.9.58 to v0.9.62 Accepted State / Proof Index Review-Ready Freshness Bundle
 

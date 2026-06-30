@@ -1,5 +1,40 @@
 # KIA Stick Closeout
 
+## v0.9.63 to v0.9.67 Accepted Pushed State / Next-Work Decision Clarity Bundle
+
+- Phase: `KIA-Stick-v0.9.63-to-v0.9.67-accepted-pushed-state-and-next-work-decision-clarity-bundle`
+- Target machine: `USER_LAPTOP_ONLY`
+- Baseline: accepted pushed v0.9.58-to-v0.9.62 closeout at `d1a31cdb0dea70a09d62a27e59351b8ab356dfad`
+- Prior proof directory: `/home/mint/kia-stick-local-proofs/proof_kia_stick_v0_9_58_to_v0_9_62_operator_qa_pass_recording_20260630T213116Z/closeout_push_20260630T214918Z`
+- Prior validation/manual QA: PASS/PASS
+- Prior push status: yes, with `HEAD == origin/main` at `d1a31cd`
+- Scope: fake-only docs/tests/tooling/status polish for accepted pushed state recording, no-actionable queue decision clarity, safe next-work selector wording, and proof/closeout discovery.
+- Included subphases: v0.9.63 accepted pushed state checkpoint; v0.9.64 no-actionable queue decision clarity; v0.9.65 safe next-work selector polish; v0.9.66 accepted pushed proof/closeout discovery checkpoint; v0.9.67 next large-work checkpoint.
+- Queue helper: no-actionable output states that accepted, blocked, and parked items are skipped and that blocked work is not approved.
+- Closeout helper: proof-chain summary prefers the v0.9.63 accepted pushed checkpoint and v0.9.67 current local bundle metadata.
+- Next/PostCSS runtime security path: remains parked as `WARN_SAFE_NEXT_TARGET_UNCLEAR`.
+- v0.9.12C implementation: blocked until an exact Next target is separately approved.
+- Product version: `0.7.0`
+- Package version: `0.7.0`
+- Prompt version: `prompt.fake-docs.v0.5-import-wizard-hardening`
+- Queue state: `queue-015-v07-first-real-doc-gate-request` remains blocked.
+- `package.json` changed: no
+- `package-lock.json` changed: no
+- Dependency versions changed: no
+- Runtime capability changed: no intake or real-doc capability; helper and docs/status output only.
+- Real document implementation approved: no
+- Real document access: none
+- File picker/FileReader/OCR/indexing/embedding/vector capability added: no
+- Services restarted: no
+- Cron/timer/tmux/Caddy/DNS changed: no
+- Secrets printed: no
+- Discord sent: no
+- Push performed: no
+- Manual QA status: PENDING
+- Proof directory: `/home/mint/kia-stick-local-proofs/proof_kia_stick_v0_9_63_to_v0_9_67_accepted_pushed_state_next_work_decision_clarity_bundle_20260630T215804Z`
+
+This local bundle records the accepted pushed v0.9.62 baseline and makes no-actionable queue / safe next-work decision output clearer. Local validation passed; operator manual QA is still pending, and any closeout/push remains separate.
+
 ## v0.9.58 to v0.9.62 Accepted State / Proof Index Review-Ready Freshness Bundle
 
 - Phase: `KIA-Stick-v0.9.58-to-v0.9.62-accepted-state-and-proof-index-review-ready-freshness-bundle`

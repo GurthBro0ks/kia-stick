@@ -115,7 +115,13 @@ export function renderQueueList(queue) {
 }
 
 export function renderNextItem(item) {
-  if (!item) return "No actionable queue items. Blocked and parked items are intentionally skipped.";
+  if (!item) {
+    return [
+      "No actionable queue items. Blocked and parked items are intentionally skipped.",
+      "Accepted, blocked, and parked items are intentionally skipped; this does not approve blocked work.",
+      "Safe next choices: continue fake-only proof/report/operator UX polish; repeat official-source research later if evidence changes; request exact Next target approval only if a clean target is proven; keep the real-doc gate blocked unless a separate one-document, one-gate approval packet is explicitly approved.",
+    ].join("\n");
+  }
   return [
     `id=${item.id}`,
     `phase=${item.phase}`,
