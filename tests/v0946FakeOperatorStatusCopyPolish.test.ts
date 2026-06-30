@@ -29,7 +29,8 @@ describe("v0.9.46 fake operator status copy polish", () => {
     expect(component).toContain("Accepted pushed commit");
     expect(component).toContain("928c614d0fcafb64b6ad79770c8d55a3b662b153");
     expect(component).toContain("manual QA PASS for v0.9.43-to-v0.9.47; pushed yes");
-    expect(component).toContain("manual QA PENDING; pushed no");
+    expect(component).toContain("manual QA ACCEPTED_WARN; pushed no");
+    expect(component).toContain("manual QA PASS; pushed no");
     expect(component).toContain("queue-015 blocked; no real-doc capability");
     expect(component).not.toMatch(/<input[^>]+type=["']file["']/);
     expect(component).not.toContain("FileReader");

@@ -6,6 +6,10 @@ const docPath = "docs/v0.9.48-accepted-pushed-state-checkpoint.md";
 const acceptedCommit = "928c614d0fcafb64b6ad79770c8d55a3b662b153";
 const closeoutProof =
   "/home/mint/kia-stick-local-proofs/proof_kia_stick_v0_9_43_to_v0_9_47_operator_qa_pass_recording_20260630T044306Z/closeout_push_20260630T071740Z";
+const operatorQaAcceptedWarn =
+  "OPERATOR_QA_ACCEPTED_WARN for /home/mint/kia-stick-local-proofs/proof_kia_stick_v0_9_48_to_v0_9_52_accepted_state_official_next_postcss_research_refresh_bundle_20260630T170813Z";
+const patchOperatorQaPass =
+  "OPERATOR_QA_PASS for /home/mint/kia-stick-local-proofs/proof_kia_stick_v0_9_48_to_v0_9_52_proof_chain_baseline_alignment_patch_20260630T174502Z";
 
 describe("v0.9.48 accepted pushed state checkpoint", () => {
   it("records the accepted pushed v0.9.47 closeout state", () => {
@@ -24,7 +28,9 @@ describe("v0.9.48 accepted pushed state checkpoint", () => {
       "`queue-015-v07-first-real-doc-gate-request` remains blocked.",
       "Product/package version remains `0.7.0`.",
       "Prompt version remains `prompt.fake-docs.v0.5-import-wizard-hardening`.",
-      "Manual QA remains `PENDING`",
+      "Manual QA is `ACCEPTED_WARN`",
+      operatorQaAcceptedWarn,
+      patchOperatorQaPass,
     ]) {
       expect(doc).toContain(required);
     }
@@ -40,6 +46,9 @@ describe("v0.9.48 accepted pushed state checkpoint", () => {
         accepted_manual_qa_status: string;
         accepted_push_status: string;
         current_bundle_manual_qa_status: string;
+        operator_qa_acceptance_text: string;
+        proof_chain_baseline_alignment_patch_manual_qa_status: string;
+        proof_chain_baseline_alignment_patch_operator_qa_text: string;
         next_postcss_status: string;
         queue_015_status: string;
         package_lock_changed: boolean;
@@ -54,7 +63,10 @@ describe("v0.9.48 accepted pushed state checkpoint", () => {
     expect(state.closeout_push_proof_dir).toBe(closeoutProof);
     expect(state.accepted_manual_qa_status).toBe("PASS");
     expect(state.accepted_push_status).toBe("yes");
-    expect(state.current_bundle_manual_qa_status).toBe("PENDING");
+    expect(state.current_bundle_manual_qa_status).toBe("ACCEPTED_WARN");
+    expect(state.operator_qa_acceptance_text).toBe(operatorQaAcceptedWarn);
+    expect(state.proof_chain_baseline_alignment_patch_manual_qa_status).toBe("PASS");
+    expect(state.proof_chain_baseline_alignment_patch_operator_qa_text).toBe(patchOperatorQaPass);
     expect(state.next_postcss_status).toBe("WARN_SAFE_NEXT_TARGET_UNCLEAR");
     expect(state.queue_015_status).toBe("blocked");
     expect(state.package_lock_changed).toBe(false);

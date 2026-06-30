@@ -30,9 +30,11 @@
 - Secrets printed: no
 - Discord sent: no
 - Push performed: no
-- Manual QA status: PENDING
+- Manual QA status: ACCEPTED_WARN
+- Operator QA acceptance: `OPERATOR_QA_ACCEPTED_WARN for /home/mint/kia-stick-local-proofs/proof_kia_stick_v0_9_48_to_v0_9_52_accepted_state_official_next_postcss_research_refresh_bundle_20260630T170813Z`
+- Proof-chain baseline alignment patch QA: PASS by `OPERATOR_QA_PASS for /home/mint/kia-stick-local-proofs/proof_kia_stick_v0_9_48_to_v0_9_52_proof_chain_baseline_alignment_patch_20260630T174502Z`
 
-This local bundle records the accepted pushed v0.9.47 baseline and refreshes official/read-only Next/PostCSS evidence. No exact clean Next target is proven, so v0.9.12C remains blocked and any closeout/push remains separate.
+This local bundle records the accepted pushed v0.9.47 baseline and refreshes official/read-only Next/PostCSS evidence. Operator QA accepted the WARN result as parked; no exact clean Next target is proven, so v0.9.12C remains blocked and any closeout/push remains separate.
 
 ## v0.9.43 to v0.9.47 Accepted State / Fake Proof Chain Operator UX Bundle
 

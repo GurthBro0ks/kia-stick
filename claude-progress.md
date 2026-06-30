@@ -5,7 +5,7 @@
 - Phase: `KIA-Stick-v0.9.48-to-v0.9.52-accepted-state-and-official-next-postcss-research-refresh-bundle`
 - Target: `USER_LAPTOP_ONLY`
 - Provider: `local-fake-deterministic`
-- Status: local v0.9.48-to-v0.9.52 accepted-state and official Next/PostCSS research refresh bundle is in progress with manual QA `PENDING`. The accepted pushed v0.9.43-to-v0.9.47 checkpoint is recorded at `928c614d0fcafb64b6ad79770c8d55a3b662b153` with closeout proof `/home/mint/kia-stick-local-proofs/proof_kia_stick_v0_9_43_to_v0_9_47_operator_qa_pass_recording_20260630T044306Z/closeout_push_20260630T071740Z`. Official/read-only evidence still leaves Next/PostCSS parked as `WARN_SAFE_NEXT_TARGET_UNCLEAR`; v0.9.12C remains blocked pending exact target approval; queue-015 remains blocked; product/prompt unchanged; no dependency or real-doc implementation is approved.
+- Status: local v0.9.48-to-v0.9.52 accepted-state and official Next/PostCSS research refresh bundle has operator QA `ACCEPTED_WARN`, and the proof-chain baseline alignment patch has operator QA `PASS`. The accepted pushed v0.9.43-to-v0.9.47 checkpoint is recorded at `928c614d0fcafb64b6ad79770c8d55a3b662b153` with closeout proof `/home/mint/kia-stick-local-proofs/proof_kia_stick_v0_9_43_to_v0_9_47_operator_qa_pass_recording_20260630T044306Z/closeout_push_20260630T071740Z`. Official/read-only evidence still leaves Next/PostCSS parked as `WARN_SAFE_NEXT_TARGET_UNCLEAR`; v0.9.12C remains blocked pending exact target approval; queue-015 remains blocked; product/prompt unchanged; no dependency or real-doc implementation is approved.
 
 ## v0.9.48 to v0.9.52 Accepted State / Official Next PostCSS Research Refresh Bundle
 
@@ -25,11 +25,12 @@
 - Queue state: `queue-015-v07-first-real-doc-gate-request` remains blocked.
 - Real-doc capability found/approved: no.
 - Push status: not pushed.
-- Manual QA status: PENDING.
+- Manual QA status: ACCEPTED_WARN by `OPERATOR_QA_ACCEPTED_WARN for /home/mint/kia-stick-local-proofs/proof_kia_stick_v0_9_48_to_v0_9_52_accepted_state_official_next_postcss_research_refresh_bundle_20260630T170813Z`.
+- Proof-chain baseline alignment patch QA: PASS by `OPERATOR_QA_PASS for /home/mint/kia-stick-local-proofs/proof_kia_stick_v0_9_48_to_v0_9_52_proof_chain_baseline_alignment_patch_20260630T174502Z`.
 - Proof directory: pending validation proof for this local bundle.
 - Commands run: baseline harness/git/package checks, implementation plan proof write, read-only official evidence capture, and scoped docs/tests/state edits.
 - Validation: pending.
-- Remaining unknowns: manual operator QA, separate closeout/push approval, and exact operator-approved Next target.
+- Remaining unknowns: separate accepted-WARN closeout/push approval and exact operator-approved Next target.
 
 ## v0.9.43 to v0.9.47 Accepted State / Fake Proof Chain Operator UX Bundle
 

@@ -310,7 +310,7 @@ describe("closeout-helper", () => {
     expect(summary.stdout).toContain("PROOF_CHAIN_ACCEPTED_PUSHED_CHECKPOINT=928c614");
     expect(summary.stdout).toContain(`PROOF_CHAIN_CLOSEOUT_PUSH_PROOF=${acceptedCloseoutProof}`);
     expect(summary.stdout).toContain(`PROOF_CHAIN_LOCAL_IMPLEMENTATION_PROOF=${currentResearchProof}`);
-    expect(summary.stdout).toContain("PROOF_CHAIN_PENDING_LOCAL_BUNDLE=KIA-Stick-v0.9.52-next-large-work-checkpoint; result=WARN_SAFE_NEXT_TARGET_UNCLEAR; manual_qa=PENDING; pushed=no");
+    expect(summary.stdout).toContain("PROOF_CHAIN_PENDING_LOCAL_BUNDLE=KIA-Stick-v0.9.52-next-large-work-checkpoint; result=WARN_SAFE_NEXT_TARGET_UNCLEAR; manual_qa=ACCEPTED_WARN; pushed=no");
     expect(summary.stdout).not.toContain("PROOF_CHAIN_ACCEPTED_PUSHED_CHECKPOINT=8358e63");
   });
 

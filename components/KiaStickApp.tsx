@@ -127,7 +127,8 @@ const acceptedOperatorCheckpoint = [
   { label: "Previous bundle QA", value: "manual QA PASS for v0.9.43-to-v0.9.47; pushed yes" },
   { label: "Current local bundle", value: "v0.9.48-to-v0.9.52 research refresh" },
   { label: "Current bundle result", value: "WARN_SAFE_NEXT_TARGET_UNCLEAR" },
-  { label: "Current bundle QA", value: "manual QA PENDING; pushed no" },
+  { label: "Current bundle QA", value: "manual QA ACCEPTED_WARN; pushed no" },
+  { label: "Baseline alignment patch QA", value: "manual QA PASS; pushed no" },
   { label: "Real-doc gate", value: "queue-015 blocked; no real-doc capability" },
   { label: "Next/PostCSS", value: "WARN_SAFE_NEXT_TARGET_UNCLEAR; parked, not fixed" },
   { label: "v0.9.12C", value: "blocked pending exact operator-approved Next target" },
@@ -514,7 +515,7 @@ export function KiaStickApp({ runtimeVersion = clientVersion }: { runtimeVersion
               <span className="sectionKicker">Operator status</span>
               <h3>Accepted pushed checkpoint visible: 928c614</h3>
               <p>
-                Accepted pushed checkpoint 928c614 is recorded for operator review. Accepted pushed WARN checkpoint visible: beea159 remains parked. This status block is copy-only; the current v0.9.48-to-v0.9.52 research bundle remains WARN_SAFE_NEXT_TARGET_UNCLEAR with manual QA pending, pushed no, and no real-doc capability approved.
+                Accepted pushed checkpoint 928c614 is recorded for operator review. Accepted pushed WARN checkpoint visible: beea159 remains parked. This status block is copy-only; the current v0.9.48-to-v0.9.52 research bundle remains WARN_SAFE_NEXT_TARGET_UNCLEAR with manual QA accepted as WARN, pushed no, and no real-doc capability approved.
               </p>
               <dl className="settingsGrid">
                 {acceptedOperatorCheckpoint.map((row) => (
