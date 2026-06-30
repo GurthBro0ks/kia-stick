@@ -45,7 +45,7 @@ describe("v0.9.59 proof-index review-ready freshness audit", () => {
     const state = featureList.v0959_proof_index_review_ready_freshness_audit;
 
     expect(state.phase).toBe(phase);
-    expect(state.status).toBe("needs_review");
+    expect(state.status).toBe("accepted");
     expect(state.reads_safe_metadata_only).toBe(true);
     expect(state.reads_screenshots).toBe(false);
     expect(state.scans_arbitrary_paths).toBe(false);

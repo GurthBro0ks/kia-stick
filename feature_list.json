@@ -6312,7 +6312,7 @@
   },
   "v0959_proof_index_review_ready_freshness_audit": {
     "phase": "KIA-Stick-v0.9.59-proof-index-review-ready-freshness-audit",
-    "status": "needs_review",
+    "status": "accepted",
     "document": "docs/v0.9.59-proof-index-review-ready-freshness-audit.md",
     "proof_index_script": "scripts/local-proof-index.mjs",
     "reads_safe_metadata_only": true,
@@ -6330,7 +6330,7 @@
   },
   "v0960_proof_index_accepted_closeout_freshness_polish": {
     "phase": "KIA-Stick-v0.9.60-proof-index-accepted-closeout-freshness-polish",
-    "status": "needs_review",
+    "status": "accepted",
     "document": "docs/v0.9.60-proof-index-accepted-closeout-freshness-polish.md",
     "proof_index_script": "scripts/local-proof-index.mjs",
     "latest_proof_label_added": true,
@@ -6349,7 +6349,7 @@
   },
   "v0961_closeout_proof_index_cross_check_output": {
     "phase": "KIA-Stick-v0.9.61-closeout-proof-index-cross-check-output",
-    "status": "needs_review",
+    "status": "accepted",
     "document": "docs/v0.9.61-closeout-proof-index-cross-check-output.md",
     "closeout_helper": "scripts/closeout-helper.mjs",
     "proof_index_script": "scripts/local-proof-index.mjs",
@@ -6367,10 +6367,12 @@
   },
   "v0962_next_large_work_checkpoint": {
     "phase": "KIA-Stick-v0.9.62-next-large-work-checkpoint",
-    "status": "needs_review",
+    "status": "accepted",
     "document": "docs/v0.9.62-next-large-work-checkpoint.md",
     "local_bundle_proof_dir": "/home/mint/kia-stick-local-proofs/proof_kia_stick_v0_9_58_to_v0_9_62_accepted_state_proof_index_review_ready_freshness_bundle_20260630T205845Z",
-    "current_bundle_manual_qa_status": "PENDING",
+    "current_bundle_manual_qa_status": "PASS",
+    "operator_qa_pass_proof_dir": "/home/mint/kia-stick-local-proofs/proof_kia_stick_v0_9_58_to_v0_9_62_operator_qa_pass_recording_20260630T213116Z",
+    "operator_qa_pass_text": "OPERATOR_QA_PASS for /home/mint/kia-stick-local-proofs/proof_kia_stick_v0_9_58_to_v0_9_62_accepted_state_proof_index_review_ready_freshness_bundle_20260630T205845Z",
     "pushed": false,
     "next_postcss_status": "WARN_SAFE_NEXT_TARGET_UNCLEAR",
     "next_implementation_blocked": true,

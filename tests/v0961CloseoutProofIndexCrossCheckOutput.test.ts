@@ -40,7 +40,7 @@ describe("v0.9.61 closeout/proof-index cross-check output", () => {
     const state = featureList.v0961_closeout_proof_index_cross_check_output;
 
     expect(state.phase).toBe(phase);
-    expect(state.status).toBe("needs_review");
+    expect(state.status).toBe("accepted");
     expect(state.closeout_helper_prefers_v0958_checkpoint).toBe(true);
     expect(state.proof_index_labels_added).toBe(true);
     expect(state.stop_on_warn_fail_weakened).toBe(false);

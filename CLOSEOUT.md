@@ -30,10 +30,12 @@
 - Secrets printed: no
 - Discord sent: no
 - Push performed: no
-- Manual QA status: PENDING
+- Manual QA status: PASS
+- Operator QA proof: `/home/mint/kia-stick-local-proofs/proof_kia_stick_v0_9_58_to_v0_9_62_operator_qa_pass_recording_20260630T213116Z`
+- Operator QA source: `OPERATOR_QA_PASS for /home/mint/kia-stick-local-proofs/proof_kia_stick_v0_9_58_to_v0_9_62_accepted_state_proof_index_review_ready_freshness_bundle_20260630T205845Z`
 - Proof directory: `/home/mint/kia-stick-local-proofs/proof_kia_stick_v0_9_58_to_v0_9_62_accepted_state_proof_index_review_ready_freshness_bundle_20260630T205845Z`
 
-This local bundle records the accepted pushed v0.9.57 baseline and makes proof-index/review-ready freshness output clearer. Operator manual QA and any closeout/push remain separate.
+This local bundle records the accepted pushed v0.9.57 baseline and makes proof-index/review-ready freshness output clearer. Operator manual QA passed for this fake-only bundle; any closeout/push remains separate.
 
 ## v0.9.53 to v0.9.57 Accepted-WARN State / Proof Report Operator UX Polish Bundle
 

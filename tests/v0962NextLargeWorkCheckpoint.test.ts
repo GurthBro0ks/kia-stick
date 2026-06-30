@@ -5,7 +5,7 @@ const phase = "KIA-Stick-v0.9.62-next-large-work-checkpoint";
 const docPath = "docs/v0.9.62-next-large-work-checkpoint.md";
 
 describe("v0.9.62 next large-work checkpoint", () => {
-  it("records next choices while keeping manual QA pending and parked gates blocked", () => {
+  it("records next choices after operator QA while keeping parked gates blocked", () => {
     const doc = readFileSync(docPath, "utf8");
 
     for (const required of [
@@ -15,7 +15,8 @@ describe("v0.9.62 next large-work checkpoint", () => {
       "Repeat official-source research later if evidence changes.",
       "Ask for separate exact Next target approval only if a clean target is proven.",
       "Keep real-doc gate blocked unless a separate one-document, one-gate approval packet is explicitly approved.",
-      "Manual QA for this local bundle is `PENDING`.",
+      "Manual QA for this local bundle is `PASS` by `OPERATOR_QA_PASS for /home/mint/kia-stick-local-proofs/proof_kia_stick_v0_9_58_to_v0_9_62_accepted_state_proof_index_review_ready_freshness_bundle_20260630T205845Z`.",
+      "Operator QA proof is `/home/mint/kia-stick-local-proofs/proof_kia_stick_v0_9_58_to_v0_9_62_operator_qa_pass_recording_20260630T213116Z`.",
       "Push is not performed by this local bundle.",
       "`KIA-Stick-v0.9.12C-next-runtime-framework-security-implementation` remains blocked",
       "Next/PostCSS remains parked as `WARN_SAFE_NEXT_TARGET_UNCLEAR`.",
@@ -27,12 +28,14 @@ describe("v0.9.62 next large-work checkpoint", () => {
     }
   });
 
-  it("tracks the pending local checkpoint without package or queue drift", () => {
+  it("tracks the accepted local checkpoint without package or queue drift", () => {
     const featureList = JSON.parse(readFileSync("feature_list.json", "utf8")) as {
       v0962_next_large_work_checkpoint: {
         phase: string;
         status: string;
         current_bundle_manual_qa_status: string;
+        operator_qa_pass_proof_dir: string;
+        operator_qa_pass_text: string;
         pushed: boolean;
         next_postcss_status: string;
         next_implementation_blocked: boolean;
@@ -49,8 +52,14 @@ describe("v0.9.62 next large-work checkpoint", () => {
     };
 
     expect(state.phase).toBe(phase);
-    expect(state.status).toBe("needs_review");
-    expect(state.current_bundle_manual_qa_status).toBe("PENDING");
+    expect(state.status).toBe("accepted");
+    expect(state.current_bundle_manual_qa_status).toBe("PASS");
+    expect(state.operator_qa_pass_proof_dir).toBe(
+      "/home/mint/kia-stick-local-proofs/proof_kia_stick_v0_9_58_to_v0_9_62_operator_qa_pass_recording_20260630T213116Z"
+    );
+    expect(state.operator_qa_pass_text).toBe(
+      "OPERATOR_QA_PASS for /home/mint/kia-stick-local-proofs/proof_kia_stick_v0_9_58_to_v0_9_62_accepted_state_proof_index_review_ready_freshness_bundle_20260630T205845Z"
+    );
     expect(state.pushed).toBe(false);
     expect(state.next_postcss_status).toBe("WARN_SAFE_NEXT_TARGET_UNCLEAR");
     expect(state.next_implementation_blocked).toBe(true);
