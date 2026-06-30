@@ -12,6 +12,20 @@ KIA Stick separates milestone semver from build identity:
 
 `/health`, `/version`, the app header, settings, answer footer, and saved answer metadata expose the current `displayVersion`.
 
+## v0.9.48 to v0.9.52 Accepted State / Official Next PostCSS Research Refresh Bundle
+
+Phase: `KIA-Stick-v0.9.48-to-v0.9.52-accepted-state-and-official-next-postcss-research-refresh-bundle`.
+
+This local research-only bundle starts from accepted pushed v0.9.43-to-v0.9.47 state at `928c614d0fcafb64b6ad79770c8d55a3b662b153`. Closeout/push proof is recorded at `/home/mint/kia-stick-local-proofs/proof_kia_stick_v0_9_43_to_v0_9_47_operator_qa_pass_recording_20260630T044306Z/closeout_push_20260630T071740Z` with validation PASS, manual QA PASS, push yes, and `HEAD == origin/main`.
+
+The bundle adds `docs/v0.9.48-accepted-pushed-state-checkpoint.md`, `docs/v0.9.49-official-next-postcss-evidence-refresh.md`, `docs/v0.9.50-exact-next-target-candidate-matrix-refresh.md`, `docs/v0.9.51-future-next-implementation-gate-packet-refresh.md`, and `docs/v0.9.52-next-large-work-checkpoint.md` with focused tests. It runs read-only npm audit, npm view, npm ls/explain, official Next.js page capture, and official GitHub advisory capture only.
+
+Audit evidence still reports `2 moderate` findings: direct `next` via transitive `postcss`, and `postcss <8.5.10`. Current lockfile state is `next@15.5.19`, `react@19.2.7`, `react-dom@19.2.7`, Next transitive `postcss@8.4.31`, and Vite nested `postcss@8.5.15`. npm metadata reports `next@16.2.9` as latest, but `next@latest` still lists `postcss@8.4.31`, so no exact clean target is proven. Result remains `WARN_SAFE_NEXT_TARGET_UNCLEAR`.
+
+This bundle is research-only docs/tests/state work. Manual QA for this new bundle is `PENDING`; no push is claimed or performed. `package.json` and `package-lock.json` remain unchanged. Product/package version remains `0.7.0`; prompt version remains `prompt.fake-docs.v0.5-import-wizard-hardening`; `queue-015-v07-first-real-doc-gate-request` remains blocked. `KIA-Stick-v0.9.12C-next-runtime-framework-security-implementation` remains blocked until a separate exact operator-approved target exists.
+
+No real-doc implementation is approved. The bundle does not add file pickers, FileReader, path readers, uploads, OCR, real redaction, text extraction, summarization, embeddings, indexing, vector stores, private-source inspection, services, secrets, Discord, global config, or system changes.
+
 ## v0.9.43 to v0.9.47 Accepted State / Fake Proof Chain Operator UX Bundle
 
 Phase: `KIA-Stick-v0.9.43-to-v0.9.47-accepted-state-and-fake-only-proof-chain-operator-ux-bundle`.
