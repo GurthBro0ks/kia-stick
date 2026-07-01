@@ -1,5 +1,42 @@
 # KIA Stick Closeout
 
+## v0.9.68 to v0.9.72 Accepted Pushed State / Runtime Status Freshness Bundle
+
+- Phase: `KIA-Stick-v0.9.68-to-v0.9.72-accepted-pushed-state-and-runtime-status-freshness-bundle`
+- Target machine: `USER_LAPTOP_ONLY`
+- Baseline: accepted pushed v0.9.63-to-v0.9.67 closeout at `1465817e8efad6207705833e9e08f22030d6a116`
+- Prior proof directory: `/home/mint/kia-stick-local-proofs/proof_kia_stick_v0_9_63_to_v0_9_67_operator_qa_pass_recording_20260701T091506Z/closeout_push_20260701T093116Z`
+- Prior validation/manual QA: PASS/PASS
+- Prior push status: yes, with `HEAD == origin/main` at `1465817`
+- Scope: fake-only docs/tests/status polish for accepted pushed state recording, Settings operator status freshness, `/health` phase metadata freshness, browser QA status checklist expectations, and next large-work choices.
+- Included subphases: v0.9.68 accepted pushed state checkpoint; v0.9.69 Settings operator-status freshness polish; v0.9.70 health/version phase-status freshness polish; v0.9.71 browser QA status checklist polish; v0.9.72 next large-work checkpoint.
+- Settings copy: current accepted pushed checkpoint `1465817`, accepted/pushed yes after v0.9.67 closeout, accepted-WARN history clearly historical/parked, no real-doc capability.
+- Runtime status: `/health` phase is refreshed to `KIA-Stick-v0.9.68-to-v0.9.72-accepted-pushed-state-and-runtime-status-freshness-bundle`; `/version` identity semantics are unchanged.
+- Closeout helper: proof-chain summary prefers the v0.9.68 accepted pushed checkpoint for current proof-chain output while preserving older explicit proof windows.
+- Next/PostCSS runtime security path: remains parked as `WARN_SAFE_NEXT_TARGET_UNCLEAR`.
+- v0.9.12C implementation: blocked until an exact Next target is separately approved.
+- Product version: `0.7.0`
+- Package version: `0.7.0`
+- Prompt version: `prompt.fake-docs.v0.5-import-wizard-hardening`
+- Queue state: `queue-015-v07-first-real-doc-gate-request` remains blocked.
+- `package.json` changed: no
+- `package-lock.json` changed: no
+- Dependency versions changed: no
+- Runtime capability changed: no intake or real-doc capability; status/copy output only.
+- Real document implementation approved: no
+- Real document access: none
+- File picker/FileReader/OCR/indexing/embedding/vector capability added: no
+- Services restarted: no
+- Cron/timer/tmux/Caddy/DNS changed: no
+- Secrets printed: no
+- Discord sent: no
+- Push performed: no
+- Manual QA status: PENDING
+- Proof directory: `/home/mint/kia-stick-local-proofs/proof_kia_stick_v0_9_68_to_v0_9_72_accepted_pushed_state_runtime_status_freshness_bundle_20260701T094248Z`
+- Validation status: PASS
+
+This local bundle records the accepted pushed v0.9.67 baseline and refreshes fake-only runtime/operator status surfaces. Local validation passed; operator manual QA remains pending and any closeout/push remains separate.
+
 ## v0.9.63 to v0.9.67 Accepted Pushed State / Next-Work Decision Clarity Bundle
 
 - Phase: `KIA-Stick-v0.9.63-to-v0.9.67-accepted-pushed-state-and-next-work-decision-clarity-bundle`

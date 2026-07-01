@@ -5,7 +5,8 @@ import path from "node:path";
 const DEFAULT_BASE_URL = "http://127.0.0.1:3000";
 const operatorSmokePhase = "KIA-Stick-v0.7.9-fake-only-operator-qa-smoke-pack";
 const expectedProjectPhase = "KIA-Stick-v0.9.10-synthetic-governance-hardening-checkpoint";
-const expectedRuntimePhase = "KIA-Stick-v0.7.12-operator-qa-closeout-and-push";
+const legacyRuntimePhase = "KIA-Stick-v0.7.12-operator-qa-closeout-and-push";
+const expectedRuntimePhase = "KIA-Stick-v0.9.68-to-v0.9.72-accepted-pushed-state-and-runtime-status-freshness-bundle";
 const productVersion = "0.7.0";
 const promptVersion = "prompt.fake-docs.v0.5-import-wizard-hardening";
 const smokeSurfaces = [
@@ -241,6 +242,7 @@ async function main() {
     console.log(`Base URL: ${result.baseUrl}`);
     console.log(`Project phase: ${expectedProjectPhase}`);
     console.log(`Runtime phase: ${expectedRuntimePhase}`);
+    console.log(`Runtime phase: ${legacyRuntimePhase} (legacy accepted closeout phase, not current)`);
     console.log(`Product version: ${productVersion}`);
     console.log(`Prompt version: ${promptVersion}`);
     console.log("Bundle smoke surfaces:");

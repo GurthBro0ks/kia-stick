@@ -12,6 +12,18 @@ KIA Stick separates milestone semver from build identity:
 
 `/health`, `/version`, the app header, settings, answer footer, and saved answer metadata expose the current `displayVersion`.
 
+## v0.9.68 to v0.9.72 Accepted Pushed State / Runtime Status Freshness Bundle
+
+Phase: `KIA-Stick-v0.9.68-to-v0.9.72-accepted-pushed-state-and-runtime-status-freshness-bundle`.
+
+This local fake-only bundle starts from accepted pushed v0.9.63-to-v0.9.67 state at `1465817e8efad6207705833e9e08f22030d6a116`. Closeout/push proof is recorded at `/home/mint/kia-stick-local-proofs/proof_kia_stick_v0_9_63_to_v0_9_67_operator_qa_pass_recording_20260701T091506Z/closeout_push_20260701T093116Z` with validation PASS, manual QA PASS, push yes, and `HEAD == origin/main`.
+
+The bundle adds `docs/v0.9.68-accepted-pushed-state-checkpoint.md`, `docs/v0.9.69-settings-operator-status-freshness-polish.md`, `docs/v0.9.70-health-version-phase-status-freshness-polish.md`, `docs/v0.9.71-browser-qa-status-checklist-polish.md`, and `docs/v0.9.72-next-large-work-checkpoint.md` with focused tests. It refreshes Settings operator status copy to show the current accepted pushed checkpoint `1465817`, marks accepted-WARN as historical/parked, refreshes `/health` phase metadata for this bundle, and updates closeout-helper proof-chain freshness.
+
+This is fake-only docs/tests/status/copy work. Validation PASS is recorded at `/home/mint/kia-stick-local-proofs/proof_kia_stick_v0_9_68_to_v0_9_72_accepted_pushed_state_runtime_status_freshness_bundle_20260701T094248Z`. Manual QA for this new local bundle is `PENDING`; no push is claimed or performed. Next/PostCSS remains `WARN_SAFE_NEXT_TARGET_UNCLEAR`, `KIA-Stick-v0.9.12C-next-runtime-framework-security-implementation` remains blocked pending exact target approval, and `queue-015-v07-first-real-doc-gate-request` remains blocked. `package.json` and `package-lock.json` remain unchanged. Product/package version remains `0.7.0`; prompt version remains `prompt.fake-docs.v0.5-import-wizard-hardening`.
+
+No real-doc implementation is approved. The bundle does not add file pickers, FileReader, path readers, uploads, OCR, real redaction, text extraction, summarization, embeddings, indexing, vector stores, private-source inspection, services, secrets, Discord, global config, or system changes.
+
 ## v0.9.63 to v0.9.67 Accepted Pushed State / Next-Work Decision Clarity Bundle
 
 Phase: `KIA-Stick-v0.9.63-to-v0.9.67-accepted-pushed-state-and-next-work-decision-clarity-bundle`.

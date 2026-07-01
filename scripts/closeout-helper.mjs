@@ -224,6 +224,11 @@ function manualQaPassed(status = "PASS") {
 
 function currentPackageLockUnchanged(featureList) {
   const currentPackageLockKeys = [
+    "v0972_next_large_work_checkpoint",
+    "v0971_browser_qa_status_checklist_polish",
+    "v0970_health_version_phase_status_freshness_polish",
+    "v0969_settings_operator_status_freshness_polish",
+    "v0968_accepted_pushed_state_checkpoint",
     "v0967_next_large_work_checkpoint",
     "v0966_accepted_pushed_proof_closeout_discovery_checkpoint",
     "v0965_safe_next_work_selector_polish",
@@ -270,10 +275,20 @@ function shouldUseHistoricalProofChain(proof) {
   return /v0[._]9[._](3[8-9]|4[0-7])|v0\.9\.(3[8-9]|4[0-7])/.test(text);
 }
 
+function proofChainWindow(proof) {
+  const text = `${proof?.phase || ""} ${proof?.path || ""}`;
+  if (/v0[._]9[._](5[8-9]|6[0-2])|v0\.9\.(5[8-9]|6[0-2])/.test(text)) return "v0963";
+  if (/v0[._]9[._](6[3-7])|v0\.9\.(6[3-7])/.test(text)) return "v0968";
+  return "current";
+}
+
 function collectProofChain(featureList, proof = {}) {
   const useHistorical = shouldUseHistoricalProofChain(proof);
+  const window = proofChainWindow(proof);
   const accepted =
-    !useHistorical && featureList.v0963_accepted_pushed_state_checkpoint
+    !useHistorical && window !== "v0963" && featureList.v0968_accepted_pushed_state_checkpoint
+      ? featureList.v0968_accepted_pushed_state_checkpoint
+      : !useHistorical && featureList.v0963_accepted_pushed_state_checkpoint
       ? featureList.v0963_accepted_pushed_state_checkpoint
       : !useHistorical && featureList.v0958_accepted_pushed_state_checkpoint
       ? featureList.v0958_accepted_pushed_state_checkpoint
@@ -291,7 +306,9 @@ function collectProofChain(featureList, proof = {}) {
       ? featureList.v0953_accepted_pushed_warn_state_checkpoint
       : featureList.v0933_accepted_pushed_warn_state_checkpoint || {};
   const current =
-    !useHistorical && featureList.v0967_next_large_work_checkpoint
+    !useHistorical && window !== "v0963" && featureList.v0972_next_large_work_checkpoint
+      ? featureList.v0972_next_large_work_checkpoint
+      : !useHistorical && featureList.v0967_next_large_work_checkpoint
       ? featureList.v0967_next_large_work_checkpoint
       : !useHistorical && featureList.v0962_next_large_work_checkpoint
       ? featureList.v0962_next_large_work_checkpoint
