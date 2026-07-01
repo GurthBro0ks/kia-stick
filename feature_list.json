@@ -6677,7 +6677,11 @@
     "active_bundle_should_use_explicit_proof_dir": true,
     "default_uses_persistent_root": true,
     "tmp_is_fallback_only": true,
+    "in_progress_proof_without_result_displaces_completed_default": false,
+    "no_actionable_queue_missing_warning_suppressed_when_acceptance_disallowed": true,
     "stop_on_warn_fail_preserved": true,
+    "real_queue_warnings_preserved": true,
+    "queue_warning_polish_proof_dir": "/home/mint/kia-stick-local-proofs/proof_kia_stick_v0_9_73_to_v0_9_77_queue_warning_polish_20260701T144454Z",
     "manual_qa_status": "PENDING",
     "package_json_changed": false,
     "package_lock_changed": false,
@@ -6706,6 +6710,10 @@
       "keep real-doc gate blocked unless separately approved"
     ],
     "local_bundle_proof_dir": "/home/mint/kia-stick-local-proofs/proof_kia_stick_v0_9_73_to_v0_9_77_accepted_pushed_state_closeout_default_proof_root_freshness_bundle_20260701T112802Z",
+    "queue_warning_polish_proof_dir": "/home/mint/kia-stick-local-proofs/proof_kia_stick_v0_9_73_to_v0_9_77_queue_warning_polish_20260701T144454Z",
+    "closeout_default_no_actionable_queue_warning_polished": true,
+    "manual_qa_pending_warning_preserved": true,
+    "local_commit_without_push_warning_preserved": true,
     "accepted_pushed_short_commit": "6155db0",
     "accepted_pushed_closeout_proof_dir": "/home/mint/kia-stick-local-proofs/proof_kia_stick_v0_9_68_to_v0_9_72_operator_qa_pass_recording_20260701T103226Z/closeout_push_20260701T111929Z"
   }

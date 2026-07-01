@@ -10,10 +10,12 @@ const phase = "KIA-Stick-v0.5.7-closeout-helper-hardening";
 
 interface CloseoutModule {
   assessCloseout(input: {
-    proof: { exists: boolean; result: string; warnFailFree: boolean; flags: string[] };
+    proof: { exists: boolean; result: string; warnFailFree: boolean; flags: string[]; manualQaStatus?: string; pushed?: string };
     git: { dirty: boolean; ahead: number; branch: string };
     queue: { ok: boolean; item: { id: string; status: string } | null; error?: string };
     proofDiscoveryMode?: string;
+    queueGuidance?: string;
+    nextActionState?: string;
   }): { status: string; nextAction: string; stopOnWarnFail: boolean; queueAcceptanceAllowed: boolean; issues: Array<{ code: string }> };
   classifySecretScanLine(line: string): string;
   parseGitState(root?: string): { dirty: boolean; ahead: number; head: string; originMain: string };
@@ -31,39 +33,42 @@ function runGit(root: string, args: string[], env: NodeJS.ProcessEnv = process.e
   return execFileSync("git", args, { cwd: root, encoding: "utf8", env });
 }
 
-function createRepoFixture(queueStatus = "ready_to_push"): string {
+function createRepoFixture(queueStatus: string | null = "ready_to_push"): string {
   const root = mkdtempSync(join(tmpdir(), "kia-closeout-repo-"));
   mkdirSync(join(root, "docs"), { recursive: true });
   writeFileSync(join(root, "README.md"), "fixture\n");
   writeFileSync(join(root, "feature_list.json"), JSON.stringify({ phase }, null, 2));
+  const items = queueStatus
+    ? [
+        {
+          id: "queue-001-closeout-helper-hardening",
+          phase,
+          title: "Closeout helper hardening",
+          status: queueStatus,
+          model: "GPT/Codex $100",
+          risk: "low",
+          summary: "Fixture closeout helper item.",
+          next_action: "Review local proof output.",
+          created_at: "2026-06-20T21:00:00.000Z",
+          updated_at: "2026-06-20T21:00:00.000Z",
+          history: [
+            {
+              at: "2026-06-20T21:00:00.000Z",
+              from: "planned",
+              to: queueStatus,
+              note: "Fixture status.",
+            },
+          ],
+        },
+      ]
+    : [];
   writeFileSync(
     join(root, "docs/phase-backlog.json"),
     JSON.stringify(
       {
         schema: "kia-stick-local-task-queue.v1",
         updated_at: "2026-06-20T21:00:00.000Z",
-        items: [
-          {
-            id: "queue-001-closeout-helper-hardening",
-            phase,
-            title: "Closeout helper hardening",
-            status: queueStatus,
-            model: "GPT/Codex $100",
-            risk: "low",
-            summary: "Fixture closeout helper item.",
-            next_action: "Review local proof output.",
-            created_at: "2026-06-20T21:00:00.000Z",
-            updated_at: "2026-06-20T21:00:00.000Z",
-            history: [
-              {
-                at: "2026-06-20T21:00:00.000Z",
-                from: "planned",
-                to: queueStatus,
-                note: "Fixture status.",
-              },
-            ],
-          },
-        ],
+        items,
       },
       null,
       2
@@ -170,6 +175,41 @@ describe("closeout-helper", () => {
     expect(assessment.stopOnWarnFail).toBe(true);
     expect(assessment.queueAcceptanceAllowed).toBe(false);
     expect(assessment.nextAction).toContain("fix proof warnings");
+  });
+
+  it("does not add queue_item_missing for an intentional no-actionable queue gate before closeout", async () => {
+    const mod = await loadModule();
+    const assessment = mod.assessCloseout({
+      proof: { exists: true, result: "PASS", warnFailFree: true, flags: [], manualQaStatus: "PENDING", pushed: "no" },
+      git: { dirty: false, ahead: 1, branch: "main" },
+      queue: { ok: true, item: null },
+      proofDiscoveryMode: "default_latest_from_persistent_kia_proof_root",
+      queueGuidance: "No actionable queue items. Accepted, blocked, and parked items are intentionally skipped.",
+      nextActionState: "closeout_push_needed",
+    });
+    const issueCodes = assessment.issues.map((issue) => issue.code);
+
+    expect(assessment.status).toBe("WARN");
+    expect(assessment.queueAcceptanceAllowed).toBe(false);
+    expect(issueCodes).toContain("manual_qa_pending");
+    expect(issueCodes).toContain("local_commit_without_push");
+    expect(issueCodes).not.toContain("queue_item_missing");
+  });
+
+  it("keeps queue_item_missing visible when queue acceptance would otherwise be clean", async () => {
+    const mod = await loadModule();
+    const assessment = mod.assessCloseout({
+      proof: { exists: true, result: "PASS", warnFailFree: true, flags: [], manualQaStatus: "PASS", pushed: "yes" },
+      git: { dirty: false, ahead: 0, branch: "main" },
+      queue: { ok: true, item: null },
+      proofDiscoveryMode: "default_latest_from_persistent_kia_proof_root",
+      queueGuidance: "No actionable queue items. Accepted, blocked, and parked items are intentionally skipped.",
+      nextActionState: "accepted_pushed_state_recorded",
+    });
+
+    expect(assessment.status).toBe("WARN");
+    expect(assessment.issues.map((issue) => issue.code)).toContain("queue_item_missing");
+    expect(assessment.queueAcceptanceAllowed).toBe(false);
   });
 
   it("detects local-ahead and dirty git states", async () => {
@@ -324,12 +364,37 @@ describe("closeout-helper", () => {
   });
 
   it("defaults to the persistent KIA proof root when available", () => {
+    createProof(
+      tmpdir(),
+      "proof_kia_stick_stale_tmp_default_discovery_20200101T000000Z",
+      ["RESULT=PASS", "PHASE=stale-tmp-proof", "PUSHED=yes", "MANUAL_QA_STATUS=PASS"].join("\n")
+    );
     const summary = spawnSync("node", [scriptPath, "summary"], { encoding: "utf8" });
 
     expect(summary.status).toBe(0);
     expect(summary.stdout).toContain("PROOF_DISCOVERY_MODE=default_latest_from_persistent_kia_proof_root");
     expect(summary.stdout).toContain("PROOF_DISCOVERY_NOTE=persistent KIA proof root selected");
     expect(summary.stdout).toContain("PROOF_DIR=/home/mint/kia-stick-local-proofs/");
+    expect(summary.stdout).not.toContain("PHASE=stale-tmp-proof");
+  });
+
+  it("omits queue_item_missing from default persistent-root review when no actionable queue is expected", () => {
+    const review = spawnSync("node", [scriptPath, "review"], { encoding: "utf8" });
+    const issueLines = review.stdout
+      .split("\n")
+      .filter((line) => line.startsWith("- WARN") || line.startsWith("- FAIL"))
+      .join("\n");
+
+    expect(review.status).toBe(0);
+    expect(review.stdout).toContain("proof_discovery_mode=default_latest_from_persistent_kia_proof_root");
+    expect(review.stdout).toContain("queue_id=none");
+    expect(review.stdout).toContain("queue_status=none");
+    expect(review.stdout).toContain("queue_acceptance_allowed=false");
+    expect(review.stdout).toContain("no_actionable_queue_guidance=No actionable queue items.");
+    expect(review.stdout).toMatch(/next_action_state=(operator_qa_needed|closeout_push_needed)/);
+    expect(issueLines).toContain("manual_qa_pending");
+    expect(issueLines).toContain("local_commit_without_push");
+    expect(issueLines).not.toContain("queue_item_missing");
   });
 
   it("reports the current accepted pushed baseline instead of stale proof-chain checkpoints", () => {

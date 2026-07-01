@@ -166,8 +166,8 @@ export function parseGitState(root = process.cwd()) {
   };
 }
 
-export function readLatestProof(proofRoot = DEFAULT_PROOF_ROOT) {
-  const latest = selectLatestProof(discoverProofDirs(proofRoot));
+export function readLatestProof(proofRoot = FALLBACK_PROOF_ROOT) {
+  const latest = selectLatestProof(discoverProofDirs(proofRoot).filter((proof) => proof.result !== "missing_RESULT"));
   if (!latest) {
     return {
       exists: false,
@@ -434,7 +434,23 @@ function noActionableQueueGuidance(queue) {
   return "not_applicable";
 }
 
-export function assessCloseout({ proof, git, queue, proofDiscoveryMode = "default_latest" }) {
+function queueMissingIsExpectedNoActionableState({ queue, queueGuidance = "not_applicable", nextActionState = "review_required" }) {
+  return (
+    queue.ok &&
+    !queue.item &&
+    queueGuidance !== "not_applicable" &&
+    ["operator_qa_needed", "closeout_push_needed"].includes(nextActionState)
+  );
+}
+
+export function assessCloseout({
+  proof,
+  git,
+  queue,
+  proofDiscoveryMode = "default_latest",
+  queueGuidance = "not_applicable",
+  nextActionState = "review_required",
+}) {
   const issues = [];
 
   function warn(code, message) {
@@ -464,7 +480,11 @@ export function assessCloseout({ proof, git, queue, proofDiscoveryMode = "defaul
 
   if (!queue.ok) {
     fail("queue_unreadable", `Queue state could not be read: ${queue.error}`);
-  } else if (!queue.item && proofDiscoveryMode !== "explicit_proof_dir") {
+  } else if (
+    !queue.item &&
+    proofDiscoveryMode !== "explicit_proof_dir" &&
+    !queueMissingIsExpectedNoActionableState({ queue, queueGuidance, nextActionState })
+  ) {
     warn("queue_item_missing", "No queue item is available for the current phase.");
   } else if (queue.item && !readyQueueStatuses.has(queue.item.status)) {
     warn("queue_not_ready", `Queue item ${queue.item.id} is ${queue.item.status}, not ready_to_push or accepted.`);
@@ -502,10 +522,8 @@ function collectState(options) {
   const git = parseGitState(root);
   const queue = readQueueState(root, phase);
   const proofDiscoveryMode = options.proofDir ? "explicit_proof_dir" : `default_latest_from_${defaultProofRoot.mode}`;
-  const assessment = assessCloseout({ proof, git, queue, proofDiscoveryMode });
   const featureText = JSON.stringify(featureList);
   const packageLockUnchanged = currentPackageLockUnchanged(featureList);
-  const proofChain = collectProofChain(featureList, proof);
   const safety = {
     packageLockUnchanged,
     queue015Status: featureText.includes('"queue_015_status":"blocked"') || featureText.includes('"queue_015_status": "blocked"') ? "blocked" : "review_required",
@@ -514,8 +532,18 @@ function collectState(options) {
     realDocCapability: featureText.includes('"real_doc_capability_added":true') || featureText.includes('"real_doc_implementation_approved":true') ? "review_required" : "blocked",
     systemChanges: "none",
   };
-  const acceptedWarnStatusMeaning = acceptedWarnMeaning(proof, featureList);
   const queueGuidance = noActionableQueueGuidance(queue);
+  const computedNextActionState = nextActionState({ proof, git, queue, safety });
+  const assessment = assessCloseout({
+    proof,
+    git,
+    queue,
+    proofDiscoveryMode,
+    queueGuidance,
+    nextActionState: computedNextActionState,
+  });
+  const proofChain = collectProofChain(featureList, proof);
+  const acceptedWarnStatusMeaning = acceptedWarnMeaning(proof, featureList);
 
   return {
     root,
@@ -530,7 +558,7 @@ function collectState(options) {
     proofChain,
     acceptedWarnStatusMeaning,
     queueGuidance,
-    nextActionState: nextActionState({ proof, git, queue, safety }),
+    nextActionState: computedNextActionState,
     assessment,
   };
 }

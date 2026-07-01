@@ -11,6 +11,8 @@
 - Scope: fake-only docs/tests/tooling/status polish for accepted pushed state recording and closeout default proof-root freshness.
 - Included subphases: v0.9.73 accepted pushed state checkpoint; v0.9.74 closeout default proof-root discovery audit; v0.9.75 closeout default persistent-root implementation; v0.9.76 operator closeout proof-root guidance; v0.9.77 next large-work checkpoint.
 - Closeout helper: default discovery now prefers explicit `--proof-dir`, safe `KIA_PROOF_ROOT`, persistent `/home/mint/kia-stick-local-proofs`, and `/tmp` fallback, in that order.
+- Queue-warning polish: default review does not add `queue_item_missing` when there is intentionally no actionable queue item, queue acceptance is not allowed, no-actionable queue guidance is present, and next action is operator QA or closeout/push.
+- Preserved warnings: proof WARN/FAIL text, dirty worktree, manual QA pending, local commits without push, queue unreadable, and real not-ready/missing queue gates still report.
 - Explicit `--proof-dir` behavior: unchanged and strongest.
 - Proof directory mutation: no.
 - Arbitrary private folder scan: no.
@@ -34,9 +36,10 @@
 - Push performed: no
 - Manual QA status: PENDING
 - Proof directory: `/home/mint/kia-stick-local-proofs/proof_kia_stick_v0_9_73_to_v0_9_77_accepted_pushed_state_closeout_default_proof_root_freshness_bundle_20260701T112802Z`
+- Queue-warning polish proof directory: `/home/mint/kia-stick-local-proofs/proof_kia_stick_v0_9_73_to_v0_9_77_queue_warning_polish_20260701T144454Z`
 - Validation status: PASS
 
-This local bundle records the accepted pushed v0.9.72 baseline and makes default closeout proof discovery prefer persistent KIA proofs instead of stale `/tmp` proofs. Local validation passed; operator manual QA and any closeout/push remain separate.
+This local bundle records the accepted pushed v0.9.72 baseline and makes default closeout proof discovery prefer persistent KIA proofs instead of stale `/tmp` proofs. The follow-up queue-warning polish removes the unexpected no-actionable `queue_item_missing` warning while preserving the expected `manual_qa_pending` and `local_commit_without_push` warnings before acceptance. Local validation passed; operator manual QA and any closeout/push remain separate.
 
 ## v0.9.68 to v0.9.72 Accepted Pushed State / Runtime Status Freshness Bundle
 
