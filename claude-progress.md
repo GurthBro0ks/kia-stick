@@ -2,10 +2,34 @@
 
 ## Current Phase
 
-- Phase: `KIA-Stick-v0.9.68-to-v0.9.72-accepted-pushed-state-and-runtime-status-freshness-bundle`
+- Phase: `KIA-Stick-v0.9.73-to-v0.9.77-accepted-pushed-state-and-closeout-default-proof-root-freshness-bundle`
 - Target: `USER_LAPTOP_ONLY`
 - Provider: `local-fake-deterministic`
-- Status: local v0.9.68-to-v0.9.72 fake-only accepted pushed state and runtime status freshness bundle has validation `PASS`, manual QA `PASS`, and push `no`. The accepted pushed v0.9.63-to-v0.9.67 closeout is recorded at `1465817e8efad6207705833e9e08f22030d6a116` with proof `/home/mint/kia-stick-local-proofs/proof_kia_stick_v0_9_63_to_v0_9_67_operator_qa_pass_recording_20260701T091506Z/closeout_push_20260701T093116Z`, validation PASS, manual QA PASS, push yes, and `HEAD == origin/main`. This bundle refreshes Settings current accepted pushed status, marks accepted-WARN as historical/parked, refreshes `/health` phase metadata, and keeps `/version` product/prompt semantics unchanged. Next/PostCSS remains parked as `WARN_SAFE_NEXT_TARGET_UNCLEAR`; v0.9.12C remains blocked pending exact target approval; queue-015 remains blocked; product/prompt unchanged; no dependency or real-doc implementation is approved.
+- Status: local v0.9.73-to-v0.9.77 fake-only accepted pushed state and closeout default proof-root freshness bundle has validation `PASS`, manual QA `PENDING`, and push `no`. The accepted pushed v0.9.68-to-v0.9.72 closeout is recorded at `6155db02cc3ba8af6e50fa482f181e20c1d5a0c4` with proof `/home/mint/kia-stick-local-proofs/proof_kia_stick_v0_9_68_to_v0_9_72_operator_qa_pass_recording_20260701T103226Z/closeout_push_20260701T111929Z`, validation PASS, manual QA PASS, push yes, and `HEAD == origin/main`. This bundle records that accepted pushed state and updates closeout-helper default discovery to prefer persistent KIA proofs before `/tmp` fallback. Next/PostCSS remains parked as `WARN_SAFE_NEXT_TARGET_UNCLEAR`; v0.9.12C remains blocked pending exact target approval; queue-015 remains blocked; product/prompt unchanged; no dependency or real-doc implementation is approved.
+
+## v0.9.73 to v0.9.77 Accepted Pushed State / Closeout Default Proof-Root Freshness Bundle
+
+- Phase: `KIA-Stick-v0.9.73-to-v0.9.77-accepted-pushed-state-and-closeout-default-proof-root-freshness-bundle`
+- Target machine: `USER_LAPTOP_ONLY`
+- Baseline: accepted pushed v0.9.68-to-v0.9.72 closeout at `6155db02cc3ba8af6e50fa482f181e20c1d5a0c4`
+- Prior accepted proof: `/home/mint/kia-stick-local-proofs/proof_kia_stick_v0_9_68_to_v0_9_72_operator_qa_pass_recording_20260701T103226Z/closeout_push_20260701T111929Z`
+- Prior validation/manual QA: PASS/PASS
+- Prior push status: yes, with `HEAD == origin/main` at `6155db0`
+- Scope: fake-only docs/tests/tooling/status; no dependency, lockfile, runtime intake, service, notification, or real-doc change.
+- New docs: `docs/v0.9.73-accepted-pushed-state-checkpoint.md`, `docs/v0.9.74-closeout-default-proof-root-discovery-audit.md`, `docs/v0.9.75-closeout-default-persistent-root-implementation.md`, `docs/v0.9.76-operator-closeout-proof-root-guidance.md`, `docs/v0.9.77-next-large-work-checkpoint.md`
+- New tests: `tests/v0973AcceptedPushedStateCheckpoint.test.ts`, `tests/v0974CloseoutDefaultProofRootDiscoveryAudit.test.ts`, `tests/v0975CloseoutDefaultPersistentRootImplementation.test.ts`, `tests/v0976OperatorCloseoutProofRootGuidance.test.ts`, `tests/v0977NextLargeWorkCheckpoint.test.ts`
+- Helper/status changes: closeout default discovery now prefers explicit `--proof-dir`, safe `KIA_PROOF_ROOT`, persistent `/home/mint/kia-stick-local-proofs`, and `/tmp` fallback, in that order.
+- Next/PostCSS runtime path: parked as `WARN_SAFE_NEXT_TARGET_UNCLEAR`, not fixed.
+- v0.9.12C implementation: blocked until exact target approval.
+- Version state: product/package version remain `0.7.0`; prompt version remains `prompt.fake-docs.v0.5-import-wizard-hardening`.
+- Queue state: `queue-015-v07-first-real-doc-gate-request` remains blocked.
+- Real-doc capability found/approved: no.
+- Push status: not pushed.
+- Manual QA status: PENDING.
+- Proof directory: `/home/mint/kia-stick-local-proofs/proof_kia_stick_v0_9_73_to_v0_9_77_accepted_pushed_state_closeout_default_proof_root_freshness_bundle_20260701T112802Z`
+- Commands run: baseline harness/git/package checks, implementation plan proof write, repo docs/tests/helper inspection, scoped docs/tests/tooling/status edits, focused tests, full lint/typecheck/test/build/design/release validation, operator smoke, queue/proof/closeout helper checks, fake/privacy scans, and package/scope checks.
+- Validation: PASS for required local gates.
+- Remaining unknowns: local commit SHA, operator manual QA, and separate closeout/push approval.
 
 ## v0.9.68 to v0.9.72 Accepted Pushed State / Runtime Status Freshness Bundle
 

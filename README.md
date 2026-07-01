@@ -12,6 +12,18 @@ KIA Stick separates milestone semver from build identity:
 
 `/health`, `/version`, the app header, settings, answer footer, and saved answer metadata expose the current `displayVersion`.
 
+## v0.9.73 to v0.9.77 Accepted Pushed State / Closeout Default Proof-Root Freshness Bundle
+
+Phase: `KIA-Stick-v0.9.73-to-v0.9.77-accepted-pushed-state-and-closeout-default-proof-root-freshness-bundle`.
+
+This local fake-only docs/tests/tooling/status bundle starts from accepted pushed v0.9.68-to-v0.9.72 closeout at `6155db02cc3ba8af6e50fa482f181e20c1d5a0c4`. Closeout/push proof is recorded at `/home/mint/kia-stick-local-proofs/proof_kia_stick_v0_9_68_to_v0_9_72_operator_qa_pass_recording_20260701T103226Z/closeout_push_20260701T111929Z` with validation PASS, manual QA PASS, push yes, and `HEAD == origin/main`.
+
+The bundle adds `docs/v0.9.73-accepted-pushed-state-checkpoint.md`, `docs/v0.9.74-closeout-default-proof-root-discovery-audit.md`, `docs/v0.9.75-closeout-default-persistent-root-implementation.md`, `docs/v0.9.76-operator-closeout-proof-root-guidance.md`, and `docs/v0.9.77-next-large-work-checkpoint.md` with focused tests. It updates `scripts/closeout-helper.mjs` so default closeout proof discovery uses this order: explicit `--proof-dir`, safe `KIA_PROOF_ROOT`, persistent `/home/mint/kia-stick-local-proofs`, then `/tmp` fallback.
+
+This is local fake-only docs/tests/tooling/status work. Validation PASS is recorded at `/home/mint/kia-stick-local-proofs/proof_kia_stick_v0_9_73_to_v0_9_77_accepted_pushed_state_closeout_default_proof_root_freshness_bundle_20260701T112802Z`. Manual QA for this new local bundle is `PENDING`; no push is claimed or performed. Next/PostCSS remains `WARN_SAFE_NEXT_TARGET_UNCLEAR`, `KIA-Stick-v0.9.12C-next-runtime-framework-security-implementation` remains blocked pending exact target approval, and `queue-015-v07-first-real-doc-gate-request` remains blocked. `package.json` and `package-lock.json` remain unchanged. Product/package version remains `0.7.0`; prompt version remains `prompt.fake-docs.v0.5-import-wizard-hardening`.
+
+No real-doc implementation is approved. The bundle does not add file pickers, FileReader, path readers, uploads, OCR, real redaction, text extraction, summarization, embeddings, indexing, vector stores, private-source inspection, services, secrets, Discord, global config, or system changes.
+
 ## v0.9.68 to v0.9.72 Accepted Pushed State / Runtime Status Freshness Bundle
 
 Phase: `KIA-Stick-v0.9.68-to-v0.9.72-accepted-pushed-state-and-runtime-status-freshness-bundle`.

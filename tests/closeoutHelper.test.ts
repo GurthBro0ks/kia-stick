@@ -19,6 +19,7 @@ interface CloseoutModule {
   parseGitState(root?: string): { dirty: boolean; ahead: number; head: string; originMain: string };
   readLatestProof(root?: string): { exists: boolean; result: string; phase: string; warnFailFree: boolean; flags: string[] };
   readProofDir(root: string): { exists: boolean; result: string; phase: string; manualQaStatus: string; pushed: string; warnFailFree: boolean; flags: string[] };
+  resolveDefaultProofRoot(options?: { proofRoot?: string; env?: NodeJS.ProcessEnv }): { root: string; mode: string; note: string };
   resultHasWarnFail(markdown: string): boolean;
 }
 
@@ -294,8 +295,41 @@ describe("closeout-helper", () => {
 
     expect(summary.status).toBe(0);
     expect(summary.stdout).toContain(`PHASE=${phase}`);
-    expect(summary.stdout).toContain("PROOF_DISCOVERY_MODE=default_latest_from_proof_root");
-    expect(summary.stdout).toContain("PROOF_DISCOVERY_NOTE=default discovery mode; pass --proof-dir");
+    expect(summary.stdout).toContain("PROOF_DISCOVERY_MODE=default_latest_from_explicit_proof_root");
+    expect(summary.stdout).toContain("PROOF_DISCOVERY_NOTE=explicit --proof-root supplied");
+  });
+
+  it("prefers KIA_PROOF_ROOT over the persistent root when supplied safely", async () => {
+    const mod = await loadModule();
+    const proofRoot = mkdtempSync(join(tmpdir(), "kia-closeout-env-proof-"));
+    createProof(
+      proofRoot,
+      "proof_kia_stick_v0_9_75_env_20260701T000000Z",
+      ["RESULT=PASS", "PHASE=env-proof-root", "PUSHED=yes", "MANUAL_QA_STATUS=PASS"].join("\n")
+    );
+
+    const selected = mod.resolveDefaultProofRoot({ env: { ...process.env, KIA_PROOF_ROOT: proofRoot } });
+
+    expect(selected.root).toBe(proofRoot);
+    expect(selected.mode).toBe("env_kia_proof_root");
+    expect(selected.note).toContain("KIA_PROOF_ROOT supplied");
+  });
+
+  it("rejects unsafe KIA_PROOF_ROOT instead of scanning arbitrary folders", async () => {
+    const mod = await loadModule();
+
+    expect(() => mod.resolveDefaultProofRoot({ env: { ...process.env, KIA_PROOF_ROOT: "/home/mint" } })).toThrow(
+      "Refusing to inspect proof dir outside allowed proof roots"
+    );
+  });
+
+  it("defaults to the persistent KIA proof root when available", () => {
+    const summary = spawnSync("node", [scriptPath, "summary"], { encoding: "utf8" });
+
+    expect(summary.status).toBe(0);
+    expect(summary.stdout).toContain("PROOF_DISCOVERY_MODE=default_latest_from_persistent_kia_proof_root");
+    expect(summary.stdout).toContain("PROOF_DISCOVERY_NOTE=persistent KIA proof root selected");
+    expect(summary.stdout).toContain("PROOF_DIR=/home/mint/kia-stick-local-proofs/");
   });
 
   it("reports the current accepted pushed baseline instead of stale proof-chain checkpoints", () => {
@@ -304,15 +338,15 @@ describe("closeout-helper", () => {
     const currentOperatorQaProof =
       "/home/mint/kia-stick-local-proofs/proof_kia_stick_v0_9_68_to_v0_9_72_operator_qa_pass_recording_20260701T103226Z";
     const currentCloseoutProof =
-      "/home/mint/kia-stick-local-proofs/proof_kia_stick_v0_9_63_to_v0_9_67_operator_qa_pass_recording_20260701T091506Z/closeout_push_20260701T093116Z";
+      "/home/mint/kia-stick-local-proofs/proof_kia_stick_v0_9_68_to_v0_9_72_operator_qa_pass_recording_20260701T103226Z/closeout_push_20260701T111929Z";
 
     const summary = spawnSync("node", [scriptPath, "summary", "--proof-dir", currentResearchProof], { encoding: "utf8" });
 
     expect(summary.status).toBe(0);
-    expect(summary.stdout).toContain("PROOF_CHAIN_ACCEPTED_PUSHED_CHECKPOINT=1465817");
+    expect(summary.stdout).toContain("PROOF_CHAIN_ACCEPTED_PUSHED_CHECKPOINT=6155db0");
     expect(summary.stdout).toContain(`PROOF_CHAIN_OPERATOR_QA_PROOF=${currentOperatorQaProof}`);
     expect(summary.stdout).toContain(`PROOF_CHAIN_CLOSEOUT_PUSH_PROOF=${currentCloseoutProof}`);
-    expect(summary.stdout).toContain("PROOF_CHAIN_PENDING_LOCAL_BUNDLE=KIA-Stick-v0.9.72-next-large-work-checkpoint; result=WARN_SAFE_NEXT_TARGET_UNCLEAR; manual_qa=PASS; pushed=no");
+    expect(summary.stdout).toContain("PROOF_CHAIN_PENDING_LOCAL_BUNDLE=KIA-Stick-v0.9.77-next-large-work-checkpoint; result=WARN_SAFE_NEXT_TARGET_UNCLEAR; manual_qa=PENDING; pushed=no");
     expect(summary.stdout).not.toContain("PROOF_CHAIN_ACCEPTED_PUSHED_CHECKPOINT=8358e63");
   });
 

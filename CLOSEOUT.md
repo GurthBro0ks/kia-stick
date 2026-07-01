@@ -1,5 +1,43 @@
 # KIA Stick Closeout
 
+## v0.9.73 to v0.9.77 Accepted Pushed State / Closeout Default Proof-Root Freshness Bundle
+
+- Phase: `KIA-Stick-v0.9.73-to-v0.9.77-accepted-pushed-state-and-closeout-default-proof-root-freshness-bundle`
+- Target machine: `USER_LAPTOP_ONLY`
+- Baseline: accepted pushed v0.9.68-to-v0.9.72 closeout at `6155db02cc3ba8af6e50fa482f181e20c1d5a0c4`
+- Prior proof directory: `/home/mint/kia-stick-local-proofs/proof_kia_stick_v0_9_68_to_v0_9_72_operator_qa_pass_recording_20260701T103226Z/closeout_push_20260701T111929Z`
+- Prior validation/manual QA: PASS/PASS
+- Prior push status: yes, with `HEAD == origin/main` at `6155db0`
+- Scope: fake-only docs/tests/tooling/status polish for accepted pushed state recording and closeout default proof-root freshness.
+- Included subphases: v0.9.73 accepted pushed state checkpoint; v0.9.74 closeout default proof-root discovery audit; v0.9.75 closeout default persistent-root implementation; v0.9.76 operator closeout proof-root guidance; v0.9.77 next large-work checkpoint.
+- Closeout helper: default discovery now prefers explicit `--proof-dir`, safe `KIA_PROOF_ROOT`, persistent `/home/mint/kia-stick-local-proofs`, and `/tmp` fallback, in that order.
+- Explicit `--proof-dir` behavior: unchanged and strongest.
+- Proof directory mutation: no.
+- Arbitrary private folder scan: no.
+- Next/PostCSS runtime security path: remains parked as `WARN_SAFE_NEXT_TARGET_UNCLEAR`.
+- v0.9.12C implementation: blocked until an exact Next target is separately approved.
+- Product version: `0.7.0`
+- Package version: `0.7.0`
+- Prompt version: `prompt.fake-docs.v0.5-import-wizard-hardening`
+- Queue state: `queue-015-v07-first-real-doc-gate-request` remains blocked.
+- `package.json` changed: no
+- `package-lock.json` changed: no
+- Dependency versions changed: no
+- Runtime capability changed: no intake or real-doc capability; helper and docs/status output only.
+- Real document implementation approved: no
+- Real document access: none
+- File picker/FileReader/OCR/indexing/embedding/vector capability added: no
+- Services restarted: no
+- Cron/timer/tmux/Caddy/DNS changed: no
+- Secrets printed: no
+- Discord sent: no
+- Push performed: no
+- Manual QA status: PENDING
+- Proof directory: `/home/mint/kia-stick-local-proofs/proof_kia_stick_v0_9_73_to_v0_9_77_accepted_pushed_state_closeout_default_proof_root_freshness_bundle_20260701T112802Z`
+- Validation status: PASS
+
+This local bundle records the accepted pushed v0.9.72 baseline and makes default closeout proof discovery prefer persistent KIA proofs instead of stale `/tmp` proofs. Local validation passed; operator manual QA and any closeout/push remain separate.
+
 ## v0.9.68 to v0.9.72 Accepted Pushed State / Runtime Status Freshness Bundle
 
 - Phase: `KIA-Stick-v0.9.68-to-v0.9.72-accepted-pushed-state-and-runtime-status-freshness-bundle`

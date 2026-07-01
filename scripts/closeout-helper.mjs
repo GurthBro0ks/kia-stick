@@ -5,7 +5,8 @@ import { spawnSync } from "node:child_process";
 import { discoverProofDirs, parseResultMarkdown, redactProofText, selectLatestProof } from "./proof-index.mjs";
 import { loadQueue, selectNextItem } from "./task-queue.mjs";
 
-const DEFAULT_PROOF_ROOT = "/tmp";
+const FALLBACK_PROOF_ROOT = "/tmp";
+const PERSISTENT_KIA_PROOF_ROOT = "/home/mint/kia-stick-local-proofs";
 const SAFE_PROOF_ROOTS = ["/tmp", "/home/mint/kia-stick-local-proofs"];
 const readyQueueStatuses = new Set(["ready_to_push", "accepted"]);
 
@@ -53,6 +54,46 @@ function assertSafeProofDir(proofDir) {
   const safe = SAFE_PROOF_ROOTS.some((root) => isWithin(root, resolved));
   if (!safe) throw new Error(`Refusing to inspect proof dir outside allowed proof roots: ${resolved}`);
   return resolved;
+}
+
+function assertSafeProofRoot(proofRoot) {
+  return assertSafeProofDir(proofRoot);
+}
+
+function proofRootHasKiaProofs(proofRoot) {
+  return discoverProofDirs(proofRoot).some((proof) => path.basename(proof.path).startsWith("proof_kia_stick_"));
+}
+
+export function resolveDefaultProofRoot({ proofRoot = "", env = process.env } = {}) {
+  if (proofRoot) {
+    return {
+      root: assertSafeProofRoot(proofRoot),
+      mode: "explicit_proof_root",
+      note: "explicit --proof-root supplied",
+    };
+  }
+
+  if (env.KIA_PROOF_ROOT) {
+    return {
+      root: assertSafeProofRoot(env.KIA_PROOF_ROOT),
+      mode: "env_kia_proof_root",
+      note: "KIA_PROOF_ROOT supplied",
+    };
+  }
+
+  if (existsSync(PERSISTENT_KIA_PROOF_ROOT) && proofRootHasKiaProofs(PERSISTENT_KIA_PROOF_ROOT)) {
+    return {
+      root: PERSISTENT_KIA_PROOF_ROOT,
+      mode: "persistent_kia_proof_root",
+      note: "persistent KIA proof root selected; pass --proof-dir to review a specific closeout proof",
+    };
+  }
+
+  return {
+    root: FALLBACK_PROOF_ROOT,
+    mode: "tmp_fallback_proof_root",
+    note: "persistent KIA proof root unavailable; using /tmp fallback; pass --proof-dir to review a specific closeout proof",
+  };
 }
 
 function parseProofMetadata(markdown, proofPath = "") {
@@ -224,6 +265,11 @@ function manualQaPassed(status = "PASS") {
 
 function currentPackageLockUnchanged(featureList) {
   const currentPackageLockKeys = [
+    "v0977_next_large_work_checkpoint",
+    "v0976_operator_closeout_proof_root_guidance",
+    "v0975_closeout_default_persistent_root_implementation",
+    "v0974_closeout_default_proof_root_discovery_audit",
+    "v0973_accepted_pushed_state_checkpoint",
     "v0972_next_large_work_checkpoint",
     "v0971_browser_qa_status_checklist_polish",
     "v0970_health_version_phase_status_freshness_polish",
@@ -286,7 +332,9 @@ function collectProofChain(featureList, proof = {}) {
   const useHistorical = shouldUseHistoricalProofChain(proof);
   const window = proofChainWindow(proof);
   const accepted =
-    !useHistorical && window !== "v0963" && featureList.v0968_accepted_pushed_state_checkpoint
+    !useHistorical && window !== "v0963" && featureList.v0973_accepted_pushed_state_checkpoint
+      ? featureList.v0973_accepted_pushed_state_checkpoint
+      : !useHistorical && window !== "v0963" && featureList.v0968_accepted_pushed_state_checkpoint
       ? featureList.v0968_accepted_pushed_state_checkpoint
       : !useHistorical && featureList.v0963_accepted_pushed_state_checkpoint
       ? featureList.v0963_accepted_pushed_state_checkpoint
@@ -306,7 +354,9 @@ function collectProofChain(featureList, proof = {}) {
       ? featureList.v0953_accepted_pushed_warn_state_checkpoint
       : featureList.v0933_accepted_pushed_warn_state_checkpoint || {};
   const current =
-    !useHistorical && window !== "v0963" && featureList.v0972_next_large_work_checkpoint
+    !useHistorical && window !== "v0963" && featureList.v0977_next_large_work_checkpoint
+      ? featureList.v0977_next_large_work_checkpoint
+      : !useHistorical && window !== "v0963" && featureList.v0972_next_large_work_checkpoint
       ? featureList.v0972_next_large_work_checkpoint
       : !useHistorical && featureList.v0967_next_large_work_checkpoint
       ? featureList.v0967_next_large_work_checkpoint
@@ -446,11 +496,12 @@ export function assessCloseout({ proof, git, queue, proofDiscoveryMode = "defaul
 function collectState(options) {
   const root = path.resolve(options.root);
   const featureList = readJson(root, "feature_list.json", {});
-  const proof = options.proofDir ? readProofDir(options.proofDir) : readLatestProof(options.proofRoot);
+  const defaultProofRoot = options.proofDir ? { root: "", mode: "explicit_proof_dir", note: "explicit proof dir supplied" } : resolveDefaultProofRoot({ proofRoot: options.proofRoot });
+  const proof = options.proofDir ? readProofDir(options.proofDir) : readLatestProof(defaultProofRoot.root);
   const phase = options.phase || proof.phase || featureList.phase || "unknown";
   const git = parseGitState(root);
   const queue = readQueueState(root, phase);
-  const proofDiscoveryMode = options.proofDir ? "explicit_proof_dir" : "default_latest_from_proof_root";
+  const proofDiscoveryMode = options.proofDir ? "explicit_proof_dir" : `default_latest_from_${defaultProofRoot.mode}`;
   const assessment = assessCloseout({ proof, git, queue, proofDiscoveryMode });
   const featureText = JSON.stringify(featureList);
   const packageLockUnchanged = currentPackageLockUnchanged(featureList);
@@ -470,8 +521,9 @@ function collectState(options) {
     root,
     phase,
     proof,
-    proofRoot: path.resolve(options.proofRoot),
+    proofRoot: options.proofDir ? "not_applicable_explicit_proof_dir" : path.resolve(defaultProofRoot.root),
     proofDiscoveryMode,
+    proofDiscoveryNote: defaultProofRoot.note,
     git,
     queue,
     safety,
@@ -488,8 +540,8 @@ function printReview(options) {
   console.log(`Closeout review: ${state.assessment.status}`);
   console.log(`phase=${state.phase}`);
   console.log(`proof_discovery_mode=${state.proofDiscoveryMode}`);
-  if (state.proofDiscoveryMode === "default_latest_from_proof_root") {
-    console.log(`proof_discovery_note=default discovery mode: using latest proof under proof_root; pass --proof-dir to review a specific closeout proof`);
+  if (state.proofDiscoveryMode !== "explicit_proof_dir") {
+    console.log(`proof_discovery_note=${state.proofDiscoveryNote}`);
   }
   console.log(`proof_root=${state.proofRoot}`);
   console.log(`proof_dir=${state.proof.path || "missing"}`);
@@ -569,9 +621,7 @@ function printSummary(options) {
     PROOF_DIR: state.proof.path || "missing",
     PROOF_DISCOVERY_MODE: state.proofDiscoveryMode,
     PROOF_DISCOVERY_NOTE:
-      state.proofDiscoveryMode === "default_latest_from_proof_root"
-        ? "default discovery mode; pass --proof-dir to review a specific closeout proof"
-        : "explicit proof dir supplied",
+      state.proofDiscoveryMode === "explicit_proof_dir" ? "explicit proof dir supplied" : state.proofDiscoveryNote,
     VALIDATION: validation,
     CLOSEOUT_HELPER_RESULT: `${state.assessment.status}; ${state.assessment.nextAction}`,
     NEXT_ACTION_STATE: state.nextActionState,
@@ -611,7 +661,7 @@ function parseArgs(argv) {
   const args = {
     command: argv[0] && !argv[0].startsWith("--") ? argv[0] : "review",
     root: process.cwd(),
-    proofRoot: DEFAULT_PROOF_ROOT,
+    proofRoot: "",
     proofDir: "",
     phase: "",
   };
