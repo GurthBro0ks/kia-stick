@@ -16,7 +16,8 @@ describe("v0.9.76 operator closeout proof-root guidance", () => {
       "`/tmp` is fallback only.",
       "Stale old `/tmp` proofs should not drive current closeout decisions",
       "Stop-on-WARN/FAIL behavior is preserved.",
-      "Manual QA remains pending",
+      "Manual QA is PASS",
+      "operator QA proof",
     ]) {
       expect(doc).toContain(required);
     }

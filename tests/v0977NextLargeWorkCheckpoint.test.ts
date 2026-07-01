@@ -18,7 +18,8 @@ describe("v0.9.77 next large-work checkpoint", () => {
       "Repeat official-source research later if evidence changes.",
       "Request exact Next target approval only if a clean target is proven.",
       "Keep real-doc gate blocked unless a separate one-document, one-gate approval packet is explicitly approved.",
-      "Manual QA for this local bundle is `PENDING`.",
+      "Manual QA for this local bundle is `PASS`",
+      "Operator QA proof is",
       "Push is not performed by this local bundle.",
       "Next/PostCSS remains parked as `WARN_SAFE_NEXT_TARGET_UNCLEAR`.",
       "`queue-015-v07-first-real-doc-gate-request` remains blocked.",
@@ -42,6 +43,7 @@ describe("v0.9.77 next large-work checkpoint", () => {
         package_lock_changed: boolean;
         dependency_versions_changed: boolean;
         safe_next_choices: string[];
+        operator_qa_pass_proof_dir: string;
       };
     };
     const queue = JSON.parse(readFileSync("docs/phase-backlog.json", "utf8")) as {
@@ -51,7 +53,8 @@ describe("v0.9.77 next large-work checkpoint", () => {
 
     expect(state.phase).toBe(phase);
     expect(state.status).toBe("accepted");
-    expect(state.current_bundle_manual_qa_status).toBe("PENDING");
+    expect(state.current_bundle_manual_qa_status).toBe("PASS");
+    expect(state.operator_qa_pass_proof_dir).toContain("operator_qa_pass_recording");
     expect(state.pushed).toBe(false);
     expect(state.next_postcss_status).toBe("WARN_SAFE_NEXT_TARGET_UNCLEAR");
     expect(state.next_implementation_blocked).toBe(true);

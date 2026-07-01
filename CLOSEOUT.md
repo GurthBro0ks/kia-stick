@@ -34,12 +34,13 @@
 - Secrets printed: no
 - Discord sent: no
 - Push performed: no
-- Manual QA status: PENDING
+- Manual QA status: PASS by `OPERATOR_QA_PASS for /home/mint/kia-stick-local-proofs/proof_kia_stick_v0_9_73_to_v0_9_77_queue_warning_polish_20260701T144454Z`
 - Proof directory: `/home/mint/kia-stick-local-proofs/proof_kia_stick_v0_9_73_to_v0_9_77_accepted_pushed_state_closeout_default_proof_root_freshness_bundle_20260701T112802Z`
 - Queue-warning polish proof directory: `/home/mint/kia-stick-local-proofs/proof_kia_stick_v0_9_73_to_v0_9_77_queue_warning_polish_20260701T144454Z`
+- Operator QA proof directory: `/home/mint/kia-stick-local-proofs/proof_kia_stick_v0_9_73_to_v0_9_77_queue_warning_polish_operator_qa_pass_recording_20260701T150207Z`
 - Validation status: PASS
 
-This local bundle records the accepted pushed v0.9.72 baseline and makes default closeout proof discovery prefer persistent KIA proofs instead of stale `/tmp` proofs. The follow-up queue-warning polish removes the unexpected no-actionable `queue_item_missing` warning while preserving the expected `manual_qa_pending` and `local_commit_without_push` warnings before acceptance. Local validation passed; operator manual QA and any closeout/push remain separate.
+This local bundle records the accepted pushed v0.9.72 baseline and makes default closeout proof discovery prefer persistent KIA proofs instead of stale `/tmp` proofs. The follow-up queue-warning polish removes the unexpected no-actionable `queue_item_missing` warning while preserving pre-acceptance manual QA and local push gates. Local validation passed and operator manual QA passed; any closeout/push remains separate.
 
 ## v0.9.68 to v0.9.72 Accepted Pushed State / Runtime Status Freshness Bundle
 

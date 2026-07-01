@@ -392,7 +392,6 @@ describe("closeout-helper", () => {
     expect(review.stdout).toContain("queue_acceptance_allowed=false");
     expect(review.stdout).toContain("no_actionable_queue_guidance=No actionable queue items.");
     expect(review.stdout).toMatch(/next_action_state=(operator_qa_needed|closeout_push_needed)/);
-    expect(issueLines).toContain("manual_qa_pending");
     expect(issueLines).toContain("local_commit_without_push");
     expect(issueLines).not.toContain("queue_item_missing");
   });
@@ -401,7 +400,7 @@ describe("closeout-helper", () => {
     const currentResearchProof =
       "/home/mint/kia-stick-local-proofs/proof_kia_stick_v0_9_48_to_v0_9_52_accepted_state_official_next_postcss_research_refresh_bundle_20260630T170813Z";
     const currentOperatorQaProof =
-      "/home/mint/kia-stick-local-proofs/proof_kia_stick_v0_9_68_to_v0_9_72_operator_qa_pass_recording_20260701T103226Z";
+      "/home/mint/kia-stick-local-proofs/proof_kia_stick_v0_9_73_to_v0_9_77_queue_warning_polish_operator_qa_pass_recording_20260701T150207Z";
     const currentCloseoutProof =
       "/home/mint/kia-stick-local-proofs/proof_kia_stick_v0_9_68_to_v0_9_72_operator_qa_pass_recording_20260701T103226Z/closeout_push_20260701T111929Z";
 
@@ -411,7 +410,7 @@ describe("closeout-helper", () => {
     expect(summary.stdout).toContain("PROOF_CHAIN_ACCEPTED_PUSHED_CHECKPOINT=6155db0");
     expect(summary.stdout).toContain(`PROOF_CHAIN_OPERATOR_QA_PROOF=${currentOperatorQaProof}`);
     expect(summary.stdout).toContain(`PROOF_CHAIN_CLOSEOUT_PUSH_PROOF=${currentCloseoutProof}`);
-    expect(summary.stdout).toContain("PROOF_CHAIN_PENDING_LOCAL_BUNDLE=KIA-Stick-v0.9.77-next-large-work-checkpoint; result=WARN_SAFE_NEXT_TARGET_UNCLEAR; manual_qa=PENDING; pushed=no");
+    expect(summary.stdout).toContain("PROOF_CHAIN_PENDING_LOCAL_BUNDLE=KIA-Stick-v0.9.77-next-large-work-checkpoint; result=WARN_SAFE_NEXT_TARGET_UNCLEAR; manual_qa=PASS; pushed=no");
     expect(summary.stdout).not.toContain("PROOF_CHAIN_ACCEPTED_PUSHED_CHECKPOINT=8358e63");
   });
 
