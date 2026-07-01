@@ -34,7 +34,7 @@ describe("v0.9.69 Settings operator-status freshness polish", () => {
     expect(component).toContain("validation PASS / manual QA PASS / pushed yes / HEAD == origin/main");
     expect(component).toContain("Historical accepted-WARN meaning");
     expect(component).toContain("accepted-WARN parked, not current");
-    expect(component).toContain("v0.9.68-to-v0.9.72 status freshness; manual QA pending; pushed no");
+    expect(component).toContain("v0.9.68-to-v0.9.72 status freshness; manual QA PASS; pushed no");
     expect(component).toContain("queue-015 blocked; no real-doc capability");
     expect(component).toContain("unchanged; no install/update/audit-fix/dedupe/prune");
     expect(component).not.toMatch(/<input[^>]+type=["']file["']/);
@@ -50,6 +50,7 @@ describe("v0.9.69 Settings operator-status freshness polish", () => {
         current_accepted_pushed_short_commit: string;
         historical_warn_marked_historical: boolean;
         current_bundle_manual_qa_status: string;
+        operator_qa_pass_text: string;
         pushed: boolean;
         package_lock_changed: boolean;
         real_doc_capability_added: boolean;
@@ -61,7 +62,10 @@ describe("v0.9.69 Settings operator-status freshness polish", () => {
     expect(state.status).toBe("accepted");
     expect(state.current_accepted_pushed_short_commit).toBe("1465817");
     expect(state.historical_warn_marked_historical).toBe(true);
-    expect(state.current_bundle_manual_qa_status).toBe("PENDING");
+    expect(state.current_bundle_manual_qa_status).toBe("PASS");
+    expect(state.operator_qa_pass_text).toBe(
+      "OPERATOR_QA_PASS for /home/mint/kia-stick-local-proofs/proof_kia_stick_v0_9_68_to_v0_9_72_accepted_pushed_state_runtime_status_freshness_bundle_20260701T094248Z"
+    );
     expect(state.pushed).toBe(false);
     expect(state.package_lock_changed).toBe(false);
     expect(state.real_doc_capability_added).toBe(false);

@@ -31,11 +31,13 @@
 - Secrets printed: no
 - Discord sent: no
 - Push performed: no
-- Manual QA status: PENDING
+- Manual QA status: PASS
+- Operator QA proof: `/home/mint/kia-stick-local-proofs/proof_kia_stick_v0_9_68_to_v0_9_72_operator_qa_pass_recording_20260701T103226Z`
+- Operator QA source: `OPERATOR_QA_PASS for /home/mint/kia-stick-local-proofs/proof_kia_stick_v0_9_68_to_v0_9_72_accepted_pushed_state_runtime_status_freshness_bundle_20260701T094248Z`
 - Proof directory: `/home/mint/kia-stick-local-proofs/proof_kia_stick_v0_9_68_to_v0_9_72_accepted_pushed_state_runtime_status_freshness_bundle_20260701T094248Z`
 - Validation status: PASS
 
-This local bundle records the accepted pushed v0.9.67 baseline and refreshes fake-only runtime/operator status surfaces. Local validation passed; operator manual QA remains pending and any closeout/push remains separate.
+This local bundle records the accepted pushed v0.9.67 baseline and refreshes fake-only runtime/operator status surfaces. Local validation passed and operator manual QA passed; any closeout/push remains separate.
 
 ## v0.9.63 to v0.9.67 Accepted Pushed State / Next-Work Decision Clarity Bundle
 

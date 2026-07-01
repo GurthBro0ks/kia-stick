@@ -17,7 +17,7 @@ describe("v0.9.72 next large-work checkpoint", () => {
       "Repeat official-source research later if evidence changes.",
       "Request exact Next target approval only if a clean target is proven.",
       "Keep real-doc gate blocked unless a separate one-document, one-gate approval packet is explicitly approved.",
-      "Manual QA for this local bundle is `PENDING`.",
+      "Manual QA for this local bundle is `PASS` by `OPERATOR_QA_PASS for /home/mint/kia-stick-local-proofs/proof_kia_stick_v0_9_68_to_v0_9_72_accepted_pushed_state_runtime_status_freshness_bundle_20260701T094248Z`.",
       "Push is not performed by this local bundle.",
       "`KIA-Stick-v0.9.12C-next-runtime-framework-security-implementation` remains blocked",
       "Next/PostCSS remains parked as `WARN_SAFE_NEXT_TARGET_UNCLEAR`.",
@@ -35,6 +35,8 @@ describe("v0.9.72 next large-work checkpoint", () => {
         phase: string;
         status: string;
         current_bundle_manual_qa_status: string;
+        operator_qa_pass_proof_dir: string;
+        operator_qa_pass_text: string;
         pushed: boolean;
         next_postcss_status: string;
         next_implementation_blocked: boolean;
@@ -53,7 +55,13 @@ describe("v0.9.72 next large-work checkpoint", () => {
 
     expect(state.phase).toBe(phase);
     expect(state.status).toBe("accepted");
-    expect(state.current_bundle_manual_qa_status).toBe("PENDING");
+    expect(state.current_bundle_manual_qa_status).toBe("PASS");
+    expect(state.operator_qa_pass_proof_dir).toBe(
+      "/home/mint/kia-stick-local-proofs/proof_kia_stick_v0_9_68_to_v0_9_72_operator_qa_pass_recording_20260701T103226Z"
+    );
+    expect(state.operator_qa_pass_text).toBe(
+      "OPERATOR_QA_PASS for /home/mint/kia-stick-local-proofs/proof_kia_stick_v0_9_68_to_v0_9_72_accepted_pushed_state_runtime_status_freshness_bundle_20260701T094248Z"
+    );
     expect(state.pushed).toBe(false);
     expect(state.next_postcss_status).toBe("WARN_SAFE_NEXT_TARGET_UNCLEAR");
     expect(state.next_implementation_blocked).toBe(true);

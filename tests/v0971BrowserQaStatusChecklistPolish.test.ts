@@ -51,6 +51,7 @@ describe("v0.9.71 browser QA status checklist polish", () => {
         health_fake_only_check: boolean;
         blocked_gate_checks: string[];
         manual_qa_status: string;
+        operator_qa_pass_text: string;
         package_lock_changed: boolean;
         real_doc_capability_added: boolean;
       };
@@ -66,7 +67,10 @@ describe("v0.9.71 browser QA status checklist polish", () => {
     expect(state.blocked_gate_checks).toContain("queue-015");
     expect(state.blocked_gate_checks).toContain("v0.9.12C");
     expect(state.blocked_gate_checks).toContain("Next/PostCSS");
-    expect(state.manual_qa_status).toBe("PENDING");
+    expect(state.manual_qa_status).toBe("PASS");
+    expect(state.operator_qa_pass_text).toBe(
+      "OPERATOR_QA_PASS for /home/mint/kia-stick-local-proofs/proof_kia_stick_v0_9_68_to_v0_9_72_accepted_pushed_state_runtime_status_freshness_bundle_20260701T094248Z"
+    );
     expect(state.package_lock_changed).toBe(false);
     expect(state.real_doc_capability_added).toBe(false);
   });

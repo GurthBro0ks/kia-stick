@@ -6536,7 +6536,10 @@
     "current_accepted_pushed_proof_dir": "/home/mint/kia-stick-local-proofs/proof_kia_stick_v0_9_63_to_v0_9_67_operator_qa_pass_recording_20260701T091506Z/closeout_push_20260701T093116Z",
     "historical_warn_short_commit": "3b9fef5",
     "historical_warn_marked_historical": true,
-    "current_bundle_manual_qa_status": "PENDING",
+    "current_bundle_manual_qa_status": "PASS",
+    "operator_qa_pass_proof_dir": "/home/mint/kia-stick-local-proofs/proof_kia_stick_v0_9_68_to_v0_9_72_operator_qa_pass_recording_20260701T103226Z",
+    "operator_qa_pass_text": "OPERATOR_QA_PASS for /home/mint/kia-stick-local-proofs/proof_kia_stick_v0_9_68_to_v0_9_72_accepted_pushed_state_runtime_status_freshness_bundle_20260701T094248Z",
+    "operator_qa_pass_recorded_at": "2026-07-01T10:32:26Z",
     "pushed": false,
     "next_postcss_status": "WARN_SAFE_NEXT_TARGET_UNCLEAR",
     "v0912c_blocked_pending_exact_target": true,
@@ -6573,7 +6576,10 @@
       "v0.9.12C",
       "Next/PostCSS"
     ],
-    "manual_qa_status": "PENDING",
+    "manual_qa_status": "PASS",
+    "operator_qa_pass_proof_dir": "/home/mint/kia-stick-local-proofs/proof_kia_stick_v0_9_68_to_v0_9_72_operator_qa_pass_recording_20260701T103226Z",
+    "operator_qa_pass_text": "OPERATOR_QA_PASS for /home/mint/kia-stick-local-proofs/proof_kia_stick_v0_9_68_to_v0_9_72_accepted_pushed_state_runtime_status_freshness_bundle_20260701T094248Z",
+    "operator_qa_pass_recorded_at": "2026-07-01T10:32:26Z",
     "package_json_changed": false,
     "package_lock_changed": false,
     "real_doc_capability_added": false
@@ -6582,7 +6588,7 @@
     "phase": "KIA-Stick-v0.9.72-next-large-work-checkpoint",
     "status": "accepted",
     "document": "docs/v0.9.72-next-large-work-checkpoint.md",
-    "current_bundle_manual_qa_status": "PENDING",
+    "current_bundle_manual_qa_status": "PASS",
     "pushed": false,
     "next_postcss_status": "WARN_SAFE_NEXT_TARGET_UNCLEAR",
     "next_implementation_blocked": true,
@@ -6601,6 +6607,9 @@
       "keep real-doc gate blocked unless separately approved"
     ],
     "local_bundle_proof_dir": "/home/mint/kia-stick-local-proofs/proof_kia_stick_v0_9_68_to_v0_9_72_accepted_pushed_state_runtime_status_freshness_bundle_20260701T094248Z",
+    "operator_qa_pass_proof_dir": "/home/mint/kia-stick-local-proofs/proof_kia_stick_v0_9_68_to_v0_9_72_operator_qa_pass_recording_20260701T103226Z",
+    "operator_qa_pass_text": "OPERATOR_QA_PASS for /home/mint/kia-stick-local-proofs/proof_kia_stick_v0_9_68_to_v0_9_72_accepted_pushed_state_runtime_status_freshness_bundle_20260701T094248Z",
+    "operator_qa_pass_recorded_at": "2026-07-01T10:32:26Z",
     "accepted_pushed_short_commit": "1465817",
     "accepted_pushed_closeout_proof_dir": "/home/mint/kia-stick-local-proofs/proof_kia_stick_v0_9_63_to_v0_9_67_operator_qa_pass_recording_20260701T091506Z/closeout_push_20260701T093116Z"
   }
