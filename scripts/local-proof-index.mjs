@@ -114,6 +114,7 @@ export function inspectLocalProof(proofPath) {
   const acceptedWarn = hasAcceptedWarn(resultMarkdown);
   const manualQaStatus = fieldValue(resultMarkdown, "MANUAL_QA_STATUS") || fieldValue(resultMarkdown, "Manual QA status") || "";
   const pushed = fieldValue(resultMarkdown, "PUSHED") || fieldValue(resultMarkdown, "Push performed") || "";
+  const commit = fieldValue(resultMarkdown, "COMMIT_SHA") || fieldValue(resultMarkdown, "Commit SHA") || "";
   const phase = fieldValue(resultMarkdown, "PHASE") || fieldValue(resultMarkdown, "Phase") || parsed?.phaseSlug || "unknown";
   const warnings = [];
   if (!resultMarkdown) warnings.push("WARN_MISSING_RESULT");
@@ -127,6 +128,7 @@ export function inspectLocalProof(proofPath) {
     mtimeMs: stat.mtimeMs,
     phase,
     result,
+    commit,
     manualQaStatus,
     pushed,
     acceptedWarn,
@@ -228,6 +230,7 @@ function formatProofLine(proof) {
     `timestamp=${proof.timestamp || "unknown"}`,
     `kind=${proof.kind}`,
     `result=${proof.result}`,
+    `commit=${proof.commit || "unknown"}`,
     `manual_qa=${proof.manualQaStatus || "unknown"}`,
     `pushed=${proof.pushed || "unknown"}`,
     `review_state=${proof.reviewState}`,
@@ -250,10 +253,13 @@ export function renderMarkdownIndex(proofs, root) {
     "",
     `Proof root: \`${path.resolve(root)}\``,
     `Generated at: \`${new Date().toISOString()}\``,
-    latest ? `Latest proof: \`${latest.path}\`` : "Latest proof: none",
+    latest ? `Latest proof: \`${latest.path}\` (newest filesystem proof; may be in progress)` : "Latest proof: none",
     latestAcceptedPushedCloseout
       ? `Latest accepted pushed closeout proof: \`${latestAcceptedPushedCloseout.path}\``
       : "Latest accepted pushed closeout proof: none",
+    latestAcceptedPushedCloseout
+      ? `Latest accepted pushed closeout commit: \`${latestAcceptedPushedCloseout.commit || "unknown"}\``
+      : "Latest accepted pushed closeout commit: none",
     latestOperatorQaPass ? `Latest operator QA PASS proof: \`${latestOperatorQaPass.path}\`` : "Latest operator QA PASS proof: none",
     latestAcceptedWarn ? `Latest accepted-WARN proof: \`${latestAcceptedWarn.path}\`` : "Latest accepted-WARN proof: none",
     latestReviewReady
@@ -262,20 +268,20 @@ export function renderMarkdownIndex(proofs, root) {
     latestReviewReady ? `Latest review-ready proof: \`${latestReviewReady.path}\`` : "Latest review-ready proof: none",
     reviewReadyExplanation(latest, latestReviewReady),
     "",
-    "| Timestamp | Kind | Result | Manual QA | Pushed | Review State | RESULT.md | OPEN_THIS_FOLDER.txt | Screenshots | Warnings | Path |",
-    "| --- | --- | --- | --- | --- | --- | --- | --- | ---: | --- | --- |",
+    "| Timestamp | Kind | Result | Commit | Manual QA | Pushed | Review State | RESULT.md | OPEN_THIS_FOLDER.txt | Screenshots | Warnings | Path |",
+    "| --- | --- | --- | --- | --- | --- | --- | --- | --- | ---: | --- | --- |",
   ];
 
   for (const proof of proofs) {
     const warnings = proof.warnings.length > 0 ? proof.warnings.join(", ") : "none";
     lines.push(
-      `| ${proof.timestamp || "unknown"} | ${proof.kind} | ${proof.result} | ${proof.manualQaStatus || "unknown"} | ${proof.pushed || "unknown"} | ${proof.reviewState} | ${proof.resultMdExists ? "yes" : "no"} | ${proof.openThisFolderExists ? "yes" : "no"} | ${proof.screenshotsCount} | ${warnings} | \`${proof.path}\` |`
+      `| ${proof.timestamp || "unknown"} | ${proof.kind} | ${proof.result} | ${proof.commit || "unknown"} | ${proof.manualQaStatus || "unknown"} | ${proof.pushed || "unknown"} | ${proof.reviewState} | ${proof.resultMdExists ? "yes" : "no"} | ${proof.openThisFolderExists ? "yes" : "no"} | ${proof.screenshotsCount} | ${warnings} | \`${proof.path}\` |`
     );
   }
   lines.push("");
   lines.push("Review rule: missing RESULT.md is WARN and must not be treated as accepted proof.");
   lines.push("Accepted-WARN rule: RESULT=WARN is parked, not PASS, only when RESULT.md explicitly records ACCEPTED_WARN or OPERATOR_QA_ACCEPTED_WARN.");
-  lines.push("Review-ready candidate rule: screenshot review-ready remains stricter than acceptance; closeout proof can be accepted/pushed without screenshots when RESULT, manual QA, and push metadata prove it.");
+  lines.push("Review-ready candidate rule: screenshot review-ready remains stricter than acceptance; closeout proof can be accepted/pushed without screenshots when RESULT, commit, manual QA, and push metadata prove it.");
   lines.push("Boundary: this index reads only proof directory names plus RESULT.md, OPEN_THIS_FOLDER.txt, and screenshots/ filenames inside the supplied proof root.");
   return `${lines.join("\n")}\n`;
 }
@@ -300,6 +306,7 @@ export function writeLocalProofIndex(root = DEFAULT_LOCAL_PROOF_ROOT, outDir = r
         latestProof: selectLatestLocalProof(proofs)?.path || null,
         latestReviewReadyProof: selectLatestReviewReadyProof(proofs)?.path || null,
         latestAcceptedPushedCloseoutProof: selectLatestAcceptedPushedCloseoutProof(proofs)?.path || null,
+        latestAcceptedPushedCloseoutCommit: selectLatestAcceptedPushedCloseoutProof(proofs)?.commit || null,
         latestOperatorQaPassProof: selectLatestOperatorQaPassProof(proofs)?.path || null,
         latestAcceptedWarnProof: selectLatestAcceptedWarnProof(proofs)?.path || null,
         reviewReadyExplanation: reviewReadyExplanation(selectLatestLocalProof(proofs), selectLatestReviewReadyProof(proofs)),
@@ -349,8 +356,9 @@ function printList(options) {
   const latestAcceptedPushedCloseout = selectLatestAcceptedPushedCloseoutProof(proofs);
   const latestOperatorQaPass = selectLatestOperatorQaPassProof(proofs);
   const latestAcceptedWarn = selectLatestAcceptedWarnProof(proofs);
-  console.log(`Latest proof: ${latest?.path || "none"}`);
+  console.log(`Latest proof: ${latest?.path || "none"}${latest ? " (newest filesystem proof; may be in progress)" : ""}`);
   console.log(`Latest accepted pushed closeout proof: ${latestAcceptedPushedCloseout?.path || "none"}`);
+  console.log(`Latest accepted pushed closeout commit: ${latestAcceptedPushedCloseout?.commit || "none"}`);
   console.log(`Latest operator QA PASS proof: ${latestOperatorQaPass?.path || "none"}`);
   console.log(`Latest accepted-WARN proof: ${latestAcceptedWarn?.path || "none"}`);
   console.log(`Latest screenshot review-ready candidate: ${latestReviewReady?.path || "none"}`);
@@ -368,8 +376,10 @@ function printLatest(options) {
     console.log(`No proof directories found under ${path.resolve(options.root)}`);
     return 1;
   }
-  console.log(`Latest proof: ${latest.path}`);
-  console.log(`Latest accepted pushed closeout proof: ${selectLatestAcceptedPushedCloseoutProof(proofs)?.path || "none"}`);
+  console.log(`Latest proof: ${latest.path} (newest filesystem proof; may be in progress)`);
+  const latestAcceptedPushedCloseout = selectLatestAcceptedPushedCloseoutProof(proofs);
+  console.log(`Latest accepted pushed closeout proof: ${latestAcceptedPushedCloseout?.path || "none"}`);
+  console.log(`Latest accepted pushed closeout commit: ${latestAcceptedPushedCloseout?.commit || "none"}`);
   console.log(`Latest operator QA PASS proof: ${selectLatestOperatorQaPassProof(proofs)?.path || "none"}`);
   console.log(`Latest accepted-WARN proof: ${selectLatestAcceptedWarnProof(proofs)?.path || "none"}`);
   console.log(`Latest screenshot review-ready candidate: ${latestReviewReady?.path || "none"}`);

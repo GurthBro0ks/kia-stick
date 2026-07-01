@@ -12,6 +12,18 @@ KIA Stick separates milestone semver from build identity:
 
 `/health`, `/version`, the app header, settings, answer footer, and saved answer metadata expose the current `displayVersion`.
 
+## v0.9.83 to v0.9.87 Fake-Only Proof/Report/Operator UX Polish
+
+Phase: `KIA-Stick-v0.9.83-to-v0.9.87-fake-only-proof-report-operator-ux-polish`.
+
+This local fake-only docs/tests/tooling/status bundle starts from accepted pushed v0.9.78-to-v0.9.82 closeout at `bc8fbef3114631ea3e0363b8e700ce0c2dce236e`. Closeout/push proof is recorded at `/home/mint/kia-stick-local-proofs/proof_kia_stick_v0_9_78_to_v0_9_82_operator_qa_pass_recording_20260701T163018Z/closeout_push_20260701T163622Z` with validation PASS, manual QA PASS, push yes, and `HEAD == origin/main`.
+
+The bundle adds `docs/v0.9.83-current-accepted-pushed-state-checkpoint.md`, `docs/v0.9.84-proof-index-wording-clarity.md`, `docs/v0.9.85-closeout-proof-chain-freshness.md`, `docs/v0.9.86-operator-state-summary-freshness.md`, and `docs/v0.9.87-next-large-work-checkpoint.md` with focused tests. It updates proof index output to show accepted pushed closeout commit metadata and updates closeout proof-chain output so current summaries surface `bc8fbef`, while `cfa7c2c` remains historical v0.9.73-to-v0.9.77 state.
+
+This is local fake-only docs/tests/tooling/status work. Validation PASS is recorded at `/home/mint/kia-stick-local-proofs/proof_kia_stick_v0_9_83_to_v0_9_87_fake_only_proof_report_operator_ux_polish_20260701T165216Z`; it does not push. Manual QA for this local checkpoint is pending operator review. Next/PostCSS remains `WARN_SAFE_NEXT_TARGET_UNCLEAR`, `KIA-Stick-v0.9.12C-next-runtime-framework-security-implementation` remains blocked pending exact target approval, and `queue-015-v07-first-real-doc-gate-request` remains blocked. `package.json` and `package-lock.json` remain unchanged. Product/package version remains `0.7.0`; prompt version remains `prompt.fake-docs.v0.5-import-wizard-hardening`.
+
+No real-doc implementation is approved. The checkpoint does not add file pickers, FileReader, path readers, uploads, OCR, real redaction, text extraction, summarization, embeddings, indexing, vector stores, private-source inspection, services, secrets, Discord, global config, or system changes.
+
 ## v0.9.78 to v0.9.82 Accepted Pushed State / Next Safe-Work Checkpoint
 
 Phase: `KIA-Stick-v0.9.78-to-v0.9.82-accepted-pushed-state-and-next-safe-work-checkpoint`.

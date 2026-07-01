@@ -1,5 +1,43 @@
 # KIA Stick Closeout
 
+## v0.9.83 to v0.9.87 Fake-Only Proof/Report/Operator UX Polish
+
+- Phase: `KIA-Stick-v0.9.83-to-v0.9.87-fake-only-proof-report-operator-ux-polish`
+- Target machine: `USER_LAPTOP_ONLY`
+- Current accepted pushed phase: `KIA-Stick-v0.9.78-to-v0.9.82-operator-qa-pass-closeout-and-push`
+- Current accepted pushed commit: `bc8fbef3114631ea3e0363b8e700ce0c2dce236e`
+- Current accepted pushed proof: `/home/mint/kia-stick-local-proofs/proof_kia_stick_v0_9_78_to_v0_9_82_operator_qa_pass_recording_20260701T163018Z/closeout_push_20260701T163622Z`
+- Accepted validation/manual QA: PASS/PASS
+- Accepted push status: yes, with `HEAD == origin/main` at `bc8fbef`
+- Historical prior baseline: `cfa7c2c72cbff14a8e9515119256a806a7b00bcd` remains the v0.9.73-to-v0.9.77 accepted pushed state, not the current accepted pushed baseline.
+- Scope: fake-only docs/tests/tooling/status polish for proof index wording, accepted pushed commit visibility, closeout proof-chain freshness, and operator state summary freshness.
+- Included subphases: v0.9.83 current accepted pushed state checkpoint; v0.9.84 proof index wording clarity; v0.9.85 closeout proof-chain freshness; v0.9.86 operator state summary freshness; v0.9.87 next large-work checkpoint.
+- Proof index: latest filesystem proof, accepted pushed closeout proof, accepted pushed closeout commit, operator QA PASS proof, accepted-WARN proof, and screenshot review-ready proof are labeled separately.
+- Closeout helper: proof-chain summary prefers `bc8fbef` for current accepted pushed checkpoint while preserving older historical evidence.
+- Next/PostCSS runtime security path: remains parked as `WARN_SAFE_NEXT_TARGET_UNCLEAR`.
+- v0.9.12C implementation: blocked until an exact Next target is separately approved.
+- Product version: `0.7.0`
+- Package version: `0.7.0`
+- Prompt version: `prompt.fake-docs.v0.5-import-wizard-hardening`
+- Queue state: `queue-015-v07-first-real-doc-gate-request` remains blocked.
+- `package.json` changed: no
+- `package-lock.json` changed: no
+- Dependency versions changed: no
+- Runtime capability changed: no intake or real-doc capability; docs/tests/tooling/status only.
+- Real document implementation approved: no
+- Real document access: none
+- File picker/FileReader/OCR/indexing/embedding/vector capability added: no
+- Services restarted: no
+- Cron/timer/tmux/Caddy/DNS changed: no
+- Secrets printed: no
+- Discord sent: no
+- Push performed by this local checkpoint: no
+- Manual QA status for this local checkpoint: pending operator review
+- Proof directory: `/home/mint/kia-stick-local-proofs/proof_kia_stick_v0_9_83_to_v0_9_87_fake_only_proof_report_operator_ux_polish_20260701T165216Z`
+- Validation status: PASS
+
+This local checkpoint has validation PASS and is pending operator manual QA. It does not approve package mutation, Next/PostCSS implementation, real-doc capability, service changes, Discord changes, or push.
+
 ## v0.9.78 to v0.9.82 Accepted Pushed State / Next Safe-Work Checkpoint
 
 - Phase: `KIA-Stick-v0.9.78-to-v0.9.82-accepted-pushed-state-and-next-safe-work-checkpoint`

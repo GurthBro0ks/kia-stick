@@ -265,6 +265,16 @@ function manualQaPassed(status = "PASS") {
 
 function currentPackageLockUnchanged(featureList) {
   const currentPackageLockKeys = [
+    "v0987_next_large_work_checkpoint",
+    "v0986_operator_state_summary_freshness",
+    "v0985_closeout_proof_chain_freshness",
+    "v0984_proof_index_wording_clarity",
+    "v0983_current_accepted_pushed_state_checkpoint",
+    "v0982_next_large_work_checkpoint",
+    "v0981_operator_state_summary",
+    "v0980_blocked_work_status_checkpoint",
+    "v0979_next_safe_work_options",
+    "v0978_accepted_pushed_state_checkpoint",
     "v0977_next_large_work_checkpoint",
     "v0976_operator_closeout_proof_root_guidance",
     "v0975_closeout_default_persistent_root_implementation",
@@ -332,7 +342,11 @@ function collectProofChain(featureList, proof = {}) {
   const useHistorical = shouldUseHistoricalProofChain(proof);
   const window = proofChainWindow(proof);
   const accepted =
-    !useHistorical && window !== "v0963" && featureList.v0973_accepted_pushed_state_checkpoint
+    !useHistorical && window !== "v0963" && featureList.v0983_current_accepted_pushed_state_checkpoint
+      ? featureList.v0983_current_accepted_pushed_state_checkpoint
+      : !useHistorical && window !== "v0963" && featureList.v0978_accepted_pushed_state_checkpoint
+      ? featureList.v0978_accepted_pushed_state_checkpoint
+      : !useHistorical && window !== "v0963" && featureList.v0973_accepted_pushed_state_checkpoint
       ? featureList.v0973_accepted_pushed_state_checkpoint
       : !useHistorical && window !== "v0963" && featureList.v0968_accepted_pushed_state_checkpoint
       ? featureList.v0968_accepted_pushed_state_checkpoint
@@ -354,7 +368,11 @@ function collectProofChain(featureList, proof = {}) {
       ? featureList.v0953_accepted_pushed_warn_state_checkpoint
       : featureList.v0933_accepted_pushed_warn_state_checkpoint || {};
   const current =
-    !useHistorical && window !== "v0963" && featureList.v0977_next_large_work_checkpoint
+    !useHistorical && window !== "v0963" && featureList.v0987_next_large_work_checkpoint
+      ? featureList.v0987_next_large_work_checkpoint
+      : !useHistorical && window !== "v0963" && featureList.v0982_next_large_work_checkpoint
+      ? featureList.v0982_next_large_work_checkpoint
+      : !useHistorical && window !== "v0963" && featureList.v0977_next_large_work_checkpoint
       ? featureList.v0977_next_large_work_checkpoint
       : !useHistorical && window !== "v0963" && featureList.v0972_next_large_work_checkpoint
       ? featureList.v0972_next_large_work_checkpoint

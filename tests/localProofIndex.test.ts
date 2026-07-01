@@ -17,6 +17,7 @@ interface LocalProofIndexModule {
     timestamp: string;
     kind: string;
     result: string;
+    commit: string;
     manualQaStatus: string;
     pushed: string;
     acceptedWarn: boolean;
@@ -29,7 +30,7 @@ interface LocalProofIndexModule {
   selectLatestReviewReadyProof<T extends { result: string; resultMdExists: boolean; openThisFolderExists: boolean; screenshotsCount: number }>(
     proofs: T[]
   ): T | null;
-  selectLatestAcceptedPushedCloseoutProof<T extends { result: string; pushed: string; kind: string; phase?: string; name?: string }>(
+  selectLatestAcceptedPushedCloseoutProof<T extends { result: string; pushed: string; kind: string; commit?: string; phase?: string; name?: string }>(
     proofs: T[]
   ): T | null;
   selectLatestOperatorQaPassProof<T extends { result: string; manualQaStatus: string; kind: string }>(proofs: T[]): T | null;
@@ -141,6 +142,7 @@ describe("local proof index", () => {
       latestProof: string;
       latestReviewReadyProof: string;
       latestAcceptedPushedCloseoutProof: string | null;
+      latestAcceptedPushedCloseoutCommit: string | null;
       latestOperatorQaPassProof: string | null;
       latestAcceptedWarnProof: string | null;
       reviewReadyExplanation: string;
@@ -152,6 +154,7 @@ describe("local proof index", () => {
     expect(markdown).toContain("KIA Stick Local Proof Index");
     expect(markdown).toContain("WARN");
     expect(markdown).toContain("Latest accepted pushed closeout proof:");
+    expect(markdown).toContain("Latest accepted pushed closeout commit:");
     expect(markdown).toContain("Latest operator QA PASS proof:");
     expect(markdown).toContain("Latest accepted-WARN proof:");
     expect(markdown).toContain("Latest screenshot review-ready candidate:");
@@ -160,6 +163,7 @@ describe("local proof index", () => {
     expect(json.latestProof).toContain("proof_kia_stick_v0_7_10b_operator_smoke_evidence_20260626T090618Z");
     expect(json).toHaveProperty("latestReviewReadyProof");
     expect(json).toHaveProperty("latestAcceptedPushedCloseoutProof");
+    expect(json).toHaveProperty("latestAcceptedPushedCloseoutCommit");
     expect(json).toHaveProperty("latestOperatorQaPassProof");
     expect(json).toHaveProperty("latestAcceptedWarnProof");
     expect(json.reviewReadyExplanation).toContain("Review-ready candidate criteria:");
@@ -187,7 +191,7 @@ describe("local proof index", () => {
       pushed: "no",
     });
     const closeout = makeProof(operatorQa, "closeout_push_20260630T204915Z", {
-      result: "RESULT=PASS\n",
+      result: "RESULT=PASS\nCOMMIT_SHA=40935306504d2746f1bae92b21893b13024f91c3\n",
       manualQa: "PASS",
       pushed: "yes",
     });
@@ -197,6 +201,7 @@ describe("local proof index", () => {
 
     expect(mod.selectLatestLocalProof(proofs)?.path).toBe(latestInProgress);
     expect(mod.selectLatestAcceptedPushedCloseoutProof(proofs)?.path).toBe(closeout);
+    expect(mod.selectLatestAcceptedPushedCloseoutProof(proofs)?.commit).toBe("40935306504d2746f1bae92b21893b13024f91c3");
     expect(mod.selectLatestOperatorQaPassProof(proofs)?.path).toBe(operatorQa);
     expect(mod.selectLatestAcceptedWarnProof(proofs)?.path).toBe(acceptedWarn);
     expect(mod.selectLatestReviewReadyProof(proofs)?.path).toBe(reviewReady);
@@ -215,12 +220,14 @@ describe("local proof index", () => {
     expect(result.status).toBe(0);
     expect(result.stdout).toContain("Latest proof:");
     expect(result.stdout).toContain("Latest accepted pushed closeout proof:");
+    expect(result.stdout).toContain("Latest accepted pushed closeout commit:");
     expect(result.stdout).toContain("Latest operator QA PASS proof:");
     expect(result.stdout).toContain("Latest accepted-WARN proof:");
     expect(result.stdout).toContain("Latest screenshot review-ready candidate:");
     expect(result.stdout).toContain("Latest review-ready proof:");
     expect(result.stdout).toContain("Review-ready candidate criteria:");
     expect(result.stdout).toContain("result=PASS");
+    expect(result.stdout).toContain("commit=unknown");
     expect(result.stdout).toContain("manual_qa=unknown");
     expect(result.stdout).toContain("pushed=unknown");
     expect(result.stdout).toContain("open_this_folder=yes");

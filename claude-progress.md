@@ -2,10 +2,33 @@
 
 ## Current Phase
 
-- Phase: `KIA-Stick-v0.9.78-to-v0.9.82-accepted-pushed-state-and-next-safe-work-checkpoint`
+- Phase: `KIA-Stick-v0.9.83-to-v0.9.87-fake-only-proof-report-operator-ux-polish`
 - Target: `USER_LAPTOP_ONLY`
 - Provider: `local-fake-deterministic`
-- Status: local v0.9.78-to-v0.9.82 fake-only accepted pushed state and next safe-work checkpoint has validation `PASS`, manual QA `PASS`, and push `no`. The accepted pushed v0.9.73-to-v0.9.77 closeout is recorded at `cfa7c2c72cbff14a8e9515119256a806a7b00bcd` with proof `/home/mint/kia-stick-local-proofs/proof_kia_stick_v0_9_73_to_v0_9_77_queue_warning_polish_operator_qa_pass_recording_20260701T150207Z/closeout_push_20260701T160751Z`, validation PASS, manual QA PASS, push yes, and `HEAD == origin/main`. This checkpoint records that accepted pushed state and the next safe work choices: continue fake-only proof/report/operator UX polish, repeat official-source Next/PostCSS research only if evidence changes, request an exact Next target only if a clean target is proven, and keep the real-doc gate blocked unless a separate one-document, one-gate packet is approved. Operator QA PASS is recorded for `/home/mint/kia-stick-local-proofs/proof_kia_stick_v0_9_78_to_v0_9_82_accepted_pushed_state_next_safe_work_checkpoint_20260701T161640Z`. Next/PostCSS remains parked as `WARN_SAFE_NEXT_TARGET_UNCLEAR`; v0.9.12C remains blocked pending exact target approval; queue-015 remains blocked; product/prompt unchanged; no dependency, runtime intake, service, Discord, or real-doc implementation is approved.
+- Status: local v0.9.83-to-v0.9.87 fake-only proof/report/operator UX polish has validation `PASS`, manual QA `PENDING`, and push `no`. The current accepted pushed v0.9.78-to-v0.9.82 closeout is recorded at `bc8fbef3114631ea3e0363b8e700ce0c2dce236e` with proof `/home/mint/kia-stick-local-proofs/proof_kia_stick_v0_9_78_to_v0_9_82_operator_qa_pass_recording_20260701T163018Z/closeout_push_20260701T163622Z`, validation PASS, manual QA PASS, push yes, and `HEAD == origin/main`. The prior `cfa7c2c72cbff14a8e9515119256a806a7b00bcd` baseline remains historical v0.9.73-to-v0.9.77 state. This checkpoint makes proof index and closeout proof-chain output surface the current `bc8fbef` accepted pushed state while keeping newest filesystem proof, operator QA PASS proof, accepted-WARN proof, and screenshot review-ready proof distinct. Next/PostCSS remains parked as `WARN_SAFE_NEXT_TARGET_UNCLEAR`; v0.9.12C remains blocked pending exact target approval; queue-015 remains blocked; product/prompt unchanged; no dependency, runtime intake, service, Discord, or real-doc implementation is approved.
+
+## v0.9.83 to v0.9.87 Fake-Only Proof/Report/Operator UX Polish
+
+- Phase: `KIA-Stick-v0.9.83-to-v0.9.87-fake-only-proof-report-operator-ux-polish`
+- Target machine: `USER_LAPTOP_ONLY`
+- Current accepted pushed phase: `KIA-Stick-v0.9.78-to-v0.9.82-operator-qa-pass-closeout-and-push`
+- Current accepted pushed commit: `bc8fbef3114631ea3e0363b8e700ce0c2dce236e`
+- Current accepted pushed proof: `/home/mint/kia-stick-local-proofs/proof_kia_stick_v0_9_78_to_v0_9_82_operator_qa_pass_recording_20260701T163018Z/closeout_push_20260701T163622Z`
+- Historical prior accepted pushed commit: `cfa7c2c72cbff14a8e9515119256a806a7b00bcd`
+- Scope: fake-only docs/tests/tooling/status; no dependency, lockfile, runtime intake, service, notification, or real-doc change.
+- New docs: `docs/v0.9.83-current-accepted-pushed-state-checkpoint.md`, `docs/v0.9.84-proof-index-wording-clarity.md`, `docs/v0.9.85-closeout-proof-chain-freshness.md`, `docs/v0.9.86-operator-state-summary-freshness.md`, `docs/v0.9.87-next-large-work-checkpoint.md`
+- New tests: `tests/v0983CurrentAcceptedPushedStateCheckpoint.test.ts`, `tests/v0984ProofIndexWordingClarity.test.ts`, `tests/v0985CloseoutProofChainFreshness.test.ts`, `tests/v0986OperatorStateSummaryFreshness.test.ts`, `tests/v0987NextLargeWorkCheckpoint.test.ts`
+- Helper/status changes: local proof index output includes accepted pushed closeout commit metadata; closeout proof-chain summary prefers `bc8fbef` for current accepted pushed state.
+- Next/PostCSS runtime path: parked as `WARN_SAFE_NEXT_TARGET_UNCLEAR`, not fixed.
+- v0.9.12C implementation: blocked until exact target approval.
+- Version state: product/package version remain `0.7.0`; prompt version remains `prompt.fake-docs.v0.5-import-wizard-hardening`.
+- Queue state: `queue-015-v07-first-real-doc-gate-request` remains blocked.
+- Real-doc capability found/approved: no.
+- Push status: not pushed by this local checkpoint.
+- Manual QA status: pending operator review.
+- Proof directory: `/home/mint/kia-stick-local-proofs/proof_kia_stick_v0_9_83_to_v0_9_87_fake_only_proof_report_operator_ux_polish_20260701T165216Z`
+- Validation: PASS for focused tests, lint, typecheck, full test, build, design:check, release:check, governance:report, queue:next, proof:index, operator:smoke, scan:fake, scan:privacy, package immutability, and safety scans.
+- Remaining unknowns: local commit SHA until commit is created, operator QA PASS, and separate closeout/push approval.
 
 ## v0.9.78 to v0.9.82 Accepted Pushed State / Next Safe-Work Checkpoint
 
