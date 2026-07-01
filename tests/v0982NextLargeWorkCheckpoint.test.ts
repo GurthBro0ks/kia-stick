@@ -20,6 +20,8 @@ describe("v0.9.82 next large-work checkpoint", () => {
       "Keep real-doc gate blocked unless a separate one-document, one-gate approval packet is explicitly approved.",
       "Validation/manual QA for accepted pushed v0.9.77 is `PASS` / `PASS`.",
       "this local checkpoint does not push.",
+      "Manual QA for this local checkpoint is `PASS`",
+      "Operator QA proof is",
       "Next/PostCSS remains parked as `WARN_SAFE_NEXT_TARGET_UNCLEAR`.",
       "`queue-015-v07-first-real-doc-gate-request` remains blocked.",
     ]) {
@@ -34,6 +36,8 @@ describe("v0.9.82 next large-work checkpoint", () => {
         status: string;
         accepted_pushed_short_commit: string;
         local_checkpoint_pushed: boolean;
+        local_checkpoint_manual_qa_status: string;
+        local_checkpoint_operator_qa_pass_proof_dir: string;
         next_postcss_status: string;
         next_implementation_blocked: boolean;
         real_doc_gate_blocked: boolean;
@@ -50,6 +54,8 @@ describe("v0.9.82 next large-work checkpoint", () => {
     expect(state.status).toBe("accepted");
     expect(state.accepted_pushed_short_commit).toBe("cfa7c2c");
     expect(state.local_checkpoint_pushed).toBe(false);
+    expect(state.local_checkpoint_manual_qa_status).toBe("PASS");
+    expect(state.local_checkpoint_operator_qa_pass_proof_dir).toContain("operator_qa_pass_recording");
     expect(state.next_postcss_status).toBe("WARN_SAFE_NEXT_TARGET_UNCLEAR");
     expect(state.next_implementation_blocked).toBe(true);
     expect(state.real_doc_gate_blocked).toBe(true);

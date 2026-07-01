@@ -30,11 +30,12 @@
 - Secrets printed: no
 - Discord sent: no
 - Push performed by this local checkpoint: no
-- Manual QA status for this local checkpoint: PENDING
+- Manual QA status for this local checkpoint: PASS by `OPERATOR_QA_PASS for /home/mint/kia-stick-local-proofs/proof_kia_stick_v0_9_78_to_v0_9_82_accepted_pushed_state_next_safe_work_checkpoint_20260701T161640Z`
+- Operator QA proof directory: `/home/mint/kia-stick-local-proofs/proof_kia_stick_v0_9_78_to_v0_9_82_operator_qa_pass_recording_20260701T163018Z`
 - Proof directory: `/home/mint/kia-stick-local-proofs/proof_kia_stick_v0_9_78_to_v0_9_82_accepted_pushed_state_next_safe_work_checkpoint_20260701T161640Z`
 - Validation status: PASS
 
-This local checkpoint records the accepted pushed v0.9.77 state and keeps all blocked work blocked. It does not approve package mutation, Next/PostCSS implementation, real-doc capability, service changes, Discord changes, or push.
+This local checkpoint records the accepted pushed v0.9.77 state and keeps all blocked work blocked. Validation passed and operator manual QA passed; it does not approve package mutation, Next/PostCSS implementation, real-doc capability, service changes, Discord changes, or push.
 
 ## v0.9.73 to v0.9.77 Accepted Pushed State / Closeout Default Proof-Root Freshness Bundle
 
