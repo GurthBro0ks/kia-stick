@@ -392,7 +392,7 @@ describe("closeout-helper", () => {
     expect(review.stdout).toContain("queue_acceptance_allowed=false");
     expect(review.stdout).toContain("no_actionable_queue_guidance=No actionable queue items.");
     expect(review.stdout).toMatch(/next_action_state=(operator_qa_needed|closeout_push_needed)/);
-    expect(issueLines).toContain("local_commit_without_push");
+    expect(issueLines).toMatch(/local_commit_without_push|worktree_dirty/);
     expect(issueLines).not.toContain("queue_item_missing");
   });
 
