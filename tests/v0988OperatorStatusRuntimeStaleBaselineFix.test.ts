@@ -1,0 +1,77 @@
+import { readFileSync } from "node:fs";
+import { describe, expect, it } from "vitest";
+
+const phase = "KIA-Stick-v0.9.83-to-v0.9.87-operator-status-runtime-stale-baseline-fix";
+const docPath = "docs/v0.9.83-to-v0.9.87-operator-status-runtime-stale-baseline-fix.md";
+const componentPath = "components/KiaStickApp.tsx";
+
+describe("v0.9.83 to v0.9.87 operator-status runtime stale-baseline fix", () => {
+  it("documents the runtime Settings repair and preserved blocked states", () => {
+    const doc = readFileSync(docPath, "utf8");
+
+    for (const required of [
+      phase,
+      "Current accepted pushed checkpoint: `v0.9.82 at bc8fbef`",
+      "Current accepted pushed commit: `bc8fbef3114631ea3e0363b8e700ce0c2dce236e`",
+      "Current accepted pushed proof: `/home/mint/kia-stick-local-proofs/proof_kia_stick_v0_9_78_to_v0_9_82_operator_qa_pass_recording_20260701T163018Z/closeout_push_20260701T163622Z`",
+      "Accepted validation/manual QA/push: `PASS` / `PASS` / pushed yes",
+      "`HEAD == origin/main == bc8fbef3114631ea3e0363b8e700ce0c2dce236e`",
+      "The previous `cfa7c2c` and `1465817` baselines are historical only, not current.",
+      "Next/PostCSS remains `WARN_SAFE_NEXT_TARGET_UNCLEAR`.",
+      "`KIA-Stick-v0.9.12C-next-runtime-framework-security-implementation` remains blocked.",
+      "`queue-015-v07-first-real-doc-gate-request` remains blocked.",
+      "Real-doc implementation remains unapproved.",
+      "Package files remain unchanged and package version remains `0.7.0`.",
+      "Manual QA remains pending",
+    ]) {
+      expect(doc).toContain(required);
+    }
+  });
+
+  it("surfaces bc8fbef in runtime Settings and never labels 1465817 as current", () => {
+    const component = readFileSync(componentPath, "utf8");
+
+    expect(component).toContain("Current accepted pushed checkpoint: v0.9.82 at bc8fbef");
+    expect(component).toContain("Current accepted pushed state is v0.9.82 at bc8fbef3114631ea3e0363b8e700ce0c2dce236e");
+    expect(component).toContain("/home/mint/kia-stick-local-proofs/proof_kia_stick_v0_9_78_to_v0_9_82_operator_qa_pass_recording_20260701T163018Z/closeout_push_20260701T163622Z");
+    expect(component).toContain("validation PASS / manual QA PASS / pushed yes / HEAD == origin/main at bc8fbef");
+    expect(component).toContain("cfa7c2c72cbff14a8e9515119256a806a7b00bcd; historical only, not current");
+    expect(component).toContain("1465817e8efad6207705833e9e08f22030d6a116; historical only, not current");
+    expect(component).not.toContain("Current accepted pushed checkpoint: v0.9.67 at 1465817");
+    expect(component).not.toContain("Current accepted pushed state is v0.9.67 at 1465817");
+    expect(component).not.toMatch(/<input[^>]+type=["']file["']/);
+    expect(component).not.toContain("FileReader");
+    expect(component).not.toContain("showOpenFilePicker");
+  });
+
+  it("tracks the repair as local, unpushed, and pending manual QA", () => {
+    const featureList = JSON.parse(readFileSync("feature_list.json", "utf8")) as {
+      v0983_to_v0987_operator_status_runtime_stale_baseline_fix: {
+        phase: string;
+        status: string;
+        runtime_settings_current_accepted_pushed_short_commit: string;
+        stale_1465817_current_label_removed: boolean;
+        historical_1465817_preserved: boolean;
+        historical_cfa7c2c_preserved: boolean;
+        local_repair_pushed: boolean;
+        manual_qa_status: string;
+        queue_015_status: string;
+        real_doc_implementation_approved: boolean;
+        package_lock_changed: boolean;
+      };
+    };
+    const state = featureList.v0983_to_v0987_operator_status_runtime_stale_baseline_fix;
+
+    expect(state.phase).toBe(phase);
+    expect(state.status).toBe("validation_pass_pending_operator_review");
+    expect(state.runtime_settings_current_accepted_pushed_short_commit).toBe("bc8fbef");
+    expect(state.stale_1465817_current_label_removed).toBe(true);
+    expect(state.historical_1465817_preserved).toBe(true);
+    expect(state.historical_cfa7c2c_preserved).toBe(true);
+    expect(state.local_repair_pushed).toBe(false);
+    expect(state.manual_qa_status).toBe("pending_operator_review");
+    expect(state.queue_015_status).toBe("blocked");
+    expect(state.real_doc_implementation_approved).toBe(false);
+    expect(state.package_lock_changed).toBe(false);
+  });
+});

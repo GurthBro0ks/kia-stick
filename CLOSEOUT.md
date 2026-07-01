@@ -38,6 +38,21 @@
 
 This local checkpoint has validation PASS and is pending operator manual QA. It does not approve package mutation, Next/PostCSS implementation, real-doc capability, service changes, Discord changes, or push.
 
+### Operator Status Runtime Repair
+
+- Phase: `KIA-Stick-v0.9.83-to-v0.9.87-operator-status-runtime-stale-baseline-fix`
+- Blocker found by manual QA: Settings -> Operator Status still showed `Current accepted pushed checkpoint: v0.9.67 at 1465817`.
+- Repair: runtime Settings now shows `Current accepted pushed checkpoint: v0.9.82 at bc8fbef` and records `bc8fbef3114631ea3e0363b8e700ce0c2dce236e` as the current accepted pushed baseline.
+- Historical status: `cfa7c2c` and `1465817` remain visible only as historical baselines, not current.
+- Proof directory: `/home/mint/kia-stick-local-proofs/proof_kia_stick_v0_9_83_to_v0_9_87_operator_status_runtime_stale_baseline_fix_20260701T172100Z`
+- Manual QA status: pending operator rerun.
+- Push performed: no.
+- Package/dependency changes: no.
+- Real-doc capability approved: no.
+- Next/PostCSS: remains `WARN_SAFE_NEXT_TARGET_UNCLEAR`.
+- v0.9.12C: remains blocked.
+- queue-015: remains blocked.
+
 ## v0.9.78 to v0.9.82 Accepted Pushed State / Next Safe-Work Checkpoint
 
 - Phase: `KIA-Stick-v0.9.78-to-v0.9.82-accepted-pushed-state-and-next-safe-work-checkpoint`
