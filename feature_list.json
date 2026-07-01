@@ -6478,7 +6478,7 @@
     "phase": "KIA-Stick-v0.9.67-next-large-work-checkpoint",
     "status": "accepted",
     "document": "docs/v0.9.67-next-large-work-checkpoint.md",
-    "current_bundle_manual_qa_status": "PENDING",
+    "current_bundle_manual_qa_status": "PASS",
     "pushed": false,
     "next_postcss_status": "WARN_SAFE_NEXT_TARGET_UNCLEAR",
     "next_implementation_blocked": true,
@@ -6496,6 +6496,9 @@
       "separate exact Next target approval only if a clean target is proven later",
       "keep real-doc gate blocked unless separately approved"
     ],
-    "local_bundle_proof_dir": "/home/mint/kia-stick-local-proofs/proof_kia_stick_v0_9_63_to_v0_9_67_accepted_pushed_state_next_work_decision_clarity_bundle_20260630T215804Z"
+    "local_bundle_proof_dir": "/home/mint/kia-stick-local-proofs/proof_kia_stick_v0_9_63_to_v0_9_67_accepted_pushed_state_next_work_decision_clarity_bundle_20260630T215804Z",
+    "operator_qa_pass_proof_dir": "/home/mint/kia-stick-local-proofs/proof_kia_stick_v0_9_63_to_v0_9_67_operator_qa_pass_recording_20260701T091506Z",
+    "operator_qa_pass_text": "OPERATOR_QA_PASS for /home/mint/kia-stick-local-proofs/proof_kia_stick_v0_9_63_to_v0_9_67_accepted_pushed_state_next_work_decision_clarity_bundle_20260630T215804Z",
+    "operator_qa_pass_recorded_at": "2026-07-01T09:15:06Z"
   }
 }
