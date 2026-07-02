@@ -20,7 +20,7 @@ describe("v1.0.9 post-closeout current state contract refresh", () => {
     }
   });
 
-  it("makes 97574a9 current and older baselines historical in the contract", () => {
+  it("makes 20485da current and older baselines historical in the contract", () => {
     const contract = JSON.parse(readFileSync("data/current-accepted-pushed-state.json", "utf8")) as {
       checkpoint_label: string;
       accepted_pushed_commit: string;
@@ -29,13 +29,14 @@ describe("v1.0.9 post-closeout current state contract refresh", () => {
       historical_prior_checkpoints: Array<{ short_commit: string; status: string }>;
     };
 
-    expect(contract.checkpoint_label).toBe("v1.0.7 at 97574a9");
-    expect(contract.accepted_pushed_commit).toBe("97574a91a5c19fda174ccd646aac96d3aaec688a");
-    expect(contract.accepted_pushed_short_commit).toBe("97574a9");
+    expect(contract.checkpoint_label).toBe("v1.0.12 at 20485da");
+    expect(contract.accepted_pushed_commit).toBe("20485da8d731ac94a12dd58d77a68e64bf296c5b");
+    expect(contract.accepted_pushed_short_commit).toBe("20485da");
     expect(contract.accepted_pushed_proof_dir).toBe(
-      "/home/mint/kia-stick-local-proofs/proof_kia_stick_v1_0_3_to_v1_0_7_operator_qa_pass_closeout_push_20260702T164456Z"
+      "/home/mint/kia-stick-local-proofs/proof_kia_stick_v1_0_8_to_v1_0_12_operator_qa_pass_closeout_push_20260702T172824Z"
     );
     expect(contract.historical_prior_checkpoints.map((checkpoint) => checkpoint.short_commit)).toEqual([
+      "97574a9",
       "80e91c7",
       "dfa7052",
       "c72f14f",
