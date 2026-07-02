@@ -16,7 +16,8 @@ describe("v0.9.97 next safe work checkpoint", () => {
       "v0.9.96 verifies proof-index and closeout-helper stale-baseline guards.",
       "This local checkpoint does not push.",
       "Validation for this local checkpoint is `PASS`.",
-      "Manual QA for this local checkpoint is `pending_operator_review`.",
+      "Manual QA for this local checkpoint is `PASS` by `OPERATOR_QA_PASS for /home/mint/kia-stick-local-proofs/proof_kia_stick_v0_9_93_to_v0_9_97_accepted_pushed_state_single_source_alignment_20260702T101516Z`.",
+      "Operator QA proof is `/home/mint/kia-stick-local-proofs/proof_kia_stick_v0_9_93_to_v0_9_97_operator_qa_pass_recording_20260702T124930Z`.",
       "Next/PostCSS remains parked as `WARN_SAFE_NEXT_TARGET_UNCLEAR`.",
       "`queue-015-v07-first-real-doc-gate-request` remains blocked.",
       "This checkpoint does not approve package mutation, service changes, notifications, push, or real-doc capability.",
@@ -34,6 +35,8 @@ describe("v0.9.97 next safe work checkpoint", () => {
         local_checkpoint_validation: string;
         local_checkpoint_pushed: boolean;
         local_checkpoint_manual_qa_status: string;
+        operator_qa_pass_text: string;
+        operator_qa_pass_proof_dir: string;
         next_postcss_status: string;
         next_implementation_blocked: boolean;
         real_doc_gate_blocked: boolean;
@@ -51,7 +54,13 @@ describe("v0.9.97 next safe work checkpoint", () => {
     expect(state.current_accepted_pushed_short_commit).toBe("c72f14f");
     expect(state.local_checkpoint_validation).toBe("PASS");
     expect(state.local_checkpoint_pushed).toBe(false);
-    expect(state.local_checkpoint_manual_qa_status).toBe("pending_operator_review");
+    expect(state.local_checkpoint_manual_qa_status).toBe("PASS");
+    expect(state.operator_qa_pass_text).toBe(
+      "OPERATOR_QA_PASS for /home/mint/kia-stick-local-proofs/proof_kia_stick_v0_9_93_to_v0_9_97_accepted_pushed_state_single_source_alignment_20260702T101516Z"
+    );
+    expect(state.operator_qa_pass_proof_dir).toBe(
+      "/home/mint/kia-stick-local-proofs/proof_kia_stick_v0_9_93_to_v0_9_97_operator_qa_pass_recording_20260702T124930Z"
+    );
     expect(state.next_postcss_status).toBe("WARN_SAFE_NEXT_TARGET_UNCLEAR");
     expect(state.next_implementation_blocked).toBe(true);
     expect(state.real_doc_gate_blocked).toBe(true);
@@ -59,8 +68,7 @@ describe("v0.9.97 next safe work checkpoint", () => {
     expect(state.package_json_changed).toBe(false);
     expect(state.package_lock_changed).toBe(false);
     expect(state.dependency_versions_changed).toBe(false);
-    expect(state.safe_next_choices).toContain("operator manual QA review for this local implementation proof");
-    expect(state.safe_next_choices).toContain("closeout/push gate only after explicit operator QA PASS and separate closeout approval");
+    expect(state.safe_next_choices).toContain("closeout/push gate only after separate explicit closeout approval");
     expect(state.safe_next_choices).toContain("keep real-doc gate blocked unless separately approved");
   });
 });
