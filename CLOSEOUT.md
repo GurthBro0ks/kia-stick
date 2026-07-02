@@ -45,7 +45,8 @@ This local checkpoint has validation PASS and is pending operator manual QA. It 
 - Repair: runtime Settings now shows `Current accepted pushed checkpoint: v0.9.82 at bc8fbef` and records `bc8fbef3114631ea3e0363b8e700ce0c2dce236e` as the current accepted pushed baseline.
 - Historical status: `cfa7c2c` and `1465817` remain visible only as historical baselines, not current.
 - Proof directory: `/home/mint/kia-stick-local-proofs/proof_kia_stick_v0_9_83_to_v0_9_87_operator_status_runtime_stale_baseline_fix_20260701T172100Z`
-- Manual QA status: pending operator rerun.
+- Manual QA status: PASS by `OPERATOR_QA_PASS for /home/mint/kia-stick-local-proofs/proof_kia_stick_v0_9_83_to_v0_9_87_operator_status_runtime_stale_baseline_fix_20260701T172100Z`.
+- Operator QA proof directory: `/home/mint/kia-stick-local-proofs/proof_kia_stick_v0_9_83_to_v0_9_87_operator_status_runtime_stale_baseline_fix_operator_qa_pass_recording_20260702T084942Z`
 - Push performed: no.
 - Package/dependency changes: no.
 - Real-doc capability approved: no.

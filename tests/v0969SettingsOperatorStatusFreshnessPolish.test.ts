@@ -34,7 +34,7 @@ describe("v0.9.69 Settings operator-status freshness polish", () => {
     expect(component).toContain("v0.9.67 at 1465817e8efad6207705833e9e08f22030d6a116; historical only, not current");
     expect(component).toContain("Historical accepted-WARN meaning");
     expect(component).toContain("accepted-WARN parked, not current");
-    expect(component).toContain("v0.9.83-to-v0.9.87 operator-status runtime repair; validation PASS after local proof; manual QA pending rerun; pushed no");
+    expect(component).toContain("v0.9.83-to-v0.9.87 operator-status runtime repair; validation PASS; manual QA PASS; pushed no");
     expect(component).toContain("queue-015 blocked; no real-doc capability");
     expect(component).toContain("unchanged; no install/update/audit-fix/dedupe/prune");
     expect(component).not.toContain("Current accepted pushed checkpoint: v0.9.67 at 1465817");

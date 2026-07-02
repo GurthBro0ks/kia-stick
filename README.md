@@ -28,7 +28,7 @@ No real-doc implementation is approved. The checkpoint does not add file pickers
 
 Manual browser QA found the Settings -> Operator Status runtime surface still labeling `v0.9.67 at 1465817` as the current accepted pushed checkpoint. The local repair phase `KIA-Stick-v0.9.83-to-v0.9.87-operator-status-runtime-stale-baseline-fix` updates the runtime Settings source so `bc8fbef3114631ea3e0363b8e700ce0c2dce236e` is current, while `cfa7c2c` and `1465817` are historical only.
 
-Repair proof is recorded at `/home/mint/kia-stick-local-proofs/proof_kia_stick_v0_9_83_to_v0_9_87_operator_status_runtime_stale_baseline_fix_20260701T172100Z`. The repair is local only, unpushed, and pending operator manual QA rerun. It does not change package files, product version, real-doc gates, services, notifications, or blocked Next/PostCSS state.
+Repair proof is recorded at `/home/mint/kia-stick-local-proofs/proof_kia_stick_v0_9_83_to_v0_9_87_operator_status_runtime_stale_baseline_fix_20260701T172100Z`. Manual QA is `PASS` by `OPERATOR_QA_PASS for /home/mint/kia-stick-local-proofs/proof_kia_stick_v0_9_83_to_v0_9_87_operator_status_runtime_stale_baseline_fix_20260701T172100Z`; operator QA proof is `/home/mint/kia-stick-local-proofs/proof_kia_stick_v0_9_83_to_v0_9_87_operator_status_runtime_stale_baseline_fix_operator_qa_pass_recording_20260702T084942Z`. The repair is local only and unpushed. It does not change package files, product version, real-doc gates, services, notifications, or blocked Next/PostCSS state.
 
 ## v0.9.78 to v0.9.82 Accepted Pushed State / Next Safe-Work Checkpoint
 

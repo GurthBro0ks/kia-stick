@@ -137,7 +137,7 @@ const acceptedOperatorCheckpoint = [
   { label: "Historical accepted-WARN checkpoint", value: "3b9fef5282e84f78453402cb10a37398300ae9c1" },
   { label: "Historical accepted-WARN proof", value: "/home/mint/kia-stick-local-proofs/proof_kia_stick_v0_9_48_to_v0_9_52_operator_qa_acceptance_recording_20260630T183635Z/warn_closeout_push_20260630T185549Z" },
   { label: "Historical accepted-WARN meaning", value: "accepted-WARN parked, not fixed; historical only, not current; exact Next target still unproven" },
-  { label: "This local bundle", value: "v0.9.83-to-v0.9.87 operator-status runtime repair; validation PASS after local proof; manual QA pending rerun; pushed no" },
+  { label: "This local bundle", value: "v0.9.83-to-v0.9.87 operator-status runtime repair; validation PASS; manual QA PASS; pushed no" },
   { label: "Runtime status surface", value: "/health phase is refreshed for this bundle; /version identity semantics unchanged" },
   { label: "Real-doc gate", value: "queue-015 blocked; no real-doc capability" },
   { label: "Next/PostCSS", value: "WARN_SAFE_NEXT_TARGET_UNCLEAR; parked, not fixed" },

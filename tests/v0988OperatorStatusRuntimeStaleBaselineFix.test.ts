@@ -22,7 +22,8 @@ describe("v0.9.83 to v0.9.87 operator-status runtime stale-baseline fix", () => 
       "`queue-015-v07-first-real-doc-gate-request` remains blocked.",
       "Real-doc implementation remains unapproved.",
       "Package files remain unchanged and package version remains `0.7.0`.",
-      "Manual QA remains pending",
+      "Manual QA is `PASS` by `OPERATOR_QA_PASS for /home/mint/kia-stick-local-proofs/proof_kia_stick_v0_9_83_to_v0_9_87_operator_status_runtime_stale_baseline_fix_20260701T172100Z`.",
+      "Operator QA proof is `/home/mint/kia-stick-local-proofs/proof_kia_stick_v0_9_83_to_v0_9_87_operator_status_runtime_stale_baseline_fix_operator_qa_pass_recording_20260702T084942Z`.",
     ]) {
       expect(doc).toContain(required);
     }
@@ -55,6 +56,8 @@ describe("v0.9.83 to v0.9.87 operator-status runtime stale-baseline fix", () => 
         historical_cfa7c2c_preserved: boolean;
         local_repair_pushed: boolean;
         manual_qa_status: string;
+        operator_qa_pass_text: string;
+        operator_qa_pass_proof_dir: string;
         queue_015_status: string;
         real_doc_implementation_approved: boolean;
         package_lock_changed: boolean;
@@ -63,13 +66,19 @@ describe("v0.9.83 to v0.9.87 operator-status runtime stale-baseline fix", () => 
     const state = featureList.v0983_to_v0987_operator_status_runtime_stale_baseline_fix;
 
     expect(state.phase).toBe(phase);
-    expect(state.status).toBe("validation_pass_pending_operator_review");
+    expect(state.status).toBe("operator_qa_pass_recorded");
     expect(state.runtime_settings_current_accepted_pushed_short_commit).toBe("bc8fbef");
     expect(state.stale_1465817_current_label_removed).toBe(true);
     expect(state.historical_1465817_preserved).toBe(true);
     expect(state.historical_cfa7c2c_preserved).toBe(true);
     expect(state.local_repair_pushed).toBe(false);
-    expect(state.manual_qa_status).toBe("pending_operator_review");
+    expect(state.manual_qa_status).toBe("PASS");
+    expect(state.operator_qa_pass_text).toBe(
+      "OPERATOR_QA_PASS for /home/mint/kia-stick-local-proofs/proof_kia_stick_v0_9_83_to_v0_9_87_operator_status_runtime_stale_baseline_fix_20260701T172100Z"
+    );
+    expect(state.operator_qa_pass_proof_dir).toBe(
+      "/home/mint/kia-stick-local-proofs/proof_kia_stick_v0_9_83_to_v0_9_87_operator_status_runtime_stale_baseline_fix_operator_qa_pass_recording_20260702T084942Z"
+    );
     expect(state.queue_015_status).toBe("blocked");
     expect(state.real_doc_implementation_approved).toBe(false);
     expect(state.package_lock_changed).toBe(false);
