@@ -12,6 +12,22 @@ KIA Stick separates milestone semver from build identity:
 
 `/health`, `/version`, the app header, settings, answer footer, and saved answer metadata expose the current `displayVersion`.
 
+## v0.9.98 to v1.0.2 Post-Closeout Accepted-State Contract Refresh
+
+Phase: `KIA-Stick-v0.9.98-to-v1.0.2-post-closeout-accepted-state-contract-refresh`.
+
+This local fake-only docs/tests/status refresh starts from accepted pushed v0.9.93-to-v0.9.97 closeout at `dfa7052e5bd87e8e96362c0e93565a29409964b3`. Closeout/push proof is recorded at `/home/mint/kia-stick-local-proofs/proof_kia_stick_v0_9_93_to_v0_9_97_operator_qa_pass_closeout_push_20260702T133507Z` with validation PASS, manual QA PASS, push yes, and `HEAD == origin/main`.
+
+The refresh updates `data/current-accepted-pushed-state.json`, Settings -> Operator Status, closeout-helper/proof-index expectations, and project state so the current accepted pushed baseline is `v0.9.97 at dfa7052`. `c72f14f`, `d20e125`, `bc8fbef`, `cfa7c2c`, and `1465817` remain historical only, not current.
+
+It adds `docs/v0.9.98-accepted-pushed-state-checkpoint.md`, `docs/v0.9.99-post-closeout-current-state-contract-refresh.md`, `docs/v1.0.0-settings-operator-status-current-accepted-pushed-refresh.md`, `docs/v1.0.1-proof-index-closeout-helper-post-push-freshness-guard.md`, and `docs/v1.0.2-next-safe-work-checkpoint.md` with focused tests.
+
+Operator workflow note: after every future closeout push, refresh `data/current-accepted-pushed-state.json` in a separate fake-only checkpoint before doing baseline-sensitive UI or tooling work.
+
+This is local fake-only docs/tests/status/tooling work. It does not push. Manual QA for this local checkpoint is pending operator review. Next/PostCSS remains `WARN_SAFE_NEXT_TARGET_UNCLEAR`, `KIA-Stick-v0.9.12C-next-runtime-framework-security-implementation` remains blocked pending exact target approval, and `queue-015-v07-first-real-doc-gate-request` remains blocked. `package.json` and `package-lock.json` remain unchanged. Product/package version remains `0.7.0`; prompt version remains `prompt.fake-docs.v0.5-import-wizard-hardening`.
+
+No real-doc implementation is approved. The checkpoint does not add file pickers, FileReader, path readers, uploads, OCR, real redaction, text extraction, summarization, embeddings, indexing, vector stores, private-source inspection, services, secrets, Discord, global config, or system changes.
+
 ## v0.9.93 to v0.9.97 Accepted Pushed State Single-Source Alignment
 
 Phase: `KIA-Stick-v0.9.93-to-v0.9.97-accepted-pushed-state-single-source-alignment`.

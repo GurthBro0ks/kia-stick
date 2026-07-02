@@ -34,13 +34,14 @@ describe("v0.9.83 to v0.9.87 operator-status runtime stale-baseline fix", () => 
     const contract = readFileSync("data/current-accepted-pushed-state.json", "utf8");
 
     expect(component).toContain('import currentAcceptedPushedState from "@/data/current-accepted-pushed-state.json";');
-    expect(contract).toContain('"checkpoint_label": "v0.9.92 at c72f14f"');
-    expect(contract).toContain('"accepted_pushed_commit": "c72f14f15859c105637aa4193a976303a7de3233"');
+    expect(contract).toContain('"checkpoint_label": "v0.9.97 at dfa7052"');
+    expect(contract).toContain('"accepted_pushed_commit": "dfa7052e5bd87e8e96362c0e93565a29409964b3"');
     expect(component).toContain("Current accepted pushed checkpoint: {currentAcceptedPushedState.checkpoint_label}");
     expect(component).toContain("Current accepted pushed state is {currentAcceptedPushedState.checkpoint} at {currentAcceptedPushedState.accepted_pushed_commit}");
-    expect(component).toContain("Older baselines, including d20e125, bc8fbef, cfa7c2c, and 1465817, are historical only and not current");
-    expect(contract).toContain("/home/mint/kia-stick-local-proofs/proof_kia_stick_v0_9_88_to_v0_9_92_operator_qa_pass_closeout_push_20260702T094921Z");
-    expect(contract).toContain('"accepted_pushed_short_commit": "c72f14f"');
+    expect(component).toContain("Older baselines, including c72f14f, d20e125, bc8fbef, cfa7c2c, and 1465817, are historical only and not current");
+    expect(contract).toContain("/home/mint/kia-stick-local-proofs/proof_kia_stick_v0_9_93_to_v0_9_97_operator_qa_pass_closeout_push_20260702T133507Z");
+    expect(contract).toContain('"accepted_pushed_short_commit": "dfa7052"');
+    expect(contract).toContain('"short_commit": "c72f14f"');
     expect(contract).toContain('"short_commit": "d20e125"');
     expect(contract).toContain('"short_commit": "bc8fbef"');
     expect(contract).toContain('"short_commit": "cfa7c2c"');

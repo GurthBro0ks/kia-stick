@@ -7262,5 +7262,133 @@
       "separate exact Next target approval only if a clean target is proven later",
       "keep real-doc gate blocked unless separately approved"
     ]
+  },
+  "v0998_accepted_pushed_state_checkpoint": {
+    "phase": "KIA-Stick-v0.9.98-accepted-pushed-state-checkpoint",
+    "status": "accepted",
+    "document": "docs/v0.9.98-accepted-pushed-state-checkpoint.md",
+    "accepted_pushed_phase": "KIA-Stick-v0.9.93-to-v0.9.97-operator-qa-pass-closeout-and-push",
+    "accepted_pushed_commit": "dfa7052e5bd87e8e96362c0e93565a29409964b3",
+    "accepted_pushed_short_commit": "dfa7052",
+    "accepted_pushed_proof_dir": "/home/mint/kia-stick-local-proofs/proof_kia_stick_v0_9_93_to_v0_9_97_operator_qa_pass_closeout_push_20260702T133507Z",
+    "prior_current_accepted_pushed_short_commit": "c72f14f",
+    "historical_prior_accepted_pushed_short_commits": [
+      "c72f14f",
+      "d20e125",
+      "bc8fbef",
+      "cfa7c2c",
+      "1465817"
+    ],
+    "accepted_validation": "PASS",
+    "accepted_manual_qa": "PASS",
+    "accepted_pushed": true,
+    "accepted_equality": "HEAD == origin/main == dfa7052e5bd87e8e96362c0e93565a29409964b3",
+    "next_postcss_status": "WARN_SAFE_NEXT_TARGET_UNCLEAR",
+    "v0912c_status": "blocked_pending_exact_target",
+    "queue_015_status": "blocked",
+    "real_doc_implementation_approved": false,
+    "package_json_changed": false,
+    "package_lock_changed": false
+  },
+  "v0999_post_closeout_current_state_contract_refresh": {
+    "phase": "KIA-Stick-v0.9.99-post-closeout-current-state-contract-refresh",
+    "status": "accepted",
+    "document": "docs/v0.9.99-post-closeout-current-state-contract-refresh.md",
+    "source_contract": "data/current-accepted-pushed-state.json",
+    "current_accepted_pushed_checkpoint": "v0.9.97 at dfa7052",
+    "current_accepted_pushed_commit": "dfa7052e5bd87e8e96362c0e93565a29409964b3",
+    "historical_short_commits_only": [
+      "c72f14f",
+      "d20e125",
+      "bc8fbef",
+      "cfa7c2c",
+      "1465817"
+    ],
+    "runtime_reads_contract": true,
+    "closeout_helper_reads_contract": true,
+    "runtime_proof_directory_reads_added": false,
+    "package_json_changed": false,
+    "package_lock_changed": false
+  },
+  "v1000_settings_operator_status_current_accepted_pushed_refresh": {
+    "phase": "KIA-Stick-v1.0.0-settings-operator-status-current-accepted-pushed-refresh",
+    "status": "accepted",
+    "document": "docs/v1.0.0-settings-operator-status-current-accepted-pushed-refresh.md",
+    "source_contract": "data/current-accepted-pushed-state.json",
+    "current_accepted_pushed_short_commit": "dfa7052",
+    "current_accepted_pushed_commit": "dfa7052e5bd87e8e96362c0e93565a29409964b3",
+    "current_accepted_pushed_checkpoint": "v0.9.97 at dfa7052",
+    "historical_short_commits_only": [
+      "c72f14f",
+      "d20e125",
+      "bc8fbef",
+      "cfa7c2c",
+      "1465817"
+    ],
+    "stale_current_headlines_prevented": [
+      "v0.9.92 at c72f14f",
+      "v0.9.87 at d20e125",
+      "v0.9.82 at bc8fbef",
+      "v0.9.77 at cfa7c2c",
+      "v0.9.67 at 1465817"
+    ],
+    "next_postcss_status": "WARN_SAFE_NEXT_TARGET_UNCLEAR",
+    "v0912c_status": "blocked_pending_exact_target",
+    "queue_015_status": "blocked",
+    "real_doc_implementation_approved": false,
+    "package_json_changed": false,
+    "package_lock_changed": false
+  },
+  "v1001_proof_index_closeout_helper_post_push_freshness_guard": {
+    "phase": "KIA-Stick-v1.0.1-proof-index-closeout-helper-post-push-freshness-guard",
+    "status": "accepted",
+    "document": "docs/v1.0.1-proof-index-closeout-helper-post-push-freshness-guard.md",
+    "proof_chain_accepted_pushed_checkpoint": "dfa7052",
+    "proof_chain_closeout_push_proof": "/home/mint/kia-stick-local-proofs/proof_kia_stick_v0_9_93_to_v0_9_97_operator_qa_pass_closeout_push_20260702T133507Z",
+    "proof_index_latest_accepted_pushed_closeout_proof": "/home/mint/kia-stick-local-proofs/proof_kia_stick_v0_9_93_to_v0_9_97_operator_qa_pass_closeout_push_20260702T133507Z",
+    "proof_index_latest_accepted_pushed_closeout_commit": "dfa7052e5bd87e8e96362c0e93565a29409964b3",
+    "proof_index_latest_accepted_pushed_short_commit": "dfa7052",
+    "stale_current_short_commits_prevented": [
+      "c72f14f",
+      "d20e125",
+      "bc8fbef",
+      "cfa7c2c",
+      "1465817"
+    ],
+    "warn_fail_gates_preserved": true,
+    "next_postcss_status": "WARN_SAFE_NEXT_TARGET_UNCLEAR",
+    "v0912c_status": "blocked_pending_exact_target",
+    "queue_015_status": "blocked",
+    "real_doc_implementation_approved": false,
+    "package_json_changed": false,
+    "package_lock_changed": false
+  },
+  "v1002_next_safe_work_checkpoint": {
+    "phase": "KIA-Stick-v1.0.2-next-safe-work-checkpoint",
+    "status": "accepted",
+    "document": "docs/v1.0.2-next-safe-work-checkpoint.md",
+    "current_accepted_pushed_commit": "dfa7052e5bd87e8e96362c0e93565a29409964b3",
+    "current_accepted_pushed_short_commit": "dfa7052",
+    "current_accepted_pushed_closeout_proof_dir": "/home/mint/kia-stick-local-proofs/proof_kia_stick_v0_9_93_to_v0_9_97_operator_qa_pass_closeout_push_20260702T133507Z",
+    "source_contract": "data/current-accepted-pushed-state.json",
+    "local_checkpoint_validation": "PASS",
+    "local_checkpoint_pushed": false,
+    "local_checkpoint_manual_qa_status": "pending_operator_review",
+    "required_future_workflow_after_closeout_push": "Refresh data/current-accepted-pushed-state.json in a separate fake-only checkpoint before baseline-sensitive UI or tooling work.",
+    "next_postcss_status": "WARN_SAFE_NEXT_TARGET_UNCLEAR",
+    "next_implementation_blocked": true,
+    "real_doc_gate_blocked": true,
+    "queue_015_status": "blocked",
+    "product_version": "0.7.0",
+    "package_version": "0.7.0",
+    "prompt_version": "prompt.fake-docs.v0.5-import-wizard-hardening",
+    "package_json_changed": false,
+    "package_lock_changed": false,
+    "dependency_versions_changed": false,
+    "safe_next_choices": [
+      "operator QA PASS recording for this local checkpoint",
+      "closeout/push gate only after separate explicit closeout approval",
+      "keep real-doc gate blocked unless separately approved"
+    ]
   }
 }

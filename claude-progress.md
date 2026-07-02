@@ -2,10 +2,34 @@
 
 ## Current Phase
 
-- Phase: `KIA-Stick-v0.9.93-to-v0.9.97-accepted-pushed-state-single-source-alignment`
+- Phase: `KIA-Stick-v0.9.98-to-v1.0.2-post-closeout-accepted-state-contract-refresh`
 - Target: `USER_LAPTOP_ONLY`
 - Provider: `local-fake-deterministic`
-- Status: local v0.9.93-to-v0.9.97 accepted pushed state single-source alignment records the v0.9.88-to-v0.9.92 closeout/push as the current accepted pushed state at `c72f14f15859c105637aa4193a976303a7de3233`. Current accepted pushed proof is `/home/mint/kia-stick-local-proofs/proof_kia_stick_v0_9_88_to_v0_9_92_operator_qa_pass_closeout_push_20260702T094921Z`; validation/manual QA/push are PASS/PASS/yes and `HEAD == origin/main` at `c72f14f`. Settings -> Operator Status now reads `data/current-accepted-pushed-state.json` and shows `v0.9.92 at c72f14f`; `d20e125`, `bc8fbef`, `cfa7c2c`, and `1465817` are historical only, not current. This local checkpoint is not pushed; operator manual QA is PASS by `OPERATOR_QA_PASS for /home/mint/kia-stick-local-proofs/proof_kia_stick_v0_9_93_to_v0_9_97_accepted_pushed_state_single_source_alignment_20260702T101516Z`; operator QA proof is `/home/mint/kia-stick-local-proofs/proof_kia_stick_v0_9_93_to_v0_9_97_operator_qa_pass_recording_20260702T124930Z`. Next/PostCSS remains parked as `WARN_SAFE_NEXT_TARGET_UNCLEAR`; v0.9.12C remains blocked pending exact target approval; queue-015 remains blocked; product/prompt unchanged; no dependency, runtime intake, service, Discord, or real-doc implementation is approved.
+- Status: local v0.9.98-to-v1.0.2 post-closeout accepted-state contract refresh records the v0.9.93-to-v0.9.97 closeout/push as the current accepted pushed state at `dfa7052e5bd87e8e96362c0e93565a29409964b3`. Current accepted pushed proof is `/home/mint/kia-stick-local-proofs/proof_kia_stick_v0_9_93_to_v0_9_97_operator_qa_pass_closeout_push_20260702T133507Z`; validation/manual QA/push are PASS/PASS/yes and `HEAD == origin/main` at `dfa7052`. Settings -> Operator Status reads `data/current-accepted-pushed-state.json` and shows `v0.9.97 at dfa7052`; `c72f14f`, `d20e125`, `bc8fbef`, `cfa7c2c`, and `1465817` are historical only, not current. This local checkpoint is not pushed; operator manual QA is pending. Next/PostCSS remains parked as `WARN_SAFE_NEXT_TARGET_UNCLEAR`; v0.9.12C remains blocked pending exact target approval; queue-015 remains blocked; product/prompt unchanged; no dependency, runtime intake, service, Discord, or real-doc implementation is approved.
+
+## v0.9.98 to v1.0.2 Post-Closeout Accepted-State Contract Refresh
+
+- Phase: `KIA-Stick-v0.9.98-to-v1.0.2-post-closeout-accepted-state-contract-refresh`
+- Target machine: `USER_LAPTOP_ONLY`
+- Current accepted pushed phase: `KIA-Stick-v0.9.93-to-v0.9.97-operator-qa-pass-closeout-and-push`
+- Current accepted pushed commit: `dfa7052e5bd87e8e96362c0e93565a29409964b3`
+- Current accepted pushed proof: `/home/mint/kia-stick-local-proofs/proof_kia_stick_v0_9_93_to_v0_9_97_operator_qa_pass_closeout_push_20260702T133507Z`
+- Historical prior accepted pushed commits: `c72f14f`, `d20e125`, `bc8fbef`, `cfa7c2c`, and `1465817` are historical only, not current.
+- Scope: fake-only docs/tests/status/tooling; no dependency, lockfile, runtime intake, service, notification, or real-doc change.
+- Refreshed state contract: `data/current-accepted-pushed-state.json`
+- New docs: `docs/v0.9.98-accepted-pushed-state-checkpoint.md`, `docs/v0.9.99-post-closeout-current-state-contract-refresh.md`, `docs/v1.0.0-settings-operator-status-current-accepted-pushed-refresh.md`, `docs/v1.0.1-proof-index-closeout-helper-post-push-freshness-guard.md`, `docs/v1.0.2-next-safe-work-checkpoint.md`
+- New tests: `tests/v0998AcceptedPushedStateCheckpoint.test.ts`, `tests/v0999PostCloseoutCurrentStateContractRefresh.test.ts`, `tests/v1000SettingsOperatorStatusCurrentAcceptedPushedRefresh.test.ts`, `tests/v1001ProofIndexCloseoutHelperPostPushFreshnessGuard.test.ts`, `tests/v1002NextSafeWorkCheckpoint.test.ts`
+- Helper/status changes: closeout helper proof-chain summary and proof-index expectations now identify `dfa7052` as current accepted pushed state.
+- Runtime repair: Settings -> Operator Status now shows `v0.9.97 at dfa7052`; `c72f14f`, `d20e125`, `bc8fbef`, `cfa7c2c`, and `1465817` are historical only, not current.
+- Operator workflow note: after every future closeout push, update the current accepted pushed state contract in a separate fake-only checkpoint before baseline-sensitive UI or tooling work.
+- Next/PostCSS runtime path: parked as `WARN_SAFE_NEXT_TARGET_UNCLEAR`, not fixed.
+- v0.9.12C implementation: blocked until exact target approval.
+- Version state: product/package version remain `0.7.0`; prompt version remains `prompt.fake-docs.v0.5-import-wizard-hardening`.
+- Queue state: `queue-015-v07-first-real-doc-gate-request` remains blocked.
+- Real-doc capability found/approved: no.
+- Push status: not pushed by this local checkpoint.
+- Manual QA status: pending operator review.
+- Validation: PASS for required local gates.
 
 ## v0.9.93 to v0.9.97 Accepted Pushed State Single-Source Alignment
 
