@@ -397,26 +397,27 @@ describe("closeout-helper", () => {
     expect(issueLines).not.toContain("queue_item_missing");
   });
 
-  it("reports the current accepted pushed baseline instead of stale proof-chain checkpoints", () => {
+  it("reports the current accepted pushed baseline from the shared contract instead of stale proof-chain checkpoints", () => {
     const currentResearchProof =
       "/home/mint/kia-stick-local-proofs/proof_kia_stick_v0_9_83_to_v0_9_87_fake_only_proof_report_operator_ux_polish_20260701T165216Z";
     const currentOperatorQaProof =
       "/home/mint/kia-stick-local-proofs/proof_kia_stick_v0_9_88_to_v0_9_92_operator_qa_pass_recording_20260702T093222Z";
     const currentCloseoutProof =
-      "/home/mint/kia-stick-local-proofs/proof_kia_stick_v0_9_83_to_v0_9_87_operator_status_runtime_stale_baseline_fix_closeout_push_20260702T085505Z";
+      "/home/mint/kia-stick-local-proofs/proof_kia_stick_v0_9_88_to_v0_9_92_operator_qa_pass_closeout_push_20260702T094921Z";
 
     const summary = spawnSync("node", [scriptPath, "summary", "--proof-dir", currentResearchProof], { encoding: "utf8" });
 
     expect(summary.status).toBe(0);
-    expect(summary.stdout).toContain("PROOF_CHAIN_ACCEPTED_PUSHED_CHECKPOINT=d20e125");
+    expect(summary.stdout).toContain("PROOF_CHAIN_ACCEPTED_PUSHED_CHECKPOINT=c72f14f");
     expect(summary.stdout).toContain(
-      "PROOF_CHAIN_LOCAL_IMPLEMENTATION_PROOF=/home/mint/kia-stick-local-proofs/proof_kia_stick_v0_9_83_to_v0_9_87_operator_status_runtime_stale_baseline_fix_20260701T172100Z"
+      "PROOF_CHAIN_LOCAL_IMPLEMENTATION_PROOF=/home/mint/kia-stick-local-proofs/proof_kia_stick_v0_9_88_to_v0_9_92_accepted_pushed_state_operator_status_freshness_checkpoint_20260702T091407Z"
     );
     expect(summary.stdout).toContain(`PROOF_CHAIN_OPERATOR_QA_PROOF=${currentOperatorQaProof}`);
     expect(summary.stdout).toContain(`PROOF_CHAIN_CLOSEOUT_PUSH_PROOF=${currentCloseoutProof}`);
     expect(summary.stdout).toContain(
-      "PROOF_CHAIN_PENDING_LOCAL_BUNDLE=KIA-Stick-v0.9.92-next-safe-work-checkpoint; result=WARN_SAFE_NEXT_TARGET_UNCLEAR; manual_qa=PASS; pushed=review_required"
+      "PROOF_CHAIN_PENDING_LOCAL_BUNDLE=KIA-Stick-v0.9.97-next-safe-work-checkpoint; result=WARN_SAFE_NEXT_TARGET_UNCLEAR; manual_qa=pending_operator_review; pushed=review_required"
     );
+    expect(summary.stdout).not.toContain("PROOF_CHAIN_ACCEPTED_PUSHED_CHECKPOINT=d20e125");
     expect(summary.stdout).not.toContain("PROOF_CHAIN_ACCEPTED_PUSHED_CHECKPOINT=bc8fbef");
     expect(summary.stdout).not.toContain("PROOF_CHAIN_ACCEPTED_PUSHED_CHECKPOINT=cfa7c2c");
     expect(summary.stdout).not.toContain("PROOF_CHAIN_ACCEPTED_PUSHED_CHECKPOINT=8358e63");

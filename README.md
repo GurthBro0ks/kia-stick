@@ -12,6 +12,18 @@ KIA Stick separates milestone semver from build identity:
 
 `/health`, `/version`, the app header, settings, answer footer, and saved answer metadata expose the current `displayVersion`.
 
+## v0.9.93 to v0.9.97 Accepted Pushed State Single-Source Alignment
+
+Phase: `KIA-Stick-v0.9.93-to-v0.9.97-accepted-pushed-state-single-source-alignment`.
+
+This local fake-only docs/tests/status/tooling bundle starts from accepted pushed v0.9.88-to-v0.9.92 closeout at `c72f14f15859c105637aa4193a976303a7de3233`. Closeout/push proof is recorded at `/home/mint/kia-stick-local-proofs/proof_kia_stick_v0_9_88_to_v0_9_92_operator_qa_pass_closeout_push_20260702T094921Z` with validation PASS, manual QA PASS, push yes, and `HEAD == origin/main`.
+
+The bundle adds `data/current-accepted-pushed-state.json`, `docs/v0.9.93-accepted-pushed-state-checkpoint.md`, `docs/v0.9.94-current-accepted-pushed-state-contract.md`, `docs/v0.9.95-settings-operator-status-current-state-alignment.md`, `docs/v0.9.96-proof-index-closeout-helper-stale-baseline-guard.md`, and `docs/v0.9.97-next-safe-work-checkpoint.md` with focused tests. It updates Settings -> Operator Status and closeout helper proof-chain selection so the current accepted pushed baseline is `v0.9.92 at c72f14f`. `d20e125`, `bc8fbef`, `cfa7c2c`, and `1465817` remain historical only, not current.
+
+This is local fake-only docs/tests/status/tooling work. It does not push. Manual QA for this local checkpoint is pending operator review. Next/PostCSS remains `WARN_SAFE_NEXT_TARGET_UNCLEAR`, `KIA-Stick-v0.9.12C-next-runtime-framework-security-implementation` remains blocked pending exact target approval, and `queue-015-v07-first-real-doc-gate-request` remains blocked. `package.json` and `package-lock.json` remain unchanged. Product/package version remains `0.7.0`; prompt version remains `prompt.fake-docs.v0.5-import-wizard-hardening`.
+
+No real-doc implementation is approved. The checkpoint does not add file pickers, FileReader, path readers, uploads, OCR, real redaction, text extraction, summarization, embeddings, indexing, vector stores, private-source inspection, services, secrets, Discord, global config, or system changes.
+
 ## v0.9.88 to v0.9.92 Accepted Pushed State / Operator Status Freshness Checkpoint
 
 Phase: `KIA-Stick-v0.9.88-to-v0.9.92-accepted-pushed-state-and-operator-status-freshness-checkpoint`.

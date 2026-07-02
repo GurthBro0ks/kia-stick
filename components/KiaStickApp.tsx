@@ -83,6 +83,7 @@ import {
   type VaultWorkflowState,
 } from "@/lib/vaultModel";
 import { clientVersion, type RuntimeVersion } from "@/lib/version";
+import currentAcceptedPushedState from "@/data/current-accepted-pushed-state.json";
 
 type Tab = "chat" | "sources" | "saved" | "upload" | "vault" | "import" | "settings";
 type VaultView = "vault" | "quarantine" | "redaction" | "metadata" | "index" | "audit";
@@ -116,13 +117,23 @@ const vaultViews: { id: VaultView; label: string; meta: string }[] = [
 ];
 
 const acceptedOperatorCheckpoint = [
-  { label: "Current accepted pushed checkpoint", value: "v0.9.87 at d20e1251d5e7c117aa9592fb8614acb77ab3220b" },
-  { label: "Current accepted pushed proof", value: "/home/mint/kia-stick-local-proofs/proof_kia_stick_v0_9_83_to_v0_9_87_operator_status_runtime_stale_baseline_fix_closeout_push_20260702T085505Z" },
-  { label: "Current accepted pushed QA", value: "validation PASS / manual QA PASS / pushed yes / HEAD == origin/main at d20e125" },
-  { label: "Current accepted pushed bundle", value: "v0.9.83-to-v0.9.87 accepted/pushed yes at d20e125" },
-  { label: "Historical accepted pushed checkpoint v0.9.82", value: "v0.9.82 at bc8fbef3114631ea3e0363b8e700ce0c2dce236e; historical only, not current" },
-  { label: "Historical accepted pushed checkpoint v0.9.77", value: "v0.9.77 at cfa7c2c72cbff14a8e9515119256a806a7b00bcd; historical only, not current" },
-  { label: "Historical accepted pushed checkpoint v0.9.67", value: "v0.9.67 at 1465817e8efad6207705833e9e08f22030d6a116; historical only, not current" },
+  {
+    label: "Current accepted pushed checkpoint",
+    value: `${currentAcceptedPushedState.checkpoint_label} (${currentAcceptedPushedState.accepted_pushed_commit})`,
+  },
+  { label: "Current accepted pushed proof", value: currentAcceptedPushedState.accepted_pushed_proof_dir },
+  {
+    label: "Current accepted pushed QA",
+    value: `validation ${currentAcceptedPushedState.accepted_validation} / manual QA ${currentAcceptedPushedState.accepted_manual_qa} / pushed yes / HEAD == origin/main at ${currentAcceptedPushedState.accepted_pushed_short_commit}`,
+  },
+  {
+    label: "Current accepted pushed bundle",
+    value: `${currentAcceptedPushedState.accepted_pushed_phase}; accepted/pushed yes at ${currentAcceptedPushedState.accepted_pushed_short_commit}`,
+  },
+  ...currentAcceptedPushedState.historical_prior_checkpoints.map((checkpoint) => ({
+    label: `Historical accepted pushed checkpoint ${checkpoint.checkpoint}`,
+    value: `${checkpoint.checkpoint} at ${checkpoint.commit}; historical only, not current`,
+  })),
   { label: "Accepted pushed WARN checkpoint visible", value: "Accepted pushed WARN checkpoint visible: 3b9fef5; historical accepted-WARN parked, not current" },
   { label: "Accepted pushed WARN commit", value: "3b9fef5282e84f78453402cb10a37398300ae9c1" },
   { label: "Accepted pushed WARN QA", value: "validation PASS / manual QA ACCEPTED_WARN / pushed yes" },
@@ -139,7 +150,7 @@ const acceptedOperatorCheckpoint = [
   { label: "Historical accepted-WARN proof", value: "/home/mint/kia-stick-local-proofs/proof_kia_stick_v0_9_48_to_v0_9_52_operator_qa_acceptance_recording_20260630T183635Z/warn_closeout_push_20260630T185549Z" },
   { label: "Historical accepted-WARN meaning", value: "accepted-WARN parked, not fixed; historical only, not current; exact Next target still unproven" },
   { label: "Historical local repair", value: "v0.9.83-to-v0.9.87 operator-status runtime repair; validation PASS; manual QA PASS; later pushed by closeout" },
-  { label: "This local bundle", value: "v0.9.88-to-v0.9.92 accepted pushed state/operator-status freshness checkpoint; validation pending; pushed no" },
+  { label: "This local bundle", value: "v0.9.93-to-v0.9.97 accepted pushed state single-source alignment; validation pending; pushed no" },
   { label: "Runtime status surface", value: "/health phase is refreshed for this bundle; /version identity semantics unchanged" },
   { label: "Real-doc gate", value: "queue-015 blocked; no real-doc capability" },
   { label: "Next/PostCSS", value: "WARN_SAFE_NEXT_TARGET_UNCLEAR; parked, not fixed" },
@@ -525,9 +536,9 @@ export function KiaStickApp({ runtimeVersion = clientVersion }: { runtimeVersion
             </section>
             <section className="aboutPanel" aria-label="Fake-only operator status">
               <span className="sectionKicker">Operator status</span>
-              <h3>Current accepted pushed checkpoint: v0.9.87 at d20e125</h3>
+              <h3>Current accepted pushed checkpoint: {currentAcceptedPushedState.checkpoint_label}</h3>
               <p>
-                Current accepted pushed state is v0.9.87 at d20e1251d5e7c117aa9592fb8614acb77ab3220b with validation PASS, manual QA PASS, push yes, and HEAD equal to origin/main at d20e125. Older baselines, including bc8fbef, cfa7c2c, and 1465817, are historical only and not current. Historical accepted-WARN state is parked, not current. This status block is copy-only; Next/PostCSS remains WARN_SAFE_NEXT_TARGET_UNCLEAR, v0.9.12C remains blocked, queue-015 remains blocked, package lock is unchanged, and no real-doc capability is approved.
+                Current accepted pushed state is {currentAcceptedPushedState.checkpoint} at {currentAcceptedPushedState.accepted_pushed_commit} with validation {currentAcceptedPushedState.accepted_validation}, manual QA {currentAcceptedPushedState.accepted_manual_qa}, push yes, and HEAD equal to origin/main at {currentAcceptedPushedState.accepted_pushed_short_commit}. Older baselines, including d20e125, bc8fbef, cfa7c2c, and 1465817, are historical only and not current. Historical accepted-WARN state is parked, not current. This status block is copy-only; Next/PostCSS remains WARN_SAFE_NEXT_TARGET_UNCLEAR, v0.9.12C remains blocked, queue-015 remains blocked, package lock is unchanged, and no real-doc capability is approved.
               </p>
               <dl className="settingsGrid">
                 {acceptedOperatorCheckpoint.map((row) => (

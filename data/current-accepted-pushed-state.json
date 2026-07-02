@@ -1,0 +1,51 @@
+{
+  "schema": "kia-stick-current-accepted-pushed-state.v1",
+  "phase": "KIA-Stick-v0.9.93-to-v0.9.97-accepted-pushed-state-single-source-alignment",
+  "checkpoint": "v0.9.92",
+  "checkpoint_label": "v0.9.92 at c72f14f",
+  "accepted_pushed_commit": "c72f14f15859c105637aa4193a976303a7de3233",
+  "accepted_pushed_short_commit": "c72f14f",
+  "accepted_pushed_proof_dir": "/home/mint/kia-stick-local-proofs/proof_kia_stick_v0_9_88_to_v0_9_92_operator_qa_pass_closeout_push_20260702T094921Z",
+  "local_implementation_proof_dir": "/home/mint/kia-stick-local-proofs/proof_kia_stick_v0_9_88_to_v0_9_92_accepted_pushed_state_operator_status_freshness_checkpoint_20260702T091407Z",
+  "operator_qa_pass_proof_dir": "/home/mint/kia-stick-local-proofs/proof_kia_stick_v0_9_88_to_v0_9_92_operator_qa_pass_recording_20260702T093222Z",
+  "accepted_pushed_phase": "KIA-Stick-v0.9.88-to-v0.9.92-operator-qa-pass-closeout-and-push",
+  "accepted_validation": "PASS",
+  "accepted_manual_qa": "PASS",
+  "accepted_pushed": true,
+  "accepted_equality": "HEAD == origin/main == c72f14f15859c105637aa4193a976303a7de3233",
+  "historical_prior_checkpoints": [
+    {
+      "checkpoint": "v0.9.87",
+      "commit": "d20e1251d5e7c117aa9592fb8614acb77ab3220b",
+      "short_commit": "d20e125",
+      "status": "historical_only_not_current"
+    },
+    {
+      "checkpoint": "v0.9.82",
+      "commit": "bc8fbef3114631ea3e0363b8e700ce0c2dce236e",
+      "short_commit": "bc8fbef",
+      "status": "historical_only_not_current"
+    },
+    {
+      "checkpoint": "v0.9.77",
+      "commit": "cfa7c2c72cbff14a8e9515119256a806a7b00bcd",
+      "short_commit": "cfa7c2c",
+      "status": "historical_only_not_current"
+    },
+    {
+      "checkpoint": "v0.9.67",
+      "commit": "1465817e8efad6207705833e9e08f22030d6a116",
+      "short_commit": "1465817",
+      "status": "historical_only_not_current"
+    }
+  ],
+  "next_postcss_status": "WARN_SAFE_NEXT_TARGET_UNCLEAR",
+  "v0912c_status": "blocked_pending_exact_target",
+  "queue_015_status": "blocked",
+  "real_doc_implementation_approved": false,
+  "package_version": "0.7.0",
+  "product_version": "0.7.0",
+  "prompt_version": "prompt.fake-docs.v0.5-import-wizard-hardening",
+  "package_json_changed": false,
+  "package_lock_changed": false
+}

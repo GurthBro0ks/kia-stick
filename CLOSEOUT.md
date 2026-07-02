@@ -1,5 +1,41 @@
 # KIA Stick Closeout
 
+## v0.9.93 to v0.9.97 Accepted Pushed State Single-Source Alignment
+
+- Phase: `KIA-Stick-v0.9.93-to-v0.9.97-accepted-pushed-state-single-source-alignment`
+- Target machine: `USER_LAPTOP_ONLY`
+- Current accepted pushed phase: `KIA-Stick-v0.9.88-to-v0.9.92-operator-qa-pass-closeout-and-push`
+- Current accepted pushed commit: `c72f14f15859c105637aa4193a976303a7de3233`
+- Current accepted pushed proof: `/home/mint/kia-stick-local-proofs/proof_kia_stick_v0_9_88_to_v0_9_92_operator_qa_pass_closeout_push_20260702T094921Z`
+- Accepted validation/manual QA: PASS/PASS
+- Accepted push status: yes, with `HEAD == origin/main` at `c72f14f`
+- Historical prior baselines: `d20e125`, `bc8fbef`, `cfa7c2c`, and `1465817` remain historical only, not current.
+- Source contract: `data/current-accepted-pushed-state.json`
+- Scope: fake-only docs/tests/status/tooling alignment for accepted pushed state, Settings -> Operator Status, proof-index expectations, closeout helper proof-chain selection, and next safe work.
+- Included subphases: v0.9.93 accepted pushed state checkpoint; v0.9.94 current accepted pushed state contract; v0.9.95 Settings/operator-status current-state alignment; v0.9.96 proof-index/closeout-helper stale-baseline guard; v0.9.97 next safe-work checkpoint.
+- Next/PostCSS runtime security path: remains parked as `WARN_SAFE_NEXT_TARGET_UNCLEAR`.
+- v0.9.12C implementation: blocked until an exact Next target is separately approved.
+- Product version: `0.7.0`
+- Package version: `0.7.0`
+- Prompt version: `prompt.fake-docs.v0.5-import-wizard-hardening`
+- Queue state: `queue-015-v07-first-real-doc-gate-request` remains blocked.
+- `package.json` changed: no
+- `package-lock.json` changed: no
+- Dependency versions changed: no
+- Runtime capability changed: no intake or real-doc capability; docs/tests/status/tooling only.
+- Real document implementation approved: no
+- Real document access: none
+- File picker/FileReader/OCR/indexing/embedding/vector capability added: no
+- Services restarted: no
+- Cron/timer/tmux/Caddy/DNS changed: no
+- Secrets printed: no
+- Discord sent: no
+- Push performed by this local checkpoint: no
+- Manual QA status for this local checkpoint: pending operator review
+- Validation status: PASS
+
+This local checkpoint has validation PASS and is pending operator manual QA. It does not approve package mutation, Next/PostCSS implementation, real-doc capability, service changes, Discord changes, or push.
+
 ## v0.9.88 to v0.9.92 Accepted Pushed State / Operator Status Freshness Checkpoint
 
 - Phase: `KIA-Stick-v0.9.88-to-v0.9.92-accepted-pushed-state-and-operator-status-freshness-checkpoint`

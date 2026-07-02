@@ -9,11 +9,16 @@ const FALLBACK_PROOF_ROOT = "/tmp";
 const PERSISTENT_KIA_PROOF_ROOT = "/home/mint/kia-stick-local-proofs";
 const SAFE_PROOF_ROOTS = ["/tmp", "/home/mint/kia-stick-local-proofs"];
 const readyQueueStatuses = new Set(["ready_to_push", "accepted"]);
+const CURRENT_ACCEPTED_PUSHED_STATE_PATH = "data/current-accepted-pushed-state.json";
 
 function readJson(root, relativePath, fallback = {}) {
   const fullPath = path.join(root, relativePath);
   if (!existsSync(fullPath)) return fallback;
   return JSON.parse(readFileSync(fullPath, "utf8"));
+}
+
+function readCurrentAcceptedPushedState(root) {
+  return readJson(root, CURRENT_ACCEPTED_PUSHED_STATE_PATH, {});
 }
 
 function gitOutput(root, args) {
@@ -265,6 +270,11 @@ function manualQaPassed(status = "PASS") {
 
 function currentPackageLockUnchanged(featureList) {
   const currentPackageLockKeys = [
+    "v0997_next_safe_work_checkpoint",
+    "v0996_proof_index_closeout_helper_stale_baseline_guard",
+    "v0995_settings_operator_status_current_state_alignment",
+    "v0994_current_accepted_pushed_state_contract",
+    "v0993_accepted_pushed_state_checkpoint",
     "v0992_next_safe_work_checkpoint",
     "v0991_closeout_helper_current_freshness",
     "v0990_proof_index_accepted_pushed_closeout_freshness",
@@ -346,8 +356,11 @@ function proofChainWindow(proof) {
 function collectProofChain(featureList, proof = {}) {
   const useHistorical = shouldUseHistoricalProofChain(proof);
   const window = proofChainWindow(proof);
+  const currentContract = featureList.__currentAcceptedPushedState || {};
   const accepted =
-    !useHistorical && window !== "v0963" && featureList.v0988_accepted_pushed_state_checkpoint
+    !useHistorical && window !== "v0963" && currentContract.accepted_pushed_commit
+      ? currentContract
+      : !useHistorical && window !== "v0963" && featureList.v0988_accepted_pushed_state_checkpoint
       ? featureList.v0988_accepted_pushed_state_checkpoint
       : !useHistorical && window !== "v0963" && featureList.v0983_current_accepted_pushed_state_checkpoint
       ? featureList.v0983_current_accepted_pushed_state_checkpoint
@@ -375,7 +388,9 @@ function collectProofChain(featureList, proof = {}) {
       ? featureList.v0953_accepted_pushed_warn_state_checkpoint
       : featureList.v0933_accepted_pushed_warn_state_checkpoint || {};
   const current =
-    !useHistorical && window !== "v0963" && featureList.v0992_next_safe_work_checkpoint
+    !useHistorical && window !== "v0963" && featureList.v0997_next_safe_work_checkpoint
+      ? featureList.v0997_next_safe_work_checkpoint
+      : !useHistorical && window !== "v0963" && featureList.v0992_next_safe_work_checkpoint
       ? featureList.v0992_next_safe_work_checkpoint
       : !useHistorical && window !== "v0963" && featureList.v0987_next_large_work_checkpoint
       ? featureList.v0987_next_large_work_checkpoint
@@ -418,7 +433,7 @@ function collectProofChain(featureList, proof = {}) {
       accepted.operator_qa_proof_dir ||
       priorAccepted.operator_qa_pass_proof_dir ||
       currentManualQa,
-    closeoutPushProof: accepted.closeout_push_proof_dir || priorAccepted.closeout_push_proof_dir || "review_required",
+    closeoutPushProof: accepted.accepted_pushed_proof_dir || accepted.closeout_push_proof_dir || priorAccepted.closeout_push_proof_dir || "review_required",
     acceptedWarnCheckpoint:
       acceptedWarn.accepted_pushed_warn_short_commit || acceptedWarn.accepted_pushed_warn_commit || "review_required",
     pendingLocalBundle: `${currentBundle}; result=${currentResult}; manual_qa=${currentManualQa}; pushed=${currentPushed}`,
@@ -543,6 +558,7 @@ export function assessCloseout({
 function collectState(options) {
   const root = path.resolve(options.root);
   const featureList = readJson(root, "feature_list.json", {});
+  featureList.__currentAcceptedPushedState = readCurrentAcceptedPushedState(root);
   const defaultProofRoot = options.proofDir ? { root: "", mode: "explicit_proof_dir", note: "explicit proof dir supplied" } : resolveDefaultProofRoot({ proofRoot: options.proofRoot });
   const proof = options.proofDir ? readProofDir(options.proofDir) : readLatestProof(defaultProofRoot.root);
   const phase = options.phase || proof.phase || featureList.phase || "unknown";
