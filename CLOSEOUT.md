@@ -1,5 +1,42 @@
 # KIA Stick Closeout
 
+## v1.0.3 to v1.0.7 Post-Closeout Accepted-State Contract Refresh
+
+- Phase: `KIA-Stick-v1.0.3-to-v1.0.7-post-closeout-accepted-state-contract-refresh`
+- Target machine: `USER_LAPTOP_ONLY`
+- Current accepted pushed phase: `KIA-Stick-v0.9.98-to-v1.0.2-operator-qa-pass-closeout-and-push`
+- Current accepted pushed commit: `80e91c74855dae6ee51bd9068e2794d08c495ec0`
+- Current accepted pushed proof: `/home/mint/kia-stick-local-proofs/proof_kia_stick_v0_9_98_to_v1_0_2_operator_qa_pass_closeout_push_20260702T151814Z`
+- Accepted validation/manual QA: PASS/PASS
+- Accepted push status: yes, with `HEAD == origin/main` at `80e91c7`
+- Historical prior baselines: `dfa7052`, `c72f14f`, `d20e125`, `bc8fbef`, `cfa7c2c`, and `1465817` remain historical only, not current.
+- Source contract: `data/current-accepted-pushed-state.json`
+- Scope: fake-only docs/tests/status/tooling alignment for post-closeout accepted pushed state, Settings -> Operator Status, proof-index expectations, closeout helper proof-chain selection, and next safe work.
+- Included subphases: v1.0.3 accepted pushed state checkpoint; v1.0.4 post-closeout current-state contract refresh; v1.0.5 Settings/operator-status current accepted pushed refresh; v1.0.6 proof-index/closeout-helper post-push freshness guard; v1.0.7 next safe-work checkpoint.
+- Required future workflow: after every future closeout push, refresh `data/current-accepted-pushed-state.json` in a separate fake-only checkpoint before baseline-sensitive UI/tooling work.
+- Next/PostCSS runtime security path: remains parked as `WARN_SAFE_NEXT_TARGET_UNCLEAR`.
+- v0.9.12C implementation: blocked until an exact Next target is separately approved.
+- Product version: `0.7.0`
+- Package version: `0.7.0`
+- Prompt version: `prompt.fake-docs.v0.5-import-wizard-hardening`
+- Queue state: `queue-015-v07-first-real-doc-gate-request` remains blocked.
+- `package.json` changed: no
+- `package-lock.json` changed: no
+- Dependency versions changed: no
+- Runtime capability changed: no intake or real-doc capability; docs/tests/status/tooling only.
+- Real document implementation approved: no
+- Real document access: none
+- File picker/FileReader/OCR/indexing/embedding/vector capability added: no
+- Services restarted: no
+- Cron/timer/tmux/Caddy/DNS changed: no
+- Secrets printed: no
+- Discord sent: no
+- Push performed by this local checkpoint: no
+- Manual QA status for this local checkpoint: pending operator review
+- Validation status: PASS
+
+This local checkpoint has validation PASS and pending operator manual QA. It does not approve package mutation, Next/PostCSS implementation, real-doc capability, service changes, Discord changes, or push. Operator QA and closeout/push remain separate explicit gates.
+
 ## v0.9.98 to v1.0.2 Post-Closeout Accepted-State Contract Refresh
 
 - Phase: `KIA-Stick-v0.9.98-to-v1.0.2-post-closeout-accepted-state-contract-refresh`

@@ -1,36 +1,40 @@
 import { readFileSync } from "node:fs";
 import { describe, expect, it } from "vitest";
 
-const phase = "KIA-Stick-v0.9.99-post-closeout-current-state-contract-refresh";
-const docPath = "docs/v0.9.99-post-closeout-current-state-contract-refresh.md";
+const phase = "KIA-Stick-v1.0.4-post-closeout-current-state-contract-refresh";
+const docPath = "docs/v1.0.4-post-closeout-current-state-contract-refresh.md";
 
-describe("v0.9.99 post-closeout current state contract refresh", () => {
+describe("v1.0.4 post-closeout current state contract refresh", () => {
   it("documents the post-closeout static contract refresh", () => {
     const doc = readFileSync(docPath, "utf8");
 
     for (const required of [
       phase,
       "Contract file: `data/current-accepted-pushed-state.json`",
-      "Current accepted pushed checkpoint: `v0.9.97 at dfa7052`",
-      "Current accepted pushed commit: `dfa7052e5bd87e8e96362c0e93565a29409964b3`",
-      "The contract marks `c72f14f`, `d20e125`, `bc8fbef`, `cfa7c2c`, and `1465817` as historical only, not current.",
+      "Current accepted pushed checkpoint: `v1.0.2 at 80e91c7`",
+      "Current accepted pushed commit: `80e91c74855dae6ee51bd9068e2794d08c495ec0`",
+      "The contract marks `dfa7052`, `c72f14f`, `d20e125`, `bc8fbef`, `cfa7c2c`, and `1465817` as historical only, not current.",
       "After every future closeout push, refresh this current accepted pushed state contract in a separate fake-only checkpoint before doing baseline-sensitive UI or tooling work.",
     ]) {
       expect(doc).toContain(required);
     }
   });
 
-  it("makes dfa7052 current and c72f14f historical in the contract", () => {
+  it("makes 80e91c7 current and older baselines historical in the contract", () => {
     const contract = JSON.parse(readFileSync("data/current-accepted-pushed-state.json", "utf8")) as {
       checkpoint_label: string;
       accepted_pushed_commit: string;
       accepted_pushed_short_commit: string;
+      accepted_pushed_proof_dir: string;
       historical_prior_checkpoints: Array<{ short_commit: string; status: string }>;
     };
 
     expect(contract.checkpoint_label).toBe("v1.0.2 at 80e91c7");
     expect(contract.accepted_pushed_commit).toBe("80e91c74855dae6ee51bd9068e2794d08c495ec0");
     expect(contract.accepted_pushed_short_commit).toBe("80e91c7");
+    expect(contract.accepted_pushed_proof_dir).toBe(
+      "/home/mint/kia-stick-local-proofs/proof_kia_stick_v0_9_98_to_v1_0_2_operator_qa_pass_closeout_push_20260702T151814Z"
+    );
     expect(contract.historical_prior_checkpoints.map((checkpoint) => checkpoint.short_commit)).toEqual([
       "dfa7052",
       "c72f14f",
