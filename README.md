@@ -12,6 +12,18 @@ KIA Stick separates milestone semver from build identity:
 
 `/health`, `/version`, the app header, settings, answer footer, and saved answer metadata expose the current `displayVersion`.
 
+## v0.9.88 to v0.9.92 Accepted Pushed State / Operator Status Freshness Checkpoint
+
+Phase: `KIA-Stick-v0.9.88-to-v0.9.92-accepted-pushed-state-and-operator-status-freshness-checkpoint`.
+
+This local fake-only docs/tests/status checkpoint starts from accepted pushed v0.9.83-to-v0.9.87 closeout at `d20e1251d5e7c117aa9592fb8614acb77ab3220b`. Closeout/push proof is recorded at `/home/mint/kia-stick-local-proofs/proof_kia_stick_v0_9_83_to_v0_9_87_operator_status_runtime_stale_baseline_fix_closeout_push_20260702T085505Z` with validation PASS, manual QA PASS, push yes, and `HEAD == origin/main`.
+
+The checkpoint adds `docs/v0.9.88-accepted-pushed-state-checkpoint.md`, `docs/v0.9.89-settings-operator-status-post-closeout-freshness.md`, `docs/v0.9.90-proof-index-accepted-pushed-closeout-freshness.md`, `docs/v0.9.91-closeout-helper-current-accepted-pushed-freshness.md`, and `docs/v0.9.92-next-safe-work-checkpoint.md` with focused tests. It updates Settings -> Operator Status, closeout helper current proof-chain selection, proof-index freshness expectations, and project state so `d20e125` is current. `bc8fbef`, `cfa7c2c`, and `1465817` remain historical only, not current.
+
+This is local fake-only docs/tests/status work. It does not push. Manual QA for this local checkpoint is pending operator review. Next/PostCSS remains `WARN_SAFE_NEXT_TARGET_UNCLEAR`, `KIA-Stick-v0.9.12C-next-runtime-framework-security-implementation` remains blocked pending exact target approval, and `queue-015-v07-first-real-doc-gate-request` remains blocked. `package.json` and `package-lock.json` remain unchanged. Product/package version remains `0.7.0`; prompt version remains `prompt.fake-docs.v0.5-import-wizard-hardening`.
+
+No real-doc implementation is approved. The checkpoint does not add file pickers, FileReader, path readers, uploads, OCR, real redaction, text extraction, summarization, embeddings, indexing, vector stores, private-source inspection, services, secrets, Discord, global config, or system changes.
+
 ## v0.9.83 to v0.9.87 Fake-Only Proof/Report/Operator UX Polish
 
 Phase: `KIA-Stick-v0.9.83-to-v0.9.87-fake-only-proof-report-operator-ux-polish`.

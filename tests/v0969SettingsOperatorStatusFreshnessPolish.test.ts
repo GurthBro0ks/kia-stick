@@ -28,16 +28,19 @@ describe("v0.9.69 Settings operator-status freshness polish", () => {
   it("updates Settings copy without adding intake affordances", () => {
     const component = readFileSync(componentPath, "utf8");
 
-    expect(component).toContain("Current accepted pushed checkpoint: v0.9.82 at bc8fbef");
-    expect(component).toContain("Current accepted pushed state is v0.9.82 at bc8fbef3114631ea3e0363b8e700ce0c2dce236e");
-    expect(component).toContain("validation PASS / manual QA PASS / pushed yes / HEAD == origin/main at bc8fbef");
+    expect(component).toContain("Current accepted pushed checkpoint: v0.9.87 at d20e125");
+    expect(component).toContain("Current accepted pushed state is v0.9.87 at d20e1251d5e7c117aa9592fb8614acb77ab3220b");
+    expect(component).toContain("validation PASS / manual QA PASS / pushed yes / HEAD == origin/main at d20e125");
+    expect(component).toContain("v0.9.82 at bc8fbef3114631ea3e0363b8e700ce0c2dce236e; historical only, not current");
     expect(component).toContain("v0.9.67 at 1465817e8efad6207705833e9e08f22030d6a116; historical only, not current");
     expect(component).toContain("Historical accepted-WARN meaning");
     expect(component).toContain("accepted-WARN parked, not current");
-    expect(component).toContain("v0.9.83-to-v0.9.87 operator-status runtime repair; validation PASS; manual QA PASS; pushed no");
+    expect(component).toContain("v0.9.83-to-v0.9.87 operator-status runtime repair; validation PASS; manual QA PASS; later pushed by closeout");
     expect(component).toContain("queue-015 blocked; no real-doc capability");
     expect(component).toContain("unchanged; no install/update/audit-fix/dedupe/prune");
+    expect(component).not.toContain("Current accepted pushed checkpoint: v0.9.82 at bc8fbef");
     expect(component).not.toContain("Current accepted pushed checkpoint: v0.9.67 at 1465817");
+    expect(component).not.toContain("Current accepted pushed state is v0.9.82 at bc8fbef");
     expect(component).not.toContain("Current accepted pushed state is v0.9.67 at 1465817");
     expect(component).not.toMatch(/<input[^>]+type=["']file["']/);
     expect(component).not.toContain("FileReader");

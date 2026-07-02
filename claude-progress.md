@@ -2,10 +2,32 @@
 
 ## Current Phase
 
-- Phase: `KIA-Stick-v0.9.83-to-v0.9.87-fake-only-proof-report-operator-ux-polish`
+- Phase: `KIA-Stick-v0.9.88-to-v0.9.92-accepted-pushed-state-and-operator-status-freshness-checkpoint`
 - Target: `USER_LAPTOP_ONLY`
 - Provider: `local-fake-deterministic`
-- Status: local v0.9.83-to-v0.9.87 fake-only proof/report/operator UX polish had validation `PASS`, manual QA `PENDING`, and push `no`; manual browser QA then found a blocker where Settings -> Operator Status still labeled `v0.9.67 at 1465817` as the current accepted pushed checkpoint. The local repair `KIA-Stick-v0.9.83-to-v0.9.87-operator-status-runtime-stale-baseline-fix` updates runtime Settings so `bc8fbef3114631ea3e0363b8e700ce0c2dce236e` is current and `cfa7c2c` / `1465817` are historical only. Repair proof is `/home/mint/kia-stick-local-proofs/proof_kia_stick_v0_9_83_to_v0_9_87_operator_status_runtime_stale_baseline_fix_20260701T172100Z`; manual QA is now `PASS` by `OPERATOR_QA_PASS for /home/mint/kia-stick-local-proofs/proof_kia_stick_v0_9_83_to_v0_9_87_operator_status_runtime_stale_baseline_fix_20260701T172100Z`; operator QA proof is `/home/mint/kia-stick-local-proofs/proof_kia_stick_v0_9_83_to_v0_9_87_operator_status_runtime_stale_baseline_fix_operator_qa_pass_recording_20260702T084942Z`; push remains `no`. The current accepted pushed v0.9.78-to-v0.9.82 closeout is recorded at `bc8fbef3114631ea3e0363b8e700ce0c2dce236e` with proof `/home/mint/kia-stick-local-proofs/proof_kia_stick_v0_9_78_to_v0_9_82_operator_qa_pass_recording_20260701T163018Z/closeout_push_20260701T163622Z`, validation PASS, manual QA PASS, push yes, and `HEAD == origin/main`. Next/PostCSS remains parked as `WARN_SAFE_NEXT_TARGET_UNCLEAR`; v0.9.12C remains blocked pending exact target approval; queue-015 remains blocked; product/prompt unchanged; no dependency, runtime intake, service, Discord, or real-doc implementation is approved.
+- Status: local v0.9.88-to-v0.9.92 accepted pushed state/operator-status freshness checkpoint records the v0.9.83-to-v0.9.87 closeout/push as the current accepted pushed state at `d20e1251d5e7c117aa9592fb8614acb77ab3220b`. Current accepted pushed proof is `/home/mint/kia-stick-local-proofs/proof_kia_stick_v0_9_83_to_v0_9_87_operator_status_runtime_stale_baseline_fix_closeout_push_20260702T085505Z`; validation/manual QA/push are PASS/PASS/yes and `HEAD == origin/main` at `d20e125`. Settings -> Operator Status now shows `v0.9.87 at d20e125`; `bc8fbef`, `cfa7c2c`, and `1465817` are historical only, not current. This local checkpoint is not pushed and remains pending operator manual QA. Next/PostCSS remains parked as `WARN_SAFE_NEXT_TARGET_UNCLEAR`; v0.9.12C remains blocked pending exact target approval; queue-015 remains blocked; product/prompt unchanged; no dependency, runtime intake, service, Discord, or real-doc implementation is approved.
+
+## v0.9.88 to v0.9.92 Accepted Pushed State / Operator Status Freshness Checkpoint
+
+- Phase: `KIA-Stick-v0.9.88-to-v0.9.92-accepted-pushed-state-and-operator-status-freshness-checkpoint`
+- Target machine: `USER_LAPTOP_ONLY`
+- Current accepted pushed phase: `KIA-Stick-v0.9.83-to-v0.9.87-operator-status-runtime-stale-baseline-fix-closeout-and-push`
+- Current accepted pushed commit: `d20e1251d5e7c117aa9592fb8614acb77ab3220b`
+- Current accepted pushed proof: `/home/mint/kia-stick-local-proofs/proof_kia_stick_v0_9_83_to_v0_9_87_operator_status_runtime_stale_baseline_fix_closeout_push_20260702T085505Z`
+- Historical prior accepted pushed commits: `bc8fbef`, `cfa7c2c`, and `1465817` are historical only, not current.
+- Scope: fake-only docs/tests/status; no dependency, lockfile, runtime intake, service, notification, or real-doc change.
+- New docs: `docs/v0.9.88-accepted-pushed-state-checkpoint.md`, `docs/v0.9.89-settings-operator-status-post-closeout-freshness.md`, `docs/v0.9.90-proof-index-accepted-pushed-closeout-freshness.md`, `docs/v0.9.91-closeout-helper-current-accepted-pushed-freshness.md`, `docs/v0.9.92-next-safe-work-checkpoint.md`
+- New tests: `tests/v0988AcceptedPushedStateCheckpoint.test.ts`, `tests/v0989SettingsOperatorStatusPostCloseoutFreshness.test.ts`, `tests/v0990ProofIndexAcceptedPushedCloseoutFreshness.test.ts`, `tests/v0991CloseoutHelperCurrentFreshness.test.ts`, `tests/v0992NextSafeWorkCheckpoint.test.ts`
+- Helper/status changes: closeout helper proof-chain summary prefers `d20e125` for current accepted pushed state; proof-index expectations identify the v0.9.83-to-v0.9.87 closeout proof as latest accepted pushed closeout.
+- Runtime repair: Settings -> Operator Status now shows `v0.9.87 at d20e125`; `bc8fbef`, `cfa7c2c`, and `1465817` are historical only, not current.
+- Next/PostCSS runtime path: parked as `WARN_SAFE_NEXT_TARGET_UNCLEAR`, not fixed.
+- v0.9.12C implementation: blocked until exact target approval.
+- Version state: product/package version remain `0.7.0`; prompt version remains `prompt.fake-docs.v0.5-import-wizard-hardening`.
+- Queue state: `queue-015-v07-first-real-doc-gate-request` remains blocked.
+- Real-doc capability found/approved: no.
+- Push status: not pushed by this local checkpoint.
+- Manual QA status: pending operator review.
+- Validation: PASS for required local gates.
 
 ## v0.9.83 to v0.9.87 Fake-Only Proof/Report/Operator UX Polish
 

@@ -265,6 +265,11 @@ function manualQaPassed(status = "PASS") {
 
 function currentPackageLockUnchanged(featureList) {
   const currentPackageLockKeys = [
+    "v0992_next_safe_work_checkpoint",
+    "v0991_closeout_helper_current_freshness",
+    "v0990_proof_index_accepted_pushed_closeout_freshness",
+    "v0989_settings_operator_status_post_closeout_freshness",
+    "v0988_accepted_pushed_state_checkpoint",
     "v0987_next_large_work_checkpoint",
     "v0986_operator_state_summary_freshness",
     "v0985_closeout_proof_chain_freshness",
@@ -342,7 +347,9 @@ function collectProofChain(featureList, proof = {}) {
   const useHistorical = shouldUseHistoricalProofChain(proof);
   const window = proofChainWindow(proof);
   const accepted =
-    !useHistorical && window !== "v0963" && featureList.v0983_current_accepted_pushed_state_checkpoint
+    !useHistorical && window !== "v0963" && featureList.v0988_accepted_pushed_state_checkpoint
+      ? featureList.v0988_accepted_pushed_state_checkpoint
+      : !useHistorical && window !== "v0963" && featureList.v0983_current_accepted_pushed_state_checkpoint
       ? featureList.v0983_current_accepted_pushed_state_checkpoint
       : !useHistorical && window !== "v0963" && featureList.v0978_accepted_pushed_state_checkpoint
       ? featureList.v0978_accepted_pushed_state_checkpoint
@@ -368,7 +375,9 @@ function collectProofChain(featureList, proof = {}) {
       ? featureList.v0953_accepted_pushed_warn_state_checkpoint
       : featureList.v0933_accepted_pushed_warn_state_checkpoint || {};
   const current =
-    !useHistorical && window !== "v0963" && featureList.v0987_next_large_work_checkpoint
+    !useHistorical && window !== "v0963" && featureList.v0992_next_safe_work_checkpoint
+      ? featureList.v0992_next_safe_work_checkpoint
+      : !useHistorical && window !== "v0963" && featureList.v0987_next_large_work_checkpoint
       ? featureList.v0987_next_large_work_checkpoint
       : !useHistorical && window !== "v0963" && featureList.v0982_next_large_work_checkpoint
       ? featureList.v0982_next_large_work_checkpoint
