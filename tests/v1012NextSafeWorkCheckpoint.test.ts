@@ -16,7 +16,7 @@ describe("v1.0.12 next safe work checkpoint", () => {
       "v1.0.11 verifies proof-index and closeout-helper post-push freshness guards.",
       "This local checkpoint does not push.",
       "Validation for this local checkpoint is `PASS`.",
-      "Manual QA for this local checkpoint is `pending_operator_review`.",
+      "Manual QA for this local checkpoint is `PASS` by `OPERATOR_QA_PASS for /home/mint/kia-stick-local-proofs/proof_kia_stick_v1_0_8_to_v1_0_12_post_closeout_accepted_state_contract_refresh_20260702T165653Z`.",
       "Operator note: after every future closeout push, update `data/current-accepted-pushed-state.json` in a separate fake-only checkpoint before baseline-sensitive UI or tooling work.",
       "Next/PostCSS remains parked as `WARN_SAFE_NEXT_TARGET_UNCLEAR`.",
       "`queue-015-v07-first-real-doc-gate-request` remains blocked.",
@@ -35,6 +35,8 @@ describe("v1.0.12 next safe work checkpoint", () => {
         local_checkpoint_validation: string;
         local_checkpoint_pushed: boolean;
         local_checkpoint_manual_qa_status: string;
+        operator_qa_pass_text: string;
+        operator_qa_pass_proof_dir: string;
         required_future_workflow_after_closeout_push: string;
         queue_015_status: string;
         package_json_changed: boolean;
@@ -44,11 +46,17 @@ describe("v1.0.12 next safe work checkpoint", () => {
     const state = featureList.v1012_next_safe_work_checkpoint;
 
     expect(state.phase).toBe(phase);
-    expect(state.status).toBe("pending_operator_review");
+    expect(state.status).toBe("accepted");
     expect(state.current_accepted_pushed_short_commit).toBe("97574a9");
     expect(state.local_checkpoint_validation).toBe("PASS");
     expect(state.local_checkpoint_pushed).toBe(false);
-    expect(state.local_checkpoint_manual_qa_status).toBe("pending_operator_review");
+    expect(state.local_checkpoint_manual_qa_status).toBe("PASS");
+    expect(state.operator_qa_pass_text).toBe(
+      "OPERATOR_QA_PASS for /home/mint/kia-stick-local-proofs/proof_kia_stick_v1_0_8_to_v1_0_12_post_closeout_accepted_state_contract_refresh_20260702T165653Z"
+    );
+    expect(state.operator_qa_pass_proof_dir).toBe(
+      "/home/mint/kia-stick-local-proofs/proof_kia_stick_v1_0_8_to_v1_0_12_operator_qa_pass_recording_20260702T171318Z"
+    );
     expect(state.required_future_workflow_after_closeout_push).toBe(
       "Refresh data/current-accepted-pushed-state.json in a separate fake-only checkpoint before baseline-sensitive UI or tooling work."
     );

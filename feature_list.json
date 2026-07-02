@@ -7641,7 +7641,7 @@
   },
   "v1012_next_safe_work_checkpoint": {
     "phase": "KIA-Stick-v1.0.12-next-safe-work-checkpoint",
-    "status": "pending_operator_review",
+    "status": "accepted",
     "document": "docs/v1.0.12-next-safe-work-checkpoint.md",
     "current_accepted_pushed_commit": "97574a91a5c19fda174ccd646aac96d3aaec688a",
     "current_accepted_pushed_short_commit": "97574a9",
@@ -7649,7 +7649,7 @@
     "source_contract": "data/current-accepted-pushed-state.json",
     "local_checkpoint_validation": "PASS",
     "local_checkpoint_pushed": false,
-    "local_checkpoint_manual_qa_status": "pending_operator_review",
+    "local_checkpoint_manual_qa_status": "PASS",
     "required_future_workflow_after_closeout_push": "Refresh data/current-accepted-pushed-state.json in a separate fake-only checkpoint before baseline-sensitive UI or tooling work.",
     "next_postcss_status": "WARN_SAFE_NEXT_TARGET_UNCLEAR",
     "next_implementation_blocked": true,
@@ -7660,6 +7660,8 @@
     "prompt_version": "prompt.fake-docs.v0.5-import-wizard-hardening",
     "package_json_changed": false,
     "package_lock_changed": false,
-    "dependency_versions_changed": false
+    "dependency_versions_changed": false,
+    "operator_qa_pass_text": "OPERATOR_QA_PASS for /home/mint/kia-stick-local-proofs/proof_kia_stick_v1_0_8_to_v1_0_12_post_closeout_accepted_state_contract_refresh_20260702T165653Z",
+    "operator_qa_pass_proof_dir": "/home/mint/kia-stick-local-proofs/proof_kia_stick_v1_0_8_to_v1_0_12_operator_qa_pass_recording_20260702T171318Z"
   }
 }

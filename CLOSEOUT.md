@@ -32,10 +32,11 @@
 - Secrets printed: no
 - Discord sent: no
 - Push performed by this local checkpoint: no
-- Manual QA status for this local checkpoint: pending operator review
+- Manual QA status for this local checkpoint: PASS by `OPERATOR_QA_PASS for /home/mint/kia-stick-local-proofs/proof_kia_stick_v1_0_8_to_v1_0_12_post_closeout_accepted_state_contract_refresh_20260702T165653Z`
+- Operator QA proof directory: `/home/mint/kia-stick-local-proofs/proof_kia_stick_v1_0_8_to_v1_0_12_operator_qa_pass_recording_20260702T171318Z`
 - Validation status: PASS
 
-This local checkpoint has validation PASS and awaits operator manual QA. It does not approve package mutation, Next/PostCSS implementation, real-doc capability, service changes, Discord changes, or push. Closeout/push remains a separate explicit gate.
+This local checkpoint has validation PASS and operator manual QA PASS. It does not approve package mutation, Next/PostCSS implementation, real-doc capability, service changes, Discord changes, or push. Closeout/push remains a separate explicit gate.
 
 ## v1.0.3 to v1.0.7 Post-Closeout Accepted-State Contract Refresh
 
@@ -218,7 +219,8 @@ This local checkpoint has validation PASS and operator manual QA PASS. It does n
 - Secrets printed: no
 - Discord sent: no
 - Push performed by this local checkpoint: no
-- Manual QA status for this local checkpoint: pending operator review
+- Manual QA status for this local checkpoint: PASS by `OPERATOR_QA_PASS for /home/mint/kia-stick-local-proofs/proof_kia_stick_v1_0_8_to_v1_0_12_post_closeout_accepted_state_contract_refresh_20260702T165653Z`
+- Operator QA proof directory: `/home/mint/kia-stick-local-proofs/proof_kia_stick_v1_0_8_to_v1_0_12_operator_qa_pass_recording_20260702T171318Z`
 - Proof directory: `/home/mint/kia-stick-local-proofs/proof_kia_stick_v0_9_83_to_v0_9_87_fake_only_proof_report_operator_ux_polish_20260701T165216Z`
 - Validation status: PASS
 
