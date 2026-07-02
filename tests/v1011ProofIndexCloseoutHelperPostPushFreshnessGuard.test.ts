@@ -2,18 +2,18 @@ import { spawnSync } from "node:child_process";
 import { readFileSync } from "node:fs";
 import { describe, expect, it } from "vitest";
 
-const phase = "KIA-Stick-v1.0.1-proof-index-closeout-helper-post-push-freshness-guard";
-const docPath = "docs/v1.0.1-proof-index-closeout-helper-post-push-freshness-guard.md";
+const phase = "KIA-Stick-v1.0.11-proof-index-closeout-helper-post-push-freshness-guard";
+const docPath = "docs/v1.0.11-proof-index-closeout-helper-post-push-freshness-guard.md";
 
-describe("v1.0.1 proof-index and closeout-helper post-push freshness guard", () => {
-  it("documents dfa7052 helper/proof-index freshness and preserved gates", () => {
+describe("v1.0.11 proof-index and closeout-helper post-push freshness guard", () => {
+  it("documents 97574a9 helper/proof-index freshness and preserved gates", () => {
     const doc = readFileSync(docPath, "utf8");
 
     for (const required of [
       phase,
-      "Latest accepted pushed closeout commit is `dfa7052e5bd87e8e96362c0e93565a29409964b3`.",
-      "Closeout helper current proof-chain selection reports `PROOF_CHAIN_ACCEPTED_PUSHED_CHECKPOINT=dfa7052`.",
-      "The helper must not regress to `c72f14f`, `d20e125`, `bc8fbef`, `cfa7c2c`, or `1465817` as the current accepted pushed checkpoint.",
+      "Latest accepted pushed closeout commit is `97574a91a5c19fda174ccd646aac96d3aaec688a`.",
+      "Closeout helper current proof-chain selection reports `PROOF_CHAIN_ACCEPTED_PUSHED_CHECKPOINT=97574a9`.",
+      "The helper must not regress to `80e91c7`, `dfa7052`, `c72f14f`, `d20e125`, `bc8fbef`, `cfa7c2c`, or `1465817` as the current accepted pushed checkpoint.",
       "Accepted-WARN stays parked and is not converted to PASS.",
       "Real-doc implementation remains unapproved.",
     ]) {
@@ -35,6 +35,5 @@ describe("v1.0.1 proof-index and closeout-helper post-push freshness guard", () 
     expect(summary.stdout).not.toContain("PROOF_CHAIN_ACCEPTED_PUSHED_CHECKPOINT=dfa7052");
     expect(summary.stdout).not.toContain("PROOF_CHAIN_ACCEPTED_PUSHED_CHECKPOINT=c72f14f");
     expect(summary.stdout).not.toContain("PROOF_CHAIN_ACCEPTED_PUSHED_CHECKPOINT=d20e125");
-    expect(summary.stdout).not.toContain("PROOF_CHAIN_ACCEPTED_PUSHED_CHECKPOINT=bc8fbef");
   });
 });

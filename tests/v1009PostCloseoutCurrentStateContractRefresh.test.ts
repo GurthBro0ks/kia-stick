@@ -1,19 +1,19 @@
 import { readFileSync } from "node:fs";
 import { describe, expect, it } from "vitest";
 
-const phase = "KIA-Stick-v1.0.4-post-closeout-current-state-contract-refresh";
-const docPath = "docs/v1.0.4-post-closeout-current-state-contract-refresh.md";
+const phase = "KIA-Stick-v1.0.9-post-closeout-current-state-contract-refresh";
+const docPath = "docs/v1.0.9-post-closeout-current-state-contract-refresh.md";
 
-describe("v1.0.4 post-closeout current state contract refresh", () => {
+describe("v1.0.9 post-closeout current state contract refresh", () => {
   it("documents the post-closeout static contract refresh", () => {
     const doc = readFileSync(docPath, "utf8");
 
     for (const required of [
       phase,
       "Contract file: `data/current-accepted-pushed-state.json`",
-      "Current accepted pushed checkpoint: `v1.0.2 at 80e91c7`",
-      "Current accepted pushed commit: `80e91c74855dae6ee51bd9068e2794d08c495ec0`",
-      "The contract marks `dfa7052`, `c72f14f`, `d20e125`, `bc8fbef`, `cfa7c2c`, and `1465817` as historical only, not current.",
+      "Current accepted pushed checkpoint: `v1.0.7 at 97574a9`",
+      "Current accepted pushed commit: `97574a91a5c19fda174ccd646aac96d3aaec688a`",
+      "The contract marks `80e91c7`, `dfa7052`, `c72f14f`, `d20e125`, `bc8fbef`, `cfa7c2c`, and `1465817` as historical only, not current.",
       "After every future closeout push, refresh this current accepted pushed state contract in a separate fake-only checkpoint before doing baseline-sensitive UI or tooling work.",
     ]) {
       expect(doc).toContain(required);

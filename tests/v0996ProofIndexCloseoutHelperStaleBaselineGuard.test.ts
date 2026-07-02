@@ -22,16 +22,17 @@ describe("v0.9.96 proof-index and closeout-helper stale-baseline guard", () => {
     }
   });
 
-  it("reports dfa7052 from closeout helper current proof-chain selection", () => {
+  it("reports 97574a9 from closeout helper current proof-chain selection", () => {
     const currentProof =
-      "/home/mint/kia-stick-local-proofs/proof_kia_stick_v0_9_98_to_v1_0_2_operator_qa_pass_closeout_push_20260702T151814Z";
+      "/home/mint/kia-stick-local-proofs/proof_kia_stick_v1_0_3_to_v1_0_7_operator_qa_pass_closeout_push_20260702T164456Z";
     const summary = spawnSync("node", ["scripts/closeout-helper.mjs", "summary", "--proof-dir", currentProof], {
       encoding: "utf8",
     });
 
     expect(summary.status).toBe(0);
-    expect(summary.stdout).toContain("PROOF_CHAIN_ACCEPTED_PUSHED_CHECKPOINT=80e91c7");
+    expect(summary.stdout).toContain("PROOF_CHAIN_ACCEPTED_PUSHED_CHECKPOINT=97574a9");
     expect(summary.stdout).toContain(`PROOF_CHAIN_CLOSEOUT_PUSH_PROOF=${currentProof}`);
+    expect(summary.stdout).not.toContain("PROOF_CHAIN_ACCEPTED_PUSHED_CHECKPOINT=80e91c7");
     expect(summary.stdout).not.toContain("PROOF_CHAIN_ACCEPTED_PUSHED_CHECKPOINT=c72f14f");
     expect(summary.stdout).not.toContain("PROOF_CHAIN_ACCEPTED_PUSHED_CHECKPOINT=d20e125");
     expect(summary.stdout).not.toContain("PROOF_CHAIN_ACCEPTED_PUSHED_CHECKPOINT=bc8fbef");

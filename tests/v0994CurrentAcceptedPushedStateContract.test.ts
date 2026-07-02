@@ -23,7 +23,7 @@ describe("v0.9.94 current accepted pushed state contract", () => {
     }
   });
 
-  it("makes dfa7052 the only current accepted pushed value", () => {
+  it("makes 97574a9 the only current accepted pushed value", () => {
     const contract = JSON.parse(readFileSync(contractPath, "utf8")) as {
       phase: string;
       checkpoint_label: string;
@@ -40,21 +40,22 @@ describe("v0.9.94 current accepted pushed state contract", () => {
       package_version: string;
     };
 
-    expect(contract.phase).toBe("KIA-Stick-v1.0.3-to-v1.0.7-post-closeout-accepted-state-contract-refresh");
-    expect(contract.checkpoint_label).toBe("v1.0.2 at 80e91c7");
-    expect(contract.accepted_pushed_commit).toBe("80e91c74855dae6ee51bd9068e2794d08c495ec0");
-    expect(contract.accepted_pushed_short_commit).toBe("80e91c7");
+    expect(contract.phase).toBe("KIA-Stick-v1.0.8-to-v1.0.12-post-closeout-accepted-state-contract-refresh");
+    expect(contract.checkpoint_label).toBe("v1.0.7 at 97574a9");
+    expect(contract.accepted_pushed_commit).toBe("97574a91a5c19fda174ccd646aac96d3aaec688a");
+    expect(contract.accepted_pushed_short_commit).toBe("97574a9");
     expect(contract.accepted_pushed_proof_dir).toBe(
-      "/home/mint/kia-stick-local-proofs/proof_kia_stick_v0_9_98_to_v1_0_2_operator_qa_pass_closeout_push_20260702T151814Z"
+      "/home/mint/kia-stick-local-proofs/proof_kia_stick_v1_0_3_to_v1_0_7_operator_qa_pass_closeout_push_20260702T164456Z"
     );
     expect(contract.local_implementation_proof_dir).toBe(
-      "/home/mint/kia-stick-local-proofs/proof_kia_stick_v0_9_98_to_v1_0_2_post_closeout_accepted_state_contract_refresh_20260702T140224Z"
+      "/home/mint/kia-stick-local-proofs/proof_kia_stick_v1_0_3_to_v1_0_7_post_closeout_accepted_state_contract_refresh_20260702T152801Z"
     );
     expect(contract.operator_qa_pass_proof_dir).toBe(
-      "/home/mint/kia-stick-local-proofs/proof_kia_stick_v0_9_98_to_v1_0_2_operator_qa_pass_recording_20260702T150515Z"
+      "/home/mint/kia-stick-local-proofs/proof_kia_stick_v1_0_3_to_v1_0_7_operator_qa_pass_recording_20260702T162844Z"
     );
     expect(contract.accepted_pushed).toBe(true);
     expect(contract.historical_prior_checkpoints.map((checkpoint) => checkpoint.short_commit)).toEqual([
+      "80e91c7",
       "dfa7052",
       "c72f14f",
       "d20e125",

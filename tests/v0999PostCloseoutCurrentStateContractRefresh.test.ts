@@ -20,7 +20,7 @@ describe("v0.9.99 post-closeout current state contract refresh", () => {
     }
   });
 
-  it("makes dfa7052 current and c72f14f historical in the contract", () => {
+  it("makes 97574a9 current and older baselines historical in the contract", () => {
     const contract = JSON.parse(readFileSync("data/current-accepted-pushed-state.json", "utf8")) as {
       checkpoint_label: string;
       accepted_pushed_commit: string;
@@ -28,10 +28,11 @@ describe("v0.9.99 post-closeout current state contract refresh", () => {
       historical_prior_checkpoints: Array<{ short_commit: string; status: string }>;
     };
 
-    expect(contract.checkpoint_label).toBe("v1.0.2 at 80e91c7");
-    expect(contract.accepted_pushed_commit).toBe("80e91c74855dae6ee51bd9068e2794d08c495ec0");
-    expect(contract.accepted_pushed_short_commit).toBe("80e91c7");
+    expect(contract.checkpoint_label).toBe("v1.0.7 at 97574a9");
+    expect(contract.accepted_pushed_commit).toBe("97574a91a5c19fda174ccd646aac96d3aaec688a");
+    expect(contract.accepted_pushed_short_commit).toBe("97574a9");
     expect(contract.historical_prior_checkpoints.map((checkpoint) => checkpoint.short_commit)).toEqual([
+      "80e91c7",
       "dfa7052",
       "c72f14f",
       "d20e125",
