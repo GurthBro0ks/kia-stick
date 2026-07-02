@@ -457,7 +457,7 @@ function queueMissingIsExpectedNoActionableState({ queue, queueGuidance = "not_a
     queue.ok &&
     !queue.item &&
     queueGuidance !== "not_applicable" &&
-    ["operator_qa_needed", "closeout_push_needed"].includes(nextActionState)
+    ["operator_qa_needed", "closeout_push_needed", "accepted_pushed_state_recorded"].includes(nextActionState)
   );
 }
 

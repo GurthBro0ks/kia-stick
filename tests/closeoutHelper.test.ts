@@ -196,7 +196,7 @@ describe("closeout-helper", () => {
     expect(issueCodes).not.toContain("queue_item_missing");
   });
 
-  it("keeps queue_item_missing visible when queue acceptance would otherwise be clean", async () => {
+  it("does not add queue_item_missing after an accepted pushed closeout is recorded", async () => {
     const mod = await loadModule();
     const assessment = mod.assessCloseout({
       proof: { exists: true, result: "PASS", warnFailFree: true, flags: [], manualQaStatus: "PASS", pushed: "yes" },
@@ -207,9 +207,10 @@ describe("closeout-helper", () => {
       nextActionState: "accepted_pushed_state_recorded",
     });
 
-    expect(assessment.status).toBe("WARN");
-    expect(assessment.issues.map((issue) => issue.code)).toContain("queue_item_missing");
-    expect(assessment.queueAcceptanceAllowed).toBe(false);
+    expect(assessment.status).toBe("PASS");
+    expect(assessment.issues.map((issue) => issue.code)).not.toContain("queue_item_missing");
+    expect(assessment.stopOnWarnFail).toBe(false);
+    expect(assessment.queueAcceptanceAllowed).toBe(true);
   });
 
   it("detects local-ahead and dirty git states", async () => {
@@ -391,7 +392,7 @@ describe("closeout-helper", () => {
     expect(review.stdout).toContain("queue_status=none");
     expect(review.stdout).toContain("queue_acceptance_allowed=false");
     expect(review.stdout).toContain("no_actionable_queue_guidance=No actionable queue items.");
-    expect(review.stdout).toMatch(/next_action_state=(operator_qa_needed|closeout_push_needed)/);
+    expect(review.stdout).toMatch(/next_action_state=(operator_qa_needed|closeout_push_needed|accepted_pushed_state_recorded)/);
     expect(issueLines).toMatch(/local_commit_without_push|worktree_dirty/);
     expect(issueLines).not.toContain("queue_item_missing");
   });
