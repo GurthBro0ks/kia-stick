@@ -5,7 +5,7 @@
 - Phase: `KIA-Stick-v0.9.88-to-v0.9.92-accepted-pushed-state-and-operator-status-freshness-checkpoint`
 - Target: `USER_LAPTOP_ONLY`
 - Provider: `local-fake-deterministic`
-- Status: local v0.9.88-to-v0.9.92 accepted pushed state/operator-status freshness checkpoint records the v0.9.83-to-v0.9.87 closeout/push as the current accepted pushed state at `d20e1251d5e7c117aa9592fb8614acb77ab3220b`. Current accepted pushed proof is `/home/mint/kia-stick-local-proofs/proof_kia_stick_v0_9_83_to_v0_9_87_operator_status_runtime_stale_baseline_fix_closeout_push_20260702T085505Z`; validation/manual QA/push are PASS/PASS/yes and `HEAD == origin/main` at `d20e125`. Settings -> Operator Status now shows `v0.9.87 at d20e125`; `bc8fbef`, `cfa7c2c`, and `1465817` are historical only, not current. This local checkpoint is not pushed and remains pending operator manual QA. Next/PostCSS remains parked as `WARN_SAFE_NEXT_TARGET_UNCLEAR`; v0.9.12C remains blocked pending exact target approval; queue-015 remains blocked; product/prompt unchanged; no dependency, runtime intake, service, Discord, or real-doc implementation is approved.
+- Status: local v0.9.88-to-v0.9.92 accepted pushed state/operator-status freshness checkpoint records the v0.9.83-to-v0.9.87 closeout/push as the current accepted pushed state at `d20e1251d5e7c117aa9592fb8614acb77ab3220b`. Current accepted pushed proof is `/home/mint/kia-stick-local-proofs/proof_kia_stick_v0_9_83_to_v0_9_87_operator_status_runtime_stale_baseline_fix_closeout_push_20260702T085505Z`; validation/manual QA/push are PASS/PASS/yes and `HEAD == origin/main` at `d20e125`. Settings -> Operator Status now shows `v0.9.87 at d20e125`; `bc8fbef`, `cfa7c2c`, and `1465817` are historical only, not current. This local checkpoint is not pushed; operator manual QA is `PASS` by `OPERATOR_QA_PASS for /home/mint/kia-stick-local-proofs/proof_kia_stick_v0_9_88_to_v0_9_92_accepted_pushed_state_operator_status_freshness_checkpoint_20260702T091407Z`, with proof `/home/mint/kia-stick-local-proofs/proof_kia_stick_v0_9_88_to_v0_9_92_operator_qa_pass_recording_20260702T093222Z`. Next/PostCSS remains parked as `WARN_SAFE_NEXT_TARGET_UNCLEAR`; v0.9.12C remains blocked pending exact target approval; queue-015 remains blocked; product/prompt unchanged; no dependency, runtime intake, service, Discord, or real-doc implementation is approved.
 
 ## v0.9.88 to v0.9.92 Accepted Pushed State / Operator Status Freshness Checkpoint
 
@@ -26,7 +26,8 @@
 - Queue state: `queue-015-v07-first-real-doc-gate-request` remains blocked.
 - Real-doc capability found/approved: no.
 - Push status: not pushed by this local checkpoint.
-- Manual QA status: pending operator review.
+- Manual QA status: PASS by `OPERATOR_QA_PASS for /home/mint/kia-stick-local-proofs/proof_kia_stick_v0_9_88_to_v0_9_92_accepted_pushed_state_operator_status_freshness_checkpoint_20260702T091407Z`.
+- Operator QA proof: `/home/mint/kia-stick-local-proofs/proof_kia_stick_v0_9_88_to_v0_9_92_operator_qa_pass_recording_20260702T093222Z`.
 - Validation: PASS for required local gates.
 
 ## v0.9.83 to v0.9.87 Fake-Only Proof/Report/Operator UX Polish
