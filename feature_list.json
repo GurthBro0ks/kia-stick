@@ -7373,7 +7373,7 @@
     "source_contract": "data/current-accepted-pushed-state.json",
     "local_checkpoint_validation": "PASS",
     "local_checkpoint_pushed": false,
-    "local_checkpoint_manual_qa_status": "pending_operator_review",
+    "local_checkpoint_manual_qa_status": "PASS",
     "required_future_workflow_after_closeout_push": "Refresh data/current-accepted-pushed-state.json in a separate fake-only checkpoint before baseline-sensitive UI or tooling work.",
     "next_postcss_status": "WARN_SAFE_NEXT_TARGET_UNCLEAR",
     "next_implementation_blocked": true,
@@ -7389,6 +7389,8 @@
       "operator QA PASS recording for this local checkpoint",
       "closeout/push gate only after separate explicit closeout approval",
       "keep real-doc gate blocked unless separately approved"
-    ]
+    ],
+    "operator_qa_pass_text": "OPERATOR_QA_PASS for /home/mint/kia-stick-local-proofs/proof_kia_stick_v0_9_98_to_v1_0_2_post_closeout_accepted_state_contract_refresh_20260702T140224Z",
+    "operator_qa_pass_proof_dir": "/home/mint/kia-stick-local-proofs/proof_kia_stick_v0_9_98_to_v1_0_2_operator_qa_pass_recording_20260702T150515Z"
   }
 }
