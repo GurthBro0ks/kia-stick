@@ -1,0 +1,25 @@
+import { readFileSync } from "node:fs";
+import { describe, expect, it } from "vitest";
+
+const phase = "KIA-Stick-v1.0.24-post-closeout-current-state-contract-refresh";
+const docPath = "docs/v1.0.24-post-closeout-current-state-contract-refresh.md";
+
+describe("v1.0.24 post-closeout current state contract refresh", () => {
+  it("documents the post-closeout static contract refresh", () => {
+    const doc = readFileSync(docPath, "utf8");
+    for (const required of [phase, "Contract file: `data/current-accepted-pushed-state.json`", "Current accepted pushed checkpoint: `v1.0.22 at 8b42744`", "Current accepted pushed commit: `8b4274413ca056a4b647a163fd79c8165a024820`", "The contract marks `b4b9fcf`, `20485da`, `97574a9`, `80e91c7`, `dfa7052`, `c72f14f`, `d20e125`, `bc8fbef`, `cfa7c2c`, and `1465817` as historical only, not current.", "After every future closeout push, refresh this current accepted pushed state contract in a separate fake-only checkpoint before doing baseline-sensitive UI or tooling work."]) {
+      expect(doc).toContain(required);
+    }
+  });
+
+  it("makes 8b42744 current and older baselines historical in the contract", () => {
+    const contract = JSON.parse(readFileSync("data/current-accepted-pushed-state.json", "utf8")) as { phase: string; checkpoint_label: string; accepted_pushed_commit: string; accepted_pushed_short_commit: string; accepted_pushed_proof_dir: string; historical_prior_checkpoints: Array<{ short_commit: string; status: string }> };
+    expect(contract.phase).toBe("KIA-Stick-v1.0.23-to-v1.0.27-post-closeout-accepted-state-contract-refresh");
+    expect(contract.checkpoint_label).toBe("v1.0.22 at 8b42744");
+    expect(contract.accepted_pushed_commit).toBe("8b4274413ca056a4b647a163fd79c8165a024820");
+    expect(contract.accepted_pushed_short_commit).toBe("8b42744");
+    expect(contract.accepted_pushed_proof_dir).toBe("/home/mint/kia-stick-local-proofs/proof_kia_stick_v1_0_18_to_v1_0_22_operator_qa_pass_closeout_push_20260703T151240Z");
+    expect(contract.historical_prior_checkpoints.map((checkpoint) => checkpoint.short_commit)).toEqual(["b4b9fcf", "20485da", "97574a9", "80e91c7", "dfa7052", "c72f14f", "d20e125", "bc8fbef", "cfa7c2c", "1465817"]);
+    expect(contract.historical_prior_checkpoints.every((checkpoint) => checkpoint.status === "historical_only_not_current")).toBe(true);
+  });
+});
