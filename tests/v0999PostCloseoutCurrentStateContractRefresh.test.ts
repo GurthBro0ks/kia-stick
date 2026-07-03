@@ -28,10 +28,11 @@ describe("v0.9.99 post-closeout current state contract refresh", () => {
       historical_prior_checkpoints: Array<{ short_commit: string; status: string }>;
     };
 
-    expect(contract.checkpoint_label).toBe("v1.0.12 at 20485da");
-    expect(contract.accepted_pushed_commit).toBe("20485da8d731ac94a12dd58d77a68e64bf296c5b");
-    expect(contract.accepted_pushed_short_commit).toBe("20485da");
+    expect(contract.checkpoint_label).toBe("v1.0.17 at b4b9fcf");
+    expect(contract.accepted_pushed_commit).toBe("b4b9fcfce31108b09350e7d304fd1cff105edc31");
+    expect(contract.accepted_pushed_short_commit).toBe("b4b9fcf");
     expect(contract.historical_prior_checkpoints.map((checkpoint) => checkpoint.short_commit)).toEqual([
+      "20485da",
       "97574a9",
       "80e91c7",
       "dfa7052",
