@@ -10,7 +10,8 @@
 - Previous current accepted pushed baseline `20485da` is historical only, not current; `97574a9`, `80e91c7`, `dfa7052`, `c72f14f`, `d20e125`, `bc8fbef`, `cfa7c2c`, and `1465817` remain historical only.
 - Scope: fake-only docs/tests/status/tooling alignment for post-closeout accepted pushed state, Settings -> Operator Status, proof-index expectations, closeout helper proof-chain selection, and next safe work.
 - Included subphases: v1.0.18 accepted pushed state checkpoint; v1.0.19 post-closeout current-state contract refresh; v1.0.20 Settings/operator-status current accepted pushed refresh; v1.0.21 proof-index/closeout-helper post-push freshness guard; v1.0.22 next safe-work checkpoint.
-- Manual QA status for this local checkpoint: pending operator review.
+- Manual QA status for this local checkpoint: PASS by `OPERATOR_QA_PASS for /home/mint/kia-stick-local-proofs/proof_kia_stick_v1_0_18_to_v1_0_22_post_closeout_accepted_state_contract_refresh_20260703T143723Z`.
+- Operator QA proof directory: `/home/mint/kia-stick-local-proofs/proof_kia_stick_v1_0_18_to_v1_0_22_operator_qa_pass_recording_20260703T145903Z`
 - Operator workflow note: after every future closeout push, update the current accepted pushed state contract in a separate fake-only checkpoint before baseline-sensitive UI or tooling work.
 - Boundaries preserved: Next/PostCSS stays `WARN_SAFE_NEXT_TARGET_UNCLEAR`; v0.9.12C remains blocked; queue-015 remains blocked; real-doc implementation remains unapproved; product/package version stays `0.7.0`; prompt stays `prompt.fake-docs.v0.5-import-wizard-hardening`; no package, service, Discord, or runtime intake changes.
 
