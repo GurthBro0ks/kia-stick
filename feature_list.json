@@ -7790,7 +7790,7 @@
     "source_contract": "data/current-accepted-pushed-state.json",
     "local_checkpoint_validation": "PASS",
     "local_checkpoint_pushed": false,
-    "local_checkpoint_manual_qa_status": "pending_operator_review",
+    "local_checkpoint_manual_qa_status": "PASS",
     "required_future_workflow_after_closeout_push": "Refresh data/current-accepted-pushed-state.json in a separate fake-only checkpoint before baseline-sensitive UI or tooling work.",
     "next_postcss_status": "WARN_SAFE_NEXT_TARGET_UNCLEAR",
     "next_implementation_blocked": true,
@@ -7801,6 +7801,8 @@
     "prompt_version": "prompt.fake-docs.v0.5-import-wizard-hardening",
     "package_json_changed": false,
     "package_lock_changed": false,
-    "dependency_versions_changed": false
+    "dependency_versions_changed": false,
+    "operator_qa_pass_text": "OPERATOR_QA_PASS for /home/mint/kia-stick-local-proofs/proof_kia_stick_v1_0_13_to_v1_0_17_post_closeout_accepted_state_contract_refresh_20260702T214226Z",
+    "operator_qa_pass_proof_dir": "/home/mint/kia-stick-local-proofs/proof_kia_stick_v1_0_13_to_v1_0_17_operator_qa_pass_recording_20260703T140747Z"
   }
 }

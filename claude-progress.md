@@ -5,7 +5,7 @@
 - Phase: `KIA-Stick-v1.0.13-to-v1.0.17-post-closeout-accepted-state-contract-refresh`
 - Target: `USER_LAPTOP_ONLY`
 - Provider: `local-fake-deterministic`
-- Status: local v1.0.13-to-v1.0.17 post-closeout accepted-state contract refresh records the v1.0.8-to-v1.0.12 closeout/push as the current accepted pushed state at `20485da8d731ac94a12dd58d77a68e64bf296c5b`. Current accepted pushed proof is `/home/mint/kia-stick-local-proofs/proof_kia_stick_v1_0_8_to_v1_0_12_operator_qa_pass_closeout_push_20260702T172824Z`; validation/manual QA/push are PASS/PASS/yes and `HEAD == origin/main` at `20485da`. Settings -> Operator Status reads `data/current-accepted-pushed-state.json` and shows `v1.0.12 at 20485da`; `97574a9`, `80e91c7`, `dfa7052`, `c72f14f`, `d20e125`, `bc8fbef`, `cfa7c2c`, and `1465817` are historical only, not current. This local checkpoint is not pushed; operator manual QA is pending. Next/PostCSS remains parked as `WARN_SAFE_NEXT_TARGET_UNCLEAR`; v0.9.12C remains blocked pending exact target approval; queue-015 remains blocked; product/prompt unchanged; no dependency, runtime intake, service, Discord, or real-doc implementation is approved.
+- Status: local v1.0.13-to-v1.0.17 post-closeout accepted-state contract refresh records the v1.0.8-to-v1.0.12 closeout/push as the current accepted pushed state at `20485da8d731ac94a12dd58d77a68e64bf296c5b`. Current accepted pushed proof is `/home/mint/kia-stick-local-proofs/proof_kia_stick_v1_0_8_to_v1_0_12_operator_qa_pass_closeout_push_20260702T172824Z`; validation/manual QA/push are PASS/PASS/yes and `HEAD == origin/main` at `20485da`. Settings -> Operator Status reads `data/current-accepted-pushed-state.json` and shows `v1.0.12 at 20485da`; `97574a9`, `80e91c7`, `dfa7052`, `c72f14f`, `d20e125`, `bc8fbef`, `cfa7c2c`, and `1465817` are historical only, not current. This local checkpoint is not pushed; operator manual QA is PASS by `OPERATOR_QA_PASS for /home/mint/kia-stick-local-proofs/proof_kia_stick_v1_0_13_to_v1_0_17_post_closeout_accepted_state_contract_refresh_20260702T214226Z`; operator QA proof is `/home/mint/kia-stick-local-proofs/proof_kia_stick_v1_0_13_to_v1_0_17_operator_qa_pass_recording_20260703T140747Z`. Next/PostCSS remains parked as `WARN_SAFE_NEXT_TARGET_UNCLEAR`; v0.9.12C remains blocked pending exact target approval; queue-015 remains blocked; product/prompt unchanged; no dependency, runtime intake, service, Discord, or real-doc implementation is approved.
 
 ## v1.0.13 to v1.0.17 Post-Closeout Accepted-State Contract Refresh
 
@@ -27,7 +27,8 @@
 - Queue state: `queue-015-v07-first-real-doc-gate-request` remains blocked.
 - Real-doc capability found/approved: no.
 - Push status: not pushed by this local checkpoint.
-- Manual QA status: pending_operator_review.
+- Manual QA status: PASS by `OPERATOR_QA_PASS for /home/mint/kia-stick-local-proofs/proof_kia_stick_v1_0_13_to_v1_0_17_post_closeout_accepted_state_contract_refresh_20260702T214226Z`.
+- Operator QA proof: `/home/mint/kia-stick-local-proofs/proof_kia_stick_v1_0_13_to_v1_0_17_operator_qa_pass_recording_20260703T140747Z`.
 - Validation: PASS for required local gates.
 
 ## v1.0.8 to v1.0.12 Post-Closeout Accepted-State Contract Refresh

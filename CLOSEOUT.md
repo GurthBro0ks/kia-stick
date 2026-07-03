@@ -32,7 +32,8 @@
 - Secrets printed: no
 - Discord sent: no
 - Push performed by this local checkpoint: no
-- Manual QA status for this local checkpoint: pending_operator_review
+- Manual QA status for this local checkpoint: PASS by `OPERATOR_QA_PASS for /home/mint/kia-stick-local-proofs/proof_kia_stick_v1_0_13_to_v1_0_17_post_closeout_accepted_state_contract_refresh_20260702T214226Z`
+- Operator QA proof directory: `/home/mint/kia-stick-local-proofs/proof_kia_stick_v1_0_13_to_v1_0_17_operator_qa_pass_recording_20260703T140747Z`
 - Validation status: PASS
 
 ## v1.0.8 to v1.0.12 Post-Closeout Accepted-State Contract Refresh
