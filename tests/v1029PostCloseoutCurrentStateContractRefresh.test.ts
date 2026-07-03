@@ -1,18 +1,18 @@
 import { readFileSync } from "node:fs";
 import { describe, expect, it } from "vitest";
 
-const phase = "KIA-Stick-v1.0.24-post-closeout-current-state-contract-refresh";
-const docPath = "docs/v1.0.24-post-closeout-current-state-contract-refresh.md";
+const phase = "KIA-Stick-v1.0.29-post-closeout-current-state-contract-refresh";
+const docPath = "docs/v1.0.29-post-closeout-current-state-contract-refresh.md";
 
-describe("v1.0.24 post-closeout current state contract refresh", () => {
+describe("v1.0.29 post-closeout current state contract refresh", () => {
   it("documents the post-closeout static contract refresh", () => {
     const doc = readFileSync(docPath, "utf8");
-    for (const required of [phase, "Contract file: `data/current-accepted-pushed-state.json`", "Current accepted pushed checkpoint: `v1.0.22 at 8b42744`", "Current accepted pushed commit: `8b4274413ca056a4b647a163fd79c8165a024820`", "The contract marks `b4b9fcf`, `20485da`, `97574a9`, `80e91c7`, `dfa7052`, `c72f14f`, `d20e125`, `bc8fbef`, `cfa7c2c`, and `1465817` as historical only, not current.", "After every future closeout push, refresh this current accepted pushed state contract in a separate fake-only checkpoint before doing baseline-sensitive UI or tooling work."]) {
+    for (const required of [phase, "Contract file: `data/current-accepted-pushed-state.json`", "Current accepted pushed checkpoint: `v1.0.27 at 87420e2`", "Current accepted pushed commit: `87420e2e293fd86b2b76c66729e0e905bb688c0d`", "The contract marks `8b42744`, `b4b9fcf`, `20485da`, `97574a9`, `80e91c7`, `dfa7052`, `c72f14f`, `d20e125`, `bc8fbef`, `cfa7c2c`, and `1465817` as historical only, not current.", "After every future closeout push, refresh this current accepted pushed state contract in a separate fake-only checkpoint before doing baseline-sensitive UI or tooling work."]) {
       expect(doc).toContain(required);
     }
   });
 
-  it("makes 8b42744 current and older baselines historical in the contract", () => {
+  it("makes 87420e2 current and older baselines historical in the contract", () => {
     const contract = JSON.parse(readFileSync("data/current-accepted-pushed-state.json", "utf8")) as { phase: string; checkpoint_label: string; accepted_pushed_commit: string; accepted_pushed_short_commit: string; accepted_pushed_proof_dir: string; historical_prior_checkpoints: Array<{ short_commit: string; status: string }> };
     expect(contract.phase).toBe("KIA-Stick-v1.0.28-to-v1.0.32-post-closeout-accepted-state-contract-refresh");
     expect(contract.checkpoint_label).toBe("v1.0.27 at 87420e2");

@@ -27,11 +27,11 @@ describe("v1.0.0 Settings operator-status current accepted pushed refresh", () =
     const contract = readFileSync("data/current-accepted-pushed-state.json", "utf8");
 
     expect(component).toContain('import currentAcceptedPushedState from "@/data/current-accepted-pushed-state.json";');
-    expect(contract).toContain('"checkpoint_label": "v1.0.22 at 8b42744"');
-    expect(contract).toContain('"accepted_pushed_commit": "8b4274413ca056a4b647a163fd79c8165a024820"');
+    expect(contract).toContain('"checkpoint_label": "v1.0.27 at 87420e2"');
+    expect(contract).toContain('"accepted_pushed_commit": "87420e2e293fd86b2b76c66729e0e905bb688c0d"');
     expect(component).toContain("Current accepted pushed checkpoint: {currentAcceptedPushedState.checkpoint_label}");
     expect(component).toContain("Current accepted pushed state is {currentAcceptedPushedState.checkpoint} at {currentAcceptedPushedState.accepted_pushed_commit}");
-    expect(component).toContain("Older baselines, including b4b9fcf, 20485da, 97574a9, 80e91c7, dfa7052, c72f14f, d20e125, bc8fbef, cfa7c2c, and 1465817, are historical only and not current.");
+    expect(component).toContain("Older baselines, including 8b42744, b4b9fcf, 20485da, 97574a9, 80e91c7, dfa7052, c72f14f, d20e125, bc8fbef, cfa7c2c, and 1465817, are historical only and not current.");
     expect(component).not.toContain("Current accepted pushed checkpoint: v0.9.92 at c72f14f");
     expect(component).not.toContain("Current accepted pushed checkpoint: v0.9.87 at d20e125");
     expect(component).not.toContain("Current accepted pushed checkpoint: v0.9.67 at 1465817");

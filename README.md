@@ -1,3 +1,18 @@
+## v1.0.28 to v1.0.32 Post-Closeout Accepted-State Contract Refresh
+
+- Phase: `KIA-Stick-v1.0.28-to-v1.0.32-post-closeout-accepted-state-contract-refresh`
+- Result: PASS after validation completes; local commit only; no push.
+- Current accepted pushed phase: `KIA-Stick-v1.0.23-to-v1.0.27-operator-qa-pass-closeout-and-push`
+- Current accepted pushed commit: `87420e2e293fd86b2b76c66729e0e905bb688c0d`
+- Current accepted pushed proof: `/home/mint/kia-stick-local-proofs/proof_kia_stick_v1_0_23_to_v1_0_27_post_closeout_accepted_state_contract_refresh_20260703T153302Z/closeout_push_20260703T164410Z`
+- Accepted validation/manual QA/push: PASS / PASS / yes
+- Accepted push status: yes, with `HEAD == origin/main` at `87420e2`
+- Previous current accepted pushed baseline `8b42744` is historical only, not current; `b4b9fcf`, `20485da`, `97574a9`, `80e91c7`, `dfa7052`, `c72f14f`, `d20e125`, `bc8fbef`, `cfa7c2c`, and `1465817` remain historical only.
+- Scope: fake-only docs/tests/status/tooling alignment for post-closeout accepted pushed state, Settings -> Operator Status, proof-index expectations, closeout helper proof-chain selection, and next safe work.
+- Included subphases: v1.0.28 accepted pushed state checkpoint; v1.0.29 post-closeout current-state contract refresh; v1.0.30 Settings/operator-status current accepted pushed refresh; v1.0.31 proof-index/closeout-helper post-push freshness guard; v1.0.32 next safe-work checkpoint.
+- Manual QA status for this local checkpoint: pending operator review.
+- Operator workflow note: after every future closeout push, update the current accepted pushed state contract in a separate fake-only checkpoint before baseline-sensitive UI or tooling work.
+- Boundaries preserved: Next/PostCSS stays `WARN_SAFE_NEXT_TARGET_UNCLEAR`; v0.9.12C remains blocked; queue-015 remains blocked; real-doc implementation remains unapproved; product/package version stays `0.7.0`; prompt stays `prompt.fake-docs.v0.5-import-wizard-hardening`; no package, service, Discord, or runtime intake changes.
 ## v1.0.23 to v1.0.27 Post-Closeout Accepted-State Contract Refresh
 
 - Phase: `KIA-Stick-v1.0.23-to-v1.0.27-post-closeout-accepted-state-contract-refresh`
