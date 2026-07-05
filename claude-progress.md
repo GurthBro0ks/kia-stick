@@ -1,3 +1,11 @@
+- Phase: `KIA-Stick-v1.0.38-to-v1.0.42-post-closeout-accepted-state-contract-refresh`
+- Proof: `/home/mint/kia-stick-local-proofs/proof_kia_stick_v1_0_38_to_v1_0_42_post_closeout_accepted_state_contract_refresh_20260705T225915Z`
+- Status: local v1.0.38-to-v1.0.42 post-closeout accepted-state contract refresh records the v1.0.33-to-v1.0.37 closeout/push as the current accepted pushed state at `841dee7d44e2af18d60500b13880ba99c1bee9a6`. Current accepted pushed proof is `/home/mint/kia-stick-local-proofs/proof_kia_stick_v1_0_33_to_v1_0_37_post_closeout_accepted_state_contract_refresh_20260705T015123Z/closeout_push_20260705T225257Z`; validation/manual QA/push are PASS/PASS/yes and `HEAD == origin/main` at `841dee7`. Settings -> Operator Status reads `data/current-accepted-pushed-state.json` and shows `v1.0.37 at 841dee7`; `870d3a7`, `87420e2`, `8b42744`, `b4b9fcf`, `20485da`, `97574a9`, `80e91c7`, `dfa7052`, `c72f14f`, `d20e125`, `bc8fbef`, `cfa7c2c`, and `1465817` are historical only, not current. This local checkpoint is not pushed; operator manual QA is pending. Next/PostCSS remains parked as `WARN_SAFE_NEXT_TARGET_UNCLEAR`; v0.9.12C remains blocked pending exact target approval; queue-015 remains blocked; product/prompt unchanged; no dependency, runtime intake, service, Discord, or real-doc implementation is approved.
+- Files changed: `data/current-accepted-pushed-state.json`, Settings operator-status copy, closeout-helper/proof-index/current-state tests, README/CLOSEOUT/claude-progress/feature_list, and v1.0.38-v1.0.42 docs/tests.
+- Helper/status changes: closeout helper proof-chain summary and proof-index expectations now identify `841dee7` as current accepted pushed state.
+- Validation: pending in proof dir; package files unchanged; fake corpus unchanged; scan/fake/privacy proof pending.
+- Operator workflow note: after every future closeout push, update the current accepted pushed state contract in a separate fake-only checkpoint before baseline-sensitive UI or tooling work.
+
 # KIA Stick Progress
 
 - Phase: `KIA-Stick-v1.0.33-to-v1.0.37-post-closeout-accepted-state-contract-refresh`
