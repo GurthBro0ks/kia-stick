@@ -28,10 +28,10 @@ describe("v0.9.99 post-closeout current state contract refresh", () => {
       historical_prior_checkpoints: Array<{ short_commit: string; status: string }>;
     };
 
-    expect(contract.checkpoint_label).toBe("v1.0.27 at 87420e2");
-    expect(contract.accepted_pushed_commit).toBe("87420e2e293fd86b2b76c66729e0e905bb688c0d");
-    expect(contract.accepted_pushed_short_commit).toBe("87420e2");
-    expect(contract.historical_prior_checkpoints.map((checkpoint) => checkpoint.short_commit)).toEqual(["8b42744","b4b9fcf","20485da","97574a9","80e91c7","dfa7052","c72f14f","d20e125","bc8fbef","cfa7c2c","1465817"]);
+    expect(contract.checkpoint_label).toBe("v1.0.32 at 870d3a7");
+    expect(contract.accepted_pushed_commit).toBe("870d3a77002548765154d73b2c088c1327580c6a");
+    expect(contract.accepted_pushed_short_commit).toBe("870d3a7");
+    expect(contract.historical_prior_checkpoints.map((checkpoint) => checkpoint.short_commit)).toEqual(["87420e2","8b42744","b4b9fcf","20485da","97574a9","80e91c7","dfa7052","c72f14f","d20e125","bc8fbef","cfa7c2c","1465817"]);
     expect(contract.historical_prior_checkpoints.every((checkpoint) => checkpoint.status === "historical_only_not_current")).toBe(true);
   });
 });
