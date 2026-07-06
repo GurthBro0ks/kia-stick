@@ -150,7 +150,7 @@ const acceptedOperatorCheckpoint = [
   { label: "Historical accepted-WARN proof", value: "/home/mint/kia-stick-local-proofs/proof_kia_stick_v0_9_48_to_v0_9_52_operator_qa_acceptance_recording_20260630T183635Z/warn_closeout_push_20260630T185549Z" },
   { label: "Historical accepted-WARN meaning", value: "accepted-WARN parked, not fixed; historical only, not current; exact Next target still unproven" },
   { label: "Historical local repair", value: "v0.9.83-to-v0.9.87 operator-status runtime repair; validation PASS; manual QA PASS; later pushed by closeout" },
-  { label: "This local bundle", value: "v1.0.38-to-v1.0.42 post-closeout accepted-state contract refresh; validation PASS pending; pushed no; manual QA pending" },
+  { label: "This local bundle", value: "v1.0.43-to-v1.0.47 post-closeout accepted-state contract refresh; validation PASS pending; pushed no; manual QA pending" },
   { label: "Runtime status surface", value: "/health phase is refreshed for this bundle; /version identity semantics unchanged" },
   { label: "Real-doc gate", value: "queue-015 blocked; no real-doc capability" },
   { label: "Next/PostCSS", value: "WARN_SAFE_NEXT_TARGET_UNCLEAR; parked, not fixed" },
@@ -538,7 +538,7 @@ export function KiaStickApp({ runtimeVersion = clientVersion }: { runtimeVersion
               <span className="sectionKicker">Operator status</span>
               <h3>Current accepted pushed checkpoint: {currentAcceptedPushedState.checkpoint_label}</h3>
               <p>
-                Current accepted pushed state is {currentAcceptedPushedState.checkpoint} at {currentAcceptedPushedState.accepted_pushed_commit} with validation {currentAcceptedPushedState.accepted_validation}, manual QA {currentAcceptedPushedState.accepted_manual_qa}, push yes, and HEAD equal to origin/main at {currentAcceptedPushedState.accepted_pushed_short_commit}. Older baselines, including 870d3a7, 87420e2, 8b42744, b4b9fcf, 20485da, 97574a9, 80e91c7, dfa7052, c72f14f, d20e125, bc8fbef, cfa7c2c, and 1465817, are historical only and not current. Historical accepted-WARN state is parked, not current. This status block is copy-only; Next/PostCSS remains WARN_SAFE_NEXT_TARGET_UNCLEAR, v0.9.12C remains blocked, queue-015 remains blocked, package lock is unchanged, and no real-doc capability is approved.
+                Current accepted pushed state is {currentAcceptedPushedState.checkpoint} at {currentAcceptedPushedState.accepted_pushed_commit} with validation {currentAcceptedPushedState.accepted_validation}, manual QA {currentAcceptedPushedState.accepted_manual_qa}, push yes, and HEAD equal to origin/main at {currentAcceptedPushedState.accepted_pushed_short_commit}. Older baselines, including 841dee7, 870d3a7, 87420e2, 8b42744, b4b9fcf, 20485da, 97574a9, 80e91c7, dfa7052, c72f14f, d20e125, bc8fbef, cfa7c2c, and 1465817, are historical only and not current. Historical accepted-WARN state is parked, not current. This status block is copy-only; Next/PostCSS remains WARN_SAFE_NEXT_TARGET_UNCLEAR, v0.9.12C remains blocked, queue-015 remains blocked, package lock is unchanged, and no real-doc capability is approved.
               </p>
               <dl className="settingsGrid">
                 {acceptedOperatorCheckpoint.map((row) => (
