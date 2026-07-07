@@ -403,14 +403,14 @@ describe("closeout-helper", () => {
     const currentOperatorQaProof =
       "/home/mint/kia-stick-local-proofs/proof_kia_stick_v0_9_93_to_v0_9_97_operator_qa_pass_recording_20260702T124930Z";
     const currentCloseoutProof =
-      "/home/mint/kia-stick-local-proofs/proof_kia_stick_v1_0_43_to_v1_0_47_post_closeout_accepted_state_contract_refresh_20260706T164518Z/closeout_push_20260707T054817Z";
+      "/home/mint/kia-stick-local-proofs/proof_kia_stick_v1_0_48_to_v1_0_52_post_closeout_accepted_state_contract_refresh_20260707T055347Z/closeout_push_20260707T060707Z";
 
     const summary = spawnSync("node", [scriptPath, "summary", "--proof-dir", currentResearchProof], { encoding: "utf8" });
 
     expect(summary.status).toBe(0);
-    expect(summary.stdout).toContain("PROOF_CHAIN_ACCEPTED_PUSHED_CHECKPOINT=5c7f360");
+    expect(summary.stdout).toContain("PROOF_CHAIN_ACCEPTED_PUSHED_CHECKPOINT=720a58a");
     expect(summary.stdout).toContain(
-      "PROOF_CHAIN_LOCAL_IMPLEMENTATION_PROOF=/home/mint/kia-stick-local-proofs/proof_kia_stick_v1_0_43_to_v1_0_47_post_closeout_accepted_state_contract_refresh_20260706T164518Z"
+      "PROOF_CHAIN_LOCAL_IMPLEMENTATION_PROOF=/home/mint/kia-stick-local-proofs/proof_kia_stick_v1_0_48_to_v1_0_52_post_closeout_accepted_state_contract_refresh_20260707T055347Z"
     );
     expect(summary.stdout).toContain(`PROOF_CHAIN_OPERATOR_QA_PROOF=${currentOperatorQaProof}`);
     expect(summary.stdout).toContain(`PROOF_CHAIN_CLOSEOUT_PUSH_PROOF=${currentCloseoutProof}`);
