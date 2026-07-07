@@ -23,13 +23,13 @@ describe("v0.9.96 proof-index and closeout-helper stale-baseline guard", () => {
   });
 
   it("reports 97574a9 from closeout helper current proof-chain selection", () => {
-    const currentProof = "/home/mint/kia-stick-local-proofs/proof_kia_stick_v1_0_38_to_v1_0_42_post_closeout_accepted_state_contract_refresh_20260705T225915Z/closeout_push_20260705T231305Z";
+    const currentProof = "/home/mint/kia-stick-local-proofs/proof_kia_stick_v1_0_43_to_v1_0_47_post_closeout_accepted_state_contract_refresh_20260706T164518Z/closeout_push_20260707T054817Z";
     const summary = spawnSync("node", ["scripts/closeout-helper.mjs", "summary", "--proof-dir", currentProof], {
       encoding: "utf8",
     });
 
     expect(summary.status).toBe(0);
-    expect(summary.stdout).toContain("PROOF_CHAIN_ACCEPTED_PUSHED_CHECKPOINT=886631f");
+    expect(summary.stdout).toContain("PROOF_CHAIN_ACCEPTED_PUSHED_CHECKPOINT=5c7f360");
     expect(summary.stdout).toContain(`PROOF_CHAIN_CLOSEOUT_PUSH_PROOF=${currentProof}`);
     expect(summary.stdout).not.toContain("PROOF_CHAIN_ACCEPTED_PUSHED_CHECKPOINT=97574a9");
     expect(summary.stdout).not.toContain("PROOF_CHAIN_ACCEPTED_PUSHED_CHECKPOINT=c72f14f");
