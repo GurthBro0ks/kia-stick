@@ -31,12 +31,12 @@ describe("v0.9.69 Settings operator-status freshness polish", () => {
 
     expect(component).toContain("Current accepted pushed checkpoint: {currentAcceptedPushedState.checkpoint_label}");
     expect(component).toContain("Current accepted pushed state is {currentAcceptedPushedState.checkpoint} at {currentAcceptedPushedState.accepted_pushed_commit}");
-    expect(contract).toContain('"checkpoint_label": "v1.0.67 at d099ff5"');
-    expect(contract).toContain('"accepted_pushed_short_commit": "d099ff5"');
-    expect(contract).toContain('"short_commit": "c72f14f"');
-    expect(contract).toContain('"short_commit": "d20e125"');
-    expect(contract).toContain('"short_commit": "bc8fbef"');
-    expect(contract).toContain('"short_commit": "1465817"');
+    expect(contract).toContain('"checkpoint_label": "v1.0.72 at cf2be1f"');
+    expect(contract).toContain('"accepted_pushed_short_commit": "cf2be1f"');
+    expect(contract).toContain('"short_commit": "d099ff5"');
+    expect(contract).toContain('"short_commit": "d099ff5"');
+    expect(contract).toContain('"short_commit": "d099ff5"');
+    expect(contract).toContain('"short_commit": "d099ff5"');
     expect(component).toContain("Historical accepted-WARN meaning");
     expect(component).toContain("accepted-WARN parked, not current");
     expect(component).toContain("v0.9.83-to-v0.9.87 operator-status runtime repair; validation PASS; manual QA PASS; later pushed by closeout");

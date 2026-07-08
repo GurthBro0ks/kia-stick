@@ -30,12 +30,12 @@ describe("v0.9.95 Settings operator-status current-state alignment", () => {
     const contract = readFileSync("data/current-accepted-pushed-state.json", "utf8");
 
     expect(component).toContain('import currentAcceptedPushedState from "@/data/current-accepted-pushed-state.json";');
-    expect(contract).toContain('"checkpoint_label": "v1.0.67 at d099ff5"');
-    expect(contract).toContain('"accepted_pushed_commit": "d099ff5b163e3b5db0bcc8a0b50d683f9448c8b0"');
-    expect(contract).toContain('"short_commit": "c72f14f"');
+    expect(contract).toContain('"checkpoint_label": "v1.0.72 at cf2be1f"');
+    expect(contract).toContain('"accepted_pushed_commit": "cf2be1ffde6d52d6ad01f54f52ce8e8d7c937358"');
+    expect(contract).toContain('"short_commit": "d099ff5"');
     expect(component).toContain("Current accepted pushed checkpoint: {currentAcceptedPushedState.checkpoint_label}");
     expect(component).toContain("Current accepted pushed state is {currentAcceptedPushedState.checkpoint} at {currentAcceptedPushedState.accepted_pushed_commit}");
-    expect(component).toContain("Older baselines, including 73b3f38, 5b7a575, 720a58a, 5c7f360, 886631f, 841dee7, 870d3a7, 87420e2, 8b42744, b4b9fcf, 20485da, 97574a9, 80e91c7, dfa7052, c72f14f, d20e125, bc8fbef, cfa7c2c, and 1465817, are historical only and not current.");
+    expect(component).toContain("Older baselines, including d099ff5, 73b3f38, 5b7a575, 720a58a, 5c7f360, 886631f, 841dee7, 870d3a7, 87420e2, 8b42744, b4b9fcf, 20485da, 97574a9, 80e91c7, dfa7052, c72f14f, d20e125, bc8fbef, cfa7c2c, and 1465817, are historical only and not current.");
     expect(component).not.toContain("Current accepted pushed checkpoint: v0.9.87 at d20e125");
     expect(component).not.toContain("Current accepted pushed checkpoint: v0.9.82 at bc8fbef");
     expect(component).not.toContain("Current accepted pushed checkpoint: v0.9.77 at cfa7c2c");
