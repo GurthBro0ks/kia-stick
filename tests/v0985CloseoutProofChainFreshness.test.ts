@@ -10,7 +10,7 @@ describe("v0.9.85 closeout proof-chain freshness", () => {
 
     for (const required of [
       phase,
-      "PROOF_CHAIN_ACCEPTED_PUSHED_CHECKPOINT=bc8fbef",
+      "PROOF_CHAIN_ACCEPTED_PUSHED_CHECKPOINT=bc8fbef`",
       "PROOF_CHAIN_LOCAL_IMPLEMENTATION_PROOF=/home/mint/kia-stick-local-proofs/proof_kia_stick_v0_9_78_to_v0_9_82_accepted_pushed_state_next_safe_work_checkpoint_20260701T161640Z",
       "PROOF_CHAIN_OPERATOR_QA_PROOF=/home/mint/kia-stick-local-proofs/proof_kia_stick_v0_9_78_to_v0_9_82_operator_qa_pass_recording_20260701T163018Z",
       "PROOF_CHAIN_CLOSEOUT_PUSH_PROOF=/home/mint/kia-stick-local-proofs/proof_kia_stick_v0_9_78_to_v0_9_82_operator_qa_pass_recording_20260701T163018Z/closeout_push_20260701T163622Z",

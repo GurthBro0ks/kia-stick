@@ -1,3 +1,18 @@
+## v1.0.68 to v1.0.72 Post-Closeout Accepted-State Contract Refresh
+
+- Phase: `KIA-Stick-v1.0.68-to-v1.0.72-post-closeout-accepted-state-contract-refresh`
+- Status: local implementation PASS pending validation; manual QA pending; push not performed.
+- Current accepted pushed phase: `KIA-Stick-v1.0.63-to-v1.0.67-operator-qa-pass-closeout-and-push`
+- Current accepted pushed commit: `d099ff5b163e3b5db0bcc8a0b50d683f9448c8b0`
+- Current accepted pushed proof: `/home/mint/kia-stick-local-proofs/proof_kia_stick_v1_0_63_to_v1_0_67_post_closeout_accepted_state_contract_refresh_20260708T145606Z/closeout_push_20260708T150959Z`
+- Current accepted pushed checkpoint: `v1.0.67 at d099ff5`
+- Accepted push status: yes, with `HEAD == origin/main` at `d099ff5`
+- Previous current accepted pushed baseline `73b3f38` is historical only, not current; `5b7a575`, `720a58a`, `5c7f360`, `886631f`, `841dee7`, `870d3a7`, `87420e2`, `8b42744`, `b4b9fcf`, `20485da`, `97574a9`, `80e91c7`, `dfa7052`, `c72f14f`, `d20e125`, `bc8fbef`, `cfa7c2c`, and `1465817` remain historical only.
+- Safety: fake-only metadata/docs/tests update; no package mutation, service changes, notifications, secrets, or real-doc/file-reader/upload/OCR/vector capability.
+- Included subphases: v1.0.68 accepted pushed state checkpoint; v1.0.69 post-closeout current-state contract refresh; v1.0.70 Settings/operator-status current accepted pushed refresh; v1.0.71 proof-index/closeout-helper post-push freshness guard; v1.0.72 next safe-work checkpoint.
+- Validation: pending in proof dir until local validation completes; operator manual QA remains pending.
+- Operator workflow note: after every future closeout push, update the current accepted pushed state contract in a separate fake-only checkpoint before baseline-sensitive UI or tooling work.
+
 ## v1.0.63 to v1.0.67 Post-Closeout Accepted-State Contract Refresh
 
 - Phase: `KIA-Stick-v1.0.63-to-v1.0.67-post-closeout-accepted-state-contract-refresh`

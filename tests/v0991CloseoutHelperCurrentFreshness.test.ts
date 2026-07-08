@@ -10,7 +10,7 @@ describe("v0.9.91 closeout helper current accepted pushed freshness", () => {
 
     for (const required of [
       phase,
-      "`PROOF_CHAIN_ACCEPTED_PUSHED_CHECKPOINT=d20e125`",
+      "PROOF_CHAIN_ACCEPTED_PUSHED_CHECKPOINT=d20e125`",
       "`PROOF_CHAIN_CLOSEOUT_PUSH_PROOF=/home/mint/kia-stick-local-proofs/proof_kia_stick_v0_9_83_to_v0_9_87_operator_status_runtime_stale_baseline_fix_closeout_push_20260702T085505Z`",
       "must not regress to `bc8fbef`, `cfa7c2c`, or `1465817` as the current accepted pushed checkpoint",
       "Missing proof still reports WARN.",
