@@ -40,19 +40,19 @@ describe("v0.9.94 current accepted pushed state contract", () => {
       package_version: string;
     };
 
-    expect(contract.phase).toBe("KIA-Stick-v1.0.58-to-v1.0.62-post-closeout-accepted-state-contract-refresh");
-    expect(contract.checkpoint_label).toBe("v1.0.57 at 5b7a575");
-    expect(contract.accepted_pushed_commit).toBe("5b7a57584cc66d8b9ef9b7ff905c1682e58a9caa");
-    expect(contract.accepted_pushed_short_commit).toBe("5b7a575");
-    expect(contract.accepted_pushed_proof_dir).toBe("/home/mint/kia-stick-local-proofs/proof_kia_stick_v1_0_53_to_v1_0_57_post_closeout_accepted_state_contract_refresh_20260707T061535Z/closeout_push_20260707T062624Z");
+    expect(contract.phase).toBe("KIA-Stick-v1.0.63-to-v1.0.67-post-closeout-accepted-state-contract-refresh");
+    expect(contract.checkpoint_label).toBe("v1.0.62 at 73b3f38");
+    expect(contract.accepted_pushed_commit).toBe("73b3f38a5e4022d336fb767987ff964df734fcde");
+    expect(contract.accepted_pushed_short_commit).toBe("73b3f38");
+    expect(contract.accepted_pushed_proof_dir).toBe("/home/mint/kia-stick-local-proofs/proof_kia_stick_v1_0_58_to_v1_0_62_post_closeout_accepted_state_contract_refresh_20260707T063039Z/closeout_push_20260708T144718Z");
     expect(contract.local_implementation_proof_dir).toBe(
-      "/home/mint/kia-stick-local-proofs/proof_kia_stick_v1_0_53_to_v1_0_57_post_closeout_accepted_state_contract_refresh_20260707T061535Z"
+      "/home/mint/kia-stick-local-proofs/proof_kia_stick_v1_0_58_to_v1_0_62_post_closeout_accepted_state_contract_refresh_20260707T063039Z"
     );
     expect(contract.operator_qa_pass_proof_dir).toBe(
-      "/home/mint/kia-stick-local-proofs/proof_kia_stick_v1_0_53_to_v1_0_57_post_closeout_accepted_state_contract_refresh_20260707T061535Z/closeout_push_20260707T062624Z"
+      "/home/mint/kia-stick-local-proofs/proof_kia_stick_v1_0_58_to_v1_0_62_post_closeout_accepted_state_contract_refresh_20260707T063039Z/closeout_push_20260708T144718Z"
     );
     expect(contract.accepted_pushed).toBe(true);
-    expect(contract.historical_prior_checkpoints.map((checkpoint) => checkpoint.short_commit)).toEqual(["720a58a","5c7f360","886631f","841dee7","870d3a7","87420e2","8b42744","b4b9fcf","20485da","97574a9","80e91c7","dfa7052","c72f14f","d20e125","bc8fbef","cfa7c2c","1465817"]);
+    expect(contract.historical_prior_checkpoints.map((checkpoint) => checkpoint.short_commit)).toEqual(["5b7a575","720a58a","5c7f360","886631f","841dee7","870d3a7","87420e2","8b42744","b4b9fcf","20485da","97574a9","80e91c7","dfa7052","c72f14f","d20e125","bc8fbef","cfa7c2c","1465817"]);
     expect(contract.historical_prior_checkpoints.every((checkpoint) => checkpoint.status === "historical_only_not_current")).toBe(true);
     expect(contract.next_postcss_status).toBe("WARN_SAFE_NEXT_TARGET_UNCLEAR");
     expect(contract.v0912c_status).toBe("blocked_pending_exact_target");
