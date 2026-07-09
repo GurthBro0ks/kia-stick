@@ -1,3 +1,16 @@
+## v1.0.83 to v1.0.87 Post-Closeout Accepted-State Contract Refresh
+
+- Phase: `KIA-Stick-v1.0.83-to-v1.0.87-post-closeout-accepted-state-contract-refresh`
+- Current accepted pushed phase: `KIA-Stick-v1.0.78-to-v1.0.82-operator-qa-pass-closeout-and-push`
+- Current accepted pushed commit: `6ca589dd09411da51e55868a805d3b0de4ab9688`
+- Current accepted pushed proof: `/home/mint/kia-stick-local-proofs/proof_kia_stick_v1_0_78_to_v1_0_82_post_closeout_accepted_state_contract_refresh_20260708T200427Z/closeout_push_20260709T084811Z`
+- Current accepted pushed checkpoint: `v1.0.82 at 6ca589d`
+- Accepted push status: yes, with `HEAD == origin/main` at `6ca589d`
+- Prior current checkpoint `f662b37` is historical only, not current. Older checkpoints `cf2be1f`, `d099ff5`, `73b3f38`, `5b7a575`, `720a58a`, `5c7f360`, `886631f`, `841dee7`, `870d3a7`, `87420e2`, `8b42744`, `b4b9fcf`, `20485da`, `97574a9`, `80e91c7`, `dfa7052`, `c72f14f`, `d20e125`, `bc8fbef`, `cfa7c2c`, and `1465817` are historical only.
+- Included subphases: v1.0.83 accepted pushed state checkpoint; v1.0.84 post-closeout current-state contract refresh; v1.0.85 Settings/operator-status current accepted pushed refresh; v1.0.86 proof-index/closeout-helper post-push freshness guard; v1.0.87 next safe-work checkpoint.
+- Workflow note: after every future closeout push, update `data/current-accepted-pushed-state.json` in a separate fake-only checkpoint before baseline-sensitive UI or tooling work.
+- Safety: fake-only static metadata; no package mutation, service change, notification, push, or real-doc capability is approved.
+
 ## v1.0.78 to v1.0.82 Post-Closeout Accepted-State Contract Refresh
 
 - Phase: `KIA-Stick-v1.0.78-to-v1.0.82-post-closeout-accepted-state-contract-refresh`

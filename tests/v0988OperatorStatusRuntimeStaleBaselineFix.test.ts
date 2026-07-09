@@ -34,13 +34,13 @@ describe("v0.9.83 to v0.9.87 operator-status runtime stale-baseline fix", () => 
     const contract = readFileSync("data/current-accepted-pushed-state.json", "utf8");
 
     expect(component).toContain('import currentAcceptedPushedState from "@/data/current-accepted-pushed-state.json";');
-    expect(contract).toContain('"checkpoint_label": "v1.0.77 at f662b37"');
-    expect(contract).toContain('"accepted_pushed_commit": "f662b37de1eccf9f924d515615ef555270ee9d6d"');
+    expect(contract).toContain('"checkpoint_label": "v1.0.82 at 6ca589d"');
+    expect(contract).toContain('"accepted_pushed_commit": "6ca589dd09411da51e55868a805d3b0de4ab9688"');
     expect(component).toContain("Current accepted pushed checkpoint: {currentAcceptedPushedState.checkpoint_label}");
     expect(component).toContain("Current accepted pushed state is {currentAcceptedPushedState.checkpoint} at {currentAcceptedPushedState.accepted_pushed_commit}");
-    expect(component).toContain("Older baselines, including cf2be1f, d099ff5, 73b3f38, 5b7a575, 720a58a, 5c7f360, 886631f, 841dee7, 870d3a7, 87420e2, 8b42744, b4b9fcf, 20485da, 97574a9, 80e91c7, dfa7052, c72f14f, d20e125, bc8fbef, cfa7c2c, and 1465817, are historical only and not current.");
-    expect(contract).toContain("/home/mint/kia-stick-local-proofs/proof_kia_stick_v1_0_73_to_v1_0_77_post_closeout_accepted_state_contract_refresh_20260708T185415Z/closeout_push_20260708T190846Z");
-    expect(contract).toContain('"accepted_pushed_short_commit": "f662b37"');
+    expect(component).toContain("Older baselines, including f662b37, cf2be1f, d099ff5, 73b3f38, 5b7a575, 720a58a, 5c7f360, 886631f, 841dee7, 870d3a7, 87420e2, 8b42744, b4b9fcf, 20485da, 97574a9, 80e91c7, dfa7052, c72f14f, d20e125, bc8fbef, cfa7c2c, and 1465817, are historical only and not current.");
+    expect(contract).toContain("/home/mint/kia-stick-local-proofs/proof_kia_stick_v1_0_78_to_v1_0_82_post_closeout_accepted_state_contract_refresh_20260708T200427Z/closeout_push_20260709T084811Z");
+    expect(contract).toContain('"accepted_pushed_short_commit": "6ca589d"');
     expect(contract).toContain('"short_commit": "d099ff5"');
     expect(contract).toContain('"short_commit": "d099ff5"');
     expect(contract).toContain('"short_commit": "d099ff5"');
