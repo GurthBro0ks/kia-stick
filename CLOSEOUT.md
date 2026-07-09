@@ -1,3 +1,16 @@
+## v1.1.8 to v1.1.12 Post-Closeout Accepted-State Contract Refresh
+
+- Phase: `KIA-Stick-v1.1.8-to-v1.1.12-post-closeout-accepted-state-contract-refresh`
+- Current accepted pushed proof: `/home/mint/kia-stick-local-proofs/proof_kia_stick_v1_1_3_to_v1_1_7_post_closeout_accepted_state_contract_refresh_20260709T142005Z/closeout_push_20260709T145726Z`
+- Current accepted pushed commit: `628fbd477ad12b77fea98e86a132cdf69412bbfe`
+- Current accepted pushed checkpoint: `v1.1.7 at 628fbd4`
+- Accepted push status: yes, with `HEAD == origin/main` at `628fbd4`
+- Historical baselines: `6d0715b`, `1da06ff`, `0269435`, `fcf5097`, `6ca589d`, `f662b37`, `cf2be1f`, `d099ff5`, `73b3f38`, `5b7a575`, `720a58a`, `5c7f360`, `886631f`, `841dee7`, `870d3a7`, `87420e2`, `8b42744`, `b4b9fcf`, `20485da`, `97574a9`, `80e91c7`, `dfa7052`, `c72f14f`, `d20e125`, `bc8fbef`, `cfa7c2c`, and `1465817` are historical only, not current.
+- Included subphases: v1.1.8 accepted pushed state checkpoint; v1.1.9 post-closeout current-state contract refresh; v1.1.10 Settings/operator-status current accepted pushed refresh; v1.1.11 proof-index/closeout-helper post-push freshness guard; v1.1.12 next safe-work checkpoint.
+- Operator workflow note: after every future closeout push, update `data/current-accepted-pushed-state.json` in a separate fake-only checkpoint before baseline-sensitive UI/tooling work.
+- Blocked states preserved: Next/PostCSS `WARN_SAFE_NEXT_TARGET_UNCLEAR`, v0.9.12C blocked, queue-015 blocked, real-doc implementation unapproved.
+- Package/product version remains `0.7.0`; no install/update/audit-fix/dedupe/prune; no push in this local checkpoint.
+
 ## v1.1.3 to v1.1.7 Post-Closeout Accepted-State Contract Refresh
 
 - Phase: `KIA-Stick-v1.1.3-to-v1.1.7-post-closeout-accepted-state-contract-refresh`
