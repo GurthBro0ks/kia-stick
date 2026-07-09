@@ -270,6 +270,11 @@ function manualQaPassed(status = "PASS") {
 
 function currentPackageLockUnchanged(featureList) {
   const currentPackageLockKeys = [
+    "v1092_next_safe_work_checkpoint",
+    "v1091_proof_index_closeout_helper_post_push_freshness_guard",
+    "v1090_settings_operator_status_current_accepted_pushed_refresh",
+    "v1089_post_closeout_current_state_contract_refresh",
+    "v1088_accepted_pushed_state_checkpoint",
     "v0997_next_safe_work_checkpoint",
     "v0996_proof_index_closeout_helper_stale_baseline_guard",
     "v0995_settings_operator_status_current_state_alignment",
@@ -388,7 +393,45 @@ function collectProofChain(featureList, proof = {}) {
       ? featureList.v0953_accepted_pushed_warn_state_checkpoint
       : featureList.v0933_accepted_pushed_warn_state_checkpoint || {};
   const current =
-    !useHistorical && window !== "v0963" && featureList.v0997_next_safe_work_checkpoint
+    !useHistorical && window !== "v0963" && featureList.v1092_next_safe_work_checkpoint
+      ? featureList.v1092_next_safe_work_checkpoint
+      : !useHistorical && window !== "v0963" && featureList.v1087_next_safe_work_checkpoint
+      ? featureList.v1087_next_safe_work_checkpoint
+      : !useHistorical && window !== "v0963" && featureList.v1082_next_safe_work_checkpoint
+      ? featureList.v1082_next_safe_work_checkpoint
+      : !useHistorical && window !== "v0963" && featureList.v1077_next_safe_work_checkpoint
+      ? featureList.v1077_next_safe_work_checkpoint
+      : !useHistorical && window !== "v0963" && featureList.v1072_next_safe_work_checkpoint
+      ? featureList.v1072_next_safe_work_checkpoint
+      : !useHistorical && window !== "v0963" && featureList.v1067_next_safe_work_checkpoint
+      ? featureList.v1067_next_safe_work_checkpoint
+      : !useHistorical && window !== "v0963" && featureList.v1062_next_safe_work_checkpoint
+      ? featureList.v1062_next_safe_work_checkpoint
+      : !useHistorical && window !== "v0963" && featureList.v1057_next_safe_work_checkpoint
+      ? featureList.v1057_next_safe_work_checkpoint
+      : !useHistorical && window !== "v0963" && featureList.v1052_next_safe_work_checkpoint
+      ? featureList.v1052_next_safe_work_checkpoint
+      : !useHistorical && window !== "v0963" && featureList.v1047_next_safe_work_checkpoint
+      ? featureList.v1047_next_safe_work_checkpoint
+      : !useHistorical && window !== "v0963" && featureList.v1042_next_safe_work_checkpoint
+      ? featureList.v1042_next_safe_work_checkpoint
+      : !useHistorical && window !== "v0963" && featureList.v1037_next_safe_work_checkpoint
+      ? featureList.v1037_next_safe_work_checkpoint
+      : !useHistorical && window !== "v0963" && featureList.v1032_next_safe_work_checkpoint
+      ? featureList.v1032_next_safe_work_checkpoint
+      : !useHistorical && window !== "v0963" && featureList.v1027_next_safe_work_checkpoint
+      ? featureList.v1027_next_safe_work_checkpoint
+      : !useHistorical && window !== "v0963" && featureList.v1022_next_safe_work_checkpoint
+      ? featureList.v1022_next_safe_work_checkpoint
+      : !useHistorical && window !== "v0963" && featureList.v1017_next_safe_work_checkpoint
+      ? featureList.v1017_next_safe_work_checkpoint
+      : !useHistorical && window !== "v0963" && featureList.v1012_next_safe_work_checkpoint
+      ? featureList.v1012_next_safe_work_checkpoint
+      : !useHistorical && window !== "v0963" && featureList.v1007_next_safe_work_checkpoint
+      ? featureList.v1007_next_safe_work_checkpoint
+      : !useHistorical && window !== "v0963" && featureList.v1002_next_safe_work_checkpoint
+      ? featureList.v1002_next_safe_work_checkpoint
+      : !useHistorical && window !== "v0963" && featureList.v0997_next_safe_work_checkpoint
       ? featureList.v0997_next_safe_work_checkpoint
       : !useHistorical && window !== "v0963" && featureList.v0992_next_safe_work_checkpoint
       ? featureList.v0992_next_safe_work_checkpoint

@@ -31,13 +31,13 @@ describe("v0.9.89 Settings operator-status post-closeout freshness", () => {
     const contract = readFileSync("data/current-accepted-pushed-state.json", "utf8");
 
     expect(component).toContain('import currentAcceptedPushedState from "@/data/current-accepted-pushed-state.json";');
-    expect(contract).toContain('"checkpoint_label": "v1.0.82 at 6ca589d"');
-    expect(contract).toContain('"accepted_pushed_commit": "6ca589dd09411da51e55868a805d3b0de4ab9688"');
+    expect(contract).toContain('"checkpoint_label": "v1.0.87 at fcf5097"');
+    expect(contract).toContain('"accepted_pushed_commit": "fcf5097fa2b43fd4d3a70ceaf68a02e29913ec0e"');
     expect(contract).toContain('"short_commit": "d099ff5"');
-    expect(contract).toContain("/home/mint/kia-stick-local-proofs/proof_kia_stick_v1_0_78_to_v1_0_82_post_closeout_accepted_state_contract_refresh_20260708T200427Z/closeout_push_20260709T084811Z");
+    expect(contract).toContain("/home/mint/kia-stick-local-proofs/proof_kia_stick_v1_0_83_to_v1_0_87_post_closeout_accepted_state_contract_refresh_20260709T091133Z/closeout_push_20260709T093102Z");
     expect(component).toContain("Current accepted pushed checkpoint: {currentAcceptedPushedState.checkpoint_label}");
     expect(component).toContain("Current accepted pushed state is {currentAcceptedPushedState.checkpoint} at {currentAcceptedPushedState.accepted_pushed_commit}");
-    expect(component).toContain("Older baselines, including f662b37, cf2be1f, d099ff5, 73b3f38, 5b7a575, 720a58a, 5c7f360, 886631f, 841dee7, 870d3a7, 87420e2, 8b42744, b4b9fcf, 20485da, 97574a9, 80e91c7, dfa7052, c72f14f, d20e125, bc8fbef, cfa7c2c, and 1465817, are historical only and not current.");
+    expect(component).toContain("Older baselines, including 6ca589d, f662b37, cf2be1f, d099ff5, 73b3f38, 5b7a575, 720a58a, 5c7f360, 886631f, 841dee7, 870d3a7, 87420e2, 8b42744, b4b9fcf, 20485da, 97574a9, 80e91c7, dfa7052, c72f14f, d20e125, bc8fbef, cfa7c2c, and 1465817, are historical only and not current.");
     expect(contract).toContain('"short_commit": "d099ff5"');
     expect(contract).toContain('"short_commit": "d099ff5"');
     expect(contract).toContain('"short_commit": "d099ff5"');
