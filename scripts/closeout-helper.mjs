@@ -270,6 +270,11 @@ function manualQaPassed(status = "PASS") {
 
 function currentPackageLockUnchanged(featureList) {
   const currentPackageLockKeys = [
+    "v1097_next_safe_work_checkpoint",
+    "v1096_proof_index_closeout_helper_post_push_freshness_guard",
+    "v1095_settings_operator_status_current_accepted_pushed_refresh",
+    "v1094_post_closeout_current_state_contract_refresh",
+    "v1093_accepted_pushed_state_checkpoint",
     "v1092_next_safe_work_checkpoint",
     "v1091_proof_index_closeout_helper_post_push_freshness_guard",
     "v1090_settings_operator_status_current_accepted_pushed_refresh",
@@ -393,7 +398,9 @@ function collectProofChain(featureList, proof = {}) {
       ? featureList.v0953_accepted_pushed_warn_state_checkpoint
       : featureList.v0933_accepted_pushed_warn_state_checkpoint || {};
   const current =
-    !useHistorical && window !== "v0963" && featureList.v1092_next_safe_work_checkpoint
+    !useHistorical && window !== "v0963" && featureList.v1097_next_safe_work_checkpoint
+      ? featureList.v1097_next_safe_work_checkpoint
+      : !useHistorical && window !== "v0963" && featureList.v1092_next_safe_work_checkpoint
       ? featureList.v1092_next_safe_work_checkpoint
       : !useHistorical && window !== "v0963" && featureList.v1087_next_safe_work_checkpoint
       ? featureList.v1087_next_safe_work_checkpoint

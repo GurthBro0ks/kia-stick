@@ -1,19 +1,19 @@
 import { readFileSync } from "node:fs";
 import { describe, expect, it } from "vitest";
 
-const phase = "KIA-Stick-v1.0.90-settings-operator-status-current-accepted-pushed-refresh";
-const docPath = "docs/v1.0.90-settings-operator-status-current-accepted-pushed-refresh.md";
+const phase = "KIA-Stick-v1.0.95-settings-operator-status-current-accepted-pushed-refresh";
+const docPath = "docs/v1.0.95-settings-operator-status-current-accepted-pushed-refresh.md";
 const componentPath = "components/KiaStickApp.tsx";
 
-describe("v1.0.90 Settings operator-status current accepted pushed refresh", () => {
-  it("documents fcf5097 as the runtime operator-status baseline", () => {
+describe("v1.0.95 Settings operator-status current accepted pushed refresh", () => {
+  it("documents 0269435 as the runtime operator-status baseline", () => {
     const doc = readFileSync(docPath, "utf8");
     for (const required of [
       phase,
-      "Runtime headline: `Current accepted pushed checkpoint: v1.0.87 at fcf5097`",
-      "Runtime current state sentence: `Current accepted pushed state is v1.0.87 at fcf5097fa2b43fd4d3a70ceaf68a02e29913ec0e`",
-      "Current accepted pushed QA: `validation PASS / manual QA PASS / pushed yes / HEAD == origin/main at fcf5097`",
-      "`v1.0.82 at 6ca589dd09411da51e55868a805d3b0de4ab9688; historical only, not current`",
+      "Runtime headline: `Current accepted pushed checkpoint: v1.0.92 at 0269435`",
+      "Runtime current state sentence: `Current accepted pushed state is v1.0.92 at 02694353a7cbaa71da9ab0c8bb458790636628cb`",
+      "Current accepted pushed QA: `validation PASS / manual QA PASS / pushed yes / HEAD == origin/main at 0269435`",
+      "`v1.0.87 at fcf5097fa2b43fd4d3a70ceaf68a02e29913ec0e; historical only, not current`",
       "Next/PostCSS remains `WARN_SAFE_NEXT_TARGET_UNCLEAR`.",
       "`queue-015-v07-first-real-doc-gate-request` remains blocked.",
     ]) {
@@ -36,3 +36,4 @@ describe("v1.0.90 Settings operator-status current accepted pushed refresh", () 
     expect(component).not.toContain("FileReader");
   });
 });
+

@@ -30,12 +30,12 @@ describe("v1.0.14 post-closeout current state contract refresh", () => {
       historical_prior_checkpoints: Array<{ short_commit: string; status: string }>;
     };
 
-    expect(contract.phase).toBe("KIA-Stick-v1.0.88-to-v1.0.92-post-closeout-accepted-state-contract-refresh");
-    expect(contract.checkpoint_label).toBe("v1.0.87 at fcf5097");
-    expect(contract.accepted_pushed_commit).toBe("fcf5097fa2b43fd4d3a70ceaf68a02e29913ec0e");
-    expect(contract.accepted_pushed_short_commit).toBe("fcf5097");
-    expect(contract.accepted_pushed_proof_dir).toBe("/home/mint/kia-stick-local-proofs/proof_kia_stick_v1_0_83_to_v1_0_87_post_closeout_accepted_state_contract_refresh_20260709T091133Z/closeout_push_20260709T093102Z");
-    expect(contract.historical_prior_checkpoints.map((checkpoint) => checkpoint.short_commit)).toEqual(["6ca589d","f662b37","cf2be1f","d099ff5","73b3f38","5b7a575","720a58a","5c7f360","886631f","841dee7","870d3a7","87420e2","8b42744","b4b9fcf","20485da","97574a9","80e91c7","dfa7052","c72f14f","d20e125","bc8fbef","cfa7c2c","1465817"]);
+    expect(contract.phase).toBe("KIA-Stick-v1.0.93-to-v1.0.97-post-closeout-accepted-state-contract-refresh");
+    expect(contract.checkpoint_label).toBe("v1.0.92 at 0269435");
+    expect(contract.accepted_pushed_commit).toBe("02694353a7cbaa71da9ab0c8bb458790636628cb");
+    expect(contract.accepted_pushed_short_commit).toBe("0269435");
+    expect(contract.accepted_pushed_proof_dir).toBe("/home/mint/kia-stick-local-proofs/proof_kia_stick_v1_0_88_to_v1_0_92_post_closeout_accepted_state_contract_refresh_20260709T093848Z/closeout_push_20260709T095838Z");
+    expect(contract.historical_prior_checkpoints.map((checkpoint) => checkpoint.short_commit)).toEqual(["fcf5097","6ca589d","f662b37","cf2be1f","d099ff5","73b3f38","5b7a575","720a58a","5c7f360","886631f","841dee7","870d3a7","87420e2","8b42744","b4b9fcf","20485da","97574a9","80e91c7","dfa7052","c72f14f","d20e125","bc8fbef","cfa7c2c","1465817"]);
     expect(contract.historical_prior_checkpoints.every((checkpoint) => checkpoint.status === "historical_only_not_current")).toBe(true);
   });
 });
