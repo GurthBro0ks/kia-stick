@@ -7,7 +7,7 @@ const phase =
 const docPath =
   "docs/v1.1.11-proof-index-closeout-helper-post-push-freshness-guard.md";
 const currentProof =
-  "/home/mint/kia-stick-local-proofs/proof_kia_stick_v1_1_8_to_v1_1_12_post_closeout_accepted_state_contract_refresh_20260709T152434Z/closeout_push_20260709T154526Z";
+  "/home/mint/kia-stick-local-proofs/proof_kia_stick_v1_1_13_to_v1_1_17_post_closeout_accepted_state_contract_refresh_20260709T162119Z/closeout_push_20260709T164333Z";
 
 describe("v1.1.11 proof-index and closeout-helper post-push freshness guard", () => {
   it("documents 628fbd4 helper/proof-index freshness and preserved gates", () => {
@@ -31,12 +31,14 @@ describe("v1.1.11 proof-index and closeout-helper post-push freshness guard", ()
     );
     expect(summary.status).toBe(0);
     expect(summary.stdout).toContain(
-      "PROOF_CHAIN_ACCEPTED_PUSHED_CHECKPOINT=b911fd1",
+      "PROOF_CHAIN_ACCEPTED_PUSHED_CHECKPOINT=aa8f8c6",
     );
     expect(summary.stdout).toContain(
       "PROOF_CHAIN_CLOSEOUT_PUSH_PROOF=" + currentProof,
     );
     for (const stale of [
+      "b911fd1",
+      "628fbd4",
       "6d0715b",
       "1da06ff",
       "0269435",

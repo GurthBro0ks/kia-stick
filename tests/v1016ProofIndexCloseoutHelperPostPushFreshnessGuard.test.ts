@@ -22,13 +22,13 @@ describe("v1.0.16 proof-index and closeout-helper post-push freshness guard", ()
   });
 
   it("reports 20485da from closeout helper current proof-chain selection", () => {
-    const currentProof = "/home/mint/kia-stick-local-proofs/proof_kia_stick_v1_1_8_to_v1_1_12_post_closeout_accepted_state_contract_refresh_20260709T152434Z/closeout_push_20260709T154526Z";
+    const currentProof = "/home/mint/kia-stick-local-proofs/proof_kia_stick_v1_1_13_to_v1_1_17_post_closeout_accepted_state_contract_refresh_20260709T162119Z/closeout_push_20260709T164333Z";
     const summary = spawnSync("node", ["scripts/closeout-helper.mjs", "summary", "--proof-dir", currentProof], {
       encoding: "utf8",
     });
 
     expect(summary.status).toBe(0);
-    expect(summary.stdout).toContain("PROOF_CHAIN_ACCEPTED_PUSHED_CHECKPOINT=b911fd1");
+    expect(summary.stdout).toContain("PROOF_CHAIN_ACCEPTED_PUSHED_CHECKPOINT=aa8f8c6");
     expect(summary.stdout).toContain(`PROOF_CHAIN_CLOSEOUT_PUSH_PROOF=${currentProof}`);
   });
 });

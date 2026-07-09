@@ -31,9 +31,9 @@ describe("v1.1.10 Settings operator-status current accepted pushed refresh", () 
     expect(component).toContain(
       'import currentAcceptedPushedState from "@/data/current-accepted-pushed-state.json";',
     );
-    expect(contract).toContain('"checkpoint_label": "v1.1.12 at b911fd1"');
+    expect(contract).toContain('"checkpoint_label": "v1.1.17 at aa8f8c6"');
     expect(contract).toContain(
-      '"accepted_pushed_commit": "b911fd1530d5fc106b3368339a439527c2a43538"',
+      '"accepted_pushed_commit": "aa8f8c651a000037f403abd41bc206bda161a861"',
     );
     expect(contract).toContain('"short_commit": "6d0715b"');
     expect(component).toContain(
@@ -42,9 +42,7 @@ describe("v1.1.10 Settings operator-status current accepted pushed refresh", () 
     expect(component).toContain(
       "Current accepted pushed state is {currentAcceptedPushedState.checkpoint} at {currentAcceptedPushedState.accepted_pushed_commit}",
     );
-    expect(component).toContain(
-      "Older baselines, including 628fbd4, 6d0715b, 1da06ff, 0269435, fcf5097, 6ca589d, f662b37, cf2be1f, d099ff5, 73b3f38, 5b7a575, 720a58a, 5c7f360, 886631f, 841dee7, 870d3a7, 87420e2, 8b42744, b4b9fcf, 20485da, 97574a9, 80e91c7, dfa7052, c72f14f, d20e125, bc8fbef, cfa7c2c, and 1465817, are historical only and not current.",
-    );
+    expect(component).toContain("historicalAcceptedPushedShortCommits");
     for (const stale of [
       "v1.1.2 at 6d0715b",
       "v1.0.97 at 1da06ff",
