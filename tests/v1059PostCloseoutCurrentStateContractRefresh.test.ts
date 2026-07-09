@@ -14,12 +14,12 @@ describe("v1.0.59 post-closeout current state contract refresh", () => {
 
   it("makes 5b7a575 current and older baselines historical in the contract", () => {
     const contract = JSON.parse(readFileSync("data/current-accepted-pushed-state.json", "utf8")) as { phase: string; checkpoint_label: string; accepted_pushed_commit: string; accepted_pushed_short_commit: string; accepted_pushed_proof_dir: string; historical_prior_checkpoints: Array<{ short_commit: string; status: string }> };
-    expect(contract.phase).toBe("KIA-Stick-v1.0.98-to-v1.1.2-post-closeout-accepted-state-contract-refresh");
-    expect(contract.checkpoint_label).toBe("v1.0.97 at 1da06ff");
-    expect(contract.accepted_pushed_commit).toBe("1da06ffaa37b3787a652c1761e1c3f24b26df691");
-    expect(contract.accepted_pushed_short_commit).toBe("1da06ff");
-    expect(contract.accepted_pushed_proof_dir).toBe("/home/mint/kia-stick-local-proofs/proof_kia_stick_v1_0_93_to_v1_0_97_post_closeout_accepted_state_contract_refresh_20260709T102419Z/closeout_push_20260709T105649Z");
-    expect(contract.historical_prior_checkpoints.map((checkpoint) => checkpoint.short_commit)).toEqual(["0269435","fcf5097","6ca589d","f662b37","cf2be1f","d099ff5","73b3f38","5b7a575","720a58a","5c7f360","886631f","841dee7","870d3a7","87420e2","8b42744","b4b9fcf","20485da","97574a9","80e91c7","dfa7052","c72f14f","d20e125","bc8fbef","cfa7c2c","1465817"]);
+    expect(contract.phase).toBe("KIA-Stick-v1.1.3-to-v1.1.7-post-closeout-accepted-state-contract-refresh");
+    expect(contract.checkpoint_label).toBe("v1.1.2 at 6d0715b");
+    expect(contract.accepted_pushed_commit).toBe("6d0715be19ed40d0f97a71022ae08912f1a82666");
+    expect(contract.accepted_pushed_short_commit).toBe("6d0715b");
+    expect(contract.accepted_pushed_proof_dir).toBe("/home/mint/kia-stick-local-proofs/proof_kia_stick_v1_0_98_to_v1_1_2_post_closeout_accepted_state_contract_refresh_20260709T110558Z/closeout_push_20260709T120853Z");
+    expect(contract.historical_prior_checkpoints.map((checkpoint) => checkpoint.short_commit)).toEqual(["1da06ff","0269435","fcf5097","6ca589d","f662b37","cf2be1f","d099ff5","73b3f38","5b7a575","720a58a","5c7f360","886631f","841dee7","870d3a7","87420e2","8b42744","b4b9fcf","20485da","97574a9","80e91c7","dfa7052","c72f14f","d20e125","bc8fbef","cfa7c2c","1465817"]);
     expect(contract.historical_prior_checkpoints.every((checkpoint) => checkpoint.status === "historical_only_not_current")).toBe(true);
   });
 });
