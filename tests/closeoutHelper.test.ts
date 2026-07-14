@@ -401,16 +401,16 @@ describe("closeout-helper", () => {
     const currentResearchProof =
       "/home/mint/kia-stick-local-proofs/proof_kia_stick_v0_9_83_to_v0_9_87_fake_only_proof_report_operator_ux_polish_20260701T165216Z";
     const currentOperatorQaProof =
-      "/home/mint/kia-stick-local-proofs/proof_kia_stick_v1_1_18_to_v1_1_22_operator_qa_pass_recording_20260710T135021Z";
+      "/home/mint/kia-stick-local-proofs/proof_kia_stick_v1_1_23_to_v1_1_27_operator_status_local_bundle_stale_fix_20260714T132534Z";
     const currentCloseoutProof =
-      "/home/mint/kia-stick-local-proofs/proof_kia_stick_v1_1_18_to_v1_1_22_operator_qa_pass_recording_20260710T135021Z/closeout_push_20260714T124609Z";
+      "/home/mint/kia-stick-local-proofs/proof_kia_stick_v1_1_23_to_v1_1_27_operator_status_local_bundle_stale_fix_20260714T132534Z/closeout_push_20260714T135859Z";
 
     const summary = spawnSync("node", [scriptPath, "summary", "--proof-dir", currentResearchProof], { encoding: "utf8" });
 
     expect(summary.status).toBe(0);
-    expect(summary.stdout).toContain("PROOF_CHAIN_ACCEPTED_PUSHED_CHECKPOINT=0051a15");
+    expect(summary.stdout).toContain("PROOF_CHAIN_ACCEPTED_PUSHED_CHECKPOINT=a215dd4");
     expect(summary.stdout).toContain(
-      "PROOF_CHAIN_LOCAL_IMPLEMENTATION_PROOF=/home/mint/kia-stick-local-proofs/proof_kia_stick_v1_1_18_to_v1_1_22_post_closeout_accepted_state_contract_refresh_20260709T171319Z"
+      "PROOF_CHAIN_LOCAL_IMPLEMENTATION_PROOF=/home/mint/kia-stick-local-proofs/proof_kia_stick_v1_1_23_to_v1_1_27_post_closeout_accepted_state_contract_refresh_20260714T125800Z"
     );
     expect(summary.stdout).toContain(`PROOF_CHAIN_OPERATOR_QA_PROOF=${currentOperatorQaProof}`);
     expect(summary.stdout).toContain(`PROOF_CHAIN_CLOSEOUT_PUSH_PROOF=${currentCloseoutProof}`);

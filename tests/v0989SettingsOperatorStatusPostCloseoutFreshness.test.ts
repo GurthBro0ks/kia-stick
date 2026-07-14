@@ -31,10 +31,10 @@ describe("v0.9.89 Settings operator-status post-closeout freshness", () => {
     const contract = readFileSync("data/current-accepted-pushed-state.json", "utf8");
 
     expect(component).toContain('import currentAcceptedPushedState from "@/data/current-accepted-pushed-state.json";');
-    expect(contract).toContain('"checkpoint_label": "v1.1.22 at 0051a15"');
-    expect(contract).toContain('"accepted_pushed_commit": "0051a1503db5d5ecf062de1595129c5eac9114d6"');
+    expect(contract).toContain('"checkpoint_label": "v1.1.27 at a215dd4"');
+    expect(contract).toContain('"accepted_pushed_commit": "a215dd4ac4687ea878263d38ea9d4bdbaf444a71"');
     expect(contract).toContain('"short_commit": "d099ff5"');
-    expect(contract).toContain("/home/mint/kia-stick-local-proofs/proof_kia_stick_v1_1_18_to_v1_1_22_operator_qa_pass_recording_20260710T135021Z/closeout_push_20260714T124609Z");
+    expect(contract).toContain("/home/mint/kia-stick-local-proofs/proof_kia_stick_v1_1_23_to_v1_1_27_operator_status_local_bundle_stale_fix_20260714T132534Z/closeout_push_20260714T135859Z");
     expect(component).toContain("Current accepted pushed checkpoint: {currentAcceptedPushedState.checkpoint_label}");
     expect(component).toContain("Current accepted pushed state is {currentAcceptedPushedState.checkpoint} at {currentAcceptedPushedState.accepted_pushed_commit}");
     expect(component).toContain("historicalAcceptedPushedShortCommits");
