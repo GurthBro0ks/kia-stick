@@ -31,9 +31,9 @@ describe("v1.1.10 Settings operator-status current accepted pushed refresh", () 
     expect(component).toContain(
       'import currentAcceptedPushedState from "@/data/current-accepted-pushed-state.json";',
     );
-    expect(contract).toContain('"checkpoint_label": "v1.1.32 at 05cb559"');
+    expect(contract).toContain('"checkpoint_label": "v1.1.37 at ac23ed9"');
     expect(contract).toContain(
-      '"accepted_pushed_commit": "05cb5592758fde1dddaf10e2582e7d6222d43df5"',
+      '"accepted_pushed_commit": "ac23ed94adec34bd32062018bf20b0de616da395"',
     );
     expect(contract).toContain('"short_commit": "6d0715b"');
     expect(component).toContain(

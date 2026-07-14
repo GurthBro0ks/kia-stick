@@ -1192,3 +1192,11 @@ Quarantine, redaction review, and metadata review are not index approval. Invali
 - `This local bundle` identifies v1.1.33-to-v1.1.37 with validation PASS, pushed no, and manual QA pending.
 - This fake-only local checkpoint preserves queue-015/v0.9.12C blocks and Next/PostCSS `WARN_SAFE_NEXT_TARGET_UNCLEAR`; no package mutation, real-document capability, service change, notification, or push is approved.
 - After every future closeout push, refresh the contract in a separate fake-only checkpoint before baseline-sensitive UI/tooling work.
+
+## v1.1.38 to v1.1.42 Post-Closeout Accepted-State Contract Refresh
+
+- The static current accepted pushed contract records `v1.1.37 at ac23ed9` / `ac23ed94adec34bd32062018bf20b0de616da395` from `/home/mint/kia-stick-local-proofs/proof_kia_stick_v1_1_33_to_v1_1_37_post_closeout_accepted_state_contract_refresh_20260714T200705Z/closeout_push_20260714T221125Z`.
+- Settings and closeout/proof helpers derive live accepted and current-local-bundle state from `data/current-accepted-pushed-state.json`; `05cb559` and older baselines are historical only.
+- `This local bundle` identifies v1.1.38-to-v1.1.42 with validation PASS, pushed no, and manual QA pending.
+- This fake-only local checkpoint preserves queue-015/v0.9.12C blocks, Next/PostCSS `WARN_SAFE_NEXT_TARGET_UNCLEAR`, product/package `0.7.0`, and the real-document prohibition.
+- After every future closeout push, refresh the contract in a separate fake-only checkpoint before baseline-sensitive UI/tooling work.
