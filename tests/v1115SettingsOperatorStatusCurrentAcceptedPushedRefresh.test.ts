@@ -15,8 +15,8 @@ describe("v1.1.15 Settings operator-status current accepted pushed refresh", () 
     const component = readFileSync(componentPath, "utf8");
     const contract = readFileSync("data/current-accepted-pushed-state.json", "utf8");
     expect(component).toContain('import currentAcceptedPushedState from "@/data/current-accepted-pushed-state.json";');
-    expect(contract).toContain('"checkpoint_label": "v1.1.17 at aa8f8c6"');
-    expect(contract).toContain('"accepted_pushed_commit": "aa8f8c651a000037f403abd41bc206bda161a861"');
+    expect(contract).toContain('"checkpoint_label": "v1.1.22 at 0051a15"');
+    expect(contract).toContain('"accepted_pushed_commit": "0051a1503db5d5ecf062de1595129c5eac9114d6"');
     expect(contract).toContain('"short_commit": "628fbd4"');
     expect(component).toContain("Current accepted pushed checkpoint: {currentAcceptedPushedState.checkpoint_label}");
     expect(component).toContain("Current accepted pushed state is {currentAcceptedPushedState.checkpoint} at {currentAcceptedPushedState.accepted_pushed_commit}");

@@ -3210,3 +3210,14 @@ That phase should remain fake-doc-safe unless separately authorized. It may plan
 Recommended next phase: `KIA-Stick-v0.2-document-vault-redaction-plan`.
 
 This phase must be planning-only. It must not read, copy, index, scan, ingest, summarize, or transform real documents yet. The plan should define quarantine, redaction, provenance, review gates, and GitHub-safe proof handling before any real-document workflow is attempted.
+## v1.1.23 to v1.1.27 Post-Closeout Accepted-State Contract Refresh
+
+- Phase: `KIA-Stick-v1.1.23-to-v1.1.27-post-closeout-accepted-state-contract-refresh`
+- Current accepted pushed proof: `/home/mint/kia-stick-local-proofs/proof_kia_stick_v1_1_18_to_v1_1_22_operator_qa_pass_recording_20260710T135021Z/closeout_push_20260714T124609Z`
+- Current accepted pushed commit: `0051a1503db5d5ecf062de1595129c5eac9114d6`
+- Current accepted pushed checkpoint: `v1.1.22 at 0051a15`
+- Accepted push status: yes, with `HEAD == origin/main` at `0051a15`; `aa8f8c6` and older baselines are historical only, not current.
+- Included subphases: v1.1.23 accepted pushed state checkpoint; v1.1.24 contract refresh; v1.1.25 Settings refresh; v1.1.26 proof-index/helper guard; v1.1.27 next safe-work checkpoint.
+- Operator workflow note: after every future closeout push, update `data/current-accepted-pushed-state.json` in a separate fake-only checkpoint before baseline-sensitive UI/tooling work.
+- Blocked states preserved: Next/PostCSS `WARN_SAFE_NEXT_TARGET_UNCLEAR`, v0.9.12C blocked, queue-015 blocked, real-doc implementation unapproved.
+- Package/product version remains `0.7.0`; no push in this local checkpoint; manual QA is pending.

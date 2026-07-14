@@ -2290,3 +2290,8 @@
 - A transient Next dev `/version` 500 occurred after running production build while dev server was live; restarting the local dev server cleared it and route captures passed.
 - v0.4 chat UX/dedupe fix 2 operator manual browser QA checklist is created but still requires operator click-through.
 - v0.4 chat layout blocker fix passed CDP smoke, but operator browser click-through is still recommended.
+## v1.1.23 to v1.1.27 post-closeout accepted-state contract refresh
+
+- Current accepted pushed baseline is `v1.1.22 at 0051a15` / `0051a1503db5d5ecf062de1595129c5eac9114d6`; its accepted closeout proof is `/home/mint/kia-stick-local-proofs/proof_kia_stick_v1_1_18_to_v1_1_22_operator_qa_pass_recording_20260710T135021Z/closeout_push_20260714T124609Z`.
+- Static contract, Settings, helper/proof-index expectations, docs, and tests are aligned. `aa8f8c6` and older baselines remain historical only.
+- No push in this local checkpoint. Manual QA is pending; preserve Next/PostCSS `WARN_SAFE_NEXT_TARGET_UNCLEAR`, v0.9.12C blocked, queue-015 blocked, and the fake-only boundary.

@@ -1178,3 +1178,9 @@ Quarantine, redaction review, and metadata review are not index approval. Invali
 - Settings includes an “About this fake MVP” panel for local deterministic fake-doc mode.
 - Product version remains `0.4.0`; build identity continues to change through `displayVersion`.
 - GitHub-safe release notes live in `docs/RELEASE_v0.4.md`.
+## v1.1.23 to v1.1.27 Post-Closeout Accepted-State Contract Refresh
+
+- The static current accepted pushed contract now records `v1.1.22 at 0051a15` / `0051a1503db5d5ecf062de1595129c5eac9114d6` from `/home/mint/kia-stick-local-proofs/proof_kia_stick_v1_1_18_to_v1_1_22_operator_qa_pass_recording_20260710T135021Z/closeout_push_20260714T124609Z`.
+- Settings -> Operator Status, closeout-helper, and proof-index derive the live baseline from `data/current-accepted-pushed-state.json`; `aa8f8c6` and older baselines are historical only.
+- This fake-only local checkpoint preserves queue-015/v0.9.12C blocks and Next/PostCSS `WARN_SAFE_NEXT_TARGET_UNCLEAR`; no package mutation, real-document capability, service change, notification, or push is approved.
+- After every future closeout push, refresh the contract in a separate fake-only checkpoint before baseline-sensitive UI/tooling work. Manual QA remains pending.
