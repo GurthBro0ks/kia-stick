@@ -3221,3 +3221,15 @@ This phase must be planning-only. It must not read, copy, index, scan, ingest, s
 - Operator workflow note: after every future closeout push, update `data/current-accepted-pushed-state.json` in a separate fake-only checkpoint before baseline-sensitive UI/tooling work.
 - Blocked states preserved: Next/PostCSS `WARN_SAFE_NEXT_TARGET_UNCLEAR`, v0.9.12C blocked, queue-015 blocked, real-doc implementation unapproved.
 - Package/product version remains `0.7.0`; no push in this local checkpoint; manual QA is pending.
+
+## v1.1.33 to v1.1.37 Post-Closeout Accepted-State Contract Refresh
+
+- Phase: `KIA-Stick-v1.1.33-to-v1.1.37-post-closeout-accepted-state-contract-refresh`
+- Current accepted pushed proof: `/home/mint/kia-stick-local-proofs/proof_kia_stick_v1_1_28_to_v1_1_32_inherited_freshness_test_repair_20260714T145341Z/closeout_push_20260714T163958Z`
+- Current accepted pushed commit: `05cb5592758fde1dddaf10e2582e7d6222d43df5`
+- Current accepted pushed checkpoint: `v1.1.32 at 05cb559`
+- Accepted push status: yes, with `HEAD == origin/main` at `05cb559`; `a215dd4` and older baselines are historical only, not current.
+- Included subphases: v1.1.33 accepted pushed state checkpoint; v1.1.34 contract refresh; v1.1.35 Settings refresh; v1.1.36 proof-index/helper guard; v1.1.37 next safe-work checkpoint.
+- Operator workflow note: after every future closeout push, update `data/current-accepted-pushed-state.json` in a separate fake-only checkpoint before baseline-sensitive UI/tooling work.
+- Blocked states preserved: Next/PostCSS `WARN_SAFE_NEXT_TARGET_UNCLEAR`, v0.9.12C blocked, queue-015 blocked, real-doc implementation unapproved.
+- Package/product version remains `0.7.0`; no push in this local checkpoint; manual QA is pending.

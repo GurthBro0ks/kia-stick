@@ -1184,3 +1184,11 @@ Quarantine, redaction review, and metadata review are not index approval. Invali
 - Settings -> Operator Status, closeout-helper, and proof-index derive the live baseline from `data/current-accepted-pushed-state.json`; `aa8f8c6` and older baselines are historical only.
 - This fake-only local checkpoint preserves queue-015/v0.9.12C blocks and Next/PostCSS `WARN_SAFE_NEXT_TARGET_UNCLEAR`; no package mutation, real-document capability, service change, notification, or push is approved.
 - After every future closeout push, refresh the contract in a separate fake-only checkpoint before baseline-sensitive UI/tooling work. Manual QA remains pending.
+
+## v1.1.33 to v1.1.37 Post-Closeout Accepted-State Contract Refresh
+
+- The static current accepted pushed contract records `v1.1.32 at 05cb559` / `05cb5592758fde1dddaf10e2582e7d6222d43df5` from `/home/mint/kia-stick-local-proofs/proof_kia_stick_v1_1_28_to_v1_1_32_inherited_freshness_test_repair_20260714T145341Z/closeout_push_20260714T163958Z`.
+- Settings -> Operator Status and closeout/proof helpers derive the live baseline from `data/current-accepted-pushed-state.json`; `a215dd4` and older baselines are historical only.
+- `This local bundle` identifies v1.1.33-to-v1.1.37 with validation PASS, pushed no, and manual QA pending.
+- This fake-only local checkpoint preserves queue-015/v0.9.12C blocks and Next/PostCSS `WARN_SAFE_NEXT_TARGET_UNCLEAR`; no package mutation, real-document capability, service change, notification, or push is approved.
+- After every future closeout push, refresh the contract in a separate fake-only checkpoint before baseline-sensitive UI/tooling work.

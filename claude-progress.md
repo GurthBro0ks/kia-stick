@@ -2295,3 +2295,10 @@
 - Current accepted pushed baseline is `v1.1.22 at 0051a15` / `0051a1503db5d5ecf062de1595129c5eac9114d6`; its accepted closeout proof is `/home/mint/kia-stick-local-proofs/proof_kia_stick_v1_1_18_to_v1_1_22_operator_qa_pass_recording_20260710T135021Z/closeout_push_20260714T124609Z`.
 - Static contract, Settings, helper/proof-index expectations, docs, and tests are aligned. `aa8f8c6` and older baselines remain historical only.
 - No push in this local checkpoint. Manual QA is pending; preserve Next/PostCSS `WARN_SAFE_NEXT_TARGET_UNCLEAR`, v0.9.12C blocked, queue-015 blocked, and the fake-only boundary.
+
+## v1.1.33 to v1.1.37 post-closeout accepted-state contract refresh
+
+- Current accepted pushed baseline is `v1.1.32 at 05cb559` / `05cb5592758fde1dddaf10e2582e7d6222d43df5`; its accepted closeout proof is `/home/mint/kia-stick-local-proofs/proof_kia_stick_v1_1_28_to_v1_1_32_inherited_freshness_test_repair_20260714T145341Z/closeout_push_20260714T163958Z`.
+- Static contract, Settings, helper/proof-index expectations, docs, and tests are aligned. `a215dd4` and older baselines remain historical only.
+- The current local bundle is v1.1.33-to-v1.1.37 with validation PASS, pushed no, and manual QA pending.
+- No push in this local checkpoint. Preserve Next/PostCSS `WARN_SAFE_NEXT_TARGET_UNCLEAR`, v0.9.12C blocked, queue-015 blocked, product/package `0.7.0`, and the fake-only boundary.
