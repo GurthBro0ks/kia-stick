@@ -5,7 +5,7 @@ describe("v1.1.49 current-state contract refresh", () => {
   it("keeps exact current and historical roles in static metadata", () => {
     const contract = readFileSync("data/current-accepted-pushed-state.json", "utf8");
     const doc = readFileSync("docs/v1.1.49-post-closeout-current-state-contract-refresh.md", "utf8");
-    expect(contract).toContain('"accepted_pushed_short_commit": "b8fb834"');
+    expect(contract).toContain('"accepted_pushed_short_commit": "857ba0e"');
     expect(contract).toContain('"short_commit": "0286f03"');
     expect(contract).toContain('"short_commit": "ac23ed9"');
     expect(doc).toContain("does not read proof directories at runtime");

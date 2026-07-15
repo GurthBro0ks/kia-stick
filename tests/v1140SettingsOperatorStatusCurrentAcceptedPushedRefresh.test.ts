@@ -6,9 +6,9 @@ describe("v1.1.40 Settings current accepted pushed refresh", () => {
     const component = readFileSync("components/KiaStickApp.tsx", "utf8");
     const contract = readFileSync("data/current-accepted-pushed-state.json", "utf8");
     expect(component).toContain('label: "This local bundle", value: currentAcceptedPushedState.local_bundle_status');
-    expect(contract).toContain('"checkpoint_label": "v1.1.47 at b8fb834"');
-    expect(contract).toContain('"accepted_pushed_commit": "b8fb8341b19980c33d7163a6993cc0e8ba520641"');
-    expect(contract).toContain('"local_bundle_status": "v1.1.48-to-v1.1.52 post-closeout accepted-state contract refresh; validation PASS; pushed no; manual QA pending"');
+    expect(contract).toContain('"checkpoint_label": "v1.1.52 at 857ba0e"');
+    expect(contract).toContain('"accepted_pushed_commit": "857ba0e0180b2bca27823367c871429ece0c5214"');
+    expect(contract).toContain('"local_bundle_status": "v1.1.53-to-v1.1.57 post-closeout accepted-state contract refresh; validation PASS; pushed no; manual QA pending"');
     expect(component).not.toContain('label: "This local bundle", value: "v1.1.33-to-v1.1.37');
     expect(component).not.toMatch(/<input[^>]+type=["']file["']/);
     expect(component).not.toContain("FileReader");
