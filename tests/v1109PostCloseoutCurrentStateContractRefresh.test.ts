@@ -32,21 +32,22 @@ describe("v1.1.9 post-closeout current state contract refresh", () => {
       }>;
     };
     expect(contract.phase).toBe(
-      "KIA-Stick-v1.1.38-to-v1.1.42-post-closeout-accepted-state-contract-refresh",
+      "KIA-Stick-v1.1.43-to-v1.1.47-post-closeout-accepted-state-contract-refresh",
     );
-    expect(contract.checkpoint_label).toBe("v1.1.37 at ac23ed9");
+    expect(contract.checkpoint_label).toBe("v1.1.42 at 0286f03");
     expect(contract.accepted_pushed_commit).toBe(
-      "ac23ed94adec34bd32062018bf20b0de616da395",
+      "0286f03ffe8055395cc4d02ee83ddc0deb6143f1",
     );
-    expect(contract.accepted_pushed_short_commit).toBe("ac23ed9");
+    expect(contract.accepted_pushed_short_commit).toBe("0286f03");
     expect(contract.accepted_pushed_proof_dir).toBe(
-      "/home/mint/kia-stick-local-proofs/proof_kia_stick_v1_1_33_to_v1_1_37_post_closeout_accepted_state_contract_refresh_20260714T200705Z/closeout_push_20260714T221125Z",
+      "/home/mint/kia-stick-local-proofs/proof_kia_stick_v1_1_38_to_v1_1_42_post_closeout_accepted_state_contract_refresh_20260714T221558Z/closeout_push_20260715T143617Z",
     );
     expect(
       contract.historical_prior_checkpoints.map(
         (checkpoint) => checkpoint.short_commit,
       ),
     ).toEqual([
+      "ac23ed9",
       "05cb559",
       "a215dd4",
       "0051a15",

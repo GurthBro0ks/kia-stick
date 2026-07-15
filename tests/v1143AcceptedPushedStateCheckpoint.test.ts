@@ -4,8 +4,8 @@ import { describe, expect, it } from "vitest";
 const commit = "0286f03ffe8055395cc4d02ee83ddc0deb6143f1";
 const proof = "/home/mint/kia-stick-local-proofs/proof_kia_stick_v1_1_38_to_v1_1_42_post_closeout_accepted_state_contract_refresh_20260714T221558Z/closeout_push_20260715T143617Z";
 
-describe("v1.1.33 accepted pushed state checkpoint", () => {
-  it("records the v1.1.32 closeout as the single current baseline", () => {
+describe("v1.1.43 accepted pushed state checkpoint", () => {
+  it("records v1.1.42 as the single current baseline", () => {
     const contract = JSON.parse(readFileSync("data/current-accepted-pushed-state.json", "utf8"));
     expect(contract.checkpoint_label).toBe("v1.1.42 at 0286f03");
     expect(contract.accepted_pushed_commit).toBe(commit);
