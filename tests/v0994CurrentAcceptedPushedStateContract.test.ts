@@ -23,7 +23,7 @@ describe("v0.9.94 current accepted pushed state contract", () => {
     }
   });
 
-  it("makes 0286f03 the only current accepted pushed value", () => {
+  it("makes b8fb834 the only current accepted pushed value", () => {
     const contract = JSON.parse(readFileSync(contractPath, "utf8")) as {
       phase: string;
       checkpoint_label: string;
@@ -40,15 +40,15 @@ describe("v0.9.94 current accepted pushed state contract", () => {
       package_version: string;
     };
 
-    expect(contract.phase).toBe("KIA-Stick-v1.1.43-to-v1.1.47-post-closeout-accepted-state-contract-refresh");
-    expect(contract.checkpoint_label).toBe("v1.1.42 at 0286f03");
-    expect(contract.accepted_pushed_commit).toBe("0286f03ffe8055395cc4d02ee83ddc0deb6143f1");
-    expect(contract.accepted_pushed_short_commit).toBe("0286f03");
-    expect(contract.accepted_pushed_proof_dir).toBe("/home/mint/kia-stick-local-proofs/proof_kia_stick_v1_1_38_to_v1_1_42_post_closeout_accepted_state_contract_refresh_20260714T221558Z/closeout_push_20260715T143617Z");
-    expect(contract.local_implementation_proof_dir).toBe("/home/mint/kia-stick-local-proofs/proof_kia_stick_v1_1_38_to_v1_1_42_post_closeout_accepted_state_contract_refresh_20260714T221558Z");
-    expect(contract.operator_qa_pass_proof_dir).toBe("/home/mint/kia-stick-local-proofs/proof_kia_stick_v1_1_38_to_v1_1_42_post_closeout_accepted_state_contract_refresh_20260714T221558Z/operator_qa_pass_20260715T141420Z");
+    expect(contract.phase).toBe("KIA-Stick-v1.1.48-to-v1.1.52-post-closeout-accepted-state-contract-refresh");
+    expect(contract.checkpoint_label).toBe("v1.1.47 at b8fb834");
+    expect(contract.accepted_pushed_commit).toBe("b8fb8341b19980c33d7163a6993cc0e8ba520641");
+    expect(contract.accepted_pushed_short_commit).toBe("b8fb834");
+    expect(contract.accepted_pushed_proof_dir).toBe("/home/mint/kia-stick-local-proofs/proof_kia_stick_v1_1_43_to_v1_1_47_post_closeout_accepted_state_contract_refresh_20260715T144326Z/closeout_push_20260715T152933Z");
+    expect(contract.local_implementation_proof_dir).toBe("/home/mint/kia-stick-local-proofs/proof_kia_stick_v1_1_43_to_v1_1_47_post_closeout_accepted_state_contract_refresh_20260715T144326Z");
+    expect(contract.operator_qa_pass_proof_dir).toBe("/home/mint/kia-stick-local-proofs/proof_kia_stick_v1_1_43_to_v1_1_47_post_closeout_accepted_state_contract_refresh_20260715T144326Z/operator_qa_pass_20260715T152425Z");
     expect(contract.accepted_pushed).toBe(true);
-    expect(contract.historical_prior_checkpoints.map((checkpoint) => checkpoint.short_commit)).toEqual(["ac23ed9","05cb559","a215dd4","0051a15","aa8f8c6","b911fd1","628fbd4","6d0715b","1da06ff","0269435","fcf5097","6ca589d","f662b37","cf2be1f","d099ff5","73b3f38","5b7a575","720a58a","5c7f360","886631f","841dee7","870d3a7","87420e2","8b42744","b4b9fcf","20485da","97574a9","80e91c7","dfa7052","c72f14f","d20e125","bc8fbef","cfa7c2c","1465817"]);
+    expect(contract.historical_prior_checkpoints.map((checkpoint) => checkpoint.short_commit)).toEqual(["0286f03","ac23ed9","05cb559","a215dd4","0051a15","aa8f8c6","b911fd1","628fbd4","6d0715b","1da06ff","0269435","fcf5097","6ca589d","f662b37","cf2be1f","d099ff5","73b3f38","5b7a575","720a58a","5c7f360","886631f","841dee7","870d3a7","87420e2","8b42744","b4b9fcf","20485da","97574a9","80e91c7","dfa7052","c72f14f","d20e125","bc8fbef","cfa7c2c","1465817"]);
     expect(contract.historical_prior_checkpoints.every((checkpoint) => checkpoint.status === "historical_only_not_current")).toBe(true);
     expect(contract.next_postcss_status).toBe("WARN_SAFE_NEXT_TARGET_UNCLEAR");
     expect(contract.v0912c_status).toBe("blocked_pending_exact_target");
