@@ -1209,6 +1209,14 @@ Quarantine, redaction review, and metadata review are not index approval. Invali
 - queue-015/v0.9.12C remain blocked, Next/PostCSS remains `WARN_SAFE_NEXT_TARGET_UNCLEAR`, product/package remains `0.7.0`, and real-document work remains unapproved.
 - Future closeout pushes require another separate fake-only contract refresh before baseline-sensitive work.
 
+## v1.1.58 to v1.1.62 Post-Closeout Accepted-State Contract Refresh
+
+- The static contract records `v1.1.57 at 65f8865` / `65f88659b238ae0cfacd51f0dab71844d885a76c` from the accepted v1.1.53-to-v1.1.57 nested closeout proof.
+- Settings and closeout/proof helpers derive current state from `data/current-accepted-pushed-state.json`; `857ba0e` and older baselines are historical only.
+- `This local bundle` identifies v1.1.58-to-v1.1.62 with validation PASS, pushed no, and manual QA pending.
+- queue-015/v0.9.12C remain blocked, Next/PostCSS remains `WARN_SAFE_NEXT_TARGET_UNCLEAR`, product/package remains `0.7.0`, and real-document work remains unapproved.
+- Future closeout pushes require another separate fake-only contract refresh before baseline-sensitive work.
+
 ## v1.1.53 to v1.1.57 Post-Closeout Accepted-State Contract Refresh
 
 - The static contract records `v1.1.52 at 857ba0e` / `857ba0e0180b2bca27823367c871429ece0c5214` from the accepted v1.1.48-to-v1.1.52 nested closeout proof.
