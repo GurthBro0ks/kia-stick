@@ -31,8 +31,8 @@ describe("v0.9.69 Settings operator-status freshness polish", () => {
 
     expect(component).toContain("Current accepted pushed checkpoint: {currentAcceptedPushedState.checkpoint_label}");
     expect(component).toContain("Current accepted pushed state is {currentAcceptedPushedState.checkpoint} at {currentAcceptedPushedState.accepted_pushed_commit}");
-    expect(contract).toContain('"checkpoint_label": "v1.1.57 at 65f8865"');
-    expect(contract).toContain('"accepted_pushed_short_commit": "65f8865"');
+    expect(contract).toContain('"checkpoint_label": "v1.1.62 at 84b5dac"');
+    expect(contract).toContain('"accepted_pushed_short_commit": "84b5dac"');
     expect(contract).toContain('"short_commit": "d099ff5"');
     expect(contract).toContain('"short_commit": "d099ff5"');
     expect(contract).toContain('"short_commit": "d099ff5"');

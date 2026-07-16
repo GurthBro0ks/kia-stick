@@ -269,6 +269,10 @@ function manualQaPassed(status = "PASS") {
 }
 
 function currentPackageLockUnchanged(featureList) {
+  const currentContract = featureList.__currentAcceptedPushedState || {};
+  if (typeof currentContract.package_lock_changed === "boolean") {
+    return currentContract.package_lock_changed ? "review_required" : "yes";
+  }
   const currentPackageLockKeys = [
     "v1117_next_safe_work_checkpoint",
     "v1116_proof_index_closeout_helper_post_push_freshness_guard",
@@ -491,7 +495,9 @@ function collectProofChain(featureList, proof = {}) {
   const currentResult = current.result || accepted.next_postcss_status || "review_required";
   const currentPushed = yesNo(current.pushed, "review_required");
   const currentBundle =
-    current.phase || accepted.current_local_bundle || accepted.phase || "review_required";
+    accepted.local_bundle_phase || current.phase || accepted.current_local_bundle || accepted.phase || "review_required";
+  const currentBundleStatus =
+    accepted.local_bundle_status || `${currentBundle}; result=${currentResult}; manual_qa=${currentManualQa}; pushed=${currentPushed}`;
 
   return {
     acceptedPushedCheckpoint:
@@ -514,7 +520,7 @@ function collectProofChain(featureList, proof = {}) {
     closeoutPushProof: accepted.accepted_pushed_proof_dir || accepted.closeout_push_proof_dir || priorAccepted.closeout_push_proof_dir || "review_required",
     acceptedWarnCheckpoint:
       acceptedWarn.accepted_pushed_warn_short_commit || acceptedWarn.accepted_pushed_warn_commit || "review_required",
-    pendingLocalBundle: `${currentBundle}; result=${currentResult}; manual_qa=${currentManualQa}; pushed=${currentPushed}`,
+    pendingLocalBundle: currentBundleStatus,
   };
 }
 
