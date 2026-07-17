@@ -11668,5 +11668,34 @@
     "local_checkpoint_validation": "PASS", "local_checkpoint_pushed": false, "local_checkpoint_manual_qa_status": "pending_operator_review",
     "next_postcss_status": "WARN_SAFE_NEXT_TARGET_UNCLEAR", "v0912c_status": "blocked_pending_exact_target", "queue_015_status": "blocked", "real_doc_implementation_approved": false,
     "package_json_changed": false, "package_lock_changed": false
+  },
+  "v1173_accepted_pushed_state_checkpoint": {
+    "phase": "KIA-Stick-v1.1.73-accepted-pushed-state-checkpoint", "status": "accepted", "document": "docs/v1.1.73-accepted-pushed-state-checkpoint.md",
+    "accepted_pushed_checkpoint_label": "v1.1.72 at ab1878e", "accepted_pushed_commit": "ab1878e4c681c8f658e8a5bf6bd36f3ad4423fea", "accepted_pushed_short_commit": "ab1878e",
+    "accepted_pushed_proof_dir": "/home/mint/kia-stick-local-proofs/proof_kia_stick_v1_1_68_to_v1_1_72_post_closeout_accepted_state_contract_refresh_20260717T092307Z/closeout_push_20260717T095029Z",
+    "prior_current_accepted_pushed_short_commit": "0cb007d", "accepted_pushed": true, "queue_015_status": "blocked", "real_doc_implementation_approved": false
+  },
+  "v1174_post_closeout_current_state_contract_refresh": {
+    "phase": "KIA-Stick-v1.1.74-post-closeout-current-state-contract-refresh", "status": "accepted", "document": "docs/v1.1.74-post-closeout-current-state-contract-refresh.md",
+    "contract_file": "data/current-accepted-pushed-state.json", "current_accepted_pushed_checkpoint_label": "v1.1.72 at ab1878e", "current_accepted_pushed_short_commit": "ab1878e",
+    "prior_current_accepted_pushed_short_commit": "0cb007d", "runtime_filesystem_reads_added": false, "real_doc_implementation_approved": false
+  },
+  "v1175_settings_operator_status_current_accepted_pushed_refresh": {
+    "phase": "KIA-Stick-v1.1.75-settings-operator-status-current-accepted-pushed-refresh", "status": "accepted", "document": "docs/v1.1.75-settings-operator-status-current-accepted-pushed-refresh.md",
+    "runtime_headline": "Current accepted pushed checkpoint: v1.1.72 at ab1878e", "current_accepted_pushed_commit": "ab1878e4c681c8f658e8a5bf6bd36f3ad4423fea", "current_accepted_pushed_short_commit": "ab1878e",
+    "current_local_bundle": "v1.1.73-to-v1.1.77 post-closeout accepted-state contract refresh; validation PASS; pushed no; manual QA pending",
+    "queue_015_status": "blocked", "file_picker_approved": false, "file_reader_approved": false, "upload_approved": false
+  },
+  "v1176_proof_index_closeout_helper_post_push_freshness_guard": {
+    "phase": "KIA-Stick-v1.1.76-proof-index-closeout-helper-post-push-freshness-guard", "status": "accepted", "document": "docs/v1.1.76-proof-index-closeout-helper-post-push-freshness-guard.md",
+    "proof_chain_accepted_pushed_checkpoint": "ab1878e", "proof_chain_closeout_push_proof": "/home/mint/kia-stick-local-proofs/proof_kia_stick_v1_1_68_to_v1_1_72_post_closeout_accepted_state_contract_refresh_20260717T092307Z/closeout_push_20260717T095029Z",
+    "stale_current_checkpoint_rejected": ["0cb007d", "84b5dac", "65f8865", "857ba0e", "b8fb834", "0286f03", "ac23ed9", "05cb559", "a215dd4", "0051a15"], "accepted_warn_status": "parked_not_converted_to_pass", "real_doc_implementation_approved": false
+  },
+  "v1177_next_safe_work_checkpoint": {
+    "phase": "KIA-Stick-v1.1.77-next-safe-work-checkpoint", "status": "accepted", "document": "docs/v1.1.77-next-safe-work-checkpoint.md",
+    "current_accepted_pushed_commit": "ab1878e4c681c8f658e8a5bf6bd36f3ad4423fea", "current_accepted_pushed_short_commit": "ab1878e", "source_contract": "data/current-accepted-pushed-state.json",
+    "local_checkpoint_validation": "PASS", "local_checkpoint_pushed": false, "local_checkpoint_manual_qa_status": "pending_operator_review",
+    "next_postcss_status": "WARN_SAFE_NEXT_TARGET_UNCLEAR", "v0912c_status": "blocked_pending_exact_target", "queue_015_status": "blocked", "real_doc_implementation_approved": false,
+    "package_json_changed": false, "package_lock_changed": false
   }
 }

@@ -401,21 +401,21 @@ describe("closeout-helper", () => {
     const currentResearchProof =
       "/home/mint/kia-stick-local-proofs/proof_kia_stick_v0_9_83_to_v0_9_87_fake_only_proof_report_operator_ux_polish_20260701T165216Z";
     const currentOperatorQaProof =
-      "/home/mint/kia-stick-local-proofs/proof_kia_stick_v1_1_63_to_v1_1_67_post_closeout_accepted_state_contract_refresh_20260716T170411Z/operator_qa_pass_20260716T172338Z";
+      "/home/mint/kia-stick-local-proofs/proof_kia_stick_v1_1_68_to_v1_1_72_post_closeout_accepted_state_contract_refresh_20260717T092307Z/operator_qa_pass_20260717T094539Z";
     const currentCloseoutProof =
-      "/home/mint/kia-stick-local-proofs/proof_kia_stick_v1_1_63_to_v1_1_67_post_closeout_accepted_state_contract_refresh_20260716T170411Z/closeout_push_20260717T091002Z";
+      "/home/mint/kia-stick-local-proofs/proof_kia_stick_v1_1_68_to_v1_1_72_post_closeout_accepted_state_contract_refresh_20260717T092307Z/closeout_push_20260717T095029Z";
 
     const summary = spawnSync("node", [scriptPath, "summary", "--proof-dir", currentResearchProof], { encoding: "utf8" });
 
     expect(summary.status).toBe(0);
-    expect(summary.stdout).toContain("PROOF_CHAIN_ACCEPTED_PUSHED_CHECKPOINT=0cb007d");
+    expect(summary.stdout).toContain("PROOF_CHAIN_ACCEPTED_PUSHED_CHECKPOINT=ab1878e");
     expect(summary.stdout).toContain(
-      "PROOF_CHAIN_LOCAL_IMPLEMENTATION_PROOF=/home/mint/kia-stick-local-proofs/proof_kia_stick_v1_1_63_to_v1_1_67_post_closeout_accepted_state_contract_refresh_20260716T170411Z"
+      "PROOF_CHAIN_LOCAL_IMPLEMENTATION_PROOF=/home/mint/kia-stick-local-proofs/proof_kia_stick_v1_1_68_to_v1_1_72_post_closeout_accepted_state_contract_refresh_20260717T092307Z"
     );
     expect(summary.stdout).toContain(`PROOF_CHAIN_OPERATOR_QA_PROOF=${currentOperatorQaProof}`);
     expect(summary.stdout).toContain(`PROOF_CHAIN_CLOSEOUT_PUSH_PROOF=${currentCloseoutProof}`);
     expect(summary.stdout).toContain(
-      "PROOF_CHAIN_PENDING_LOCAL_BUNDLE=v1.1.68-to-v1.1.72 post-closeout accepted-state contract refresh; validation PASS; pushed no; manual QA pending"
+      "PROOF_CHAIN_PENDING_LOCAL_BUNDLE=v1.1.73-to-v1.1.77 post-closeout accepted-state contract refresh; validation PASS; pushed no; manual QA pending"
     );
     expect(summary.stdout).not.toContain("PROOF_CHAIN_ACCEPTED_PUSHED_CHECKPOINT=628fbd4");
     expect(summary.stdout).not.toContain("PROOF_CHAIN_ACCEPTED_PUSHED_CHECKPOINT=6d0715b");

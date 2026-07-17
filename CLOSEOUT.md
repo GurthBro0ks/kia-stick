@@ -3222,6 +3222,15 @@ This phase must be planning-only. It must not read, copy, index, scan, ingest, s
 - Blocked states preserved: Next/PostCSS `WARN_SAFE_NEXT_TARGET_UNCLEAR`, v0.9.12C blocked, queue-015 blocked, real-doc implementation unapproved.
 - Package/product version remains `0.7.0`; no push in this local checkpoint; manual QA is pending.
 
+## v1.1.73 to v1.1.77 Post-Closeout Accepted-State Contract Refresh
+
+- Phase: `KIA-Stick-v1.1.73-to-v1.1.77-post-closeout-accepted-state-contract-refresh`
+- Current accepted pushed proof: `/home/mint/kia-stick-local-proofs/proof_kia_stick_v1_1_68_to_v1_1_72_post_closeout_accepted_state_contract_refresh_20260717T092307Z/closeout_push_20260717T095029Z`
+- Current accepted pushed commit/checkpoint: `ab1878e4c681c8f658e8a5bf6bd36f3ad4423fea` / `v1.1.72 at ab1878e`
+- `0cb007d` and older baselines are historical only; included subphases are v1.1.73 through v1.1.77.
+- Next/PostCSS, v0.9.12C, queue-015, package/product `0.7.0`, and the real-doc prohibition remain unchanged.
+- No push in this local checkpoint; manual QA is pending.
+
 ## v1.1.68 to v1.1.72 Post-Closeout Accepted-State Contract Refresh
 
 - Phase: `KIA-Stick-v1.1.68-to-v1.1.72-post-closeout-accepted-state-contract-refresh`
