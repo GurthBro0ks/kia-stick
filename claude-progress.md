@@ -2369,4 +2369,8 @@
 - Files changed: `app/globals.css`, `components/KiaStickApp.tsx`, `lib/answerGovernor.ts`, `lib/chatAnswerRouter.ts`, `lib/conversationModel.ts`, `lib/publicSource.ts`, `lib/publicSourceAnswer.ts`, `lib/savedAnswers.ts`, `tests/publicChatRoutingIntegration.test.ts`, and this progress entry.
 - Proof: `/home/mint/kia-stick-local-proofs/proof_kia_stick_public_data_pilot_1A_public_chat_routing_repair_20260717T113055Z`.
 - Safety: one existing allowlisted NLRB source only; no private data, additional URL, CBA fetch, upload, file reader, arbitrary path, OCR, embedding, vector store, external AI, dependency change, service change, notification, Discord, or push.
-- Remaining unknown: independent operator manual QA is pending. Do not mark the original pilot complete and do not push until `OPERATOR_QA_PASS` is explicitly recorded.
+- Operator QA: PASS by `OPERATOR_QA_PASS for /home/mint/kia-stick-local-proofs/proof_kia_stick_public_data_pilot_1A_public_chat_routing_repair_20260717T113055Z`; recording proof is `/home/mint/kia-stick-local-proofs/proof_kia_stick_public_data_pilot_1A_public_chat_routing_repair_operator_qa_pass_recording_20260717T121743Z`.
+- Closeout/push authorization: `CLOSEOUT_AND_PUSH_PUBLIC_DATA_PILOT_1A_AUTHORIZED`.
+- Canonical closeout/push proof: `/home/mint/kia-stick-local-proofs/proof_kia_stick_public_data_pilot_1A_public_chat_routing_repair_operator_qa_pass_recording_20260717T121743Z/closeout_push_20260717T122936Z`.
+- Closeout scope: `CLOSEOUT.md`, `claude-progress.md`, and `feature_list.json` only; no feature, dependency, runtime, source, service, notification, or real/private-data change.
+- Accepted-state follow-up: the shared accepted pushed contract remains `v1.1.77 at 80e53c7` until a separate post-closeout contract refresh; final pushed equality is recorded in the nested closeout proof.

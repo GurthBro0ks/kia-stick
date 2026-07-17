@@ -1,3 +1,19 @@
+## Public Data Pilot 1A Chat Routing Repair Closeout and Push
+
+- Phase: `KIA-Stick-public-data-pilot-1A-public-chat-routing-repair-closeout-and-push`.
+- Authorization: `CLOSEOUT_AND_PUSH_PUBLIC_DATA_PILOT_1A_AUTHORIZED`.
+- Bounded public-source implementation commit: `7995d9802f1710163b443fafcb7dbe7aa723e06e`.
+- Public Chat routing repair commit: `175a0027afc592fd26eb025733c660c55cd8f223`.
+- Repair proof: `/home/mint/kia-stick-local-proofs/proof_kia_stick_public_data_pilot_1A_public_chat_routing_repair_20260717T113055Z`.
+- Operator QA PASS proof: `/home/mint/kia-stick-local-proofs/proof_kia_stick_public_data_pilot_1A_public_chat_routing_repair_operator_qa_pass_recording_20260717T121743Z`.
+- Canonical closeout/push proof: `/home/mint/kia-stick-local-proofs/proof_kia_stick_public_data_pilot_1A_public_chat_routing_repair_operator_qa_pass_recording_20260717T121743Z/closeout_push_20260717T122936Z`.
+- Validation and manual QA: `PASS` / `PASS`; the exact four public Chat questions, citation navigation, Saved public metadata, missing-cache safety, and fake/public isolation are accepted.
+- Scope: project-state closeout only after the accepted runtime repair; no additional source, URL, CBA fetch, private data, upload, file reader, OCR, embedding, vector store, external AI, dependency, or service change.
+- Push gate: one authorized push of `main`; final pushed SHA and `HEAD == origin/main` equality are recorded in the canonical proof to avoid a self-referential repository SHA.
+- Accepted-state contract note: `data/current-accepted-pushed-state.json` remains anchored to the prior accepted pushed `v1.1.77 at 80e53c7` until a separate post-closeout accepted-state contract refresh is explicitly performed.
+- Blocked states preserved: queue-015 remains blocked; Next/PostCSS remains `WARN_SAFE_NEXT_TARGET_UNCLEAR`; v0.9.12C remains parked pending exact approval; product/package remain `0.7.0`.
+- Notifications: Discord disabled; no duplicate notification; no report URL.
+
 ## v1.1.18 to v1.1.22 Post-Closeout Accepted-State Contract Refresh
 
 - Phase: `KIA-Stick-v1.1.18-to-v1.1.22-post-closeout-accepted-state-contract-refresh`

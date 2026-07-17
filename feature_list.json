@@ -11697,5 +11697,29 @@
     "local_checkpoint_validation": "PASS", "local_checkpoint_pushed": false, "local_checkpoint_manual_qa_status": "pending_operator_review",
     "next_postcss_status": "WARN_SAFE_NEXT_TARGET_UNCLEAR", "v0912c_status": "blocked_pending_exact_target", "queue_015_status": "blocked", "real_doc_implementation_approved": false,
     "package_json_changed": false, "package_lock_changed": false
+  },
+  "public_data_pilot_1a_public_chat_routing_repair_closeout": {
+    "phase": "KIA-Stick-public-data-pilot-1A-public-chat-routing-repair-closeout-and-push",
+    "status": "accepted",
+    "bounded_public_source_implementation_commit": "7995d9802f1710163b443fafcb7dbe7aa723e06e",
+    "public_chat_routing_repair_commit": "175a0027afc592fd26eb025733c660c55cd8f223",
+    "repair_proof_dir": "/home/mint/kia-stick-local-proofs/proof_kia_stick_public_data_pilot_1A_public_chat_routing_repair_20260717T113055Z",
+    "operator_qa_pass_proof_dir": "/home/mint/kia-stick-local-proofs/proof_kia_stick_public_data_pilot_1A_public_chat_routing_repair_operator_qa_pass_recording_20260717T121743Z",
+    "closeout_push_proof_dir": "/home/mint/kia-stick-local-proofs/proof_kia_stick_public_data_pilot_1A_public_chat_routing_repair_operator_qa_pass_recording_20260717T121743Z/closeout_push_20260717T122936Z",
+    "validation_status": "PASS",
+    "manual_qa_status": "PASS",
+    "push_authorization": "CLOSEOUT_AND_PUSH_PUBLIC_DATA_PILOT_1A_AUTHORIZED",
+    "push_completion_recorded_in_closeout_proof": true,
+    "accepted_pushed_contract_before_refresh": "v1.1.77 at 80e53c7",
+    "post_closeout_accepted_state_contract_refresh_required": true,
+    "queue_015_status": "blocked",
+    "next_postcss_status": "WARN_SAFE_NEXT_TARGET_UNCLEAR",
+    "v0912c_status": "blocked_pending_exact_target",
+    "product_version": "0.7.0",
+    "package_json_changed": false,
+    "package_lock_changed": false,
+    "real_doc_implementation_approved": false,
+    "additional_public_source_approved": false,
+    "discord_sent": false
   }
 }
