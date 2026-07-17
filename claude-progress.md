@@ -2317,6 +2317,13 @@
 - The current local bundle is v1.1.43-to-v1.1.47 with validation PASS, pushed no, and manual QA pending, sourced from the shared contract.
 - No push in this checkpoint. Preserve Next/PostCSS `WARN_SAFE_NEXT_TARGET_UNCLEAR`, v0.9.12C and queue-015 blocks, product/package `0.7.0`, and the fake-only boundary.
 
+## v1.1.68 to v1.1.72 post-closeout accepted-state contract refresh
+
+- Current accepted pushed baseline is `v1.1.67 at 0cb007d` / `0cb007d38c6e17d316cc25640f0fb28b2b934c55`; its proof is the v1.1.63-to-v1.1.67 nested closeout.
+- Contract, Settings, helper/proof-index expectations, docs, and tests are aligned. `84b5dac` and older baselines remain historical only in exact order.
+- The local bundle is v1.1.68-to-v1.1.72 with validation PASS, pushed no, and manual QA pending.
+- No push; preserve all blocked states, product/package `0.7.0`, and the fake-only boundary.
+
 ## v1.1.63 to v1.1.67 post-closeout accepted-state contract refresh
 
 - Current accepted pushed baseline is `v1.1.62 at 84b5dac` / `84b5dacb2bf9453040e382b44843fe775ed5b91d`; its proof is the v1.1.58-to-v1.1.62 nested closeout.
