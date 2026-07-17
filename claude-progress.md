@@ -2374,3 +2374,16 @@
 - Canonical closeout/push proof: `/home/mint/kia-stick-local-proofs/proof_kia_stick_public_data_pilot_1A_public_chat_routing_repair_operator_qa_pass_recording_20260717T121743Z/closeout_push_20260717T122936Z`.
 - Closeout scope: `CLOSEOUT.md`, `claude-progress.md`, and `feature_list.json` only; no feature, dependency, runtime, source, service, notification, or real/private-data change.
 - Accepted-state follow-up: the shared accepted pushed contract remains `v1.1.77 at 80e53c7` until a separate post-closeout contract refresh; final pushed equality is recorded in the nested closeout proof.
+
+## Public data pilot 1B official APWU-USPS CBA closeout and push
+
+- Phase: `KIA-Stick-public-data-pilot-1B-official-APWU-USPS-CBA-closeout-and-push`.
+- Implementation commit: `0842b67345dd9bfd2590afefb01b877f8f68d3e8` on the accepted Public Data Pilot 1A pushed baseline `04774874c5a20b2b38d435fb66ba2b1cfb9c9e29`.
+- Capability: exact allowlisted official final 2024-2027 APWU-USPS CBA; deterministic Poppler extraction, article/section/page/paragraph navigation, lexical search, CBA-specific Chat answers, exact citations, Saved metadata, and strict NLRB/fake separation.
+- Implementation proof: `/home/mint/kia-stick-local-proofs/proof_kia_stick_public_data_pilot_1B_official_apwu_usps_cba_20260717T135027Z`; validation PASS.
+- Operator QA: PASS by `OPERATOR_QA_PASS for /home/mint/kia-stick-local-proofs/proof_kia_stick_public_data_pilot_1B_official_apwu_usps_cba_20260717T135027Z`; recording proof is `/home/mint/kia-stick-local-proofs/proof_kia_stick_public_data_pilot_1B_official_apwu_usps_cba_operator_qa_pass_recording_20260717T150520Z`.
+- Closeout/push authorization: `CLOSEOUT_AND_PUSH_PUBLIC_DATA_PILOT_1B_AUTHORIZED`.
+- Canonical closeout/push proof: `/home/mint/kia-stick-local-proofs/proof_kia_stick_public_data_pilot_1B_official_apwu_usps_cba_operator_qa_pass_recording_20260717T150520Z/closeout_push_20260717T151924Z`.
+- Closeout scope: `CLOSEOUT.md`, `claude-progress.md`, and `feature_list.json` only; no feature, dependency, runtime, source, service, scheduler, notification, additional public source, or private-data change.
+- Accepted-state governance: the capability bundle records Public Data Pilot 1A at `0477487` as current accepted pushed state; this closeout does not create a standalone refresh or v1.1.78-to-v1.1.82 metadata ladder.
+- Next planned phase: separately authorized read-only Fable 5 architecture, safety, and UX audit. queue-015, Next/PostCSS, and v0.9.12C remain blocked or parked; product/package remain `0.7.0`.

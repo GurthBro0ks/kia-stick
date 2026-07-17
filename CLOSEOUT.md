@@ -1,3 +1,20 @@
+## Public Data Pilot 1B Official APWU-USPS CBA Closeout and Push
+
+- Phase: `KIA-Stick-public-data-pilot-1B-official-APWU-USPS-CBA-closeout-and-push`.
+- Authorization: `CLOSEOUT_AND_PUSH_PUBLIC_DATA_PILOT_1B_AUTHORIZED`.
+- Official CBA implementation commit: `0842b67345dd9bfd2590afefb01b877f8f68d3e8`.
+- Implementation proof: `/home/mint/kia-stick-local-proofs/proof_kia_stick_public_data_pilot_1B_official_apwu_usps_cba_20260717T135027Z`.
+- Operator QA PASS proof: `/home/mint/kia-stick-local-proofs/proof_kia_stick_public_data_pilot_1B_official_apwu_usps_cba_operator_qa_pass_recording_20260717T150520Z`.
+- Canonical closeout/push proof: `/home/mint/kia-stick-local-proofs/proof_kia_stick_public_data_pilot_1B_official_apwu_usps_cba_operator_qa_pass_recording_20260717T150520Z/closeout_push_20260717T151924Z`.
+- Validation and manual QA: `PASS` / `PASS`; official final CBA ingestion, deterministic extraction/search, Chat routing, exact citations, Saved metadata, source separation, missing-cache safety, and fake isolation are accepted.
+- Source boundary: the exact allowlisted official final 2024-2027 APWU-USPS CBA plus the existing NLRB source only; no JCIM, LMOU, handbook, manual, arbitration decision, grievance/member/private data, OCR, embedding, vector store, LLM, or additional URL.
+- Closeout scope: `CLOSEOUT.md`, `claude-progress.md`, and `feature_list.json` only; no runtime, source, dependency, package, lockfile, service, scheduler, notification, or private-data change.
+- Push gate: one authorized push of `main`; final pushed SHA and `HEAD == origin/main` equality are recorded in the canonical proof to avoid a self-referential repository SHA.
+- Accepted-state contract note: the Pilot 1B capability bundle already records Public Data Pilot 1A at `0477487` as the current accepted pushed baseline. No standalone accepted-state refresh or v1.1.78-to-v1.1.82 metadata ladder is created by this closeout.
+- Next planned phase: a separately authorized read-only Fable 5 architecture, safety, and UX audit; no implementation authorization is implied.
+- Blocked states preserved: queue-015 remains blocked; Next/PostCSS remains `WARN_SAFE_NEXT_TARGET_UNCLEAR`; v0.9.12C remains parked pending exact approval; product/package remain `0.7.0`.
+- Notifications: Discord disabled; no duplicate notification; no report URL.
+
 ## Public Data Pilot 1A Chat Routing Repair Closeout and Push
 
 - Phase: `KIA-Stick-public-data-pilot-1A-public-chat-routing-repair-closeout-and-push`.
