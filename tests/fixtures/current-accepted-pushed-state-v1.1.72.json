@@ -1,0 +1,219 @@
+{
+  "schema": "kia-stick-current-accepted-pushed-state.v1",
+  "phase": "KIA-Stick-v1.1.73-to-v1.1.77-post-closeout-accepted-state-contract-refresh",
+  "checkpoint": "v1.1.72",
+  "checkpoint_label": "v1.1.72 at ab1878e",
+  "accepted_pushed_commit": "ab1878e4c681c8f658e8a5bf6bd36f3ad4423fea",
+  "accepted_pushed_short_commit": "ab1878e",
+  "accepted_pushed_proof_dir": "/home/mint/kia-stick-local-proofs/proof_kia_stick_v1_1_68_to_v1_1_72_post_closeout_accepted_state_contract_refresh_20260717T092307Z/closeout_push_20260717T095029Z",
+  "local_implementation_proof_dir": "/home/mint/kia-stick-local-proofs/proof_kia_stick_v1_1_68_to_v1_1_72_post_closeout_accepted_state_contract_refresh_20260717T092307Z",
+  "operator_qa_pass_proof_dir": "/home/mint/kia-stick-local-proofs/proof_kia_stick_v1_1_68_to_v1_1_72_post_closeout_accepted_state_contract_refresh_20260717T092307Z/operator_qa_pass_20260717T094539Z",
+  "accepted_pushed_phase": "KIA-Stick-v1.1.68-to-v1.1.72-operator-qa-pass-closeout-and-push",
+  "accepted_validation": "PASS",
+  "accepted_manual_qa": "PASS",
+  "accepted_pushed": true,
+  "accepted_equality": "HEAD == origin/main == ab1878e4c681c8f658e8a5bf6bd36f3ad4423fea",
+  "local_bundle_phase": "KIA-Stick-v1.1.73-to-v1.1.77-post-closeout-accepted-state-contract-refresh",
+  "local_bundle_status": "v1.1.73-to-v1.1.77 post-closeout accepted-state contract refresh; validation PASS; pushed no; manual QA pending",
+  "historical_prior_checkpoints": [
+    { "checkpoint": "v1.1.67", "commit": "0cb007d38c6e17d316cc25640f0fb28b2b934c55", "short_commit": "0cb007d", "status": "historical_only_not_current" },
+    { "checkpoint": "v1.1.62", "commit": "84b5dacb2bf9453040e382b44843fe775ed5b91d", "short_commit": "84b5dac", "status": "historical_only_not_current" },
+    { "checkpoint": "v1.1.57", "commit": "65f88659b238ae0cfacd51f0dab71844d885a76c", "short_commit": "65f8865", "status": "historical_only_not_current" },
+    { "checkpoint": "v1.1.52", "commit": "857ba0e0180b2bca27823367c871429ece0c5214", "short_commit": "857ba0e", "status": "historical_only_not_current" },
+    { "checkpoint": "v1.1.47", "commit": "b8fb8341b19980c33d7163a6993cc0e8ba520641", "short_commit": "b8fb834", "status": "historical_only_not_current" },
+    { "checkpoint": "v1.1.42", "commit": "0286f03ffe8055395cc4d02ee83ddc0deb6143f1", "short_commit": "0286f03", "status": "historical_only_not_current" },
+    { "checkpoint": "v1.1.37", "commit": "ac23ed94adec34bd32062018bf20b0de616da395", "short_commit": "ac23ed9", "status": "historical_only_not_current" },
+    { "checkpoint": "v1.1.32", "commit": "05cb5592758fde1dddaf10e2582e7d6222d43df5", "short_commit": "05cb559", "status": "historical_only_not_current" },
+    { "checkpoint": "v1.1.27", "commit": "a215dd4ac4687ea878263d38ea9d4bdbaf444a71", "short_commit": "a215dd4", "status": "historical_only_not_current" },
+    { "checkpoint": "v1.1.22", "commit": "0051a1503db5d5ecf062de1595129c5eac9114d6", "short_commit": "0051a15", "status": "historical_only_not_current" },
+    {
+      "checkpoint": "v1.1.17",
+      "commit": "aa8f8c651a000037f403abd41bc206bda161a861",
+      "short_commit": "aa8f8c6",
+      "status": "historical_only_not_current"
+    },
+    {
+      "checkpoint": "v1.1.12",
+      "commit": "b911fd1530d5fc106b3368339a439527c2a43538",
+      "short_commit": "b911fd1",
+      "status": "historical_only_not_current"
+    },
+    {
+      "checkpoint": "v1.1.7",
+      "commit": "628fbd477ad12b77fea98e86a132cdf69412bbfe",
+      "short_commit": "628fbd4",
+      "status": "historical_only_not_current"
+    },
+    {
+      "checkpoint": "v1.1.2",
+      "commit": "6d0715be19ed40d0f97a71022ae08912f1a82666",
+      "short_commit": "6d0715b",
+      "status": "historical_only_not_current"
+    },
+    {
+      "checkpoint": "v1.0.97",
+      "commit": "1da06ffaa37b3787a652c1761e1c3f24b26df691",
+      "short_commit": "1da06ff",
+      "status": "historical_only_not_current"
+    },
+    {
+      "checkpoint": "v1.0.92",
+      "commit": "02694353a7cbaa71da9ab0c8bb458790636628cb",
+      "short_commit": "0269435",
+      "status": "historical_only_not_current"
+    },
+    {
+      "checkpoint": "v1.0.87",
+      "commit": "fcf5097fa2b43fd4d3a70ceaf68a02e29913ec0e",
+      "short_commit": "fcf5097",
+      "status": "historical_only_not_current"
+    },
+    {
+      "checkpoint": "v1.0.82",
+      "commit": "6ca589dd09411da51e55868a805d3b0de4ab9688",
+      "short_commit": "6ca589d",
+      "status": "historical_only_not_current"
+    },
+    {
+      "checkpoint": "v1.0.77",
+      "commit": "f662b37de1eccf9f924d515615ef555270ee9d6d",
+      "short_commit": "f662b37",
+      "status": "historical_only_not_current"
+    },
+    {
+      "checkpoint": "v1.0.72",
+      "commit": "cf2be1ffde6d52d6ad01f54f52ce8e8d7c937358",
+      "short_commit": "cf2be1f",
+      "status": "historical_only_not_current"
+    },
+    {
+      "checkpoint": "v1.0.67",
+      "commit": "d099ff5b163e3b5db0bcc8a0b50d683f9448c8b0",
+      "short_commit": "d099ff5",
+      "status": "historical_only_not_current"
+    },
+    {
+      "checkpoint": "v1.0.62",
+      "commit": "73b3f38a5e4022d336fb767987ff964df734fcde",
+      "short_commit": "73b3f38",
+      "status": "historical_only_not_current"
+    },
+    {
+      "checkpoint": "v1.0.57",
+      "commit": "5b7a57584cc66d8b9ef9b7ff905c1682e58a9caa",
+      "short_commit": "5b7a575",
+      "status": "historical_only_not_current"
+    },
+    {
+      "checkpoint": "v1.0.52",
+      "commit": "720a58a1973e77dd3617fa0558478ae8c9b96214",
+      "short_commit": "720a58a",
+      "status": "historical_only_not_current"
+    },
+    {
+      "checkpoint": "v1.0.47",
+      "commit": "5c7f3600267f161db3d773181d82a3c4f4727dea",
+      "short_commit": "5c7f360",
+      "status": "historical_only_not_current"
+    },
+    {
+      "checkpoint": "v1.0.42",
+      "commit": "886631f9578100965032f55284e442f0f1360b0c",
+      "short_commit": "886631f",
+      "status": "historical_only_not_current"
+    },
+    {
+      "checkpoint": "v1.0.37",
+      "commit": "841dee7d44e2af18d60500b13880ba99c1bee9a6",
+      "short_commit": "841dee7",
+      "status": "historical_only_not_current"
+    },
+    {
+      "checkpoint": "v1.0.32",
+      "commit": "870d3a77002548765154d73b2c088c1327580c6a",
+      "short_commit": "870d3a7",
+      "status": "historical_only_not_current"
+    },
+    {
+      "checkpoint": "v1.0.27",
+      "commit": "87420e2e293fd86b2b76c66729e0e905bb688c0d",
+      "short_commit": "87420e2",
+      "status": "historical_only_not_current"
+    },
+    {
+      "checkpoint": "v1.0.22",
+      "commit": "8b4274413ca056a4b647a163fd79c8165a024820",
+      "short_commit": "8b42744",
+      "status": "historical_only_not_current"
+    },
+    {
+      "checkpoint": "v1.0.17",
+      "commit": "b4b9fcfce31108b09350e7d304fd1cff105edc31",
+      "short_commit": "b4b9fcf",
+      "status": "historical_only_not_current"
+    },
+    {
+      "checkpoint": "v1.0.12",
+      "commit": "20485da8d731ac94a12dd58d77a68e64bf296c5b",
+      "short_commit": "20485da",
+      "status": "historical_only_not_current"
+    },
+    {
+      "checkpoint": "v1.0.7",
+      "commit": "97574a91a5c19fda174ccd646aac96d3aaec688a",
+      "short_commit": "97574a9",
+      "status": "historical_only_not_current"
+    },
+    {
+      "checkpoint": "v1.0.2",
+      "commit": "80e91c74855dae6ee51bd9068e2794d08c495ec0",
+      "short_commit": "80e91c7",
+      "status": "historical_only_not_current"
+    },
+    {
+      "checkpoint": "v0.9.97",
+      "commit": "dfa7052e5bd87e8e96362c0e93565a29409964b3",
+      "short_commit": "dfa7052",
+      "status": "historical_only_not_current"
+    },
+    {
+      "checkpoint": "v0.9.92",
+      "commit": "c72f14f15859c105637aa4193a976303a7de3233",
+      "short_commit": "c72f14f",
+      "status": "historical_only_not_current"
+    },
+    {
+      "checkpoint": "v0.9.87",
+      "commit": "d20e1251d5e7c117aa9592fb8614acb77ab3220b",
+      "short_commit": "d20e125",
+      "status": "historical_only_not_current"
+    },
+    {
+      "checkpoint": "v0.9.82",
+      "commit": "bc8fbef3114631ea3e0363b8e700ce0c2dce236e",
+      "short_commit": "bc8fbef",
+      "status": "historical_only_not_current"
+    },
+    {
+      "checkpoint": "v0.9.77",
+      "commit": "cfa7c2c72cbff14a8e9515119256a806a7b00bcd",
+      "short_commit": "cfa7c2c",
+      "status": "historical_only_not_current"
+    },
+    {
+      "checkpoint": "v0.9.67",
+      "commit": "1465817e8efad6207705833e9e08f22030d6a116",
+      "short_commit": "1465817",
+      "status": "historical_only_not_current"
+    }
+  ],
+  "next_postcss_status": "WARN_SAFE_NEXT_TARGET_UNCLEAR",
+  "v0912c_status": "blocked_pending_exact_target",
+  "queue_015_status": "blocked",
+  "real_doc_implementation_approved": false,
+  "package_version": "0.7.0",
+  "product_version": "0.7.0",
+  "prompt_version": "prompt.fake-docs.v0.5-import-wizard-hardening",
+  "package_json_changed": false,
+  "package_lock_changed": false
+}

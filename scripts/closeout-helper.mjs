@@ -4,21 +4,17 @@ import path from "node:path";
 import { spawnSync } from "node:child_process";
 import { discoverProofDirs, parseResultMarkdown, redactProofText, selectLatestProof } from "./proof-index.mjs";
 import { loadQueue, selectNextItem } from "./task-queue.mjs";
+import { readCurrentAcceptedPushedState } from "./accepted-state.mjs";
 
 const FALLBACK_PROOF_ROOT = "/tmp";
 const PERSISTENT_KIA_PROOF_ROOT = "/home/mint/kia-stick-local-proofs";
 const SAFE_PROOF_ROOTS = ["/tmp", "/home/mint/kia-stick-local-proofs"];
 const readyQueueStatuses = new Set(["ready_to_push", "accepted"]);
-const CURRENT_ACCEPTED_PUSHED_STATE_PATH = "data/current-accepted-pushed-state.json";
 
 function readJson(root, relativePath, fallback = {}) {
   const fullPath = path.join(root, relativePath);
   if (!existsSync(fullPath)) return fallback;
   return JSON.parse(readFileSync(fullPath, "utf8"));
-}
-
-function readCurrentAcceptedPushedState(root) {
-  return readJson(root, CURRENT_ACCEPTED_PUSHED_STATE_PATH, {});
 }
 
 function gitOutput(root, args) {

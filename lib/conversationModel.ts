@@ -10,6 +10,7 @@ export interface ModeScopeDetailSnapshot {
   mode: Mode;
   scope: Scope;
   detail: Detail;
+  sourceMode?: "fake" | "public";
 }
 
 export interface BaseChatMessage {
@@ -113,11 +114,15 @@ export function createLoadingAssistantMessage(input: {
   now?: string;
 }): AssistantMessage {
   const now = input.now ?? new Date().toISOString();
+  const publicMode = input.modeScopeDetail.sourceMode === "public";
   const placeholder = {
-    question: "Generating fake answer...",
+    answerKind: publicMode ? "public" : "fake",
+    question: publicMode ? "Checking the public source..." : "Generating fake answer...",
     intent: "unknown",
-    shortAnswer: "Checking the fake source trail...",
-    modeNote: "Local deterministic fake provider is preparing the next response.",
+    shortAnswer: publicMode ? "Checking the one allowlisted public source..." : "Checking the fake source trail...",
+    modeNote: publicMode
+      ? "Local deterministic public-source provider is preparing a citation-first response."
+      : "Local deterministic fake provider is preparing the next response.",
     noAnswer: true,
     bestGuessDisabled: true,
     sourceGroups: [],
@@ -127,7 +132,9 @@ export function createLoadingAssistantMessage(input: {
     missingFacts: [],
     followUps: [],
     relatedFakeSections: [],
-    footer: "Sources:0 | Provider:local-fake-deterministic",
+    footer: publicMode
+      ? "PUBLIC DATA PILOT | Sources:0 | Provider:local-public-static-deterministic"
+      : "Sources:0 | Provider:local-fake-deterministic",
     version: {
       productVersion: "0.7.0",
       channel: "dev",
@@ -136,8 +143,8 @@ export function createLoadingAssistantMessage(input: {
       displayVersion: "0.7.0-dev.unknown+unknown",
       corpusVersion: "unknown",
       indexVersion: "unknown",
-      promptVersion: "unknown",
-      provider: "local-fake-deterministic",
+      promptVersion: publicMode ? "prompt.public-docs.v0.1-citation-first" : "unknown",
+      provider: publicMode ? "local-public-static-deterministic" : "local-fake-deterministic",
     },
     generatedAt: now,
   } satisfies AnswerResult;

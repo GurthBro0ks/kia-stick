@@ -6,7 +6,7 @@ const proof = "/home/mint/kia-stick-local-proofs/proof_kia_stick_v1_1_68_to_v1_1
 
 describe("v1.1.33 accepted pushed state checkpoint", () => {
   it("records the v1.1.32 closeout as the single current baseline", () => {
-    const contract = JSON.parse(readFileSync("data/current-accepted-pushed-state.json", "utf8"));
+    const contract = JSON.parse(readFileSync("tests/fixtures/current-accepted-pushed-state-v1.1.72.json", "utf8"));
     expect(contract.checkpoint_label).toBe("v1.1.72 at ab1878e");
     expect(contract.accepted_pushed_commit).toBe(commit);
     expect(contract.accepted_pushed_proof_dir).toBe(proof);

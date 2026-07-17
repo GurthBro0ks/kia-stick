@@ -1,6 +1,7 @@
 import { spawnSync } from "node:child_process";
 import { readFileSync } from "node:fs";
 import { describe, expect, it } from "vitest";
+import { expectCurrentCloseoutSummary } from "@/tests/helpers/currentAcceptedState";
 
 const phase = "KIA-Stick-v0.9.96-proof-index-closeout-helper-stale-baseline-guard";
 const docPath = "docs/v0.9.96-proof-index-closeout-helper-stale-baseline-guard.md";
@@ -29,8 +30,8 @@ describe("v0.9.96 proof-index and closeout-helper stale-baseline guard", () => {
     });
 
     expect(summary.status).toBe(0);
-    expect(summary.stdout).toContain("PROOF_CHAIN_ACCEPTED_PUSHED_CHECKPOINT=ab1878e");
-    expect(summary.stdout).toContain(`PROOF_CHAIN_CLOSEOUT_PUSH_PROOF=${currentProof}`);
+    expectCurrentCloseoutSummary(summary.stdout);
+
   });
 
   it("tracks stale-baseline guard state", () => {

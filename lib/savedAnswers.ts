@@ -207,6 +207,8 @@ export function migrateSavedAnswers(input: unknown): SavedAnswer[] {
     };
 
     try {
+      const hasPublicCitation = citations.some((citation) => citation?.sourceKind === "public");
+      if (hasPublicCitation) throw new Error("Preserve public-source citation identity without fake answer rebuilding.");
       const rebuiltAnswer = buildAnswer(question, {
         mode,
         scope,

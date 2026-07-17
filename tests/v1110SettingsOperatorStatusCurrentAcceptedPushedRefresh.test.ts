@@ -25,11 +25,11 @@ describe("v1.1.10 Settings operator-status current accepted pushed refresh", () 
   it("uses the shared contract in runtime Settings and keeps stale current labels out", () => {
     const component = readFileSync(componentPath, "utf8");
     const contract = readFileSync(
-      "data/current-accepted-pushed-state.json",
+      "tests/fixtures/current-accepted-pushed-state-v1.1.72.json",
       "utf8",
     );
     expect(component).toContain(
-      'import currentAcceptedPushedState from "@/data/current-accepted-pushed-state.json";',
+      'from "@/lib/acceptedState"',
     );
     expect(contract).toContain('"checkpoint_label": "v1.1.72 at ab1878e"');
     expect(contract).toContain(

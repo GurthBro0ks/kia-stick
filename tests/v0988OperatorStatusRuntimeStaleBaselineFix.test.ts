@@ -31,9 +31,9 @@ describe("v0.9.83 to v0.9.87 operator-status runtime stale-baseline fix", () => 
 
   it("surfaces the post-v0.9.92 c72f14f baseline in runtime Settings and keeps older baselines historical", () => {
     const component = readFileSync(componentPath, "utf8");
-    const contract = readFileSync("data/current-accepted-pushed-state.json", "utf8");
+    const contract = readFileSync("tests/fixtures/current-accepted-pushed-state-v1.1.72.json", "utf8");
 
-    expect(component).toContain('import currentAcceptedPushedState from "@/data/current-accepted-pushed-state.json";');
+    expect(component).toContain('from "@/lib/acceptedState"');
     expect(contract).toContain('"checkpoint_label": "v1.1.72 at ab1878e"');
     expect(contract).toContain('"accepted_pushed_commit": "ab1878e4c681c8f658e8a5bf6bd36f3ad4423fea"');
     expect(component).toContain("Current accepted pushed checkpoint: {currentAcceptedPushedState.checkpoint_label}");

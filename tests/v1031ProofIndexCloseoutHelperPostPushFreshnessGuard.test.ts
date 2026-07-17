@@ -1,6 +1,7 @@
 import { spawnSync } from "node:child_process";
 import { readFileSync } from "node:fs";
 import { describe, expect, it } from "vitest";
+import { expectCurrentCloseoutSummary } from "@/tests/helpers/currentAcceptedState";
 
 const phase = "KIA-Stick-v1.0.31-proof-index-closeout-helper-post-push-freshness-guard";
 const docPath = "docs/v1.0.31-proof-index-closeout-helper-post-push-freshness-guard.md";
@@ -17,8 +18,8 @@ describe("v1.0.31 proof-index and closeout-helper post-push freshness guard", ()
   it("reports 87420e2 from closeout helper current proof-chain selection", () => {
     const summary = spawnSync("node", ["scripts/closeout-helper.mjs", "summary", "--proof-dir", currentProof], { encoding: "utf8" });
     expect(summary.status).toBe(0);
-    expect(summary.stdout).toContain("PROOF_CHAIN_ACCEPTED_PUSHED_CHECKPOINT=ab1878e");
-    expect(summary.stdout).toContain("PROOF_CHAIN_CLOSEOUT_PUSH_PROOF=" + currentProof);
+    expectCurrentCloseoutSummary(summary.stdout);
+
     for (const stale of ["8b42744","b4b9fcf","20485da","97574a9","80e91c7","dfa7052","c72f14f","d20e125","bc8fbef","cfa7c2c","1465817"]) {
       expect(summary.stdout).not.toContain("PROOF_CHAIN_ACCEPTED_PUSHED_CHECKPOINT=" + stale);
     }

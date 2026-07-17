@@ -7,7 +7,7 @@ const history = ["0cb007d","84b5dac","65f8865","857ba0e","b8fb834","0286f03","ac
 
 describe("v1.1.58 accepted pushed state checkpoint", () => {
   it("records v1.1.57 as the single current baseline with exact history", () => {
-    const contract = JSON.parse(readFileSync("data/current-accepted-pushed-state.json", "utf8"));
+    const contract = JSON.parse(readFileSync("tests/fixtures/current-accepted-pushed-state-v1.1.72.json", "utf8"));
     expect(contract.phase).toBe("KIA-Stick-v1.1.73-to-v1.1.77-post-closeout-accepted-state-contract-refresh");
     expect(contract.checkpoint_label).toBe("v1.1.72 at ab1878e");
     expect(contract.accepted_pushed_commit).toBe(commit);

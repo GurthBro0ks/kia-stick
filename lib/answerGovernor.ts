@@ -46,6 +46,7 @@ export interface AnswerSourceGroup {
 }
 
 export interface AnswerResult {
+  answerKind?: "fake" | "public";
   question: string;
   resolvedQuestion?: string;
   contextNote?: string;
@@ -470,6 +471,7 @@ export function buildAnswer(question: string, options: AnswerOptions): AnswerRes
   const footer = `Sources:${docs.length} | Corpus:${runtimeVersion.corpusVersion} | Index:${runtimeVersion.indexVersion} | Build:${runtimeVersion.displayVersion} | Mode:${options.mode}`;
 
   return {
+    answerKind: "fake",
     question: resolution.originalQuestion,
     resolvedQuestion: resolution.governedQuestion !== resolution.originalQuestion ? resolution.governedQuestion : undefined,
     contextNote: resolution.contextNote,
@@ -495,7 +497,7 @@ export function buildAnswer(question: string, options: AnswerOptions): AnswerRes
 export function answerToMarkdown(answer: AnswerResult): string {
   const citations = answer.citations.length > 0
     ? answer.citations.map((citation, index) => `${index + 1}. ${citationLabel(citation)}`).join("\n")
-    : "No citable fake sources.";
+    : answer.answerKind === "public" ? "No supported public-source citation." : "No citable fake sources.";
 
   return [
     `Short answer: ${answer.shortAnswer}`,

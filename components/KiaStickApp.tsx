@@ -21,6 +21,7 @@ import {
 } from "lucide-react";
 import React, { useEffect, useMemo, useRef, useState } from "react";
 import { buildAnswer, cannedQuestions, type AnswerResult } from "@/lib/answerGovernor";
+import { buildPublicSourceAnswer } from "@/lib/publicSourceAnswer";
 import {
   appendTurn,
   createAssistantMessage,
@@ -60,6 +61,7 @@ import {
   citationLabel,
   sourceClassLabels,
   type Detail,
+  type Citation,
   type Mode,
   type Scope,
 } from "@/lib/sourceModel";
@@ -83,10 +85,21 @@ import {
   type VaultWorkflowState,
 } from "@/lib/vaultModel";
 import { clientVersion, type RuntimeVersion } from "@/lib/version";
-import currentAcceptedPushedState from "@/data/current-accepted-pushed-state.json";
+import { currentAcceptedPushedState, historicalAcceptedPushedShortCommits } from "@/lib/acceptedState";
+import {
+  PUBLIC_SOURCE_APPLICABILITY_WARNING,
+  PUBLIC_SOURCE_ID,
+  PUBLIC_SOURCE_PROMPT_VERSION,
+  PUBLIC_SOURCE_PROVIDER,
+  PUBLIC_SOURCE_URL,
+  publicPilotQuestions,
+  type PublicSourceRouteResponse,
+} from "@/lib/publicSource";
 
 type Tab = "chat" | "sources" | "saved" | "upload" | "vault" | "import" | "settings";
 type VaultView = "vault" | "quarantine" | "redaction" | "metadata" | "index" | "audit";
+type ChatSourceMode = "fake" | "public";
+type PublicSourceLoadState = { status: "loading" } | PublicSourceRouteResponse;
 
 export interface QuarantineItem {
   id: string;
@@ -158,10 +171,6 @@ const acceptedOperatorCheckpoint = [
   { label: "Package lock", value: "unchanged; no install/update/audit-fix/dedupe/prune" },
 ];
 
-const historicalAcceptedPushedShortCommits = currentAcceptedPushedState.historical_prior_checkpoints
-  .map((checkpoint) => checkpoint.short_commit)
-  .join(", ");
-
 const intentLabels: Record<AnswerResult["intent"], string> = {
   annual_leave: "Annual leave",
   steward_request: "Steward request",
@@ -187,9 +196,14 @@ function savedBuildLabel(item: SavedAnswer): string {
   return item.version?.displayVersion ?? item.provider ?? "unknown";
 }
 
-function saveStatusText(status: SaveAnswerStatus): string {
-  if (status === "created") return "Saved fake answer to Saved with current version metadata.";
-  if (status === "replaced") return "Updated the saved answer with newer fake metadata.";
+function publicCitationForSaved(item: SavedAnswer): Citation | undefined {
+  return item.citations.find((citation) => citation.sourceKind === "public");
+}
+
+function saveStatusText(status: SaveAnswerStatus, answerKind: AnswerResult["answerKind"]): string {
+  const kind = answerKind === "public" ? "public-source" : "fake";
+  if (status === "created") return `Saved ${kind} answer with source and provider metadata.`;
+  if (status === "replaced") return `Updated the saved ${kind} answer with newer metadata.`;
   return "Already saved. No duplicate Saved record was created.";
 }
 
@@ -202,6 +216,8 @@ export function KiaStickApp({ runtimeVersion = clientVersion }: { runtimeVersion
   const [mode, setMode] = useState<Mode>("Strict Research");
   const [scope, setScope] = useState<Scope>("All Fake");
   const [detail, setDetail] = useState<Detail>("Detailed");
+  const [chatSourceMode, setChatSourceMode] = useState<ChatSourceMode>("fake");
+  const [publicSourceState, setPublicSourceState] = useState<PublicSourceLoadState>({ status: "loading" });
   const [draft, setDraft] = useState("");
   const [thread, setThread] = useState<ConversationThread>(() => createConversationThread());
   const [isSending, setIsSending] = useState(false);
@@ -227,6 +243,21 @@ export function KiaStickApp({ runtimeVersion = clientVersion }: { runtimeVersion
     if ("serviceWorker" in navigator) {
       navigator.serviceWorker.register("/sw.js").catch(() => undefined);
     }
+  }, []);
+
+  useEffect(() => {
+    let cancelled = false;
+    fetch("/api/public-source", { method: "GET", cache: "no-store" })
+      .then(async (response) => {
+        const payload = (await response.json()) as PublicSourceRouteResponse;
+        if (!cancelled && (payload.status === "available" || payload.status === "unavailable")) setPublicSourceState(payload);
+      })
+      .catch(() => {
+        if (!cancelled) setPublicSourceState({ status: "unavailable", reason: "cache_unsafe" });
+      });
+    return () => {
+      cancelled = true;
+    };
   }, []);
 
   useEffect(() => {
@@ -283,11 +314,20 @@ export function KiaStickApp({ runtimeVersion = clientVersion }: { runtimeVersion
   }) {
     window.setTimeout(() => {
       try {
-        const answer = buildAnswer(input.userMessage.content, {
-          ...input.snapshot,
-          runtimeVersion,
-          threadHistory: recentAnswerHistory(input.baseThread),
-        });
+        const answer = input.snapshot.sourceMode === "public"
+          ? buildPublicSourceAnswer({
+              question: input.userMessage.content,
+              source: publicSourceState.status === "available" ? publicSourceState.source : null,
+              runtimeVersion,
+              mode: input.snapshot.mode,
+              scope: input.snapshot.scope,
+              detail: input.snapshot.detail,
+            })
+          : buildAnswer(input.userMessage.content, {
+              ...input.snapshot,
+              runtimeVersion,
+              threadHistory: recentAnswerHistory(input.baseThread),
+            });
         const assistantMessage = createAssistantMessage({
           threadId: input.userMessage.threadId,
           turnId: input.userMessage.turnId,
@@ -300,7 +340,7 @@ export function KiaStickApp({ runtimeVersion = clientVersion }: { runtimeVersion
         const failedMessage: AssistantMessage = {
           ...input.loadingMessage,
           status: "failed",
-          content: "KIA Stick could not generate this fake response.",
+          content: "KIA Stick could not generate this local deterministic response.",
           error: error instanceof Error ? error.message : "Unknown generation failure.",
           createdAt: new Date().toISOString(),
         };
@@ -315,7 +355,7 @@ export function KiaStickApp({ runtimeVersion = clientVersion }: { runtimeVersion
   function sendMessage(messageText = draft) {
     const content = messageText.trim();
     if (!content || isSending) return;
-    const snapshot = { mode, scope, detail };
+    const snapshot: ModeScopeDetailSnapshot = { mode, scope, detail, sourceMode: chatSourceMode };
     const baseThread = thread;
     const userMessage = createUserMessage({
       threadId: thread.threadId,
@@ -367,7 +407,9 @@ export function KiaStickApp({ runtimeVersion = clientVersion }: { runtimeVersion
     if (message.answer.noAnswer) {
       setSaveNotice({
         status: "duplicate",
-        text: "No-answer responses stay out of Saved. Review the context-only fake trail instead.",
+        text: message.answer.answerKind === "public"
+          ? "No-answer responses stay out of Saved. Review the one-source public pilot instead."
+          : "No-answer responses stay out of Saved. Review the context-only fake trail instead.",
       });
       return;
     }
@@ -380,19 +422,27 @@ export function KiaStickApp({ runtimeVersion = clientVersion }: { runtimeVersion
     });
     setSaved((current) => {
       const result = upsertSavedAnswer(current, record);
-      setSaveNotice({ status: result.status, text: saveStatusText(result.status) });
+      setSaveNotice({ status: result.status, text: saveStatusText(result.status, message.answer.answerKind) });
       return result.saved;
     });
   }
 
   function startNewChat() {
-    if (thread.messages.length > 0 && !window.confirm("Start a new fake chat and clear the current thread?")) return;
+    if (thread.messages.length > 0 && !window.confirm("Start a new chat and clear the current thread?")) return;
     setThread(createConversationThread());
     setDraft("");
     setSaveNotice(null);
     setIsSending(false);
     setPendingScroll(true);
     setTab("chat");
+  }
+
+  function navigateToCitation(citation: Citation) {
+    if (citation.sourceKind !== "public" || !citation.paragraphId) return;
+    setTab("sources");
+    window.setTimeout(() => {
+      document.getElementById(`public-source-${citation.paragraphId}`)?.scrollIntoView({ behavior: "smooth", block: "center" });
+    }, 0);
   }
 
   function queueFakeUpload(kind: "single" | "batch") {
@@ -455,7 +505,7 @@ export function KiaStickApp({ runtimeVersion = clientVersion }: { runtimeVersion
 
       <div className="fakeNotice" role="status">
         <AlertTriangle size={16} />
-        <span>Fake sample mode only. No cloud keys, real uploads, or real-doc gate are active.</span>
+        <span>Fake sample mode only remains isolated. PUBLIC DATA PILOT: one allowlisted source, local read-only, no private data. No cloud keys, real uploads, or real-doc gate are active.</span>
       </div>
 
       <main className={tab === "chat" ? "mainArea chatMain" : "mainArea"} ref={chatScrollRef}>
@@ -464,8 +514,8 @@ export function KiaStickApp({ runtimeVersion = clientVersion }: { runtimeVersion
             <section className="chatThread" aria-label="Current conversation">
               {thread.messages.length === 0 && (
                 <div className="emptyChatState">
-                  <span className="messageLabel">New fake chat</span>
-                  <p>Ask a fake-doc question to start a cited thread.</p>
+                  <span className="messageLabel">New fake chat / public pilot</span>
+                  <p>Select the fake corpus or the one-source public pilot, then ask a cited question.</p>
                 </div>
               )}
               {thread.messages.map((message, index) =>
@@ -478,6 +528,7 @@ export function KiaStickApp({ runtimeVersion = clientVersion }: { runtimeVersion
                     turnLabel={`Turn ${Math.floor(index / 2) + 1}`}
                     onRetry={() => retryAssistant(message)}
                     onSave={() => saveAssistantAnswer(message)}
+                    onCitationNavigate={navigateToCitation}
                   />
                 )
               )}
@@ -486,7 +537,7 @@ export function KiaStickApp({ runtimeVersion = clientVersion }: { runtimeVersion
         )}
 
         {tab === "sources" && (
-          <SourcesPanel sourceHierarchyGroups={sourceHierarchyGroups} runtimeVersion={runtimeVersion} />
+          <SourcesPanel publicSourceState={publicSourceState} sourceHierarchyGroups={sourceHierarchyGroups} runtimeVersion={runtimeVersion} />
         )}
 
         {tab === "saved" && (
@@ -528,21 +579,21 @@ export function KiaStickApp({ runtimeVersion = clientVersion }: { runtimeVersion
         {tab === "settings" && (
           <section className="tabPanel settingsPanel">
             <PanelHeader title="Settings" meta={<a href="/version">Version page</a>} />
-            <section className="aboutPanel" aria-label="About this fake MVP">
-              <span className="sectionKicker">About this fake MVP</span>
-              <h3>Local deterministic fake-doc mode</h3>
+            <section className="aboutPanel" aria-label="About local isolated data modes">
+              <span className="sectionKicker">Local isolated data modes</span>
+              <h3>Fake corpus plus one exact public source</h3>
               <p>
-                KIA Stick answers from the bundled fake corpus only. Chat threads, Saved Answers, quarantine metadata, and Vault review state stay in this browser unless you clear them.
+                KIA Stick keeps the bundled fake corpus available under provider `local-fake-deterministic`. The separate public pilot reads one validated local cache for `{PUBLIC_SOURCE_ID}` under provider `{PUBLIC_SOURCE_PROVIDER}` and prompt `{PUBLIC_SOURCE_PROMPT_VERSION}`.
               </p>
               <p>
-                This build does not read private folders, real APWU/USPS/member/local/case documents, cloud services, or external APIs. The real-doc gate remains blocked until a future operator-approved phase.
+                This build does not read private folders, real APWU/USPS/member/local/case documents, cloud services, or external AI APIs. The public pilot is non-sensitive and read-only; private-data and real-doc gates remain blocked.
               </p>
             </section>
-            <section className="aboutPanel" aria-label="Fake-only operator status">
+            <section className="aboutPanel" aria-label="Fake-only operator status and public pilot status">
               <span className="sectionKicker">Operator status</span>
               <h3>Current accepted pushed checkpoint: {currentAcceptedPushedState.checkpoint_label}</h3>
               <p>
-                Current accepted pushed state is {currentAcceptedPushedState.checkpoint} at {currentAcceptedPushedState.accepted_pushed_commit} with validation {currentAcceptedPushedState.accepted_validation}, manual QA {currentAcceptedPushedState.accepted_manual_qa}, push yes, and HEAD equal to origin/main at {currentAcceptedPushedState.accepted_pushed_short_commit}. Older baselines, including {historicalAcceptedPushedShortCommits}, are historical only and not current. Historical accepted-WARN state is parked, not current. This status block is copy-only; Next/PostCSS remains WARN_SAFE_NEXT_TARGET_UNCLEAR, v0.9.12C remains blocked, queue-015 remains blocked, package lock is unchanged, and no real-doc capability is approved.
+                Current accepted pushed state is {currentAcceptedPushedState.checkpoint} at {currentAcceptedPushedState.accepted_pushed_commit} with validation {currentAcceptedPushedState.accepted_validation}, manual QA {currentAcceptedPushedState.accepted_manual_qa}, push yes, and HEAD equal to origin/main at {currentAcceptedPushedState.accepted_pushed_short_commit}. Older baselines, including {historicalAcceptedPushedShortCommits}, are historical only and not current. Historical accepted-WARN state is parked, not current. Next/PostCSS remains WARN_SAFE_NEXT_TARGET_UNCLEAR, v0.9.12C remains blocked, unrestricted queue-015 remains blocked, package lock is unchanged, and no private real-doc capability is approved.
               </p>
               <dl className="settingsGrid">
                 {acceptedOperatorCheckpoint.map((row) => (
@@ -591,10 +642,14 @@ export function KiaStickApp({ runtimeVersion = clientVersion }: { runtimeVersion
             <div className="composerHeaderActions">
               <button className="button subtle compactButton" type="button" onClick={startNewChat} aria-label="New chat">
                 <Plus size={16} />
-                New fake chat
+                New chat
               </button>
               <span className={latestAssistant?.answer.noAnswer ? "statusPill warning" : "statusPill ok"}>
-                {isSending ? "Checking fake sources" : latestAssistant?.answer.noAnswer ? "No-answer unsaved" : latestAssistant ? "Fake thread ready" : "Ready"}
+                {isSending
+                  ? chatSourceMode === "public" ? "Checking public cache" : "Checking fake sources"
+                  : latestAssistant?.answer.noAnswer ? "No-answer unsaved"
+                  : latestAssistant ? latestAssistant.answer.answerKind === "public" ? "Public citation ready" : "Fake thread ready"
+                  : "Ready"}
               </span>
             </div>
           </div>
@@ -629,6 +684,13 @@ export function KiaStickApp({ runtimeVersion = clientVersion }: { runtimeVersion
             <summary>Response options</summary>
             <div className="controlStrip">
               <label className="controlPill">
+                <span>Source mode</span>
+                <select value={chatSourceMode} onChange={(event) => setChatSourceMode(event.target.value as ChatSourceMode)}>
+                  <option value="fake">Fake sample corpus</option>
+                  <option value="public">Public pilot (NLRB)</option>
+                </select>
+              </label>
+              <label className="controlPill">
                 <span>Mode</span>
                 <select value={mode} onChange={(event) => setMode(event.target.value as Mode)}>
                   {modes.map((item) => (
@@ -657,8 +719,8 @@ export function KiaStickApp({ runtimeVersion = clientVersion }: { runtimeVersion
 
           <details className="promptDetails">
             <summary>Prompt shortcuts</summary>
-            <div className="promptRail" aria-label="fake test prompts">
-              {cannedQuestions.map((prompt) => (
+            <div className="promptRail" aria-label={chatSourceMode === "public" ? "public pilot prompts" : "fake test prompts"}>
+              {(chatSourceMode === "public" ? publicPilotQuestions : cannedQuestions).map((prompt) => (
                 <button className="promptChip" key={prompt} type="button" onClick={() => setDraft(prompt)}>
                   {prompt}
                   <ChevronRight size={14} />
@@ -758,9 +820,11 @@ export function FakeUploadPanel(props: {
 }
 
 export function SourcesPanel({
+  publicSourceState = { status: "unavailable", reason: "cache_missing" },
   sourceHierarchyGroups,
   runtimeVersion,
 }: {
+  publicSourceState?: PublicSourceLoadState;
   sourceHierarchyGroups: ReturnType<typeof buildSourceHierarchyGroups>;
   runtimeVersion: RuntimeVersion;
 }) {
@@ -770,7 +834,88 @@ export function SourcesPanel({
 
   return (
     <section className="tabPanel">
-      <PanelHeader title="Sources" meta="hierarchy traceable" />
+      <PanelHeader title="Sources" meta="isolated fake and public lanes" />
+      <div className="publicPilotStatus" aria-label="public data pilot status">
+        <strong>PUBLIC DATA PILOT</strong>
+        <span>ONE ALLOWLISTED SOURCE</span>
+        <span>LOCAL READ-ONLY</span>
+        <span>NO PRIVATE DATA</span>
+      </div>
+
+      {publicSourceState.status === "loading" && (
+        <article className="sourceCard publicSourceCard">
+          <h3>Loading bounded local public-source cache</h3>
+          <p>No external fetch occurs in the application. The server is checking only the exact local cache file.</p>
+        </article>
+      )}
+
+      {publicSourceState.status === "unavailable" && (
+        <article className="sourceCard publicSourceCard" aria-label="public source unavailable">
+          <h3>Weingarten Rights source unavailable</h3>
+          <p>The bounded cache is safely unavailable ({publicSourceState.reason}). No other path or source was tried.</p>
+          <p>Operator restore command: <code>node scripts/public-source-sync.mjs {PUBLIC_SOURCE_ID}</code></p>
+        </article>
+      )}
+
+      {publicSourceState.status === "available" && (
+        <article className="sourceCard publicSourceCard" aria-label="official NLRB public source">
+          <div className="publicSourceHeader">
+            <div>
+              <span className="sectionKicker">Official public guidance</span>
+              <h3>{publicSourceState.source.source.title}</h3>
+              <p>{publicSourceState.source.source.owner}</p>
+            </div>
+            <a className="button subtle officialSourceLink" href={PUBLIC_SOURCE_URL} target="_blank" rel="noreferrer">
+              Official NLRB page
+            </a>
+          </div>
+          <div className="sourceMeta">
+            <span className="badge green">OFFICIAL SOURCE</span>
+            <span className="badge green">PUBLIC / NON-SENSITIVE</span>
+            <span className="badge">READ-ONLY</span>
+            <span className="badge">source id {publicSourceState.source.source.id}</span>
+            <span className="badge">class {publicSourceState.source.source.sourceClass}</span>
+            <span className="badge">postal applicability {publicSourceState.source.source.postalApplicability}</span>
+            <span className="badge red">controlling for USPS {publicSourceState.source.source.controllingForUsps}</span>
+          </div>
+          <dl className="publicSourceMetadata">
+            <dt>Publisher</dt>
+            <dd>{publicSourceState.source.source.owner}</dd>
+            <dt>Retrieved</dt>
+            <dd>{publicSourceState.source.retrievedAt}</dd>
+            <dt>Approved URL</dt>
+            <dd>{publicSourceState.source.source.url}</dd>
+            <dt>Source SHA-256</dt>
+            <dd>{publicSourceState.source.response.sha256}</dd>
+            <dt>Normalized SHA-256</dt>
+            <dd>{publicSourceState.source.normalized.sha256}</dd>
+            <dt>Sections</dt>
+            <dd>{publicSourceState.source.normalized.sectionCount}</dd>
+            <dt>Access</dt>
+            <dd>{publicSourceState.source.source.accessMode}</dd>
+          </dl>
+          <div className="applicabilityWarning" role="note">
+            <AlertTriangle size={16} />
+            <strong>{PUBLIC_SOURCE_APPLICABILITY_WARNING}</strong>
+          </div>
+          <div className="publicSourceSections" aria-label="normalized public source sections">
+            {publicSourceState.source.normalized.sections.map((section) => (
+              <section id={`public-source-${section.id}`} key={section.id} className="publicSourceSection">
+                <h4>{section.title}</h4>
+                <span className="sectionAnchor">{section.id}</span>
+                {section.paragraphs.map((paragraph) => (
+                  <p id={`public-source-${paragraph.id}`} key={paragraph.id}>
+                    <span className="paragraphAnchor">{paragraph.id}</span>
+                    {paragraph.text}
+                  </p>
+                ))}
+              </section>
+            ))}
+          </div>
+        </article>
+      )}
+
+      <h3 className="sourceLaneTitle">Fake sample corpus — separate from public claims</h3>
       <div className="traceSummary" aria-label="source traceability summary">
         <strong>{totalSources} fake sources</strong>
         <span>{citableSources} citable in answer citations</span>
@@ -820,7 +965,7 @@ export function SavedAnswersPanel(props: { saved: SavedAnswer[]; onDelete: (id: 
       <div className="sourceCards">
         {props.saved.length === 0 && (
           <p className="emptyState">
-            No saved fake answers yet. Save a cited Chat answer to review local version, prompt, provider, citation count, and fake build metadata here. No-answer Chat cards are blocked from Saved.
+            No saved fake answers yet. Answer cards retain source/provider metadata, citation count, and fake build metadata. No-answer Chat cards are blocked from Saved. No saved public-pilot answers yet. Both lanes remain separately labeled and retain local provider, prompt, source, hash, and anchor metadata.
           </p>
         )}
         {props.saved.map((item) => (
@@ -847,12 +992,27 @@ export function SavedAnswersPanel(props: { saved: SavedAnswer[]; onDelete: (id: 
               <dd>{savedBuildLabel(item)}</dd>
               <dt>Provider</dt>
               <dd>{item.provider}</dd>
+              <dt>Source lane</dt>
+              <dd>{publicCitationForSaved(item) ? "PUBLIC DATA PILOT" : "FAKE SAMPLE CORPUS"}</dd>
+              {publicCitationForSaved(item) && (
+                <>
+                  <dt>Public source ID</dt>
+                  <dd>{publicCitationForSaved(item)?.sourceId}</dd>
+                  <dt>Content hash</dt>
+                  <dd>{publicCitationForSaved(item)?.contentHash}</dd>
+                  <dt>Citation anchors</dt>
+                  <dd>{item.citations.map((citation) => `${citation.sectionId}/${citation.paragraphId}`).join(", ")}</dd>
+                </>
+              )}
             </dl>
             <div className="sourceMeta">
               <span className="badge">{item.mode}</span>
               <span className="badge">{item.scope}</span>
               <span className="badge">{item.detail}</span>
               <span className="badge">{item.citations.length} citations</span>
+              <span className={publicCitationForSaved(item) ? "badge green" : "badge"}>
+                {publicCitationForSaved(item) ? "official public guidance" : "fake claims"}
+              </span>
               <span className="badge">{new Date(item.timestamp).toLocaleString()}</span>
             </div>
           </article>
@@ -1536,11 +1696,13 @@ export function AssistantMessageCard({
   turnLabel,
   onRetry,
   onSave,
+  onCitationNavigate = () => undefined,
 }: {
   message: AssistantMessage;
   turnLabel?: string;
   onRetry: () => void;
   onSave: () => void;
+  onCitationNavigate?: (citation: Citation) => void;
 }) {
   const [citationsOpen, setCitationsOpen] = useState(false);
   const [packetOpen, setPacketOpen] = useState(false);
@@ -1554,7 +1716,7 @@ export function AssistantMessageCard({
             <span className="messageLabel">KIA Stick</span>
             {turnLabel && <span>{turnLabel}</span>}
           </div>
-          <p>Checking the fake source trail...</p>
+          <p>{answer.answerKind === "public" ? "Checking the one allowlisted public source..." : "Checking the fake source trail..."}</p>
         </div>
       </div>
     );
@@ -1574,7 +1736,7 @@ export function AssistantMessageCard({
             </div>
             <span className="statusPill warning">Retry available</span>
           </div>
-          <p>{message.error ?? "The fake response was not generated."}</p>
+          <p>{message.error ?? "The local deterministic response was not generated."}</p>
           <div className="compactActions">
             <button className="button primary" type="button" onClick={onRetry} aria-label="Retry response">
               <RotateCcw size={16} />
@@ -1595,10 +1757,12 @@ export function AssistantMessageCard({
                 <span className="messageLabel">KIA Stick</span>
                 {turnLabel && <span>{turnLabel}</span>}
               </div>
-              <h2>{intentLabels[answer.intent]}</h2>
+              <h2>{answer.answerKind === "public" ? "NLRB Weingarten public pilot" : intentLabels[answer.intent]}</h2>
             </div>
             <span className={answer.noAnswer ? "statusPill warning" : "statusPill ok"}>
-              {answer.noAnswer ? "Unsaved no-answer; context-only trail" : `${answer.citations.length} citations`}
+              {answer.noAnswer
+                ? answer.answerKind === "public" ? "Unsaved no-answer; public source unsupported" : "Unsaved no-answer; context-only trail"
+                : `${answer.citations.length} citations`}
             </span>
           </div>
 
@@ -1614,8 +1778,8 @@ export function AssistantMessageCard({
             </section>
             <section>
               <span>What to do next</span>
-              <strong>{answer.followUps[0] ?? answer.evidenceChecklist[0] ?? "Review the fake source trail."}</strong>
-              <p>{answer.missingFacts[0] ?? "Keep the fake record packet attached to the answer."}</p>
+              <strong>{answer.followUps[0] ?? answer.evidenceChecklist[0] ?? "Review the selected source trail."}</strong>
+              <p>{answer.missingFacts[0] ?? "Keep the cited source metadata attached to the answer."}</p>
             </section>
           </div>
 
@@ -1642,7 +1806,11 @@ export function AssistantMessageCard({
               {answer.noAnswer ? "No answer to save" : "Save to Saved"}
             </button>
             {answer.citations.length === 0 ? (
-              <p className="emptyState">No Saved record is created for no-answer responses. Context-only fake sources can still be reviewed in the full packet. Prompt and provider metadata remain visible there.</p>
+              <p className="emptyState">
+                {answer.answerKind === "public"
+                  ? "No Saved record is created for no-answer responses. Public source prompt, provider, and lane metadata remain visible."
+                  : "No Saved record is created for no-answer responses. Context-only fake sources can still be reviewed in the full packet. Prompt and provider metadata remain visible there."}
+              </p>
             ) : (
               <button
                 aria-expanded={citationsOpen}
@@ -1658,8 +1826,19 @@ export function AssistantMessageCard({
           {citationsOpen && (
             <ol className="citationCards">
               {answer.citations.map((citation) => (
-                <li key={citation.id}>{citationLabel(citation)}</li>
+                <li key={citation.id}>
+                  {citation.sourceKind === "public" ? (
+                    <button className="citationAnchorButton" type="button" onClick={() => onCitationNavigate(citation)}>
+                      {citationLabel(citation)}
+                    </button>
+                  ) : citationLabel(citation)}
+                </li>
               ))}
+              {answer.answerKind === "public" && (
+                <li className="officialCitationLink">
+                  <a href={PUBLIC_SOURCE_URL} target="_blank" rel="noreferrer">Open the separate official NLRB source</a>
+                </li>
+              )}
             </ol>
           )}
 
@@ -1674,6 +1853,11 @@ export function AssistantMessageCard({
 }
 
 function authoritySummary(answer: AnswerResult): string {
+  if (answer.answerKind === "public") {
+    return answer.noAnswer
+      ? "No supported answer from the one allowlisted public source."
+      : "Official general NLRB guidance. USPS controlling applicability is unverified.";
+  }
   if (answer.noAnswer) return "Low confidence. No controlling fake source found.";
   const controllingCount = answer.sourceGroups
     .flatMap((group) => group.docs)
@@ -1686,12 +1870,18 @@ function authoritySummary(answer: AnswerResult): string {
 
 export function FullPacket({ answer }: { answer: AnswerResult }) {
   const sourceCount = answer.sourceGroups.reduce((total, group) => total + group.docs.length, 0);
-  const conflicts = answer.conflicts.length > 0 ? answer.conflicts : ["No visible fake-source conflicts."];
+  const conflicts = answer.conflicts.length > 0 ? answer.conflicts : [answer.answerKind === "public" ? "No public-source conflict recorded." : "No visible fake-source conflicts."];
 
   return (
     <div className="fullPacket">
       <DetailDisclosure icon={<ShieldCheck size={14} />} title={`Show authority stack (${sourceCount})`}>
-        {answer.sourceGroups.length === 0 && <p className="emptyState">No fake sources matched.</p>}
+        {answer.sourceGroups.length === 0 && (
+          <p className="emptyState">
+            {answer.answerKind === "public"
+              ? "Public citations are shown as exact source, section, and paragraph anchors; no fake claim is blended into this answer."
+              : "No fake sources matched."}
+          </p>
+        )}
         {answer.sourceGroups.map((group) => (
           <section className="authorityGroup" key={group.bucket}>
             <h4>{group.label}</h4>

@@ -3,7 +3,7 @@ import { describe, expect, it } from "vitest";
 
 const phase = "KIA-Stick-v0.9.94-current-accepted-pushed-state-contract";
 const docPath = "docs/v0.9.94-current-accepted-pushed-state-contract.md";
-const contractPath = "data/current-accepted-pushed-state.json";
+const contractPath = "tests/fixtures/current-accepted-pushed-state-v1.1.72.json";
 
 describe("v0.9.94 current accepted pushed state contract", () => {
   it("documents the static single-source contract", () => {

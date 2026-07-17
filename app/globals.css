@@ -248,7 +248,7 @@ a {
 
 .controlStrip {
   display: grid;
-  grid-template-columns: repeat(3, minmax(0, 1fr));
+  grid-template-columns: repeat(4, minmax(0, 1fr));
   gap: 8px;
   margin-top: 12px;
 }
@@ -627,6 +627,127 @@ a {
   padding: 10px;
 }
 
+.publicPilotStatus {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+  gap: 7px;
+  margin-bottom: 10px;
+  border: 2px solid var(--teal);
+  background: #dff0e5;
+  padding: 9px;
+}
+
+.publicPilotStatus strong,
+.publicPilotStatus span {
+  color: #174c31;
+  font-size: 0.76rem;
+  font-weight: 950;
+}
+
+.publicSourceCard {
+  margin-bottom: 12px;
+  border-color: #7ca99b;
+  background: #f4fbf8;
+}
+
+.publicSourceHeader {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 10px;
+}
+
+.officialSourceLink {
+  flex: 0 0 auto;
+  min-height: 34px;
+}
+
+.publicSourceMetadata {
+  display: grid;
+  grid-template-columns: minmax(120px, 0.3fr) minmax(0, 1fr);
+  gap: 7px 10px;
+  margin: 12px 0 0;
+}
+
+.publicSourceMetadata dt {
+  color: var(--muted);
+  font-size: 0.7rem;
+  font-weight: 950;
+  text-transform: uppercase;
+}
+
+.publicSourceMetadata dd {
+  margin: 0;
+  min-width: 0;
+  overflow-wrap: anywhere;
+  font-size: 0.8rem;
+  font-weight: 800;
+}
+
+.applicabilityWarning {
+  display: flex;
+  align-items: flex-start;
+  gap: 7px;
+  margin-top: 12px;
+  border: 1px solid #d4bb76;
+  background: #fff7dd;
+  color: #59451a;
+  padding: 9px;
+  line-height: 1.4;
+}
+
+.publicSourceSections {
+  display: grid;
+  gap: 9px;
+  margin-top: 12px;
+}
+
+.publicSourceSection {
+  border: 1px solid #c8d6d4;
+  background: #fff;
+  padding: 10px;
+  scroll-margin-top: 120px;
+}
+
+.publicSourceSection h4 {
+  margin: 0;
+  font-size: 0.92rem;
+}
+
+.sectionAnchor,
+.paragraphAnchor {
+  display: block;
+  color: var(--teal);
+  font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+  font-size: 0.65rem;
+  font-weight: 900;
+}
+
+.sectionAnchor {
+  margin-top: 3px;
+}
+
+.publicSourceSection p {
+  margin: 9px 0 0;
+  border-left: 3px solid #d5e6e1;
+  padding-left: 8px;
+  color: var(--ink);
+  scroll-margin-top: 120px;
+}
+
+.publicSourceSection p:target {
+  border-color: var(--amber);
+  background: #fff7dd;
+  outline: 2px solid var(--amber);
+}
+
+.sourceLaneTitle {
+  margin: 16px 0 8px;
+  color: var(--blue);
+  font-size: 0.88rem;
+  text-transform: uppercase;
+}
+
 .authorityCard {
   border: 1px solid #d4dbe1;
   background: #fff;
@@ -802,6 +923,22 @@ a {
   padding: 8px;
   line-height: 1.35;
   overflow-wrap: anywhere;
+}
+
+.citationAnchorButton {
+  width: 100%;
+  border: 0;
+  background: transparent;
+  color: var(--blue);
+  padding: 0;
+  text-align: left;
+  font-weight: 850;
+  overflow-wrap: anywhere;
+}
+
+.officialCitationLink a {
+  color: var(--blue);
+  font-weight: 900;
 }
 
 .footerLine {
@@ -1550,6 +1687,14 @@ a {
 
   .controlStrip {
     grid-template-columns: 1fr;
+  }
+
+  .publicSourceHeader {
+    display: grid;
+  }
+
+  .officialSourceLink {
+    width: 100%;
   }
 
   .vaultTabs {

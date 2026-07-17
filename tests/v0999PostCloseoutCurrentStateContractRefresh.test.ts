@@ -21,7 +21,7 @@ describe("v0.9.99 post-closeout current state contract refresh", () => {
   });
 
   it("makes 20485da current and older baselines historical in the contract", () => {
-    const contract = JSON.parse(readFileSync("data/current-accepted-pushed-state.json", "utf8")) as {
+    const contract = JSON.parse(readFileSync("tests/fixtures/current-accepted-pushed-state-v1.1.72.json", "utf8")) as {
       checkpoint_label: string;
       accepted_pushed_commit: string;
       accepted_pushed_short_commit: string;

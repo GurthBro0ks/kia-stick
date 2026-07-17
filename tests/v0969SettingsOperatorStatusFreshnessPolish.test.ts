@@ -27,7 +27,7 @@ describe("v0.9.69 Settings operator-status freshness polish", () => {
 
   it("updates Settings copy without adding intake affordances", () => {
     const component = readFileSync(componentPath, "utf8");
-    const contract = readFileSync("data/current-accepted-pushed-state.json", "utf8");
+    const contract = readFileSync("tests/fixtures/current-accepted-pushed-state-v1.1.72.json", "utf8");
 
     expect(component).toContain("Current accepted pushed checkpoint: {currentAcceptedPushedState.checkpoint_label}");
     expect(component).toContain("Current accepted pushed state is {currentAcceptedPushedState.checkpoint} at {currentAcceptedPushedState.accepted_pushed_commit}");

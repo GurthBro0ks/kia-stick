@@ -93,6 +93,13 @@ export interface Citation {
   file: string;
   hash: string;
   citable: boolean;
+  sourceKind?: "fake" | "public";
+  sourceId?: string;
+  sectionId?: string;
+  paragraphId?: string;
+  retrievedAt?: string;
+  contentHash?: string;
+  officialUrl?: string;
 }
 
 export const corpus = corpusJson as unknown as CorpusData;
@@ -255,6 +262,9 @@ export function dedupeCitations(citations: Citation[]): Citation[] {
 }
 
 export function citationLabel(citation: Citation): string {
+  if (citation.sourceKind === "public") {
+    return `${citation.sourceId} · ${citation.sectionId} · ${citation.paragraphId} · retrieved ${citation.retrievedAt?.slice(0, 10)} · ${citation.contentHash}`;
+  }
   return `${citation.title} · ${citation.article} · ${citation.section} · ${citation.page} · ${citation.hash.slice(0, 10)}`;
 }
 

@@ -2,6 +2,7 @@
 import { existsSync, lstatSync, mkdirSync, readdirSync, readFileSync, statSync, writeFileSync } from "node:fs";
 import { tmpdir } from "node:os";
 import path from "node:path";
+import { acceptedStateProofLines, readCurrentAcceptedPushedState } from "./accepted-state.mjs";
 
 export const DEFAULT_LOCAL_PROOF_ROOT = "/home/mint/kia-stick-local-proofs";
 const PROOF_PREFIX = "proof_kia_stick_";
@@ -359,6 +360,10 @@ function printList(options) {
   console.log(`Latest proof: ${latest?.path || "none"}${latest ? " (newest filesystem proof; may be in progress)" : ""}`);
   console.log(`Latest accepted pushed closeout proof: ${latestAcceptedPushedCloseout?.path || "none"}`);
   console.log(`Latest accepted pushed closeout commit: ${latestAcceptedPushedCloseout?.commit || "none"}`);
+  const acceptedState = acceptedStateProofLines(readCurrentAcceptedPushedState());
+  console.log(`Accepted state contract checkpoint: ${acceptedState.checkpoint}`);
+  console.log(`Accepted state contract commit: ${acceptedState.commit}`);
+  console.log(`Accepted state contract proof: ${acceptedState.proof}`);
   console.log(`Latest operator QA PASS proof: ${latestOperatorQaPass?.path || "none"}`);
   console.log(`Latest accepted-WARN proof: ${latestAcceptedWarn?.path || "none"}`);
   console.log(`Latest screenshot review-ready candidate: ${latestReviewReady?.path || "none"}`);
@@ -380,6 +385,10 @@ function printLatest(options) {
   const latestAcceptedPushedCloseout = selectLatestAcceptedPushedCloseoutProof(proofs);
   console.log(`Latest accepted pushed closeout proof: ${latestAcceptedPushedCloseout?.path || "none"}`);
   console.log(`Latest accepted pushed closeout commit: ${latestAcceptedPushedCloseout?.commit || "none"}`);
+  const acceptedState = acceptedStateProofLines(readCurrentAcceptedPushedState());
+  console.log(`Accepted state contract checkpoint: ${acceptedState.checkpoint}`);
+  console.log(`Accepted state contract commit: ${acceptedState.commit}`);
+  console.log(`Accepted state contract proof: ${acceptedState.proof}`);
   console.log(`Latest operator QA PASS proof: ${selectLatestOperatorQaPassProof(proofs)?.path || "none"}`);
   console.log(`Latest accepted-WARN proof: ${selectLatestAcceptedWarnProof(proofs)?.path || "none"}`);
   console.log(`Latest screenshot review-ready candidate: ${latestReviewReady?.path || "none"}`);

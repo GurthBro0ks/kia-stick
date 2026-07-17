@@ -13,7 +13,7 @@ describe("v1.0.54 post-closeout current state contract refresh", () => {
   });
 
   it("makes 720a58a current and older baselines historical in the contract", () => {
-    const contract = JSON.parse(readFileSync("data/current-accepted-pushed-state.json", "utf8")) as { phase: string; checkpoint_label: string; accepted_pushed_commit: string; accepted_pushed_short_commit: string; accepted_pushed_proof_dir: string; historical_prior_checkpoints: Array<{ short_commit: string; status: string }> };
+    const contract = JSON.parse(readFileSync("tests/fixtures/current-accepted-pushed-state-v1.1.72.json", "utf8")) as { phase: string; checkpoint_label: string; accepted_pushed_commit: string; accepted_pushed_short_commit: string; accepted_pushed_proof_dir: string; historical_prior_checkpoints: Array<{ short_commit: string; status: string }> };
     expect(contract.phase).toBe("KIA-Stick-v1.1.73-to-v1.1.77-post-closeout-accepted-state-contract-refresh");
     expect(contract.checkpoint_label).toBe("v1.1.72 at ab1878e");
     expect(contract.accepted_pushed_commit).toBe("ab1878e4c681c8f658e8a5bf6bd36f3ad4423fea");

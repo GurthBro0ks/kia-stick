@@ -4,6 +4,7 @@ out/
 dist/
 coverage/
 .turbo/
+.kia-public-data/
 
 uploads/
 data/private/
