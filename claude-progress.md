@@ -2387,3 +2387,12 @@
 - Closeout scope: `CLOSEOUT.md`, `claude-progress.md`, and `feature_list.json` only; no feature, dependency, runtime, source, service, scheduler, notification, additional public source, or private-data change.
 - Accepted-state governance: the capability bundle records Public Data Pilot 1A at `0477487` as current accepted pushed state; this closeout does not create a standalone refresh or v1.1.78-to-v1.1.82 metadata ladder.
 - Next planned phase: separately authorized read-only Fable 5 architecture, safety, and UX audit. queue-015, Next/PostCSS, and v0.9.12C remain blocked or parked; product/package remain `0.7.0`.
+
+## Public truth and generic CBA retrieval bundle
+
+- Phase: `KIA-Stick-public-truth-and-generic-CBA-retrieval-bundle`.
+- Authorization: `AUTHORIZE_KIA_PUBLIC_TRUTH_AND_GENERIC_CBA_RETRIEVAL_BUNDLE`.
+- Scope: fold the accepted Pilot 1B state into the shared contract and `/health` truth surfaces; retrieve exact CBA passages for generic article/section/topic queries; keep case conclusions unsaveable and source lanes isolated.
+- Safety: no new source or URL, no sync/fetch, no private data, upload, OCR, embedding, vector store, LLM, dependency, package, lockfile, service, notification, or push.
+- Proof: `/home/mint/kia-stick-local-proofs/proof_kia_stick_public_truth_and_generic_cba_retrieval_20260717T170641Z`.
+- Status: local implementation and automated validation PASS; operator QA remains pending and no push is authorized.

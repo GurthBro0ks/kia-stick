@@ -1,7 +1,7 @@
 import { NextResponse } from "next/server";
 import { corpus } from "@/lib/sourceModel";
 import { getRuntimeVersion } from "@/lib/serverVersion";
-import { CURRENT_PHASE } from "@/lib/version";
+import { currentAcceptedPushedState } from "@/lib/acceptedState";
 
 export const dynamic = "force-dynamic";
 
@@ -11,9 +11,11 @@ export function GET() {
   return NextResponse.json({
     ok: true,
     app: "kia-stick",
-    phase: CURRENT_PHASE,
+    phase: currentAcceptedPushedState.accepted_pushed_phase,
+    acceptedCheckpoint: currentAcceptedPushedState.checkpoint_label,
+    acceptedCommit: currentAcceptedPushedState.accepted_pushed_commit,
     targetMachine: "USER_LAPTOP_ONLY",
-    fakeOnly: true,
+    dataModes: currentAcceptedPushedState.data_modes,
     realDbTouched: false,
     cloudRequired: false,
     apiKeyRequired: false,

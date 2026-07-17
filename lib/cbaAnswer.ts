@@ -27,6 +27,12 @@ import type { RuntimeVersion } from "@/lib/version";
 
 export type CbaQuestionIntent = "grievance_deadline" | "article_17" | "article_16" | "cross_source" | "case_outcome" | "unsupported";
 
+export const genericCbaRetrievalSuggestions = [
+  "What does Article 15 say?",
+  "What does Article 16 say about discipline?",
+  "What does Article 17 say about steward representation?",
+];
+
 export function detectCbaIntent(question: string): CbaQuestionIntent {
   const normalized = question.toLowerCase();
   if (/\b(nlrb|weingarten)\b/.test(normalized) && /\b(cba|collective bargaining agreement|contract)\b/.test(normalized)) return "cross_source";
@@ -115,6 +121,7 @@ function baseAnswer(input: {
   evidenceChecklist?: string[];
   missingFacts?: string[];
   followUps?: string[];
+  suggestedQuestions?: string[];
 }): AnswerResult {
   return {
     answerKind: "public",
@@ -139,6 +146,7 @@ function baseAnswer(input: {
     evidenceChecklist: input.evidenceChecklist ?? ["Read the exact cited contract passage.", "Confirm the applicable craft, status, trigger date, and procedural posture."],
     missingFacts: input.missingFacts ?? ["Employee coverage and the facts that trigger the cited provision."],
     followUps: input.followUps ?? ["Open the cited CBA paragraph in Sources and verify the rule against the actual facts."],
+    suggestedQuestions: input.suggestedQuestions,
     relatedFakeSections: [],
     footer: `PUBLIC DATA PILOT | Lane:public_cba | Source:${CBA_SOURCE_ID} | Content:${input.source?.normalized.sha256 ?? "unavailable"} | Scope:${input.scope} | SelectedMode:${input.mode}`,
     version: { ...input.runtimeVersion, promptVersion: CBA_PROMPT_VERSION, provider: CBA_PROVIDER },
@@ -150,13 +158,40 @@ function unavailableAnswer(input: { question: string; source: CbaSourceCache | n
   return baseAnswer({
     ...input,
     shortAnswer: input.source
-      ? "The allowlisted CBA does not support the requested conclusion. No factual or legal outcome was generated."
+      ? "No exact CBA passage was retrieved for this search. That result does not establish that the CBA lacks a rule on the topic."
       : "The exact allowlisted CBA cache is unavailable. No other source, path, or fake answer lane was substituted.",
     citations: [],
     noAnswer: true,
-    conflicts: [input.source ? "The requested claim is not supported by an identified CBA passage." : "The exact validated CBA cache is unavailable."],
-    missingFacts: [input.source ? "A contract-supported claim or article reference." : "The validated local CBA PDF and normalized cache."],
-    followUps: [input.source ? "Search the CBA by exact article, section, or contract phrase." : `Run node scripts/public-source-sync.mjs ${CBA_SOURCE_ID}.`],
+    conflicts: [input.source ? "No exact passage was retrieved from the allowlisted CBA for this query." : "The exact validated CBA cache is unavailable."],
+    missingFacts: [input.source ? "An exact article, section, or contract phrase to retrieve." : "The validated local CBA PDF and normalized cache."],
+    followUps: [input.source ? "Use a specific CBA article, section, or contract topic." : `Run node scripts/public-source-sync.mjs ${CBA_SOURCE_ID}.`],
+    suggestedQuestions: input.source ? genericCbaRetrievalSuggestions : undefined,
+  });
+}
+
+function buildGenericCbaRetrievalAnswer(input: {
+  question: string;
+  source: CbaSourceCache;
+  runtimeVersion: RuntimeVersion;
+  mode: Mode;
+  scope: Scope;
+}): AnswerResult {
+  const retrievalQuery = input.question
+    .replace(/\b(what|does|the|a|an|cba|apwu|usps|collective|bargaining|agreement|contract|say|about|show|tell|me|please)\b/gi, " ")
+    .replace(/\s+/g, " ")
+    .trim();
+  const matches = retrievalQuery ? searchCba(input.source, retrievalQuery, 3) : [];
+  if (matches.length === 0) return unavailableAnswer({ ...input, source: input.source });
+  const passages = matches.map((match, index) => `Passage ${index + 1}: “${match.paragraph.text}”`).join("\n\n");
+  return baseAnswer({
+    ...input,
+    shortAnswer: `Exact CBA passages retrieved for “${input.question}”:\n\n${passages}`,
+    citations: matches.map((match) => cbaCitation(input.source, match.paragraph)),
+    noAnswer: false,
+    conflicts: ["These are retrieved contract passages. They do not determine a case outcome or add an interpretation."],
+    evidenceChecklist: ["Read each quoted passage and its exact citation anchor.", "Confirm whether the retrieved passage addresses the question you intend to ask."],
+    missingFacts: ["No case-specific conclusion was generated from this retrieval."],
+    followUps: ["Open a citation in Sources, or refine the query with an article, section, or exact contract phrase."],
   });
 }
 
@@ -258,7 +293,7 @@ export function buildCbaAnswer(input: {
     });
   }
 
-  return unavailableAnswer({ ...input, question });
+  return buildGenericCbaRetrievalAnswer({ ...input, question, source: input.source });
 }
 
 export function buildSafeRouterNoAnswer(input: {

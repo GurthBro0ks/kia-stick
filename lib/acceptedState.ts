@@ -40,6 +40,12 @@ export interface CurrentAcceptedPushedState {
   public_pilot_prompt_version?: string;
   cba_public_provider?: string;
   cba_public_prompt_version?: string;
+  data_modes?: {
+    fake_corpus: string;
+    public_sources: string;
+    private_data: string;
+    external_ai: string;
+  };
   package_json_changed: boolean;
   package_lock_changed: boolean;
 }

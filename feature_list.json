@@ -11752,5 +11752,26 @@
     "llm_used": false,
     "embeddings_used": false,
     "discord_sent": false
+  },
+  "public_truth_and_generic_cba_retrieval": {
+    "phase": "KIA-Stick-public-truth-and-generic-CBA-retrieval-bundle",
+    "status": "local_validation_pass",
+    "authorization": "AUTHORIZE_KIA_PUBLIC_TRUTH_AND_GENERIC_CBA_RETRIEVAL_BUNDLE",
+    "accepted_pushed_checkpoint": "Public Data Pilot 1B at 006da8d",
+    "accepted_pushed_commit": "006da8dc25638cdbe5ebd43b04b5b5c506056ab9",
+    "scope": ["accepted-state truth", "health data modes", "generic deterministic CBA retrieval", "citation-first source action"],
+    "source_id": "apwu-usps-cba-2024-2027",
+    "new_source_added": false,
+    "llm_used": false,
+    "embeddings_used": false,
+    "private_data_accessed": false,
+    "queue_015_status": "blocked",
+    "next_postcss_status": "WARN_SAFE_NEXT_TARGET_UNCLEAR",
+    "v0912c_status": "blocked_pending_exact_target",
+    "product_version": "0.7.0",
+    "package_json_changed": false,
+    "package_lock_changed": false,
+    "pushed": false,
+    "manual_qa_status": "pending_operator_review"
   }
 }

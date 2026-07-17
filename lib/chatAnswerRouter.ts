@@ -43,7 +43,8 @@ export function isAutoCbaQuestion(question: string): boolean {
   const normalized = normalizeQuestion(question);
   if (detectCbaIntent(question) !== "unsupported") return true;
   if (/\barticle\s*(?:[1-9]|[1-3][0-9]|4[0-3])\b/.test(normalized)) return true;
-  return /\b(apwu-usps cba|collective bargaining agreement|official cba)\b/.test(normalized);
+  return /\b(apwu-usps cba|collective bargaining agreement|official cba)\b/.test(normalized)
+    || (/\b(apwu|usps)\b/.test(normalized) && /\b(cba|contract|agreement)\b/.test(normalized));
 }
 
 export function resolveChatAnswerLane(question: string, policy: ChatSourcePolicy): ChatAnswerLane {

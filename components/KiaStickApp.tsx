@@ -531,6 +531,12 @@ export function KiaStickApp({ runtimeVersion = clientVersion }: { runtimeVersion
     setImportWizardState((current) => applyImportWizardAction(current, { ...action, now: new Date().toISOString() }));
   }
 
+  function prepareCbaQuestion(nextQuestion: string) {
+    setDraft(nextQuestion);
+    setChatSourceMode("cba");
+    setTab("chat");
+  }
+
   return (
     <div className="appShell">
       <header className="topBar">
@@ -570,6 +576,7 @@ export function KiaStickApp({ runtimeVersion = clientVersion }: { runtimeVersion
                     onRetry={() => retryAssistant(message)}
                     onSave={() => saveAssistantAnswer(message)}
                     onCitationNavigate={navigateToCitation}
+                    onAskQuestion={prepareCbaQuestion}
                   />
                 )
               )}
@@ -583,6 +590,7 @@ export function KiaStickApp({ runtimeVersion = clientVersion }: { runtimeVersion
             cbaSourceState={cbaSourceState}
             publicSourceState={publicSourceState}
             sourceHierarchyGroups={sourceHierarchyGroups}
+            onAskCbaQuestion={prepareCbaQuestion}
             runtimeVersion={runtimeVersion}
           />
         )}
@@ -912,12 +920,14 @@ export function SourcesPanel({
   cbaSourceState = { status: "unavailable", reason: "cache_missing" },
   publicSourceState = { status: "unavailable", reason: "cache_missing" },
   sourceHierarchyGroups,
+  onAskCbaQuestion,
   runtimeVersion,
 }: {
   cbaCitationTargetId?: string | null;
   cbaSourceState?: CbaSourceLoadState;
   publicSourceState?: PublicSourceLoadState;
   sourceHierarchyGroups: ReturnType<typeof buildSourceHierarchyGroups>;
+  onAskCbaQuestion?: (question: string) => void;
   runtimeVersion: RuntimeVersion;
 }) {
   const [cbaSearchQuery, setCbaSearchQuery] = useState("Article 15");
@@ -1005,6 +1015,11 @@ export function SourcesPanel({
               <input value={cbaSearchQuery} onChange={(event) => setCbaSearchQuery(event.target.value)} placeholder="Article 15 or quoted contract phrase" />
             </label>
             <p className="emptyState">No embeddings, fuzzy expansion, model call, or external API. Results use exact tokens, phrases, article/title boosts, and stable ordering.</p>
+            {onAskCbaQuestion && (
+              <button className="button subtle" type="button" onClick={() => onAskCbaQuestion(cbaSearchQuery)}>
+                Ask Chat about this CBA search
+              </button>
+            )}
             <div className="sourceCards" aria-label="CBA lexical search results">
               {cbaSearchResults.length === 0 && <p className="emptyState">No CBA passage matched the exact lexical query.</p>}
               {cbaSearchResults.filter((result) => result.paragraph.id !== cbaCitationTargetId).map((result) => (
@@ -1915,12 +1930,14 @@ export function AssistantMessageCard({
   onRetry,
   onSave,
   onCitationNavigate = () => undefined,
+  onAskQuestion,
 }: {
   message: AssistantMessage;
   turnLabel?: string;
   onRetry: () => void;
   onSave: () => void;
   onCitationNavigate?: (citation: Citation) => void;
+  onAskQuestion?: (question: string) => void;
 }) {
   const [citationsOpen, setCitationsOpen] = useState(false);
   const [packetOpen, setPacketOpen] = useState(false);
@@ -2011,6 +2028,16 @@ export function AssistantMessageCard({
           </div>
 
           {answer.contextNote && <p className="contextNote">{answer.contextNote}</p>}
+
+          {answer.suggestedQuestions && answer.suggestedQuestions.length > 0 && onAskQuestion && (
+            <div className="compactActions" aria-label="CBA retrieval suggestions">
+              {answer.suggestedQuestions.map((suggestion) => (
+                <button className="button subtle" type="button" key={suggestion} onClick={() => onAskQuestion(suggestion)}>
+                  {suggestion}
+                </button>
+              ))}
+            </div>
+          )}
 
           <div className="compactActions">
             <button

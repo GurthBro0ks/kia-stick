@@ -1,12 +1,12 @@
 #!/usr/bin/env node
 import { existsSync, readFileSync, statSync } from "node:fs";
+import { spawnSync } from "node:child_process";
 import path from "node:path";
+import { readCurrentAcceptedPushedState } from "./accepted-state.mjs";
 
 const DEFAULT_BASE_URL = "http://127.0.0.1:3000";
 const operatorSmokePhase = "KIA-Stick-v0.7.9-fake-only-operator-qa-smoke-pack";
 const expectedProjectPhase = "KIA-Stick-v0.9.10-synthetic-governance-hardening-checkpoint";
-const legacyRuntimePhase = "KIA-Stick-v0.7.12-operator-qa-closeout-and-push";
-const expectedRuntimePhase = "KIA-Stick-v0.9.68-to-v0.9.72-accepted-pushed-state-and-runtime-status-freshness-bundle";
 const productVersion = "0.7.0";
 const promptVersion = "prompt.fake-docs.v0.5-import-wizard-hardening";
 const smokeSurfaces = [
@@ -101,6 +101,11 @@ function constantValue(source, name, problems) {
   return match[1];
 }
 
+function gitRef(root, ref) {
+  const result = spawnSync("git", ["rev-parse", ref], { cwd: root, encoding: "utf8" });
+  return result.status === 0 ? result.stdout.trim() : "";
+}
+
 function checkStaticContracts(root, problems) {
   const doc = readText(root, "docs/v0.7.9-operator-qa-smoke-pack.md", problems);
   const component = readText(root, "components/KiaStickApp.tsx", problems);
@@ -110,6 +115,7 @@ function checkStaticContracts(root, problems) {
   const queue = readJson(root, "docs/phase-backlog.json", problems);
   const featureList = readJson(root, "feature_list.json", problems);
   const packageJson = readJson(root, "package.json", problems);
+  const acceptedState = readCurrentAcceptedPushedState(root);
 
   requireContains(problems, "smoke doc", doc, operatorSmokePhase);
   requireContains(problems, "smoke doc", doc, `Product version: \`${productVersion}\``);
@@ -139,7 +145,7 @@ function checkStaticContracts(root, problems) {
     requireContains(problems, "KiaStickApp", component, marker);
   }
 
-  for (const marker of ["phase", "fakeOnly", "realDbTouched", "productVersion", "displayVersion", "promptVersion", "provider", "corpusVersion", "indexVersion", "gitSha"]) {
+  for (const marker of ["phase", "acceptedCheckpoint", "acceptedCommit", "dataModes", "realDbTouched", "productVersion", "displayVersion", "promptVersion", "provider", "corpusVersion", "indexVersion", "gitSha"]) {
     requireContains(problems, "health route", health, marker);
   }
   for (const marker of ["Display Version", "Product Version", "Build Date", "Git SHA", "Corpus", "Index", "Prompt", "Provider"]) {
@@ -148,11 +154,16 @@ function checkStaticContracts(root, problems) {
 
   const actualProductVersion = constantValue(versionSource, "PRODUCT_VERSION", problems);
   const actualPromptVersion = constantValue(versionSource, "PROMPT_VERSION", problems);
-  const actualCurrentPhase = constantValue(versionSource, "CURRENT_PHASE", problems);
   if (actualProductVersion !== productVersion) problems.push(`PRODUCT_VERSION must be ${productVersion}; found ${actualProductVersion || "missing"}`);
   if (actualPromptVersion !== promptVersion) problems.push(`PROMPT_VERSION must be ${promptVersion}; found ${actualPromptVersion || "missing"}`);
-  if (actualCurrentPhase !== expectedRuntimePhase) {
-    problems.push(`CURRENT_PHASE must be ${expectedRuntimePhase}; found ${actualCurrentPhase || "missing"}`);
+  if (!versionSource.includes("currentAcceptedPushedState.accepted_pushed_phase")) problems.push("CURRENT_PHASE must derive from the accepted-state contract");
+  if (!acceptedState.accepted_pushed_phase || !acceptedState.accepted_pushed_commit || !acceptedState.checkpoint_label) {
+    problems.push("accepted-state contract is missing the current accepted phase, commit, or checkpoint label");
+  }
+  const head = gitRef(root, "HEAD");
+  const originMain = gitRef(root, "origin/main");
+  if (head && head === originMain && acceptedState.accepted_pushed_commit !== head) {
+    problems.push("accepted-state contract must match HEAD when HEAD equals origin/main");
   }
   if (packageJson?.scripts?.["operator:smoke"] !== "node scripts/operator-qa-smoke.mjs") problems.push("package.json must expose operator:smoke");
 
@@ -171,9 +182,10 @@ function checkStaticContracts(root, problems) {
     problems.push("v0.9.0 feature state must be pending bundle operator QA or PASS");
   }
   if (featureList?.v079_operator_qa_smoke_pack?.queue_015_status !== "blocked") problems.push("v0.7.9 feature state must keep queue-015 blocked");
+  return acceptedState;
 }
 
-async function checkLiveRoutes(baseUrl, requireServer, problems, notes) {
+async function checkLiveRoutes(baseUrl, requireServer, acceptedState, problems, notes) {
   let healthJson;
   try {
     const healthUrl = new URL("/health", baseUrl);
@@ -187,10 +199,15 @@ async function checkLiveRoutes(baseUrl, requireServer, problems, notes) {
     return;
   }
 
-  if (healthJson.phase !== expectedRuntimePhase) problems.push(`/health phase mismatch: ${healthJson.phase}`);
+  if (healthJson.phase !== acceptedState.accepted_pushed_phase) problems.push(`/health phase mismatch: ${healthJson.phase}`);
+  if (healthJson.acceptedCheckpoint !== acceptedState.checkpoint_label) problems.push(`/health accepted checkpoint mismatch: ${healthJson.acceptedCheckpoint}`);
+  if (healthJson.acceptedCommit !== acceptedState.accepted_pushed_commit) problems.push(`/health accepted commit mismatch: ${healthJson.acceptedCommit}`);
   if (healthJson.productVersion !== productVersion) problems.push(`/health productVersion mismatch: ${healthJson.productVersion}`);
   if (healthJson.promptVersion !== promptVersion) problems.push(`/health promptVersion mismatch: ${healthJson.promptVersion}`);
-  if (healthJson.fakeOnly !== true) problems.push("/health fakeOnly must be true");
+  if (healthJson.dataModes?.fake_corpus !== "available") problems.push("/health fake corpus mode must be available");
+  if (healthJson.dataModes?.public_sources !== "available_exact_allowlisted") problems.push("/health public-source mode must be exact allowlisted");
+  if (healthJson.dataModes?.private_data !== "blocked") problems.push("/health private-data mode must be blocked");
+  if (healthJson.dataModes?.external_ai !== "disabled") problems.push("/health external AI mode must be disabled");
   if (healthJson.realDbTouched !== false) problems.push("/health realDbTouched must be false");
 
   try {
@@ -213,8 +230,8 @@ export async function runOperatorQaSmoke(options = {}) {
   const problems = [];
   const notes = [];
 
-  checkStaticContracts(root, problems);
-  await checkLiveRoutes(baseUrl, Boolean(options.requireServer), problems, notes);
+  const acceptedState = checkStaticContracts(root, problems);
+  await checkLiveRoutes(baseUrl, Boolean(options.requireServer), acceptedState, problems, notes);
 
   return {
     ok: problems.length === 0,
@@ -241,8 +258,9 @@ async function main() {
     console.log(`Root: ${result.root}`);
     console.log(`Base URL: ${result.baseUrl}`);
     console.log(`Project phase: ${expectedProjectPhase}`);
-    console.log(`Runtime phase: ${expectedRuntimePhase}`);
-    console.log(`Runtime phase: ${legacyRuntimePhase} (legacy accepted closeout phase, not current)`);
+    const acceptedState = readCurrentAcceptedPushedState(args.root);
+    console.log(`Runtime phase: ${acceptedState.accepted_pushed_phase}`);
+    console.log(`Accepted checkpoint: ${acceptedState.checkpoint_label}`);
     console.log(`Product version: ${productVersion}`);
     console.log(`Prompt version: ${promptVersion}`);
     console.log("Bundle smoke surfaces:");

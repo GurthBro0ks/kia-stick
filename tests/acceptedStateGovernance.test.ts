@@ -6,18 +6,24 @@ import currentAcceptedPushedState from "@/data/current-accepted-pushed-state.jso
 const immutableHistoricalFixture = "tests/fixtures/current-accepted-pushed-state-v1.1.72.json";
 
 describe("accepted-state governance loop break", () => {
-  it("records Public Data Pilot 1A at 0477487 as the exact current accepted capability", () => {
+  it("records Public Data Pilot 1B at 006da8d as the exact current accepted capability", () => {
     expect(currentAcceptedPushedState.checkpoint_kind).toBe("capability");
-    expect(currentAcceptedPushedState.checkpoint_label).toBe("Public Data Pilot 1A at 0477487");
-    expect(currentAcceptedPushedState.accepted_bundle).toBe("KIA-Stick-public-data-pilot-1A-public-chat-routing-repair-closeout-and-push");
-    expect(currentAcceptedPushedState.accepted_pushed_commit).toBe("04774874c5a20b2b38d435fb66ba2b1cfb9c9e29");
-    expect(currentAcceptedPushedState.accepted_pushed_short_commit).toBe("0477487");
-    expect(currentAcceptedPushedState.accepted_pushed_proof_dir).toContain("closeout_push_20260717T122936Z");
+    expect(currentAcceptedPushedState.checkpoint_label).toBe("Public Data Pilot 1B at 006da8d");
+    expect(currentAcceptedPushedState.accepted_bundle).toBe("KIA-Stick-public-data-pilot-1B-official-APWU-USPS-CBA-closeout-and-push");
+    expect(currentAcceptedPushedState.accepted_pushed_commit).toBe("006da8dc25638cdbe5ebd43b04b5b5c506056ab9");
+    expect(currentAcceptedPushedState.accepted_pushed_short_commit).toBe("006da8d");
+    expect(currentAcceptedPushedState.accepted_pushed_proof_dir).toContain("closeout_push_proof_repair_20260717T155616Z");
     expect(currentAcceptedPushedState.historical_prior_checkpoints[0]).toEqual({
-      checkpoint: "v1.1.77",
-      commit: "80e53c74ea86c2e83c797011728efc138b800f0e",
-      short_commit: "80e53c7",
+      checkpoint: "Public Data Pilot 1A",
+      commit: "04774874c5a20b2b38d435fb66ba2b1cfb9c9e29",
+      short_commit: "0477487",
       status: "historical_only_not_current",
+    });
+    expect(currentAcceptedPushedState.data_modes).toEqual({
+      fake_corpus: "available",
+      public_sources: "available_exact_allowlisted",
+      private_data: "blocked",
+      external_ai: "disabled",
     });
     expect(new Set(currentAcceptedPushedState.historical_prior_checkpoints.map((item) => item.commit)).size)
       .toBe(currentAcceptedPushedState.historical_prior_checkpoints.length);

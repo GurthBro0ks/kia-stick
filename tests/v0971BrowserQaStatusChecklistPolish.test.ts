@@ -1,9 +1,9 @@
 import { readFileSync } from "node:fs";
 import { spawnSync } from "node:child_process";
 import { describe, expect, it } from "vitest";
+import { currentAcceptedPushedState } from "@/lib/acceptedState";
 
 const phase = "KIA-Stick-v0.9.71-browser-qa-status-checklist-polish";
-const bundlePhase = "KIA-Stick-v0.9.68-to-v0.9.72-accepted-pushed-state-and-runtime-status-freshness-bundle";
 const docPath = "docs/v0.9.71-browser-qa-status-checklist-polish.md";
 
 describe("v0.9.71 browser QA status checklist polish", () => {
@@ -32,8 +32,8 @@ describe("v0.9.71 browser QA status checklist polish", () => {
 
     expect(result.status).toBe(0);
     expect(result.stdout).toContain("Operator QA smoke PASS");
-    expect(result.stdout).toContain(`Runtime phase: ${bundlePhase}`);
-    expect(result.stdout).toContain("Runtime phase: KIA-Stick-v0.7.12-operator-qa-closeout-and-push (legacy accepted closeout phase, not current)");
+    expect(result.stdout).toContain(`Runtime phase: ${currentAcceptedPushedState.accepted_pushed_phase}`);
+    expect(result.stdout).toContain(`Accepted checkpoint: ${currentAcceptedPushedState.checkpoint_label}`);
     expect(result.stdout).toContain("Settings version identity");
     expect(result.stdout).toContain("/health local route");
     expect(result.stdout).toContain("/version local route");

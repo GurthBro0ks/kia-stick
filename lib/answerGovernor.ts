@@ -62,6 +62,7 @@ export interface AnswerResult {
   resolvedQuestion?: string;
   contextNote?: string;
   clarificationNeeded?: boolean;
+  suggestedQuestions?: string[];
   intent: AnswerIntent;
   shortAnswer: string;
   modeNote: string;

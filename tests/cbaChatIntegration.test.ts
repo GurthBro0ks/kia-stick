@@ -90,6 +90,41 @@ describe("official CBA Chat and UI integration", () => {
     expect(result.answer.citations.every((citation) => citation.publicSourceType === "cba_contract")).toBe(true);
   });
 
+  it("retrieves exact CBA passages for an article question instead of making a conclusion", () => {
+    const result = submit("What does Article 15 say?");
+    expect(result.snapshot.sourceMode).toBe("cba");
+    expect(result.answer.noAnswer).toBe(false);
+    expect(result.answer.shortAnswer).toContain("Exact CBA passages retrieved");
+    expect(result.answer.shortAnswer).toContain("Passage 1:");
+    expect(result.answer.citations.length).toBeGreaterThan(0);
+    expect(result.answer.citations.every((citation) => citation.articleNumber === "15")).toBe(true);
+    expect(result.answer.citations.every((citation) => citation.publicSourceType === "cba_contract")).toBe(true);
+    expect(result.answer.version.provider).toBe(CBA_PROVIDER);
+    expect(result.answer.version.promptVersion).toBe(CBA_PROMPT_VERSION);
+    expect(result.cardHtml).toContain("Save to Saved");
+    expect(result.cardHtml).not.toContain("local-fake-deterministic");
+  });
+
+  it("routes an explicit CBA topic to retrieved passages without relying on a scripted intent", () => {
+    const result = submit("What does the APWU-USPS CBA say about discipline?");
+    expect(result.snapshot.sourceMode).toBe("cba");
+    expect(result.answer.noAnswer).toBe(false);
+    expect(result.answer.shortAnswer).toContain("corrective rather than punitive");
+    expect(result.answer.citations.some((citation) => citation.articleNumber === "16")).toBe(true);
+  });
+
+  it("uses honest retrieval wording and CBA suggestion chips when no exact passage is retrieved", () => {
+    const result = submit("What does the APWU-USPS CBA say about unfindableterm?");
+    expect(result.snapshot.sourceMode).toBe("cba");
+    expect(result.answer.noAnswer).toBe(true);
+    expect(result.answer.shortAnswer).toContain("No exact CBA passage was retrieved");
+    expect(result.answer.shortAnswer).toContain("does not establish that the CBA lacks a rule");
+    expect(result.answer.citations).toEqual([]);
+    expect(result.answer.suggestedQuestions).toContain("What does Article 15 say?");
+    expect(result.cardHtml).toContain("No answer to save");
+    expect(result.cardHtml).not.toContain("local-fake-deterministic");
+  });
+
   it("answers the cross-source question with separate CBA and NLRB authority identities", () => {
     const result = submit("Does the NLRB Weingarten page override the APWU-USPS CBA?");
     expect(result.snapshot.sourceMode).toBe("cba");
@@ -146,11 +181,13 @@ describe("official CBA Chat and UI integration", () => {
       publicSourceState: { status: "available", source: nlrbSource },
       sourceHierarchyGroups: buildSourceHierarchyGroups(),
       runtimeVersion,
+      onAskCbaQuestion: () => undefined,
     }));
     expect(html).toContain("OFFICIAL FINAL CBA");
     expect(html).toContain("CONTROLLING CONTRACT LANGUAGE");
     expect(html).toContain("OFFICIAL GENERAL GUIDANCE");
     expect(html).toContain("Deterministic lexical search");
+    expect(html).toContain("Ask Chat about this CBA search");
     expect(html).toContain("Article 15");
     expect(html.match(new RegExp(`id="${cbaParagraphAnchorId(targetId)}"`, "g"))).toHaveLength(1);
     expect(html).toContain("Official PDF");

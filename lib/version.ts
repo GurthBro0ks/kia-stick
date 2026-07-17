@@ -1,4 +1,5 @@
 import { corpus } from "@/lib/sourceModel";
+import { currentAcceptedPushedState } from "@/lib/acceptedState";
 
 export interface RuntimeVersion {
   productVersion: string;
@@ -13,7 +14,7 @@ export interface RuntimeVersion {
 }
 
 export const PRODUCT_VERSION = "0.7.0";
-export const CURRENT_PHASE = "KIA-Stick-v0.9.68-to-v0.9.72-accepted-pushed-state-and-runtime-status-freshness-bundle";
+export const CURRENT_PHASE = currentAcceptedPushedState.accepted_pushed_phase;
 export const DEFAULT_CHANNEL = "dev";
 export const PROMPT_VERSION = "prompt.fake-docs.v0.5-import-wizard-hardening";
 export const DEFAULT_PROVIDER = "local-fake-deterministic";

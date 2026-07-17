@@ -1,5 +1,7 @@
 import { readFileSync } from "node:fs";
 import { describe, expect, it } from "vitest";
+import { currentAcceptedPushedState } from "@/lib/acceptedState";
+import { CURRENT_PHASE } from "@/lib/version";
 
 const phase = "KIA-Stick-v0.9.70-health-version-phase-status-freshness-polish";
 const bundlePhase = "KIA-Stick-v0.9.68-to-v0.9.72-accepted-pushed-state-and-runtime-status-freshness-bundle";
@@ -35,12 +37,12 @@ describe("v0.9.70 health/version phase-status freshness polish", () => {
     const healthRoute = readFileSync("app/health/route.ts", "utf8");
     const versionPage = readFileSync("app/version/page.tsx", "utf8");
 
-    expect(constantValue(versionSource, "CURRENT_PHASE")).toBe(bundlePhase);
+    expect(CURRENT_PHASE).toBe(currentAcceptedPushedState.accepted_pushed_phase);
     expect(constantValue(versionSource, "PRODUCT_VERSION")).toBe("0.7.0");
     expect(constantValue(versionSource, "PROMPT_VERSION")).toBe("prompt.fake-docs.v0.5-import-wizard-hardening");
-    expect(healthRoute).toContain("fakeOnly");
+    expect(healthRoute).toContain("dataModes");
     expect(healthRoute).toContain("realDbTouched");
-    expect(healthRoute).toContain("CURRENT_PHASE");
+    expect(healthRoute).toContain("currentAcceptedPushedState");
     expect(versionPage).toContain("Display Version");
     expect(versionPage).toContain("Product Version");
     expect(versionPage).toContain("Prompt");
