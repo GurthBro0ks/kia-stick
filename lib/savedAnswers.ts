@@ -4,6 +4,7 @@ import {
   PUBLIC_SOURCE_OWNER,
   PUBLIC_SOURCE_POSTAL_APPLICABILITY,
 } from "@/lib/publicSource";
+import { CBA_SOURCE_OWNER } from "@/lib/cbaSource";
 import type { Detail, Mode, Scope } from "@/lib/sourceModel";
 import { clientVersion } from "@/lib/version";
 
@@ -19,9 +20,16 @@ export interface SavedAnswer {
   citations: AnswerResult["citations"];
   version: AnswerResult["version"];
   provider: string;
-  answerLane: "fake" | "public";
+  answerLane: "fake" | "public" | "public_cba";
   sourceId?: string;
+  sourceTitle?: string;
   sourceOwner?: string;
+  sourceStatus?: string;
+  effectiveStart?: string;
+  effectiveEnd?: string;
+  pdfSha256?: string;
+  scopeWarning?: string;
+  authorityClassification?: string;
   sourceRetrievedAt?: string;
   normalizedSourceHash?: string;
   postalApplicability?: string;
@@ -117,6 +125,13 @@ function stableAnswerFingerprint(answer: AnswerResult, mode: Mode, scope: Scope,
     answer.sourceOwner ?? "",
     answer.postalApplicability ?? "",
     answer.controllingForUsps ?? "",
+    answer.sourceTitle ?? "",
+    answer.sourceStatus ?? "",
+    answer.effectiveStart ?? "",
+    answer.effectiveEnd ?? "",
+    answer.pdfSha256 ?? "",
+    answer.scopeWarning ?? "",
+    answer.authorityClassification ?? "",
   ].join("|");
 }
 
@@ -174,7 +189,8 @@ export function createSavedAnswerRecord(input: {
   const saveKey = savedAnswerKey(input.answer, input.mode, input.scope);
   const dataFingerprint = savedAnswerFingerprint(input.answer, input.mode, input.scope, input.detail);
   const publicCitation = input.answer.citations.find((citation) => citation.sourceKind === "public");
-  const answerLane = input.answer.answerKind === "public" || publicCitation ? "public" : "fake";
+  const cbaCitation = input.answer.citations.find((citation) => citation.publicSourceType === "cba_contract");
+  const answerLane = cbaCitation ? "public_cba" : input.answer.answerKind === "public" || publicCitation ? "public" : "fake";
 
   return {
     id: input.existingId ?? `saved-${stableHash(saveKey)}`,
@@ -189,10 +205,19 @@ export function createSavedAnswerRecord(input: {
     version: input.answer.version,
     provider: input.answer.version.provider,
     answerLane,
-    sourceId: publicCitation?.sourceId,
-    sourceOwner: answerLane === "public" ? input.answer.sourceOwner ?? PUBLIC_SOURCE_OWNER : undefined,
-    sourceRetrievedAt: publicCitation?.retrievedAt,
-    normalizedSourceHash: publicCitation?.contentHash,
+    sourceId: cbaCitation?.sourceId ?? publicCitation?.sourceId,
+    sourceTitle: input.answer.sourceTitle ?? cbaCitation?.title ?? publicCitation?.title,
+    sourceOwner: answerLane === "public_cba"
+      ? input.answer.sourceOwner ?? CBA_SOURCE_OWNER
+      : answerLane === "public" ? input.answer.sourceOwner ?? PUBLIC_SOURCE_OWNER : undefined,
+    sourceStatus: input.answer.sourceStatus,
+    effectiveStart: input.answer.effectiveStart ?? cbaCitation?.effectiveStart,
+    effectiveEnd: input.answer.effectiveEnd ?? cbaCitation?.effectiveEnd,
+    pdfSha256: input.answer.pdfSha256 ?? cbaCitation?.responseHash,
+    scopeWarning: input.answer.scopeWarning,
+    authorityClassification: input.answer.authorityClassification,
+    sourceRetrievedAt: cbaCitation?.retrievedAt ?? publicCitation?.retrievedAt,
+    normalizedSourceHash: cbaCitation?.contentHash ?? publicCitation?.contentHash,
     postalApplicability: answerLane === "public"
       ? input.answer.postalApplicability ?? PUBLIC_SOURCE_POSTAL_APPLICABILITY
       : undefined,
@@ -219,7 +244,10 @@ export function migrateSavedAnswers(input: unknown): SavedAnswer[] {
     const detail = validDetail(source.detail);
     const citations = Array.isArray(source.citations) ? source.citations : [];
     const publicCitation = citations.find((citation) => citation?.sourceKind === "public");
-    const answerLane = source.answerLane === "public" || publicCitation ? "public" : "fake";
+    const cbaCitation = citations.find((citation) => citation?.publicSourceType === "cba_contract");
+    const answerLane = source.answerLane === "public_cba" || cbaCitation
+      ? "public_cba"
+      : source.answerLane === "public" || publicCitation ? "public" : "fake";
     const normalized: SavedAnswer = {
       id: typeof source.id === "string" ? source.id : `saved-${index}`,
       saveKey: "",
@@ -233,16 +261,23 @@ export function migrateSavedAnswers(input: unknown): SavedAnswer[] {
       version: source.version ?? clientVersion,
       provider: typeof source.provider === "string" ? source.provider : source.version?.provider ?? clientVersion.provider,
       answerLane,
-      sourceId: typeof source.sourceId === "string" ? source.sourceId : publicCitation?.sourceId,
+      sourceId: typeof source.sourceId === "string" ? source.sourceId : cbaCitation?.sourceId ?? publicCitation?.sourceId,
+      sourceTitle: typeof source.sourceTitle === "string" ? source.sourceTitle : cbaCitation?.title ?? publicCitation?.title,
       sourceOwner: typeof source.sourceOwner === "string"
         ? source.sourceOwner
-        : answerLane === "public" ? PUBLIC_SOURCE_OWNER : undefined,
+        : answerLane === "public_cba" ? CBA_SOURCE_OWNER : answerLane === "public" ? PUBLIC_SOURCE_OWNER : undefined,
+      sourceStatus: typeof source.sourceStatus === "string" ? source.sourceStatus : undefined,
+      effectiveStart: typeof source.effectiveStart === "string" ? source.effectiveStart : cbaCitation?.effectiveStart,
+      effectiveEnd: typeof source.effectiveEnd === "string" ? source.effectiveEnd : cbaCitation?.effectiveEnd,
+      pdfSha256: typeof source.pdfSha256 === "string" ? source.pdfSha256 : cbaCitation?.responseHash,
+      scopeWarning: typeof source.scopeWarning === "string" ? source.scopeWarning : undefined,
+      authorityClassification: typeof source.authorityClassification === "string" ? source.authorityClassification : undefined,
       sourceRetrievedAt: typeof source.sourceRetrievedAt === "string"
         ? source.sourceRetrievedAt
-        : publicCitation?.retrievedAt,
+        : cbaCitation?.retrievedAt ?? publicCitation?.retrievedAt,
       normalizedSourceHash: typeof source.normalizedSourceHash === "string"
         ? source.normalizedSourceHash
-        : publicCitation?.contentHash,
+        : cbaCitation?.contentHash ?? publicCitation?.contentHash,
       postalApplicability: typeof source.postalApplicability === "string"
         ? source.postalApplicability
         : answerLane === "public" ? PUBLIC_SOURCE_POSTAL_APPLICABILITY : undefined,

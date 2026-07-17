@@ -94,7 +94,7 @@ describe("public Chat submit orchestration regression", () => {
     const result = submitThroughComponentRouter(question);
 
     expect(result.snapshot.sourceModePolicy).toBe("auto");
-    expect(result.snapshot.sourceMode).toBe("public");
+    expect(result.snapshot.sourceMode).toBe("nlrb");
     expect(result.snapshot.scope).toBe("Official-Like");
     expect(result.loading.answer.answerKind).toBe("public");
     expect(result.answer.answerKind).toBe("public");
@@ -108,7 +108,7 @@ describe("public Chat submit orchestration regression", () => {
       Boolean(citation.paragraphId?.match(/-p\d{2}$/))
     ))).toBe(true);
     expect(result.cardHtml).toContain("NLRB Weingarten public pilot");
-    expect(result.cardHtml).toContain("Answer lane: public");
+    expect(result.cardHtml).toContain("Actual lane: public_nlrb");
     expect(result.cardHtml).toContain(`Provider: ${PUBLIC_SOURCE_PROVIDER}`);
     expect(result.cardHtml).toContain(`Prompt: ${PUBLIC_SOURCE_PROMPT_VERSION}`);
     expect(result.cardHtml).toContain("Save to Saved");
@@ -121,7 +121,7 @@ describe("public Chat submit orchestration regression", () => {
       "Does this source by itself establish the controlling rule for USPS employees?"
     );
 
-    expect(result.snapshot.sourceMode).toBe("public");
+    expect(result.snapshot.sourceMode).toBe("nlrb");
     expect(result.answer.noAnswer).toBe(false);
     expect(result.answer.shortAnswer).toContain("No.");
     expect(result.answer.shortAnswer).toContain("Postal applicability is unverified");
@@ -133,16 +133,17 @@ describe("public Chat submit orchestration regression", () => {
 
   it("returns the exact unsupported demonstration as an unsaveable public-lane no-answer", () => {
     const result = submitThroughComponentRouter(
-      "What is the contractual deadline for filing an APWU grievance?"
+      "What is the contractual deadline for filing an APWU grievance?",
+      { sourcePolicy: "nlrb" }
     );
 
-    expect(result.snapshot.sourceMode).toBe("public");
+    expect(result.snapshot.sourceMode).toBe("nlrb");
     expect(result.answer.answerKind).toBe("public");
     expect(result.answer.noAnswer).toBe(true);
     expect(result.answer.citations).toEqual([]);
     expect(result.answer.shortAnswer).toContain("does not support the requested claim");
     expect(result.answer.version.provider).toBe(PUBLIC_SOURCE_PROVIDER);
-    expect(result.cardHtml).toContain("Answer lane: public");
+    expect(result.cardHtml).toContain("Actual lane: public_nlrb");
     expect(result.cardHtml).toContain("No answer to save");
     expect(result.cardHtml).not.toContain("Name the exact fake issue");
     expect(result.cardHtml).not.toContain("controlling fake source");
@@ -155,7 +156,7 @@ describe("public Chat submit orchestration regression", () => {
       { cache: null }
     );
 
-    expect(result.snapshot.sourceMode).toBe("public");
+    expect(result.snapshot.sourceMode).toBe("nlrb");
     expect(result.answer.answerKind).toBe("public");
     expect(result.answer.noAnswer).toBe(true);
     expect(result.answer.citations).toEqual([]);
@@ -172,7 +173,7 @@ describe("public Chat submit orchestration regression", () => {
     expect(result.snapshot.sourceMode).toBe("fake");
     expect(result.answer.answerKind).toBe("fake");
     expect(result.answer.version.provider).toBe("local-fake-deterministic");
-    expect(result.cardHtml).toContain("Answer lane: fake");
+    expect(result.cardHtml).toContain("Actual lane: fake");
     expect(result.cardHtml).not.toContain(PUBLIC_SOURCE_PROVIDER);
   });
 
@@ -217,7 +218,7 @@ describe("public Chat submit orchestration regression", () => {
     const componentSource = readFileSync("components/KiaStickApp.tsx", "utf8");
 
     expect(shellHtml).toContain("Chat answer lane policy");
-    expect(shellHtml).toContain("Automatic (public intents first)");
+    expect(shellHtml).toContain("Automatic — official public intents first");
     expect(shellHtml).toMatch(/<option value="auto" selected=""/);
     expect(componentSource).toContain("createChatSubmitSnapshot({");
     expect(componentSource).toContain("routeChatQuestion({");

@@ -10,8 +10,10 @@ export interface AcceptedCheckpoint {
 export interface CurrentAcceptedPushedState {
   schema: string;
   phase: string;
+  checkpoint_kind?: "capability";
   checkpoint: string;
   checkpoint_label: string;
+  accepted_bundle?: string;
   accepted_pushed_commit: string;
   accepted_pushed_short_commit: string;
   accepted_pushed_proof_dir: string;
@@ -36,6 +38,8 @@ export interface CurrentAcceptedPushedState {
   public_source_ids?: string[];
   public_pilot_provider?: string;
   public_pilot_prompt_version?: string;
+  cba_public_provider?: string;
+  cba_public_prompt_version?: string;
   package_json_changed: boolean;
   package_lock_changed: boolean;
 }
@@ -45,4 +49,3 @@ export const currentAcceptedPushedState = currentAcceptedPushedStateJson as Curr
 export const historicalAcceptedPushedShortCommits = currentAcceptedPushedState.historical_prior_checkpoints
   .map((checkpoint) => checkpoint.short_commit)
   .join(", ");
-

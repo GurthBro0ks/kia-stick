@@ -6,15 +6,17 @@ import currentAcceptedPushedState from "@/data/current-accepted-pushed-state.jso
 const immutableHistoricalFixture = "tests/fixtures/current-accepted-pushed-state-v1.1.72.json";
 
 describe("accepted-state governance loop break", () => {
-  it("records v1.1.77 at 80e53c7 as the exact current accepted state", () => {
-    expect(currentAcceptedPushedState.checkpoint_label).toBe("v1.1.77 at 80e53c7");
-    expect(currentAcceptedPushedState.accepted_pushed_commit).toBe("80e53c74ea86c2e83c797011728efc138b800f0e");
-    expect(currentAcceptedPushedState.accepted_pushed_short_commit).toBe("80e53c7");
-    expect(currentAcceptedPushedState.accepted_pushed_proof_dir).toContain("closeout_push_20260717T103212Z");
+  it("records Public Data Pilot 1A at 0477487 as the exact current accepted capability", () => {
+    expect(currentAcceptedPushedState.checkpoint_kind).toBe("capability");
+    expect(currentAcceptedPushedState.checkpoint_label).toBe("Public Data Pilot 1A at 0477487");
+    expect(currentAcceptedPushedState.accepted_bundle).toBe("KIA-Stick-public-data-pilot-1A-public-chat-routing-repair-closeout-and-push");
+    expect(currentAcceptedPushedState.accepted_pushed_commit).toBe("04774874c5a20b2b38d435fb66ba2b1cfb9c9e29");
+    expect(currentAcceptedPushedState.accepted_pushed_short_commit).toBe("0477487");
+    expect(currentAcceptedPushedState.accepted_pushed_proof_dir).toContain("closeout_push_20260717T122936Z");
     expect(currentAcceptedPushedState.historical_prior_checkpoints[0]).toEqual({
-      checkpoint: "v1.1.72",
-      commit: "ab1878e4c681c8f658e8a5bf6bd36f3ad4423fea",
-      short_commit: "ab1878e",
+      checkpoint: "v1.1.77",
+      commit: "80e53c74ea86c2e83c797011728efc138b800f0e",
+      short_commit: "80e53c7",
       status: "historical_only_not_current",
     });
     expect(new Set(currentAcceptedPushedState.historical_prior_checkpoints.map((item) => item.commit)).size)

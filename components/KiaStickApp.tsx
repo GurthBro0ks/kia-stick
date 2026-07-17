@@ -91,6 +91,22 @@ import {
 import { clientVersion, type RuntimeVersion } from "@/lib/version";
 import { currentAcceptedPushedState, historicalAcceptedPushedShortCommits } from "@/lib/acceptedState";
 import {
+  CBA_DOCUMENT_STATUS,
+  CBA_EFFECTIVE_END,
+  CBA_EFFECTIVE_START,
+  CBA_PROMPT_VERSION,
+  CBA_PROVIDER,
+  CBA_SCOPE_WARNING,
+  CBA_SOURCE_ID,
+  CBA_SOURCE_PAGE_URL,
+  CBA_SOURCE_PDF_URL,
+  cbaParagraphAnchorId,
+  cbaPilotQuestions,
+  searchCba,
+  type CbaParagraph,
+  type CbaSourceRouteResponse,
+} from "@/lib/cbaSource";
+import {
   PUBLIC_SOURCE_APPLICABILITY_WARNING,
   PUBLIC_SOURCE_ID,
   PUBLIC_SOURCE_PROMPT_VERSION,
@@ -104,6 +120,7 @@ import {
 type Tab = "chat" | "sources" | "saved" | "upload" | "vault" | "import" | "settings";
 type VaultView = "vault" | "quarantine" | "redaction" | "metadata" | "index" | "audit";
 type PublicSourceLoadState = { status: "loading" } | PublicSourceRouteResponse;
+type CbaSourceLoadState = { status: "loading" } | CbaSourceRouteResponse;
 
 export interface QuarantineItem {
   id: string;
@@ -169,7 +186,7 @@ const acceptedOperatorCheckpoint = [
   { label: "Historical local repair", value: "v0.9.83-to-v0.9.87 operator-status runtime repair; validation PASS; manual QA PASS; later pushed by closeout" },
   { label: "This local bundle", value: currentAcceptedPushedState.local_bundle_status },
   { label: "Runtime status surface", value: "/health phase is refreshed for this bundle; /version identity semantics unchanged" },
-  { label: "Real-doc gate", value: "queue-015 blocked; no real-doc capability" },
+  { label: "Real-doc gate", value: "queue-015 blocked; no real-doc capability beyond the exact approved public CBA source" },
   { label: "Next/PostCSS", value: "WARN_SAFE_NEXT_TARGET_UNCLEAR; parked, not fixed" },
   { label: "v0.9.12C", value: "blocked pending exact operator-approved Next target" },
   { label: "Package lock", value: "unchanged; no install/update/audit-fix/dedupe/prune" },
@@ -222,6 +239,8 @@ export function KiaStickApp({ runtimeVersion = clientVersion }: { runtimeVersion
   const [detail, setDetail] = useState<Detail>("Detailed");
   const [chatSourceMode, setChatSourceMode] = useState<ChatSourcePolicy>("auto");
   const [publicSourceState, setPublicSourceState] = useState<PublicSourceLoadState>({ status: "loading" });
+  const [cbaSourceState, setCbaSourceState] = useState<CbaSourceLoadState>({ status: "loading" });
+  const [cbaCitationTargetId, setCbaCitationTargetId] = useState<string | null>(null);
   const [draft, setDraft] = useState("");
   const [thread, setThread] = useState<ConversationThread>(() => createConversationThread());
   const [isSending, setIsSending] = useState(false);
@@ -247,6 +266,21 @@ export function KiaStickApp({ runtimeVersion = clientVersion }: { runtimeVersion
     if ("serviceWorker" in navigator) {
       navigator.serviceWorker.register("/sw.js").catch(() => undefined);
     }
+  }, []);
+
+  useEffect(() => {
+    let cancelled = false;
+    fetch("/api/public-cba-source", { method: "GET", cache: "no-store" })
+      .then(async (response) => {
+        const payload = (await response.json()) as CbaSourceRouteResponse;
+        if (!cancelled && (payload.status === "available" || payload.status === "unavailable")) setCbaSourceState(payload);
+      })
+      .catch(() => {
+        if (!cancelled) setCbaSourceState({ status: "unavailable", reason: "cache_unsafe" });
+      });
+    return () => {
+      cancelled = true;
+    };
   }, []);
 
   useEffect(() => {
@@ -322,6 +356,7 @@ export function KiaStickApp({ runtimeVersion = clientVersion }: { runtimeVersion
           question: input.userMessage.content,
           snapshot: input.snapshot,
           publicSource: publicSourceState.status === "available" ? publicSourceState.source : null,
+          cbaSource: cbaSourceState.status === "available" ? cbaSourceState.source : null,
           runtimeVersion,
           threadHistory: recentAnswerHistory(input.baseThread),
         });
@@ -442,11 +477,13 @@ export function KiaStickApp({ runtimeVersion = clientVersion }: { runtimeVersion
 
   function navigateToCitation(citation: Citation) {
     if (citation.sourceKind !== "public" || !citation.paragraphId) return;
-    const targetId = publicSourceParagraphAnchorId(citation.paragraphId);
+    const isCba = citation.publicSourceType === "cba_contract" || citation.sourceId === CBA_SOURCE_ID;
+    const targetId = isCba ? cbaParagraphAnchorId(citation.paragraphId) : publicSourceParagraphAnchorId(citation.paragraphId);
+    setCbaCitationTargetId(isCba ? citation.paragraphId : null);
     setTab("sources");
     window.setTimeout(() => {
       document.getElementById(targetId)?.scrollIntoView({ behavior: "smooth", block: "center" });
-    }, 0);
+    }, 50);
   }
 
   function queueFakeUpload(kind: "single" | "batch") {
@@ -509,7 +546,7 @@ export function KiaStickApp({ runtimeVersion = clientVersion }: { runtimeVersion
 
       <div className="fakeNotice" role="status">
         <AlertTriangle size={16} />
-        <span>Fake sample mode only remains isolated. PUBLIC DATA PILOT: one allowlisted source, local read-only, no private data. No cloud keys, real uploads, or real-doc gate are active.</span>
+        <span>Fake sample mode remains isolated. PUBLIC DATA PILOT: two exact allowlisted official sources, local read-only, no private data. No cloud keys, real uploads, or unrestricted real-doc gate are active.</span>
       </div>
 
       <main className={tab === "chat" ? "mainArea chatMain" : "mainArea"} ref={chatScrollRef}>
@@ -541,7 +578,13 @@ export function KiaStickApp({ runtimeVersion = clientVersion }: { runtimeVersion
         )}
 
         {tab === "sources" && (
-          <SourcesPanel publicSourceState={publicSourceState} sourceHierarchyGroups={sourceHierarchyGroups} runtimeVersion={runtimeVersion} />
+          <SourcesPanel
+            cbaCitationTargetId={cbaCitationTargetId}
+            cbaSourceState={cbaSourceState}
+            publicSourceState={publicSourceState}
+            sourceHierarchyGroups={sourceHierarchyGroups}
+            runtimeVersion={runtimeVersion}
+          />
         )}
 
         {tab === "saved" && (
@@ -585,9 +628,9 @@ export function KiaStickApp({ runtimeVersion = clientVersion }: { runtimeVersion
             <PanelHeader title="Settings" meta={<a href="/version">Version page</a>} />
             <section className="aboutPanel" aria-label="About local isolated data modes">
               <span className="sectionKicker">Local isolated data modes</span>
-              <h3>Fake corpus plus one exact public source</h3>
+              <h3>Fake corpus plus two exact official public sources</h3>
               <p>
-                KIA Stick keeps the bundled fake corpus available under provider `local-fake-deterministic`. The separate public pilot reads one validated local cache for `{PUBLIC_SOURCE_ID}` under provider `{PUBLIC_SOURCE_PROVIDER}` and prompt `{PUBLIC_SOURCE_PROMPT_VERSION}`.
+                KIA Stick keeps the bundled fake corpus under `local-fake-deterministic`. The public pilot separately reads `{CBA_SOURCE_ID}` under `{CBA_PROVIDER}` / `{CBA_PROMPT_VERSION}` and `{PUBLIC_SOURCE_ID}` under `{PUBLIC_SOURCE_PROVIDER}` / `{PUBLIC_SOURCE_PROMPT_VERSION}`.
               </p>
               <p>
                 This build does not read private folders, real APWU/USPS/member/local/case documents, cloud services, or external AI APIs. The public pilot is non-sensitive and read-only; private-data and real-doc gates remain blocked.
@@ -650,7 +693,7 @@ export function KiaStickApp({ runtimeVersion = clientVersion }: { runtimeVersion
               </button>
               <span className={latestAssistant?.answer.noAnswer ? "statusPill warning" : "statusPill ok"}>
                 {isSending
-                  ? chatSourceMode === "public" ? "Checking public cache" : chatSourceMode === "fake" ? "Checking fake sources" : "Routing automatically"
+                  ? chatSourceMode === "cba" ? "Checking CBA cache" : chatSourceMode === "nlrb" || chatSourceMode === "public" ? "Checking NLRB cache" : chatSourceMode === "fake" ? "Checking fake sources" : "Routing automatically"
                   : latestAssistant?.answer.noAnswer ? "No-answer unsaved"
                   : latestAssistant ? latestAssistant.answer.answerKind === "public" ? "Public citation ready" : "Fake thread ready"
                   : "Ready"}
@@ -663,12 +706,13 @@ export function KiaStickApp({ runtimeVersion = clientVersion }: { runtimeVersion
               <label className="controlPill">
                 <span>Answer lane</span>
                 <select value={chatSourceMode} onChange={(event) => setChatSourceMode(event.target.value as ChatSourcePolicy)}>
-                  <option value="auto">Automatic (public intents first)</option>
+                  <option value="auto">Automatic — official public intents first</option>
+                  <option value="cba">CBA</option>
+                  <option value="nlrb">NLRB Guidance</option>
                   <option value="fake">Fake sample corpus</option>
-                  <option value="public">Public pilot (NLRB)</option>
                 </select>
               </label>
-              <span className="emptyState">Automatic is the safe default: approved NLRB intents route public; known fake prompts stay fake.</span>
+              <span className="emptyState">Automatic is the safe default: CBA intents first, then NLRB guidance, known fake prompts, and finally a no-answer lane.</span>
             </div>
             <textarea
               aria-label="Message KIA Stick"
@@ -727,12 +771,14 @@ export function KiaStickApp({ runtimeVersion = clientVersion }: { runtimeVersion
 
           <details className="promptDetails">
             <summary>Prompt shortcuts</summary>
-            <div className="promptRail" aria-label={chatSourceMode === "public" ? "public pilot prompts" : chatSourceMode === "fake" ? "fake test prompts" : "automatic public and fake prompts"}>
-              {(chatSourceMode === "public"
+            <div className="promptRail" aria-label={chatSourceMode === "cba" ? "CBA prompts" : chatSourceMode === "nlrb" || chatSourceMode === "public" ? "NLRB guidance prompts" : chatSourceMode === "fake" ? "fake test prompts" : "automatic public and fake prompts"}>
+              {(chatSourceMode === "cba"
+                ? cbaPilotQuestions
+                : chatSourceMode === "nlrb" || chatSourceMode === "public"
                 ? publicPilotQuestions
                 : chatSourceMode === "fake"
                   ? cannedQuestions
-                  : [...publicPilotQuestions, ...cannedQuestions]
+                  : [...cbaPilotQuestions, ...publicPilotQuestions, ...cannedQuestions]
               ).map((prompt) => (
                 <button className="promptChip" key={prompt} type="button" onClick={() => setDraft(prompt)}>
                   {prompt}
@@ -832,15 +878,59 @@ export function FakeUploadPanel(props: {
   );
 }
 
+function CbaPassageCard({
+  paragraph,
+  normalizedHash,
+  relevance,
+}: {
+  paragraph: CbaParagraph;
+  normalizedHash: string;
+  relevance: string;
+}) {
+  return (
+    <article id={cbaParagraphAnchorId(paragraph.id)} className="hierarchyDoc cbaPassageCard">
+      <strong>
+        {paragraph.articleNumber ? `Article ${paragraph.articleNumber}` : paragraph.structuralType}
+        {paragraph.sectionNumber ? ` · Section ${paragraph.sectionNumber}` : ""}
+        {paragraph.subsection ? ` · ${paragraph.subsection}` : ""}
+      </strong>
+      <p>{paragraph.text.length > 520 ? `${paragraph.text.slice(0, 517)}…` : paragraph.text}</p>
+      <div className="sourceMeta">
+        <span className="badge">PDF {paragraph.pdfPageNumber}</span>
+        <span className="badge">printed {paragraph.printedPageLabel ?? "unknown"}</span>
+        <span className="badge">{paragraph.structuralType}</span>
+        <span className="badge">{paragraph.id}</span>
+      </div>
+      <p className="emptyState">Relevance: {relevance}</p>
+      <p className="sectionAnchor">Normalized SHA-256 {normalizedHash}</p>
+    </article>
+  );
+}
+
 export function SourcesPanel({
+  cbaCitationTargetId = null,
+  cbaSourceState = { status: "unavailable", reason: "cache_missing" },
   publicSourceState = { status: "unavailable", reason: "cache_missing" },
   sourceHierarchyGroups,
   runtimeVersion,
 }: {
+  cbaCitationTargetId?: string | null;
+  cbaSourceState?: CbaSourceLoadState;
   publicSourceState?: PublicSourceLoadState;
   sourceHierarchyGroups: ReturnType<typeof buildSourceHierarchyGroups>;
   runtimeVersion: RuntimeVersion;
 }) {
+  const [cbaSearchQuery, setCbaSearchQuery] = useState("Article 15");
+  const cbaSearchResults = useMemo(
+    () => cbaSourceState.status === "available" ? searchCba(cbaSourceState.source, cbaSearchQuery, 8) : [],
+    [cbaSearchQuery, cbaSourceState]
+  );
+  const cbaCitationTarget = useMemo(() => {
+    if (cbaSourceState.status !== "available" || !cbaCitationTargetId) return null;
+    return cbaSourceState.source.normalized.pages
+      .flatMap((page) => page.paragraphs)
+      .find((paragraph) => paragraph.id === cbaCitationTargetId) ?? null;
+  }, [cbaCitationTargetId, cbaSourceState]);
   const totalSources = sourceHierarchyGroups.reduce((total, group) => total + group.docs.length, 0);
   const citableSources = sourceHierarchyGroups.flatMap((group) => group.docs).filter((doc) => doc.citable).length;
   const contextOnlySources = totalSources - citableSources;
@@ -850,10 +940,103 @@ export function SourcesPanel({
       <PanelHeader title="Sources" meta="isolated fake and public lanes" />
       <div className="publicPilotStatus" aria-label="public data pilot status">
         <strong>PUBLIC DATA PILOT</strong>
-        <span>ONE ALLOWLISTED SOURCE</span>
+        <span>TWO EXACT ALLOWLISTED SOURCES</span>
         <span>LOCAL READ-ONLY</span>
         <span>NO PRIVATE DATA</span>
       </div>
+
+      {cbaSourceState.status === "loading" && (
+        <article className="sourceCard publicSourceCard" aria-label="official CBA source loading">
+          <h3>Loading bounded local official CBA cache</h3>
+          <p>No external fetch occurs in the application. The server checks only the fixed PDF and normalized cache.</p>
+        </article>
+      )}
+
+      {cbaSourceState.status === "unavailable" && (
+        <article className="sourceCard publicSourceCard" aria-label="official CBA source unavailable">
+          <h3>Official APWU-USPS CBA unavailable</h3>
+          <p>The bounded CBA cache is safely unavailable ({cbaSourceState.reason}). No other path, URL, source, or fake lane was tried.</p>
+          <p>Operator restore command: <code>node scripts/public-source-sync.mjs {CBA_SOURCE_ID}</code></p>
+        </article>
+      )}
+
+      {cbaSourceState.status === "available" && (
+        <article className="sourceCard publicSourceCard cbaSourceCard" aria-label="official final APWU USPS CBA source">
+          <div className="publicSourceHeader">
+            <div>
+              <span className="sectionKicker">OFFICIAL FINAL CBA</span>
+              <h3>{cbaSourceState.source.source.title}</h3>
+              <p>{cbaSourceState.source.source.owner}</p>
+            </div>
+            <div className="compactActions">
+              <a className="button subtle officialSourceLink" href={CBA_SOURCE_PAGE_URL} target="_blank" rel="noreferrer">Official source page</a>
+              <a className="button subtle officialSourceLink" href={CBA_SOURCE_PDF_URL} target="_blank" rel="noreferrer">Official PDF</a>
+            </div>
+          </div>
+          <div className="sourceMeta">
+            <span className="badge green">OFFICIAL FINAL CBA</span>
+            <span className="badge green">CONTROLLING CONTRACT LANGUAGE</span>
+            <span className="badge green">PUBLIC / NON-SENSITIVE</span>
+            <span className="badge">LOCAL READ-ONLY</span>
+            <span className="badge">source id {CBA_SOURCE_ID}</span>
+            <span className="badge">NO LEGAL ADVICE</span>
+          </div>
+          <dl className="publicSourceMetadata">
+            <dt>Status</dt><dd>{CBA_DOCUMENT_STATUS}</dd>
+            <dt>Effective</dt><dd>{CBA_EFFECTIVE_START} through {CBA_EFFECTIVE_END}</dd>
+            <dt>PDF pages</dt><dd>{cbaSourceState.source.extraction.pageCount}</dd>
+            <dt>Retrieved</dt><dd>{cbaSourceState.source.retrievedAt}</dd>
+            <dt>PDF SHA-256</dt><dd>{cbaSourceState.source.response.sha256}</dd>
+            <dt>Normalized SHA-256</dt><dd>{cbaSourceState.source.normalized.sha256}</dd>
+            <dt>Articles</dt><dd>{cbaSourceState.source.normalized.articleCount}</dd>
+            <dt>Sections</dt><dd>{cbaSourceState.source.normalized.sectionCount}</dd>
+            <dt>Paragraphs</dt><dd>{cbaSourceState.source.normalized.paragraphCount}</dd>
+            <dt>Extraction</dt><dd>{cbaSourceState.source.extraction.toolVersion}</dd>
+          </dl>
+          <div className="applicabilityWarning" role="note">
+            <AlertTriangle size={16} />
+            <strong>{CBA_SCOPE_WARNING} Not legal advice.</strong>
+          </div>
+
+          <section className="cbaSearchPanel" aria-label="deterministic CBA lexical search">
+            <span className="sectionKicker">Deterministic lexical search</span>
+            <label className="controlPill">
+              <span>Search exact CBA text</span>
+              <input value={cbaSearchQuery} onChange={(event) => setCbaSearchQuery(event.target.value)} placeholder="Article 15 or quoted contract phrase" />
+            </label>
+            <p className="emptyState">No embeddings, fuzzy expansion, model call, or external API. Results use exact tokens, phrases, article/title boosts, and stable ordering.</p>
+            <div className="sourceCards" aria-label="CBA lexical search results">
+              {cbaSearchResults.length === 0 && <p className="emptyState">No CBA passage matched the exact lexical query.</p>}
+              {cbaSearchResults.filter((result) => result.paragraph.id !== cbaCitationTargetId).map((result) => (
+                <CbaPassageCard
+                  key={result.paragraph.id}
+                  paragraph={result.paragraph}
+                  normalizedHash={cbaSourceState.source.normalized.sha256}
+                  relevance={result.relevance.join("; ")}
+                />
+              ))}
+            </div>
+          </section>
+
+          {cbaCitationTarget && (
+            <section className="cbaCitationTarget" aria-label="selected CBA citation passage">
+              <span className="sectionKicker">Selected citation passage</span>
+              <CbaPassageCard paragraph={cbaCitationTarget} normalizedHash={cbaSourceState.source.normalized.sha256} relevance="exact internal citation anchor" />
+            </section>
+          )}
+
+          <section className="cbaArticleIndex" aria-label="CBA structural article index">
+            <h4>Article and document structure index</h4>
+            <div className="sourceMeta">
+              {cbaSourceState.source.normalized.structures.map((entry) => (
+                <span className="badge" key={entry.id}>{entry.label} · PDF {entry.startPdfPage} · {entry.structuralType}</span>
+              ))}
+            </div>
+          </section>
+        </article>
+      )}
+
+      <h3 className="sourceLaneTitle">NLRB official general guidance — separate authority role</h3>
 
       {publicSourceState.status === "loading" && (
         <article className="sourceCard publicSourceCard">
@@ -874,7 +1057,7 @@ export function SourcesPanel({
         <article className="sourceCard publicSourceCard" aria-label="official NLRB public source">
           <div className="publicSourceHeader">
             <div>
-              <span className="sectionKicker">Official public guidance</span>
+              <span className="sectionKicker">OFFICIAL GENERAL GUIDANCE</span>
               <h3>{publicSourceState.source.source.title}</h3>
               <p>{publicSourceState.source.source.owner}</p>
             </div>
@@ -1008,8 +1191,8 @@ export function SavedAnswersPanel(props: { saved: SavedAnswer[]; onDelete: (id: 
               <dt>Answer lane</dt>
               <dd>{item.answerLane}</dd>
               <dt>Source lane</dt>
-              <dd>{item.answerLane === "public" ? "PUBLIC DATA PILOT" : "FAKE SAMPLE CORPUS"}</dd>
-              {item.answerLane === "public" && (
+              <dd>{item.answerLane === "public_cba" ? "PUBLIC DATA PILOT — CBA" : item.answerLane === "public" ? "PUBLIC DATA PILOT — NLRB" : "FAKE SAMPLE CORPUS"}</dd>
+              {item.answerLane !== "fake" && (
                 <>
                   <dt>Public source ID</dt>
                   <dd>{item.sourceId ?? publicCitationForSaved(item)?.sourceId}</dd>
@@ -1024,7 +1207,19 @@ export function SavedAnswersPanel(props: { saved: SavedAnswer[]; onDelete: (id: 
                   <dt>Postal applicability</dt>
                   <dd>{item.postalApplicability}</dd>
                   <dt>Controlling for USPS</dt>
-                  <dd>{item.controllingForUsps}</dd>
+                  <dd>{item.answerLane === "public_cba" ? "yes_with_scope_caveats" : item.controllingForUsps}</dd>
+                  {item.answerLane === "public_cba" && (
+                    <>
+                      <dt>Source title</dt><dd>{item.sourceTitle}</dd>
+                      <dt>Document status</dt><dd>{item.sourceStatus}</dd>
+                      <dt>Effective dates</dt><dd>{item.effectiveStart} through {item.effectiveEnd}</dd>
+                      <dt>PDF SHA-256</dt><dd>{item.pdfSha256}</dd>
+                      <dt>Authority</dt><dd>{item.authorityClassification}</dd>
+                      <dt>Scope warning</dt><dd>{item.scopeWarning}</dd>
+                      <dt>CBA locations</dt>
+                      <dd>{item.citations.filter((citation) => citation.publicSourceType === "cba_contract").map((citation) => `Article ${citation.articleNumber} / ${citation.sectionId} / PDF ${citation.pdfPageNumber} / printed ${citation.printedPageLabel ?? "unknown"} / ${citation.paragraphId}`).join(", ")}</dd>
+                    </>
+                  )}
                 </>
               )}
             </dl>
@@ -1033,8 +1228,8 @@ export function SavedAnswersPanel(props: { saved: SavedAnswer[]; onDelete: (id: 
               <span className="badge">{item.scope}</span>
               <span className="badge">{item.detail}</span>
               <span className="badge">{item.citations.length} citations</span>
-              <span className={item.answerLane === "public" ? "badge green" : "badge"}>
-                {item.answerLane === "public" ? "official public guidance" : "fake claims"}
+              <span className={item.answerLane !== "fake" ? "badge green" : "badge"}>
+                {item.answerLane === "public_cba" ? "official controlling CBA" : item.answerLane === "public" ? "official public guidance" : "fake claims"}
               </span>
               <span className="badge">{new Date(item.timestamp).toLocaleString()}</span>
             </div>
@@ -1739,7 +1934,7 @@ export function AssistantMessageCard({
             <span className="messageLabel">KIA Stick</span>
             {turnLabel && <span>{turnLabel}</span>}
           </div>
-          <p>{answer.answerKind === "public" ? "Checking the one allowlisted public source..." : "Checking the fake source trail..."}</p>
+          <p>{message.modeScopeDetail.sourceMode === "cba" ? "Checking the exact official CBA cache..." : answer.answerKind === "public" ? "Checking the selected public source..." : "Checking the fake source trail..."}</p>
         </div>
       </div>
     );
@@ -1780,7 +1975,7 @@ export function AssistantMessageCard({
                 <span className="messageLabel">KIA Stick</span>
                 {turnLabel && <span>{turnLabel}</span>}
               </div>
-              <h2>{answer.answerKind === "public" ? "NLRB Weingarten public pilot" : intentLabels[answer.intent]}</h2>
+              <h2>{answer.publicSourceRole === "cba_contract" ? "Official APWU-USPS CBA" : answer.publicSourceRole === "cross_source" ? "CBA and NLRB authority comparison" : answer.publicSourceRole === "safe_no_answer" ? "Safe source-router no-answer" : answer.answerKind === "public" ? "NLRB Weingarten public pilot" : intentLabels[answer.intent]}</h2>
             </div>
             <span className={answer.noAnswer ? "statusPill warning" : "statusPill ok"}>
               {answer.noAnswer
@@ -1790,8 +1985,9 @@ export function AssistantMessageCard({
           </div>
 
           <div className="sourceMeta" aria-label="Answer lane identity">
+            <span className="badge">Selected lane: {message.modeScopeDetail.sourceModePolicy ?? "legacy"}</span>
             <span className={answer.answerKind === "public" ? "badge green" : "badge"}>
-              Answer lane: {answer.answerKind === "public" ? "public" : "fake"}
+              Actual lane: {answer.publicSourceRole === "cba_contract" || answer.publicSourceRole === "cross_source" ? "public_cba" : answer.publicSourceRole === "nlrb_guidance" ? "public_nlrb" : answer.publicSourceRole === "safe_no_answer" ? "safe_no_answer" : answer.answerKind === "public" ? "public_nlrb" : "fake"}
             </span>
             <span className="badge">Provider: {answer.version.provider}</span>
             <span className="badge">Prompt: {answer.version.promptVersion}</span>
@@ -1867,7 +2063,9 @@ export function AssistantMessageCard({
               ))}
               {answer.answerKind === "public" && (
                 <li className="officialCitationLink">
-                  <a href={PUBLIC_SOURCE_URL} target="_blank" rel="noreferrer">Open the separate official NLRB source</a>
+                  <a href={answer.publicSourceRole === "cba_contract" || answer.publicSourceRole === "cross_source" ? CBA_SOURCE_PDF_URL : PUBLIC_SOURCE_URL} target="_blank" rel="noreferrer">
+                    {answer.publicSourceRole === "cba_contract" || answer.publicSourceRole === "cross_source" ? "Open the separate official CBA PDF" : "Open the separate official NLRB source"}
+                  </a>
                 </li>
               )}
             </ol>
@@ -1885,6 +2083,13 @@ export function AssistantMessageCard({
 
 function authoritySummary(answer: AnswerResult): string {
   if (answer.answerKind === "public") {
+    if (answer.publicSourceRole === "cba_contract") {
+      return answer.noAnswer
+        ? "No case outcome established; relevant CBA passages may be shown for review."
+        : "Official final controlling contract language, with coverage and fact-specific scope caveats.";
+    }
+    if (answer.publicSourceRole === "cross_source") return "Separate CBA controlling-contract and NLRB general-guidance roles; no automatic override established.";
+    if (answer.publicSourceRole === "safe_no_answer") return "No approved deterministic source lane supports this claim.";
     return answer.noAnswer
       ? "No supported answer from the one allowlisted public source."
       : "Official general NLRB guidance. USPS controlling applicability is unverified.";

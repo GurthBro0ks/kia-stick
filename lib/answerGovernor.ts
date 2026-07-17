@@ -47,7 +47,15 @@ export interface AnswerSourceGroup {
 
 export interface AnswerResult {
   answerKind?: "fake" | "public";
+  publicSourceRole?: "nlrb_guidance" | "cba_contract" | "cross_source" | "safe_no_answer";
   sourceOwner?: string;
+  sourceTitle?: string;
+  sourceStatus?: string;
+  effectiveStart?: string;
+  effectiveEnd?: string;
+  pdfSha256?: string;
+  scopeWarning?: string;
+  authorityClassification?: string;
   postalApplicability?: string;
   controllingForUsps?: string;
   question: string;

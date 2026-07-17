@@ -10,8 +10,8 @@ export interface ModeScopeDetailSnapshot {
   mode: Mode;
   scope: Scope;
   detail: Detail;
-  sourceMode?: "fake" | "public";
-  sourceModePolicy?: "auto" | "fake" | "public";
+  sourceMode?: "fake" | "public" | "nlrb" | "cba" | "safe_no_answer";
+  sourceModePolicy?: "auto" | "fake" | "public" | "nlrb" | "cba";
 }
 
 export interface BaseChatMessage {
@@ -115,12 +115,14 @@ export function createLoadingAssistantMessage(input: {
   now?: string;
 }): AssistantMessage {
   const now = input.now ?? new Date().toISOString();
-  const publicMode = input.modeScopeDetail.sourceMode === "public";
+  const cbaMode = input.modeScopeDetail.sourceMode === "cba";
+  const safeRouterMode = input.modeScopeDetail.sourceMode === "safe_no_answer";
+  const publicMode = cbaMode || input.modeScopeDetail.sourceMode === "public" || input.modeScopeDetail.sourceMode === "nlrb" || input.modeScopeDetail.sourceMode === "safe_no_answer";
   const placeholder = {
     answerKind: publicMode ? "public" : "fake",
-    question: publicMode ? "Checking the public source..." : "Generating fake answer...",
+    question: publicMode ? "Checking the selected public source..." : "Generating fake answer...",
     intent: "unknown",
-    shortAnswer: publicMode ? "Checking the one allowlisted public source..." : "Checking the fake source trail...",
+    shortAnswer: cbaMode ? "Checking the exact official CBA cache..." : publicMode ? "Checking the selected public source..." : "Checking the fake source trail...",
     modeNote: publicMode
       ? "Local deterministic public-source provider is preparing a citation-first response."
       : "Local deterministic fake provider is preparing the next response.",
@@ -134,7 +136,7 @@ export function createLoadingAssistantMessage(input: {
     followUps: [],
     relatedFakeSections: [],
     footer: publicMode
-      ? "PUBLIC DATA PILOT | Sources:0 | Provider:local-public-static-deterministic"
+      ? cbaMode ? "PUBLIC DATA PILOT | Lane:public_cba | Sources:0 | Provider:local-public-cba-deterministic" : safeRouterMode ? "PUBLIC DATA PILOT | Lane:safe_no_answer | Sources:0 | Provider:local-source-router-deterministic" : "PUBLIC DATA PILOT | Sources:0 | Provider:local-public-static-deterministic"
       : "Sources:0 | Provider:local-fake-deterministic",
     version: {
       productVersion: "0.7.0",
@@ -144,8 +146,8 @@ export function createLoadingAssistantMessage(input: {
       displayVersion: "0.7.0-dev.unknown+unknown",
       corpusVersion: "unknown",
       indexVersion: "unknown",
-      promptVersion: publicMode ? "prompt.public-docs.v0.1-citation-first" : "unknown",
-      provider: publicMode ? "local-public-static-deterministic" : "local-fake-deterministic",
+      promptVersion: cbaMode ? "prompt.public-cba.v0.1-citation-first" : safeRouterMode ? "prompt.source-router.v0.1-safe-no-answer" : publicMode ? "prompt.public-docs.v0.1-citation-first" : "unknown",
+      provider: cbaMode ? "local-public-cba-deterministic" : safeRouterMode ? "local-source-router-deterministic" : publicMode ? "local-public-static-deterministic" : "local-fake-deterministic",
     },
     generatedAt: now,
   } satisfies AnswerResult;

@@ -100,6 +100,21 @@ export interface Citation {
   retrievedAt?: string;
   contentHash?: string;
   officialUrl?: string;
+  publicSourceType?: "nlrb_guidance" | "cba_contract";
+  sourcePageUrl?: string;
+  officialPdfUrl?: string;
+  responseHash?: string;
+  effectiveStart?: string;
+  effectiveEnd?: string;
+  pdfPageIndex?: number;
+  pdfPageNumber?: number;
+  printedPageLabel?: string | null;
+  structuralType?: string;
+  articleNumber?: string | null;
+  articleTitle?: string | null;
+  subsection?: string | null;
+  provider?: string;
+  promptVersion?: string;
 }
 
 export const corpus = corpusJson as unknown as CorpusData;
@@ -263,6 +278,10 @@ export function dedupeCitations(citations: Citation[]): Citation[] {
 
 export function citationLabel(citation: Citation): string {
   if (citation.sourceKind === "public") {
+    if (citation.publicSourceType === "cba_contract") {
+      const printed = citation.printedPageLabel ? ` · printed ${citation.printedPageLabel}` : " · printed unknown";
+      return `${citation.sourceId} · Article ${citation.articleNumber ?? "unknown"} · Section ${citation.sectionId ?? "unknown"} · PDF ${citation.pdfPageNumber ?? "unknown"}${printed} · ${citation.paragraphId} · retrieved ${citation.retrievedAt?.slice(0, 10)} · ${citation.contentHash}`;
+    }
     return `${citation.sourceId} · ${citation.sectionId} · ${citation.paragraphId} · retrieved ${citation.retrievedAt?.slice(0, 10)} · ${citation.contentHash}`;
   }
   return `${citation.title} · ${citation.article} · ${citation.section} · ${citation.page} · ${citation.hash.slice(0, 10)}`;

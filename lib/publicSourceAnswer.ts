@@ -54,23 +54,27 @@ function findParagraphs(source: PublicSourceCache, patterns: RegExp[], limit: nu
   return matches;
 }
 
-function citationFor(source: PublicSourceCache, match: ParagraphMatch): Citation {
+export function citationForPublicParagraph(
+  source: PublicSourceCache,
+  section: PublicSourceSection,
+  paragraph: PublicSourceParagraph
+): Citation {
   return {
-    id: `${PUBLIC_SOURCE_ID}@${match.section.id}@${match.paragraph.id}`,
+    id: `${PUBLIC_SOURCE_ID}@${section.id}@${paragraph.id}`,
     title: source.source.title,
     class: "persuasive_authority",
     scope: "Official-Like",
     status: "public_non_sensitive_read_only",
     page: source.retrievedAt.slice(0, 10),
     article: PUBLIC_SOURCE_CLASS,
-    section: match.section.id,
+    section: section.id,
     file: PUBLIC_SOURCE_URL,
     hash: source.normalized.sha256,
     citable: true,
     sourceKind: "public",
     sourceId: PUBLIC_SOURCE_ID,
-    sectionId: match.section.id,
-    paragraphId: match.paragraph.id,
+    sectionId: section.id,
+    paragraphId: paragraph.id,
     retrievedAt: source.retrievedAt,
     contentHash: source.normalized.sha256,
     officialUrl: PUBLIC_SOURCE_URL,
@@ -85,6 +89,7 @@ function unavailableAnswer(
 ): AnswerResult {
   return {
     answerKind: "public",
+    publicSourceRole: "nlrb_guidance",
     sourceOwner: PUBLIC_SOURCE_OWNER,
     postalApplicability: PUBLIC_SOURCE_POSTAL_APPLICABILITY,
     controllingForUsps: PUBLIC_SOURCE_CONTROLLING_FOR_USPS,
@@ -146,9 +151,10 @@ export function buildPublicSourceAnswer(input: {
   }
   if (matches.length === 0) return unavailableAnswer(question, input.runtimeVersion, input.mode, true);
 
-  const citations = matches.map((match) => citationFor(input.source!, match));
+  const citations = matches.map((match) => citationForPublicParagraph(input.source!, match.section, match.paragraph));
   return {
     answerKind: "public",
+    publicSourceRole: "nlrb_guidance",
     sourceOwner: PUBLIC_SOURCE_OWNER,
     postalApplicability: PUBLIC_SOURCE_POSTAL_APPLICABILITY,
     controllingForUsps: PUBLIC_SOURCE_CONTROLLING_FOR_USPS,
