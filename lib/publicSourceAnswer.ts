@@ -3,7 +3,9 @@ import type { Citation, Detail, Mode, Scope } from "@/lib/sourceModel";
 import {
   PUBLIC_SOURCE_APPLICABILITY_WARNING,
   PUBLIC_SOURCE_CLASS,
+  PUBLIC_SOURCE_CONTROLLING_FOR_USPS,
   PUBLIC_SOURCE_ID,
+  PUBLIC_SOURCE_OWNER,
   PUBLIC_SOURCE_POSTAL_APPLICABILITY,
   PUBLIC_SOURCE_PROMPT_VERSION,
   PUBLIC_SOURCE_PROVIDER,
@@ -83,11 +85,14 @@ function unavailableAnswer(
 ): AnswerResult {
   return {
     answerKind: "public",
+    sourceOwner: PUBLIC_SOURCE_OWNER,
+    postalApplicability: PUBLIC_SOURCE_POSTAL_APPLICABILITY,
+    controllingForUsps: PUBLIC_SOURCE_CONTROLLING_FOR_USPS,
     question,
     intent: "source_hierarchy",
     shortAnswer: sourceUnavailable
       ? "The allowlisted public source is unavailable in the bounded local cache. Run the explicit operator sync command, then try again."
-      : "This one-source public pilot cannot answer that question from the allowlisted NLRB Weingarten page. No answer was generated.",
+      : "The allowlisted NLRB Weingarten public source does not support the requested claim. No answer was generated.",
     modeNote: "Citation-first public mode blocks unsupported answers and never falls back to fake claims, another URL, or an external model.",
     noAnswer: true,
     bestGuessDisabled: true,
@@ -96,9 +101,9 @@ function unavailableAnswer(
     conflicts: [sourceUnavailable ? "The exact local cache is unavailable." : "The question is outside the one-source Weingarten pilot."],
     evidenceChecklist: ["Use only the exact allowlisted NLRB source.", "Do not treat this source as USPS-controlling authority."],
     missingFacts: [sourceUnavailable ? "A validated local public-source cache." : "A supported Weingarten question."],
-    followUps: [sourceUnavailable ? `Run node scripts/public-source-sync.mjs ${PUBLIC_SOURCE_ID}.` : "Ask one of the three public-pilot demonstration questions."],
+    followUps: [sourceUnavailable ? `Run node scripts/public-source-sync.mjs ${PUBLIC_SOURCE_ID}.` : "Ask a supported NLRB Weingarten public-pilot question."],
     relatedFakeSections: [],
-    footer: `PUBLIC DATA PILOT | Sources:0 | Mode:${mode} | USPS applicability:${PUBLIC_SOURCE_POSTAL_APPLICABILITY}`,
+    footer: `PUBLIC DATA PILOT | Lane:public | Sources:0 | Mode:${mode} | USPS applicability:${PUBLIC_SOURCE_POSTAL_APPLICABILITY} | ControllingForUsps:${PUBLIC_SOURCE_CONTROLLING_FOR_USPS}`,
     version: { ...runtimeVersion, promptVersion: PUBLIC_SOURCE_PROMPT_VERSION, provider: PUBLIC_SOURCE_PROVIDER },
     generatedAt: new Date().toISOString(),
   };
@@ -144,6 +149,9 @@ export function buildPublicSourceAnswer(input: {
   const citations = matches.map((match) => citationFor(input.source!, match));
   return {
     answerKind: "public",
+    sourceOwner: PUBLIC_SOURCE_OWNER,
+    postalApplicability: PUBLIC_SOURCE_POSTAL_APPLICABILITY,
+    controllingForUsps: PUBLIC_SOURCE_CONTROLLING_FOR_USPS,
     question,
     intent: "source_hierarchy",
     shortAnswer,
@@ -157,7 +165,7 @@ export function buildPublicSourceAnswer(input: {
     missingFacts: ["USPS-specific controlling applicability remains unverified."],
     followUps: ["Review the cited source paragraphs and the official page qualification."],
     relatedFakeSections: [],
-    footer: `PUBLIC DATA PILOT | Source:${PUBLIC_SOURCE_ID} | Content:${input.source.normalized.sha256} | Scope:${input.scope}`,
+    footer: `PUBLIC DATA PILOT | Lane:public | Source:${PUBLIC_SOURCE_ID} | Content:${input.source.normalized.sha256} | Scope:${input.scope} | PostalApplicability:${PUBLIC_SOURCE_POSTAL_APPLICABILITY} | ControllingForUsps:${PUBLIC_SOURCE_CONTROLLING_FOR_USPS}`,
     version: { ...input.runtimeVersion, promptVersion: PUBLIC_SOURCE_PROMPT_VERSION, provider: PUBLIC_SOURCE_PROVIDER },
     generatedAt: new Date().toISOString(),
   };

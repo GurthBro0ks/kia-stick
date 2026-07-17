@@ -20,8 +20,12 @@ import {
   Upload,
 } from "lucide-react";
 import React, { useEffect, useMemo, useRef, useState } from "react";
-import { buildAnswer, cannedQuestions, type AnswerResult } from "@/lib/answerGovernor";
-import { buildPublicSourceAnswer } from "@/lib/publicSourceAnswer";
+import { cannedQuestions, type AnswerResult } from "@/lib/answerGovernor";
+import {
+  createChatSubmitSnapshot,
+  routeChatQuestion,
+  type ChatSourcePolicy,
+} from "@/lib/chatAnswerRouter";
 import {
   appendTurn,
   createAssistantMessage,
@@ -93,12 +97,12 @@ import {
   PUBLIC_SOURCE_PROVIDER,
   PUBLIC_SOURCE_URL,
   publicPilotQuestions,
+  publicSourceParagraphAnchorId,
   type PublicSourceRouteResponse,
 } from "@/lib/publicSource";
 
 type Tab = "chat" | "sources" | "saved" | "upload" | "vault" | "import" | "settings";
 type VaultView = "vault" | "quarantine" | "redaction" | "metadata" | "index" | "audit";
-type ChatSourceMode = "fake" | "public";
 type PublicSourceLoadState = { status: "loading" } | PublicSourceRouteResponse;
 
 export interface QuarantineItem {
@@ -216,7 +220,7 @@ export function KiaStickApp({ runtimeVersion = clientVersion }: { runtimeVersion
   const [mode, setMode] = useState<Mode>("Strict Research");
   const [scope, setScope] = useState<Scope>("All Fake");
   const [detail, setDetail] = useState<Detail>("Detailed");
-  const [chatSourceMode, setChatSourceMode] = useState<ChatSourceMode>("fake");
+  const [chatSourceMode, setChatSourceMode] = useState<ChatSourcePolicy>("auto");
   const [publicSourceState, setPublicSourceState] = useState<PublicSourceLoadState>({ status: "loading" });
   const [draft, setDraft] = useState("");
   const [thread, setThread] = useState<ConversationThread>(() => createConversationThread());
@@ -314,20 +318,13 @@ export function KiaStickApp({ runtimeVersion = clientVersion }: { runtimeVersion
   }) {
     window.setTimeout(() => {
       try {
-        const answer = input.snapshot.sourceMode === "public"
-          ? buildPublicSourceAnswer({
-              question: input.userMessage.content,
-              source: publicSourceState.status === "available" ? publicSourceState.source : null,
-              runtimeVersion,
-              mode: input.snapshot.mode,
-              scope: input.snapshot.scope,
-              detail: input.snapshot.detail,
-            })
-          : buildAnswer(input.userMessage.content, {
-              ...input.snapshot,
-              runtimeVersion,
-              threadHistory: recentAnswerHistory(input.baseThread),
-            });
+        const answer = routeChatQuestion({
+          question: input.userMessage.content,
+          snapshot: input.snapshot,
+          publicSource: publicSourceState.status === "available" ? publicSourceState.source : null,
+          runtimeVersion,
+          threadHistory: recentAnswerHistory(input.baseThread),
+        });
         const assistantMessage = createAssistantMessage({
           threadId: input.userMessage.threadId,
           turnId: input.userMessage.turnId,
@@ -355,7 +352,13 @@ export function KiaStickApp({ runtimeVersion = clientVersion }: { runtimeVersion
   function sendMessage(messageText = draft) {
     const content = messageText.trim();
     if (!content || isSending) return;
-    const snapshot: ModeScopeDetailSnapshot = { mode, scope, detail, sourceMode: chatSourceMode };
+    const snapshot = createChatSubmitSnapshot({
+      question: content,
+      sourcePolicy: chatSourceMode,
+      mode,
+      scope,
+      detail,
+    });
     const baseThread = thread;
     const userMessage = createUserMessage({
       threadId: thread.threadId,
@@ -439,9 +442,10 @@ export function KiaStickApp({ runtimeVersion = clientVersion }: { runtimeVersion
 
   function navigateToCitation(citation: Citation) {
     if (citation.sourceKind !== "public" || !citation.paragraphId) return;
+    const targetId = publicSourceParagraphAnchorId(citation.paragraphId);
     setTab("sources");
     window.setTimeout(() => {
-      document.getElementById(`public-source-${citation.paragraphId}`)?.scrollIntoView({ behavior: "smooth", block: "center" });
+      document.getElementById(targetId)?.scrollIntoView({ behavior: "smooth", block: "center" });
     }, 0);
   }
 
@@ -646,7 +650,7 @@ export function KiaStickApp({ runtimeVersion = clientVersion }: { runtimeVersion
               </button>
               <span className={latestAssistant?.answer.noAnswer ? "statusPill warning" : "statusPill ok"}>
                 {isSending
-                  ? chatSourceMode === "public" ? "Checking public cache" : "Checking fake sources"
+                  ? chatSourceMode === "public" ? "Checking public cache" : chatSourceMode === "fake" ? "Checking fake sources" : "Routing automatically"
                   : latestAssistant?.answer.noAnswer ? "No-answer unsaved"
                   : latestAssistant ? latestAssistant.answer.answerKind === "public" ? "Public citation ready" : "Fake thread ready"
                   : "Ready"}
@@ -655,6 +659,17 @@ export function KiaStickApp({ runtimeVersion = clientVersion }: { runtimeVersion
           </div>
 
           <div className="askBox">
+            <div className="visibleLaneControl" aria-label="Chat answer lane policy">
+              <label className="controlPill">
+                <span>Answer lane</span>
+                <select value={chatSourceMode} onChange={(event) => setChatSourceMode(event.target.value as ChatSourcePolicy)}>
+                  <option value="auto">Automatic (public intents first)</option>
+                  <option value="fake">Fake sample corpus</option>
+                  <option value="public">Public pilot (NLRB)</option>
+                </select>
+              </label>
+              <span className="emptyState">Automatic is the safe default: approved NLRB intents route public; known fake prompts stay fake.</span>
+            </div>
             <textarea
               aria-label="Message KIA Stick"
               placeholder="Message KIA Stick..."
@@ -684,13 +699,6 @@ export function KiaStickApp({ runtimeVersion = clientVersion }: { runtimeVersion
             <summary>Response options</summary>
             <div className="controlStrip">
               <label className="controlPill">
-                <span>Source mode</span>
-                <select value={chatSourceMode} onChange={(event) => setChatSourceMode(event.target.value as ChatSourceMode)}>
-                  <option value="fake">Fake sample corpus</option>
-                  <option value="public">Public pilot (NLRB)</option>
-                </select>
-              </label>
-              <label className="controlPill">
                 <span>Mode</span>
                 <select value={mode} onChange={(event) => setMode(event.target.value as Mode)}>
                   {modes.map((item) => (
@@ -719,8 +727,13 @@ export function KiaStickApp({ runtimeVersion = clientVersion }: { runtimeVersion
 
           <details className="promptDetails">
             <summary>Prompt shortcuts</summary>
-            <div className="promptRail" aria-label={chatSourceMode === "public" ? "public pilot prompts" : "fake test prompts"}>
-              {(chatSourceMode === "public" ? publicPilotQuestions : cannedQuestions).map((prompt) => (
+            <div className="promptRail" aria-label={chatSourceMode === "public" ? "public pilot prompts" : chatSourceMode === "fake" ? "fake test prompts" : "automatic public and fake prompts"}>
+              {(chatSourceMode === "public"
+                ? publicPilotQuestions
+                : chatSourceMode === "fake"
+                  ? cannedQuestions
+                  : [...publicPilotQuestions, ...cannedQuestions]
+              ).map((prompt) => (
                 <button className="promptChip" key={prompt} type="button" onClick={() => setDraft(prompt)}>
                   {prompt}
                   <ChevronRight size={14} />
@@ -904,7 +917,7 @@ export function SourcesPanel({
                 <h4>{section.title}</h4>
                 <span className="sectionAnchor">{section.id}</span>
                 {section.paragraphs.map((paragraph) => (
-                  <p id={`public-source-${paragraph.id}`} key={paragraph.id}>
+                  <p id={publicSourceParagraphAnchorId(paragraph.id)} key={paragraph.id}>
                     <span className="paragraphAnchor">{paragraph.id}</span>
                     {paragraph.text}
                   </p>
@@ -992,16 +1005,26 @@ export function SavedAnswersPanel(props: { saved: SavedAnswer[]; onDelete: (id: 
               <dd>{savedBuildLabel(item)}</dd>
               <dt>Provider</dt>
               <dd>{item.provider}</dd>
+              <dt>Answer lane</dt>
+              <dd>{item.answerLane}</dd>
               <dt>Source lane</dt>
-              <dd>{publicCitationForSaved(item) ? "PUBLIC DATA PILOT" : "FAKE SAMPLE CORPUS"}</dd>
-              {publicCitationForSaved(item) && (
+              <dd>{item.answerLane === "public" ? "PUBLIC DATA PILOT" : "FAKE SAMPLE CORPUS"}</dd>
+              {item.answerLane === "public" && (
                 <>
                   <dt>Public source ID</dt>
-                  <dd>{publicCitationForSaved(item)?.sourceId}</dd>
-                  <dt>Content hash</dt>
-                  <dd>{publicCitationForSaved(item)?.contentHash}</dd>
+                  <dd>{item.sourceId ?? publicCitationForSaved(item)?.sourceId}</dd>
+                  <dt>Source owner</dt>
+                  <dd>{item.sourceOwner}</dd>
+                  <dt>Retrieved</dt>
+                  <dd>{item.sourceRetrievedAt ?? publicCitationForSaved(item)?.retrievedAt}</dd>
+                  <dt>Normalized source hash</dt>
+                  <dd>{item.normalizedSourceHash ?? publicCitationForSaved(item)?.contentHash}</dd>
                   <dt>Citation anchors</dt>
                   <dd>{item.citations.map((citation) => `${citation.sectionId}/${citation.paragraphId}`).join(", ")}</dd>
+                  <dt>Postal applicability</dt>
+                  <dd>{item.postalApplicability}</dd>
+                  <dt>Controlling for USPS</dt>
+                  <dd>{item.controllingForUsps}</dd>
                 </>
               )}
             </dl>
@@ -1010,8 +1033,8 @@ export function SavedAnswersPanel(props: { saved: SavedAnswer[]; onDelete: (id: 
               <span className="badge">{item.scope}</span>
               <span className="badge">{item.detail}</span>
               <span className="badge">{item.citations.length} citations</span>
-              <span className={publicCitationForSaved(item) ? "badge green" : "badge"}>
-                {publicCitationForSaved(item) ? "official public guidance" : "fake claims"}
+              <span className={item.answerLane === "public" ? "badge green" : "badge"}>
+                {item.answerLane === "public" ? "official public guidance" : "fake claims"}
               </span>
               <span className="badge">{new Date(item.timestamp).toLocaleString()}</span>
             </div>
@@ -1766,6 +1789,14 @@ export function AssistantMessageCard({
             </span>
           </div>
 
+          <div className="sourceMeta" aria-label="Answer lane identity">
+            <span className={answer.answerKind === "public" ? "badge green" : "badge"}>
+              Answer lane: {answer.answerKind === "public" ? "public" : "fake"}
+            </span>
+            <span className="badge">Provider: {answer.version.provider}</span>
+            <span className="badge">Prompt: {answer.version.promptVersion}</span>
+          </div>
+
           <div className="compactAnswer">
             <section>
               <span>Short answer</span>
@@ -1845,7 +1876,7 @@ export function AssistantMessageCard({
           {packetOpen && <FullPacket answer={answer} />}
 
           <div className="footerLine">
-            {answer.footer} | Prompt:{answer.version.promptVersion} | Provider:{answer.version.provider}
+            {answer.footer} | AnswerLane:{answer.answerKind === "public" ? "public" : "fake"} | Prompt:{answer.version.promptVersion} | Provider:{answer.version.provider}
           </div>
         </div>
       </div>

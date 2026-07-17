@@ -1,4 +1,9 @@
 import { answerToMarkdown, buildAnswer, detectIntent, type AnswerResult } from "@/lib/answerGovernor";
+import {
+  PUBLIC_SOURCE_CONTROLLING_FOR_USPS,
+  PUBLIC_SOURCE_OWNER,
+  PUBLIC_SOURCE_POSTAL_APPLICABILITY,
+} from "@/lib/publicSource";
 import type { Detail, Mode, Scope } from "@/lib/sourceModel";
 import { clientVersion } from "@/lib/version";
 
@@ -14,6 +19,13 @@ export interface SavedAnswer {
   citations: AnswerResult["citations"];
   version: AnswerResult["version"];
   provider: string;
+  answerLane: "fake" | "public";
+  sourceId?: string;
+  sourceOwner?: string;
+  sourceRetrievedAt?: string;
+  normalizedSourceHash?: string;
+  postalApplicability?: string;
+  controllingForUsps?: string;
   timestamp: string;
   footer: string;
 }
@@ -102,6 +114,9 @@ function stableAnswerFingerprint(answer: AnswerResult, mode: Mode, scope: Scope,
     answer.version.indexVersion,
     answer.version.promptVersion,
     answer.version.provider,
+    answer.sourceOwner ?? "",
+    answer.postalApplicability ?? "",
+    answer.controllingForUsps ?? "",
   ].join("|");
 }
 
@@ -158,6 +173,8 @@ export function createSavedAnswerRecord(input: {
 }): SavedAnswer {
   const saveKey = savedAnswerKey(input.answer, input.mode, input.scope);
   const dataFingerprint = savedAnswerFingerprint(input.answer, input.mode, input.scope, input.detail);
+  const publicCitation = input.answer.citations.find((citation) => citation.sourceKind === "public");
+  const answerLane = input.answer.answerKind === "public" || publicCitation ? "public" : "fake";
 
   return {
     id: input.existingId ?? `saved-${stableHash(saveKey)}`,
@@ -171,6 +188,17 @@ export function createSavedAnswerRecord(input: {
     citations: input.answer.citations,
     version: input.answer.version,
     provider: input.answer.version.provider,
+    answerLane,
+    sourceId: publicCitation?.sourceId,
+    sourceOwner: answerLane === "public" ? input.answer.sourceOwner ?? PUBLIC_SOURCE_OWNER : undefined,
+    sourceRetrievedAt: publicCitation?.retrievedAt,
+    normalizedSourceHash: publicCitation?.contentHash,
+    postalApplicability: answerLane === "public"
+      ? input.answer.postalApplicability ?? PUBLIC_SOURCE_POSTAL_APPLICABILITY
+      : undefined,
+    controllingForUsps: answerLane === "public"
+      ? input.answer.controllingForUsps ?? PUBLIC_SOURCE_CONTROLLING_FOR_USPS
+      : undefined,
     timestamp: input.timestamp,
     footer: input.answer.footer,
   };
@@ -190,6 +218,8 @@ export function migrateSavedAnswers(input: unknown): SavedAnswer[] {
     const scope = validScope(source.scope);
     const detail = validDetail(source.detail);
     const citations = Array.isArray(source.citations) ? source.citations : [];
+    const publicCitation = citations.find((citation) => citation?.sourceKind === "public");
+    const answerLane = source.answerLane === "public" || publicCitation ? "public" : "fake";
     const normalized: SavedAnswer = {
       id: typeof source.id === "string" ? source.id : `saved-${index}`,
       saveKey: "",
@@ -202,13 +232,29 @@ export function migrateSavedAnswers(input: unknown): SavedAnswer[] {
       citations,
       version: source.version ?? clientVersion,
       provider: typeof source.provider === "string" ? source.provider : source.version?.provider ?? clientVersion.provider,
+      answerLane,
+      sourceId: typeof source.sourceId === "string" ? source.sourceId : publicCitation?.sourceId,
+      sourceOwner: typeof source.sourceOwner === "string"
+        ? source.sourceOwner
+        : answerLane === "public" ? PUBLIC_SOURCE_OWNER : undefined,
+      sourceRetrievedAt: typeof source.sourceRetrievedAt === "string"
+        ? source.sourceRetrievedAt
+        : publicCitation?.retrievedAt,
+      normalizedSourceHash: typeof source.normalizedSourceHash === "string"
+        ? source.normalizedSourceHash
+        : publicCitation?.contentHash,
+      postalApplicability: typeof source.postalApplicability === "string"
+        ? source.postalApplicability
+        : answerLane === "public" ? PUBLIC_SOURCE_POSTAL_APPLICABILITY : undefined,
+      controllingForUsps: typeof source.controllingForUsps === "string"
+        ? source.controllingForUsps
+        : answerLane === "public" ? PUBLIC_SOURCE_CONTROLLING_FOR_USPS : undefined,
       timestamp: typeof source.timestamp === "string" ? source.timestamp : new Date(0).toISOString(),
       footer: typeof source.footer === "string" ? source.footer : "",
     };
 
     try {
-      const hasPublicCitation = citations.some((citation) => citation?.sourceKind === "public");
-      if (hasPublicCitation) throw new Error("Preserve public-source citation identity without fake answer rebuilding.");
+      if (publicCitation) throw new Error("Preserve public-source citation identity without fake answer rebuilding.");
       const rebuiltAnswer = buildAnswer(question, {
         mode,
         scope,

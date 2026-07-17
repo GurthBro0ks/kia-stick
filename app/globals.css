@@ -332,6 +332,20 @@ a {
   padding: 8px;
 }
 
+.visibleLaneControl {
+  display: grid;
+  grid-template-columns: minmax(220px, 0.7fr) minmax(0, 1.3fr);
+  gap: 10px;
+  align-items: end;
+  margin-bottom: 9px;
+  border-bottom: 1px solid var(--line);
+  padding-bottom: 9px;
+}
+
+.visibleLaneControl .emptyState {
+  align-self: center;
+}
+
 .askBox textarea {
   width: 100%;
   min-height: 64px;
@@ -1672,6 +1686,10 @@ a {
 }
 
 @media (max-width: 640px) {
+  .visibleLaneControl {
+    grid-template-columns: 1fr;
+  }
+
   .topMeta span:last-child {
     display: none;
   }

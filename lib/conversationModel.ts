@@ -11,6 +11,7 @@ export interface ModeScopeDetailSnapshot {
   scope: Scope;
   detail: Detail;
   sourceMode?: "fake" | "public";
+  sourceModePolicy?: "auto" | "fake" | "public";
 }
 
 export interface BaseChatMessage {

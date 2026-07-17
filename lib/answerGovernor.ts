@@ -47,6 +47,9 @@ export interface AnswerSourceGroup {
 
 export interface AnswerResult {
   answerKind?: "fake" | "public";
+  sourceOwner?: string;
+  postalApplicability?: string;
+  controllingForUsps?: string;
   question: string;
   resolvedQuestion?: string;
   contextNote?: string;

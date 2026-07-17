@@ -71,7 +71,12 @@ export const publicPilotQuestions = [
   "When may a represented employee request a union representative during an investigatory interview?",
   "What role may the representative play?",
   "Does this source by itself establish the controlling rule for USPS employees?",
+  "What is the contractual deadline for filing an APWU grievance?",
 ] as const;
+
+export function publicSourceParagraphAnchorId(paragraphId: string): string {
+  return `public-source-${paragraphId}`;
+}
 
 const namedEntities: Record<string, string> = {
   amp: "&",

@@ -2358,3 +2358,15 @@
 - Contract, Settings, helper/proof-index expectations, docs, and tests are aligned. `0286f03` and older baselines remain historical only.
 - The current local bundle is v1.1.48-to-v1.1.52 with validation PASS, pushed no, and manual QA pending, sourced from the shared contract.
 - No push in this checkpoint. Preserve Next/PostCSS `WARN_SAFE_NEXT_TARGET_UNCLEAR`, v0.9.12C and queue-015 blocks, product/package `0.7.0`, and the fake-only boundary.
+
+## Public data pilot 1A public Chat routing repair
+
+- Phase: `KIA-Stick-public-data-pilot-1A-public-chat-routing-repair`.
+- Base implementation commit: `7995d9802f1710163b443fafcb7dbe7aa723e06e`; accepted pushed baseline remains `v1.1.77 at 80e53c7` / `80e53c74ea86c2e83c797011728efc138b800f0e`.
+- Proven root cause: Chat defaulted to a hidden fake source selector and branched before any public-intent classification, so the valid public cache and public governor were unreachable from the normal composer path.
+- Repair: visible automatic/fake/public lane policy; automatic routing for the bounded NLRB demonstrations; shared submit router; public/fake card identity; exact public citation navigation; explicit Saved public metadata; public no-answer isolation; component-path regression coverage.
+- Validation commands: focused public Chat routing tests; `npm run lint`; `npm run typecheck`; `env -u KIA_PROOF_ROOT npm test -- --testTimeout 20000`; `npm run build`; `npm run design:check`; `npm run release:check`; `npm run governance:report`; `npm run queue:next`; `npm run operator:smoke`; `PROOF_DIR=... npm run qa`; `npm run scan:fake`; `npm run scan:privacy`; package/lock immutability checks; `git diff --check`; in-app browser execution of all four exact questions, citation jump, Saved public record, and fake/public separation.
+- Files changed: `app/globals.css`, `components/KiaStickApp.tsx`, `lib/answerGovernor.ts`, `lib/chatAnswerRouter.ts`, `lib/conversationModel.ts`, `lib/publicSource.ts`, `lib/publicSourceAnswer.ts`, `lib/savedAnswers.ts`, `tests/publicChatRoutingIntegration.test.ts`, and this progress entry.
+- Proof: `/home/mint/kia-stick-local-proofs/proof_kia_stick_public_data_pilot_1A_public_chat_routing_repair_20260717T113055Z`.
+- Safety: one existing allowlisted NLRB source only; no private data, additional URL, CBA fetch, upload, file reader, arbitrary path, OCR, embedding, vector store, external AI, dependency change, service change, notification, Discord, or push.
+- Remaining unknown: independent operator manual QA is pending. Do not mark the original pilot complete and do not push until `OPERATOR_QA_PASS` is explicitly recorded.
