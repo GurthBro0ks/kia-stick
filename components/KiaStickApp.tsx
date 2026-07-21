@@ -151,6 +151,9 @@ const vaultKey = "kia-stick.vault-state.v0.4";
 const importWizardKey = "kia-stick.import-wizard-state.v0.5.1";
 const operatorDiagnosticsRegionId = "settings-operator-diagnostics";
 const operatorDiagnosticsToggleId = "settings-operator-diagnostics-toggle";
+const repositoryRecordingShortCommit = currentAcceptedPushedState.repository_recording_short_commit
+  ?? currentAcceptedPushedState.repository_recording_commit?.slice(0, 7)
+  ?? "not recorded";
 
 const vaultViews: { id: VaultView; label: string; meta: string }[] = [
   { id: "vault", label: "Vault", meta: "fake lane overview" },
@@ -169,7 +172,7 @@ const acceptedOperatorCheckpoint = [
   { label: "Current accepted pushed proof", value: currentAcceptedPushedState.accepted_pushed_proof_dir },
   {
     label: "Current accepted pushed QA",
-    value: `validation ${currentAcceptedPushedState.accepted_validation} / manual QA ${currentAcceptedPushedState.accepted_manual_qa} / pushed yes / HEAD == origin/main at ${currentAcceptedPushedState.accepted_pushed_short_commit}`,
+    value: `validation ${currentAcceptedPushedState.accepted_validation} / manual QA ${currentAcceptedPushedState.accepted_manual_qa} / pushed yes / repository equality verified at ${repositoryRecordingShortCommit}`,
   },
   {
     label: "Current accepted pushed bundle",
@@ -929,7 +932,7 @@ export function SettingsContent(props: {
           </p>
           <h3>Current accepted pushed checkpoint: {currentAcceptedPushedState.checkpoint_label}</h3>
           <p>
-            Current accepted pushed state is {currentAcceptedPushedState.checkpoint} at {currentAcceptedPushedState.accepted_pushed_commit} with validation {currentAcceptedPushedState.accepted_validation}, manual QA {currentAcceptedPushedState.accepted_manual_qa}, push yes, and HEAD equal to origin/main at {currentAcceptedPushedState.accepted_pushed_short_commit}. Older baselines, including {historicalAcceptedPushedShortCommits}, are historical only and not current. Historical accepted-WARN state is parked, not current. Next/PostCSS remains WARN_SAFE_NEXT_TARGET_UNCLEAR, v0.9.12C remains blocked, unrestricted queue-015 remains blocked, package lock is unchanged, and no private real-doc capability is approved.
+            Current accepted pushed state is {currentAcceptedPushedState.checkpoint} at {currentAcceptedPushedState.accepted_pushed_commit} with validation {currentAcceptedPushedState.accepted_validation}, manual QA {currentAcceptedPushedState.accepted_manual_qa}, and push yes. The accepted feature checkpoint is distinct from the repository/closeout recording point, where repository equality was verified at {repositoryRecordingShortCommit}. Older baselines, including {historicalAcceptedPushedShortCommits}, are historical only and not current. Historical accepted-WARN state is parked, not current. Next/PostCSS remains WARN_SAFE_NEXT_TARGET_UNCLEAR, v0.9.12C remains blocked, unrestricted queue-015 remains blocked, package lock is unchanged, and no private real-doc capability is approved.
           </p>
           <dl className="settingsGrid operatorDiagnosticsGrid">
             {acceptedOperatorCheckpoint.map((row) => (

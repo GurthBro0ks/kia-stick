@@ -1,11 +1,10 @@
-- Phase: `KIA-Stick-public-Settings-post-closeout-accepted-state-refresh`
-- Authorization: `AUTHORIZE_KIA_PUBLIC_SETTINGS_POST_CLOSEOUT_ACCEPTED_STATE_REFRESH`.
-- Status: shared accepted-state contract and bounded consumers now record the pushed Settings summary/operator diagnostics capability at implementation commit `76c73122a87cb23b5b8595a002d54d7a127fbba8`, with repository/closeout recording point `3690c74650d0fb19395bd046adee1bf236950f9e`; validation PASS; pushed no; manual QA pending.
-- Accepted pushed proof: `/home/mint/kia-stick-local-proofs/proof_kia_stick_public_settings_user_summary_operator_diagnostics_split_operator_qa_pass_recording_20260721T160349Z/closeout_push_20260721T161310Z`. Local refresh proof: `/home/mint/kia-stick-local-proofs/proof_kia_stick_public_settings_post_closeout_accepted_state_refresh_20260721T162717Z`.
+- Phase: `KIA-Stick-public-Settings-post-closeout-accepted-state-refresh-repository-equality-copy-repair`
+- Status: the false operator-diagnostics claim `HEAD == origin/main at 76c7312` is repaired. Accepted capability stays at implementation commit `76c73122a87cb23b5b8595a002d54d7a127fbba8`; repository equality is derived from recording point `3690c74650d0fb19395bd046adee1bf236950f9e`; validation PASS; pushed no; manual QA pending rerun.
+- Accepted pushed proof: `/home/mint/kia-stick-local-proofs/proof_kia_stick_public_settings_user_summary_operator_diagnostics_split_operator_qa_pass_recording_20260721T160349Z/closeout_push_20260721T161310Z`. Local repair proof: `/home/mint/kia-stick-local-proofs/proof_kia_stick_public_settings_post_closeout_accepted_state_refresh_repository_equality_copy_repair_20260721T164746Z`.
 - Historical preservation: prior CBA citation-durability checkpoint `1e0e96b0e0cd95d1e62af1eb76cfd5b57c43f4e8` is historical-only, not deleted or rewritten.
 - Files: `data/current-accepted-pushed-state.json`, shared Settings consumer, bounded current-state tests, `CLOSEOUT.md`, `README.md`, `feature_list.json`, and this progress record.
 - Safety: no source sync, private data, file chooser, real upload/import, OCR, embeddings, vector database, LLM, dependency/package/lockfile mutation, service/system/network change, Discord, or push. queue-015 and v0.9.12C remain blocked; Next/PostCSS remains parked.
-- Next: operator manual QA for this local refresh. Do not push without separate explicit authorization.
+- Next: rerun operator manual QA for the corrected capability-versus-repository identity. Do not push.
 
 - Phase: `KIA-Stick-public-Settings-user-summary-and-operator-diagnostics-split-closeout-and-push`
 - Authorization: `CLOSEOUT_AND_PUSH_KIA_PUBLIC_SETTINGS_DIAGNOSTICS_SPLIT_AUTHORIZED`.

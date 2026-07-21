@@ -68,7 +68,11 @@ describe("public Settings summary and operator diagnostics split", () => {
     expect(html).toContain("v0.9.12C remains blocked");
     expect(html).toContain("queue-015 blocked");
     expect(html).toContain("Package lock</dt><dd>unchanged");
+    expect(html).toContain("repository equality verified at 3690c74");
+    expect(html).toContain("accepted feature checkpoint is distinct from the repository/closeout recording point");
     expect(html).toContain("Accepted-state recording baseline</dt><dd>3690c74650d0fb19395bd046adee1bf236950f9e");
+    expect(html).not.toContain("HEAD == origin/main at 76c7312");
+    expect(html).not.toContain("HEAD equal to origin/main at 76c7312");
     expect(html).toContain("Build Date");
     expect(html).toContain("Provider");
   });
@@ -82,6 +86,7 @@ describe("public Settings summary and operator diagnostics split", () => {
     expect(css).toContain(".operatorDiagnosticsToggle:focus-visible");
     expect(css).toContain("overflow-wrap: anywhere");
     expect(css).toContain(".operatorDiagnosticsGrid");
+    expect(css).toMatch(/\.operatorDiagnosticsGrid dd\s*\{[^}]*min-width:\s*0/s);
     expect(css).toContain(".bottomNav");
   });
 

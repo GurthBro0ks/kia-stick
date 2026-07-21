@@ -14,6 +14,8 @@ describe("accepted-state governance loop break", () => {
     expect(currentAcceptedPushedState.accepted_pushed_short_commit).toBe("76c7312");
     expect(currentAcceptedPushedState.repository_recording_commit).toBe("3690c74650d0fb19395bd046adee1bf236950f9e");
     expect(currentAcceptedPushedState.repository_recording_short_commit).toBe("3690c74");
+    expect(currentAcceptedPushedState.accepted_equality).toContain("HEAD == origin/main == remote main == 3690c74650d0fb19395bd046adee1bf236950f9e");
+    expect(currentAcceptedPushedState.accepted_equality).not.toContain("HEAD == origin/main == remote main == 76c73122");
     expect(currentAcceptedPushedState.accepted_pushed_proof_dir).toContain("closeout_push_20260721T161310Z");
     expect(currentAcceptedPushedState.historical_prior_checkpoints[0]).toEqual({
       checkpoint: "CBA Citation Durability Source Instance and Resync Drift Guard",
@@ -39,10 +41,10 @@ describe("accepted-state governance loop break", () => {
       private_data: "blocked",
       external_ai: "disabled",
     });
-    expect(currentAcceptedPushedState.local_implementation_proof_dir).toBe("/home/mint/kia-stick-local-proofs/proof_kia_stick_public_settings_post_closeout_accepted_state_refresh_20260721T162717Z");
+    expect(currentAcceptedPushedState.local_implementation_proof_dir).toBe("/home/mint/kia-stick-local-proofs/proof_kia_stick_public_settings_post_closeout_accepted_state_refresh_repository_equality_copy_repair_20260721T164746Z");
     expect(currentAcceptedPushedState.local_bundle_operator_qa_pass_proof_dir).toBe("/home/mint/kia-stick-local-proofs/proof_kia_stick_public_settings_user_summary_operator_diagnostics_split_operator_qa_pass_recording_20260721T160349Z");
-    expect(currentAcceptedPushedState.local_bundle_phase).toBe("KIA-Stick-public-Settings-post-closeout-accepted-state-refresh");
-    expect(currentAcceptedPushedState.local_bundle_status).toBe("public Settings post-closeout accepted-state refresh; validation PASS; pushed no; manual QA pending");
+    expect(currentAcceptedPushedState.local_bundle_phase).toBe("KIA-Stick-public-Settings-post-closeout-accepted-state-refresh-repository-equality-copy-repair");
+    expect(currentAcceptedPushedState.local_bundle_status).toBe("public Settings post-closeout accepted-state refresh equality-copy repair; validation PASS; pushed no; manual QA pending rerun");
     expect(new Set(currentAcceptedPushedState.historical_prior_checkpoints.map((item) => item.commit)).size)
       .toBe(currentAcceptedPushedState.historical_prior_checkpoints.length);
   });

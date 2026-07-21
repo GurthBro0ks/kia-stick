@@ -15,6 +15,8 @@ describe("public truth runtime identity", () => {
     expect(payload.phase).toBe(currentAcceptedPushedState.accepted_pushed_phase);
     expect(payload.acceptedCheckpoint).toBe(currentAcceptedPushedState.checkpoint_label);
     expect(payload.acceptedCommit).toBe(currentAcceptedPushedState.accepted_pushed_commit);
+    expect(payload.acceptedCommit).toBe("76c73122a87cb23b5b8595a002d54d7a127fbba8");
+    expect(payload).not.toHaveProperty("repositoryEqualityCommit");
     expect(payload.dataModes).toEqual({
       fake_corpus: "available",
       public_sources: "available_exact_allowlisted",
