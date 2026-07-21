@@ -158,13 +158,13 @@ function unavailableAnswer(input: { question: string; source: CbaSourceCache | n
   return baseAnswer({
     ...input,
     shortAnswer: input.source
-      ? "No exact CBA passage was retrieved for this search. That result does not establish that the CBA lacks a rule on the topic."
+      ? "No exact CBA passage was retrieved for this search. Refine the query with an article, section, or contract phrase. That result does not establish that the CBA lacks a rule on the topic."
       : "The exact allowlisted CBA cache is unavailable. No other source, path, or fake answer lane was substituted.",
     citations: [],
     noAnswer: true,
     conflicts: [input.source ? "No exact passage was retrieved from the allowlisted CBA for this query." : "The exact validated CBA cache is unavailable."],
     missingFacts: [input.source ? "An exact article, section, or contract phrase to retrieve." : "The validated local CBA PDF and normalized cache."],
-    followUps: [input.source ? "Use a specific CBA article, section, or contract topic." : `Run node scripts/public-source-sync.mjs ${CBA_SOURCE_ID}.`],
+    followUps: [input.source ? "Refine the query with an article, section, or exact contract phrase." : `Run node scripts/public-source-sync.mjs ${CBA_SOURCE_ID}.`],
     suggestedQuestions: input.source ? genericCbaRetrievalSuggestions : undefined,
   });
 }

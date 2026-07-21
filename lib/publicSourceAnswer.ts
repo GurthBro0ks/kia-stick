@@ -25,6 +25,7 @@ interface ParagraphMatch {
 
 function detectPublicIntent(question: string): PublicQuestionIntent {
   const normalized = question.toLowerCase();
+  if (/\bweingarten\b/.test(normalized)) return "request";
   if (/\b(usps|postal|post office|letter carrier|mail handler)\b/.test(normalized)) return "postal_applicability";
   if (/\b(role|representative play|representative do|may the representative|active assistance|advice)\b/.test(normalized)) {
     return "representative_role";
@@ -131,7 +132,7 @@ export function buildPublicSourceAnswer(input: {
   let matches: ParagraphMatch[];
   if (intent === "request") {
     shortAnswer =
-      "According to this NLRB guidance, a union-represented employee may request representation when management questions the employee as part of an investigation and the employee reasonably believes the interview could lead to discipline or another adverse job consequence. The employee must make the request.";
+      `According to this NLRB guidance, a union-represented employee may request representation when management questions the employee as part of an investigation and the employee reasonably believes the interview could lead to discipline or another adverse job consequence. The employee must make the request. ${PUBLIC_SOURCE_APPLICABILITY_WARNING}`;
     matches = findParagraphs(
       input.source,
       [/seeking to question an employee/i, /reasonably believes.*(?:discipline|discharge|adverse consequence)/i, /employee requests a union representative/i],

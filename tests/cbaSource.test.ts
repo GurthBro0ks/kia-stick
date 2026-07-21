@@ -124,6 +124,15 @@ describe("bounded official CBA source", () => {
     expect(searchCba(source, "", 5)).toEqual([]);
   });
 
+  it("does not treat routing or high-frequency corpus terms as sufficient retrieval evidence", () => {
+    const source = createCbaSourceFixtureCache();
+    source.normalized.pages[0].paragraphs[0].text = "Fixture boilerplate says employees receive free access to a public work area.";
+
+    expect(searchCba(source, "What does the CBA say about employees receiving free pet llamas?", 5)).toEqual([]);
+    expect(searchCba(source, "What does the contract say?", 5)).toEqual([]);
+    expect(searchCba(source, "employees postal union service", 5)).toEqual([]);
+  });
+
   it("keeps the app pathless and the exact source sync explicit", () => {
     const route = readFileSync("app/api/public-cba-source/route.ts", "utf8");
     const sync = readFileSync("scripts/public-source-sync.mjs", "utf8");

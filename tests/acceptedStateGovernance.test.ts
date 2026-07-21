@@ -25,6 +25,7 @@ describe("accepted-state governance loop break", () => {
       private_data: "blocked",
       external_ai: "disabled",
     });
+    expect(currentAcceptedPushedState.local_bundle_status).toBe("public truth and generic CBA routing repair; validation PASS; pushed no; manual QA pending");
     expect(new Set(currentAcceptedPushedState.historical_prior_checkpoints.map((item) => item.commit)).size)
       .toBe(currentAcceptedPushedState.historical_prior_checkpoints.length);
   });

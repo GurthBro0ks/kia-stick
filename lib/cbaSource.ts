@@ -599,8 +599,36 @@ const searchStopWords = new Set([
   "a", "an", "and", "are", "as", "at", "be", "by", "do", "does", "for", "from", "have", "how", "i", "in", "is", "it", "many", "my", "of", "on", "or", "say", "the", "to", "what", "with",
 ]);
 
+const routingOnlySearchTerms = new Set([
+  "agreement", "apwu", "article", "bargaining", "cba", "collective", "contract", "postal", "say", "source", "union", "usps",
+]);
+
+const highFrequencySearchTerms = new Set([
+  "employee", "employer", "management", "service", "work", "working", "unit",
+]);
+
+const supportedTopicTerms = new Set([
+  "annual", "break", "deadline", "discipline", "evidence", "grievance", "leave", "lunch", "overtime", "represent", "representation", "steward", "supervisor",
+]);
+
 function searchTokens(value: string): string[] {
   return value.normalize("NFKD").replace(/[\u0300-\u036f]/g, "").toLowerCase().match(/[a-z0-9]+/g) ?? [];
+}
+
+function normalizeSearchToken(token: string): string {
+  if (token.endsWith("ies") && token.length > 4) return `${token.slice(0, -3)}y`;
+  if (token.endsWith("s") && token.length > 3 && !token.endsWith("ss")) return token.slice(0, -1);
+  return token;
+}
+
+function meaningfulQueryTokens(value: string): string[] {
+  return [...new Set(searchTokens(value)
+    .map(normalizeSearchToken)
+    .filter((token) => !searchStopWords.has(token) && !routingOnlySearchTerms.has(token) && !highFrequencySearchTerms.has(token)))];
+}
+
+function normalizedTokenSet(value: string): Set<string> {
+  return new Set(searchTokens(value).map(normalizeSearchToken));
 }
 
 export interface CbaSearchResult {
@@ -613,36 +641,61 @@ export interface CbaSearchResult {
 export function searchCba(source: CbaSourceCache, query: string, limit = 8): CbaSearchResult[] {
   const normalizedQuery = query.trim().toLowerCase().replace(/\s+/g, " ");
   if (!normalizedQuery) return [];
-  const phrases = [...query.matchAll(/"([^"]+)"/g)].map((match) => match[1].toLowerCase().trim()).filter(Boolean);
-  const tokens = [...new Set(searchTokens(query).filter((token) => !searchStopWords.has(token)))];
+  const phrases = [...query.matchAll(/"([^"]+)"/g)]
+    .map((match) => match[1].toLowerCase().trim())
+    .filter((phrase) => phrase && meaningfulQueryTokens(phrase).length > 0);
+  const tokens = meaningfulQueryTokens(query);
   const articleReference = /\barticle\s+(\d{1,2})\b/i.exec(query)?.[1] ?? null;
+  const sectionReference = /\bsection\s+(\d+(?:\.[a-z0-9]+)?)\b/i.exec(query)?.[1] ?? null;
   const results: CbaSearchResult[] = [];
   for (const paragraph of source.normalized.pages.flatMap((page) => page.paragraphs)) {
     const text = paragraph.text.toLowerCase();
     const title = (paragraph.articleTitle ?? "").toLowerCase();
     const section = (paragraph.sectionTitle ?? "").toLowerCase();
+    const textTokens = normalizedTokenSet(text);
+    const titleTokens = normalizedTokenSet(title);
+    const sectionTokens = normalizedTokenSet(section);
     let score = 0;
     const relevance: string[] = [];
+    let locatorMatched = false;
+    let phraseMatched = false;
+    let supportedTopicMatched = false;
+    const uncommonMatches = new Set<string>();
     if (articleReference && paragraph.articleNumber === articleReference) {
       score += 240;
       relevance.push(`exact Article ${articleReference}`);
+      locatorMatched = true;
+    }
+    if (sectionReference && paragraph.sectionNumber === sectionReference) {
+      score += 180;
+      relevance.push(`exact Section ${sectionReference}`);
+      locatorMatched = true;
     }
     for (const phrase of phrases) {
       if (text.includes(phrase)) {
         score += 180;
         relevance.push(`quoted phrase: ${phrase}`);
+        phraseMatched = true;
       }
     }
     for (const token of tokens) {
-      const exactMatches = text.match(new RegExp(`\\b${token}\\b`, "g"))?.length ?? 0;
-      if (exactMatches > 0) {
-        score += Math.min(exactMatches, 5) * 12;
+      const textMatch = textTokens.has(token);
+      const titleMatch = titleTokens.has(token);
+      const sectionMatch = sectionTokens.has(token);
+      if (textMatch || titleMatch || sectionMatch) {
+        const supportedTopic = supportedTopicTerms.has(token);
+        score += supportedTopic ? 90 : 30;
+        if (titleMatch) score += supportedTopic ? 70 : 30;
+        if (sectionMatch) score += supportedTopic ? 45 : 20;
         relevance.push(`exact term: ${token}`);
+        if (supportedTopic) supportedTopicMatched = true;
+        else uncommonMatches.add(token);
       }
-      if (title.includes(token)) score += 50;
-      if (section.includes(token)) score += 35;
     }
-    if (score === 0) continue;
+    const uncommonTokens = tokens.filter((token) => !supportedTopicTerms.has(token));
+    const uncommonCoverage = uncommonTokens.length === 0 ? 0 : uncommonMatches.size / uncommonTokens.length;
+    const enoughUncommonEvidence = uncommonMatches.size >= 2 && uncommonCoverage >= 0.5;
+    if (!locatorMatched && !phraseMatched && !supportedTopicMatched && !enoughUncommonEvidence) continue;
     const excerpt = paragraph.text.length > 320 ? `${paragraph.text.slice(0, 317)}…` : paragraph.text;
     results.push({ paragraph, score, relevance: [...new Set(relevance)].slice(0, 5), excerpt });
   }

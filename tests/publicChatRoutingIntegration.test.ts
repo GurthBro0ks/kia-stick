@@ -87,6 +87,22 @@ function submitThroughComponentRouter(
 }
 
 describe("public Chat submit orchestration regression", () => {
+  it("answers the supported Weingarten alias only in the NLRB lane", () => {
+    const result = submitThroughComponentRouter("What are my Weingarten rights?", { sourcePolicy: "nlrb" });
+
+    expect(result.snapshot.sourceModePolicy).toBe("nlrb");
+    expect(result.snapshot.sourceMode).toBe("nlrb");
+    expect(result.answer.noAnswer).toBe(false);
+    expect(result.answer.version.provider).toBe(PUBLIC_SOURCE_PROVIDER);
+    expect(result.answer.version.promptVersion).toBe(PUBLIC_SOURCE_PROMPT_VERSION);
+    expect(result.answer.citations.length).toBeGreaterThan(0);
+    expect(result.answer.citations.every((citation) => citation.sourceId === PUBLIC_SOURCE_ID && citation.publicSourceType !== "cba_contract")).toBe(true);
+    expect(result.answer.shortAnswer).toContain("employee may request representation");
+    expect(result.cardHtml).toContain("Actual lane: public_nlrb");
+    expect(result.cardHtml).not.toContain("local-fake-deterministic");
+    expect(resolveChatAnswerLane("What are my general rights?", "auto")).not.toBe("nlrb");
+  });
+
   it.each([
     "When may a represented employee request a union representative during an investigatory interview?",
     "What role may the representative play?",

@@ -384,12 +384,12 @@ export function KiaStickApp({ runtimeVersion = clientVersion }: { runtimeVersion
     }, 90);
   }
 
-  function sendMessage(messageText = draft) {
+  function sendMessage(messageText = draft, sourcePolicy = chatSourceMode) {
     const content = messageText.trim();
     if (!content || isSending) return;
     const snapshot = createChatSubmitSnapshot({
       question: content,
-      sourcePolicy: chatSourceMode,
+      sourcePolicy,
       mode,
       scope,
       detail,
@@ -408,6 +408,7 @@ export function KiaStickApp({ runtimeVersion = clientVersion }: { runtimeVersion
     });
 
     setDraft("");
+    setChatSourceMode(sourcePolicy);
     setSaveNotice(null);
     setIsSending(true);
     setPendingScroll(true);
@@ -576,7 +577,7 @@ export function KiaStickApp({ runtimeVersion = clientVersion }: { runtimeVersion
                     onRetry={() => retryAssistant(message)}
                     onSave={() => saveAssistantAnswer(message)}
                     onCitationNavigate={navigateToCitation}
-                    onAskQuestion={prepareCbaQuestion}
+                    onSubmitCbaSuggestion={(suggestion) => sendMessage(suggestion, "cba")}
                   />
                 )
               )}
@@ -1930,14 +1931,14 @@ export function AssistantMessageCard({
   onRetry,
   onSave,
   onCitationNavigate = () => undefined,
-  onAskQuestion,
+  onSubmitCbaSuggestion,
 }: {
   message: AssistantMessage;
   turnLabel?: string;
   onRetry: () => void;
   onSave: () => void;
   onCitationNavigate?: (citation: Citation) => void;
-  onAskQuestion?: (question: string) => void;
+  onSubmitCbaSuggestion?: (question: string) => void;
 }) {
   const [citationsOpen, setCitationsOpen] = useState(false);
   const [packetOpen, setPacketOpen] = useState(false);
@@ -2029,10 +2030,10 @@ export function AssistantMessageCard({
 
           {answer.contextNote && <p className="contextNote">{answer.contextNote}</p>}
 
-          {answer.suggestedQuestions && answer.suggestedQuestions.length > 0 && onAskQuestion && (
+          {answer.suggestedQuestions && answer.suggestedQuestions.length > 0 && onSubmitCbaSuggestion && (
             <div className="compactActions" aria-label="CBA retrieval suggestions">
               {answer.suggestedQuestions.map((suggestion) => (
-                <button className="button subtle" type="button" key={suggestion} onClick={() => onAskQuestion(suggestion)}>
+                <button className="button subtle" type="button" key={suggestion} onClick={() => onSubmitCbaSuggestion(suggestion)}>
                   {suggestion}
                 </button>
               ))}

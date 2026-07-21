@@ -46,11 +46,69 @@ function submit(question: string, options: { sourcePolicy?: ChatSourcePolicy; ca
     onRetry: () => undefined,
     onSave: () => undefined,
     onCitationNavigate: () => undefined,
+    onSubmitCbaSuggestion: () => undefined,
   }));
   return { snapshot, answer, assistant, cardHtml };
 }
 
 describe("official CBA Chat and UI integration", () => {
+  it("gives explicit official CBA identity cues priority over synthetic topic matching", () => {
+    const officialQueries = [
+      "What does the contract say about overtime?",
+      "What does the contract say about annual leave?",
+      "What does Article 15 say?",
+      "Article 17",
+      "What does the CBA say about discipline?",
+      "What does the collective bargaining agreement say about grievance deadlines?",
+    ];
+
+    for (const question of officialQueries) {
+      expect(resolveChatAnswerLane(question, "auto")).toBe("cba");
+    }
+    expect(resolveChatAnswerLane("Can annual leave be denied after I submitted inside the fake window?", "auto")).toBe("fake");
+    expect(resolveChatAnswerLane("Can annual leave be denied after I submitted inside the fake window?", "cba")).toBe("cba");
+    expect(resolveChatAnswerLane("Can annual leave be denied after I submitted inside the fake window?", "fake")).toBe("fake");
+  });
+
+  it("retrieves recognized generic CBA topics with CBA-only citations and save eligibility", () => {
+    const source = createCbaSourceFixtureCache();
+    const passage = source.normalized.pages[0].paragraphs[0];
+    passage.text = "Fixture Article 8 overtime provisions and Article 10 annual leave scheduling are available for deterministic CBA retrieval.";
+
+    for (const question of ["What does the contract say about overtime?", "What does the contract say about annual leave?"]) {
+      const result = submit(question, { cache: source });
+      expect(result.snapshot.sourceMode).toBe("cba");
+      expect(result.answer.noAnswer).toBe(false);
+      expect(result.answer.citations.length).toBeGreaterThan(0);
+      expect(result.answer.citations.every((citation) => citation.sourceId === CBA_SOURCE_ID && citation.publicSourceType === "cba_contract")).toBe(true);
+      expect(result.answer.version.provider).toBe(CBA_PROVIDER);
+      expect(result.answer.version.promptVersion).toBe(CBA_PROMPT_VERSION);
+      expect(result.cardHtml).toContain("Save to Saved");
+      expect(result.cardHtml).not.toContain("local-fake-deterministic");
+    }
+  });
+
+  it("keeps an explicit CBA low-relevance search source-bounded and unsaveable", () => {
+    const source = createCbaSourceFixtureCache();
+    source.normalized.pages[0].paragraphs[0].text = "Fixture boilerplate says employees receive free access to a public work area.";
+    const result = submit("What does the CBA say about employees receiving free pet llamas?", { sourcePolicy: "cba", cache: source });
+
+    expect(result.snapshot.sourceModePolicy).toBe("cba");
+    expect(result.snapshot.sourceMode).toBe("cba");
+    expect(result.answer.publicSourceRole).toBe("cba_contract");
+    expect(result.answer.version.provider).toBe(CBA_PROVIDER);
+    expect(result.answer.version.promptVersion).toBe(CBA_PROMPT_VERSION);
+    expect(result.answer.noAnswer).toBe(true);
+    expect(result.answer.citations).toEqual([]);
+    expect(result.answer.shortAnswer).toContain("No exact CBA passage was retrieved");
+    expect(result.answer.suggestedQuestions).toContain("What does Article 15 say?");
+    expect(result.cardHtml).toContain("No answer to save");
+    expect(result.cardHtml).toContain("CBA retrieval suggestions");
+    expect(result.cardHtml).not.toContain("Public citation ready");
+    expect(result.cardHtml).not.toContain(PUBLIC_SOURCE_PROVIDER);
+    expect(result.cardHtml).not.toContain("local-fake-deterministic");
+  });
+
   it("routes the grievance deadline to Article 15 Section 2 Step 1(a) with a qualified fourteen-day rule", () => {
     const result = submit("How many days do I have to file a grievance?");
     expect(result.snapshot.sourceMode).toBe("cba");

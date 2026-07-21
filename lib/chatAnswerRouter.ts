@@ -24,6 +24,17 @@ function normalizeQuestion(question: string): string {
 
 const exactPublicPilotQuestions = new Set(publicPilotQuestions.map(normalizeQuestion));
 
+function hasExplicitCbaSourceCue(question: string): boolean {
+  const normalized = normalizeQuestion(question);
+  const hasContractContext = /\b(cba|apwu-usps cba|collective bargaining agreement|contract|agreement|apwu|usps)\b/.test(normalized);
+  return /\b(?:apwu-usps\s+)?cba\b/.test(normalized)
+    || /\bcollective bargaining agreement\b/.test(normalized)
+    || /\bthe contract\b/.test(normalized)
+    || /\bcontract\s+(?:say|says)\b/.test(normalized)
+    || /\barticle\s*(?:[1-9]|[1-3][0-9]|4[0-3])\b/.test(normalized)
+    || (/\bsection\s*\d+(?:\.[a-z0-9]+)?\b/.test(normalized) && hasContractContext);
+}
+
 export function isAutoPublicPilotQuestion(question: string): boolean {
   const normalized = normalizeQuestion(question);
   if (exactPublicPilotQuestions.has(normalized)) return true;
@@ -41,6 +52,7 @@ export function isAutoPublicPilotQuestion(question: string): boolean {
 
 export function isAutoCbaQuestion(question: string): boolean {
   const normalized = normalizeQuestion(question);
+  if (hasExplicitCbaSourceCue(question)) return true;
   if (detectCbaIntent(question) !== "unsupported") return true;
   if (/\barticle\s*(?:[1-9]|[1-3][0-9]|4[0-3])\b/.test(normalized)) return true;
   return /\b(apwu-usps cba|collective bargaining agreement|official cba)\b/.test(normalized)

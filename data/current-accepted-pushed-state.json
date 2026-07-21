@@ -16,7 +16,7 @@
   "accepted_pushed": true,
   "accepted_equality": "HEAD == origin/main == 006da8dc25638cdbe5ebd43b04b5b5c506056ab9",
   "local_bundle_phase": "KIA-Stick-public-truth-and-generic-CBA-retrieval-bundle",
-  "local_bundle_status": "public state truth and generic deterministic CBA retrieval; implementation authorized; validation pending; pushed no; manual QA pending",
+  "local_bundle_status": "public truth and generic CBA routing repair; validation PASS; pushed no; manual QA pending",
   "historical_prior_checkpoints": [
     { "checkpoint": "Public Data Pilot 1A", "commit": "04774874c5a20b2b38d435fb66ba2b1cfb9c9e29", "short_commit": "0477487", "status": "historical_only_not_current" },
     { "checkpoint": "v1.1.77", "commit": "80e53c74ea86c2e83c797011728efc138b800f0e", "short_commit": "80e53c7", "status": "historical_only_not_current" },
