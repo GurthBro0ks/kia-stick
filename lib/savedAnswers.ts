@@ -5,6 +5,7 @@ import {
   PUBLIC_SOURCE_POSTAL_APPLICABILITY,
 } from "@/lib/publicSource";
 import { CBA_SOURCE_OWNER } from "@/lib/cbaSource";
+import type { CitationVerificationState } from "@/lib/cbaCitationIntegrity";
 import type { Detail, Mode, Scope } from "@/lib/sourceModel";
 import { clientVersion } from "@/lib/version";
 
@@ -32,6 +33,13 @@ export interface SavedAnswer {
   authorityClassification?: string;
   sourceRetrievedAt?: string;
   normalizedSourceHash?: string;
+  sourceInstanceId?: string;
+  sourceInstanceAlgorithmVersion?: string;
+  paragraphContentSha256?: string;
+  paragraphHashAlgorithmVersion?: string;
+  citationAnchorSha256?: string;
+  citationAnchorAlgorithmVersion?: string;
+  citationVerificationStateAtSave?: CitationVerificationState;
   postalApplicability?: string;
   controllingForUsps?: string;
   timestamp: string;
@@ -218,6 +226,13 @@ export function createSavedAnswerRecord(input: {
     authorityClassification: input.answer.authorityClassification,
     sourceRetrievedAt: cbaCitation?.retrievedAt ?? publicCitation?.retrievedAt,
     normalizedSourceHash: cbaCitation?.contentHash ?? publicCitation?.contentHash,
+    sourceInstanceId: cbaCitation?.sourceInstanceId,
+    sourceInstanceAlgorithmVersion: cbaCitation?.sourceInstanceAlgorithmVersion,
+    paragraphContentSha256: cbaCitation?.paragraphContentSha256,
+    paragraphHashAlgorithmVersion: cbaCitation?.paragraphHashAlgorithmVersion,
+    citationAnchorSha256: cbaCitation?.citationAnchorSha256,
+    citationAnchorAlgorithmVersion: cbaCitation?.citationAnchorAlgorithmVersion,
+    citationVerificationStateAtSave: cbaCitation?.citationVerificationState,
     postalApplicability: answerLane === "public"
       ? input.answer.postalApplicability ?? PUBLIC_SOURCE_POSTAL_APPLICABILITY
       : undefined,
@@ -278,6 +293,15 @@ export function migrateSavedAnswers(input: unknown): SavedAnswer[] {
       normalizedSourceHash: typeof source.normalizedSourceHash === "string"
         ? source.normalizedSourceHash
         : cbaCitation?.contentHash ?? publicCitation?.contentHash,
+      sourceInstanceId: typeof source.sourceInstanceId === "string" ? source.sourceInstanceId : undefined,
+      sourceInstanceAlgorithmVersion: typeof source.sourceInstanceAlgorithmVersion === "string" ? source.sourceInstanceAlgorithmVersion : undefined,
+      paragraphContentSha256: typeof source.paragraphContentSha256 === "string" ? source.paragraphContentSha256 : undefined,
+      paragraphHashAlgorithmVersion: typeof source.paragraphHashAlgorithmVersion === "string" ? source.paragraphHashAlgorithmVersion : undefined,
+      citationAnchorSha256: typeof source.citationAnchorSha256 === "string" ? source.citationAnchorSha256 : undefined,
+      citationAnchorAlgorithmVersion: typeof source.citationAnchorAlgorithmVersion === "string" ? source.citationAnchorAlgorithmVersion : undefined,
+      citationVerificationStateAtSave: isCitationVerificationState(source.citationVerificationStateAtSave)
+        ? source.citationVerificationStateAtSave
+        : undefined,
       postalApplicability: typeof source.postalApplicability === "string"
         ? source.postalApplicability
         : answerLane === "public" ? PUBLIC_SOURCE_POSTAL_APPLICABILITY : undefined,
@@ -305,6 +329,20 @@ export function migrateSavedAnswers(input: unknown): SavedAnswer[] {
 
     return upsertSavedAnswer(saved, normalized, { preferNewerDuplicate: true }).saved;
   }, []);
+}
+
+function isCitationVerificationState(value: unknown): value is CitationVerificationState {
+  return typeof value === "string" && [
+    "verified_current",
+    "source_instance_changed",
+    "paragraph_changed",
+    "paragraph_missing",
+    "locator_changed",
+    "ambiguous_duplicate",
+    "legacy_unverifiable",
+    "cache_unavailable",
+    "invalid_metadata",
+  ].includes(value);
 }
 
 function timestampValue(value: string): number {

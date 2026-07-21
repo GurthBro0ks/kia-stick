@@ -70,6 +70,14 @@ import {
   type Scope,
 } from "@/lib/sourceModel";
 import {
+  citationVerificationMessage,
+  deriveCbaCitationIntegrity,
+  deriveCbaSourceInstance,
+  shortCbaDigest,
+  verifyCbaCitation,
+  type CitationVerificationState,
+} from "@/lib/cbaCitationIntegrity";
+import {
   applyVaultAction,
   createInitialVaultState,
   exportVaultAuditJson,
@@ -121,6 +129,7 @@ type Tab = "chat" | "sources" | "saved" | "upload" | "vault" | "import" | "setti
 type VaultView = "vault" | "quarantine" | "redaction" | "metadata" | "index" | "audit";
 type PublicSourceLoadState = { status: "loading" } | PublicSourceRouteResponse;
 type CbaSourceLoadState = { status: "loading" } | CbaSourceRouteResponse;
+type CbaCitationNavigationNotice = { citation: Citation; state: CitationVerificationState };
 
 export interface QuarantineItem {
   id: string;
@@ -241,6 +250,7 @@ export function KiaStickApp({ runtimeVersion = clientVersion }: { runtimeVersion
   const [publicSourceState, setPublicSourceState] = useState<PublicSourceLoadState>({ status: "loading" });
   const [cbaSourceState, setCbaSourceState] = useState<CbaSourceLoadState>({ status: "loading" });
   const [cbaCitationTargetId, setCbaCitationTargetId] = useState<string | null>(null);
+  const [cbaCitationNavigationNotice, setCbaCitationNavigationNotice] = useState<CbaCitationNavigationNotice | null>(null);
   const [draft, setDraft] = useState("");
   const [thread, setThread] = useState<ConversationThread>(() => createConversationThread());
   const [isSending, setIsSending] = useState(false);
@@ -452,6 +462,14 @@ export function KiaStickApp({ runtimeVersion = clientVersion }: { runtimeVersion
       });
       return;
     }
+    const cbaCitations = message.answer.citations.filter((citation) => citation.publicSourceType === "cba_contract");
+    const cbaSaveEligible = cbaCitations.every(
+      (citation) => verifyCbaCitation(citation, cbaSourceState.status === "available" ? cbaSourceState.source : null).state === "verified_current"
+    );
+    if (!cbaSaveEligible) {
+      setSaveNotice({ status: "duplicate", text: "CBA citation verification is required before this answer can be Saved. Re-search the current CBA source." });
+      return;
+    }
     const record = createSavedAnswerRecord({
       answer: message.answer,
       mode: message.modeScopeDetail.mode,
@@ -479,6 +497,16 @@ export function KiaStickApp({ runtimeVersion = clientVersion }: { runtimeVersion
   function navigateToCitation(citation: Citation) {
     if (citation.sourceKind !== "public" || !citation.paragraphId) return;
     const isCba = citation.publicSourceType === "cba_contract" || citation.sourceId === CBA_SOURCE_ID;
+    if (isCba) {
+      const verification = verifyCbaCitation(citation, cbaSourceState.status === "available" ? cbaSourceState.source : null);
+      if (verification.state !== "verified_current") {
+        setCbaCitationTargetId(null);
+        setCbaCitationNavigationNotice({ citation, state: verification.state });
+        setTab("sources");
+        return;
+      }
+      setCbaCitationNavigationNotice(null);
+    }
     const targetId = isCba ? cbaParagraphAnchorId(citation.paragraphId) : publicSourceParagraphAnchorId(citation.paragraphId);
     setCbaCitationTargetId(isCba ? citation.paragraphId : null);
     setTab("sources");
@@ -588,6 +616,7 @@ export function KiaStickApp({ runtimeVersion = clientVersion }: { runtimeVersion
         {tab === "sources" && (
           <SourcesPanel
             cbaCitationTargetId={cbaCitationTargetId}
+            cbaCitationNavigationNotice={cbaCitationNavigationNotice}
             cbaSourceState={cbaSourceState}
             publicSourceState={publicSourceState}
             sourceHierarchyGroups={sourceHierarchyGroups}
@@ -600,6 +629,8 @@ export function KiaStickApp({ runtimeVersion = clientVersion }: { runtimeVersion
           <SavedAnswersPanel
             saved={saved}
             onDelete={(id) => setSaved((current) => current.filter((savedItem) => savedItem.id !== id))}
+            cbaSourceState={cbaSourceState}
+            onResearchCba={(question) => sendMessage(question, "cba")}
           />
         )}
 
@@ -889,13 +920,14 @@ export function FakeUploadPanel(props: {
 
 function CbaPassageCard({
   paragraph,
-  normalizedHash,
+  source,
   relevance,
 }: {
   paragraph: CbaParagraph;
-  normalizedHash: string;
+  source: Extract<CbaSourceRouteResponse, { status: "available" }>["source"];
   relevance: string;
 }) {
+  const integrity = deriveCbaCitationIntegrity(source, paragraph);
   return (
     <article id={cbaParagraphAnchorId(paragraph.id)} className="hierarchyDoc cbaPassageCard">
       <strong>
@@ -911,13 +943,21 @@ function CbaPassageCard({
         <span className="badge">{paragraph.id}</span>
       </div>
       <p className="emptyState">Relevance: {relevance}</p>
-      <p className="sectionAnchor">Normalized SHA-256 {normalizedHash}</p>
+      <details className="packetDisclosure">
+        <summary>Citation integrity details</summary>
+        <div className="packetDisclosureBody">
+          <p>Source instance {integrity.sourceInstanceId}</p>
+          <p>Paragraph SHA-256 {integrity.paragraphContentSha256}</p>
+          <p>Anchor SHA-256 {integrity.citationAnchorSha256}</p>
+        </div>
+      </details>
     </article>
   );
 }
 
 export function SourcesPanel({
   cbaCitationTargetId = null,
+  cbaCitationNavigationNotice = null,
   cbaSourceState = { status: "unavailable", reason: "cache_missing" },
   publicSourceState = { status: "unavailable", reason: "cache_missing" },
   sourceHierarchyGroups,
@@ -925,6 +965,7 @@ export function SourcesPanel({
   runtimeVersion,
 }: {
   cbaCitationTargetId?: string | null;
+  cbaCitationNavigationNotice?: CbaCitationNavigationNotice | null;
   cbaSourceState?: CbaSourceLoadState;
   publicSourceState?: PublicSourceLoadState;
   sourceHierarchyGroups: ReturnType<typeof buildSourceHierarchyGroups>;
@@ -942,6 +983,10 @@ export function SourcesPanel({
       .flatMap((page) => page.paragraphs)
       .find((paragraph) => paragraph.id === cbaCitationTargetId) ?? null;
   }, [cbaCitationTargetId, cbaSourceState]);
+  const cbaSourceInstance = useMemo(
+    () => cbaSourceState.status === "available" ? deriveCbaSourceInstance(cbaSourceState.source) : null,
+    [cbaSourceState]
+  );
   const totalSources = sourceHierarchyGroups.reduce((total, group) => total + group.docs.length, 0);
   const citableSources = sourceHierarchyGroups.flatMap((group) => group.docs).filter((doc) => doc.citable).length;
   const contextOnlySources = totalSources - citableSources;
@@ -991,6 +1036,8 @@ export function SourcesPanel({
             <span className="badge">LOCAL READ-ONLY</span>
             <span className="badge">source id {CBA_SOURCE_ID}</span>
             <span className="badge">NO LEGAL ADVICE</span>
+            <span className="badge green">CURRENT SOURCE INSTANCE VERIFIED</span>
+            <span className="badge">instance {shortCbaDigest(cbaSourceInstance!.sourceInstanceId)} (short prefix only)</span>
           </div>
           <dl className="publicSourceMetadata">
             <dt>Status</dt><dd>{CBA_DOCUMENT_STATUS}</dd>
@@ -1004,10 +1051,33 @@ export function SourcesPanel({
             <dt>Paragraphs</dt><dd>{cbaSourceState.source.normalized.paragraphCount}</dd>
             <dt>Extraction</dt><dd>{cbaSourceState.source.extraction.toolVersion}</dd>
           </dl>
+          <details className="packetDisclosure">
+            <summary>Citation-integrity technical details</summary>
+            <div className="packetDisclosureBody">
+              <p>Full source instance: {cbaSourceInstance!.sourceInstanceId}</p>
+              <p>Source-instance algorithm: {cbaSourceInstance!.sourceInstanceAlgorithmVersion}</p>
+              <p>Extraction tool: {cbaSourceState.source.extraction.tool} {cbaSourceState.source.extraction.toolVersion}</p>
+              <p>Parser/schema: {cbaSourceInstance!.parserSchemaVersion}</p>
+              <p>Normalization algorithm: {cbaSourceInstance!.normalizationAlgorithmVersion}</p>
+            </div>
+          </details>
           <div className="applicabilityWarning" role="note">
             <AlertTriangle size={16} />
             <strong>{CBA_SCOPE_WARNING} Not legal advice.</strong>
           </div>
+
+          {cbaCitationNavigationNotice && (
+            <div className="applicabilityWarning" role="alert" aria-label="CBA citation verification warning">
+              <AlertTriangle size={16} />
+              <strong>{citationVerificationMessage(cbaCitationNavigationNotice.state)}</strong>
+              <span>Internal navigation was blocked. Use the official PDF or re-search the current CBA source.</span>
+              {onAskCbaQuestion && (
+                <button className="button subtle" type="button" onClick={() => onAskCbaQuestion(cbaCitationNavigationNotice.citation.articleNumber ? `What does Article ${cbaCitationNavigationNotice.citation.articleNumber} say?` : "What does the contract say about overtime?")}>
+                  Re-search current CBA
+                </button>
+              )}
+            </div>
+          )}
 
           <section className="cbaSearchPanel" aria-label="deterministic CBA lexical search">
             <span className="sectionKicker">Deterministic lexical search</span>
@@ -1027,7 +1097,7 @@ export function SourcesPanel({
                 <CbaPassageCard
                   key={result.paragraph.id}
                   paragraph={result.paragraph}
-                  normalizedHash={cbaSourceState.source.normalized.sha256}
+                  source={cbaSourceState.source}
                   relevance={result.relevance.join("; ")}
                 />
               ))}
@@ -1037,7 +1107,7 @@ export function SourcesPanel({
           {cbaCitationTarget && (
             <section className="cbaCitationTarget" aria-label="selected CBA citation passage">
               <span className="sectionKicker">Selected citation passage</span>
-              <CbaPassageCard paragraph={cbaCitationTarget} normalizedHash={cbaSourceState.source.normalized.sha256} relevance="exact internal citation anchor" />
+              <CbaPassageCard paragraph={cbaCitationTarget} source={cbaSourceState.source} relevance="exact internal citation anchor" />
             </section>
           )}
 
@@ -1170,7 +1240,19 @@ export function SourcesPanel({
   );
 }
 
-export function SavedAnswersPanel(props: { saved: SavedAnswer[]; onDelete: (id: string) => void }) {
+function savedCbaVerificationState(item: SavedAnswer, cbaSourceState: CbaSourceLoadState): CitationVerificationState | null {
+  const citation = item.citations.find((candidate) => candidate.publicSourceType === "cba_contract");
+  if (!citation) return null;
+  return verifyCbaCitation(citation, cbaSourceState.status === "available" ? cbaSourceState.source : null).state;
+}
+
+export function SavedAnswersPanel(props: {
+  saved: SavedAnswer[];
+  onDelete: (id: string) => void;
+  cbaSourceState?: CbaSourceLoadState;
+  onResearchCba?: (question: string) => void;
+}) {
+  const cbaSourceState = props.cbaSourceState ?? { status: "unavailable", reason: "cache_missing" as const };
   return (
     <section className="tabPanel">
       <PanelHeader title="Saved" meta={`${props.saved.length} stored locally`} />
@@ -1180,7 +1262,10 @@ export function SavedAnswersPanel(props: { saved: SavedAnswer[]; onDelete: (id: 
             No saved fake answers yet. Answer cards retain source/provider metadata, citation count, and fake build metadata. No-answer Chat cards are blocked from Saved. No saved public-pilot answers yet. Both lanes remain separately labeled and retain local provider, prompt, source, hash, and anchor metadata.
           </p>
         )}
-        {props.saved.map((item) => (
+        {props.saved.map((item) => {
+          const cbaVerificationState = savedCbaVerificationState(item, cbaSourceState);
+          const cbaCitation = item.citations.find((citation) => citation.publicSourceType === "cba_contract");
+          return (
           <article className="savedCard" key={item.id}>
             <div className="savedHeader">
               <h3>{item.question}</h3>
@@ -1232,8 +1317,27 @@ export function SavedAnswersPanel(props: { saved: SavedAnswer[]; onDelete: (id: 
                       <dt>PDF SHA-256</dt><dd>{item.pdfSha256}</dd>
                       <dt>Authority</dt><dd>{item.authorityClassification}</dd>
                       <dt>Scope warning</dt><dd>{item.scopeWarning}</dd>
+                      <dt>Citation integrity</dt><dd>{cbaVerificationState ?? item.citationVerificationStateAtSave ?? "legacy_unverifiable"}</dd>
+                      <dt>Source instance</dt><dd>{item.sourceInstanceId ? `${shortCbaDigest(item.sourceInstanceId)} (short prefix only)` : "Legacy citation - re-verification required"}</dd>
                       <dt>CBA locations</dt>
                       <dd>{item.citations.filter((citation) => citation.publicSourceType === "cba_contract").map((citation) => `Article ${citation.articleNumber} / ${citation.sectionId} / PDF ${citation.pdfPageNumber} / printed ${citation.printedPageLabel ?? "unknown"} / ${citation.paragraphId}`).join(", ")}</dd>
+                      {cbaVerificationState && cbaVerificationState !== "verified_current" && (
+                        <dd className="applicabilityWarning" role="alert">
+                          {citationVerificationMessage(cbaVerificationState)}
+                          {props.onResearchCba && <button className="button subtle" type="button" onClick={() => props.onResearchCba?.(item.question)}>Re-search current CBA</button>}
+                        </dd>
+                      )}
+                      {cbaCitation && (
+                        <details className="packetDisclosure">
+                          <summary>Citation-integrity technical details</summary>
+                          <div className="packetDisclosureBody">
+                            <p>Source instance {item.sourceInstanceId ?? cbaCitation.sourceInstanceId ?? "legacy missing"}</p>
+                            <p>Paragraph SHA-256 {item.paragraphContentSha256 ?? cbaCitation.paragraphContentSha256 ?? "legacy missing"}</p>
+                            <p>Anchor SHA-256 {item.citationAnchorSha256 ?? cbaCitation.citationAnchorSha256 ?? "legacy missing"}</p>
+                            <p>Algorithms {item.sourceInstanceAlgorithmVersion ?? cbaCitation.sourceInstanceAlgorithmVersion ?? "legacy missing"} / {item.paragraphHashAlgorithmVersion ?? cbaCitation.paragraphHashAlgorithmVersion ?? "legacy missing"} / {item.citationAnchorAlgorithmVersion ?? cbaCitation.citationAnchorAlgorithmVersion ?? "legacy missing"}</p>
+                          </div>
+                        </details>
+                      )}
                     </>
                   )}
                 </>
@@ -1250,7 +1354,8 @@ export function SavedAnswersPanel(props: { saved: SavedAnswer[]; onDelete: (id: 
               <span className="badge">{new Date(item.timestamp).toLocaleString()}</span>
             </div>
           </article>
-        ))}
+          );
+        })}
       </div>
     </section>
   );
@@ -1943,6 +2048,10 @@ export function AssistantMessageCard({
   const [citationsOpen, setCitationsOpen] = useState(false);
   const [packetOpen, setPacketOpen] = useState(false);
   const answer = message.answer;
+  const hasNonCurrentCbaCitation = answer.citations.some(
+    (citation) => citation.publicSourceType === "cba_contract" && citation.citationVerificationState !== "verified_current"
+  );
+  const saveDisabled = answer.noAnswer || hasNonCurrentCbaCitation;
 
   if (message.status === "loading") {
     return (
@@ -2054,12 +2163,13 @@ export function AssistantMessageCard({
               className="button subtle"
               type="button"
               onClick={onSave}
-              aria-label={answer.noAnswer ? "No-answer responses cannot be saved" : "Save this answer"}
-              disabled={answer.noAnswer}
+              aria-label={saveDisabled ? "Citation-unverified or no-answer responses cannot be saved" : "Save this answer"}
+              disabled={saveDisabled}
             >
               <Save size={16} />
-              {answer.noAnswer ? "No answer to save" : "Save to Saved"}
+              {answer.noAnswer ? "No answer to save" : hasNonCurrentCbaCitation ? "Citation verification required" : "Save to Saved"}
             </button>
+            {hasNonCurrentCbaCitation && <p className="emptyState">CBA citations must verify against the current bounded source before saving.</p>}
             {answer.citations.length === 0 ? (
               <p className="emptyState">
                 {answer.answerKind === "public"

@@ -81,6 +81,7 @@ describe("official CBA Chat and UI integration", () => {
       expect(result.answer.noAnswer).toBe(false);
       expect(result.answer.citations.length).toBeGreaterThan(0);
       expect(result.answer.citations.every((citation) => citation.sourceId === CBA_SOURCE_ID && citation.publicSourceType === "cba_contract")).toBe(true);
+      expect(result.answer.citations.every((citation) => citation.citationVerificationState === "verified_current" && /^[a-f0-9]{64}$/.test(citation.sourceInstanceId ?? "") && /^[a-f0-9]{64}$/.test(citation.paragraphContentSha256 ?? "") && /^[a-f0-9]{64}$/.test(citation.citationAnchorSha256 ?? ""))).toBe(true);
       expect(result.answer.version.provider).toBe(CBA_PROVIDER);
       expect(result.answer.version.promptVersion).toBe(CBA_PROMPT_VERSION);
       expect(result.cardHtml).toContain("Save to Saved");
@@ -223,11 +224,58 @@ describe("official CBA Chat and UI integration", () => {
     expect(saved.pdfSha256).toBe(cbaSource.response.sha256);
     expect(saved.normalizedSourceHash).toBe(cbaSource.normalized.sha256);
     expect(saved.provider).toBe(CBA_PROVIDER);
+    expect(saved.sourceInstanceId).toMatch(/^[a-f0-9]{64}$/);
+    expect(saved.paragraphContentSha256).toMatch(/^[a-f0-9]{64}$/);
+    expect(saved.citationAnchorSha256).toMatch(/^[a-f0-9]{64}$/);
+    expect(saved.citationVerificationStateAtSave).toBe("verified_current");
     expect(saved.citations[0].pdfPageNumber).toBeGreaterThan(0);
-    const html = renderToStaticMarkup(React.createElement(SavedAnswersPanel, { saved: [saved], onDelete: () => undefined }));
+    const html = renderToStaticMarkup(React.createElement(SavedAnswersPanel, { saved: [saved], onDelete: () => undefined, cbaSourceState: { status: "available", source: cbaSource } }));
     expect(html).toContain("PUBLIC DATA PILOT — CBA");
     expect(html).toContain("official controlling CBA");
     expect(html).toContain(cbaSource.response.sha256);
+    expect(html).toContain("verified_current");
+  });
+
+  it("renders legacy and stale CBA citations as re-verification states rather than current citations", () => {
+    const result = submit("What does Article 15 say?");
+    const legacy = JSON.parse(JSON.stringify(createSavedAnswerRecord({ answer: result.answer, ...defaults, timestamp: "2026-07-21T14:01:00.000Z" })));
+    delete legacy.sourceInstanceId;
+    delete legacy.paragraphContentSha256;
+    delete legacy.citationAnchorSha256;
+    for (const citation of legacy.citations) {
+      delete citation.sourceInstanceId;
+      delete citation.sourceInstanceAlgorithmVersion;
+      delete citation.paragraphContentSha256;
+      delete citation.paragraphHashAlgorithmVersion;
+      delete citation.citationAnchorSha256;
+      delete citation.citationAnchorAlgorithmVersion;
+      delete citation.citationVerificationState;
+    }
+    const legacyHtml = renderToStaticMarkup(React.createElement(SavedAnswersPanel, {
+      saved: [legacy],
+      onDelete: () => undefined,
+      cbaSourceState: { status: "available", source: cbaSource },
+      onResearchCba: () => undefined,
+    }));
+    expect(legacyHtml).toContain("Legacy citation - re-verification required");
+    expect(legacyHtml).toContain("Re-search current CBA");
+
+    const staleAssistant = {
+      ...result.assistant,
+      answer: {
+        ...result.answer,
+        citations: result.answer.citations.map((citation) => ({ ...citation, citationVerificationState: "paragraph_changed" as const })),
+      },
+    };
+    const staleHtml = renderToStaticMarkup(React.createElement(AssistantMessageCard, {
+      message: staleAssistant,
+      onRetry: () => undefined,
+      onSave: () => undefined,
+      onCitationNavigate: () => undefined,
+      onSubmitCbaSuggestion: () => undefined,
+    }));
+    expect(staleHtml).toContain("Citation verification required");
+    expect(staleHtml).toContain("CBA citations must verify against the current bounded source before saving.");
   });
 
   it("renders two separate public sources, visible search, and the exact internal citation anchor", () => {
@@ -242,6 +290,7 @@ describe("official CBA Chat and UI integration", () => {
       onAskCbaQuestion: () => undefined,
     }));
     expect(html).toContain("OFFICIAL FINAL CBA");
+    expect(html).toContain("CURRENT SOURCE INSTANCE VERIFIED");
     expect(html).toContain("CONTROLLING CONTRACT LANGUAGE");
     expect(html).toContain("OFFICIAL GENERAL GUIDANCE");
     expect(html).toContain("Deterministic lexical search");

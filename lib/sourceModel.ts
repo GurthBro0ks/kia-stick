@@ -115,6 +115,22 @@ export interface Citation {
   subsection?: string | null;
   provider?: string;
   promptVersion?: string;
+  sourceInstanceId?: string;
+  sourceInstanceAlgorithmVersion?: string;
+  paragraphContentSha256?: string;
+  paragraphHashAlgorithmVersion?: string;
+  citationAnchorSha256?: string;
+  citationAnchorAlgorithmVersion?: string;
+  citationVerificationState?:
+    | "verified_current"
+    | "source_instance_changed"
+    | "paragraph_changed"
+    | "paragraph_missing"
+    | "locator_changed"
+    | "ambiguous_duplicate"
+    | "legacy_unverifiable"
+    | "cache_unavailable"
+    | "invalid_metadata";
 }
 
 export const corpus = corpusJson as unknown as CorpusData;
@@ -280,7 +296,8 @@ export function citationLabel(citation: Citation): string {
   if (citation.sourceKind === "public") {
     if (citation.publicSourceType === "cba_contract") {
       const printed = citation.printedPageLabel ? ` · printed ${citation.printedPageLabel}` : " · printed unknown";
-      return `${citation.sourceId} · Article ${citation.articleNumber ?? "unknown"} · Section ${citation.sectionId ?? "unknown"} · PDF ${citation.pdfPageNumber ?? "unknown"}${printed} · ${citation.paragraphId} · retrieved ${citation.retrievedAt?.slice(0, 10)} · ${citation.contentHash}`;
+      const integrity = citation.citationVerificationState === "verified_current" ? " · verified current source" : citation.citationVerificationState ? ` · ${citation.citationVerificationState.replaceAll("_", " ")}` : "";
+      return `${citation.sourceId} · Article ${citation.articleNumber ?? "unknown"} · Section ${citation.sectionId ?? "unknown"} · PDF ${citation.pdfPageNumber ?? "unknown"}${printed} · ${citation.paragraphId}${integrity}`;
     }
     return `${citation.sourceId} · ${citation.sectionId} · ${citation.paragraphId} · retrieved ${citation.retrievedAt?.slice(0, 10)} · ${citation.contentHash}`;
   }

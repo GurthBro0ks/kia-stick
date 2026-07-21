@@ -238,11 +238,15 @@ export function readProofDir(proofDir) {
 export function readQueueState(root = process.cwd(), phase = "") {
   try {
     const queue = loadQueue(root);
-    const item = queue.items.find((candidate) => candidate.phase === phase) || selectNextItem(queue);
+    const phaseMatch = phase ? queue.items.find((candidate) => candidate.phase === phase) : null;
+    // A proof identifies one exact phase. Falling through to an unrelated
+    // actionable queue item would make a local proof appear tied to work it
+    // does not authorize, so only general queue inspection may select next.
+    const item = phaseMatch || (phase ? null : selectNextItem(queue));
     return {
       ok: true,
       item,
-      selectedBy: item?.phase === phase ? "phase" : "next",
+      selectedBy: phaseMatch ? "phase" : phase ? "none" : "next",
       error: "",
     };
   } catch (error) {

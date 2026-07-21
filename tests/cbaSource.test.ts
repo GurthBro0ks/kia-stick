@@ -142,6 +142,9 @@ describe("bounded official CBA source", () => {
     expect(sync).toContain('redirect: "manual"');
     expect(sync).toContain("CBA_MAX_RESPONSE_BYTES");
     expect(sync).toContain("validateCbaSyncArguments(process.argv.slice(2))");
+    expect(sync).toContain("evaluateCbaSourceOverwriteGuard");
+    expect(sync).toContain("accepted cache was not overwritten");
+    expect(sync).not.toContain("--force");
     expect(component).toContain('fetch("/api/public-cba-source"');
     expect(component).not.toMatch(/FileReader|showOpenFilePicker|webkitdirectory|type=["']file/);
   });

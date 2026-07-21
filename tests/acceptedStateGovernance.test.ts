@@ -6,17 +6,17 @@ import currentAcceptedPushedState from "@/data/current-accepted-pushed-state.jso
 const immutableHistoricalFixture = "tests/fixtures/current-accepted-pushed-state-v1.1.72.json";
 
 describe("accepted-state governance loop break", () => {
-  it("records Public Data Pilot 1B at 006da8d as the exact current accepted capability", () => {
+  it("records the pushed public-truth repair as current while retaining Pilot 1B as history", () => {
     expect(currentAcceptedPushedState.checkpoint_kind).toBe("capability");
-    expect(currentAcceptedPushedState.checkpoint_label).toBe("Public Data Pilot 1B at 006da8d");
-    expect(currentAcceptedPushedState.accepted_bundle).toBe("KIA-Stick-public-data-pilot-1B-official-APWU-USPS-CBA-closeout-and-push");
-    expect(currentAcceptedPushedState.accepted_pushed_commit).toBe("006da8dc25638cdbe5ebd43b04b5b5c506056ab9");
-    expect(currentAcceptedPushedState.accepted_pushed_short_commit).toBe("006da8d");
-    expect(currentAcceptedPushedState.accepted_pushed_proof_dir).toContain("closeout_push_proof_repair_20260717T155616Z");
+    expect(currentAcceptedPushedState.checkpoint_label).toBe("Public Truth and Generic CBA Routing Repair at 571436a");
+    expect(currentAcceptedPushedState.accepted_bundle).toBe("KIA-Stick-public-truth-and-generic-CBA-retrieval-routing-repair");
+    expect(currentAcceptedPushedState.accepted_pushed_commit).toBe("571436a59a7d09756b401912906377c6257680af");
+    expect(currentAcceptedPushedState.accepted_pushed_short_commit).toBe("571436a");
+    expect(currentAcceptedPushedState.accepted_pushed_proof_dir).toContain("closeout_push_20260721T131958Z");
     expect(currentAcceptedPushedState.historical_prior_checkpoints[0]).toEqual({
-      checkpoint: "Public Data Pilot 1A",
-      commit: "04774874c5a20b2b38d435fb66ba2b1cfb9c9e29",
-      short_commit: "0477487",
+      checkpoint: "Public Data Pilot 1B",
+      commit: "006da8dc25638cdbe5ebd43b04b5b5c506056ab9",
+      short_commit: "006da8d",
       status: "historical_only_not_current",
     });
     expect(currentAcceptedPushedState.data_modes).toEqual({
@@ -25,7 +25,8 @@ describe("accepted-state governance loop break", () => {
       private_data: "blocked",
       external_ai: "disabled",
     });
-    expect(currentAcceptedPushedState.local_bundle_status).toBe("public truth and generic CBA routing repair; validation PASS; pushed no; manual QA pending");
+    expect(currentAcceptedPushedState.local_implementation_proof_dir).toBe("/home/mint/kia-stick-local-proofs/proof_kia_stick_cba_citation_durability_source_instance_resync_drift_guard_20260721T134506Z");
+    expect(currentAcceptedPushedState.local_bundle_status).toBe("citation durability/source-instance/resync-drift implementation; validation PASS; pushed no; manual QA pending");
     expect(new Set(currentAcceptedPushedState.historical_prior_checkpoints.map((item) => item.commit)).size)
       .toBe(currentAcceptedPushedState.historical_prior_checkpoints.length);
   });

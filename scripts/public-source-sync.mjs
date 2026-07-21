@@ -45,6 +45,7 @@ import {
   validatePdfMagic,
   validatePopplerToolAvailability,
 } from "../lib/cbaSource.ts";
+import { evaluateCbaSourceOverwriteGuard } from "../lib/cbaCitationIntegrity.ts";
 import {
   normalizeApprovedArticleHtml,
   normalizedContentForHash,
@@ -173,6 +174,30 @@ function writeNlrBCache(repositoryRoot, cache) {
     if (existsSync(temporaryPath)) rmSync(temporaryPath);
   }
   return cachePath;
+}
+
+function readExistingCbaCache(jsonPath) {
+  if (!existsSync(jsonPath)) return null;
+  const stat = lstatSync(jsonPath);
+  if (!stat.isFile() || stat.isSymbolicLink()) throw new Error("Existing CBA cache file is unsafe.");
+  try {
+    return JSON.parse(readFileSync(jsonPath, "utf8"));
+  } catch {
+    throw new Error("Existing CBA cache JSON is invalid; source sync will not overwrite it.");
+  }
+}
+
+function boundedDriftSummary(report) {
+  const counts = report.paragraphDrift.reduce((summary, item) => {
+    summary[item.state] = (summary[item.state] ?? 0) + 1;
+    return summary;
+  }, {});
+  return {
+    sourceState: report.sourceState,
+    currentSourceInstance: report.currentSourceInstance.sourceInstanceId.slice(0, 12),
+    proposedSourceInstance: report.proposedSourceInstance.sourceInstanceId.slice(0, 12),
+    paragraphDriftCounts: counts,
+  };
 }
 
 function findRequiredTool(name) {
@@ -305,6 +330,14 @@ async function syncCba(repositoryRoot) {
       },
       normalized: normalizedOne,
     };
+    const existingCache = readExistingCbaCache(jsonPath);
+    if (existingCache) {
+      const overwriteGuard = evaluateCbaSourceOverwriteGuard({ current: existingCache, proposed: cache });
+      if (!overwriteGuard.allowed) {
+        process.stdout.write(JSON.stringify({ result: "REVIEW_REQUIRED", overwrite: "blocked", ...boundedDriftSummary(overwriteGuard.report) }, null, 2) + "\\n");
+        throw new Error("CBA source instance changed or is incompatible; accepted cache was not overwritten. Exact expected source-instance hashes and explicit operator approval are required for any future override.");
+      }
+    }
     writeFileSync(temporaryJson, `${JSON.stringify(cache, null, 2)}\n`, { encoding: "utf8", flag: "wx", mode: 0o600 });
     renameSync(temporaryPdf, pdfPath);
     chmodSync(pdfPath, 0o600);

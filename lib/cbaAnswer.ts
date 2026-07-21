@@ -22,6 +22,7 @@ import {
   type PublicSourceCache,
 } from "@/lib/publicSource";
 import { citationForPublicParagraph } from "@/lib/publicSourceAnswer";
+import { deriveCbaCitationIntegrity, verifyCbaCitation } from "@/lib/cbaCitationIntegrity";
 import type { Citation, Detail, Mode, Scope } from "@/lib/sourceModel";
 import type { RuntimeVersion } from "@/lib/version";
 
@@ -46,7 +47,8 @@ export function detectCbaIntent(question: string): CbaQuestionIntent {
 
 function cbaCitation(source: CbaSourceCache, paragraph: CbaParagraph): Citation {
   const sectionId = paragraph.sectionNumber ? `section-${paragraph.sectionNumber}` : "section-unknown";
-  return {
+  const integrity = deriveCbaCitationIntegrity(source, paragraph);
+  const citation: Citation = {
     id: `${CBA_SOURCE_ID}@${paragraph.id}`,
     title: CBA_SOURCE_TITLE,
     class: CBA_SOURCE_CLASS,
@@ -80,7 +82,9 @@ function cbaCitation(source: CbaSourceCache, paragraph: CbaParagraph): Citation 
     subsection: paragraph.subsection,
     provider: CBA_PROVIDER,
     promptVersion: CBA_PROMPT_VERSION,
+    ...integrity,
   };
+  return { ...citation, citationVerificationState: verifyCbaCitation(citation, source).state };
 }
 
 function paragraphsForArticle(source: CbaSourceCache, articleNumber: string): CbaParagraph[] {
@@ -123,6 +127,9 @@ function baseAnswer(input: {
   followUps?: string[];
   suggestedQuestions?: string[];
 }): AnswerResult {
+  const citationVerificationFailed = input.citations.some(
+    (citation) => citation.publicSourceType === "cba_contract" && citation.citationVerificationState !== "verified_current"
+  );
   return {
     answerKind: "public",
     publicSourceRole: input.role ?? "cba_contract",
@@ -136,12 +143,14 @@ function baseAnswer(input: {
     authorityClassification: CBA_SOURCE_CLASS,
     question: input.question,
     intent: "source_hierarchy",
-    shortAnswer: input.shortAnswer,
+    shortAnswer: citationVerificationFailed
+      ? "The bounded CBA cache could not verify every displayed citation. No current-source answer was produced and no alternate source lane was substituted."
+      : input.shortAnswer,
     modeNote: `${CBA_SCOPE_WARNING} This deterministic citation-first summary is not legal advice and does not decide disputed facts.`,
-    noAnswer: input.noAnswer,
-    bestGuessDisabled: input.noAnswer,
+    noAnswer: input.noAnswer || citationVerificationFailed,
+    bestGuessDisabled: input.noAnswer || citationVerificationFailed,
     sourceGroups: [],
-    citations: input.citations,
+    citations: citationVerificationFailed ? [] : input.citations,
     conflicts: input.conflicts ?? ["Application depends on coverage, craft, employee status, local agreements, memoranda, and case facts."],
     evidenceChecklist: input.evidenceChecklist ?? ["Read the exact cited contract passage.", "Confirm the applicable craft, status, trigger date, and procedural posture."],
     missingFacts: input.missingFacts ?? ["Employee coverage and the facts that trigger the cited provision."],
