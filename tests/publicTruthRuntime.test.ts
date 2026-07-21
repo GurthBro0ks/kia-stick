@@ -6,7 +6,7 @@ import { CURRENT_PHASE } from "@/lib/version";
 describe("public truth runtime identity", () => {
   it("derives the runtime phase from the accepted-state contract", () => {
     expect(CURRENT_PHASE).toBe(currentAcceptedPushedState.accepted_pushed_phase);
-    expect(currentAcceptedPushedState.checkpoint_label).toBe("CBA Citation Durability Source Instance and Resync Drift Guard at 1e0e96b");
+    expect(currentAcceptedPushedState.checkpoint_label).toBe("Public Settings User Summary and Operator Diagnostics Split at 76c7312");
   });
 
   it("reports explicit data modes instead of a fake-only claim", async () => {

@@ -1,3 +1,13 @@
+## Public Settings Post-Closeout Accepted-State Contract Refresh
+
+- The current accepted pushed capability is `Public Settings User Summary and Operator Diagnostics Split at 76c7312`.
+- The accepted implementation commit is `76c73122a87cb23b5b8595a002d54d7a127fbba8`; the distinct repository/closeout recording point is `3690c74650d0fb19395bd046adee1bf236950f9e`.
+- Canonical closeout proof: `/home/mint/kia-stick-local-proofs/proof_kia_stick_public_settings_user_summary_operator_diagnostics_split_operator_qa_pass_recording_20260721T160349Z/closeout_push_20260721T161310Z`.
+- Shared current-state contract: `data/current-accepted-pushed-state.json`; Settings, `/health`, proof helpers, and current-state tests consume this contract rather than a new independent baseline.
+- Prior accepted CBA citation-durability checkpoint `1e0e96b` remains historical-only and available in operator diagnostics.
+- This refresh is local-only: validation `PASS`, pushed `no`, operator manual QA `pending_operator_review`.
+- queue-015 and v0.9.12C remain blocked; Next/PostCSS remains `WARN_SAFE_NEXT_TARGET_UNCLEAR`; product/package remain `0.7.0`.
+
 ## v1.1.18 to v1.1.22 Post-Closeout Accepted-State Contract Refresh
 
 - Phase: `KIA-Stick-v1.1.18-to-v1.1.22-post-closeout-accepted-state-contract-refresh`

@@ -6,22 +6,28 @@ import currentAcceptedPushedState from "@/data/current-accepted-pushed-state.jso
 const immutableHistoricalFixture = "tests/fixtures/current-accepted-pushed-state-v1.1.72.json";
 
 describe("accepted-state governance loop break", () => {
-  it("records the pushed citation-durability repair as current while retaining prior public repairs as history", () => {
+  it("records the pushed Settings diagnostics split as current while retaining the CBA repair as history", () => {
     expect(currentAcceptedPushedState.checkpoint_kind).toBe("capability");
-    expect(currentAcceptedPushedState.checkpoint_label).toBe("CBA Citation Durability Source Instance and Resync Drift Guard at 1e0e96b");
-    expect(currentAcceptedPushedState.accepted_bundle).toBe("KIA-Stick-CBA-citation-durability-source-instance-and-resync-drift-guard");
-    expect(currentAcceptedPushedState.accepted_pushed_commit).toBe("1e0e96b0e0cd95d1e62af1eb76cfd5b57c43f4e8");
-    expect(currentAcceptedPushedState.accepted_pushed_short_commit).toBe("1e0e96b");
-    expect(currentAcceptedPushedState.repository_recording_commit).toBe("96fccd4e1d14eb947a6044cb238a4bb4d535795f");
-    expect(currentAcceptedPushedState.repository_recording_short_commit).toBe("96fccd4");
-    expect(currentAcceptedPushedState.accepted_pushed_proof_dir).toContain("closeout_push_20260721T144537Z");
+    expect(currentAcceptedPushedState.checkpoint_label).toBe("Public Settings User Summary and Operator Diagnostics Split at 76c7312");
+    expect(currentAcceptedPushedState.accepted_bundle).toBe("KIA-Stick-public-Settings-user-summary-and-operator-diagnostics-split");
+    expect(currentAcceptedPushedState.accepted_pushed_commit).toBe("76c73122a87cb23b5b8595a002d54d7a127fbba8");
+    expect(currentAcceptedPushedState.accepted_pushed_short_commit).toBe("76c7312");
+    expect(currentAcceptedPushedState.repository_recording_commit).toBe("3690c74650d0fb19395bd046adee1bf236950f9e");
+    expect(currentAcceptedPushedState.repository_recording_short_commit).toBe("3690c74");
+    expect(currentAcceptedPushedState.accepted_pushed_proof_dir).toContain("closeout_push_20260721T161310Z");
     expect(currentAcceptedPushedState.historical_prior_checkpoints[0]).toEqual({
+      checkpoint: "CBA Citation Durability Source Instance and Resync Drift Guard",
+      commit: "1e0e96b0e0cd95d1e62af1eb76cfd5b57c43f4e8",
+      short_commit: "1e0e96b",
+      status: "historical_only_not_current",
+    });
+    expect(currentAcceptedPushedState.historical_prior_checkpoints[1]).toEqual({
       checkpoint: "Public Truth and Generic CBA Routing Repair",
       commit: "571436a59a7d09756b401912906377c6257680af",
       short_commit: "571436a",
       status: "historical_only_not_current",
     });
-    expect(currentAcceptedPushedState.historical_prior_checkpoints[1]).toEqual({
+    expect(currentAcceptedPushedState.historical_prior_checkpoints[2]).toEqual({
       checkpoint: "Public Data Pilot 1B",
       commit: "006da8dc25638cdbe5ebd43b04b5b5c506056ab9",
       short_commit: "006da8d",
@@ -33,10 +39,10 @@ describe("accepted-state governance loop break", () => {
       private_data: "blocked",
       external_ai: "disabled",
     });
-    expect(currentAcceptedPushedState.local_implementation_proof_dir).toBe("/home/mint/kia-stick-local-proofs/proof_kia_stick_public_settings_user_summary_operator_diagnostics_split_20260721T150300Z");
+    expect(currentAcceptedPushedState.local_implementation_proof_dir).toBe("/home/mint/kia-stick-local-proofs/proof_kia_stick_public_settings_post_closeout_accepted_state_refresh_20260721T162717Z");
     expect(currentAcceptedPushedState.local_bundle_operator_qa_pass_proof_dir).toBe("/home/mint/kia-stick-local-proofs/proof_kia_stick_public_settings_user_summary_operator_diagnostics_split_operator_qa_pass_recording_20260721T160349Z");
-    expect(currentAcceptedPushedState.local_bundle_phase).toBe("KIA-Stick-public-Settings-user-summary-and-operator-diagnostics-split");
-    expect(currentAcceptedPushedState.local_bundle_status).toBe("public Settings user summary and operator diagnostics split; validation PASS; pushed no; manual QA PASS");
+    expect(currentAcceptedPushedState.local_bundle_phase).toBe("KIA-Stick-public-Settings-post-closeout-accepted-state-refresh");
+    expect(currentAcceptedPushedState.local_bundle_status).toBe("public Settings post-closeout accepted-state refresh; validation PASS; pushed no; manual QA pending");
     expect(new Set(currentAcceptedPushedState.historical_prior_checkpoints.map((item) => item.commit)).size)
       .toBe(currentAcceptedPushedState.historical_prior_checkpoints.length);
   });

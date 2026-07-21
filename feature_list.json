@@ -11797,5 +11797,30 @@
     "source_sync_performed": false,
     "private_data_accessed": false,
     "discord_sent": false
+  },
+  "public_settings_post_closeout_accepted_state_refresh": {
+    "phase": "KIA-Stick-public-Settings-post-closeout-accepted-state-refresh",
+    "status": "local_validation_pass",
+    "authorization": "AUTHORIZE_KIA_PUBLIC_SETTINGS_POST_CLOSEOUT_ACCEPTED_STATE_REFRESH",
+    "contract_file": "data/current-accepted-pushed-state.json",
+    "accepted_pushed_checkpoint_label": "Public Settings User Summary and Operator Diagnostics Split at 76c7312",
+    "accepted_pushed_commit": "76c73122a87cb23b5b8595a002d54d7a127fbba8",
+    "repository_recording_commit": "3690c74650d0fb19395bd046adee1bf236950f9e",
+    "accepted_pushed_proof_dir": "/home/mint/kia-stick-local-proofs/proof_kia_stick_public_settings_user_summary_operator_diagnostics_split_operator_qa_pass_recording_20260721T160349Z/closeout_push_20260721T161310Z",
+    "local_refresh_proof_dir": "/home/mint/kia-stick-local-proofs/proof_kia_stick_public_settings_post_closeout_accepted_state_refresh_20260721T162717Z",
+    "prior_checkpoint_short_commit": "1e0e96b",
+    "prior_checkpoint_status": "historical_only_not_current",
+    "local_validation_status": "PASS",
+    "local_manual_qa_status": "pending_operator_review",
+    "local_pushed": false,
+    "queue_015_status": "blocked",
+    "next_postcss_status": "WARN_SAFE_NEXT_TARGET_UNCLEAR",
+    "v0912c_status": "blocked_pending_exact_target",
+    "product_version": "0.7.0",
+    "package_json_changed": false,
+    "package_lock_changed": false,
+    "source_sync_performed": false,
+    "private_data_accessed": false,
+    "discord_sent": false
   }
 }

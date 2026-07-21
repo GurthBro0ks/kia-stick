@@ -846,7 +846,7 @@ export function SettingsContent(props: {
 
         <section className="settingsSummaryCard" aria-labelledby="settings-accepted-capability">
           <span className="sectionKicker">Current accepted capability</span>
-          <h3 id="settings-accepted-capability">CBA Citation Durability and Resync Drift Guard</h3>
+          <h3 id="settings-accepted-capability">{currentAcceptedPushedState.checkpoint}</h3>
           <dl className="compactSettingsGrid">
             <dt>Accepted checkpoint</dt>
             <dd>{currentAcceptedPushedState.checkpoint}</dd>

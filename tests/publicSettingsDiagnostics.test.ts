@@ -29,8 +29,8 @@ describe("public Settings summary and operator diagnostics split", () => {
 
     expect(html).toContain("Data and privacy mode");
     expect(html).toContain("local public pilot + fake samples");
-    expect(html).toContain("CBA Citation Durability Source Instance and Resync Drift Guard");
-    expect(html).toContain("1e0e96b");
+    expect(html).toContain("Public Settings User Summary and Operator Diagnostics Split");
+    expect(html).toContain("76c7312");
     expect(html).toContain("Validation</dt><dd>PASS");
     expect(html).toContain("Operator QA</dt><dd>PASS");
     expect(html).toContain("Pushed</dt><dd>yes");
@@ -68,7 +68,7 @@ describe("public Settings summary and operator diagnostics split", () => {
     expect(html).toContain("v0.9.12C remains blocked");
     expect(html).toContain("queue-015 blocked");
     expect(html).toContain("Package lock</dt><dd>unchanged");
-    expect(html).toContain("Accepted-state recording baseline</dt><dd>96fccd4e1d14eb947a6044cb238a4bb4d535795f");
+    expect(html).toContain("Accepted-state recording baseline</dt><dd>3690c74650d0fb19395bd046adee1bf236950f9e");
     expect(html).toContain("Build Date");
     expect(html).toContain("Provider");
   });

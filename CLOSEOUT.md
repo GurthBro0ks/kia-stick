@@ -1,3 +1,16 @@
+## Public Settings Post-Closeout Accepted-State Contract Refresh
+
+- Phase: `KIA-Stick-public-Settings-post-closeout-accepted-state-refresh`.
+- Authorization: `AUTHORIZE_KIA_PUBLIC_SETTINGS_POST_CLOSEOUT_ACCEPTED_STATE_REFRESH`.
+- Current accepted pushed capability: `Public Settings User Summary and Operator Diagnostics Split at 76c7312` (`76c73122a87cb23b5b8595a002d54d7a127fbba8`).
+- Repository/closeout recording point: `3690c74650d0fb19395bd046adee1bf236950f9e`, where `HEAD == origin/main == remote main` was verified.
+- Accepted pushed proof: `/home/mint/kia-stick-local-proofs/proof_kia_stick_public_settings_user_summary_operator_diagnostics_split_operator_qa_pass_recording_20260721T160349Z/closeout_push_20260721T161310Z`.
+- Current local refresh proof: `/home/mint/kia-stick-local-proofs/proof_kia_stick_public_settings_post_closeout_accepted_state_refresh_20260721T162717Z`.
+- Shared contract and bounded consumers now identify the Settings diagnostics split as current; the CBA citation-durability checkpoint `1e0e96b` remains preserved as historical-only.
+- Local refresh status: validation `PASS`; pushed `no`; operator manual QA `pending_operator_review`.
+- Safety: no source sync, private data, upload/import capability, external AI, dependency, package, lockfile, service, scheduler, notification, or blocked-target change.
+- Next: operator manual QA for this local accepted-state refresh. Do not push without separate explicit authorization.
+
 ## Public Settings User Summary and Operator Diagnostics Split Closeout and Push
 
 - Phase: `KIA-Stick-public-Settings-user-summary-and-operator-diagnostics-split-closeout-and-push`.
