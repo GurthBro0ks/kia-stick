@@ -1028,6 +1028,105 @@ a {
   padding-bottom: 88px;
 }
 
+.settingsSummaryGrid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 260px), 1fr));
+  gap: 10px;
+}
+
+.settingsSummaryCard {
+  min-width: 0;
+  border: 1px solid #b7c9cf;
+  background: #f5faf8;
+  padding: 11px;
+}
+
+.settingsSummaryCard h3,
+.settingsSummaryCard p,
+.settingsSummaryList {
+  margin: 0;
+}
+
+.settingsSummaryCard h3 {
+  margin-top: 4px;
+  font-size: 0.96rem;
+}
+
+.settingsSummaryList {
+  display: grid;
+  gap: 5px;
+  padding: 8px 0 0 18px;
+  color: var(--muted);
+  font-size: 0.84rem;
+  font-weight: 750;
+  line-height: 1.35;
+}
+
+.compactSettingsGrid {
+  display: grid;
+  grid-template-columns: minmax(90px, 0.42fr) minmax(0, 1fr);
+  gap: 6px 10px;
+  margin: 8px 0 0;
+  font-size: 0.84rem;
+}
+
+.compactSettingsGrid dt {
+  color: var(--muted);
+  font-weight: 900;
+}
+
+.compactSettingsGrid dd {
+  min-width: 0;
+  margin: 0;
+  overflow-wrap: anywhere;
+  font-weight: 800;
+}
+
+.settingsNote {
+  margin-top: 8px !important;
+  color: var(--muted);
+  font-size: 0.78rem;
+  font-weight: 750;
+  line-height: 1.35;
+}
+
+.settingsVersionLink {
+  display: inline-block;
+  margin-top: 8px;
+  font-size: 0.82rem;
+  font-weight: 900;
+}
+
+.operatorDiagnosticsControls {
+  display: grid;
+  justify-items: start;
+  gap: 7px;
+  margin: 12px 0;
+}
+
+.operatorDiagnosticsControls p {
+  margin: 0;
+  color: var(--muted);
+  font-size: 0.8rem;
+  font-weight: 800;
+  line-height: 1.35;
+}
+
+.operatorDiagnosticsToggle:focus-visible {
+  outline: 3px solid var(--blue);
+  outline-offset: 3px;
+}
+
+.operatorDiagnosticsRegion {
+  min-width: 0;
+  overflow: hidden;
+}
+
+.operatorDiagnosticsGrid dd {
+  overflow-wrap: anywhere;
+  word-break: break-word;
+}
+
 .aboutPanel {
   display: grid;
   gap: 7px;
@@ -1701,6 +1800,20 @@ a {
   .mainArea {
     padding-left: 8px;
     padding-right: 8px;
+  }
+
+  .compactSettingsGrid,
+  .operatorDiagnosticsGrid {
+    grid-template-columns: 1fr;
+  }
+
+  .compactSettingsGrid dd,
+  .operatorDiagnosticsGrid dd {
+    margin-bottom: 4px;
+  }
+
+  .operatorDiagnosticsToggle {
+    width: 100%;
   }
 
   .controlStrip {

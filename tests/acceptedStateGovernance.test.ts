@@ -12,6 +12,8 @@ describe("accepted-state governance loop break", () => {
     expect(currentAcceptedPushedState.accepted_bundle).toBe("KIA-Stick-CBA-citation-durability-source-instance-and-resync-drift-guard");
     expect(currentAcceptedPushedState.accepted_pushed_commit).toBe("1e0e96b0e0cd95d1e62af1eb76cfd5b57c43f4e8");
     expect(currentAcceptedPushedState.accepted_pushed_short_commit).toBe("1e0e96b");
+    expect(currentAcceptedPushedState.repository_recording_commit).toBe("96fccd4e1d14eb947a6044cb238a4bb4d535795f");
+    expect(currentAcceptedPushedState.repository_recording_short_commit).toBe("96fccd4");
     expect(currentAcceptedPushedState.accepted_pushed_proof_dir).toContain("closeout_push_20260721T144537Z");
     expect(currentAcceptedPushedState.historical_prior_checkpoints[0]).toEqual({
       checkpoint: "Public Truth and Generic CBA Routing Repair",
@@ -33,7 +35,8 @@ describe("accepted-state governance loop break", () => {
     });
     expect(currentAcceptedPushedState.local_implementation_proof_dir).toBe("/home/mint/kia-stick-local-proofs/proof_kia_stick_cba_citation_durability_source_instance_resync_drift_guard_20260721T134506Z");
     expect(currentAcceptedPushedState.local_bundle_operator_qa_pass_proof_dir).toBe("/home/mint/kia-stick-local-proofs/proof_kia_stick_cba_citation_durability_source_instance_resync_drift_guard_operator_qa_pass_recording_20260721T143005Z");
-    expect(currentAcceptedPushedState.local_bundle_status).toBe("citation durability/source-instance/resync-drift implementation; validation PASS; manual QA PASS; pushed yes at 1e0e96b");
+    expect(currentAcceptedPushedState.local_bundle_phase).toBe("KIA-Stick-public-Settings-user-summary-and-operator-diagnostics-split");
+    expect(currentAcceptedPushedState.local_bundle_status).toBe("public Settings user summary and operator diagnostics split; validation PASS; pushed no; manual QA pending");
     expect(new Set(currentAcceptedPushedState.historical_prior_checkpoints.map((item) => item.commit)).size)
       .toBe(currentAcceptedPushedState.historical_prior_checkpoints.length);
   });

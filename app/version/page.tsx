@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import React from "react";
+import { localDataModeLabel } from "@/lib/acceptedState";
 import { corpus, sourceClassLabels } from "@/lib/sourceModel";
 import { getRuntimeVersion } from "@/lib/serverVersion";
 
@@ -33,7 +34,7 @@ export default function VersionPage() {
       <section className="tabPanel">
         <div className="panelHeader">
           <h2>Runtime</h2>
-          <span>fake-only local</span>
+          <span>{localDataModeLabel()}</span>
         </div>
         <dl className="versionGrid">
           <dt>Display Version</dt>

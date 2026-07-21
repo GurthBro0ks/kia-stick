@@ -16,6 +16,8 @@ export interface CurrentAcceptedPushedState {
   accepted_bundle?: string;
   accepted_pushed_commit: string;
   accepted_pushed_short_commit: string;
+  repository_recording_commit?: string;
+  repository_recording_short_commit?: string;
   accepted_pushed_proof_dir: string;
   local_implementation_proof_dir: string;
   local_bundle_operator_qa_pass_proof_dir?: string;
@@ -52,6 +54,14 @@ export interface CurrentAcceptedPushedState {
 }
 
 export const currentAcceptedPushedState = currentAcceptedPushedStateJson as CurrentAcceptedPushedState;
+
+export function localDataModeLabel(state: CurrentAcceptedPushedState = currentAcceptedPushedState): string {
+  const modes = state.data_modes;
+  if (modes?.public_sources === "available_exact_allowlisted" && modes.fake_corpus === "available") {
+    return "local public pilot + fake samples";
+  }
+  return modes?.fake_corpus === "available" ? "local fake samples" : "local isolated data modes";
+}
 
 export const historicalAcceptedPushedShortCommits = currentAcceptedPushedState.historical_prior_checkpoints
   .map((checkpoint) => checkpoint.short_commit)

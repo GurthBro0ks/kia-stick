@@ -162,8 +162,11 @@ function checkStaticContracts(root, problems) {
   }
   const head = gitRef(root, "HEAD");
   const originMain = gitRef(root, "origin/main");
-  if (head && head === originMain && acceptedState.accepted_pushed_commit !== head) {
-    problems.push("accepted-state contract must match HEAD when HEAD equals origin/main");
+  const expectedRecordedHead = acceptedState.checkpoint_kind === "capability"
+    ? acceptedState.repository_recording_commit
+    : acceptedState.accepted_pushed_commit;
+  if (head && head === originMain && expectedRecordedHead !== head) {
+    problems.push("accepted-state contract recording commit must match HEAD when HEAD equals origin/main");
   }
   if (packageJson?.scripts?.["operator:smoke"] !== "node scripts/operator-qa-smoke.mjs") problems.push("package.json must expose operator:smoke");
 

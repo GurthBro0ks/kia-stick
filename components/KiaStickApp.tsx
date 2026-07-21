@@ -97,7 +97,7 @@ import {
   type VaultWorkflowState,
 } from "@/lib/vaultModel";
 import { clientVersion, type RuntimeVersion } from "@/lib/version";
-import { currentAcceptedPushedState, historicalAcceptedPushedShortCommits } from "@/lib/acceptedState";
+import { currentAcceptedPushedState, historicalAcceptedPushedShortCommits, localDataModeLabel } from "@/lib/acceptedState";
 import {
   CBA_DOCUMENT_STATUS,
   CBA_EFFECTIVE_END,
@@ -149,6 +149,8 @@ const threadKey = "kia-stick.current-thread.v0.4";
 const quarantineKey = "kia-stick.quarantine.v0.1";
 const vaultKey = "kia-stick.vault-state.v0.4";
 const importWizardKey = "kia-stick.import-wizard-state.v0.5.1";
+const operatorDiagnosticsRegionId = "settings-operator-diagnostics";
+const operatorDiagnosticsToggleId = "settings-operator-diagnostics-toggle";
 
 const vaultViews: { id: VaultView; label: string; meta: string }[] = [
   { id: "vault", label: "Vault", meta: "fake lane overview" },
@@ -664,58 +666,11 @@ export function KiaStickApp({ runtimeVersion = clientVersion }: { runtimeVersion
         )}
 
         {tab === "settings" && (
-          <section className="tabPanel settingsPanel">
-            <PanelHeader title="Settings" meta={<a href="/version">Version page</a>} />
-            <section className="aboutPanel" aria-label="About local isolated data modes">
-              <span className="sectionKicker">Local isolated data modes</span>
-              <h3>Fake corpus plus two exact official public sources</h3>
-              <p>
-                KIA Stick keeps the bundled fake corpus under `local-fake-deterministic`. The public pilot separately reads `{CBA_SOURCE_ID}` under `{CBA_PROVIDER}` / `{CBA_PROMPT_VERSION}` and `{PUBLIC_SOURCE_ID}` under `{PUBLIC_SOURCE_PROVIDER}` / `{PUBLIC_SOURCE_PROMPT_VERSION}`.
-              </p>
-              <p>
-                This build does not read private folders, real APWU/USPS/member/local/case documents, cloud services, or external AI APIs. The public pilot is non-sensitive and read-only; private-data and real-doc gates remain blocked.
-              </p>
-            </section>
-            <section className="aboutPanel" aria-label="Fake-only operator status and public pilot status">
-              <span className="sectionKicker">Operator status</span>
-              <h3>Current accepted pushed checkpoint: {currentAcceptedPushedState.checkpoint_label}</h3>
-              <p>
-                Current accepted pushed state is {currentAcceptedPushedState.checkpoint} at {currentAcceptedPushedState.accepted_pushed_commit} with validation {currentAcceptedPushedState.accepted_validation}, manual QA {currentAcceptedPushedState.accepted_manual_qa}, push yes, and HEAD equal to origin/main at {currentAcceptedPushedState.accepted_pushed_short_commit}. Older baselines, including {historicalAcceptedPushedShortCommits}, are historical only and not current. Historical accepted-WARN state is parked, not current. Next/PostCSS remains WARN_SAFE_NEXT_TARGET_UNCLEAR, v0.9.12C remains blocked, unrestricted queue-015 remains blocked, package lock is unchanged, and no private real-doc capability is approved.
-              </p>
-              <dl className="settingsGrid">
-                {acceptedOperatorCheckpoint.map((row) => (
-                  <React.Fragment key={row.label}>
-                    <dt>{row.label}</dt>
-                    <dd>{row.value}</dd>
-                  </React.Fragment>
-                ))}
-              </dl>
-            </section>
-            <dl className="settingsGrid">
-              <dt>Display</dt>
-              <dd>{runtimeVersion.displayVersion}</dd>
-              <dt>Product</dt>
-              <dd>{runtimeVersion.productVersion}</dd>
-              <dt>Channel</dt>
-              <dd>{runtimeVersion.channel}</dd>
-              <dt>Build Date</dt>
-              <dd>{runtimeVersion.buildDate}</dd>
-              <dt>Git SHA</dt>
-              <dd>{runtimeVersion.gitSha}</dd>
-              <dt>Corpus</dt>
-              <dd>{runtimeVersion.corpusVersion}</dd>
-              <dt>Index</dt>
-              <dd>{runtimeVersion.indexVersion}</dd>
-              <dt>Prompt</dt>
-              <dd>{runtimeVersion.promptVersion}</dd>
-              <dt>Provider</dt>
-              <dd>{runtimeVersion.provider}</dd>
-              <dt>Cloud</dt>
-              <dd>disabled</dd>
-              <dt>Real DB</dt>
-              <dd>not touched</dd>
-            </dl>
-          </section>
+          <SettingsPanel
+            cbaSourceState={cbaSourceState}
+            publicSourceState={publicSourceState}
+            runtimeVersion={runtimeVersion}
+          />
         )}
       </main>
 
@@ -840,6 +795,177 @@ export function KiaStickApp({ runtimeVersion = clientVersion }: { runtimeVersion
         <NavButton active={tab === "settings"} label="Settings" onClick={() => setTab("settings")} icon={<Settings size={20} />} />
       </nav>
     </div>
+  );
+}
+
+export function SettingsPanel(props: {
+  cbaSourceState: CbaSourceLoadState;
+  publicSourceState: PublicSourceLoadState;
+  runtimeVersion: RuntimeVersion;
+}) {
+  const [operatorDiagnosticsOpen, setOperatorDiagnosticsOpen] = useState(false);
+  return (
+    <SettingsContent
+      {...props}
+      operatorDiagnosticsOpen={operatorDiagnosticsOpen}
+      onOperatorDiagnosticsToggle={() => setOperatorDiagnosticsOpen((open) => !open)}
+    />
+  );
+}
+
+export function SettingsContent(props: {
+  cbaSourceState: CbaSourceLoadState;
+  publicSourceState: PublicSourceLoadState;
+  runtimeVersion: RuntimeVersion;
+  operatorDiagnosticsOpen: boolean;
+  onOperatorDiagnosticsToggle: () => void;
+}) {
+  const dataModes = currentAcceptedPushedState.data_modes;
+  const cbaInstanceStatus = props.cbaSourceState.status === "available"
+    ? `verified (${shortCbaDigest(deriveCbaSourceInstance(props.cbaSourceState.source).sourceInstanceId)})`
+    : props.cbaSourceState.status === "loading" ? "checking local cache" : "local cache unavailable";
+  const nlrbStatus = props.publicSourceState.status === "available"
+    ? "available from verified local cache"
+    : props.publicSourceState.status === "loading" ? "checking local cache" : "local cache unavailable";
+
+  return (
+    <section className="tabPanel settingsPanel">
+      <PanelHeader title="Settings" meta={<a href="/version">Version page</a>} />
+      <div className="settingsSummaryGrid" aria-label="Settings summary">
+        <section className="settingsSummaryCard" aria-labelledby="settings-data-privacy">
+          <span className="sectionKicker">Data and privacy mode</span>
+          <h3 id="settings-data-privacy">{localDataModeLabel()}</h3>
+          <ul className="settingsSummaryList">
+            <li>Fake samples are isolated.</li>
+            <li>Two exact official public sources are available locally in read-only mode.</li>
+            <li>Private, member, and case data is {dataModes?.private_data ?? "blocked"}.</li>
+            <li>External AI is {dataModes?.external_ai ?? "disabled"}.</li>
+            <li>No real upload or import path exists.</li>
+          </ul>
+        </section>
+
+        <section className="settingsSummaryCard" aria-labelledby="settings-accepted-capability">
+          <span className="sectionKicker">Current accepted capability</span>
+          <h3 id="settings-accepted-capability">CBA Citation Durability and Resync Drift Guard</h3>
+          <dl className="compactSettingsGrid">
+            <dt>Accepted checkpoint</dt>
+            <dd>{currentAcceptedPushedState.checkpoint}</dd>
+            <dt>Feature commit</dt>
+            <dd>{currentAcceptedPushedState.accepted_pushed_short_commit}</dd>
+            <dt>Validation</dt>
+            <dd>{currentAcceptedPushedState.accepted_validation}</dd>
+            <dt>Operator QA</dt>
+            <dd>{currentAcceptedPushedState.accepted_manual_qa}</dd>
+            <dt>Pushed</dt>
+            <dd>{currentAcceptedPushedState.accepted_pushed ? "yes" : "no"}</dd>
+          </dl>
+          <p className="settingsNote">This accepted feature checkpoint is separate from the current application build.</p>
+        </section>
+
+        <section className="settingsSummaryCard" aria-labelledby="settings-current-build">
+          <span className="sectionKicker">Current application build</span>
+          <h3 id="settings-current-build">KIA Stick {props.runtimeVersion.productVersion}</h3>
+          <dl className="compactSettingsGrid">
+            <dt>Current build</dt>
+            <dd>{props.runtimeVersion.gitSha}</dd>
+            <dt>Channel</dt>
+            <dd>{props.runtimeVersion.channel}</dd>
+            <dt>Local bundle</dt>
+            <dd>{currentAcceptedPushedState.local_bundle_status}</dd>
+          </dl>
+          <a className="settingsVersionLink" href="/version">View full build identity</a>
+        </section>
+
+        <section className="settingsSummaryCard" aria-labelledby="settings-source-status">
+          <span className="sectionKicker">Source status</span>
+          <h3 id="settings-source-status">Official sources and isolated samples</h3>
+          <dl className="compactSettingsGrid">
+            <dt>APWU-USPS CBA</dt>
+            <dd>available; current source instance {cbaInstanceStatus}</dd>
+            <dt>NLRB guidance</dt>
+            <dd>{nlrbStatus}</dd>
+            <dt>Fake samples</dt>
+            <dd>isolated corpus available</dd>
+          </dl>
+        </section>
+
+        <section className="settingsSummaryCard" aria-labelledby="settings-safety-boundaries">
+          <span className="sectionKicker">Safety boundaries</span>
+          <h3 id="settings-safety-boundaries">Blocked capabilities remain blocked</h3>
+          <ul className="settingsSummaryList">
+            <li>Private data blocked.</li>
+            <li>queue-015 blocked.</li>
+            <li>External AI disabled.</li>
+            <li>Real upload and import disabled.</li>
+          </ul>
+        </section>
+      </div>
+
+      <div className="operatorDiagnosticsControls">
+        <button
+          aria-controls={operatorDiagnosticsRegionId}
+          aria-expanded={props.operatorDiagnosticsOpen}
+          className="button subtle operatorDiagnosticsToggle"
+          id={operatorDiagnosticsToggleId}
+          onClick={props.onOperatorDiagnosticsToggle}
+          type="button"
+        >
+          {props.operatorDiagnosticsOpen ? "Hide operator diagnostics" : "Show operator diagnostics"}
+        </button>
+        <p>This is a local diagnostic view, not an authentication or authorization boundary.</p>
+      </div>
+
+      {props.operatorDiagnosticsOpen && (
+        <section
+          aria-labelledby={operatorDiagnosticsToggleId}
+          className="aboutPanel operatorDiagnosticsRegion"
+          id={operatorDiagnosticsRegionId}
+          role="region"
+        >
+          <span className="sectionKicker">Operator and governance diagnostics</span>
+          <h3>Fake-only operator status and exact local data-mode identity</h3>
+          <p>
+            KIA Stick keeps the bundled fake corpus under `local-fake-deterministic`. The public pilot separately reads `{CBA_SOURCE_ID}` under `{CBA_PROVIDER}` / `{CBA_PROMPT_VERSION}` and `{PUBLIC_SOURCE_ID}` under `{PUBLIC_SOURCE_PROVIDER}` / `{PUBLIC_SOURCE_PROMPT_VERSION}`. This build does not read private folders, real APWU/USPS/member/local/case documents, cloud services, or external AI APIs. The public pilot is non-sensitive and read-only; private-data and real-doc gates remain blocked.
+          </p>
+          <h3>Current accepted pushed checkpoint: {currentAcceptedPushedState.checkpoint_label}</h3>
+          <p>
+            Current accepted pushed state is {currentAcceptedPushedState.checkpoint} at {currentAcceptedPushedState.accepted_pushed_commit} with validation {currentAcceptedPushedState.accepted_validation}, manual QA {currentAcceptedPushedState.accepted_manual_qa}, push yes, and HEAD equal to origin/main at {currentAcceptedPushedState.accepted_pushed_short_commit}. Older baselines, including {historicalAcceptedPushedShortCommits}, are historical only and not current. Historical accepted-WARN state is parked, not current. Next/PostCSS remains WARN_SAFE_NEXT_TARGET_UNCLEAR, v0.9.12C remains blocked, unrestricted queue-015 remains blocked, package lock is unchanged, and no private real-doc capability is approved.
+          </p>
+          <dl className="settingsGrid operatorDiagnosticsGrid">
+            {acceptedOperatorCheckpoint.map((row) => (
+              <React.Fragment key={row.label}>
+                <dt>{row.label}</dt>
+                <dd>{row.value}</dd>
+              </React.Fragment>
+            ))}
+            <dt>Display</dt>
+            <dd>{props.runtimeVersion.displayVersion}</dd>
+            <dt>Accepted-state recording baseline</dt>
+            <dd>{currentAcceptedPushedState.repository_recording_commit ?? "not recorded"}</dd>
+            <dt>Product</dt>
+            <dd>{props.runtimeVersion.productVersion}</dd>
+            <dt>Channel</dt>
+            <dd>{props.runtimeVersion.channel}</dd>
+            <dt>Build Date</dt>
+            <dd>{props.runtimeVersion.buildDate}</dd>
+            <dt>Git SHA</dt>
+            <dd>{props.runtimeVersion.gitSha}</dd>
+            <dt>Corpus</dt>
+            <dd>{props.runtimeVersion.corpusVersion}</dd>
+            <dt>Index</dt>
+            <dd>{props.runtimeVersion.indexVersion}</dd>
+            <dt>Prompt</dt>
+            <dd>{props.runtimeVersion.promptVersion}</dd>
+            <dt>Provider</dt>
+            <dd>{props.runtimeVersion.provider}</dd>
+            <dt>Cloud</dt>
+            <dd>disabled</dd>
+            <dt>Real DB</dt>
+            <dd>not touched</dd>
+          </dl>
+        </section>
+      )}
+    </section>
   );
 }
 
