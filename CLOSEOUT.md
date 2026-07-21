@@ -1,3 +1,22 @@
+## Public Settings Accepted-State Refresh Equality Repair Closeout and Push
+
+- Phase: `KIA-Stick-public-Settings-post-closeout-accepted-state-refresh-repository-equality-copy-repair-closeout-and-push`.
+- Authorization: `CLOSEOUT_AND_PUSH_KIA_SETTINGS_ACCEPTED_STATE_REFRESH_REPAIR_AUTHORIZED`.
+- Accepted capability remains `Public Settings User Summary and Operator Diagnostics Split at 76c7312` (`76c73122a87cb23b5b8595a002d54d7a127fbba8`).
+- Accepted repository/closeout recording identity remains `3690c74650d0fb19395bd046adee1bf236950f9e`; the repair does not rewrite that historical equality point.
+- Accepted-state refresh commit: `a8403520e9b44caaa59e2351d4b1dd15321d9c76`.
+- Equality-copy repair commit: `97df7d488af5653db5a3957bd6cb14286d5f72ff`.
+- Operator-QA PASS recording commit: `7daa8ad0ea8873ad690226c362502b27153e9a8a`.
+- Repair proof: `/home/mint/kia-stick-local-proofs/proof_kia_stick_public_settings_post_closeout_accepted_state_refresh_repository_equality_copy_repair_20260721T164746Z`.
+- Operator-QA PASS proof: `/home/mint/kia-stick-local-proofs/proof_kia_stick_public_settings_post_closeout_accepted_state_refresh_repository_equality_copy_repair_operator_qa_pass_recording_20260721T171139Z`.
+- Canonical closeout/push proof: `/home/mint/kia-stick-local-proofs/proof_kia_stick_public_settings_post_closeout_accepted_state_refresh_repository_equality_copy_repair_operator_qa_pass_recording_20260721T171139Z/closeout_push_20260721T172102Z`.
+- Validation and manual QA: `PASS` / `PASS`; the accepted feature identity remains distinct from repository equality, and no rendered copy claims equality at `76c7312`.
+- Scope: closeout-only project-state update after the validated repair and operator-QA record; no new source, source sync, private data, package/lock mutation, service, scheduler, notification, or blocked-target change.
+- Push gate: one authorized push of `main`; final pushed SHA and `HEAD == origin/main == remote main` equality are recorded in the canonical proof.
+- Contract note: a later separately authorized post-closeout refresh may record this repair push as new local-bundle bookkeeping; this closeout does not rewrite the accepted capability or the historical `3690c74` equality identity.
+- Blocked states preserved: queue-015 remains blocked; Next/PostCSS remains `WARN_SAFE_NEXT_TARGET_UNCLEAR`; v0.9.12C remains blocked; product/package remain `0.7.0`.
+- Notifications: Discord disabled; no duplicate notification; no report URL.
+
 ## Public Settings Post-Closeout Repository Equality Copy Repair
 
 - Phase: `KIA-Stick-public-Settings-post-closeout-accepted-state-refresh-repository-equality-copy-repair`.
