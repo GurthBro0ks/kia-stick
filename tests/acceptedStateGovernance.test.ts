@@ -33,10 +33,10 @@ describe("accepted-state governance loop break", () => {
       private_data: "blocked",
       external_ai: "disabled",
     });
-    expect(currentAcceptedPushedState.local_implementation_proof_dir).toBe("/home/mint/kia-stick-local-proofs/proof_kia_stick_cba_citation_durability_source_instance_resync_drift_guard_20260721T134506Z");
-    expect(currentAcceptedPushedState.local_bundle_operator_qa_pass_proof_dir).toBe("/home/mint/kia-stick-local-proofs/proof_kia_stick_cba_citation_durability_source_instance_resync_drift_guard_operator_qa_pass_recording_20260721T143005Z");
+    expect(currentAcceptedPushedState.local_implementation_proof_dir).toBe("/home/mint/kia-stick-local-proofs/proof_kia_stick_public_settings_user_summary_operator_diagnostics_split_20260721T150300Z");
+    expect(currentAcceptedPushedState.local_bundle_operator_qa_pass_proof_dir).toBe("/home/mint/kia-stick-local-proofs/proof_kia_stick_public_settings_user_summary_operator_diagnostics_split_operator_qa_pass_recording_20260721T160349Z");
     expect(currentAcceptedPushedState.local_bundle_phase).toBe("KIA-Stick-public-Settings-user-summary-and-operator-diagnostics-split");
-    expect(currentAcceptedPushedState.local_bundle_status).toBe("public Settings user summary and operator diagnostics split; validation PASS; pushed no; manual QA pending");
+    expect(currentAcceptedPushedState.local_bundle_status).toBe("public Settings user summary and operator diagnostics split; validation PASS; pushed no; manual QA PASS");
     expect(new Set(currentAcceptedPushedState.historical_prior_checkpoints.map((item) => item.commit)).size)
       .toBe(currentAcceptedPushedState.historical_prior_checkpoints.length);
   });
