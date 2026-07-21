@@ -18,6 +18,7 @@ export interface CurrentAcceptedPushedState {
   accepted_pushed_short_commit: string;
   accepted_pushed_proof_dir: string;
   local_implementation_proof_dir: string;
+  local_bundle_operator_qa_pass_proof_dir?: string;
   operator_qa_pass_proof_dir: string;
   accepted_pushed_phase: string;
   accepted_validation: string;

@@ -26,7 +26,8 @@ describe("accepted-state governance loop break", () => {
       external_ai: "disabled",
     });
     expect(currentAcceptedPushedState.local_implementation_proof_dir).toBe("/home/mint/kia-stick-local-proofs/proof_kia_stick_cba_citation_durability_source_instance_resync_drift_guard_20260721T134506Z");
-    expect(currentAcceptedPushedState.local_bundle_status).toBe("citation durability/source-instance/resync-drift implementation; validation PASS; pushed no; manual QA pending");
+    expect(currentAcceptedPushedState.local_bundle_operator_qa_pass_proof_dir).toBe("/home/mint/kia-stick-local-proofs/proof_kia_stick_cba_citation_durability_source_instance_resync_drift_guard_operator_qa_pass_recording_20260721T143005Z");
+    expect(currentAcceptedPushedState.local_bundle_status).toBe("citation durability/source-instance/resync-drift implementation; validation PASS; pushed no; manual QA PASS");
     expect(new Set(currentAcceptedPushedState.historical_prior_checkpoints.map((item) => item.commit)).size)
       .toBe(currentAcceptedPushedState.historical_prior_checkpoints.length);
   });

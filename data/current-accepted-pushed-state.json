@@ -9,6 +9,7 @@
   "accepted_pushed_short_commit": "571436a",
   "accepted_pushed_proof_dir": "/home/mint/kia-stick-local-proofs/proof_kia_stick_public_truth_generic_cba_routing_repair_operator_qa_pass_recording_20260721T131318Z/closeout_push_20260721T131958Z",
   "local_implementation_proof_dir": "/home/mint/kia-stick-local-proofs/proof_kia_stick_cba_citation_durability_source_instance_resync_drift_guard_20260721T134506Z",
+  "local_bundle_operator_qa_pass_proof_dir": "/home/mint/kia-stick-local-proofs/proof_kia_stick_cba_citation_durability_source_instance_resync_drift_guard_operator_qa_pass_recording_20260721T143005Z",
   "operator_qa_pass_proof_dir": "/home/mint/kia-stick-local-proofs/proof_kia_stick_public_truth_generic_cba_routing_repair_operator_qa_pass_recording_20260721T131318Z",
   "accepted_pushed_phase": "KIA-Stick-public-truth-and-generic-CBA-retrieval-routing-repair",
   "accepted_validation": "PASS",
@@ -16,7 +17,7 @@
   "accepted_pushed": true,
   "accepted_equality": "HEAD == origin/main == remote main == 571436a59a7d09756b401912906377c6257680af",
   "local_bundle_phase": "KIA-Stick-CBA-citation-durability-source-instance-and-resync-drift-guard",
-  "local_bundle_status": "citation durability/source-instance/resync-drift implementation; validation PASS; pushed no; manual QA pending",
+  "local_bundle_status": "citation durability/source-instance/resync-drift implementation; validation PASS; pushed no; manual QA PASS",
   "historical_prior_checkpoints": [
     { "checkpoint": "Public Data Pilot 1B", "commit": "006da8dc25638cdbe5ebd43b04b5b5c506056ab9", "short_commit": "006da8d", "status": "historical_only_not_current" },
     { "checkpoint": "Public Data Pilot 1A", "commit": "04774874c5a20b2b38d435fb66ba2b1cfb9c9e29", "short_commit": "0477487", "status": "historical_only_not_current" },
