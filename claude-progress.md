@@ -1,3 +1,10 @@
+- Phase: `KIA-Stick-public-Settings-user-summary-and-operator-diagnostics-split-closeout-and-push`
+- Authorization: `CLOSEOUT_AND_PUSH_KIA_PUBLIC_SETTINGS_DIAGNOSTICS_SPLIT_AUTHORIZED`.
+- Status: implementation validation PASS and operator QA PASS are accepted for implementation commit `76c73122a87cb23b5b8595a002d54d7a127fbba8`; QA recording commit is `3d6740281b979b784fd44f922250448c8bb06f64`; the authorized closeout push is recorded in `/home/mint/kia-stick-local-proofs/proof_kia_stick_public_settings_user_summary_operator_diagnostics_split_operator_qa_pass_recording_20260721T160349Z/closeout_push_20260721T161310Z`.
+- Closeout scope: `CLOSEOUT.md`, `claude-progress.md`, and `feature_list.json` only. No runtime/source/private-data/package/lockfile/service/system/network/Discord change; queue-015 and v0.9.12C remain blocked; Next/PostCSS remains parked.
+- Accepted-state contract remains anchored to accepted capability `1e0e96b0e0cd95d1e62af1eb76cfd5b57c43f4e8` and repository recording baseline `96fccd4e1d14eb947a6044cb238a4bb4d535795f` until a separately authorized post-closeout contract refresh.
+- Push completion, final SHA, and `HEAD == origin/main` equality are recorded in the canonical closeout proof rather than embedded self-referentially here.
+
 - Phase: `KIA-Stick-public-Settings-user-summary-and-operator-diagnostics-split-operator-QA-PASS-recording`
 - Status: operator QA PASS explicitly recorded for `/home/mint/kia-stick-local-proofs/proof_kia_stick_public_settings_user_summary_operator_diagnostics_split_20260721T150300Z`; validation remains PASS; pushed no.
 - Implementation commit under review: `76c73122a87cb23b5b8595a002d54d7a127fbba8`. Accepted capability remains `1e0e96b0e0cd95d1e62af1eb76cfd5b57c43f4e8`; accepted-state repository recording baseline remains `96fccd4e1d14eb947a6044cb238a4bb4d535795f`. Operator QA does not advance either accepted-state identity.

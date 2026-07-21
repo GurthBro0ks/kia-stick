@@ -1,3 +1,19 @@
+## Public Settings User Summary and Operator Diagnostics Split Closeout and Push
+
+- Phase: `KIA-Stick-public-Settings-user-summary-and-operator-diagnostics-split-closeout-and-push`.
+- Authorization: `CLOSEOUT_AND_PUSH_KIA_PUBLIC_SETTINGS_DIAGNOSTICS_SPLIT_AUTHORIZED`.
+- Settings implementation commit: `76c73122a87cb23b5b8595a002d54d7a127fbba8`.
+- Operator-QA recording commit: `3d6740281b979b784fd44f922250448c8bb06f64`.
+- Implementation proof: `/home/mint/kia-stick-local-proofs/proof_kia_stick_public_settings_user_summary_operator_diagnostics_split_20260721T150300Z`.
+- Operator-QA PASS proof: `/home/mint/kia-stick-local-proofs/proof_kia_stick_public_settings_user_summary_operator_diagnostics_split_operator_qa_pass_recording_20260721T160349Z`.
+- Canonical closeout/push proof: `/home/mint/kia-stick-local-proofs/proof_kia_stick_public_settings_user_summary_operator_diagnostics_split_operator_qa_pass_recording_20260721T160349Z/closeout_push_20260721T161310Z`.
+- Validation and manual QA: `PASS` / `PASS`; concise default Settings, conditional full operator diagnostics, preserved governance history/proof paths, accessible toggle semantics, responsive layout, truthful `/version` data-mode wording, and public/fake/upload/import regressions are accepted.
+- Scope: project-state closeout only after the validated implementation and QA record; no source sync, private data, dependency, package, lockfile, service, scheduler, notification, or blocked-target change.
+- Push gate: one authorized push of `main`; final pushed SHA and `HEAD == origin/main` equality are recorded in the canonical proof to avoid a self-referential repository SHA.
+- Accepted-state contract note: `data/current-accepted-pushed-state.json` remains anchored to the accepted CBA capability at `1e0e96b` and repository recording baseline `96fccd4` until a separate post-closeout accepted-state contract refresh is explicitly performed.
+- Blocked states preserved: queue-015 remains blocked; Next/PostCSS remains `WARN_SAFE_NEXT_TARGET_UNCLEAR`; v0.9.12C remains blocked; product/package remain `0.7.0`.
+- Notifications: Discord disabled; no duplicate notification; no report URL.
+
 ## Public Data Pilot 1B Official APWU-USPS CBA Closeout and Push
 
 - Phase: `KIA-Stick-public-data-pilot-1B-official-APWU-USPS-CBA-closeout-and-push`.

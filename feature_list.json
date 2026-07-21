@@ -11773,5 +11773,29 @@
     "package_lock_changed": false,
     "pushed": false,
     "manual_qa_status": "pending_operator_review"
+  },
+  "public_settings_user_summary_operator_diagnostics_split_closeout": {
+    "phase": "KIA-Stick-public-Settings-user-summary-and-operator-diagnostics-split-closeout-and-push",
+    "status": "accepted",
+    "authorization": "CLOSEOUT_AND_PUSH_KIA_PUBLIC_SETTINGS_DIAGNOSTICS_SPLIT_AUTHORIZED",
+    "implementation_commit": "76c73122a87cb23b5b8595a002d54d7a127fbba8",
+    "operator_qa_recording_commit": "3d6740281b979b784fd44f922250448c8bb06f64",
+    "implementation_proof_dir": "/home/mint/kia-stick-local-proofs/proof_kia_stick_public_settings_user_summary_operator_diagnostics_split_20260721T150300Z",
+    "operator_qa_pass_proof_dir": "/home/mint/kia-stick-local-proofs/proof_kia_stick_public_settings_user_summary_operator_diagnostics_split_operator_qa_pass_recording_20260721T160349Z",
+    "closeout_push_proof_dir": "/home/mint/kia-stick-local-proofs/proof_kia_stick_public_settings_user_summary_operator_diagnostics_split_operator_qa_pass_recording_20260721T160349Z/closeout_push_20260721T161310Z",
+    "validation_status": "PASS",
+    "manual_qa_status": "PASS",
+    "push_completion_recorded_in_closeout_proof": true,
+    "accepted_pushed_contract_checkpoint_before_refresh": "CBA Citation Durability Source Instance and Resync Drift Guard at 1e0e96b",
+    "post_closeout_accepted_state_contract_refresh_required": true,
+    "queue_015_status": "blocked",
+    "next_postcss_status": "WARN_SAFE_NEXT_TARGET_UNCLEAR",
+    "v0912c_status": "blocked_pending_exact_target",
+    "product_version": "0.7.0",
+    "package_json_changed": false,
+    "package_lock_changed": false,
+    "source_sync_performed": false,
+    "private_data_accessed": false,
+    "discord_sent": false
   }
 }
