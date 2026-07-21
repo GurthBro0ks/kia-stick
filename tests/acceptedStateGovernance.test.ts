@@ -42,9 +42,9 @@ describe("accepted-state governance loop break", () => {
       external_ai: "disabled",
     });
     expect(currentAcceptedPushedState.local_implementation_proof_dir).toBe("/home/mint/kia-stick-local-proofs/proof_kia_stick_public_settings_post_closeout_accepted_state_refresh_repository_equality_copy_repair_20260721T164746Z");
-    expect(currentAcceptedPushedState.local_bundle_operator_qa_pass_proof_dir).toBe("/home/mint/kia-stick-local-proofs/proof_kia_stick_public_settings_user_summary_operator_diagnostics_split_operator_qa_pass_recording_20260721T160349Z");
+    expect(currentAcceptedPushedState.local_bundle_operator_qa_pass_proof_dir).toBe("/home/mint/kia-stick-local-proofs/proof_kia_stick_public_settings_post_closeout_accepted_state_refresh_repository_equality_copy_repair_operator_qa_pass_recording_20260721T171139Z");
     expect(currentAcceptedPushedState.local_bundle_phase).toBe("KIA-Stick-public-Settings-post-closeout-accepted-state-refresh-repository-equality-copy-repair");
-    expect(currentAcceptedPushedState.local_bundle_status).toBe("public Settings post-closeout accepted-state refresh equality-copy repair; validation PASS; pushed no; manual QA pending rerun");
+    expect(currentAcceptedPushedState.local_bundle_status).toBe("public Settings post-closeout accepted-state refresh equality-copy repair; validation PASS; pushed no; manual QA PASS");
     expect(new Set(currentAcceptedPushedState.historical_prior_checkpoints.map((item) => item.commit)).size)
       .toBe(currentAcceptedPushedState.historical_prior_checkpoints.length);
   });
