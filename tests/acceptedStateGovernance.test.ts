@@ -41,9 +41,10 @@ describe("accepted-state governance loop break", () => {
       private_data: "blocked",
       external_ai: "disabled",
     });
-    expect(currentAcceptedPushedState.local_implementation_proof_dir).toBe("/home/mint/kia-stick-local-proofs/proof_kia_stick_stale_local_bundle_push_status_repair_20260722T154710Z");
-    expect(currentAcceptedPushedState.local_bundle_phase).toBe("KIA-Stick-stale-local-bundle-push-status-repair");
-    expect(currentAcceptedPushedState.local_bundle_status).toBe("public Settings stale local-bundle push-status repair; validation PASS; pushed no; manual QA pending");
+    expect(currentAcceptedPushedState.local_implementation_proof_dir).toBe("/home/mint/kia-stick-local-proofs/proof_kia_stick_public_weingarten_cited_argument_builder_pilot_20260722T172040Z");
+    expect(currentAcceptedPushedState.local_bundle_phase).toBe("KIA-Stick-public-Weingarten-cited-argument-builder-pilot");
+    expect(currentAcceptedPushedState.local_bundle_status).toBe("public Weingarten cited argument-builder pilot; validation PASS; pushed no; manual QA pending operator review");
+    expect(currentAcceptedPushedState.local_bundle_status).not.toContain("stale local-bundle push-status repair");
     expect(currentAcceptedPushedState.latest_pushed_closeout_commit).toBe("0695680047608462b5f154a9ed82593e6923932a");
     expect(currentAcceptedPushedState.latest_pushed_closeout_short_commit).toBe("0695680");
     expect(currentAcceptedPushedState.latest_pushed_closeout_status).toContain("pushed yes");

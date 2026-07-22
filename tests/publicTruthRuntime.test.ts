@@ -14,7 +14,7 @@ describe("public truth runtime identity", () => {
     const response = GET();
     const payload = await response.json();
     expect(payload.phase).toBe(PUBLIC_ARGUMENT_BUILDER_PHASE);
-    expect(payload.phase).not.toBe(currentAcceptedPushedState.local_bundle_phase);
+    expect(payload.phase).toBe(currentAcceptedPushedState.local_bundle_phase);
     expect(payload.acceptedCheckpoint).toBe(currentAcceptedPushedState.checkpoint_label);
     expect(payload.acceptedCommit).toBe(currentAcceptedPushedState.accepted_pushed_commit);
     expect(payload.acceptedCommit).toBe("76c73122a87cb23b5b8595a002d54d7a127fbba8");

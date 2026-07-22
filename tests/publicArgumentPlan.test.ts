@@ -20,6 +20,7 @@ import {
 } from "@/lib/publicCitationIntegrity";
 import { buildPublicSourceAnswer, citationForPublicParagraph } from "@/lib/publicSourceAnswer";
 import {
+  createSavedAnswerRecord,
   createSavedArgumentPlanRecord,
   migrateSavedAnswers,
   upsertSavedAnswer,
@@ -219,6 +220,7 @@ describe("public Weingarten cited argument builder", () => {
     ]) expect(html).toContain(heading);
     expect(html).toContain(PUBLIC_ARGUMENT_PLAN_PRIVATE_WARNING);
     expect(html).toContain("Open supporting citation");
+    expect(html).toContain("Save to Saved");
     expect(html).toContain("Save cited argument plan");
     expect(html).toContain("Saved type: public_argument_plan");
   });
@@ -239,6 +241,11 @@ describe("public Weingarten cited argument builder", () => {
     });
     const inserted = upsertSavedAnswer([], first);
     const deduped = upsertSavedAnswer(inserted.saved, duplicate);
+    const normalAnswer = createSavedAnswerRecord({
+      answer,
+      ...defaults,
+      timestamp: "2026-07-22T17:33:00.000Z",
+    });
     const migrated = migrateSavedAnswers(deduped.saved);
     const html = renderToStaticMarkup(React.createElement(SavedAnswersPanel, {
       saved: migrated,
@@ -246,6 +253,8 @@ describe("public Weingarten cited argument builder", () => {
     }));
 
     expect(first.savedType).toBe("public_argument_plan");
+    expect(normalAnswer.savedType).toBe("answer");
+    expect(normalAnswer.argumentPlan).toBeUndefined();
     expect(first.argumentPlan?.citations.every((citation) => citation.citationVerificationState === "verified_current")).toBe(true);
     expect(first.argumentPlan?.provider).toBe(plan.provider);
     expect(first.argumentPlan?.promptVersion).toBe(plan.promptVersion);

@@ -9,7 +9,7 @@ import { createRuntimeVersion } from "@/lib/version";
 import { createCbaSourceFixtureCache } from "@/tests/fixtures/cbaSourceFixture";
 import { createPublicSourceFixtureCache } from "@/tests/fixtures/publicSourceFixture";
 
-const runtimeVersion = createRuntimeVersion({ buildDate: "20260721", gitSha: "96fccd4" });
+const runtimeVersion = createRuntimeVersion({ buildDate: "20260722", gitSha: "9773768" });
 const cbaSourceState = { status: "available" as const, source: createCbaSourceFixtureCache() };
 const publicSourceState = { status: "available" as const, source: createPublicSourceFixtureCache() };
 
@@ -35,7 +35,12 @@ describe("public Settings summary and operator diagnostics split", () => {
     expect(html).toContain("Operator QA</dt><dd>PASS");
     expect(html).toContain("Pushed</dt><dd>yes");
     expect(html).toContain("KIA Stick 0.7.0");
-    expect(html).toContain("Current build</dt><dd>96fccd4");
+    expect(html).toContain("Current build</dt><dd>9773768");
+    expect(html).toContain("public Weingarten cited argument-builder pilot");
+    expect(html).toContain("validation PASS");
+    expect(html).toContain("pushed no");
+    expect(html).toContain("manual QA pending operator review");
+    expect(html).not.toContain("stale local-bundle push-status repair");
     expect(html).toContain("APWU-USPS CBA");
     expect(html).toContain("current source instance verified");
     expect(html).toContain("NLRB guidance");
@@ -77,6 +82,9 @@ describe("public Settings summary and operator diagnostics split", () => {
     expect(html).toContain(currentAcceptedPushedState.local_bundle_status);
     expect(currentAcceptedPushedState.local_bundle_status).toContain("pushed no");
     expect(currentAcceptedPushedState.local_bundle_status).toContain("manual QA pending");
+    expect(currentAcceptedPushedState.accepted_pushed_short_commit).toBe("76c7312");
+    expect(currentAcceptedPushedState.repository_recording_short_commit).toBe("3690c74");
+    expect(currentAcceptedPushedState.latest_pushed_closeout_short_commit).toBe("0695680");
     expect(html).not.toContain("HEAD == origin/main at 76c7312");
     expect(html).not.toContain("HEAD equal to origin/main at 76c7312");
     expect(html).toContain("Build Date");
