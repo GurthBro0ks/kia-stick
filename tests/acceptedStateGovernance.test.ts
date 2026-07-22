@@ -41,10 +41,28 @@ describe("accepted-state governance loop break", () => {
       private_data: "blocked",
       external_ai: "disabled",
     });
-    expect(currentAcceptedPushedState.local_implementation_proof_dir).toBe("/home/mint/kia-stick-local-proofs/proof_kia_stick_public_settings_post_closeout_accepted_state_refresh_repository_equality_copy_repair_20260721T164746Z");
-    expect(currentAcceptedPushedState.local_bundle_operator_qa_pass_proof_dir).toBe("/home/mint/kia-stick-local-proofs/proof_kia_stick_public_settings_post_closeout_accepted_state_refresh_repository_equality_copy_repair_operator_qa_pass_recording_20260721T171139Z");
-    expect(currentAcceptedPushedState.local_bundle_phase).toBe("KIA-Stick-public-Settings-post-closeout-accepted-state-refresh-repository-equality-copy-repair");
-    expect(currentAcceptedPushedState.local_bundle_status).toBe("public Settings post-closeout accepted-state refresh equality-copy repair; validation PASS; pushed no; manual QA PASS");
+    expect(currentAcceptedPushedState.local_implementation_proof_dir).toBe("/home/mint/kia-stick-local-proofs/proof_kia_stick_stale_local_bundle_push_status_repair_20260722T154710Z");
+    expect(currentAcceptedPushedState.local_bundle_phase).toBe("KIA-Stick-stale-local-bundle-push-status-repair");
+    expect(currentAcceptedPushedState.local_bundle_status).toBe("public Settings stale local-bundle push-status repair; validation PASS; pushed no; manual QA pending");
+    expect(currentAcceptedPushedState.latest_pushed_closeout_commit).toBe("0695680047608462b5f154a9ed82593e6923932a");
+    expect(currentAcceptedPushedState.latest_pushed_closeout_short_commit).toBe("0695680");
+    expect(currentAcceptedPushedState.latest_pushed_closeout_status).toContain("pushed yes");
+    expect(currentAcceptedPushedState.latest_pushed_closeout_status).toContain("repository equality at 0695680047608462b5f154a9ed82593e6923932a");
+    expect(currentAcceptedPushedState.local_bundle_status).not.toContain("pushed yes");
+    expect([
+      currentAcceptedPushedState.accepted_pushed_commit,
+      currentAcceptedPushedState.repository_recording_commit,
+      currentAcceptedPushedState.latest_pushed_closeout_commit,
+    ]).toEqual([
+      "76c73122a87cb23b5b8595a002d54d7a127fbba8",
+      "3690c74650d0fb19395bd046adee1bf236950f9e",
+      "0695680047608462b5f154a9ed82593e6923932a",
+    ]);
+    expect(new Set([
+      currentAcceptedPushedState.accepted_pushed_commit,
+      currentAcceptedPushedState.repository_recording_commit,
+      currentAcceptedPushedState.latest_pushed_closeout_commit,
+    ]).size).toBe(3);
     expect(new Set(currentAcceptedPushedState.historical_prior_checkpoints.map((item) => item.commit)).size)
       .toBe(currentAcceptedPushedState.historical_prior_checkpoints.length);
   });

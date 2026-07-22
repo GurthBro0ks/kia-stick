@@ -71,6 +71,12 @@ describe("public Settings summary and operator diagnostics split", () => {
     expect(html).toContain("repository equality verified at 3690c74");
     expect(html).toContain("accepted feature checkpoint is distinct from the repository/closeout recording point");
     expect(html).toContain("Accepted-state recording baseline</dt><dd>3690c74650d0fb19395bd046adee1bf236950f9e");
+    expect(html).toContain("Latest pushed repository closeout commit</dt><dd>0695680047608462b5f154a9ed82593e6923932a");
+    expect(html).toContain("Latest pushed repository closeout");
+    expect(html).toContain(currentAcceptedPushedState.latest_pushed_closeout_short_commit as string);
+    expect(html).toContain(currentAcceptedPushedState.local_bundle_status);
+    expect(currentAcceptedPushedState.local_bundle_status).toContain("pushed no");
+    expect(currentAcceptedPushedState.local_bundle_status).toContain("manual QA pending");
     expect(html).not.toContain("HEAD == origin/main at 76c7312");
     expect(html).not.toContain("HEAD equal to origin/main at 76c7312");
     expect(html).toContain("Build Date");

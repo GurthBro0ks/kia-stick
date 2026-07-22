@@ -178,6 +178,12 @@ const acceptedOperatorCheckpoint = [
     label: "Current accepted pushed bundle",
     value: `${currentAcceptedPushedState.accepted_pushed_phase}; accepted/pushed yes at ${currentAcceptedPushedState.accepted_pushed_short_commit}`,
   },
+  {
+    label: "Latest pushed repository closeout",
+    value: currentAcceptedPushedState.latest_pushed_closeout_short_commit
+      ? `${currentAcceptedPushedState.latest_pushed_closeout_status} (${currentAcceptedPushedState.latest_pushed_closeout_short_commit})`
+      : "not recorded",
+  },
   ...currentAcceptedPushedState.historical_prior_checkpoints.map((checkpoint) => ({
     label: `Historical accepted pushed checkpoint ${checkpoint.checkpoint}`,
     value: `${checkpoint.checkpoint} at ${checkpoint.commit}; historical only, not current`,
@@ -945,6 +951,8 @@ export function SettingsContent(props: {
             <dd>{props.runtimeVersion.displayVersion}</dd>
             <dt>Accepted-state recording baseline</dt>
             <dd>{currentAcceptedPushedState.repository_recording_commit ?? "not recorded"}</dd>
+            <dt>Latest pushed repository closeout commit</dt>
+            <dd>{currentAcceptedPushedState.latest_pushed_closeout_commit ?? "not recorded"}</dd>
             <dt>Product</dt>
             <dd>{props.runtimeVersion.productVersion}</dd>
             <dt>Channel</dt>

@@ -10,10 +10,14 @@ export function expectCurrentCloseoutSummary(output: string): void {
 }
 
 export function expectCurrentProofIndexOutput(output: string): void {
+  const closeoutProof =
+    currentAcceptedPushedState.latest_pushed_closeout_proof_dir ?? currentAcceptedPushedState.accepted_pushed_proof_dir;
   const closeoutCommit =
-    currentAcceptedPushedState.repository_recording_commit ?? currentAcceptedPushedState.accepted_pushed_commit;
+    currentAcceptedPushedState.latest_pushed_closeout_commit ??
+    currentAcceptedPushedState.repository_recording_commit ??
+    currentAcceptedPushedState.accepted_pushed_commit;
 
-  expect(output).toContain(`Latest accepted pushed closeout proof: ${currentAcceptedPushedState.accepted_pushed_proof_dir}`);
+  expect(output).toContain(`Latest accepted pushed closeout proof: ${closeoutProof}`);
   expect(output).toContain(`Latest accepted pushed closeout commit: ${closeoutCommit}`);
   expect(output).toContain(`Accepted state contract checkpoint: ${currentAcceptedPushedState.accepted_pushed_short_commit}`);
   expect(output).toContain(`Accepted state contract commit: ${currentAcceptedPushedState.accepted_pushed_commit}`);

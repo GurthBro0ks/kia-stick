@@ -163,7 +163,7 @@ function checkStaticContracts(root, problems) {
   const head = gitRef(root, "HEAD");
   const originMain = gitRef(root, "origin/main");
   const expectedRecordedHead = acceptedState.checkpoint_kind === "capability"
-    ? acceptedState.repository_recording_commit
+    ? acceptedState.latest_pushed_closeout_commit ?? acceptedState.repository_recording_commit
     : acceptedState.accepted_pushed_commit;
   if (head && head === originMain && expectedRecordedHead !== head) {
     problems.push("accepted-state contract recording commit must match HEAD when HEAD equals origin/main");

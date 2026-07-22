@@ -27,6 +27,11 @@ export interface CurrentAcceptedPushedState {
   accepted_manual_qa: string;
   accepted_pushed: boolean;
   accepted_equality: string;
+  latest_pushed_closeout_commit?: string;
+  latest_pushed_closeout_short_commit?: string;
+  latest_pushed_closeout_phase?: string;
+  latest_pushed_closeout_proof_dir?: string;
+  latest_pushed_closeout_status?: string;
   local_bundle_phase: string;
   local_bundle_status: string;
   historical_prior_checkpoints: AcceptedCheckpoint[];
