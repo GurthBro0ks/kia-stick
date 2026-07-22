@@ -11,9 +11,11 @@ export function GET() {
   return NextResponse.json({
     ok: true,
     app: "kia-stick",
-    phase: currentAcceptedPushedState.accepted_pushed_phase,
+    phase: currentAcceptedPushedState.local_bundle_phase,
     acceptedCheckpoint: currentAcceptedPushedState.checkpoint_label,
     acceptedCommit: currentAcceptedPushedState.accepted_pushed_commit,
+    repositoryRecordingCommit: currentAcceptedPushedState.repository_recording_commit,
+    latestPushedCloseoutCommit: currentAcceptedPushedState.latest_pushed_closeout_commit,
     targetMachine: "USER_LAPTOP_ONLY",
     dataModes: currentAcceptedPushedState.data_modes,
     realDbTouched: false,

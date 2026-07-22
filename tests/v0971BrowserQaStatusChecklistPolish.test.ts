@@ -32,7 +32,7 @@ describe("v0.9.71 browser QA status checklist polish", () => {
 
     expect(result.status).toBe(0);
     expect(result.stdout).toContain("Operator QA smoke PASS");
-    expect(result.stdout).toContain(`Runtime phase: ${currentAcceptedPushedState.accepted_pushed_phase}`);
+    expect(result.stdout).toContain(`Runtime phase: ${currentAcceptedPushedState.local_bundle_phase}`);
     expect(result.stdout).toContain(`Accepted checkpoint: ${currentAcceptedPushedState.checkpoint_label}`);
     expect(result.stdout).toContain("Settings version identity");
     expect(result.stdout).toContain("/health local route");

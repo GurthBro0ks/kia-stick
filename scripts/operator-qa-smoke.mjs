@@ -145,7 +145,7 @@ function checkStaticContracts(root, problems) {
     requireContains(problems, "KiaStickApp", component, marker);
   }
 
-  for (const marker of ["phase", "acceptedCheckpoint", "acceptedCommit", "dataModes", "realDbTouched", "productVersion", "displayVersion", "promptVersion", "provider", "corpusVersion", "indexVersion", "gitSha"]) {
+  for (const marker of ["phase", "acceptedCheckpoint", "acceptedCommit", "repositoryRecordingCommit", "latestPushedCloseoutCommit", "dataModes", "realDbTouched", "productVersion", "displayVersion", "promptVersion", "provider", "corpusVersion", "indexVersion", "gitSha"]) {
     requireContains(problems, "health route", health, marker);
   }
   for (const marker of ["Display Version", "Product Version", "Build Date", "Git SHA", "Corpus", "Index", "Prompt", "Provider"]) {
@@ -157,8 +157,8 @@ function checkStaticContracts(root, problems) {
   if (actualProductVersion !== productVersion) problems.push(`PRODUCT_VERSION must be ${productVersion}; found ${actualProductVersion || "missing"}`);
   if (actualPromptVersion !== promptVersion) problems.push(`PROMPT_VERSION must be ${promptVersion}; found ${actualPromptVersion || "missing"}`);
   if (!versionSource.includes("currentAcceptedPushedState.accepted_pushed_phase")) problems.push("CURRENT_PHASE must derive from the accepted-state contract");
-  if (!acceptedState.accepted_pushed_phase || !acceptedState.accepted_pushed_commit || !acceptedState.checkpoint_label) {
-    problems.push("accepted-state contract is missing the current accepted phase, commit, or checkpoint label");
+  if (!acceptedState.local_bundle_phase || !acceptedState.accepted_pushed_commit || !acceptedState.repository_recording_commit || !acceptedState.latest_pushed_closeout_commit || !acceptedState.checkpoint_label) {
+    problems.push("accepted-state contract is missing the local phase, repository identities, or checkpoint label");
   }
   const head = gitRef(root, "HEAD");
   const originMain = gitRef(root, "origin/main");
@@ -202,9 +202,17 @@ async function checkLiveRoutes(baseUrl, requireServer, acceptedState, problems, 
     return;
   }
 
-  if (healthJson.phase !== acceptedState.accepted_pushed_phase) problems.push(`/health phase mismatch: ${healthJson.phase}`);
+  if (healthJson.phase !== acceptedState.local_bundle_phase) problems.push(`/health phase mismatch: ${healthJson.phase}`);
   if (healthJson.acceptedCheckpoint !== acceptedState.checkpoint_label) problems.push(`/health accepted checkpoint mismatch: ${healthJson.acceptedCheckpoint}`);
   if (healthJson.acceptedCommit !== acceptedState.accepted_pushed_commit) problems.push(`/health accepted commit mismatch: ${healthJson.acceptedCommit}`);
+  if (healthJson.repositoryRecordingCommit !== acceptedState.repository_recording_commit) problems.push(`/health repository recording commit mismatch: ${healthJson.repositoryRecordingCommit}`);
+  if (healthJson.latestPushedCloseoutCommit !== acceptedState.latest_pushed_closeout_commit) problems.push(`/health latest pushed closeout commit mismatch: ${healthJson.latestPushedCloseoutCommit}`);
+  if (new Set([healthJson.acceptedCommit, healthJson.repositoryRecordingCommit, healthJson.latestPushedCloseoutCommit]).size !== 3) {
+    problems.push("/health accepted, repository-recording, and latest pushed closeout commits must be distinct");
+  }
+  if ([healthJson.acceptedCommit, healthJson.repositoryRecordingCommit, healthJson.latestPushedCloseoutCommit].includes(healthJson.gitSha)) {
+    problems.push("/health current build Git SHA must remain distinct from accepted-state repository identities");
+  }
   if (healthJson.productVersion !== productVersion) problems.push(`/health productVersion mismatch: ${healthJson.productVersion}`);
   if (healthJson.promptVersion !== promptVersion) problems.push(`/health promptVersion mismatch: ${healthJson.promptVersion}`);
   if (healthJson.dataModes?.fake_corpus !== "available") problems.push("/health fake corpus mode must be available");
@@ -262,7 +270,7 @@ async function main() {
     console.log(`Base URL: ${result.baseUrl}`);
     console.log(`Project phase: ${expectedProjectPhase}`);
     const acceptedState = readCurrentAcceptedPushedState(args.root);
-    console.log(`Runtime phase: ${acceptedState.accepted_pushed_phase}`);
+    console.log(`Runtime phase: ${acceptedState.local_bundle_phase}`);
     console.log(`Accepted checkpoint: ${acceptedState.checkpoint_label}`);
     console.log(`Product version: ${productVersion}`);
     console.log(`Prompt version: ${promptVersion}`);

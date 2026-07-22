@@ -35,7 +35,7 @@ describe("v0.8.9 mobile/narrow operator QA polish", () => {
     expect(result.status).toBe(0);
     expect(result.stdout).toContain("Operator QA smoke PASS");
     expect(result.stdout).toContain("Project phase: KIA-Stick-v0.9.10-synthetic-governance-hardening-checkpoint");
-    expect(result.stdout).toContain(`Runtime phase: ${currentAcceptedPushedState.accepted_pushed_phase}`);
+    expect(result.stdout).toContain(`Runtime phase: ${currentAcceptedPushedState.local_bundle_phase}`);
     expect(result.stdout).toContain("Bundle smoke surfaces:");
     for (const surface of [
       "Chat no-answer save blocking",
