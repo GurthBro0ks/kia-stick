@@ -105,6 +105,8 @@ describe("public Chat submit orchestration regression", () => {
 
   it.each([
     "When may a represented employee request a union representative during an investigatory interview?",
+    "Can I have a steward during an investigative interview?",
+    "May I request a union representative when questioning may lead to discipline?",
     "What role may the representative play?",
   ])("automatically routes supported question through the public card path: %s", (question) => {
     const result = submitThroughComponentRouter(question);

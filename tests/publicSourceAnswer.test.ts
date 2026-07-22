@@ -33,6 +33,11 @@ describe("citation-first public answers", () => {
       expect(citation.paragraphId).toMatch(/-p\d{2}$/);
       expect(citation.retrievedAt).toBe(common.source.retrievedAt);
       expect(citation.contentHash).toBe(common.source.normalized.sha256);
+      expect(citation.publicSourceType).toBe("nlrb_guidance");
+      expect(citation.citationVerificationState).toBe("verified_current");
+      expect(citation.sourceInstanceId).toMatch(/^[a-f0-9]{64}$/);
+      expect(citation.paragraphContentSha256).toMatch(/^[a-f0-9]{64}$/);
+      expect(citation.citationAnchorSha256).toMatch(/^[a-f0-9]{64}$/);
     }
   });
 

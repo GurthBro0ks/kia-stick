@@ -39,7 +39,7 @@ import {
 } from "@/lib/redactionMetadataModel";
 import { createSavedAnswerRecord, migrateSavedAnswers, upsertSavedAnswer } from "@/lib/savedAnswers";
 import { buildSourceHierarchyGroups, corpus, sourceHierarchyLabels, sourceHierarchyOrder } from "@/lib/sourceModel";
-import { currentAcceptedPushedState } from "@/lib/acceptedState";
+import { PUBLIC_ARGUMENT_BUILDER_PHASE } from "@/lib/publicArgumentPlan";
 import { PRODUCT_VERSION, PROMPT_VERSION, createRuntimeVersion, runtimeVersionFields } from "@/lib/version";
 import {
   applyVaultAction,
@@ -482,7 +482,7 @@ describe("runtime build identity", () => {
     }
 
     expect(payload.version.productVersion).toBe("0.7.0");
-    expect(payload.phase).toBe(currentAcceptedPushedState.local_bundle_phase);
+    expect(payload.phase).toBe(PUBLIC_ARGUMENT_BUILDER_PHASE);
     expect(payload.phase).not.toBe("KIA-Stick-v0.5.2-fake-wizard-state-machine-hardening");
     expect(payload.version.displayVersion).toMatch(/^0\.7\.0-dev\.\d{8}\+(?:[a-z0-9]+|unknown)$/);
     expect(payload.version.corpusVersion).toBe(corpus.corpusVersion);

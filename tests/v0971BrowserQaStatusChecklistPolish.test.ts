@@ -2,6 +2,7 @@ import { readFileSync } from "node:fs";
 import { spawnSync } from "node:child_process";
 import { describe, expect, it } from "vitest";
 import { currentAcceptedPushedState } from "@/lib/acceptedState";
+import { PUBLIC_ARGUMENT_BUILDER_PHASE } from "@/lib/publicArgumentPlan";
 
 const phase = "KIA-Stick-v0.9.71-browser-qa-status-checklist-polish";
 const docPath = "docs/v0.9.71-browser-qa-status-checklist-polish.md";
@@ -32,7 +33,7 @@ describe("v0.9.71 browser QA status checklist polish", () => {
 
     expect(result.status).toBe(0);
     expect(result.stdout).toContain("Operator QA smoke PASS");
-    expect(result.stdout).toContain(`Runtime phase: ${currentAcceptedPushedState.local_bundle_phase}`);
+    expect(result.stdout).toContain(`Runtime phase: ${PUBLIC_ARGUMENT_BUILDER_PHASE}`);
     expect(result.stdout).toContain(`Accepted checkpoint: ${currentAcceptedPushedState.checkpoint_label}`);
     expect(result.stdout).toContain("Settings version identity");
     expect(result.stdout).toContain("/health local route");

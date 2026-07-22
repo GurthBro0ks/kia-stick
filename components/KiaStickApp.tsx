@@ -55,11 +55,17 @@ import {
 } from "@/lib/importWizardModel";
 import {
   createSavedAnswerRecord,
+  createSavedArgumentPlanRecord,
   migrateSavedAnswers,
   upsertSavedAnswer,
   type SaveAnswerStatus,
   type SavedAnswer,
 } from "@/lib/savedAnswers";
+import {
+  buildPublicArgumentPlan,
+  publicArgumentPlanEligibility,
+  type PublicArgumentPlan,
+} from "@/lib/publicArgumentPlan";
 import {
   buildSourceHierarchyGroups,
   citationLabel,
@@ -272,6 +278,7 @@ export function KiaStickApp({ runtimeVersion = clientVersion }: { runtimeVersion
   const [importWizardState, setImportWizardState] = useState<ImportWizardState>(() => createInitialImportWizardState());
   const [fakeOnlyConfirmed, setFakeOnlyConfirmed] = useState(false);
   const [saveNotice, setSaveNotice] = useState<{ status: SaveAnswerStatus; text: string } | null>(null);
+  const [argumentPlans, setArgumentPlans] = useState<Record<string, PublicArgumentPlan>>({});
   const [hydrated, setHydrated] = useState(false);
   const [pendingScroll, setPendingScroll] = useState(false);
   const chatScrollRef = useRef<HTMLElement>(null);
@@ -495,9 +502,49 @@ export function KiaStickApp({ runtimeVersion = clientVersion }: { runtimeVersion
     });
   }
 
+  function buildArgumentPlanFor(message: AssistantMessage) {
+    const plan = buildPublicArgumentPlan({
+      answer: message.answer,
+      source: publicSourceState.status === "available" ? publicSourceState.source : null,
+    });
+    if (!plan) {
+      setSaveNotice({
+        status: "duplicate",
+        text: "A current verified NLRB citation is required before a cited argument plan can be built.",
+      });
+      return;
+    }
+    setArgumentPlans((current) => ({ ...current, [message.messageId]: plan }));
+    setSaveNotice(null);
+  }
+
+  function saveArgumentPlan(message: AssistantMessage, plan: PublicArgumentPlan) {
+    const record = createSavedArgumentPlanRecord({
+      plan,
+      question: message.answer.question,
+      mode: message.modeScopeDetail.mode,
+      scope: message.modeScopeDetail.scope,
+      detail: message.modeScopeDetail.detail,
+      timestamp: new Date().toISOString(),
+    });
+    setSaved((current) => {
+      const result = upsertSavedAnswer(current, record);
+      setSaveNotice({
+        status: result.status,
+        text: result.status === "created"
+          ? "Saved cited argument plan with current citation and source-instance metadata."
+          : result.status === "replaced"
+            ? "Updated the saved cited argument plan with refreshed verified metadata."
+            : "Already saved. No duplicate cited argument plan was created.",
+      });
+      return result.saved;
+    });
+  }
+
   function startNewChat() {
     if (thread.messages.length > 0 && !window.confirm("Start a new chat and clear the current thread?")) return;
     setThread(createConversationThread());
+    setArgumentPlans({});
     setDraft("");
     setSaveNotice(null);
     setIsSending(false);
@@ -609,15 +656,30 @@ export function KiaStickApp({ runtimeVersion = clientVersion }: { runtimeVersion
                 message.role === "user" ? (
                   <UserMessageBubble key={message.messageId} message={message} turnLabel={`Turn ${Math.floor(index / 2) + 1}`} />
                 ) : (
-                  <AssistantMessageCard
-                    key={message.messageId}
-                    message={message}
-                    turnLabel={`Turn ${Math.floor(index / 2) + 1}`}
-                    onRetry={() => retryAssistant(message)}
-                    onSave={() => saveAssistantAnswer(message)}
-                    onCitationNavigate={navigateToCitation}
-                    onSubmitCbaSuggestion={(suggestion) => sendMessage(suggestion, "cba")}
-                  />
+                  (() => {
+                    const plan = argumentPlans[message.messageId];
+                    const eligibility = message.status === "complete"
+                      ? publicArgumentPlanEligibility({
+                          answer: message.answer,
+                          source: publicSourceState.status === "available" ? publicSourceState.source : null,
+                        })
+                      : { eligible: false as const, reason: "no_answer" as const };
+                    return (
+                      <AssistantMessageCard
+                        key={message.messageId}
+                        message={message}
+                        turnLabel={`Turn ${Math.floor(index / 2) + 1}`}
+                        onRetry={() => retryAssistant(message)}
+                        onSave={() => saveAssistantAnswer(message)}
+                        canBuildArgument={eligibility.eligible}
+                        argumentPlan={plan}
+                        onBuildArgument={() => buildArgumentPlanFor(message)}
+                        onSaveArgumentPlan={() => plan && saveArgumentPlan(message, plan)}
+                        onCitationNavigate={navigateToCitation}
+                        onSubmitCbaSuggestion={(suggestion) => sendMessage(suggestion, "cba")}
+                      />
+                    );
+                  })()
                 )
               )}
             </section>
@@ -642,6 +704,7 @@ export function KiaStickApp({ runtimeVersion = clientVersion }: { runtimeVersion
             onDelete={(id) => setSaved((current) => current.filter((savedItem) => savedItem.id !== id))}
             cbaSourceState={cbaSourceState}
             onResearchCba={(question) => sendMessage(question, "cba")}
+            onCitationNavigate={navigateToCitation}
           />
         )}
 
@@ -1388,8 +1451,10 @@ export function SavedAnswersPanel(props: {
   onDelete: (id: string) => void;
   cbaSourceState?: CbaSourceLoadState;
   onResearchCba?: (question: string) => void;
+  onCitationNavigate?: (citation: Citation) => void;
 }) {
   const cbaSourceState = props.cbaSourceState ?? { status: "unavailable", reason: "cache_missing" as const };
+  const [openPlanId, setOpenPlanId] = useState<string | null>(null);
   return (
     <section className="tabPanel">
       <PanelHeader title="Saved" meta={`${props.saved.length} stored locally`} />
@@ -1405,7 +1470,7 @@ export function SavedAnswersPanel(props: {
           return (
           <article className="savedCard" key={item.id}>
             <div className="savedHeader">
-              <h3>{item.question}</h3>
+              <h3>{item.argumentPlan?.title ?? item.question}</h3>
               <button
                 className="button iconOnly subtle"
                 type="button"
@@ -1416,8 +1481,10 @@ export function SavedAnswersPanel(props: {
                 <Archive size={16} />
               </button>
             </div>
-            <p>{item.answer.split("\n\n")[0]}</p>
+            <p>{item.savedType === "public_argument_plan" ? item.argumentPlan?.issueSummary : item.answer.split("\n\n")[0]}</p>
             <dl className="savedDetailList" aria-label="Saved answer metadata">
+              <dt>Saved type</dt>
+              <dd>{item.savedType}</dd>
               <dt>Product</dt>
               <dd>{item.version.productVersion}</dd>
               <dt>Prompt</dt>
@@ -1480,6 +1547,25 @@ export function SavedAnswersPanel(props: {
                 </>
               )}
             </dl>
+            {item.savedType === "public_argument_plan" && item.argumentPlan && (
+              <div className="savedPlanActions">
+                <button
+                  aria-expanded={openPlanId === item.id}
+                  className="button primary"
+                  type="button"
+                  onClick={() => setOpenPlanId((current) => current === item.id ? null : item.id)}
+                >
+                  <ClipboardList size={16} />
+                  {openPlanId === item.id ? "Close saved plan" : "Open saved plan"}
+                </button>
+                {openPlanId === item.id && (
+                  <PublicArgumentPlanView
+                    plan={item.argumentPlan}
+                    onCitationNavigate={props.onCitationNavigate ?? (() => undefined)}
+                  />
+                )}
+              </div>
+            )}
             <div className="sourceMeta">
               <span className="badge">{item.mode}</span>
               <span className="badge">{item.scope}</span>
@@ -2172,6 +2258,10 @@ export function AssistantMessageCard({
   turnLabel,
   onRetry,
   onSave,
+  canBuildArgument = false,
+  argumentPlan,
+  onBuildArgument = () => undefined,
+  onSaveArgumentPlan = () => undefined,
   onCitationNavigate = () => undefined,
   onSubmitCbaSuggestion,
 }: {
@@ -2179,6 +2269,10 @@ export function AssistantMessageCard({
   turnLabel?: string;
   onRetry: () => void;
   onSave: () => void;
+  canBuildArgument?: boolean;
+  argumentPlan?: PublicArgumentPlan;
+  onBuildArgument?: () => void;
+  onSaveArgumentPlan?: () => void;
   onCitationNavigate?: (citation: Citation) => void;
   onSubmitCbaSuggestion?: (question: string) => void;
 }) {
@@ -2287,6 +2381,12 @@ export function AssistantMessageCard({
           )}
 
           <div className="compactActions">
+            {canBuildArgument && !argumentPlan && (
+              <button className="button primary" type="button" onClick={onBuildArgument}>
+                <ClipboardList size={16} />
+                Build cited argument
+              </button>
+            )}
             <button
               aria-expanded={packetOpen}
               className="button primary"
@@ -2325,6 +2425,14 @@ export function AssistantMessageCard({
             )}
           </div>
 
+          {argumentPlan && (
+            <PublicArgumentPlanView
+              plan={argumentPlan}
+              onCitationNavigate={onCitationNavigate}
+              onSave={onSaveArgumentPlan}
+            />
+          )}
+
           {citationsOpen && (
             <ol className="citationCards">
               {answer.citations.map((citation) => (
@@ -2353,6 +2461,145 @@ export function AssistantMessageCard({
           </div>
         </div>
       </div>
+  );
+}
+
+function PublicArgumentPlanView({
+  plan,
+  onCitationNavigate,
+  onSave,
+}: {
+  plan: PublicArgumentPlan;
+  onCitationNavigate: (citation: Citation) => void;
+  onSave?: () => void;
+}) {
+  const headingId = `argument-plan-${plan.id}`;
+  const citationNumber = new Map(plan.citations.map((citation, index) => [citation.id, index + 1]));
+
+  function CitationLinks({ citationIds }: { citationIds: string[] }) {
+    return (
+      <span className="argumentPlanCitationLinks" aria-label="Supporting citations">
+        {citationIds.map((citationId) => {
+          const citation = plan.citations.find((candidate) => candidate.id === citationId);
+          if (!citation) return null;
+          return (
+            <button
+              aria-label={`Open supporting citation ${citationNumber.get(citationId)}`}
+              className="argumentPlanCitationButton"
+              key={citationId}
+              onClick={() => onCitationNavigate(citation)}
+              type="button"
+            >
+              [{citationNumber.get(citationId)}]
+            </button>
+          );
+        })}
+      </span>
+    );
+  }
+
+  function CitedItems({ items, ordered = false }: { items: Array<{ text: string; citationIds: string[] }>; ordered?: boolean }) {
+    const List = ordered ? "ol" : "ul";
+    return (
+      <List className="argumentPlanList">
+        {items.map((entry) => (
+          <li key={`${entry.text}-${entry.citationIds.join("-")}`}>
+            <span>{entry.text}</span>
+            <CitationLinks citationIds={entry.citationIds} />
+          </li>
+        ))}
+      </List>
+    );
+  }
+
+  function PlainItems({ items, ordered = false }: { items: string[]; ordered?: boolean }) {
+    const List = ordered ? "ol" : "ul";
+    return <List className="argumentPlanList">{items.map((entry) => <li key={entry}>{entry}</li>)}</List>;
+  }
+
+  return (
+    <section className="publicArgumentPlan" aria-labelledby={headingId}>
+      <div className="argumentPlanHeader">
+        <div>
+          <span className="sectionKicker">Deterministic public argument builder</span>
+          <h3 id={headingId}>{plan.title}</h3>
+        </div>
+        <span className="statusPill ok">{plan.citations.length} verified citations</span>
+      </div>
+      <p className="argumentPlanPrivateWarning" role="note">
+        <AlertTriangle size={16} />
+        <strong>{plan.privateCaseWarning}</strong>
+      </p>
+      <div className="argumentPlanMeta" aria-label="Argument plan identity">
+        <span>Provider: {plan.provider}</span>
+        <span>Prompt: {plan.promptVersion}</span>
+        <span>Build: {plan.buildIdentity}</span>
+        <span>Source instance: {plan.sourceInstanceIds.join(", ")}</span>
+      </div>
+
+      <section className="argumentPlanSection">
+        <h4>1. Issue</h4>
+        <p>{plan.issueSummary}</p>
+      </section>
+      <section className="argumentPlanSection">
+        <h4>2. Governing public rule</h4>
+        <p>{plan.sourceRule.text}<CitationLinks citationIds={plan.sourceRule.citationIds} /></p>
+      </section>
+      <section className="argumentPlanSection">
+        <h4>3. Conditions that must be present</h4>
+        <CitedItems items={plan.thresholdElements} />
+      </section>
+      <section className="argumentPlanSection">
+        <h4>4. Facts to confirm</h4>
+        <PlainItems items={plan.factsToConfirm} />
+      </section>
+      <section className="argumentPlanSection">
+        <h4>5. Immediate member actions</h4>
+        <CitedItems items={plan.memberActions} />
+      </section>
+      <section className="argumentPlanSection">
+        <h4>6. Steward actions</h4>
+        <CitedItems items={plan.stewardActions} />
+      </section>
+      <section className="argumentPlanSection">
+        <h4>7. Questions to ask management</h4>
+        <PlainItems items={plan.employerQuestions} />
+      </section>
+      <section className="argumentPlanSection">
+        <h4>8. Step-by-step argument</h4>
+        <CitedItems items={plan.argumentSteps} ordered />
+      </section>
+      <section className="argumentPlanSection argumentPlanEscalation">
+        <h4>9. Escalation triggers</h4>
+        <CitedItems items={plan.escalationTriggers} />
+      </section>
+      <section className="argumentPlanSection">
+        <h4>10. Limitations and uncertainty</h4>
+        <CitedItems items={plan.limitations} />
+      </section>
+      <section className="argumentPlanSection">
+        <h4>11. Sources</h4>
+        <ol className="argumentPlanSources">
+          {plan.citations.map((citation) => (
+            <li key={citation.id}>
+              <button className="citationAnchorButton" type="button" onClick={() => onCitationNavigate(citation)}>
+                {citationLabel(citation)}
+              </button>
+              <span>{citation.citationVerificationState}</span>
+            </li>
+          ))}
+        </ol>
+      </section>
+      {onSave && (
+        <div className="compactActions argumentPlanSaveActions">
+          <button className="button primary" type="button" onClick={onSave}>
+            <Save size={16} />
+            Save cited argument plan
+          </button>
+          <span>Saved type: public_argument_plan</span>
+        </div>
+      )}
+    </section>
   );
 }
 

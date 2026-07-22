@@ -15,6 +15,7 @@ import {
   type PublicSourceSection,
 } from "@/lib/publicSource";
 import type { RuntimeVersion } from "@/lib/version";
+import { derivePublicCitationIntegrity, verifyPublicCitation } from "@/lib/publicCitationIntegrity";
 
 type PublicQuestionIntent = "request" | "representative_role" | "postal_applicability" | "unsupported";
 
@@ -31,8 +32,8 @@ function detectPublicIntent(question: string): PublicQuestionIntent {
     return "representative_role";
   }
   if (
-    /\b(when|request|represented employee|investigatory interview|lead to discipline|union representative)\b/.test(normalized) &&
-    /\b(represent|interview|investigat|disciplin|union)\b/.test(normalized)
+    /\b(when|request|represented employee|investigatory interview|investigative interview|lead to discipline|union representative|steward)\b/.test(normalized) &&
+    /\b(represent|steward|interview|investigat|disciplin|union)\b/.test(normalized)
   ) return "request";
   return "unsupported";
 }
@@ -60,7 +61,8 @@ export function citationForPublicParagraph(
   section: PublicSourceSection,
   paragraph: PublicSourceParagraph
 ): Citation {
-  return {
+  const integrity = derivePublicCitationIntegrity(source, section, paragraph);
+  const citation: Citation = {
     id: `${PUBLIC_SOURCE_ID}@${section.id}@${paragraph.id}`,
     title: source.source.title,
     class: "persuasive_authority",
@@ -79,7 +81,12 @@ export function citationForPublicParagraph(
     retrievedAt: source.retrievedAt,
     contentHash: source.normalized.sha256,
     officialUrl: PUBLIC_SOURCE_URL,
+    publicSourceType: "nlrb_guidance",
+    provider: PUBLIC_SOURCE_PROVIDER,
+    promptVersion: PUBLIC_SOURCE_PROMPT_VERSION,
+    ...integrity,
   };
+  return { ...citation, citationVerificationState: verifyPublicCitation(citation, source).state };
 }
 
 function unavailableAnswer(

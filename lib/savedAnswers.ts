@@ -1,5 +1,6 @@
 import { answerToMarkdown, buildAnswer, detectIntent, type AnswerResult } from "@/lib/answerGovernor";
 import {
+  PUBLIC_SOURCE_APPLICABILITY_WARNING,
   PUBLIC_SOURCE_CONTROLLING_FOR_USPS,
   PUBLIC_SOURCE_OWNER,
   PUBLIC_SOURCE_POSTAL_APPLICABILITY,
@@ -8,6 +9,11 @@ import { CBA_SOURCE_OWNER } from "@/lib/cbaSource";
 import type { CitationVerificationState } from "@/lib/cbaCitationIntegrity";
 import type { Detail, Mode, Scope } from "@/lib/sourceModel";
 import { clientVersion } from "@/lib/version";
+import {
+  PUBLIC_ARGUMENT_PLAN_SAVED_TYPE,
+  publicArgumentPlanToText,
+  type PublicArgumentPlan,
+} from "@/lib/publicArgumentPlan";
 
 export interface SavedAnswer {
   id: string;
@@ -44,6 +50,8 @@ export interface SavedAnswer {
   controllingForUsps?: string;
   timestamp: string;
   footer: string;
+  savedType: "answer" | typeof PUBLIC_ARGUMENT_PLAN_SAVED_TYPE;
+  argumentPlan?: PublicArgumentPlan;
 }
 
 export type SaveAnswerStatus = "created" | "replaced" | "duplicate";
@@ -241,7 +249,69 @@ export function createSavedAnswerRecord(input: {
       : undefined,
     timestamp: input.timestamp,
     footer: input.answer.footer,
+    savedType: "answer",
   };
+}
+
+export function createSavedArgumentPlanRecord(input: {
+  plan: PublicArgumentPlan;
+  question: string;
+  mode: Mode;
+  scope: Scope;
+  detail: Detail;
+  timestamp: string;
+  existingId?: string;
+}): SavedAnswer {
+  const publicCitation = input.plan.citations[0];
+  const saveKey = `${PUBLIC_ARGUMENT_PLAN_SAVED_TYPE}|${input.plan.id}`;
+  return {
+    id: input.existingId ?? `saved-${stableHash(saveKey)}`,
+    saveKey,
+    dataFingerprint: `${saveKey}|${input.plan.contentIdentity}`,
+    question: input.question,
+    answer: publicArgumentPlanToText(input.plan),
+    mode: input.mode,
+    scope: input.scope,
+    detail: input.detail,
+    citations: input.plan.citations,
+    version: input.plan.version,
+    provider: input.plan.provider,
+    answerLane: "public",
+    sourceId: publicCitation?.sourceId,
+    sourceTitle: publicCitation?.title,
+    sourceOwner: PUBLIC_SOURCE_OWNER,
+    sourceStatus: publicCitation?.status,
+    scopeWarning: PUBLIC_SOURCE_APPLICABILITY_WARNING,
+    authorityClassification: publicCitation?.class,
+    sourceRetrievedAt: publicCitation?.retrievedAt,
+    normalizedSourceHash: publicCitation?.contentHash,
+    sourceInstanceId: publicCitation?.sourceInstanceId,
+    sourceInstanceAlgorithmVersion: publicCitation?.sourceInstanceAlgorithmVersion,
+    paragraphContentSha256: publicCitation?.paragraphContentSha256,
+    paragraphHashAlgorithmVersion: publicCitation?.paragraphHashAlgorithmVersion,
+    citationAnchorSha256: publicCitation?.citationAnchorSha256,
+    citationAnchorAlgorithmVersion: publicCitation?.citationAnchorAlgorithmVersion,
+    citationVerificationStateAtSave: publicCitation?.citationVerificationState,
+    postalApplicability: PUBLIC_SOURCE_POSTAL_APPLICABILITY,
+    controllingForUsps: PUBLIC_SOURCE_CONTROLLING_FOR_USPS,
+    timestamp: input.timestamp,
+    footer: `PUBLIC ARGUMENT PLAN | Type:${input.plan.type} | Build:${input.plan.buildIdentity}`,
+    savedType: PUBLIC_ARGUMENT_PLAN_SAVED_TYPE,
+    argumentPlan: input.plan,
+  };
+}
+
+function validPublicArgumentPlan(value: unknown): value is PublicArgumentPlan {
+  if (!value || typeof value !== "object") return false;
+  const source = value as Partial<PublicArgumentPlan>;
+  return source.savedType === PUBLIC_ARGUMENT_PLAN_SAVED_TYPE &&
+    typeof source.id === "string" &&
+    typeof source.contentIdentity === "string" &&
+    typeof source.title === "string" &&
+    Array.isArray(source.citations) &&
+    Array.isArray(source.thresholdElements) &&
+    Array.isArray(source.argumentSteps) &&
+    Array.isArray(source.sourceInstanceIds);
 }
 
 export function migrateSavedAnswers(input: unknown): SavedAnswer[] {
@@ -263,6 +333,10 @@ export function migrateSavedAnswers(input: unknown): SavedAnswer[] {
     const answerLane = source.answerLane === "public_cba" || cbaCitation
       ? "public_cba"
       : source.answerLane === "public" || publicCitation ? "public" : "fake";
+    const argumentPlan = validPublicArgumentPlan(source.argumentPlan) ? source.argumentPlan : undefined;
+    const savedType = source.savedType === PUBLIC_ARGUMENT_PLAN_SAVED_TYPE && argumentPlan
+      ? PUBLIC_ARGUMENT_PLAN_SAVED_TYPE
+      : "answer";
     const normalized: SavedAnswer = {
       id: typeof source.id === "string" ? source.id : `saved-${index}`,
       saveKey: "",
@@ -310,9 +384,16 @@ export function migrateSavedAnswers(input: unknown): SavedAnswer[] {
         : answerLane === "public" ? PUBLIC_SOURCE_CONTROLLING_FOR_USPS : undefined,
       timestamp: typeof source.timestamp === "string" ? source.timestamp : new Date(0).toISOString(),
       footer: typeof source.footer === "string" ? source.footer : "",
+      savedType,
+      argumentPlan,
     };
 
     try {
+      if (savedType === PUBLIC_ARGUMENT_PLAN_SAVED_TYPE && argumentPlan) {
+        normalized.saveKey = `${PUBLIC_ARGUMENT_PLAN_SAVED_TYPE}|${argumentPlan.id}`;
+        normalized.dataFingerprint = `${normalized.saveKey}|${argumentPlan.contentIdentity}`;
+        return upsertSavedAnswer(saved, normalized, { preferNewerDuplicate: true }).saved;
+      }
       if (publicCitation) throw new Error("Preserve public-source citation identity without fake answer rebuilding.");
       const rebuiltAnswer = buildAnswer(question, {
         mode,

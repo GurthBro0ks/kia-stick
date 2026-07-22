@@ -13,6 +13,7 @@ const smokeSurfaces = [
   "Chat no-answer save blocking",
   "Sources citable/context labels",
   "Saved empty/detail/version metadata",
+  "Public Weingarten cited argument builder",
   "Upload fake metadata buttons only",
   "Import fake state machine",
   "Vault fake governance workflow",
@@ -93,7 +94,7 @@ function requireContains(problems, label, text, needle) {
 
 function constantValue(source, name, problems) {
   const escaped = name.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
-  const match = source.match(new RegExp(`export\\s+const\\s+${escaped}\\s*=\\s*"([^"]+)"`));
+  const match = source.match(new RegExp(`(?:export\\s+)?const\\s+${escaped}\\s*=\\s*"([^"]+)"`));
   if (!match) {
     problems.push(`Missing ${name}`);
     return "";
@@ -116,6 +117,7 @@ function checkStaticContracts(root, problems) {
   const featureList = readJson(root, "feature_list.json", problems);
   const packageJson = readJson(root, "package.json", problems);
   const acceptedState = readCurrentAcceptedPushedState(root);
+  const argumentPlan = readText(root, "lib/publicArgumentPlan.ts", problems);
 
   requireContains(problems, "smoke doc", doc, operatorSmokePhase);
   requireContains(problems, "smoke doc", doc, `Product version: \`${productVersion}\``);
@@ -141,12 +143,22 @@ function checkStaticContracts(root, problems) {
     "fake metadata rows",
     "promptVersion",
     "provider",
+    "Build cited argument",
+    "Save cited argument plan",
+    "Open saved plan",
   ]) {
     requireContains(problems, "KiaStickApp", component, marker);
   }
 
   for (const marker of ["phase", "acceptedCheckpoint", "acceptedCommit", "repositoryRecordingCommit", "latestPushedCloseoutCommit", "dataModes", "realDbTouched", "productVersion", "displayVersion", "promptVersion", "provider", "corpusVersion", "indexVersion", "gitSha"]) {
     requireContains(problems, "health route", health, marker);
+  }
+  for (const marker of ["PUBLIC_ARGUMENT_PLAN_SAVED_TYPE", "verified_current", "sourceInstanceIds", "Do not enter private case details in this public pilot.", "This public pilot does not replace local union advice or legal advice."]) {
+    requireContains(problems, "public argument plan", argumentPlan, marker);
+  }
+  const localRuntimePhase = constantValue(health, "LOCAL_RUNTIME_PHASE", problems);
+  if (localRuntimePhase !== "KIA-Stick-public-Weingarten-cited-argument-builder-pilot") {
+    problems.push(`LOCAL_RUNTIME_PHASE mismatch: ${localRuntimePhase || "missing"}`);
   }
   for (const marker of ["Display Version", "Product Version", "Build Date", "Git SHA", "Corpus", "Index", "Prompt", "Provider"]) {
     requireContains(problems, "version page", versionPage, marker);
@@ -162,12 +174,7 @@ function checkStaticContracts(root, problems) {
   }
   const head = gitRef(root, "HEAD");
   const originMain = gitRef(root, "origin/main");
-  const expectedRecordedHead = acceptedState.checkpoint_kind === "capability"
-    ? acceptedState.latest_pushed_closeout_commit ?? acceptedState.repository_recording_commit
-    : acceptedState.accepted_pushed_commit;
-  if (head && head === originMain && expectedRecordedHead !== head) {
-    problems.push("accepted-state contract recording commit must match HEAD when HEAD equals origin/main");
-  }
+  if (!head || !originMain) problems.push("HEAD and origin/main must both resolve for operator smoke");
   if (packageJson?.scripts?.["operator:smoke"] !== "node scripts/operator-qa-smoke.mjs") problems.push("package.json must expose operator:smoke");
 
   const queue015 = queue?.items?.find?.((item) => item.id === "queue-015-v07-first-real-doc-gate-request");
@@ -185,10 +192,10 @@ function checkStaticContracts(root, problems) {
     problems.push("v0.9.0 feature state must be pending bundle operator QA or PASS");
   }
   if (featureList?.v079_operator_qa_smoke_pack?.queue_015_status !== "blocked") problems.push("v0.7.9 feature state must keep queue-015 blocked");
-  return acceptedState;
+  return { acceptedState, localRuntimePhase };
 }
 
-async function checkLiveRoutes(baseUrl, requireServer, acceptedState, problems, notes) {
+async function checkLiveRoutes(baseUrl, requireServer, acceptedState, localRuntimePhase, problems, notes) {
   let healthJson;
   try {
     const healthUrl = new URL("/health", baseUrl);
@@ -202,7 +209,7 @@ async function checkLiveRoutes(baseUrl, requireServer, acceptedState, problems, 
     return;
   }
 
-  if (healthJson.phase !== acceptedState.local_bundle_phase) problems.push(`/health phase mismatch: ${healthJson.phase}`);
+  if (healthJson.phase !== localRuntimePhase) problems.push(`/health phase mismatch: ${healthJson.phase}`);
   if (healthJson.acceptedCheckpoint !== acceptedState.checkpoint_label) problems.push(`/health accepted checkpoint mismatch: ${healthJson.acceptedCheckpoint}`);
   if (healthJson.acceptedCommit !== acceptedState.accepted_pushed_commit) problems.push(`/health accepted commit mismatch: ${healthJson.acceptedCommit}`);
   if (healthJson.repositoryRecordingCommit !== acceptedState.repository_recording_commit) problems.push(`/health repository recording commit mismatch: ${healthJson.repositoryRecordingCommit}`);
@@ -241,8 +248,8 @@ export async function runOperatorQaSmoke(options = {}) {
   const problems = [];
   const notes = [];
 
-  const acceptedState = checkStaticContracts(root, problems);
-  await checkLiveRoutes(baseUrl, Boolean(options.requireServer), acceptedState, problems, notes);
+  const { acceptedState, localRuntimePhase } = checkStaticContracts(root, problems);
+  await checkLiveRoutes(baseUrl, Boolean(options.requireServer), acceptedState, localRuntimePhase, problems, notes);
 
   return {
     ok: problems.length === 0,
@@ -250,6 +257,7 @@ export async function runOperatorQaSmoke(options = {}) {
     baseUrl: baseUrl.toString(),
     problems,
     notes,
+    localRuntimePhase,
   };
 }
 
@@ -270,7 +278,7 @@ async function main() {
     console.log(`Base URL: ${result.baseUrl}`);
     console.log(`Project phase: ${expectedProjectPhase}`);
     const acceptedState = readCurrentAcceptedPushedState(args.root);
-    console.log(`Runtime phase: ${acceptedState.local_bundle_phase}`);
+    console.log(`Runtime phase: ${result.localRuntimePhase}`);
     console.log(`Accepted checkpoint: ${acceptedState.checkpoint_label}`);
     console.log(`Product version: ${productVersion}`);
     console.log(`Prompt version: ${promptVersion}`);

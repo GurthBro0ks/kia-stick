@@ -23,6 +23,7 @@ export const syntheticNlrBHtml = `<!doctype html>
   <p>Section 7 protects represented employees in this synthetic public fixture.</p>
   <p><strong>When do employees have a right to request a union representative?</strong></p>
   <p>An investigatory interview occurs when a manager is seeking to question an employee.</p>
+  <p>The questioning is part of an investigation into the employee's performance or work conduct.</p>
   <ul>
     <li>The employee reasonably believes the investigation may result in discharge, discipline, or another adverse consequence.</li>
     <li>The employee requests a union representative.</li>
@@ -31,6 +32,7 @@ export const syntheticNlrBHtml = `<!doctype html>
   <p>Union representatives serve as advisors and witnesses during employee interviews.</p>
   <p>A representative may clarify questions, give limited advice, and provide additional information after questioning.</p>
   <h2>What are the limitations?</h2>
+  <p>A representative must remain civil and may not interfere with legitimate efforts to conduct an investigation.</p>
   <p>A representative may not tell an employee what to say and may not advise false answers.</p>
   <p>This page has not been reviewed or approved by the Board and may be subject to qualifications.</p>
 </div>
@@ -71,4 +73,3 @@ export function createPublicSourceFixtureCache(): PublicSourceCache {
     },
   };
 }
-

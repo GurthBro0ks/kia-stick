@@ -40,8 +40,12 @@ export function isAutoPublicPilotQuestion(question: string): boolean {
   if (exactPublicPilotQuestions.has(normalized)) return true;
   if (/\bweingarten\b/.test(normalized)) return true;
   if (
-    /\binvestigatory interview\b/.test(normalized) &&
-    /\b(union representative|union representation|represented employee)\b/.test(normalized)
+    /\b(?:investigatory|investigative)\s+interview\b/.test(normalized) &&
+    /\b(union representative|union representation|represented employee|steward)\b/.test(normalized)
+  ) return true;
+  if (
+    /\b(steward|union representative|union representation)\b/.test(normalized) &&
+    /\b(question|questioning|investigat|disciplin|adverse consequence)\b/.test(normalized)
   ) return true;
   return (
     /\b(usps|postal)\b/.test(normalized) &&

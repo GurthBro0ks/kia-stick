@@ -2,6 +2,7 @@ import { describe, expect, it } from "vitest";
 import { GET } from "@/app/health/route";
 import { currentAcceptedPushedState } from "@/lib/acceptedState";
 import { CURRENT_PHASE } from "@/lib/version";
+import { PUBLIC_ARGUMENT_BUILDER_PHASE } from "@/lib/publicArgumentPlan";
 
 describe("public truth runtime identity", () => {
   it("keeps the accepted pushed phase derived from the accepted-state contract", () => {
@@ -12,8 +13,8 @@ describe("public truth runtime identity", () => {
   it("reports the local bundle phase and distinct repository identities", async () => {
     const response = GET();
     const payload = await response.json();
-    expect(payload.phase).toBe(currentAcceptedPushedState.local_bundle_phase);
-    expect(payload.phase).toBe("KIA-Stick-stale-local-bundle-push-status-repair");
+    expect(payload.phase).toBe(PUBLIC_ARGUMENT_BUILDER_PHASE);
+    expect(payload.phase).not.toBe(currentAcceptedPushedState.local_bundle_phase);
     expect(payload.acceptedCheckpoint).toBe(currentAcceptedPushedState.checkpoint_label);
     expect(payload.acceptedCommit).toBe(currentAcceptedPushedState.accepted_pushed_commit);
     expect(payload.acceptedCommit).toBe("76c73122a87cb23b5b8595a002d54d7a127fbba8");

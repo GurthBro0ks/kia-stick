@@ -4,6 +4,7 @@ import { getRuntimeVersion } from "@/lib/serverVersion";
 import { currentAcceptedPushedState } from "@/lib/acceptedState";
 
 export const dynamic = "force-dynamic";
+const LOCAL_RUNTIME_PHASE = "KIA-Stick-public-Weingarten-cited-argument-builder-pilot";
 
 export function GET() {
   const version = getRuntimeVersion();
@@ -11,7 +12,7 @@ export function GET() {
   return NextResponse.json({
     ok: true,
     app: "kia-stick",
-    phase: currentAcceptedPushedState.local_bundle_phase,
+    phase: LOCAL_RUNTIME_PHASE,
     acceptedCheckpoint: currentAcceptedPushedState.checkpoint_label,
     acceptedCommit: currentAcceptedPushedState.accepted_pushed_commit,
     repositoryRecordingCommit: currentAcceptedPushedState.repository_recording_commit,

@@ -563,6 +563,144 @@ a {
   margin-top: 10px;
 }
 
+.publicArgumentPlan {
+  min-width: 0;
+  margin-top: 14px;
+  border: 2px solid #7ca99b;
+  border-radius: 8px;
+  background: #f4fbf8;
+  padding: 12px;
+  overflow: hidden;
+}
+
+.argumentPlanHeader {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 10px;
+}
+
+.argumentPlanHeader h3,
+.argumentPlanSection h4 {
+  margin: 3px 0 0;
+}
+
+.argumentPlanPrivateWarning {
+  display: flex;
+  align-items: flex-start;
+  gap: 8px;
+  border: 1px solid #d4bb76;
+  background: #fff7dd;
+  color: #59451a;
+  padding: 9px;
+}
+
+.argumentPlanPrivateWarning svg {
+  flex: 0 0 auto;
+}
+
+.argumentPlanMeta {
+  display: grid;
+  gap: 4px;
+  margin-top: 10px;
+  border: 1px solid #c8d6d4;
+  background: #fff;
+  padding: 8px;
+  color: var(--muted);
+  font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+  font-size: 0.68rem;
+  font-weight: 800;
+}
+
+.argumentPlanMeta span,
+.argumentPlanSources li,
+.argumentPlanSources button {
+  min-width: 0;
+  max-width: 100%;
+  overflow-wrap: anywhere;
+  word-break: break-word;
+}
+
+.argumentPlanSection {
+  margin-top: 10px;
+  border-top: 1px solid #c8d6d4;
+  padding-top: 10px;
+}
+
+.argumentPlanSection h4 {
+  color: var(--blue);
+  font-size: 0.9rem;
+}
+
+.argumentPlanList,
+.argumentPlanSources {
+  display: grid;
+  gap: 7px;
+  margin: 7px 0 0;
+  padding-left: 22px;
+}
+
+.argumentPlanList li {
+  line-height: 1.45;
+}
+
+.argumentPlanCitationLinks {
+  display: inline-flex;
+  flex-wrap: wrap;
+  gap: 3px;
+  margin-left: 5px;
+}
+
+.argumentPlanCitationButton {
+  min-width: 30px;
+  min-height: 30px;
+  border: 1px solid #7ca99b;
+  background: #fff;
+  color: var(--blue);
+  font-weight: 950;
+}
+
+.argumentPlanEscalation {
+  border: 1px solid #d4bb76;
+  background: #fff7dd;
+  padding: 10px;
+}
+
+.argumentPlanSources li {
+  display: grid;
+  gap: 4px;
+}
+
+.argumentPlanSources span {
+  color: var(--green);
+  font-size: 0.72rem;
+  font-weight: 900;
+  text-transform: uppercase;
+}
+
+.argumentPlanSaveActions,
+.savedPlanActions {
+  margin-top: 12px;
+}
+
+.argumentPlanSaveActions span {
+  color: var(--muted);
+  font-size: 0.75rem;
+  font-weight: 850;
+  overflow-wrap: anywhere;
+}
+
+.savedPlanActions {
+  display: grid;
+  gap: 9px;
+}
+
+.publicArgumentPlan button:focus-visible,
+.publicArgumentPlan a:focus-visible {
+  outline: 3px solid var(--blue);
+  outline-offset: 3px;
+}
+
 .fullPacket {
   margin-top: 12px;
   border-top: 1px solid #d7dde2;
@@ -1823,6 +1961,14 @@ a {
 
   .publicSourceHeader {
     display: grid;
+  }
+
+  .argumentPlanHeader {
+    display: grid;
+  }
+
+  .publicArgumentPlan {
+    padding: 10px;
   }
 
   .officialSourceLink {
