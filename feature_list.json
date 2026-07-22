@@ -11850,5 +11850,31 @@
     "source_sync_performed": false,
     "private_data_accessed": false,
     "discord_sent": false
+  },
+  "stale_local_bundle_status_and_health_truth_repair_closeout": {
+    "phase": "KIA-Stick-stale-local-bundle-push-status-repair-and-health-truth-fix-closeout-and-push",
+    "status": "closeout_push_authorized",
+    "authorization": "CLOSEOUT_AND_PUSH_KIA_STALE_STATUS_AND_HEALTH_TRUTH_REPAIR_AUTHORIZED",
+    "stale_status_repair_commit": "bd3d5ad259d0eec739f4f73a675c0bf01e006dc8",
+    "health_truth_repair_commit": "3b2d37fc4f2daafc495ffd6a2fb0e55dfa30b0a4",
+    "accepted_capability_commit": "76c73122a87cb23b5b8595a002d54d7a127fbba8",
+    "capability_repository_equality_commit": "3690c74650d0fb19395bd046adee1bf236950f9e",
+    "prior_latest_pushed_closeout_commit": "0695680047608462b5f154a9ed82593e6923932a",
+    "repair_and_operator_qa_proof_dir": "/home/mint/kia-stick-local-proofs/proof_kia_stick_stale_local_bundle_push_status_repair_20260722T154710Z/health_truth_repair_20260722T162649Z",
+    "closeout_push_proof_dir": "/home/mint/kia-stick-local-proofs/proof_kia_stick_stale_local_bundle_push_status_repair_20260722T154710Z/health_truth_repair_20260722T162649Z/closeout_push_20260722T170449Z",
+    "validation_status": "PASS",
+    "manual_qa_status": "PASS",
+    "push_completion_recorded_in_closeout_proof": true,
+    "post_push_accepted_state_bookkeeping_requires_separate_authorization": true,
+    "accepted_identity_rewritten": false,
+    "queue_015_status": "blocked",
+    "next_postcss_status": "WARN_SAFE_NEXT_TARGET_UNCLEAR",
+    "v0912c_status": "blocked_pending_exact_target",
+    "product_version": "0.7.0",
+    "package_json_changed": false,
+    "package_lock_changed": false,
+    "source_sync_performed": false,
+    "private_data_accessed": false,
+    "discord_sent": false
   }
 }

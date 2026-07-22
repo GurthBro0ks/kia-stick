@@ -1,3 +1,12 @@
+- Phase: `KIA-Stick-stale-local-bundle-push-status-repair-and-health-truth-fix-closeout-and-push`
+- Authorization: `CLOSEOUT_AND_PUSH_KIA_STALE_STATUS_AND_HEALTH_TRUTH_REPAIR_AUTHORIZED`.
+- Status: stale local-bundle push-status repair `bd3d5ad259d0eec739f4f73a675c0bf01e006dc8` and health-truth repair `3b2d37fc4f2daafc495ffd6a2fb0e55dfa30b0a4` passed validation and operator QA and are authorized for one closeout push.
+- Identity truth: accepted capability stays `76c73122a87cb23b5b8595a002d54d7a127fbba8`; capability repository-equality history stays `3690c74650d0fb19395bd046adee1bf236950f9e`; prior latest pushed closeout is `0695680047608462b5f154a9ed82593e6923932a`; current build identity remains independently version-derived.
+- Repair/operator-QA proof: `/home/mint/kia-stick-local-proofs/proof_kia_stick_stale_local_bundle_push_status_repair_20260722T154710Z/health_truth_repair_20260722T162649Z`.
+- Canonical closeout/push proof: `/home/mint/kia-stick-local-proofs/proof_kia_stick_stale_local_bundle_push_status_repair_20260722T154710Z/health_truth_repair_20260722T162649Z/closeout_push_20260722T170449Z`.
+- Scope: `CLOSEOUT.md`, `claude-progress.md`, and `feature_list.json` only for this closeout commit. No runtime/source/private-data/package/lockfile/service/system/network/Discord change; queue-015 and v0.9.12C remain blocked; Next/PostCSS remains parked.
+- Push completion, final SHA, and `HEAD == origin/main == remote main` equality are recorded in the canonical proof. Post-push accepted-state bookkeeping remains separately authorized.
+
 - Phase: `KIA-Stick-public-Settings-post-closeout-accepted-state-refresh-repository-equality-copy-repair-closeout-and-push`
 - Authorization: `CLOSEOUT_AND_PUSH_KIA_SETTINGS_ACCEPTED_STATE_REFRESH_REPAIR_AUTHORIZED`.
 - Status: accepted-state refresh `a840352`, equality-copy repair `97df7d4`, and operator-QA PASS recording `7daa8ad` passed the closeout gate and are authorized for one push; the accepted capability remains `76c7312` and the historical repository equality recording identity remains `3690c74`.

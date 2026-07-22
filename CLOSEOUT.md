@@ -1,3 +1,20 @@
+## Stale Local-Bundle Status and Health Truth Repair Closeout and Push
+
+- Phase: `KIA-Stick-stale-local-bundle-push-status-repair-and-health-truth-fix-closeout-and-push`.
+- Authorization: `CLOSEOUT_AND_PUSH_KIA_STALE_STATUS_AND_HEALTH_TRUTH_REPAIR_AUTHORIZED`.
+- Stale-status repair commit: `bd3d5ad259d0eec739f4f73a675c0bf01e006dc8`.
+- Health-truth repair commit: `3b2d37fc4f2daafc495ffd6a2fb0e55dfa30b0a4`.
+- Accepted capability remains `76c73122a87cb23b5b8595a002d54d7a127fbba8`; its historical repository-equality point remains `3690c74650d0fb19395bd046adee1bf236950f9e`.
+- Prior latest pushed repository closeout is `0695680047608462b5f154a9ed82593e6923932a`; the new final closeout commit and remote equality are recorded in the canonical closeout proof without rewriting either historical identity.
+- Repair and operator-QA proof: `/home/mint/kia-stick-local-proofs/proof_kia_stick_stale_local_bundle_push_status_repair_20260722T154710Z/health_truth_repair_20260722T162649Z`.
+- Canonical closeout/push proof: `/home/mint/kia-stick-local-proofs/proof_kia_stick_stale_local_bundle_push_status_repair_20260722T154710Z/health_truth_repair_20260722T162649Z/closeout_push_20260722T170449Z`.
+- Validation and manual QA: `PASS` / `PASS`; Settings status truth and `/health` phase/identity truth are accepted with current build SHA kept independent.
+- Scope: `CLOSEOUT.md`, `claude-progress.md`, and `feature_list.json` only for this closeout commit; no runtime, source, private-data, package/lockfile, service, scheduler, network, or notification change.
+- Push gate: one authorized push of `main`; final `HEAD == origin/main == remote main` equality is recorded in the canonical proof.
+- Contract note: post-push accepted-state bookkeeping remains a separately authorized stage; this closeout does not self-reference the new closeout SHA or rewrite accepted capability/history.
+- Blocked states preserved: queue-015 remains blocked; Next/PostCSS remains `WARN_SAFE_NEXT_TARGET_UNCLEAR`; v0.9.12C remains blocked; product/package remain `0.7.0`.
+- Notifications: Discord disabled; no duplicate notification; no report URL.
+
 ## Public Settings Accepted-State Refresh Equality Repair Closeout and Push
 
 - Phase: `KIA-Stick-public-Settings-post-closeout-accepted-state-refresh-repository-equality-copy-repair-closeout-and-push`.
