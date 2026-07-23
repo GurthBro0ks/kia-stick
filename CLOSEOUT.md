@@ -1,3 +1,23 @@
+## Public Weingarten Cited Argument Builder Closeout and Push
+
+- Phase: `KIA-Stick-public-Weingarten-cited-argument-builder-pilot-closeout-and-push`.
+- Authorization: `CLOSEOUT_AND_PUSH_KIA_WEINGARTEN_ARGUMENT_BUILDER_AUTHORIZED`.
+- Argument-builder implementation commit: `9773768b5a7354281e9a4868876e85778c306d56`.
+- Settings local-bundle truth repair commit: `7a9eeb9b281bf5e0a2feb64958b6702bc71062bc`.
+- Saved persistent-record identity repair commit: `22fd63c69eb0e3c49e0aefb0fea2c15ae86d9058`.
+- Operator-QA PASS recording commit: `103630cf825de2a44486724674e72702df784e39`.
+- Implementation proof: `/home/mint/kia-stick-local-proofs/proof_kia_stick_public_weingarten_cited_argument_builder_pilot_20260722T172040Z`.
+- Settings truth-repair proof: `/home/mint/kia-stick-local-proofs/proof_kia_stick_public_weingarten_cited_argument_builder_pilot_20260722T172040Z/settings_local_bundle_truth_repair_20260722T214458Z`.
+- Saved-ID repair proof: `/home/mint/kia-stick-local-proofs/proof_kia_stick_public_weingarten_cited_argument_builder_pilot_20260722T172040Z/settings_local_bundle_truth_repair_20260722T214458Z/saved_id_collision_repair_20260723T170415Z`.
+- Operator-QA PASS proof: `/home/mint/kia-stick-local-proofs/proof_kia_stick_public_weingarten_cited_argument_builder_saved_id_collision_repair_operator_qa_pass_recording_20260723T173721Z`.
+- Canonical closeout/push proof: `/home/mint/kia-stick-local-proofs/proof_kia_stick_public_weingarten_cited_argument_builder_saved_id_collision_repair_operator_qa_pass_recording_20260723T173721Z/closeout_push_20260723T180541Z`.
+- Validation and manual QA: `PASS` / `PASS`; deterministic public Weingarten plan generation, current citation governance, fake/public separation, Settings truth, Saved answer/plan identity separation, legacy collision migration, and local proof-chain selection are accepted.
+- Scope: `CLOSEOUT.md`, `claude-progress.md`, and `feature_list.json` only for this closeout commit; no runtime, source, private-data, package/lockfile, service, scheduler, network, notification, or blocked-target change.
+- Push gate: one authorized push of `main`; final closeout SHA and `HEAD == origin/main == remote main` equality are recorded in the canonical proof.
+- Contract note: accepted capability `76c73122a87cb23b5b8595a002d54d7a127fbba8`, repository-recording identity `3690c74650d0fb19395bd046adee1bf236950f9e`, and prior latest pushed closeout `0695680047608462b5f154a9ed82593e6923932a` remain historical until a separately authorized post-push accepted-state bookkeeping refresh.
+- Blocked states preserved: queue-015 remains blocked; Next/PostCSS remains `WARN_SAFE_NEXT_TARGET_UNCLEAR`; v0.9.12C remains blocked; product/package remain `0.7.0`.
+- Notifications: Discord disabled; no duplicate notification; no report URL.
+
 ## Stale Local-Bundle Status and Health Truth Repair Closeout and Push
 
 - Phase: `KIA-Stick-stale-local-bundle-push-status-repair-and-health-truth-fix-closeout-and-push`.

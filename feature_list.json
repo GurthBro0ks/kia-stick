@@ -11876,5 +11876,33 @@
     "source_sync_performed": false,
     "private_data_accessed": false,
     "discord_sent": false
+  },
+  "public_weingarten_cited_argument_builder_closeout": {
+    "phase": "KIA-Stick-public-Weingarten-cited-argument-builder-pilot-closeout-and-push",
+    "status": "closeout_push_authorized",
+    "authorization": "CLOSEOUT_AND_PUSH_KIA_WEINGARTEN_ARGUMENT_BUILDER_AUTHORIZED",
+    "implementation_commit": "9773768b5a7354281e9a4868876e85778c306d56",
+    "settings_truth_repair_commit": "7a9eeb9b281bf5e0a2feb64958b6702bc71062bc",
+    "saved_id_collision_repair_commit": "22fd63c69eb0e3c49e0aefb0fea2c15ae86d9058",
+    "operator_qa_recording_commit": "103630cf825de2a44486724674e72702df784e39",
+    "implementation_proof_dir": "/home/mint/kia-stick-local-proofs/proof_kia_stick_public_weingarten_cited_argument_builder_pilot_20260722T172040Z",
+    "settings_truth_repair_proof_dir": "/home/mint/kia-stick-local-proofs/proof_kia_stick_public_weingarten_cited_argument_builder_pilot_20260722T172040Z/settings_local_bundle_truth_repair_20260722T214458Z",
+    "saved_id_collision_repair_proof_dir": "/home/mint/kia-stick-local-proofs/proof_kia_stick_public_weingarten_cited_argument_builder_pilot_20260722T172040Z/settings_local_bundle_truth_repair_20260722T214458Z/saved_id_collision_repair_20260723T170415Z",
+    "operator_qa_pass_proof_dir": "/home/mint/kia-stick-local-proofs/proof_kia_stick_public_weingarten_cited_argument_builder_saved_id_collision_repair_operator_qa_pass_recording_20260723T173721Z",
+    "closeout_push_proof_dir": "/home/mint/kia-stick-local-proofs/proof_kia_stick_public_weingarten_cited_argument_builder_saved_id_collision_repair_operator_qa_pass_recording_20260723T173721Z/closeout_push_20260723T180541Z",
+    "validation_status": "PASS",
+    "manual_qa_status": "PASS",
+    "push_completion_recorded_in_closeout_proof": true,
+    "post_push_accepted_state_bookkeeping_requires_separate_authorization": true,
+    "accepted_identity_rewritten": false,
+    "queue_015_status": "blocked",
+    "next_postcss_status": "WARN_SAFE_NEXT_TARGET_UNCLEAR",
+    "v0912c_status": "blocked_pending_exact_target",
+    "product_version": "0.7.0",
+    "package_json_changed": false,
+    "package_lock_changed": false,
+    "source_sync_performed": false,
+    "private_data_accessed": false,
+    "discord_sent": false
   }
 }
