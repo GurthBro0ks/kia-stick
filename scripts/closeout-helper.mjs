@@ -513,6 +513,7 @@ function collectProofChain(featureList, proof = {}) {
     operatorQaProof:
       current.operator_qa_pass_proof_dir ||
       current.operator_qa_proof_dir ||
+      accepted.local_bundle_operator_qa_pass_proof_dir ||
       accepted.operator_qa_pass_proof_dir ||
       accepted.operator_qa_proof_dir ||
       priorAccepted.operator_qa_pass_proof_dir ||

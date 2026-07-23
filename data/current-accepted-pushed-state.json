@@ -10,7 +10,8 @@
   "repository_recording_commit": "3690c74650d0fb19395bd046adee1bf236950f9e",
   "repository_recording_short_commit": "3690c74",
   "accepted_pushed_proof_dir": "/home/mint/kia-stick-local-proofs/proof_kia_stick_public_settings_user_summary_operator_diagnostics_split_operator_qa_pass_recording_20260721T160349Z/closeout_push_20260721T161310Z",
-  "local_implementation_proof_dir": "/home/mint/kia-stick-local-proofs/proof_kia_stick_public_weingarten_cited_argument_builder_pilot_20260722T172040Z",
+  "local_implementation_proof_dir": "/home/mint/kia-stick-local-proofs/proof_kia_stick_public_weingarten_cited_argument_builder_pilot_20260722T172040Z/settings_local_bundle_truth_repair_20260722T214458Z/saved_id_collision_repair_20260723T170415Z",
+  "local_bundle_operator_qa_pass_proof_dir": "/home/mint/kia-stick-local-proofs/proof_kia_stick_public_weingarten_cited_argument_builder_saved_id_collision_repair_operator_qa_pass_recording_20260723T173721Z",
   "operator_qa_pass_proof_dir": "/home/mint/kia-stick-local-proofs/proof_kia_stick_public_settings_user_summary_operator_diagnostics_split_operator_qa_pass_recording_20260721T160349Z",
   "accepted_pushed_phase": "KIA-Stick-public-Settings-user-summary-and-operator-diagnostics-split-closeout-and-push",
   "accepted_validation": "PASS",
@@ -23,7 +24,7 @@
   "latest_pushed_closeout_proof_dir": "/home/mint/kia-stick-local-proofs/proof_kia_stick_public_settings_post_closeout_accepted_state_refresh_repository_equality_copy_repair_operator_qa_pass_recording_20260721T171139Z/closeout_push_20260721T172102Z",
   "latest_pushed_closeout_status": "public Settings post-closeout accepted-state refresh, repository-equality copy repair, and operator-QA recording; validation PASS; manual QA PASS; pushed yes; repository equality at 0695680047608462b5f154a9ed82593e6923932a",
   "local_bundle_phase": "KIA-Stick-public-Weingarten-cited-argument-builder-pilot",
-  "local_bundle_status": "public Weingarten cited argument-builder pilot; validation PASS; pushed no; manual QA pending operator review",
+  "local_bundle_status": "public Weingarten cited argument-builder pilot Saved ID collision repair; validation PASS; pushed no; manual QA PASS",
   "historical_prior_checkpoints": [
     { "checkpoint": "CBA Citation Durability Source Instance and Resync Drift Guard", "commit": "1e0e96b0e0cd95d1e62af1eb76cfd5b57c43f4e8", "short_commit": "1e0e96b", "status": "historical_only_not_current" },
     { "checkpoint": "Public Truth and Generic CBA Routing Repair", "commit": "571436a59a7d09756b401912906377c6257680af", "short_commit": "571436a", "status": "historical_only_not_current" },
