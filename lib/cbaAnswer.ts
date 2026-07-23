@@ -41,13 +41,22 @@ export const genericCbaRetrievalSuggestions = [
   "What does Article 17 say about steward representation?",
 ];
 
+function isAnnualLeaveIntent(normalized: string): boolean {
+  if (/\b(fake|sample|sick leave|fmla|lwop|military leave|owcp|medical|attendance|disciplin(?:e|ary))\b/.test(normalized)) {
+    return false;
+  }
+  const explicitTopic = /\b(annual leave|vacation)\b/.test(normalized);
+  const boundedGenericLeave =
+    /\bleave\b/.test(normalized) &&
+    /\b(supervisor|prime[ -]?time|tomorrow|time off)\b/.test(normalized);
+  const administrationCue =
+    /\b(request(?:ed|ing)?|submit(?:ted|ting)?|den(?:y|ied|ial)|schedul(?:e|ed|ing)|approv(?:al|e|ed)|administration|deadline|time off)\b/.test(normalized);
+  return (explicitTopic || boundedGenericLeave) && administrationCue;
+}
+
 export function detectCbaIntent(question: string): CbaQuestionIntent {
   const normalized = question.toLowerCase();
-  if (
-    /\b(annual leave|vacation)\b/.test(normalized) &&
-    /\b(request|requested|requesting|denied|deny|denial|schedule|scheduled|scheduling|approval|approved|administration)\b/.test(normalized) &&
-    !/\b(fake|sample|sick leave|fmla|lwop|military leave|owcp|medical|attendance|disciplin(?:e|ary))\b/.test(normalized)
-  ) return "annual_leave";
+  if (isAnnualLeaveIntent(normalized)) return "annual_leave";
   if (/\b(nlrb|weingarten)\b/.test(normalized) && /\b(cba|collective bargaining agreement|contract)\b/.test(normalized)) return "cross_source";
   if (/\b(article\s*15|grievance)\b/.test(normalized) && /\b(days?|deadline|file|filing|timely|time limit)\b/.test(normalized)) return "grievance_deadline";
   if (/\barticle\s*17\b/.test(normalized) || (/\b(representation|steward)\b/.test(normalized) && /\b(cba|contract|article)\b/.test(normalized))) return "article_17";

@@ -104,6 +104,55 @@ describe("public CBA annual-leave cited grievance outline", () => {
     expect(publicGrievanceOutlineEligibility({ answer, source: cbaSource }).eligible).toBe(true);
   });
 
+  it.each([
+    "If I forget to submit my prime-time annual leave by the deadline, can I still take any time off during prime-time?",
+    "I forgot to submit my leave today and I still need tomorrow off. Is my supervisor allowed to deny my leave?",
+  ])("keeps the operator-QA annual-leave wording in the official CBA lane: %s", (question) => {
+    expect(resolveChatAnswerLane(question, "auto")).toBe("cba");
+    const { answer, snapshot } = submit(question);
+    expect(snapshot.sourceMode).toBe("cba");
+    expect(answer.publicSourceRole).toBe("cba_contract");
+    expect(answer.version.provider).toBe("local-public-cba-deterministic");
+    expect(answer.version.promptVersion).toBe("prompt.public-cba.v0.1-citation-first");
+    expect(answer.citations.length).toBeGreaterThan(0);
+    expect(answer.citations.every((citation) => citation.citationVerificationState === "verified_current")).toBe(true);
+    expect(publicGrievanceOutlineEligibility({ answer, source: cbaSource }).eligible).toBe(true);
+    const outline = buildPublicGrievanceOutline({ answer, source: cbaSource });
+    expect(outline).not.toBeNull();
+    expect([
+      outline!.issue,
+      outline!.governingContractLanguage,
+      outline!.elementsToEstablish,
+      outline!.factsToConfirm,
+      outline!.evidenceToRequest,
+      outline!.questionsForManagement,
+      outline!.stepOneArgument,
+      outline!.possibleRemedies,
+      outline!.timelinessAndProcedureLimits,
+      outline!.escalationReadiness,
+      outline!.limitations,
+      outline!.citations,
+    ].every((section) => typeof section === "string" ? section.length > 0 : section.length > 0)).toBe(true);
+  });
+
+  it("keeps explicit fake selection isolated and fails a recognized Automatic public intent closed without the CBA cache", () => {
+    const question = "If I forget to submit my prime-time annual leave by the deadline, can I still take any time off during prime-time?";
+    const explicitFake = submit(question, { sourcePolicy: "fake" });
+    expect(explicitFake.snapshot.sourceMode).toBe("fake");
+    expect(explicitFake.answer.answerKind).toBe("fake");
+    expect(explicitFake.answer.version.provider).toBe("local-fake-deterministic");
+    expect(publicGrievanceOutlineEligibility({ answer: explicitFake.answer, source: cbaSource }).eligible).toBe(false);
+
+    const missingSource = submit(question, { cache: null });
+    expect(missingSource.snapshot.sourceMode).toBe("cba");
+    expect(missingSource.answer.answerKind).toBe("public");
+    expect(missingSource.answer.publicSourceRole).toBe("cba_contract");
+    expect(missingSource.answer.noAnswer).toBe(true);
+    expect(missingSource.answer.version.provider).toBe("local-public-cba-deterministic");
+    expect(missingSource.answer.citations).toEqual([]);
+    expect(publicGrievanceOutlineEligibility({ answer: missingSource.answer, source: null }).eligible).toBe(false);
+  });
+
   it("keeps known fake annual-leave wording isolated and preserves unrelated routes", () => {
     expect(resolveChatAnswerLane("Can annual leave be denied after I submitted inside the fake window?", "auto")).toBe("fake");
     expect(resolveChatAnswerLane("What does the contract say about overtime?", "auto")).toBe("cba");
@@ -343,7 +392,7 @@ describe("public CBA annual-leave cited grievance outline", () => {
   it("keeps Settings, health, accepted identities, product, and blocked gates truthful", async () => {
     expect(currentAcceptedPushedState.local_bundle_phase).toBe(PUBLIC_GRIEVANCE_OUTLINE_PHASE);
     expect(currentAcceptedPushedState.local_bundle_status).toBe(
-      "public CBA annual-leave cited grievance-outline pilot; validation PASS; pushed no; manual QA pending operator review"
+      "public CBA annual-leave cited grievance-outline pilot; automatic public-CBA routing repair; validation PASS; pushed no; manual QA pending operator rerun"
     );
     expect(currentAcceptedPushedState.accepted_pushed_commit).toBe("76c73122a87cb23b5b8595a002d54d7a127fbba8");
     expect(currentAcceptedPushedState.repository_recording_commit).toBe("3690c74650d0fb19395bd046adee1bf236950f9e");

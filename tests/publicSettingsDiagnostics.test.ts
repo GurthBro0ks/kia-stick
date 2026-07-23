@@ -39,7 +39,8 @@ describe("public Settings summary and operator diagnostics split", () => {
     expect(html).toContain("public CBA annual-leave cited grievance-outline pilot");
     expect(html).toContain("validation PASS");
     expect(html).toContain("pushed no");
-    expect(html).toContain("manual QA pending operator review");
+    expect(html).toContain("automatic public-CBA routing repair");
+    expect(html).toContain("manual QA pending operator rerun");
     expect(html).not.toContain("stale local-bundle push-status repair");
     expect(html).toContain("APWU-USPS CBA");
     expect(html).toContain("current source instance verified");
@@ -81,7 +82,7 @@ describe("public Settings summary and operator diagnostics split", () => {
     expect(html).toContain(currentAcceptedPushedState.latest_pushed_closeout_short_commit as string);
     expect(html).toContain(currentAcceptedPushedState.local_bundle_status);
     expect(currentAcceptedPushedState.local_bundle_status).toContain("pushed no");
-    expect(currentAcceptedPushedState.local_bundle_status).toContain("manual QA pending operator review");
+    expect(currentAcceptedPushedState.local_bundle_status).toContain("manual QA pending operator rerun");
     expect(currentAcceptedPushedState.accepted_pushed_short_commit).toBe("76c7312");
     expect(currentAcceptedPushedState.repository_recording_short_commit).toBe("3690c74");
     expect(currentAcceptedPushedState.latest_pushed_closeout_short_commit).toBe("0695680");

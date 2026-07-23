@@ -24,7 +24,7 @@
   "latest_pushed_closeout_proof_dir": "/home/mint/kia-stick-local-proofs/proof_kia_stick_public_settings_post_closeout_accepted_state_refresh_repository_equality_copy_repair_operator_qa_pass_recording_20260721T171139Z/closeout_push_20260721T172102Z",
   "latest_pushed_closeout_status": "public Settings post-closeout accepted-state refresh, repository-equality copy repair, and operator-QA recording; validation PASS; manual QA PASS; pushed yes; repository equality at 0695680047608462b5f154a9ed82593e6923932a",
   "local_bundle_phase": "KIA-Stick-public-CBA-annual-leave-cited-grievance-outline-pilot",
-  "local_bundle_status": "public CBA annual-leave cited grievance-outline pilot; validation PASS; pushed no; manual QA pending operator review",
+  "local_bundle_status": "public CBA annual-leave cited grievance-outline pilot; automatic public-CBA routing repair; validation PASS; pushed no; manual QA pending operator rerun",
   "historical_prior_checkpoints": [
     { "checkpoint": "CBA Citation Durability Source Instance and Resync Drift Guard", "commit": "1e0e96b0e0cd95d1e62af1eb76cfd5b57c43f4e8", "short_commit": "1e0e96b", "status": "historical_only_not_current" },
     { "checkpoint": "Public Truth and Generic CBA Routing Repair", "commit": "571436a59a7d09756b401912906377c6257680af", "short_commit": "571436a", "status": "historical_only_not_current" },
