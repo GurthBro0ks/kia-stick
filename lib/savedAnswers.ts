@@ -6,7 +6,7 @@ import {
   PUBLIC_SOURCE_POSTAL_APPLICABILITY,
 } from "@/lib/publicSource";
 import { CBA_SOURCE_OWNER } from "@/lib/cbaSource";
-import type { CitationVerificationState } from "@/lib/cbaCitationIntegrity";
+import { sha256Hex, type CitationVerificationState } from "@/lib/cbaCitationIntegrity";
 import type { Detail, Mode, Scope } from "@/lib/sourceModel";
 import { clientVersion } from "@/lib/version";
 import {
@@ -54,6 +54,8 @@ export interface SavedAnswer {
   argumentPlan?: PublicArgumentPlan;
 }
 
+export type SavedRecordType = SavedAnswer["savedType"];
+
 export type SaveAnswerStatus = "created" | "replaced" | "duplicate";
 
 export interface SaveAnswerResult {
@@ -66,12 +68,11 @@ function normalizeText(value: string): string {
   return value.trim().toLowerCase().replace(/\s+/g, " ");
 }
 
-function stableHash(value: string): string {
-  let hash = 5381;
-  for (const char of value) {
-    hash = (hash * 33) ^ char.charCodeAt(0);
-  }
-  return (hash >>> 0).toString(36);
+export function savedRecordId(savedType: SavedRecordType, saveKey: string): string {
+  const namespace = savedType === PUBLIC_ARGUMENT_PLAN_SAVED_TYPE
+    ? "public-argument-plan"
+    : "answer";
+  return `saved-${namespace}-${sha256Hex(saveKey)}`;
 }
 
 const modes = ["Strict Research", "Calm Neutral", "Aggressive Grievance", "Steward-to-Supervisor"] as const;
@@ -151,7 +152,7 @@ function stableAnswerFingerprint(answer: AnswerResult, mode: Mode, scope: Scope,
   ].join("|");
 }
 
-function legacyAnswerIdentity(item: Pick<SavedAnswer, "question" | "answer" | "mode" | "scope" | "citations">): string {
+function savedAnswerRecordContentKey(item: Pick<SavedAnswer, "question" | "answer" | "mode" | "scope" | "citations">): string {
   const shortAnswerLine = item.answer
     .split("\n")
     .find((line) => line.toLowerCase().startsWith("short answer:"))
@@ -200,20 +201,26 @@ export function createSavedAnswerRecord(input: {
   scope: Scope;
   detail: Detail;
   timestamp: string;
-  existingId?: string;
 }): SavedAnswer {
-  const saveKey = savedAnswerKey(input.answer, input.mode, input.scope);
+  const renderedAnswer = answerToMarkdown(input.answer);
+  const saveKey = savedAnswerRecordContentKey({
+    question: input.answer.question,
+    answer: renderedAnswer,
+    mode: input.mode,
+    scope: input.scope,
+    citations: input.answer.citations,
+  });
   const dataFingerprint = savedAnswerFingerprint(input.answer, input.mode, input.scope, input.detail);
   const publicCitation = input.answer.citations.find((citation) => citation.sourceKind === "public");
   const cbaCitation = input.answer.citations.find((citation) => citation.publicSourceType === "cba_contract");
   const answerLane = cbaCitation ? "public_cba" : input.answer.answerKind === "public" || publicCitation ? "public" : "fake";
 
   return {
-    id: input.existingId ?? `saved-${stableHash(saveKey)}`,
+    id: savedRecordId("answer", saveKey),
     saveKey,
     dataFingerprint,
     question: input.answer.question,
-    answer: answerToMarkdown(input.answer),
+    answer: renderedAnswer,
     mode: input.mode,
     scope: input.scope,
     detail: input.detail,
@@ -260,12 +267,11 @@ export function createSavedArgumentPlanRecord(input: {
   scope: Scope;
   detail: Detail;
   timestamp: string;
-  existingId?: string;
 }): SavedAnswer {
   const publicCitation = input.plan.citations[0];
   const saveKey = `${PUBLIC_ARGUMENT_PLAN_SAVED_TYPE}|${input.plan.id}`;
   return {
-    id: input.existingId ?? `saved-${stableHash(saveKey)}`,
+    id: savedRecordId(PUBLIC_ARGUMENT_PLAN_SAVED_TYPE, saveKey),
     saveKey,
     dataFingerprint: `${saveKey}|${input.plan.contentIdentity}`,
     question: input.question,
@@ -317,7 +323,7 @@ function validPublicArgumentPlan(value: unknown): value is PublicArgumentPlan {
 export function migrateSavedAnswers(input: unknown): SavedAnswer[] {
   if (!Array.isArray(input)) return [];
 
-  return input.reduce<SavedAnswer[]>((saved, item, index) => {
+  return input.reduceRight<SavedAnswer[]>((saved, item) => {
     if (!item || typeof item !== "object") return saved;
     const source = item as Partial<SavedAnswer>;
     const question = typeof source.question === "string" ? source.question.trim() : "";
@@ -338,7 +344,7 @@ export function migrateSavedAnswers(input: unknown): SavedAnswer[] {
       ? PUBLIC_ARGUMENT_PLAN_SAVED_TYPE
       : "answer";
     const normalized: SavedAnswer = {
-      id: typeof source.id === "string" ? source.id : `saved-${index}`,
+      id: "",
       saveKey: "",
       dataFingerprint: "",
       question,
@@ -388,10 +394,15 @@ export function migrateSavedAnswers(input: unknown): SavedAnswer[] {
       argumentPlan,
     };
 
+    const storedDataFingerprint = typeof source.dataFingerprint === "string" && source.dataFingerprint.length > 0
+      ? source.dataFingerprint
+      : null;
+
     try {
       if (savedType === PUBLIC_ARGUMENT_PLAN_SAVED_TYPE && argumentPlan) {
         normalized.saveKey = `${PUBLIC_ARGUMENT_PLAN_SAVED_TYPE}|${argumentPlan.id}`;
         normalized.dataFingerprint = `${normalized.saveKey}|${argumentPlan.contentIdentity}`;
+        normalized.id = savedRecordId(savedType, normalized.saveKey);
         return upsertSavedAnswer(saved, normalized, { preferNewerDuplicate: true }).saved;
       }
       if (publicCitation) throw new Error("Preserve public-source citation identity without fake answer rebuilding.");
@@ -404,9 +415,10 @@ export function migrateSavedAnswers(input: unknown): SavedAnswer[] {
       normalized.saveKey = savedAnswerKey(rebuiltAnswer, mode, scope);
       normalized.dataFingerprint = savedAnswerFingerprint(rebuiltAnswer, mode, scope, detail);
     } catch {
-      normalized.saveKey = legacyAnswerIdentity(normalized);
-      normalized.dataFingerprint = legacyFingerprint(normalized);
+      normalized.saveKey = savedAnswerRecordContentKey(normalized);
+      normalized.dataFingerprint = storedDataFingerprint ?? legacyFingerprint(normalized);
     }
+    normalized.id = savedRecordId(savedType, normalized.saveKey);
 
     return upsertSavedAnswer(saved, normalized, { preferNewerDuplicate: true }).saved;
   }, []);
