@@ -40,8 +40,39 @@ export function syntheticCbaExtraction(): string {
     for (let articleNumber = 1; articleNumber <= 43; articleNumber += 1) {
       if (pageIndex !== 10 + (articleNumber - 1) * 4) continue;
       lines.unshift(`ARTICLE ${articleNumber}`, `ARTICLE ${articleNumber} FIXTURE TITLE`, "");
+      if (articleNumber === 10) {
+        lines.push(
+          "",
+          "Section 2. Leave Regulations",
+          "",
+          "Career employees will be given preference over noncareer employees when scheduling annual leave. This preference will take into consideration that scheduling is done on a tour-by-tour basis and that employee skills are a determining factor in this decision.",
+          "",
+          "Section 3. Choice of Vacation Period",
+          "",
+          "It is agreed to establish a nationwide program for vacation planning with emphasis upon the choice vacation period. The duration of the choice vacation period shall be determined pursuant to local implementation procedures. Annual leave shall be granted in the choice period within the stated employee options, and the remainder may be granted at other times as requested.",
+          "",
+          "Section 4. Vacation Planning",
+          "",
+          "The installation head shall determine a final date for submission of applications for vacation periods and provide official notice to each employee of the vacation schedule approved for each employee. A procedure in each office for submission of applications for annual leave for periods other than the choice period may be established pursuant to the local implementation procedure.",
+          "",
+          "All advance commitments for granting annual leave must be honored except in serious emergency situations."
+        );
+      }
       if (articleNumber === 15) {
-        lines.push("", "Section 2. Grievance Procedure Steps", "", "Step 1: (a) Any employee who feels aggrieved must discuss the grievance with the immediate supervisor within fourteen (14) days of the date on which the employee or Union first learned or may reasonably have been expected to have learned of its cause.");
+        lines.push(
+          "",
+          "Section 1. Definition",
+          "",
+          "A grievance is defined as a dispute, difference, disagreement or complaint between the parties related to wages, hours, and conditions of employment. A grievance includes a complaint involving interpretation, application of, or compliance with this Agreement or any Local Memorandum of Understanding not in conflict with this Agreement.",
+          "",
+          "Section 2. Grievance Procedure Steps",
+          "",
+          "Step 1: (a) Any employee who feels aggrieved must discuss the grievance with the immediate supervisor within fourteen (14) days of the date on which the employee or Union first learned or may reasonably have been expected to have learned of its cause.",
+          "",
+          "(c) If no resolution is reached the supervisor shall render a decision stating the reasons. (d) The Union shall be entitled to appeal an adverse decision to Step 2 within ten (10) days after receipt of the supervisor decision. The standard grievance form shall include a detailed statement of facts, contentions, particular contractual provisions involved, and remedy sought.",
+          "",
+          "Step 2: (d) The Union representative and Employer representative shall make full and detailed statements of facts and contractual provisions relied upon. The parties shall cooperate fully to develop all necessary facts, including the exchange of copies of all relevant papers or documents."
+        );
       }
       if (articleNumber === 16) {
         lines.push("", "Section 1. Principles", "", "Discipline should be corrective rather than punitive. No employee may be disciplined or discharged except for just cause. Discipline is subject to the grievance-arbitration procedure.");

@@ -26,7 +26,14 @@ import { deriveCbaCitationIntegrity, verifyCbaCitation } from "@/lib/cbaCitation
 import type { Citation, Detail, Mode, Scope } from "@/lib/sourceModel";
 import type { RuntimeVersion } from "@/lib/version";
 
-export type CbaQuestionIntent = "grievance_deadline" | "article_17" | "article_16" | "cross_source" | "case_outcome" | "unsupported";
+export type CbaQuestionIntent =
+  | "annual_leave"
+  | "grievance_deadline"
+  | "article_17"
+  | "article_16"
+  | "cross_source"
+  | "case_outcome"
+  | "unsupported";
 
 export const genericCbaRetrievalSuggestions = [
   "What does Article 15 say?",
@@ -36,6 +43,11 @@ export const genericCbaRetrievalSuggestions = [
 
 export function detectCbaIntent(question: string): CbaQuestionIntent {
   const normalized = question.toLowerCase();
+  if (
+    /\b(annual leave|vacation)\b/.test(normalized) &&
+    /\b(request|requested|requesting|denied|deny|denial|schedule|scheduled|scheduling|approval|approved|administration)\b/.test(normalized) &&
+    !/\b(fake|sample|sick leave|fmla|lwop|military leave|owcp|medical|attendance|disciplin(?:e|ary))\b/.test(normalized)
+  ) return "annual_leave";
   if (/\b(nlrb|weingarten)\b/.test(normalized) && /\b(cba|collective bargaining agreement|contract)\b/.test(normalized)) return "cross_source";
   if (/\b(article\s*15|grievance)\b/.test(normalized) && /\b(days?|deadline|file|filing|timely|time limit)\b/.test(normalized)) return "grievance_deadline";
   if (/\barticle\s*17\b/.test(normalized) || (/\b(representation|steward)\b/.test(normalized) && /\b(cba|contract|article)\b/.test(normalized))) return "article_17";
@@ -45,7 +57,7 @@ export function detectCbaIntent(question: string): CbaQuestionIntent {
   return "unsupported";
 }
 
-function cbaCitation(source: CbaSourceCache, paragraph: CbaParagraph): Citation {
+export function citationForCbaParagraph(source: CbaSourceCache, paragraph: CbaParagraph): Citation {
   const sectionId = paragraph.sectionNumber ? `section-${paragraph.sectionNumber}` : "section-unknown";
   const integrity = deriveCbaCitationIntegrity(source, paragraph);
   const citation: Citation = {
@@ -195,7 +207,7 @@ function buildGenericCbaRetrievalAnswer(input: {
   return baseAnswer({
     ...input,
     shortAnswer: `Exact CBA passages retrieved for “${input.question}”:\n\n${passages}`,
-    citations: matches.map((match) => cbaCitation(input.source, match.paragraph)),
+    citations: matches.map((match) => citationForCbaParagraph(input.source, match.paragraph)),
     noAnswer: false,
     conflicts: ["These are retrieved contract passages. They do not determine a case outcome or add an interpretation."],
     evidenceChecklist: ["Read each quoted passage and its exact citation anchor.", "Confirm whether the retrieved passage addresses the question you intend to ask."],
@@ -217,6 +229,28 @@ export function buildCbaAnswer(input: {
   if (!input.source) return unavailableAnswer({ ...input, question });
   const intent = detectCbaIntent(question);
 
+  if (intent === "annual_leave") {
+    const article = paragraphsForArticle(input.source, "10");
+    const matches = distinctParagraphs([
+      article.find((paragraph) => paragraph.sectionNumber === "2" && /scheduling annual leave/i.test(paragraph.text)),
+      article.find((paragraph) => paragraph.sectionNumber === "3" && /choice vacation period/i.test(paragraph.text) && /annual leave shall be granted/i.test(paragraph.text)),
+      article.find((paragraph) => paragraph.sectionNumber === "4" && /submission of applications for annual leave/i.test(paragraph.text)),
+      article.find((paragraph) => paragraph.sectionNumber === "4" && /advance commitments for granting annual leave/i.test(paragraph.text)),
+    ]);
+    if (matches.length < 3) return unavailableAnswer({ ...input, question });
+    return baseAnswer({
+      ...input,
+      question,
+      shortAnswer: "Article 10 supplies current contract language for annual-leave scheduling and vacation planning. It addresses qualified scheduling preferences, choice-period leave, locally implemented request procedures, official schedule notice, and advance leave commitments subject to a serious-emergency exception. Which provisions apply depends on employee status, the requested period, the locally implemented procedure, and the actual request and disposition. These passages do not by themselves establish that management violated the CBA.",
+      citations: matches.map((paragraph) => citationForCbaParagraph(input.source!, paragraph)),
+      noAnswer: false,
+      conflicts: ["Article 10 expressly leaves parts of vacation planning and request administration to local implementation; no LMOU or local practice is included in this public pilot."],
+      evidenceChecklist: ["Review the leave request and its recorded disposition.", "Confirm the applicable leave calendar, approved schedule notice, and separately verified local implementation procedure."],
+      missingFacts: ["Employee status, applicable tour and skills, choice-period status, the locally implemented request procedure, the request disposition, and whether an advance commitment or serious emergency is involved."],
+      followUps: ["Build the cited grievance outline to separate verified Article 10 rules from the facts and local provisions that still require confirmation."],
+    });
+  }
+
   if (intent === "grievance_deadline") {
     const article = paragraphsForArticle(input.source, "15");
     const matches = distinctParagraphs([
@@ -228,7 +262,7 @@ export function buildCbaAnswer(input: {
       ...input,
       question,
       shortAnswer: "Article 15, Section 2, Step 1(a) states a fourteen-day period for an employee to discuss a grievance with the immediate supervisor, measured from when the employee or Union first learned or reasonably may have been expected to learn of its cause. The same passage also addresses a Union-initiated Step 1 grievance. Other grievance types or procedural postures may have different triggers, so this is not an unqualified deadline for every possible grievance.",
-      citations: matches.map((paragraph) => cbaCitation(input.source!, paragraph)),
+      citations: matches.map((paragraph) => citationForCbaParagraph(input.source!, paragraph)),
       noAnswer: false,
       missingFacts: ["The grievance type, when the employee or Union learned or reasonably should have learned of the cause, and whether another contractual procedure applies."],
     });
@@ -246,7 +280,7 @@ export function buildCbaAnswer(input: {
       ...input,
       question,
       shortAnswer: "Article 17 is CBA representation language. It provides for stewards to investigate, present, and adjust grievances and includes contract rules governing steward designation, access, permission, and compensated grievance-handling time. These citations are contract provisions; they are distinct from the separate NLRB Weingarten general-guidance source.",
-      citations: matches.map((paragraph) => cbaCitation(input.source!, paragraph)),
+      citations: matches.map((paragraph) => citationForCbaParagraph(input.source!, paragraph)),
       noAnswer: false,
       conflicts: [`Article 17 contract language and ${PUBLIC_SOURCE_ID} general guidance have distinct source roles and are not silently blended.`],
     });
@@ -264,7 +298,7 @@ export function buildCbaAnswer(input: {
       ...input,
       question,
       shortAnswer: "Article 16 states that discipline should be corrective rather than punitive and that an employee may not be disciplined or discharged except for just cause. It also makes discipline or discharge subject to the grievance-arbitration procedure. Whether those protections establish an outcome in a particular matter depends on the facts and procedural posture.",
-      citations: matches.map((paragraph) => cbaCitation(input.source!, paragraph)),
+      citations: matches.map((paragraph) => citationForCbaParagraph(input.source!, paragraph)),
       noAnswer: false,
       missingFacts: ["The charge, evidence, prior record, notice, level of discipline, employee status, timing, and grievance posture."],
     });
@@ -272,7 +306,7 @@ export function buildCbaAnswer(input: {
 
   if (intent === "cross_source") {
     const cbaParagraph = paragraphsForArticle(input.source, "17").find((paragraph) => paragraph.sectionNumber === "1" && /investigating, presenting and adjusting grievances/i.test(paragraph.text));
-    const citations = [cbaParagraph ? cbaCitation(input.source, cbaParagraph) : undefined, ...findNlrBCitation(input.nlrbSource)].filter((citation): citation is Citation => Boolean(citation));
+    const citations = [cbaParagraph ? citationForCbaParagraph(input.source, cbaParagraph) : undefined, ...findNlrBCitation(input.nlrbSource)].filter((citation): citation is Citation => Boolean(citation));
     return baseAnswer({
       ...input,
       question,
@@ -294,7 +328,7 @@ export function buildCbaAnswer(input: {
       ...input,
       question,
       shortAnswer: "I cannot determine whether management violated the contract in a specific case from this question and the CBA alone. The contract supplies rules, but a violation finding requires the relevant facts, coverage, dates, actions, defenses, local or incorporated authority, and procedural posture.",
-      citations: distinctParagraphs(relevant).map((paragraph) => cbaCitation(input.source!, paragraph)),
+      citations: distinctParagraphs(relevant).map((paragraph) => citationForCbaParagraph(input.source!, paragraph)),
       noAnswer: true,
       conflicts: ["The CBA is authoritative contract language, but it does not establish the disputed facts of this case."],
       missingFacts: ["Who is covered, what occurred, when it occurred, notice and response, relevant craft or local provisions, documents, witnesses, and grievance status."],

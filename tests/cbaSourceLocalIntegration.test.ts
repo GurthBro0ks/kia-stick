@@ -3,6 +3,10 @@ import { buildCbaAnswer } from "@/lib/cbaAnswer";
 import { CBA_EXPECTED_PDF_PAGES, CBA_SOURCE_ID, CBA_SOURCE_PDF_URL, searchCba } from "@/lib/cbaSource";
 import { readBoundedCbaSourceCache } from "@/lib/cbaSourceServer";
 import { readBoundedPublicSourceCache } from "@/lib/publicSourceServer";
+import {
+  buildPublicGrievanceOutline,
+  publicGrievanceOutlineEligibility,
+} from "@/lib/publicGrievanceOutline";
 import { createRuntimeVersion } from "@/lib/version";
 
 const requireCache = process.env.KIA_REQUIRE_CBA_SOURCE_CACHE === "1";
@@ -51,5 +55,34 @@ describe("local exact official CBA integration", () => {
     expect(answers[3].shortAnswer).toContain("No automatic override");
     const search = searchCba(state.source, "Article 15 grievance", 5);
     expect(search[0].paragraph.articleNumber).toBe("15");
+  });
+
+  it("builds the annual-leave grievance outline from the verified local Article 10 and Article 15 anchors", () => {
+    const state = readBoundedCbaSourceCache();
+    if (state.status === "unavailable") {
+      if (requireCache) expect.fail(`required CBA cache unavailable: ${state.reason}`);
+      return;
+    }
+    const runtimeVersion = createRuntimeVersion({ buildDate: "20260723", gitSha: "annual-local" });
+    const answer = buildCbaAnswer({
+      question: "Can an annual leave request be denied under the CBA?",
+      source: state.source,
+      nlrbSource: null,
+      runtimeVersion,
+      mode: "Strict Research",
+      scope: "Official-Like",
+      detail: "Detailed",
+    });
+    const eligibility = publicGrievanceOutlineEligibility({ answer, source: state.source });
+    const outline = buildPublicGrievanceOutline({
+      answer,
+      source: state.source,
+      createdAt: "2026-07-23T19:20:00.000Z",
+    });
+    expect(answer.noAnswer).toBe(false);
+    expect(eligibility.eligible).toBe(true);
+    expect(outline).not.toBeNull();
+    expect(outline?.citations.every((citation) => citation.citationVerificationState === "verified_current")).toBe(true);
+    expect(new Set(outline?.citations.map((citation) => citation.articleNumber))).toEqual(new Set(["10", "15"]));
   });
 });

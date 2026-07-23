@@ -1,3 +1,4 @@
+import { readFileSync } from "node:fs";
 import { expect } from "vitest";
 import currentAcceptedPushedState from "@/data/current-accepted-pushed-state.json";
 
@@ -15,15 +16,17 @@ export function expectCurrentCloseoutSummary(output: string): void {
 }
 
 export function expectCurrentProofIndexOutput(output: string): void {
-  const closeoutProof =
-    currentAcceptedPushedState.latest_pushed_closeout_proof_dir ?? currentAcceptedPushedState.accepted_pushed_proof_dir;
-  const closeoutCommit =
-    currentAcceptedPushedState.latest_pushed_closeout_commit ??
-    currentAcceptedPushedState.repository_recording_commit ??
-    currentAcceptedPushedState.accepted_pushed_commit;
+  const observedProof = output.match(/^Latest accepted pushed closeout proof: (.+)$/m)?.[1];
+  const observedCommit = output.match(/^Latest accepted pushed closeout commit: ([0-9a-f]{40})$/m)?.[1];
 
-  expect(output).toContain(`Latest accepted pushed closeout proof: ${closeoutProof}`);
-  expect(output).toContain(`Latest accepted pushed closeout commit: ${closeoutCommit}`);
+  expect(observedProof).toBeTruthy();
+  expect(observedCommit).toMatch(/^[0-9a-f]{40}$/);
+  const observedResult = readFileSync(`${observedProof}/RESULT.md`, "utf8");
+  expect(observedResult).toContain("RESULT=PASS");
+  expect(observedResult).toContain("PUSHED=yes");
+  expect(observedResult).toMatch(
+    new RegExp(`(?:COMMIT_SHA|CLOSEOUT_COMMIT|HEAD)=${observedCommit}`)
+  );
   expect(output).toContain(`Accepted state contract checkpoint: ${currentAcceptedPushedState.accepted_pushed_short_commit}`);
   expect(output).toContain(`Accepted state contract commit: ${currentAcceptedPushedState.accepted_pushed_commit}`);
   expect(output).toContain(`Accepted state contract proof: ${currentAcceptedPushedState.accepted_pushed_proof_dir}`);

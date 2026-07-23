@@ -2,7 +2,7 @@ import { describe, expect, it } from "vitest";
 import { GET } from "@/app/health/route";
 import { currentAcceptedPushedState } from "@/lib/acceptedState";
 import { CURRENT_PHASE } from "@/lib/version";
-import { PUBLIC_ARGUMENT_BUILDER_PHASE } from "@/lib/publicArgumentPlan";
+import { PUBLIC_GRIEVANCE_OUTLINE_PHASE } from "@/lib/publicGrievanceOutline";
 
 describe("public truth runtime identity", () => {
   it("keeps the accepted pushed phase derived from the accepted-state contract", () => {
@@ -13,7 +13,7 @@ describe("public truth runtime identity", () => {
   it("reports the local bundle phase and distinct repository identities", async () => {
     const response = GET();
     const payload = await response.json();
-    expect(payload.phase).toBe(PUBLIC_ARGUMENT_BUILDER_PHASE);
+    expect(payload.phase).toBe(PUBLIC_GRIEVANCE_OUTLINE_PHASE);
     expect(payload.phase).toBe(currentAcceptedPushedState.local_bundle_phase);
     expect(payload.acceptedCheckpoint).toBe(currentAcceptedPushedState.checkpoint_label);
     expect(payload.acceptedCommit).toBe(currentAcceptedPushedState.accepted_pushed_commit);

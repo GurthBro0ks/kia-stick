@@ -14,6 +14,7 @@ const smokeSurfaces = [
   "Sources citable/context labels",
   "Saved empty/detail/version metadata",
   "Public Weingarten cited argument builder",
+  "Public CBA annual-leave cited grievance outline",
   "Upload fake metadata buttons only",
   "Import fake state machine",
   "Vault fake governance workflow",
@@ -118,6 +119,7 @@ function checkStaticContracts(root, problems) {
   const packageJson = readJson(root, "package.json", problems);
   const acceptedState = readCurrentAcceptedPushedState(root);
   const argumentPlan = readText(root, "lib/publicArgumentPlan.ts", problems);
+  const grievanceOutline = readText(root, "lib/publicGrievanceOutline.ts", problems);
 
   requireContains(problems, "smoke doc", doc, operatorSmokePhase);
   requireContains(problems, "smoke doc", doc, `Product version: \`${productVersion}\``);
@@ -146,6 +148,9 @@ function checkStaticContracts(root, problems) {
     "Build cited argument",
     "Save cited argument plan",
     "Open saved plan",
+    "Build cited grievance outline",
+    "Save cited grievance outline",
+    "Open saved outline",
   ]) {
     requireContains(problems, "KiaStickApp", component, marker);
   }
@@ -156,8 +161,11 @@ function checkStaticContracts(root, problems) {
   for (const marker of ["PUBLIC_ARGUMENT_PLAN_SAVED_TYPE", "verified_current", "sourceInstanceIds", "Do not enter private case details in this public pilot.", "This public pilot does not replace local union advice or legal advice."]) {
     requireContains(problems, "public argument plan", argumentPlan, marker);
   }
+  for (const marker of ["PUBLIC_GRIEVANCE_OUTLINE_SAVED_TYPE", "verified_current", "sourceInstanceIds", "Do not enter private case details in this public pilot.", "This public pilot does not replace local union advice or legal advice."]) {
+    requireContains(problems, "public grievance outline", grievanceOutline, marker);
+  }
   const localRuntimePhase = constantValue(health, "LOCAL_RUNTIME_PHASE", problems);
-  if (localRuntimePhase !== "KIA-Stick-public-Weingarten-cited-argument-builder-pilot") {
+  if (localRuntimePhase !== "KIA-Stick-public-CBA-annual-leave-cited-grievance-outline-pilot") {
     problems.push(`LOCAL_RUNTIME_PHASE mismatch: ${localRuntimePhase || "missing"}`);
   }
   for (const marker of ["Display Version", "Product Version", "Build Date", "Git SHA", "Corpus", "Index", "Prompt", "Provider"]) {

@@ -36,10 +36,10 @@ describe("public Settings summary and operator diagnostics split", () => {
     expect(html).toContain("Pushed</dt><dd>yes");
     expect(html).toContain("KIA Stick 0.7.0");
     expect(html).toContain("Current build</dt><dd>9773768");
-    expect(html).toContain("public Weingarten cited argument-builder pilot");
+    expect(html).toContain("public CBA annual-leave cited grievance-outline pilot");
     expect(html).toContain("validation PASS");
     expect(html).toContain("pushed no");
-    expect(html).toContain("manual QA PASS");
+    expect(html).toContain("manual QA pending operator review");
     expect(html).not.toContain("stale local-bundle push-status repair");
     expect(html).toContain("APWU-USPS CBA");
     expect(html).toContain("current source instance verified");
@@ -81,7 +81,7 @@ describe("public Settings summary and operator diagnostics split", () => {
     expect(html).toContain(currentAcceptedPushedState.latest_pushed_closeout_short_commit as string);
     expect(html).toContain(currentAcceptedPushedState.local_bundle_status);
     expect(currentAcceptedPushedState.local_bundle_status).toContain("pushed no");
-    expect(currentAcceptedPushedState.local_bundle_status).toContain("manual QA PASS");
+    expect(currentAcceptedPushedState.local_bundle_status).toContain("manual QA pending operator review");
     expect(currentAcceptedPushedState.accepted_pushed_short_commit).toBe("76c7312");
     expect(currentAcceptedPushedState.repository_recording_short_commit).toBe("3690c74");
     expect(currentAcceptedPushedState.latest_pushed_closeout_short_commit).toBe("0695680");

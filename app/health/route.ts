@@ -4,7 +4,7 @@ import { getRuntimeVersion } from "@/lib/serverVersion";
 import { currentAcceptedPushedState } from "@/lib/acceptedState";
 
 export const dynamic = "force-dynamic";
-const LOCAL_RUNTIME_PHASE = "KIA-Stick-public-Weingarten-cited-argument-builder-pilot";
+const LOCAL_RUNTIME_PHASE = "KIA-Stick-public-CBA-annual-leave-cited-grievance-outline-pilot";
 
 export function GET() {
   const version = getRuntimeVersion();

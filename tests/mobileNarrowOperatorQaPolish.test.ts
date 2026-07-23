@@ -1,7 +1,7 @@
 import { spawnSync } from "node:child_process";
 import { existsSync, readFileSync } from "node:fs";
 import { describe, expect, it } from "vitest";
-import { PUBLIC_ARGUMENT_BUILDER_PHASE } from "@/lib/publicArgumentPlan";
+import { PUBLIC_GRIEVANCE_OUTLINE_PHASE } from "@/lib/publicGrievanceOutline";
 
 const phase = "KIA-Stick-v0.8.9-mobile-narrow-operator-qa-polish";
 const docPath = "docs/v0.8.9-mobile-narrow-operator-qa-polish.md";
@@ -35,7 +35,7 @@ describe("v0.8.9 mobile/narrow operator QA polish", () => {
     expect(result.status).toBe(0);
     expect(result.stdout).toContain("Operator QA smoke PASS");
     expect(result.stdout).toContain("Project phase: KIA-Stick-v0.9.10-synthetic-governance-hardening-checkpoint");
-    expect(result.stdout).toContain(`Runtime phase: ${PUBLIC_ARGUMENT_BUILDER_PHASE}`);
+    expect(result.stdout).toContain(`Runtime phase: ${PUBLIC_GRIEVANCE_OUTLINE_PHASE}`);
     expect(result.stdout).toContain("Bundle smoke surfaces:");
     for (const surface of [
       "Chat no-answer save blocking",

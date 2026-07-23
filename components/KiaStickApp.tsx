@@ -56,6 +56,7 @@ import {
 import {
   createSavedAnswerRecord,
   createSavedArgumentPlanRecord,
+  createSavedGrievanceOutlineRecord,
   migrateSavedAnswers,
   upsertSavedAnswer,
   type SaveAnswerStatus,
@@ -66,6 +67,11 @@ import {
   publicArgumentPlanEligibility,
   type PublicArgumentPlan,
 } from "@/lib/publicArgumentPlan";
+import {
+  buildPublicGrievanceOutline,
+  publicGrievanceOutlineEligibility,
+  type PublicGrievanceOutline,
+} from "@/lib/publicGrievanceOutline";
 import {
   buildSourceHierarchyGroups,
   citationLabel,
@@ -279,6 +285,7 @@ export function KiaStickApp({ runtimeVersion = clientVersion }: { runtimeVersion
   const [fakeOnlyConfirmed, setFakeOnlyConfirmed] = useState(false);
   const [saveNotice, setSaveNotice] = useState<{ status: SaveAnswerStatus; text: string } | null>(null);
   const [argumentPlans, setArgumentPlans] = useState<Record<string, PublicArgumentPlan>>({});
+  const [grievanceOutlines, setGrievanceOutlines] = useState<Record<string, PublicGrievanceOutline>>({});
   const [hydrated, setHydrated] = useState(false);
   const [pendingScroll, setPendingScroll] = useState(false);
   const chatScrollRef = useRef<HTMLElement>(null);
@@ -541,10 +548,50 @@ export function KiaStickApp({ runtimeVersion = clientVersion }: { runtimeVersion
     });
   }
 
+  function buildGrievanceOutlineFor(message: AssistantMessage) {
+    const outline = buildPublicGrievanceOutline({
+      answer: message.answer,
+      source: cbaSourceState.status === "available" ? cbaSourceState.source : null,
+    });
+    if (!outline) {
+      setSaveNotice({
+        status: "duplicate",
+        text: "Current verified Article 10 and Article 15 citations are required before a cited grievance outline can be built.",
+      });
+      return;
+    }
+    setGrievanceOutlines((current) => ({ ...current, [message.messageId]: outline }));
+    setSaveNotice(null);
+  }
+
+  function saveGrievanceOutline(message: AssistantMessage, outline: PublicGrievanceOutline) {
+    const record = createSavedGrievanceOutlineRecord({
+      outline,
+      question: message.answer.question,
+      mode: message.modeScopeDetail.mode,
+      scope: message.modeScopeDetail.scope,
+      detail: message.modeScopeDetail.detail,
+      timestamp: new Date().toISOString(),
+    });
+    setSaved((current) => {
+      const result = upsertSavedAnswer(current, record);
+      setSaveNotice({
+        status: result.status,
+        text: result.status === "created"
+          ? "Saved cited grievance outline with current CBA citation and source-instance metadata."
+          : result.status === "replaced"
+            ? "Updated the saved cited grievance outline with refreshed verified metadata."
+            : "Already saved. No duplicate cited grievance outline was created.",
+      });
+      return result.saved;
+    });
+  }
+
   function startNewChat() {
     if (thread.messages.length > 0 && !window.confirm("Start a new chat and clear the current thread?")) return;
     setThread(createConversationThread());
     setArgumentPlans({});
+    setGrievanceOutlines({});
     setDraft("");
     setSaveNotice(null);
     setIsSending(false);
@@ -658,10 +705,17 @@ export function KiaStickApp({ runtimeVersion = clientVersion }: { runtimeVersion
                 ) : (
                   (() => {
                     const plan = argumentPlans[message.messageId];
-                    const eligibility = message.status === "complete"
+                    const grievanceOutline = grievanceOutlines[message.messageId];
+                    const argumentEligibility = message.status === "complete"
                       ? publicArgumentPlanEligibility({
                           answer: message.answer,
                           source: publicSourceState.status === "available" ? publicSourceState.source : null,
+                        })
+                      : { eligible: false as const, reason: "no_answer" as const };
+                    const grievanceEligibility = message.status === "complete"
+                      ? publicGrievanceOutlineEligibility({
+                          answer: message.answer,
+                          source: cbaSourceState.status === "available" ? cbaSourceState.source : null,
                         })
                       : { eligible: false as const, reason: "no_answer" as const };
                     return (
@@ -671,10 +725,14 @@ export function KiaStickApp({ runtimeVersion = clientVersion }: { runtimeVersion
                         turnLabel={`Turn ${Math.floor(index / 2) + 1}`}
                         onRetry={() => retryAssistant(message)}
                         onSave={() => saveAssistantAnswer(message)}
-                        canBuildArgument={eligibility.eligible}
+                        canBuildArgument={argumentEligibility.eligible}
                         argumentPlan={plan}
                         onBuildArgument={() => buildArgumentPlanFor(message)}
                         onSaveArgumentPlan={() => plan && saveArgumentPlan(message, plan)}
+                        canBuildGrievanceOutline={grievanceEligibility.eligible}
+                        grievanceOutline={grievanceOutline}
+                        onBuildGrievanceOutline={() => buildGrievanceOutlineFor(message)}
+                        onSaveGrievanceOutline={() => grievanceOutline && saveGrievanceOutline(message, grievanceOutline)}
                         onCitationNavigate={navigateToCitation}
                         onSubmitCbaSuggestion={(suggestion) => sendMessage(suggestion, "cba")}
                       />
@@ -1455,6 +1513,7 @@ export function SavedAnswersPanel(props: {
 }) {
   const cbaSourceState = props.cbaSourceState ?? { status: "unavailable", reason: "cache_missing" as const };
   const [openPlanId, setOpenPlanId] = useState<string | null>(null);
+  const [openOutlineId, setOpenOutlineId] = useState<string | null>(null);
   return (
     <section className="tabPanel">
       <PanelHeader title="Saved" meta={`${props.saved.length} stored locally`} />
@@ -1470,7 +1529,7 @@ export function SavedAnswersPanel(props: {
           return (
           <article className="savedCard" key={item.id}>
             <div className="savedHeader">
-              <h3>{item.argumentPlan?.title ?? item.question}</h3>
+              <h3>{item.argumentPlan?.title ?? item.grievanceOutline?.title ?? item.question}</h3>
               <button
                 className="button iconOnly subtle"
                 type="button"
@@ -1481,7 +1540,13 @@ export function SavedAnswersPanel(props: {
                 <Archive size={16} />
               </button>
             </div>
-            <p>{item.savedType === "public_argument_plan" ? item.argumentPlan?.issueSummary : item.answer.split("\n\n")[0]}</p>
+            <p>
+              {item.savedType === "public_argument_plan"
+                ? item.argumentPlan?.issueSummary
+                : item.savedType === "public_grievance_outline"
+                  ? item.grievanceOutline?.issue
+                  : item.answer.split("\n\n")[0]}
+            </p>
             <dl className="savedDetailList" aria-label="Saved answer metadata">
               <dt>Saved type</dt>
               <dd>{item.savedType}</dd>
@@ -1561,6 +1626,25 @@ export function SavedAnswersPanel(props: {
                 {openPlanId === item.id && (
                   <PublicArgumentPlanView
                     plan={item.argumentPlan}
+                    onCitationNavigate={props.onCitationNavigate ?? (() => undefined)}
+                  />
+                )}
+              </div>
+            )}
+            {item.savedType === "public_grievance_outline" && item.grievanceOutline && (
+              <div className="savedPlanActions">
+                <button
+                  aria-expanded={openOutlineId === item.id}
+                  className="button primary"
+                  type="button"
+                  onClick={() => setOpenOutlineId((current) => current === item.id ? null : item.id)}
+                >
+                  <ClipboardList size={16} />
+                  {openOutlineId === item.id ? "Close saved outline" : "Open saved outline"}
+                </button>
+                {openOutlineId === item.id && (
+                  <PublicGrievanceOutlineView
+                    outline={item.grievanceOutline}
                     onCitationNavigate={props.onCitationNavigate ?? (() => undefined)}
                   />
                 )}
@@ -2262,6 +2346,10 @@ export function AssistantMessageCard({
   argumentPlan,
   onBuildArgument = () => undefined,
   onSaveArgumentPlan = () => undefined,
+  canBuildGrievanceOutline = false,
+  grievanceOutline,
+  onBuildGrievanceOutline = () => undefined,
+  onSaveGrievanceOutline = () => undefined,
   onCitationNavigate = () => undefined,
   onSubmitCbaSuggestion,
 }: {
@@ -2273,6 +2361,10 @@ export function AssistantMessageCard({
   argumentPlan?: PublicArgumentPlan;
   onBuildArgument?: () => void;
   onSaveArgumentPlan?: () => void;
+  canBuildGrievanceOutline?: boolean;
+  grievanceOutline?: PublicGrievanceOutline;
+  onBuildGrievanceOutline?: () => void;
+  onSaveGrievanceOutline?: () => void;
   onCitationNavigate?: (citation: Citation) => void;
   onSubmitCbaSuggestion?: (question: string) => void;
 }) {
@@ -2387,6 +2479,12 @@ export function AssistantMessageCard({
                 Build cited argument
               </button>
             )}
+            {canBuildGrievanceOutline && !grievanceOutline && (
+              <button className="button primary" type="button" onClick={onBuildGrievanceOutline}>
+                <ClipboardList size={16} />
+                Build cited grievance outline
+              </button>
+            )}
             <button
               aria-expanded={packetOpen}
               className="button primary"
@@ -2430,6 +2528,13 @@ export function AssistantMessageCard({
               plan={argumentPlan}
               onCitationNavigate={onCitationNavigate}
               onSave={onSaveArgumentPlan}
+            />
+          )}
+          {grievanceOutline && (
+            <PublicGrievanceOutlineView
+              outline={grievanceOutline}
+              onCitationNavigate={onCitationNavigate}
+              onSave={onSaveGrievanceOutline}
             />
           )}
 
@@ -2597,6 +2702,152 @@ function PublicArgumentPlanView({
             Save cited argument plan
           </button>
           <span>Saved type: public_argument_plan</span>
+        </div>
+      )}
+    </section>
+  );
+}
+
+function PublicGrievanceOutlineView({
+  outline,
+  onCitationNavigate,
+  onSave,
+}: {
+  outline: PublicGrievanceOutline;
+  onCitationNavigate: (citation: Citation) => void;
+  onSave?: () => void;
+}) {
+  const headingId = `grievance-outline-${outline.id}`;
+  const citationNumber = new Map(outline.citations.map((citation, index) => [citation.id, index + 1]));
+
+  function CitationLinks({ citationIds }: { citationIds: string[] }) {
+    return (
+      <span className="argumentPlanCitationLinks" aria-label="Supporting citations">
+        {citationIds.map((citationId) => {
+          const citation = outline.citations.find((candidate) => candidate.id === citationId);
+          if (!citation) return null;
+          return (
+            <button
+              aria-label={`Open supporting citation ${citationNumber.get(citationId)}`}
+              className="argumentPlanCitationButton"
+              key={citationId}
+              onClick={() => onCitationNavigate(citation)}
+              type="button"
+            >
+              [{citationNumber.get(citationId)}]
+            </button>
+          );
+        })}
+      </span>
+    );
+  }
+
+  function CitedItems({ items, ordered = false }: {
+    items: Array<{ text: string; citationIds: string[] }>;
+    ordered?: boolean;
+  }) {
+    const List = ordered ? "ol" : "ul";
+    return (
+      <List className="argumentPlanList">
+        {items.map((entry) => (
+          <li key={`${entry.text}-${entry.citationIds.join("-")}`}>
+            <span>{entry.text}</span>
+            <CitationLinks citationIds={entry.citationIds} />
+          </li>
+        ))}
+      </List>
+    );
+  }
+
+  function PlainItems({ items }: { items: string[] }) {
+    return <ul className="argumentPlanList">{items.map((entry) => <li key={entry}>{entry}</li>)}</ul>;
+  }
+
+  return (
+    <section className="publicArgumentPlan publicGrievanceOutline" aria-labelledby={headingId}>
+      <div className="argumentPlanHeader">
+        <div>
+          <span className="sectionKicker">Deterministic public CBA outline builder</span>
+          <h3 id={headingId}>{outline.title}</h3>
+        </div>
+        <span className="statusPill ok">{outline.citations.length} verified citations</span>
+      </div>
+      <p className="argumentPlanPrivateWarning" role="note">
+        <AlertTriangle size={16} />
+        <strong>{outline.privateCaseWarning}</strong>
+      </p>
+      <div className="argumentPlanMeta" aria-label="Grievance outline identity">
+        <span>Provider: {outline.provider}</span>
+        <span>Prompt: {outline.promptVersion}</span>
+        <span>Build: {outline.buildIdentity}</span>
+        <span>Source instance: {outline.sourceInstanceIds.join(", ")}</span>
+        <span>Content identity: {outline.contentIdentity}</span>
+      </div>
+
+      <section className="argumentPlanSection">
+        <h4>1. Issue</h4>
+        <p>{outline.issue}</p>
+      </section>
+      <section className="argumentPlanSection">
+        <h4>2. Governing contract language</h4>
+        <CitedItems items={outline.governingContractLanguage} />
+      </section>
+      <section className="argumentPlanSection">
+        <h4>3. Elements that must be established</h4>
+        <CitedItems items={outline.elementsToEstablish} />
+      </section>
+      <section className="argumentPlanSection">
+        <h4>4. Facts still to confirm</h4>
+        <PlainItems items={outline.factsToConfirm} />
+      </section>
+      <section className="argumentPlanSection">
+        <h4>5. Evidence or records to request</h4>
+        <CitedItems items={outline.evidenceToRequest} />
+      </section>
+      <section className="argumentPlanSection">
+        <h4>6. Questions to ask management</h4>
+        <PlainItems items={outline.questionsForManagement} />
+      </section>
+      <section className="argumentPlanSection">
+        <h4>7. Step 1 argument outline</h4>
+        <CitedItems items={outline.stepOneArgument} ordered />
+      </section>
+      <section className="argumentPlanSection">
+        <h4>8. Possible remedy categories</h4>
+        <CitedItems items={outline.possibleRemedies} />
+      </section>
+      <section className="argumentPlanSection">
+        <h4>9. Timeliness and procedural limits</h4>
+        <CitedItems items={outline.timelinessAndProcedureLimits} />
+      </section>
+      <section className="argumentPlanSection argumentPlanEscalation">
+        <h4>10. Step 2 or escalation readiness</h4>
+        <CitedItems items={outline.escalationReadiness} />
+      </section>
+      <section className="argumentPlanSection">
+        <h4>11. Limitations and uncertainty</h4>
+        <CitedItems items={outline.limitations} />
+      </section>
+      <section className="argumentPlanSection">
+        <h4>12. Sources</h4>
+        <ol className="argumentPlanSources">
+          {outline.citations.map((citation) => (
+            <li key={citation.id}>
+              <button className="citationAnchorButton" type="button" onClick={() => onCitationNavigate(citation)}>
+                {citationLabel(citation)}
+              </button>
+              <span>{citation.citationVerificationState}</span>
+            </li>
+          ))}
+        </ol>
+      </section>
+      {onSave && (
+        <div className="compactActions argumentPlanSaveActions">
+          <button className="button primary" type="button" onClick={onSave}>
+            <Save size={16} />
+            Save cited grievance outline
+          </button>
+          <span>Saved type: public_grievance_outline</span>
         </div>
       )}
     </section>
