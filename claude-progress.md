@@ -1,3 +1,12 @@
+- Phase: `KIA-Stick-public-CBA-annual-leave-cited-grievance-outline-post-push-accepted-state-refresh`
+- Authorization: `AUTHORIZE_KIA_ANNUAL_LEAVE_POST_PUSH_ACCEPTED_STATE_REFRESH`.
+- Status: shared accepted-state contract and bounded consumers now record the pushed annual-leave grievance-outline capability and automatic routing repair at `9a66d37148f37d2dee16bcbe6b9a12aa4ba9946a`, with repository/closeout recording point `370979a7108a4876fea13161d928fedc558f2fed`; validation PASS; pushed no; manual QA pending.
+- Accepted pushed proof: `/home/mint/kia-stick-local-proofs/proof_kia_stick_public_cba_annual_leave_cited_grievance_outline_auto_routing_repair_operator_qa_pass_recording_20260724T012508Z/closeout_push_20260724T015523Z`. Local refresh proof: `/home/mint/kia-stick-local-proofs/proof_kia_stick_public_cba_annual_leave_post_push_accepted_state_refresh_20260724T133841Z`.
+- Historical preservation: prior Settings summary/operator-diagnostics checkpoint `76c73122a87cb23b5b8595a002d54d7a127fbba8` is historical-only, not deleted or rewritten.
+- Files: `data/current-accepted-pushed-state.json`, bounded current-state tests, `CLOSEOUT.md`, `README.md`, `feature_list.json`, and this progress record.
+- Safety: no source sync, private data, file chooser, real upload/import, OCR, embeddings, vector database, LLM, dependency/package/lockfile mutation, service/system/network change, Discord, or push. queue-015 and v0.9.12C remain blocked; Next/PostCSS remains parked.
+- Next: operator manual QA for this local refresh. Do not push without separate explicit authorization.
+
 - Phase: `KIA-Stick-public-CBA-annual-leave-cited-grievance-outline-pilot-closeout-and-push`
 - Authorization: `CLOSEOUT_AND_PUSH_KIA_ANNUAL_LEAVE_GRIEVANCE_OUTLINE_AUTHORIZED`.
 - Status: annual-leave grievance-outline implementation `b913254`, automatic public-CBA routing repair `9a66d37`, and operator-QA PASS recording `629afe0` passed the closeout gate and are authorized for one push.

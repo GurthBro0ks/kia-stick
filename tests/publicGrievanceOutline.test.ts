@@ -390,13 +390,15 @@ describe("public CBA annual-leave cited grievance outline", () => {
   });
 
   it("keeps Settings, health, accepted identities, product, and blocked gates truthful", async () => {
-    expect(currentAcceptedPushedState.local_bundle_phase).toBe(PUBLIC_GRIEVANCE_OUTLINE_PHASE);
-    expect(currentAcceptedPushedState.local_bundle_status).toBe(
-      "public CBA annual-leave cited grievance-outline pilot; automatic public-CBA routing repair; validation PASS; pushed no; manual QA PASS"
+    expect(currentAcceptedPushedState.local_bundle_phase).toBe(
+      "KIA-Stick-public-CBA-annual-leave-cited-grievance-outline-post-push-accepted-state-refresh"
     );
-    expect(currentAcceptedPushedState.accepted_pushed_commit).toBe("76c73122a87cb23b5b8595a002d54d7a127fbba8");
-    expect(currentAcceptedPushedState.repository_recording_commit).toBe("3690c74650d0fb19395bd046adee1bf236950f9e");
-    expect(currentAcceptedPushedState.latest_pushed_closeout_commit).toBe("0695680047608462b5f154a9ed82593e6923932a");
+    expect(currentAcceptedPushedState.local_bundle_status).toBe(
+      "public CBA annual-leave post-push accepted-state refresh; validation PASS; pushed no; manual QA pending"
+    );
+    expect(currentAcceptedPushedState.accepted_pushed_commit).toBe("9a66d37148f37d2dee16bcbe6b9a12aa4ba9946a");
+    expect(currentAcceptedPushedState.repository_recording_commit).toBe("370979a7108a4876fea13161d928fedc558f2fed");
+    expect(currentAcceptedPushedState.latest_pushed_closeout_commit).toBe("370979a7108a4876fea13161d928fedc558f2fed");
 
     const healthResponse = GET();
     const health = await healthResponse.json();

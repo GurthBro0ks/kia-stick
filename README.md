@@ -1,3 +1,13 @@
+## Public CBA Annual-Leave Post-Push Accepted-State Refresh
+
+- The current accepted pushed capability is `Public CBA Annual-Leave Cited Grievance Outline and Automatic Routing Repair at 9a66d37`.
+- The accepted capability repair commit is `9a66d37148f37d2dee16bcbe6b9a12aa4ba9946a`; the distinct repository/closeout recording point is `370979a7108a4876fea13161d928fedc558f2fed`.
+- Canonical closeout proof: `/home/mint/kia-stick-local-proofs/proof_kia_stick_public_cba_annual_leave_cited_grievance_outline_auto_routing_repair_operator_qa_pass_recording_20260724T012508Z/closeout_push_20260724T015523Z`.
+- Shared current-state contract: `data/current-accepted-pushed-state.json`; Settings, `/health`, proof helpers, and current-state tests consume this contract rather than an independent baseline.
+- Prior accepted Settings summary/operator-diagnostics checkpoint `76c7312` is preserved as historical-only.
+- This refresh is local-only: validation `PASS`, pushed `no`, operator manual QA `pending_operator_review`.
+- queue-015 and v0.9.12C remain blocked; Next/PostCSS remains `WARN_SAFE_NEXT_TARGET_UNCLEAR`; product/package remain `0.7.0`.
+
 ## Public Settings Post-Closeout Repository Equality Copy Repair
 
 - The current accepted pushed capability is `Public Settings User Summary and Operator Diagnostics Split at 76c7312`.
