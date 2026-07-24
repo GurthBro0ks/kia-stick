@@ -1556,6 +1556,10 @@ function savedCbaVerificationState(item: SavedAnswer, cbaSourceState: CbaSourceL
   return verifyCbaCitation(citation, cbaSourceState.status === "available" ? cbaSourceState.source : null).state;
 }
 
+export function normalizeSavedTopicFilter(topicFilter: string, topics: readonly string[]): string {
+  return topicFilter === "all" || topics.includes(topicFilter) ? topicFilter : "all";
+}
+
 export function SavedAnswersPanel(props: {
   saved: SavedAnswer[];
   onDelete: (id: string) => void;
@@ -1578,20 +1582,24 @@ export function SavedAnswersPanel(props: {
       )].sort((left, right) => left.localeCompare(right)),
     [props.saved]
   );
+  const effectiveTopicFilter = normalizeSavedTopicFilter(topicFilter, topics);
+  useEffect(() => {
+    if (effectiveTopicFilter !== topicFilter) setTopicFilter(effectiveTopicFilter);
+  }, [effectiveTopicFilter, topicFilter]);
   const visibleSaved = useMemo(
     () =>
       props.saved
         .filter((item) => typeFilter === "all" || item.savedType === typeFilter)
         .filter(
           (item) =>
-            topicFilter === "all" ||
-            (item.grievanceOutlineTopic ?? item.grievanceOutline?.topic) === topicFilter
+            effectiveTopicFilter === "all" ||
+            (item.grievanceOutlineTopic ?? item.grievanceOutline?.topic) === effectiveTopicFilter
         )
         .sort(
           (left, right) =>
             right.timestamp.localeCompare(left.timestamp) || left.id.localeCompare(right.id)
         ),
-    [props.saved, topicFilter, typeFilter]
+    [effectiveTopicFilter, props.saved, typeFilter]
   );
   return (
     <section className="tabPanel">
@@ -1614,7 +1622,7 @@ export function SavedAnswersPanel(props: {
           <span>Topic</span>
           <select
             aria-label="Filter Saved by topic"
-            value={topicFilter}
+            value={effectiveTopicFilter}
             onChange={(event) => setTopicFilter(event.target.value)}
           >
             <option value="all">All topics</option>

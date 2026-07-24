@@ -1,7 +1,11 @@
 import React from "react";
 import { renderToStaticMarkup } from "react-dom/server";
 import { describe, expect, it } from "vitest";
-import { SourcesPanel, SavedAnswersPanel } from "@/components/KiaStickApp";
+import {
+  normalizeSavedTopicFilter,
+  SourcesPanel,
+  SavedAnswersPanel,
+} from "@/components/KiaStickApp";
 import { buildCbaAnswer, detectCbaIntent } from "@/lib/cbaAnswer";
 import {
   createChatSubmitSnapshot,
@@ -166,6 +170,18 @@ describe("public steward workflow platform registry", () => {
 });
 
 describe("public steward workflow exports, persistence, and discovery", () => {
+  it("resets a topic filter whose last saved record was deleted", () => {
+    expect(normalizeSavedTopicFilter("Holiday scheduling", [
+      "Annual leave",
+      "Overtime",
+    ])).toBe("all");
+    expect(normalizeSavedTopicFilter("Overtime", [
+      "Annual leave",
+      "Overtime",
+    ])).toBe("Overtime");
+    expect(normalizeSavedTopicFilter("all", [])).toBe("all");
+  });
+
   it("exports only a verified-current outline with identity, twelve sections, citations, and warnings", () => {
     const { outline } = outlineFor(
       "How does the CBA govern holiday scheduling and who may be required to work?"
