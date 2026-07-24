@@ -1,3 +1,21 @@
+## Public CBA Annual-Leave Cited Grievance Outline Closeout and Push
+
+- Phase: `KIA-Stick-public-CBA-annual-leave-cited-grievance-outline-pilot-closeout-and-push`.
+- Authorization: `CLOSEOUT_AND_PUSH_KIA_ANNUAL_LEAVE_GRIEVANCE_OUTLINE_AUTHORIZED`.
+- Annual-leave grievance-outline implementation commit: `b913254ed1652cc4cb26e614c2229a32ae5637cb`.
+- Automatic public-CBA routing repair commit: `9a66d37148f37d2dee16bcbe6b9a12aa4ba9946a`.
+- Operator-QA PASS recording commit: `629afe098e727e5e4f061942b8a995cee6d0e4bd`.
+- Implementation proof: `/home/mint/kia-stick-local-proofs/proof_kia_stick_public_cba_annual_leave_cited_grievance_outline_pilot_20260723T190138Z`.
+- Automatic routing-repair proof: `/home/mint/kia-stick-local-proofs/proof_kia_stick_public_cba_annual_leave_cited_grievance_outline_pilot_20260723T190138Z/automatic_public_cba_routing_repair_20260723T194449Z`.
+- Operator-QA PASS proof: `/home/mint/kia-stick-local-proofs/proof_kia_stick_public_cba_annual_leave_cited_grievance_outline_auto_routing_repair_operator_qa_pass_recording_20260724T012508Z`.
+- Canonical closeout/push proof: `/home/mint/kia-stick-local-proofs/proof_kia_stick_public_cba_annual_leave_cited_grievance_outline_auto_routing_repair_operator_qa_pass_recording_20260724T012508Z/closeout_push_20260724T015523Z`.
+- Validation and manual QA: `PASS` / `PASS`; deterministic annual-leave public-CBA routing, cited twelve-section grievance-outline generation, current citation governance, save/reopen/dedupe behavior, fake/public separation, Settings and health truth, and Weingarten/overtime/no-match regressions are accepted.
+- Scope: `CLOSEOUT.md`, `claude-progress.md`, and `feature_list.json` only for this closeout commit; no runtime, source, private-data, package/lockfile, service, scheduler, network, notification, or blocked-target change.
+- Push gate: one authorized push of `main`; final closeout SHA and `HEAD == origin/main == remote main` equality are recorded in the canonical proof.
+- Contract note: accepted capability `76c73122a87cb23b5b8595a002d54d7a127fbba8`, repository-recording identity `3690c74650d0fb19395bd046adee1bf236950f9e`, and prior latest pushed closeout `0695680047608462b5f154a9ed82593e6923932a` remain historical until a separately authorized post-push accepted-state bookkeeping refresh.
+- Blocked states preserved: queue-015 remains blocked; Next/PostCSS remains `WARN_SAFE_NEXT_TARGET_UNCLEAR`; v0.9.12C remains blocked; product/package remain `0.7.0`.
+- Notifications: Discord disabled; no duplicate notification; no report URL.
+
 ## Public Weingarten Cited Argument Builder Closeout and Push
 
 - Phase: `KIA-Stick-public-Weingarten-cited-argument-builder-pilot-closeout-and-push`.

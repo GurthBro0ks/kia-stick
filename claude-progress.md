@@ -1,3 +1,11 @@
+- Phase: `KIA-Stick-public-CBA-annual-leave-cited-grievance-outline-pilot-closeout-and-push`
+- Authorization: `CLOSEOUT_AND_PUSH_KIA_ANNUAL_LEAVE_GRIEVANCE_OUTLINE_AUTHORIZED`.
+- Status: annual-leave grievance-outline implementation `b913254`, automatic public-CBA routing repair `9a66d37`, and operator-QA PASS recording `629afe0` passed the closeout gate and are authorized for one push.
+- Canonical closeout/push proof: `/home/mint/kia-stick-local-proofs/proof_kia_stick_public_cba_annual_leave_cited_grievance_outline_auto_routing_repair_operator_qa_pass_recording_20260724T012508Z/closeout_push_20260724T015523Z`.
+- Scope: `CLOSEOUT.md`, `claude-progress.md`, and `feature_list.json` only for this closeout commit. No runtime/source/private-data/package/lockfile/service/system/network/Discord change; queue-015 and v0.9.12C remain blocked; Next/PostCSS remains parked.
+- Identity truth: accepted capability remains `76c73122a87cb23b5b8595a002d54d7a127fbba8`; repository-recording identity remains `3690c74650d0fb19395bd046adee1bf236950f9e`; prior latest pushed closeout remains `0695680047608462b5f154a9ed82593e6923932a`. Final push equality is recorded in the canonical proof.
+- Next: complete the authorized closeout push. Post-push accepted-state bookkeeping remains separately authorized.
+
 - Phase: `KIA-Stick-public-CBA-annual-leave-cited-grievance-outline-auto-routing-repair-operator-QA-PASS-recording`
 - Status: operator QA PASS explicitly recorded for `/home/mint/kia-stick-local-proofs/proof_kia_stick_public_cba_annual_leave_cited_grievance_outline_pilot_20260723T190138Z/automatic_public_cba_routing_repair_20260723T194449Z`; validation remains PASS; pushed no.
 - Repair commit under review: `9a66d37148f37d2dee16bcbe6b9a12aa4ba9946a`. Accepted capability remains `76c73122a87cb23b5b8595a002d54d7a127fbba8`; accepted-state repository recording baseline remains `3690c74650d0fb19395bd046adee1bf236950f9e`; latest pushed closeout remains `0695680047608462b5f154a9ed82593e6923932a`. Operator QA does not advance any accepted or pushed identity.

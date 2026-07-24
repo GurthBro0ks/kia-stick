@@ -11904,5 +11904,31 @@
     "source_sync_performed": false,
     "private_data_accessed": false,
     "discord_sent": false
+  },
+  "public_cba_annual_leave_cited_grievance_outline_closeout": {
+    "phase": "KIA-Stick-public-CBA-annual-leave-cited-grievance-outline-pilot-closeout-and-push",
+    "status": "closeout_push_authorized",
+    "authorization": "CLOSEOUT_AND_PUSH_KIA_ANNUAL_LEAVE_GRIEVANCE_OUTLINE_AUTHORIZED",
+    "implementation_commit": "b913254ed1652cc4cb26e614c2229a32ae5637cb",
+    "automatic_public_cba_routing_repair_commit": "9a66d37148f37d2dee16bcbe6b9a12aa4ba9946a",
+    "operator_qa_recording_commit": "629afe098e727e5e4f061942b8a995cee6d0e4bd",
+    "implementation_proof_dir": "/home/mint/kia-stick-local-proofs/proof_kia_stick_public_cba_annual_leave_cited_grievance_outline_pilot_20260723T190138Z",
+    "automatic_routing_repair_proof_dir": "/home/mint/kia-stick-local-proofs/proof_kia_stick_public_cba_annual_leave_cited_grievance_outline_pilot_20260723T190138Z/automatic_public_cba_routing_repair_20260723T194449Z",
+    "operator_qa_pass_proof_dir": "/home/mint/kia-stick-local-proofs/proof_kia_stick_public_cba_annual_leave_cited_grievance_outline_auto_routing_repair_operator_qa_pass_recording_20260724T012508Z",
+    "closeout_push_proof_dir": "/home/mint/kia-stick-local-proofs/proof_kia_stick_public_cba_annual_leave_cited_grievance_outline_auto_routing_repair_operator_qa_pass_recording_20260724T012508Z/closeout_push_20260724T015523Z",
+    "validation_status": "PASS",
+    "manual_qa_status": "PASS",
+    "push_completion_recorded_in_closeout_proof": true,
+    "post_push_accepted_state_bookkeeping_requires_separate_authorization": true,
+    "accepted_identity_rewritten": false,
+    "queue_015_status": "blocked",
+    "next_postcss_status": "WARN_SAFE_NEXT_TARGET_UNCLEAR",
+    "v0912c_status": "blocked_pending_exact_target",
+    "product_version": "0.7.0",
+    "package_json_changed": false,
+    "package_lock_changed": false,
+    "source_sync_performed": false,
+    "private_data_accessed": false,
+    "discord_sent": false
   }
 }
