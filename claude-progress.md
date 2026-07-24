@@ -1,3 +1,12 @@
+- Phase: `KIA-Stick-public-steward-workflow-platform-bundle-1`
+- Status: the overtime Stage 1 implementation is preserved and integrated with a shared five-topic public steward workflow platform; automated validation PASS; pushed no; combined operator manual QA pending.
+- Proof: `/home/mint/kia-stick-local-proofs/proof_kia_stick_public_steward_workflow_platform_bundle_1_20260724T151808Z`.
+- Topics: `annual_leave`, `overtime`, `holiday_scheduling`, `safety_health`, and `discipline_just_cause`. Ten candidate areas were reviewed in `docs/public-steward-workflow-source-matrix.md`; five bounded candidates remain research-only.
+- Features: one typed registry and deterministic matcher; shared fail-closed eligibility and twelve-section outline architecture; registry-derived discovery; Saved type/topic filtering with migration and identity preservation; verified-current-only plain-text copy and Markdown download; desktop and narrow responsive styling.
+- Validation: lint, typecheck, full Vitest suite (333 files / 940 tests), build, design check, release check, governance report, queue-next, operator smoke, fake scan, privacy scan, proof QA, exact live-cache five-topic integration, package/lock/source/fake-corpus immutability, and diff checks PASS. Browser artifacts and the combined manual-QA checklist are kept in the proof root.
+- Safety: no source fetch/sync, private data, file chooser, real upload/import, OCR, embeddings, vector database, external AI, dependency/package/lockfile mutation, service/system/network change, Discord, accepted-state refresh, closeout, or push. Accepted capability remains `9a66d37148f37d2dee16bcbe6b9a12aa4ba9946a`; repository recording and latest pushed closeout remain `370979a7108a4876fea13161d928fedc558f2fed`; queue-015 and v0.9.12C remain blocked; Next/PostCSS remains parked.
+- Next: run one combined operator manual QA for the complete Public Steward Workflow Platform Bundle 1. Do not push.
+
 - Phase: `KIA-Stick-public-CBA-overtime-cited-grievance-outline-pilot`
 - Status: deterministic public-only overtime routing and the Article 8 plus Article 15 cited grievance-outline builder are implemented; validation PASS; pushed no; operator manual QA pending.
 - Proof: `/home/mint/kia-stick-local-proofs/proof_kia_stick_public_cba_overtime_cited_grievance_outline_pilot_20260724T142716Z`.

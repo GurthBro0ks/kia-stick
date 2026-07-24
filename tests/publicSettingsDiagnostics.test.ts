@@ -36,7 +36,8 @@ describe("public Settings summary and operator diagnostics split", () => {
     expect(html).toContain("Pushed</dt><dd>yes");
     expect(html).toContain("KIA Stick 0.7.0");
     expect(html).toContain("Current build</dt><dd>9773768");
-    expect(html).toContain("public CBA overtime cited grievance-outline pilot");
+    expect(html).toContain("public steward workflow platform bundle 1");
+    expect(html).toContain("KIA-Stick-public-steward-workflow-platform-bundle-1");
     expect(html).toContain("validation PASS; pushed no; manual QA pending operator review");
     expect(html).toContain("validation PASS");
     expect(html).toContain("pushed no");

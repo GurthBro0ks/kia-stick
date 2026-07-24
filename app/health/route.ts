@@ -2,10 +2,10 @@ import { NextResponse } from "next/server";
 import { corpus } from "@/lib/sourceModel";
 import { getRuntimeVersion } from "@/lib/serverVersion";
 import { currentAcceptedPushedState } from "@/lib/acceptedState";
-import { PUBLIC_STEWARD_WORKFLOW_PHASE } from "@/lib/publicStewardWorkflowRegistry";
 
 export const dynamic = "force-dynamic";
-const LOCAL_RUNTIME_PHASE = PUBLIC_STEWARD_WORKFLOW_PHASE;
+const LOCAL_RUNTIME_PHASE =
+  "KIA-Stick-public-steward-workflow-platform-bundle-1";
 
 export function GET() {
   const version = getRuntimeVersion();

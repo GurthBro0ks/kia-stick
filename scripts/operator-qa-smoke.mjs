@@ -16,6 +16,12 @@ const smokeSurfaces = [
   "Public Weingarten cited argument builder",
   "Public CBA annual-leave cited grievance outline",
   "Public CBA overtime cited grievance outline",
+  "Public CBA holiday-scheduling cited grievance outline",
+  "Public CBA safety-and-health cited grievance outline",
+  "Public CBA discipline-and-just-cause cited grievance outline",
+  "Supported public workflow discovery",
+  "Saved type and topic filters",
+  "Verified-current public outline exports",
   "Upload fake metadata buttons only",
   "Import fake state machine",
   "Vault fake governance workflow",
@@ -166,7 +172,7 @@ function checkStaticContracts(root, problems) {
     requireContains(problems, "public grievance outline", grievanceOutline, marker);
   }
   const localRuntimePhase = constantValue(health, "LOCAL_RUNTIME_PHASE", problems);
-  if (localRuntimePhase !== "KIA-Stick-public-CBA-overtime-cited-grievance-outline-pilot") {
+  if (localRuntimePhase !== "KIA-Stick-public-steward-workflow-platform-bundle-1") {
     problems.push(`LOCAL_RUNTIME_PHASE mismatch: ${localRuntimePhase || "missing"}`);
   }
   for (const marker of ["Display Version", "Product Version", "Build Date", "Git SHA", "Corpus", "Index", "Prompt", "Provider"]) {
