@@ -2,6 +2,7 @@ import React from "react";
 import { renderToStaticMarkup } from "react-dom/server";
 import { describe, expect, it } from "vitest";
 import {
+  AssistantMessageCard,
   normalizeSavedTopicFilter,
   SourcesPanel,
   SavedAnswersPanel,
@@ -12,6 +13,7 @@ import {
   resolveChatAnswerLane,
   routeChatQuestion,
 } from "@/lib/chatAnswerRouter";
+import { createAssistantMessage } from "@/lib/conversationModel";
 import {
   buildPublicGrievanceOutline,
   PUBLIC_GRIEVANCE_OUTLINE_PRIVATE_WARNING,
@@ -46,6 +48,10 @@ const defaults = {
   scope: "Official-Like" as const,
   detail: "Detailed" as const,
 };
+const disciplineSection3 =
+  "Keep charges, evidence, notice, prior record, employee status, defenses, and local handling separate and unverified until reviewed through the proper local process.";
+const disciplineSection6 =
+  "Does management rely on charges, evidence, notice, prior record, employee status, defenses, or local handling, and where can that authority be verified?";
 
 function answerFor(question: string) {
   return buildCbaAnswer({
@@ -134,6 +140,111 @@ describe("public steward workflow platform registry", () => {
     ]) {
       expect(section.every((entry) => entry.citationIds.length > 0)).toBe(true);
     }
+  });
+
+  it("keeps local-verification fragments grammatical and deterministic across all five topics", () => {
+    for (const topic of PUBLIC_STEWARD_WORKFLOW_TOPICS) {
+      const first = outlineFor(topic.exampleQuestion).outline;
+      const second = outlineFor(topic.exampleQuestion).outline;
+      const renderedCopy = publicGrievanceOutlineToText(first);
+      const markdown = publicGrievanceOutlineToMarkdown(first);
+      const malformedElement =
+        `${topic.localVerification.toLowerCase()} separate`;
+      const malformedQuestion =
+        `${topic.localVerification.toLowerCase()} and where`;
+
+      expect(renderedCopy.toLowerCase()).not.toContain(malformedElement);
+      expect(renderedCopy.toLowerCase()).not.toContain(malformedQuestion);
+      expect(markdown.toLowerCase()).not.toContain(malformedElement);
+      expect(markdown.toLowerCase()).not.toContain(malformedQuestion);
+      expect(first.id).toBe(second.id);
+      expect(first.contentIdentity).toBe(second.contentIdentity);
+      expect(first.citations.map((citation) => citation.id)).toEqual(
+        second.citations.map((citation) => citation.id)
+      );
+      expect(first.sourceInstanceIds).toEqual(second.sourceInstanceIds);
+    }
+  });
+
+  it("renders, saves, reopens, and exports the corrected discipline copy without changing citation or dedupe behavior", () => {
+    const { answer, outline } = outlineFor(
+      "What does the CBA require for discipline and just cause?"
+    );
+    const repeated = outlineFor(
+      "What does the CBA require for discipline and just cause?"
+    ).outline;
+
+    expect(outline.elementsToEstablish[2].text).toBe(disciplineSection3);
+    expect(outline.questionsForManagement[3]).toBe(disciplineSection6);
+    expect(outline.citations).toHaveLength(7);
+    expect(outline.citations.map((citation) => citation.id)).toEqual(
+      repeated.citations.map((citation) => citation.id)
+    );
+    expect(outline.sourceInstanceIds).toEqual(repeated.sourceInstanceIds);
+    expect(outline.contentIdentity).toBe(repeated.contentIdentity);
+
+    const text = publicGrievanceOutlineToText(outline);
+    const markdown = publicGrievanceOutlineToMarkdown(outline);
+    expect(text).toContain(disciplineSection3);
+    expect(text).toContain(disciplineSection6);
+    expect(markdown).toContain(disciplineSection3);
+    expect(markdown).toContain(disciplineSection6);
+
+    const message = createAssistantMessage({
+      threadId: "thread-discipline-copy",
+      turnId: "turn-discipline-copy",
+      parentMessageId: "message-user-discipline-copy",
+      answer,
+      modeScopeDetail: {
+        ...defaults,
+        sourceMode: "cba",
+        sourceModePolicy: "auto",
+      },
+      now: "2026-07-24T16:00:00.000Z",
+    });
+    const html = renderToStaticMarkup(
+      React.createElement(AssistantMessageCard, {
+        message,
+        onRetry: () => undefined,
+        onSave: () => undefined,
+        canBuildGrievanceOutline: true,
+        grievanceOutline: outline,
+        grievanceOutlineSource: cbaSource,
+      })
+    );
+    expect(html).toContain(disciplineSection3);
+    expect(html).toContain(disciplineSection6);
+
+    const savedRecord = createSavedGrievanceOutlineRecord({
+      outline,
+      question: answer.question,
+      timestamp: "2026-07-24T16:01:00.000Z",
+      ...defaults,
+    });
+    const migrated = migrateSavedAnswers([structuredClone(savedRecord)]);
+    expect(migrated).toHaveLength(1);
+    expect(migrated[0].grievanceOutline?.elementsToEstablish[2].text).toBe(
+      disciplineSection3
+    );
+    expect(migrated[0].grievanceOutline?.questionsForManagement[3]).toBe(
+      disciplineSection6
+    );
+    expect(migrated[0].answer).toContain(disciplineSection3);
+    expect(migrated[0].answer).toContain(disciplineSection6);
+
+    const duplicate = upsertSavedAnswer(
+      migrated,
+      createSavedGrievanceOutlineRecord({
+        outline: repeated,
+        question: answer.question,
+        timestamp: "2026-07-24T16:02:00.000Z",
+        ...defaults,
+      })
+    );
+    expect(duplicate.status).toBe("duplicate");
+    expect(duplicate.saved).toHaveLength(1);
+    expect(duplicate.saved[0].id).toBe(savedRecord.id);
+    expect(duplicate.saved[0].dataFingerprint).toBe(savedRecord.dataFingerprint);
   });
 
   it.each([

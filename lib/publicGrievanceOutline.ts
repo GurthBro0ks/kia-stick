@@ -813,7 +813,8 @@ function buildRegistryGrievanceOutline(
   const stepOneDecisionAndAppeal = [required.stepOneDecisionAndAppeal];
   const stepTwoDevelopment = [required.stepTwoFactDevelopment];
   const primaryArticle = topic.sourceSufficiency.primaryArticle;
-  const localVerification = topic.localVerification;
+  const localVerification = sentenceFragment(topic.localVerification);
+  const localVerificationAlternatives = alternativeList(localVerification);
 
   const core: PublicGrievanceOutlineCore = {
     savedType: PUBLIC_GRIEVANCE_OUTLINE_SAVED_TYPE,
@@ -873,7 +874,7 @@ function buildRegistryGrievanceOutline(
       `Which Article ${primaryArticle} provision does management contend governed the event?`,
       "What confirmed facts and neutral records support management's position?",
       "Which employee category, work context, qualification, sequence, or procedural condition was applied?",
-      `Does management rely on ${localVerification.toLowerCase()} and where can that authority be verified?`,
+      `Does management rely on ${localVerificationAlternatives.toLowerCase()}, and where can that authority be verified?`,
       "What corrective action, if any, was considered or taken?",
       "Will management identify all relevant papers or documents for the grievance record?",
     ],
@@ -983,6 +984,19 @@ function buildRegistryGrievanceOutline(
   };
 
   return finalizePublicGrievanceOutline(core, input.createdAt);
+}
+
+function alternativeList(value: string): string {
+  const finalConjunction = ", and ";
+  const finalConjunctionIndex = value.lastIndexOf(finalConjunction);
+  if (finalConjunctionIndex < 0) return value;
+  return `${value.slice(0, finalConjunctionIndex)}, or ${value.slice(
+    finalConjunctionIndex + finalConjunction.length
+  )}`;
+}
+
+function sentenceFragment(value: string): string {
+  return value.endsWith(".") ? value.slice(0, -1) : value;
 }
 
 export function publicGrievanceOutlineToText(outline: PublicGrievanceOutline): string {
