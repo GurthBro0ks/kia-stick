@@ -1,3 +1,11 @@
+- Phase: `KIA-Stick-public-CBA-annual-leave-post-push-accepted-state-refresh-closeout-and-push`
+- Authorization: `CLOSEOUT_AND_PUSH_KIA_ANNUAL_LEAVE_POST_PUSH_ACCEPTED_STATE_REFRESH_AUTHORIZED`.
+- Status: accepted-state refresh `547f612` and operator-QA PASS recording `b1aee15` passed the closeout gate and are authorized for one push.
+- Canonical closeout/push proof: `/home/mint/kia-stick-local-proofs/proof_kia_stick_public_cba_annual_leave_post_push_accepted_state_refresh_operator_qa_pass_recording_20260724T135655Z/closeout_push_20260724T140649Z`.
+- Scope: `CLOSEOUT.md`, `claude-progress.md`, and `feature_list.json` only for this closeout commit. No runtime/source/private-data/package/lockfile/service/system/network/Discord change; queue-015 and v0.9.12C remain blocked; Next/PostCSS remains parked.
+- Identity truth: accepted capability remains `9a66d37148f37d2dee16bcbe6b9a12aa4ba9946a`; pre-closeout repository recording and latest pushed closeout remain `370979a7108a4876fea13161d928fedc558f2fed`. Final push equality is recorded in the canonical proof.
+- Next: complete the authorized closeout push. Any later accepted-state bookkeeping remains separately authorized.
+
 - Phase: `KIA-Stick-public-CBA-annual-leave-post-push-accepted-state-refresh-operator-QA-PASS-recording`
 - Status: operator QA PASS explicitly recorded for `/home/mint/kia-stick-local-proofs/proof_kia_stick_public_cba_annual_leave_post_push_accepted_state_refresh_20260724T133841Z`; validation remains PASS; pushed no.
 - Local refresh commit under review: `547f612e987d6b8b86d2afb0d71795f4a0ee8665`. Accepted capability remains `9a66d37148f37d2dee16bcbe6b9a12aa4ba9946a`; repository recording and latest pushed closeout remain `370979a7108a4876fea13161d928fedc558f2fed`. Operator QA does not advance any accepted or pushed identity.

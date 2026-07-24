@@ -1,3 +1,19 @@
+## Public CBA Annual-Leave Post-Push Accepted-State Refresh Closeout and Push
+
+- Phase: `KIA-Stick-public-CBA-annual-leave-post-push-accepted-state-refresh-closeout-and-push`.
+- Authorization: `CLOSEOUT_AND_PUSH_KIA_ANNUAL_LEAVE_POST_PUSH_ACCEPTED_STATE_REFRESH_AUTHORIZED`.
+- Accepted-state refresh commit: `547f612e987d6b8b86d2afb0d71795f4a0ee8665`.
+- Operator-QA PASS recording commit: `b1aee1554dab51f06f82ff7530ae4a1831e0bcee`.
+- Accepted capability remains `9a66d37148f37d2dee16bcbe6b9a12aa4ba9946a`; pre-closeout repository recording and latest pushed closeout remain `370979a7108a4876fea13161d928fedc558f2fed`.
+- Refresh proof: `/home/mint/kia-stick-local-proofs/proof_kia_stick_public_cba_annual_leave_post_push_accepted_state_refresh_20260724T133841Z`.
+- Operator-QA PASS proof: `/home/mint/kia-stick-local-proofs/proof_kia_stick_public_cba_annual_leave_post_push_accepted_state_refresh_operator_qa_pass_recording_20260724T135655Z`.
+- Canonical closeout/push proof: `/home/mint/kia-stick-local-proofs/proof_kia_stick_public_cba_annual_leave_post_push_accepted_state_refresh_operator_qa_pass_recording_20260724T135655Z/closeout_push_20260724T140649Z`.
+- Validation and manual QA: `PASS` / `PASS`; accepted-state identity, Settings/health truth, proof-chain metadata, fake/public separation, and blocked gates are accepted.
+- Scope: `CLOSEOUT.md`, `claude-progress.md`, and `feature_list.json` only for this closeout commit; no runtime, source, private-data, package/lockfile, service, scheduler, network, notification, or blocked-target change.
+- Push gate: one authorized push of `main`; final closeout SHA and `HEAD == origin/main == remote main` equality are recorded in the canonical proof.
+- Blocked states preserved: queue-015 remains blocked; Next/PostCSS remains `WARN_SAFE_NEXT_TARGET_UNCLEAR`; v0.9.12C remains blocked; product/package remain `0.7.0`.
+- Notifications: Discord disabled; no duplicate notification; no report URL.
+
 ## Public CBA Annual-Leave Post-Push Accepted-State Contract Refresh
 
 - Phase: `KIA-Stick-public-CBA-annual-leave-cited-grievance-outline-post-push-accepted-state-refresh`.

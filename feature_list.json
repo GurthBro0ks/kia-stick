@@ -11956,5 +11956,32 @@
     "source_sync_performed": false,
     "private_data_accessed": false,
     "discord_sent": false
+  },
+  "public_cba_annual_leave_post_push_accepted_state_refresh_closeout": {
+    "phase": "KIA-Stick-public-CBA-annual-leave-post-push-accepted-state-refresh-closeout-and-push",
+    "status": "closeout_push_authorized",
+    "authorization": "CLOSEOUT_AND_PUSH_KIA_ANNUAL_LEAVE_POST_PUSH_ACCEPTED_STATE_REFRESH_AUTHORIZED",
+    "accepted_state_refresh_commit": "547f612e987d6b8b86d2afb0d71795f4a0ee8665",
+    "operator_qa_recording_commit": "b1aee1554dab51f06f82ff7530ae4a1831e0bcee",
+    "accepted_capability_commit": "9a66d37148f37d2dee16bcbe6b9a12aa4ba9946a",
+    "pre_closeout_repository_recording_commit": "370979a7108a4876fea13161d928fedc558f2fed",
+    "pre_closeout_latest_pushed_closeout_commit": "370979a7108a4876fea13161d928fedc558f2fed",
+    "refresh_proof_dir": "/home/mint/kia-stick-local-proofs/proof_kia_stick_public_cba_annual_leave_post_push_accepted_state_refresh_20260724T133841Z",
+    "operator_qa_pass_proof_dir": "/home/mint/kia-stick-local-proofs/proof_kia_stick_public_cba_annual_leave_post_push_accepted_state_refresh_operator_qa_pass_recording_20260724T135655Z",
+    "closeout_push_proof_dir": "/home/mint/kia-stick-local-proofs/proof_kia_stick_public_cba_annual_leave_post_push_accepted_state_refresh_operator_qa_pass_recording_20260724T135655Z/closeout_push_20260724T140649Z",
+    "validation_status": "PASS",
+    "manual_qa_status": "PASS",
+    "push_completion_recorded_in_closeout_proof": true,
+    "post_push_accepted_state_bookkeeping_requires_separate_authorization": true,
+    "accepted_identity_rewritten": false,
+    "queue_015_status": "blocked",
+    "next_postcss_status": "WARN_SAFE_NEXT_TARGET_UNCLEAR",
+    "v0912c_status": "blocked_pending_exact_target",
+    "product_version": "0.7.0",
+    "package_json_changed": false,
+    "package_lock_changed": false,
+    "source_sync_performed": false,
+    "private_data_accessed": false,
+    "discord_sent": false
   }
 }
