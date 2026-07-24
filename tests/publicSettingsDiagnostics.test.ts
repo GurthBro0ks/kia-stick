@@ -36,10 +36,11 @@ describe("public Settings summary and operator diagnostics split", () => {
     expect(html).toContain("Pushed</dt><dd>yes");
     expect(html).toContain("KIA Stick 0.7.0");
     expect(html).toContain("Current build</dt><dd>9773768");
-    expect(html).toContain("public CBA annual-leave post-push accepted-state refresh");
+    expect(html).toContain("public CBA overtime cited grievance-outline pilot");
+    expect(html).toContain("validation PASS; pushed no; manual QA pending operator review");
     expect(html).toContain("validation PASS");
     expect(html).toContain("pushed no");
-    expect(html).toContain("manual QA PASS");
+    expect(html).toContain("manual QA pending operator review");
     expect(html).not.toContain("stale local-bundle push-status repair");
     expect(html).toContain("APWU-USPS CBA");
     expect(html).toContain("current source instance verified");
@@ -81,7 +82,7 @@ describe("public Settings summary and operator diagnostics split", () => {
     expect(html).toContain(currentAcceptedPushedState.latest_pushed_closeout_short_commit as string);
     expect(html).toContain(currentAcceptedPushedState.local_bundle_status);
     expect(currentAcceptedPushedState.local_bundle_status).toContain("pushed no");
-    expect(currentAcceptedPushedState.local_bundle_status).toContain("manual QA PASS");
+    expect(currentAcceptedPushedState.local_bundle_status).toContain("manual QA pending operator review");
     expect(currentAcceptedPushedState.accepted_pushed_short_commit).toBe("9a66d37");
     expect(currentAcceptedPushedState.repository_recording_short_commit).toBe("370979a");
     expect(currentAcceptedPushedState.latest_pushed_closeout_short_commit).toBe("370979a");

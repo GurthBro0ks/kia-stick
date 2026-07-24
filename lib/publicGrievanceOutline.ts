@@ -4,6 +4,8 @@ import {
   CBA_PROMPT_VERSION,
   CBA_PROVIDER,
   CBA_SOURCE_ID,
+  CBA_SOURCE_PAGE_URL,
+  CBA_SOURCE_PDF_URL,
   type CbaParagraph,
   type CbaSourceCache,
 } from "@/lib/cbaSource";
@@ -12,8 +14,14 @@ import type { Citation } from "@/lib/sourceModel";
 import type { RuntimeVersion } from "@/lib/version";
 
 export const PUBLIC_GRIEVANCE_OUTLINE_PHASE =
-  "KIA-Stick-public-CBA-annual-leave-cited-grievance-outline-pilot" as const;
-export const PUBLIC_GRIEVANCE_OUTLINE_TYPE = "annual_leave_denial_or_scheduling" as const;
+  "KIA-Stick-public-CBA-overtime-cited-grievance-outline-pilot" as const;
+export const PUBLIC_GRIEVANCE_OUTLINE_TYPES = {
+  annual_leave: "annual_leave_denial_or_scheduling",
+  overtime: "overtime_assignment_or_distribution",
+} as const;
+export type PublicGrievanceOutlineTemplate = keyof typeof PUBLIC_GRIEVANCE_OUTLINE_TYPES;
+export type PublicGrievanceOutlineType =
+  (typeof PUBLIC_GRIEVANCE_OUTLINE_TYPES)[PublicGrievanceOutlineTemplate];
 export const PUBLIC_GRIEVANCE_OUTLINE_SAVED_TYPE = "public_grievance_outline" as const;
 export const PUBLIC_GRIEVANCE_OUTLINE_PRIVATE_WARNING =
   "Do not enter private case details in this public pilot." as const;
@@ -27,8 +35,9 @@ export interface PublicGrievanceOutline {
   id: string;
   contentIdentity: string;
   savedType: typeof PUBLIC_GRIEVANCE_OUTLINE_SAVED_TYPE;
-  type: typeof PUBLIC_GRIEVANCE_OUTLINE_TYPE;
-  topic: "Annual leave";
+  type: PublicGrievanceOutlineType;
+  template: PublicGrievanceOutlineTemplate;
+  topic: "Annual leave" | "Overtime";
   title: string;
   issue: string;
   governingContractLanguage: CitedGrievanceOutlineItem[];
@@ -52,11 +61,15 @@ export interface PublicGrievanceOutline {
 }
 
 export type PublicGrievanceOutlineEligibility =
-  | { eligible: true; citations: Citation[] }
+  | {
+      eligible: true;
+      citations: Citation[];
+      template: PublicGrievanceOutlineTemplate;
+    }
   | {
       eligible: false;
       reason:
-        | "not_public_annual_leave"
+        | "not_supported_public_grievance_topic"
         | "no_answer"
         | "provider_mismatch"
         | "cache_unavailable"
@@ -64,15 +77,24 @@ export type PublicGrievanceOutlineEligibility =
         | "missing_verified_outline_source";
     };
 
-interface RequiredOutlineCitationSet {
-  schedulingPreference: Citation;
-  choicePeriod: Citation;
-  vacationPlanning: Citation;
-  advanceCommitments: Citation;
+interface RequiredProcedureCitationSet {
   grievanceDefinition: Citation;
   stepOneTiming: Citation;
   stepOneDecisionAndAppeal: Citation;
   stepTwoFactDevelopment: Citation;
+}
+
+interface RequiredAnnualLeaveCitationSet extends RequiredProcedureCitationSet {
+  schedulingPreference: Citation;
+  choicePeriod: Citation;
+  vacationPlanning: Citation;
+  advanceCommitments: Citation;
+}
+
+interface RequiredOvertimeCitationSet extends RequiredProcedureCitationSet {
+  assignmentAdministration: Citation;
+  voluntarySelectionAndMandatoryRotation: Citation;
+  overtimeDesiredListLimits: Citation;
 }
 
 function articleParagraphs(source: CbaSourceCache, articleNumber: string): CbaParagraph[] {
@@ -88,35 +110,9 @@ function findParagraph(
   return paragraphs.find(predicate) ?? null;
 }
 
-function requiredOutlineCitationSet(source: CbaSourceCache): RequiredOutlineCitationSet | null {
-  const article10 = articleParagraphs(source, "10");
+function requiredProcedureCitationSet(source: CbaSourceCache): RequiredProcedureCitationSet | null {
   const article15 = articleParagraphs(source, "15");
   const paragraphs = {
-    schedulingPreference: findParagraph(
-      article10,
-      (paragraph) => paragraph.sectionNumber === "2" && /scheduling annual leave/i.test(paragraph.text)
-    ),
-    choicePeriod: findParagraph(
-      article10,
-      (paragraph) =>
-        paragraph.sectionNumber === "3" &&
-        /choice vacation period/i.test(paragraph.text) &&
-        /annual leave shall be granted/i.test(paragraph.text)
-    ),
-    vacationPlanning: findParagraph(
-      article10,
-      (paragraph) =>
-        paragraph.sectionNumber === "4" &&
-        /submission of applications for annual leave/i.test(paragraph.text) &&
-        /official notice/i.test(paragraph.text)
-    ),
-    advanceCommitments: findParagraph(
-      article10,
-      (paragraph) =>
-        paragraph.sectionNumber === "4" &&
-        /advance commitments for granting annual leave/i.test(paragraph.text) &&
-        /serious emergency/i.test(paragraph.text)
-    ),
     grievanceDefinition: findParagraph(
       article15,
       (paragraph) =>
@@ -151,13 +147,120 @@ function requiredOutlineCitationSet(source: CbaSourceCache): RequiredOutlineCita
       key,
       citationForCbaParagraph(source, paragraph as CbaParagraph),
     ])
-  ) as unknown as RequiredOutlineCitationSet;
+  ) as unknown as RequiredProcedureCitationSet;
 }
 
-function requiredOutlineCitations(source: CbaSourceCache): Citation[] | null {
-  const citationSet = requiredOutlineCitationSet(source);
+function requiredAnnualLeaveCitationSet(source: CbaSourceCache): RequiredAnnualLeaveCitationSet | null {
+  const procedure = requiredProcedureCitationSet(source);
+  const article10 = articleParagraphs(source, "10");
+  const paragraphs = {
+    schedulingPreference: findParagraph(
+      article10,
+      (paragraph) => paragraph.sectionNumber === "2" && /scheduling annual leave/i.test(paragraph.text)
+    ),
+    choicePeriod: findParagraph(
+      article10,
+      (paragraph) =>
+        paragraph.sectionNumber === "3" &&
+        /choice vacation period/i.test(paragraph.text) &&
+        /annual leave shall be granted/i.test(paragraph.text)
+    ),
+    vacationPlanning: findParagraph(
+      article10,
+      (paragraph) =>
+        paragraph.sectionNumber === "4" &&
+        /submission of applications for annual leave/i.test(paragraph.text) &&
+        /official notice/i.test(paragraph.text)
+    ),
+    advanceCommitments: findParagraph(
+      article10,
+      (paragraph) =>
+        paragraph.sectionNumber === "4" &&
+        /advance commitments for granting annual leave/i.test(paragraph.text) &&
+        /serious emergency/i.test(paragraph.text)
+    ),
+  };
+  if (!procedure || Object.values(paragraphs).some((paragraph) => !paragraph)) return null;
+  return {
+    ...procedure,
+    ...Object.fromEntries(
+      Object.entries(paragraphs).map(([key, paragraph]) => [
+        key,
+        citationForCbaParagraph(source, paragraph as CbaParagraph),
+      ])
+    ) as Pick<
+      RequiredAnnualLeaveCitationSet,
+      "schedulingPreference" | "choicePeriod" | "vacationPlanning" | "advanceCommitments"
+    >,
+  };
+}
+
+function requiredOvertimeCitationSet(source: CbaSourceCache): RequiredOvertimeCitationSet | null {
+  const procedure = requiredProcedureCitationSet(source);
+  const article8 = articleParagraphs(source, "8");
+  const paragraphs = {
+    assignmentAdministration: findParagraph(
+      article8,
+      (paragraph) =>
+        /scheduled among qualified employees doing similar work/i.test(paragraph.text) &&
+        /Overtime Desired List/i.test(paragraph.text)
+    ),
+    voluntarySelectionAndMandatoryRotation: findParagraph(
+      article8,
+      (paragraph) =>
+        /selected in order of their seniority on a rotating basis/i.test(paragraph.text) &&
+        /not on the list may be required to work overtime on a rotating basis/i.test(paragraph.text)
+    ),
+    overtimeDesiredListLimits: findParagraph(
+      article8,
+      (paragraph) =>
+        /no more than twelve \(12\) hours of work in a day/i.test(paragraph.text) &&
+        /not required to utilize employees on the Overtime Desired List at the penalty overtime rate/i.test(paragraph.text)
+    ),
+  };
+  if (!procedure || Object.values(paragraphs).some((paragraph) => !paragraph)) return null;
+  return {
+    ...procedure,
+    ...Object.fromEntries(
+      Object.entries(paragraphs).map(([key, paragraph]) => [
+        key,
+        citationForCbaParagraph(source, paragraph as CbaParagraph),
+      ])
+    ) as Pick<
+      RequiredOvertimeCitationSet,
+      "assignmentAdministration" | "voluntarySelectionAndMandatoryRotation" | "overtimeDesiredListLimits"
+    >,
+  };
+}
+
+function requiredOutlineCitationSet(
+  source: CbaSourceCache,
+  template: PublicGrievanceOutlineTemplate
+): RequiredAnnualLeaveCitationSet | RequiredOvertimeCitationSet | null {
+  return template === "overtime"
+    ? requiredOvertimeCitationSet(source)
+    : requiredAnnualLeaveCitationSet(source);
+}
+
+function requiredOutlineCitations(
+  source: CbaSourceCache,
+  template: PublicGrievanceOutlineTemplate
+): Citation[] | null {
+  const citationSet = requiredOutlineCitationSet(source, template);
   if (!citationSet) return null;
   return [...new Map(Object.values(citationSet).map((citation) => [citation.id, citation])).values()];
+}
+
+function trustedCurrentCbaCitation(citation: Citation, source: CbaSourceCache): boolean {
+  return citation.sourceKind === "public" &&
+    citation.sourceId === CBA_SOURCE_ID &&
+    citation.publicSourceType === "cba_contract" &&
+    citation.file === CBA_SOURCE_PDF_URL &&
+    citation.officialUrl === CBA_SOURCE_PDF_URL &&
+    citation.officialPdfUrl === CBA_SOURCE_PDF_URL &&
+    citation.sourcePageUrl === CBA_SOURCE_PAGE_URL &&
+    citation.citationVerificationState === "verified_current" &&
+    verifyCbaCitation(citation, source).state === "verified_current";
 }
 
 export function publicGrievanceOutlineEligibility(input: {
@@ -165,11 +268,14 @@ export function publicGrievanceOutlineEligibility(input: {
   source: CbaSourceCache | null;
 }): PublicGrievanceOutlineEligibility {
   const { answer, source } = input;
+  const intent = detectCbaIntent(answer.question);
+  const template: PublicGrievanceOutlineTemplate | null =
+    intent === "annual_leave" ? "annual_leave" : intent === "overtime" ? "overtime" : null;
   if (
     answer.answerKind !== "public" ||
     answer.publicSourceRole !== "cba_contract" ||
-    detectCbaIntent(answer.question) !== "annual_leave"
-  ) return { eligible: false, reason: "not_public_annual_leave" };
+    !template
+  ) return { eligible: false, reason: "not_supported_public_grievance_topic" };
   if (answer.noAnswer) return { eligible: false, reason: "no_answer" };
   if (answer.version.provider !== CBA_PROVIDER || answer.version.promptVersion !== CBA_PROMPT_VERSION) {
     return { eligible: false, reason: "provider_mismatch" };
@@ -179,30 +285,59 @@ export function publicGrievanceOutlineEligibility(input: {
     (citation) =>
       citation.sourceId === CBA_SOURCE_ID &&
       citation.publicSourceType === "cba_contract" &&
-      citation.articleNumber === "10"
+      citation.articleNumber === (template === "overtime" ? "8" : "10")
   );
   if (
     answerCitations.length === 0 ||
-    answerCitations.some(
-      (citation) =>
-        citation.citationVerificationState !== "verified_current" ||
-        verifyCbaCitation(citation, source).state !== "verified_current"
-    )
+    answerCitations.some((citation) => !trustedCurrentCbaCitation(citation, source))
   ) return { eligible: false, reason: "missing_verified_answer_citation" };
-  const citations = requiredOutlineCitations(source);
+  const citations = requiredOutlineCitations(source, template);
   if (
     !citations ||
-    citations.some(
-      (citation) =>
-        citation.citationVerificationState !== "verified_current" ||
-        verifyCbaCitation(citation, source).state !== "verified_current"
-    )
+    citations.some((citation) => !trustedCurrentCbaCitation(citation, source))
   ) return { eligible: false, reason: "missing_verified_outline_source" };
-  return { eligible: true, citations };
+  return { eligible: true, citations, template };
 }
 
 function item(text: string, citations: Citation[]): CitedGrievanceOutlineItem {
   return { text, citationIds: [...new Set(citations.map((citation) => citation.id))] };
+}
+
+type PublicGrievanceOutlineCore = Omit<
+  PublicGrievanceOutline,
+  "id" | "contentIdentity" | "createdAt"
+>;
+
+function finalizePublicGrievanceOutline(
+  core: PublicGrievanceOutlineCore,
+  createdAt?: string
+): PublicGrievanceOutline {
+  const stableOutlineIdentity = sha256Hex(
+    canonicalJson({
+      sourceIds: core.citations.map((citation) => citation.sourceId ?? ""),
+      template: core.template,
+      topic: core.topic,
+      type: core.type,
+    })
+  );
+  const contentIdentity = sha256Hex(
+    JSON.stringify({
+      ...core,
+      citations: core.citations.map((citation) => ({
+        citationAnchorSha256: citation.citationAnchorSha256 ?? "",
+        citationVerificationState: citation.citationVerificationState ?? "",
+        id: citation.id,
+        paragraphContentSha256: citation.paragraphContentSha256 ?? "",
+        sourceInstanceId: citation.sourceInstanceId ?? "",
+      })),
+    })
+  );
+  return {
+    ...core,
+    id: `public-grievance-outline-${stableOutlineIdentity.slice(0, 16)}`,
+    contentIdentity,
+    createdAt: createdAt ?? new Date().toISOString(),
+  };
 }
 
 export function buildPublicGrievanceOutline(input: {
@@ -212,7 +347,13 @@ export function buildPublicGrievanceOutline(input: {
 }): PublicGrievanceOutline | null {
   const eligibility = publicGrievanceOutlineEligibility(input);
   if (!eligibility.eligible || !input.source) return null;
-  const required = requiredOutlineCitationSet(input.source);
+  if (eligibility.template === "overtime") {
+    return buildOvertimeGrievanceOutline(
+      { answer: input.answer, source: input.source, createdAt: input.createdAt },
+      eligibility.citations
+    );
+  }
+  const required = requiredAnnualLeaveCitationSet(input.source);
   if (!required) return null;
 
   const citations = eligibility.citations;
@@ -226,9 +367,10 @@ export function buildPublicGrievanceOutline(input: {
   const stepOneDecisionAndAppeal = [required.stepOneDecisionAndAppeal];
   const stepTwoDevelopment = [required.stepTwoFactDevelopment];
 
-  const core = {
+  const core: PublicGrievanceOutlineCore = {
     savedType: PUBLIC_GRIEVANCE_OUTLINE_SAVED_TYPE,
-    type: PUBLIC_GRIEVANCE_OUTLINE_TYPE,
+    type: PUBLIC_GRIEVANCE_OUTLINE_TYPES.annual_leave,
+    template: "annual_leave",
     topic: "Annual leave" as const,
     title: "Public annual-leave cited grievance outline",
     issue:
@@ -400,31 +542,209 @@ export function buildPublicGrievanceOutline(input: {
     ],
   };
 
-  const stableOutlineIdentity = sha256Hex(
-    canonicalJson({
-      sourceIds: citations.map((citation) => citation.sourceId ?? ""),
-      topic: core.topic,
-      type: core.type,
-    })
-  );
-  const contentIdentity = sha256Hex(
-    JSON.stringify({
-      ...core,
-      citations: citations.map((citation) => ({
-        citationAnchorSha256: citation.citationAnchorSha256 ?? "",
-        citationVerificationState: citation.citationVerificationState ?? "",
-        id: citation.id,
-        paragraphContentSha256: citation.paragraphContentSha256 ?? "",
-        sourceInstanceId: citation.sourceInstanceId ?? "",
-      })),
-    })
-  );
-  return {
-    ...core,
-    id: `public-grievance-outline-${stableOutlineIdentity.slice(0, 16)}`,
-    contentIdentity,
-    createdAt: input.createdAt ?? new Date().toISOString(),
+  return finalizePublicGrievanceOutline(core, input.createdAt);
+}
+
+function buildOvertimeGrievanceOutline(
+  input: {
+    answer: AnswerResult;
+    source: CbaSourceCache;
+    createdAt?: string;
+  },
+  citations: Citation[]
+): PublicGrievanceOutline | null {
+  const required = requiredOvertimeCitationSet(input.source);
+  if (!required) return null;
+
+  const assignmentAdministration = [required.assignmentAdministration];
+  const selectionAndRotation = [required.voluntarySelectionAndMandatoryRotation];
+  const desiredListLimits = [required.overtimeDesiredListLimits];
+  const article8 = [
+    required.assignmentAdministration,
+    required.voluntarySelectionAndMandatoryRotation,
+    required.overtimeDesiredListLimits,
+  ];
+  const grievanceDefinition = [required.grievanceDefinition];
+  const stepOneTiming = [required.stepOneTiming];
+  const stepOneDecisionAndAppeal = [required.stepOneDecisionAndAppeal];
+  const stepTwoDevelopment = [required.stepTwoFactDevelopment];
+
+  const core: PublicGrievanceOutlineCore = {
+    savedType: PUBLIC_GRIEVANCE_OUTLINE_SAVED_TYPE,
+    type: PUBLIC_GRIEVANCE_OUTLINE_TYPES.overtime,
+    template: "overtime",
+    topic: "Overtime",
+    title: "Public overtime cited grievance outline",
+    issue:
+      "Whether verified Article 8 overtime-assignment language may support a grievance after the applicable craft, work location, employee qualifications and availability, Overtime Desired List status, assignment sequence, hours, and local implementation rules are separately confirmed.",
+    governingContractLanguage: [
+      item(
+        "Article 8 states that overtime for regular full-time employees is scheduled among qualified employees doing similar work in the work location where they regularly work, using an Overtime Desired List established by craft, section, or tour under local implementation.",
+        assignmentAdministration
+      ),
+      item(
+        "Article 8 states that listed employees with the necessary skills are selected by seniority on a rotating basis, with employees absent or on leave passed over.",
+        selectionAndRotation
+      ),
+      item(
+        "Article 8 permits qualified full-time regular employees not on the list to be required to work overtime on a rotating basis when the voluntary list does not provide enough qualified people, subject to the cited conditions.",
+        selectionAndRotation
+      ),
+      item(
+        "Article 8 places stated limits and qualifications on Overtime Desired List utilization, including daily and weekly limits and a penalty-rate qualification.",
+        desiredListLimits
+      ),
+    ],
+    elementsToEstablish: [
+      item(
+        "Identify the potentially applicable Article 8 rule: list administration, qualified-employee selection, voluntary rotation, mandatory rotation, or the cited list-utilization limits.",
+        article8
+      ),
+      item(
+        "Confirm the employee category, craft, section or tour, work location, necessary skills, availability, list status, and assignment sequence before applying the cited rule.",
+        [...assignmentAdministration, ...selectionAndRotation]
+      ),
+      item(
+        "Confirm whether the voluntary list supplied enough qualified people and whether the cited preconditions for assigning non-list employees were met.",
+        selectionAndRotation
+      ),
+      item(
+        "Confirm the relevant hours and whether a cited daily, weekly, December, or penalty-rate qualification applies; this pilot does not calculate hours or pay.",
+        desiredListLimits
+      ),
+    ],
+    factsToConfirm: [
+      "The separately verified craft, section or tour, work location, and applicable local implementation procedure.",
+      "The employee category, necessary skills, availability, and Overtime Desired List status.",
+      "The order in which overtime opportunities were offered or assigned, without entering employee names or private details here.",
+      "Whether anyone was absent, on leave, unavailable, unqualified, or already subject to a cited hours limit.",
+      "Whether the overtime was voluntary or mandatory and what management states was the reason for the sequence.",
+      "When the employee or Union learned or reasonably should have learned of the grievance cause; keep actual dates outside this public pilot.",
+    ],
+    evidenceToRequest: [
+      item(
+        "The applicable Overtime Desired List and neutral assignment or opportunity sequence records, reviewed outside this pilot and only to the extent they exist and are properly available.",
+        [...assignmentAdministration, ...selectionAndRotation]
+      ),
+      item(
+        "Neutral records sufficient to check qualifications, availability, rotation, and the relevant daily or weekly hours, without entering private data here.",
+        [...selectionAndRotation, ...desiredListLimits]
+      ),
+      item(
+        "Any applicable local implementation provision, treated as a separate source that still requires verification.",
+        assignmentAdministration
+      ),
+      item(
+        "Relevant papers or documents exchanged through the grievance process under the cited Article 15 fact-development procedure.",
+        stepTwoDevelopment
+      ),
+    ],
+    questionsForManagement: [
+      "Which Article 8 provision and separately verified local implementation rule governed the overtime assignment?",
+      "What craft, section or tour, work location, qualifications, availability, and list criteria were applied?",
+      "What was the neutral sequence of offers or assignments?",
+      "Was the voluntary Overtime Desired List insufficient, and if so, what verified facts support that conclusion?",
+      "Which cited daily, weekly, December, or penalty-rate qualification does management contend applies?",
+      "What records or local provisions does management rely upon for separate verification?",
+    ],
+    stepOneArgument: [
+      item(
+        "Frame the matter conditionally as a dispute about interpretation, application, or compliance with the Agreement or a non-conflicting LMOU, not as a predetermined violation.",
+        grievanceDefinition
+      ),
+      item(
+        "Identify only the Article 8 provisions made potentially relevant by confirmed employee status, list status, qualifications, availability, work location, and assignment sequence.",
+        article8
+      ),
+      item(
+        "Compare the verified rotation and list-utilization rules with confirmed neutral records while keeping unverified local procedures and disputed facts separate.",
+        [...assignmentAdministration, ...selectionAndRotation, ...desiredListLimits]
+      ),
+      item(
+        "Confirm the qualified Step 1 timing trigger before proceeding; this pilot does not calculate a deadline from private dates.",
+        stepOneTiming
+      ),
+      item(
+        "State facts, contentions, particular contract provisions, and a conditional remedy category only after local-union review.",
+        stepOneDecisionAndAppeal
+      ),
+    ],
+    possibleRemedies: [
+      item(
+        "Article 15 requires a remedy sought on a Step 2 appeal, but the cited national paragraphs do not prescribe a specific remedy for every overtime dispute.",
+        stepOneDecisionAndAppeal
+      ),
+      item(
+        "Depending on confirmed facts and local-union review, a remedy category might seek compliance with a verified assignment procedure, correction of an established opportunity record, or another make-whole form that is actually supported; no entitlement, amount, or outcome is promised.",
+        [...article8, ...stepOneDecisionAndAppeal]
+      ),
+      item(
+        "Any monetary, LMOU-specific, or local-practice remedy requires separate verification and calculation outside this public pilot.",
+        [...assignmentAdministration, ...grievanceDefinition]
+      ),
+    ],
+    timelinessAndProcedureLimits: [
+      item(
+        "Article 15 Step 1 states a qualified fourteen-day period measured from when the employee or Union first learned or reasonably should have learned of the cause; actual timing requires fact-specific local-union review.",
+        stepOneTiming
+      ),
+      item(
+        "If Step 1 is unresolved, Article 15 addresses the supervisor's decision and a ten-day Union appeal period to Step 2 after receipt of that decision.",
+        stepOneDecisionAndAppeal
+      ),
+      item(
+        "This pilot does not accept incident dates, calculate deadlines, calculate hours or pay, prepare a grievance form, or decide whether an extension or different procedure applies.",
+        [...stepOneTiming, ...stepOneDecisionAndAppeal]
+      ),
+    ],
+    escalationReadiness: [
+      item(
+        "A Step 2 appeal is not ready until facts, contentions, particular contract provisions, and a conditional remedy sought can be stated through the proper union process.",
+        stepOneDecisionAndAppeal
+      ),
+      item(
+        "Step 2 development includes the parties' factual and contractual positions and exchange of relevant papers or documents under the cited procedure.",
+        stepTwoDevelopment
+      ),
+      item(
+        "Escalation decisions belong with the local or designated union representative after current facts, timing, and any local agreement are verified.",
+        [...stepOneDecisionAndAppeal, ...stepTwoDevelopment]
+      ),
+    ],
+    limitations: [
+      item(
+        "The verified CBA supplies conditional overtime rules, but unknown facts do not establish that management violated the Agreement or that a grievance will succeed.",
+        article8
+      ),
+      item(
+        "This CBA-only pilot does not verify an LMOU, JCIM interpretation, handbook rule, arbitration precedent, management policy, local practice, or worked-off-assignment theory beyond the cited Article 8 language.",
+        [...assignmentAdministration, ...grievanceDefinition]
+      ),
+      item(
+        "This public pilot does not determine a particular remedy, calculate damages or back pay, replace local union advice, or provide legal advice.",
+        [...grievanceDefinition, ...stepOneDecisionAndAppeal]
+      ),
+      item(
+        "Private case details must remain outside this public pilot.",
+        [...grievanceDefinition, ...stepOneTiming]
+      ),
+    ],
+    citations,
+    privateCaseWarning: PUBLIC_GRIEVANCE_OUTLINE_PRIVATE_WARNING,
+    provider: CBA_PROVIDER,
+    promptVersion: CBA_PROMPT_VERSION,
+    buildIdentity: input.answer.version.displayVersion,
+    version: input.answer.version,
+    sourceInstanceIds: [
+      ...new Set(
+        citations
+          .map((citation) => citation.sourceInstanceId)
+          .filter((value): value is string => Boolean(value))
+      ),
+    ],
   };
+
+  return finalizePublicGrievanceOutline(core, input.createdAt);
 }
 
 export function publicGrievanceOutlineToText(outline: PublicGrievanceOutline): string {

@@ -556,7 +556,7 @@ export function KiaStickApp({ runtimeVersion = clientVersion }: { runtimeVersion
     if (!outline) {
       setSaveNotice({
         status: "duplicate",
-        text: "Current verified Article 10 and Article 15 citations are required before a cited grievance outline can be built.",
+        text: "Current verified topic-specific CBA and Article 15 citations are required before a cited grievance outline can be built.",
       });
       return;
     }
@@ -1550,6 +1550,14 @@ export function SavedAnswersPanel(props: {
             <dl className="savedDetailList" aria-label="Saved answer metadata">
               <dt>Saved type</dt>
               <dd>{item.savedType}</dd>
+              {item.savedType === "public_grievance_outline" && item.grievanceOutline && (
+                <>
+                  <dt>Saved topic</dt>
+                  <dd>{item.grievanceOutlineTopic ?? item.grievanceOutline.topic}</dd>
+                  <dt>Saved template</dt>
+                  <dd>{item.grievanceOutlineTemplate ?? item.grievanceOutline.template}</dd>
+                </>
+              )}
               <dt>Product</dt>
               <dd>{item.version.productVersion}</dd>
               <dt>Prompt</dt>
@@ -2777,6 +2785,8 @@ function PublicGrievanceOutlineView({
         <strong>{outline.privateCaseWarning}</strong>
       </p>
       <div className="argumentPlanMeta" aria-label="Grievance outline identity">
+        <span>Topic: {outline.topic}</span>
+        <span>Template: {outline.template}</span>
         <span>Provider: {outline.provider}</span>
         <span>Prompt: {outline.promptVersion}</span>
         <span>Build: {outline.buildIdentity}</span>

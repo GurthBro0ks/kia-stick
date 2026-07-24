@@ -85,4 +85,34 @@ describe("local exact official CBA integration", () => {
     expect(outline?.citations.every((citation) => citation.citationVerificationState === "verified_current")).toBe(true);
     expect(new Set(outline?.citations.map((citation) => citation.articleNumber))).toEqual(new Set(["10", "15"]));
   });
+
+  it("builds the overtime grievance outline from the verified local Article 8 and Article 15 anchors", () => {
+    const state = readBoundedCbaSourceCache();
+    if (state.status === "unavailable") {
+      if (requireCache) expect.fail(`required CBA cache unavailable: ${state.reason}`);
+      return;
+    }
+    const runtimeVersion = createRuntimeVersion({ buildDate: "20260724", gitSha: "overtime-local" });
+    const answer = buildCbaAnswer({
+      question: "How should overtime opportunities be distributed under the CBA?",
+      source: state.source,
+      nlrbSource: null,
+      runtimeVersion,
+      mode: "Strict Research",
+      scope: "Official-Like",
+      detail: "Detailed",
+    });
+    const eligibility = publicGrievanceOutlineEligibility({ answer, source: state.source });
+    const outline = buildPublicGrievanceOutline({
+      answer,
+      source: state.source,
+      createdAt: "2026-07-24T14:30:00.000Z",
+    });
+    expect(answer.noAnswer).toBe(false);
+    expect(eligibility).toMatchObject({ eligible: true, template: "overtime" });
+    expect(outline).not.toBeNull();
+    expect(outline?.template).toBe("overtime");
+    expect(outline?.citations.every((citation) => citation.citationVerificationState === "verified_current")).toBe(true);
+    expect(new Set(outline?.citations.map((citation) => citation.articleNumber))).toEqual(new Set(["8", "15"]));
+  });
 });

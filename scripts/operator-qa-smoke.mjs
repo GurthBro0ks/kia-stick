@@ -15,6 +15,7 @@ const smokeSurfaces = [
   "Saved empty/detail/version metadata",
   "Public Weingarten cited argument builder",
   "Public CBA annual-leave cited grievance outline",
+  "Public CBA overtime cited grievance outline",
   "Upload fake metadata buttons only",
   "Import fake state machine",
   "Vault fake governance workflow",
@@ -165,7 +166,7 @@ function checkStaticContracts(root, problems) {
     requireContains(problems, "public grievance outline", grievanceOutline, marker);
   }
   const localRuntimePhase = constantValue(health, "LOCAL_RUNTIME_PHASE", problems);
-  if (localRuntimePhase !== "KIA-Stick-public-CBA-annual-leave-cited-grievance-outline-pilot") {
+  if (localRuntimePhase !== "KIA-Stick-public-CBA-overtime-cited-grievance-outline-pilot") {
     problems.push(`LOCAL_RUNTIME_PHASE mismatch: ${localRuntimePhase || "missing"}`);
   }
   for (const marker of ["Display Version", "Product Version", "Build Date", "Git SHA", "Corpus", "Index", "Prompt", "Provider"]) {
@@ -222,8 +223,11 @@ async function checkLiveRoutes(baseUrl, requireServer, acceptedState, localRunti
   if (healthJson.acceptedCommit !== acceptedState.accepted_pushed_commit) problems.push(`/health accepted commit mismatch: ${healthJson.acceptedCommit}`);
   if (healthJson.repositoryRecordingCommit !== acceptedState.repository_recording_commit) problems.push(`/health repository recording commit mismatch: ${healthJson.repositoryRecordingCommit}`);
   if (healthJson.latestPushedCloseoutCommit !== acceptedState.latest_pushed_closeout_commit) problems.push(`/health latest pushed closeout commit mismatch: ${healthJson.latestPushedCloseoutCommit}`);
-  if (new Set([healthJson.acceptedCommit, healthJson.repositoryRecordingCommit, healthJson.latestPushedCloseoutCommit]).size !== 3) {
-    problems.push("/health accepted, repository-recording, and latest pushed closeout commits must be distinct");
+  if (healthJson.acceptedCommit === healthJson.repositoryRecordingCommit) {
+    problems.push("/health accepted capability and repository-recording commits must remain distinct");
+  }
+  if (healthJson.repositoryRecordingCommit !== healthJson.latestPushedCloseoutCommit) {
+    problems.push("/health repository-recording and latest pushed closeout commits must match the shared contract");
   }
   if ([healthJson.acceptedCommit, healthJson.repositoryRecordingCommit, healthJson.latestPushedCloseoutCommit].includes(healthJson.gitSha)) {
     problems.push("/health current build Git SHA must remain distinct from accepted-state repository identities");

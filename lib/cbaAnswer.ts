@@ -28,6 +28,7 @@ import type { RuntimeVersion } from "@/lib/version";
 
 export type CbaQuestionIntent =
   | "annual_leave"
+  | "overtime"
   | "grievance_deadline"
   | "article_17"
   | "article_16"
@@ -54,8 +55,23 @@ function isAnnualLeaveIntent(normalized: string): boolean {
   return (explicitTopic || boundedGenericLeave) && administrationCue;
 }
 
+function isOvertimeIntent(normalized: string): boolean {
+  if (/\b(fake|sample|annual leave|vacation|sick leave|fmla|lwop|owcp|medical)\b/.test(normalized)) {
+    return false;
+  }
+  const explicitTopic =
+    /\bovertime\b/.test(normalized) ||
+    /\bovertime[- ]desired[- ]list\b/.test(normalized) ||
+    /\bodl\b/.test(normalized);
+  const workedOffAssignment =
+    /\bworked off assignment\b/.test(normalized) &&
+    /\b(overtime|odl|bypass(?:ed)?|forced|mandatory)\b/.test(normalized);
+  return explicitTopic || workedOffAssignment;
+}
+
 export function detectCbaIntent(question: string): CbaQuestionIntent {
   const normalized = question.toLowerCase();
+  if (isOvertimeIntent(normalized)) return "overtime";
   if (isAnnualLeaveIntent(normalized)) return "annual_leave";
   if (/\b(nlrb|weingarten)\b/.test(normalized) && /\b(cba|collective bargaining agreement|contract)\b/.test(normalized)) return "cross_source";
   if (/\b(article\s*15|grievance)\b/.test(normalized) && /\b(days?|deadline|file|filing|timely|time limit)\b/.test(normalized)) return "grievance_deadline";
@@ -237,6 +253,39 @@ export function buildCbaAnswer(input: {
   const question = input.question.trim();
   if (!input.source) return unavailableAnswer({ ...input, question });
   const intent = detectCbaIntent(question);
+
+  if (intent === "overtime") {
+    const article = paragraphsForArticle(input.source, "8");
+    const matches = distinctParagraphs([
+      article.find(
+        (paragraph) =>
+          /scheduled among qualified employees doing similar work/i.test(paragraph.text) &&
+          /Overtime Desired List/i.test(paragraph.text)
+      ),
+      article.find(
+        (paragraph) =>
+          /selected in order of their seniority on a rotating basis/i.test(paragraph.text) &&
+          /not on the list may be required to work overtime on a rotating basis/i.test(paragraph.text)
+      ),
+      article.find(
+        (paragraph) =>
+          /no more than twelve \(12\) hours of work in a day/i.test(paragraph.text) &&
+          /not required to utilize employees on the Overtime Desired List at the penalty overtime rate/i.test(paragraph.text)
+      ),
+    ]);
+    if (matches.length < 3) return unavailableAnswer({ ...input, question });
+    return baseAnswer({
+      ...input,
+      question,
+      shortAnswer: "Article 8 supplies current contract language for overtime assignment and Overtime Desired List administration. It addresses qualified employees doing similar work in the work location, list creation by craft, section, or tour, seniority rotation, pass-over conditions, mandatory overtime when the voluntary list is insufficient, and stated list-utilization limits. Which provisions apply depends on employee category, craft, work location, skills, availability, list status, assignment sequence, hours, and separately verified local implementation. These passages do not by themselves establish a violation, remedy, or monetary amount.",
+      citations: matches.map((paragraph) => citationForCbaParagraph(input.source!, paragraph)),
+      noAnswer: false,
+      conflicts: ["Article 8 references local implementation and fact-specific qualifications; no LMOU, local practice, assignment record, or employee-specific fact is included in this public pilot."],
+      evidenceChecklist: ["Review the applicable Overtime Desired List and neutral assignment sequence only through the proper process.", "Confirm qualifications, availability, list status, relevant hours, and any separately verified local implementation rule."],
+      missingFacts: ["Employee category, craft, section or tour, work location, necessary skills, availability, list status, voluntary or mandatory status, assignment sequence, relevant hours, and local implementation."],
+      followUps: ["Build the cited grievance outline to separate verified Article 8 rules from facts and local procedures that still require confirmation."],
+    });
+  }
 
   if (intent === "annual_leave") {
     const article = paragraphsForArticle(input.source, "10");

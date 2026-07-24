@@ -40,6 +40,18 @@ export function syntheticCbaExtraction(): string {
     for (let articleNumber = 1; articleNumber <= 43; articleNumber += 1) {
       if (pageIndex !== 10 + (articleNumber - 1) * 4) continue;
       lines.unshift(`ARTICLE ${articleNumber}`, `ARTICLE ${articleNumber} FIXTURE TITLE`, "");
+      if (articleNumber === 8) {
+        lines.push(
+          "",
+          "Section 5. Overtime Assignments",
+          "",
+          "When needed, overtime work for regular full-time employees shall be scheduled among qualified employees doing similar work in the work location where the employees regularly work. Two weeks before each calendar quarter, employees desiring overtime shall place their names on an Overtime Desired List. Lists will be established by craft, section, or tour under local implementation.",
+          "",
+          "When overtime arises, employees with the necessary skills who listed their names will be selected in order of their seniority on a rotating basis. Those absent or on leave shall be passed over. If the voluntary Overtime Desired List does not provide sufficient qualified people, qualified full-time regular employees not on the list may be required to work overtime on a rotating basis, beginning with the junior employee.",
+          "",
+          "Employees on the Overtime Desired List shall be limited to no more than twelve (12) hours of work in a day and no more than sixty (60) hours in a service week. The Employer is not required to utilize employees on the Overtime Desired List at the penalty overtime rate when qualified listed employees not yet entitled to penalty overtime are available."
+        );
+      }
       if (articleNumber === 10) {
         lines.push(
           "",

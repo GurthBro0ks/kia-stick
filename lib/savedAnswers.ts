@@ -61,6 +61,8 @@ export interface SavedAnswer {
     | typeof PUBLIC_GRIEVANCE_OUTLINE_SAVED_TYPE;
   argumentPlan?: PublicArgumentPlan;
   grievanceOutline?: PublicGrievanceOutline;
+  grievanceOutlineTopic?: PublicGrievanceOutline["topic"];
+  grievanceOutlineTemplate?: PublicGrievanceOutline["template"];
 }
 
 export type SavedRecordType = SavedAnswer["savedType"];
@@ -84,6 +86,10 @@ export function savedRecordId(savedType: SavedRecordType, saveKey: string): stri
       ? "public-grievance-outline"
     : "answer";
   return `saved-${namespace}-${sha256Hex(saveKey)}`;
+}
+
+function grievanceOutlineSaveKey(outline: PublicGrievanceOutline): string {
+  return `${PUBLIC_GRIEVANCE_OUTLINE_SAVED_TYPE}|${outline.template}|${outline.id}`;
 }
 
 const modes = ["Strict Research", "Calm Neutral", "Aggressive Grievance", "Steward-to-Supervisor"] as const;
@@ -327,7 +333,7 @@ export function createSavedGrievanceOutlineRecord(input: {
   timestamp: string;
 }): SavedAnswer {
   const cbaCitation = input.outline.citations[0];
-  const saveKey = `${PUBLIC_GRIEVANCE_OUTLINE_SAVED_TYPE}|${input.outline.id}`;
+  const saveKey = grievanceOutlineSaveKey(input.outline);
   return {
     id: savedRecordId(PUBLIC_GRIEVANCE_OUTLINE_SAVED_TYPE, saveKey),
     saveKey,
@@ -360,9 +366,11 @@ export function createSavedGrievanceOutlineRecord(input: {
     citationAnchorAlgorithmVersion: cbaCitation?.citationAnchorAlgorithmVersion,
     citationVerificationStateAtSave: cbaCitation?.citationVerificationState,
     timestamp: input.timestamp,
-    footer: `PUBLIC GRIEVANCE OUTLINE | Type:${input.outline.type} | Build:${input.outline.buildIdentity}`,
+    footer: `PUBLIC GRIEVANCE OUTLINE | Topic:${input.outline.topic} | Template:${input.outline.template} | Type:${input.outline.type} | Build:${input.outline.buildIdentity}`,
     savedType: PUBLIC_GRIEVANCE_OUTLINE_SAVED_TYPE,
     grievanceOutline: input.outline,
+    grievanceOutlineTopic: input.outline.topic,
+    grievanceOutlineTemplate: input.outline.template,
   };
 }
 
@@ -379,10 +387,10 @@ function validPublicArgumentPlan(value: unknown): value is PublicArgumentPlan {
     Array.isArray(source.sourceInstanceIds);
 }
 
-function validPublicGrievanceOutline(value: unknown): value is PublicGrievanceOutline {
-  if (!value || typeof value !== "object") return false;
+function normalizePublicGrievanceOutline(value: unknown): PublicGrievanceOutline | undefined {
+  if (!value || typeof value !== "object") return undefined;
   const source = value as Partial<PublicGrievanceOutline>;
-  return source.savedType === PUBLIC_GRIEVANCE_OUTLINE_SAVED_TYPE &&
+  const structurallyValid = source.savedType === PUBLIC_GRIEVANCE_OUTLINE_SAVED_TYPE &&
     typeof source.id === "string" &&
     typeof source.contentIdentity === "string" &&
     typeof source.title === "string" &&
@@ -398,6 +406,25 @@ function validPublicGrievanceOutline(value: unknown): value is PublicGrievanceOu
     Array.isArray(source.limitations) &&
     Array.isArray(source.citations) &&
     Array.isArray(source.sourceInstanceIds);
+  if (!structurallyValid) return undefined;
+  const template = source.template === "annual_leave" || source.template === "overtime"
+    ? source.template
+    : source.type === "annual_leave_denial_or_scheduling"
+      ? "annual_leave"
+      : source.type === "overtime_assignment_or_distribution"
+        ? "overtime"
+        : undefined;
+  if (!template) return undefined;
+  const type = template === "overtime"
+    ? "overtime_assignment_or_distribution"
+    : "annual_leave_denial_or_scheduling";
+  const topic = template === "overtime" ? "Overtime" : "Annual leave";
+  return {
+    ...source,
+    template,
+    topic,
+    type,
+  } as PublicGrievanceOutline;
 }
 
 export function migrateSavedAnswers(input: unknown): SavedAnswer[] {
@@ -420,9 +447,7 @@ export function migrateSavedAnswers(input: unknown): SavedAnswer[] {
       ? "public_cba"
       : source.answerLane === "public" || publicCitation ? "public" : "fake";
     const argumentPlan = validPublicArgumentPlan(source.argumentPlan) ? source.argumentPlan : undefined;
-    const grievanceOutline = validPublicGrievanceOutline(source.grievanceOutline)
-      ? source.grievanceOutline
-      : undefined;
+    const grievanceOutline = normalizePublicGrievanceOutline(source.grievanceOutline);
     const savedType = source.savedType === PUBLIC_GRIEVANCE_OUTLINE_SAVED_TYPE && grievanceOutline
       ? PUBLIC_GRIEVANCE_OUTLINE_SAVED_TYPE
       : source.savedType === PUBLIC_ARGUMENT_PLAN_SAVED_TYPE && argumentPlan
@@ -478,6 +503,8 @@ export function migrateSavedAnswers(input: unknown): SavedAnswer[] {
       savedType,
       argumentPlan,
       grievanceOutline,
+      grievanceOutlineTopic: grievanceOutline?.topic,
+      grievanceOutlineTemplate: grievanceOutline?.template,
     };
 
     const storedDataFingerprint = typeof source.dataFingerprint === "string" && source.dataFingerprint.length > 0
@@ -486,7 +513,7 @@ export function migrateSavedAnswers(input: unknown): SavedAnswer[] {
 
     try {
       if (savedType === PUBLIC_GRIEVANCE_OUTLINE_SAVED_TYPE && grievanceOutline) {
-        normalized.saveKey = `${PUBLIC_GRIEVANCE_OUTLINE_SAVED_TYPE}|${grievanceOutline.id}`;
+        normalized.saveKey = grievanceOutlineSaveKey(grievanceOutline);
         normalized.dataFingerprint = `${normalized.saveKey}|${grievanceOutline.contentIdentity}`;
         normalized.id = savedRecordId(savedType, normalized.saveKey);
         return upsertSavedAnswer(saved, normalized, { preferNewerDuplicate: true }).saved;

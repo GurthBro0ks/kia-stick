@@ -310,7 +310,11 @@
     "v0949_official_next_postcss_evidence_refresh",
     "v0950_exact_next_target_candidate_matrix_refresh",
     "v0951_future_next_implementation_gate_packet_refresh",
-    "v0952_next_large_work_checkpoint"
+    "v0952_next_large_work_checkpoint",
+    "public_cba_overtime_intent_routing",
+    "public_cba_overtime_cited_grievance_outline",
+    "public_grievance_outline_topic_template_identity",
+    "public_grievance_outline_cross_topic_saved_coexistence"
   ],
   "release_readiness": {
     "phase": "KIA-Stick-v0.9.10-synthetic-governance-hardening-checkpoint",
@@ -11982,6 +11986,28 @@
     "package_lock_changed": false,
     "source_sync_performed": false,
     "private_data_accessed": false,
+    "discord_sent": false
+  },
+  "public_cba_overtime_cited_grievance_outline_pilot": {
+    "phase": "KIA-Stick-public-CBA-overtime-cited-grievance-outline-pilot",
+    "status": "local_validation_pass_manual_qa_pending",
+    "proof_dir": "/home/mint/kia-stick-local-proofs/proof_kia_stick_public_cba_overtime_cited_grievance_outline_pilot_20260724T142716Z",
+    "accepted_capability_commit": "9a66d37148f37d2dee16bcbe6b9a12aa4ba9946a",
+    "repository_recording_commit": "370979a7108a4876fea13161d928fedc558f2fed",
+    "latest_pushed_closeout_commit": "370979a7108a4876fea13161d928fedc558f2fed",
+    "validation_status": "PASS",
+    "manual_qa_status": "pending_operator_review",
+    "pushed": false,
+    "saved_type": "public_grievance_outline",
+    "saved_topic": "Overtime",
+    "saved_template": "overtime",
+    "source_sync_performed": false,
+    "private_data_accessed": false,
+    "package_json_changed": false,
+    "package_lock_changed": false,
+    "queue_015_status": "blocked",
+    "next_postcss_status": "WARN_SAFE_NEXT_TARGET_UNCLEAR",
+    "v0912c_status": "blocked_pending_exact_target",
     "discord_sent": false
   }
 }

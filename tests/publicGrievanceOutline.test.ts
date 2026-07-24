@@ -173,7 +173,7 @@ describe("public CBA annual-leave cited grievance outline", () => {
       runtimeVersion,
       ...defaults,
     });
-    const unrelated = submit("What does the contract say about overtime?").answer;
+    const unrelated = submit("What does Article 17 say about steward representation?").answer;
     const noAnswer = submit("Tell me about llamas").answer;
     const legacy = structuredClone(current);
     for (const citation of legacy.citations) {
@@ -391,10 +391,10 @@ describe("public CBA annual-leave cited grievance outline", () => {
 
   it("keeps Settings, health, accepted identities, product, and blocked gates truthful", async () => {
     expect(currentAcceptedPushedState.local_bundle_phase).toBe(
-      "KIA-Stick-public-CBA-annual-leave-cited-grievance-outline-post-push-accepted-state-refresh"
+      "KIA-Stick-public-CBA-overtime-cited-grievance-outline-pilot"
     );
     expect(currentAcceptedPushedState.local_bundle_status).toBe(
-      "public CBA annual-leave post-push accepted-state refresh; validation PASS; pushed no; manual QA PASS"
+      "public CBA overtime cited grievance-outline pilot; validation PASS; pushed no; manual QA pending operator review"
     );
     expect(currentAcceptedPushedState.accepted_pushed_commit).toBe("9a66d37148f37d2dee16bcbe6b9a12aa4ba9946a");
     expect(currentAcceptedPushedState.repository_recording_commit).toBe("370979a7108a4876fea13161d928fedc558f2fed");
