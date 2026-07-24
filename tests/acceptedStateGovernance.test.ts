@@ -41,10 +41,10 @@ describe("accepted-state governance loop break", () => {
       private_data: "blocked",
       external_ai: "disabled",
     });
-    expect(currentAcceptedPushedState.local_implementation_proof_dir).toBe("/home/mint/kia-stick-local-proofs/proof_kia_stick_public_weingarten_cited_argument_builder_pilot_20260722T172040Z/settings_local_bundle_truth_repair_20260722T214458Z/saved_id_collision_repair_20260723T170415Z");
-    expect(currentAcceptedPushedState.local_bundle_operator_qa_pass_proof_dir).toBe("/home/mint/kia-stick-local-proofs/proof_kia_stick_public_weingarten_cited_argument_builder_saved_id_collision_repair_operator_qa_pass_recording_20260723T173721Z");
+    expect(currentAcceptedPushedState.local_implementation_proof_dir).toBe("/home/mint/kia-stick-local-proofs/proof_kia_stick_public_cba_annual_leave_cited_grievance_outline_pilot_20260723T190138Z/automatic_public_cba_routing_repair_20260723T194449Z");
+    expect(currentAcceptedPushedState.local_bundle_operator_qa_pass_proof_dir).toBe("/home/mint/kia-stick-local-proofs/proof_kia_stick_public_cba_annual_leave_cited_grievance_outline_auto_routing_repair_operator_qa_pass_recording_20260724T012508Z");
     expect(currentAcceptedPushedState.local_bundle_phase).toBe("KIA-Stick-public-CBA-annual-leave-cited-grievance-outline-pilot");
-    expect(currentAcceptedPushedState.local_bundle_status).toBe("public CBA annual-leave cited grievance-outline pilot; automatic public-CBA routing repair; validation PASS; pushed no; manual QA pending operator rerun");
+    expect(currentAcceptedPushedState.local_bundle_status).toBe("public CBA annual-leave cited grievance-outline pilot; automatic public-CBA routing repair; validation PASS; pushed no; manual QA PASS");
     expect(currentAcceptedPushedState.local_bundle_status).not.toContain("stale local-bundle push-status repair");
     expect(currentAcceptedPushedState.latest_pushed_closeout_commit).toBe("0695680047608462b5f154a9ed82593e6923932a");
     expect(currentAcceptedPushedState.latest_pushed_closeout_short_commit).toBe("0695680");

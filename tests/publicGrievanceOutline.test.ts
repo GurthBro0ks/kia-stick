@@ -392,7 +392,7 @@ describe("public CBA annual-leave cited grievance outline", () => {
   it("keeps Settings, health, accepted identities, product, and blocked gates truthful", async () => {
     expect(currentAcceptedPushedState.local_bundle_phase).toBe(PUBLIC_GRIEVANCE_OUTLINE_PHASE);
     expect(currentAcceptedPushedState.local_bundle_status).toBe(
-      "public CBA annual-leave cited grievance-outline pilot; automatic public-CBA routing repair; validation PASS; pushed no; manual QA pending operator rerun"
+      "public CBA annual-leave cited grievance-outline pilot; automatic public-CBA routing repair; validation PASS; pushed no; manual QA PASS"
     );
     expect(currentAcceptedPushedState.accepted_pushed_commit).toBe("76c73122a87cb23b5b8595a002d54d7a127fbba8");
     expect(currentAcceptedPushedState.repository_recording_commit).toBe("3690c74650d0fb19395bd046adee1bf236950f9e");
