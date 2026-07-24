@@ -8,6 +8,7 @@ import {
   publicGrievanceOutlineEligibility,
 } from "@/lib/publicGrievanceOutline";
 import { createRuntimeVersion } from "@/lib/version";
+import { PUBLIC_STEWARD_WORKFLOW_TOPICS } from "@/lib/publicStewardWorkflowRegistry";
 
 const requireCache = process.env.KIA_REQUIRE_CBA_SOURCE_CACHE === "1";
 
@@ -114,5 +115,40 @@ describe("local exact official CBA integration", () => {
     expect(outline?.template).toBe("overtime");
     expect(outline?.citations.every((citation) => citation.citationVerificationState === "verified_current")).toBe(true);
     expect(new Set(outline?.citations.map((citation) => citation.articleNumber))).toEqual(new Set(["8", "15"]));
+  });
+
+  it("builds every registry topic from verified current local CBA anchors", () => {
+    const state = readBoundedCbaSourceCache();
+    if (state.status === "unavailable") {
+      if (requireCache) expect.fail(`required CBA cache unavailable: ${state.reason}`);
+      return;
+    }
+    const runtimeVersion = createRuntimeVersion({
+      buildDate: "20260724",
+      gitSha: "workflow-local",
+    });
+    for (const topic of PUBLIC_STEWARD_WORKFLOW_TOPICS) {
+      const answer = buildCbaAnswer({
+        question: topic.exampleQuestion,
+        source: state.source,
+        nlrbSource: null,
+        runtimeVersion,
+        mode: "Strict Research",
+        scope: "Official-Like",
+        detail: "Detailed",
+      });
+      const outline = buildPublicGrievanceOutline({
+        answer,
+        source: state.source,
+        createdAt: "2026-07-24T16:00:00.000Z",
+      });
+      expect(answer.noAnswer, topic.id).toBe(false);
+      expect(outline?.template, topic.id).toBe(topic.id);
+      expect(outline?.citations.every(
+        (citation) => citation.citationVerificationState === "verified_current"
+      ), topic.id).toBe(true);
+      expect(new Set(outline?.citations.map((citation) => citation.articleNumber)), topic.id)
+        .toEqual(new Set([topic.sourceSufficiency.primaryArticle, "15"]));
+    }
   });
 });

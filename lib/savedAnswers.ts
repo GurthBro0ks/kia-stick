@@ -19,6 +19,11 @@ import {
   publicGrievanceOutlineToText,
   type PublicGrievanceOutline,
 } from "@/lib/publicGrievanceOutline";
+import {
+  PUBLIC_STEWARD_WORKFLOW_TOPICS,
+  publicStewardWorkflowTopic,
+  type PublicStewardWorkflowTopicId,
+} from "@/lib/publicStewardWorkflowRegistry";
 
 export interface SavedAnswer {
   id: string;
@@ -407,21 +412,36 @@ function normalizePublicGrievanceOutline(value: unknown): PublicGrievanceOutline
     Array.isArray(source.citations) &&
     Array.isArray(source.sourceInstanceIds);
   if (!structurallyValid) return undefined;
-  const template = source.template === "annual_leave" || source.template === "overtime"
-    ? source.template
+  const registeredTemplate = PUBLIC_STEWARD_WORKFLOW_TOPICS.some(
+    (topic) => topic.id === source.template
+  )
+    ? source.template as PublicStewardWorkflowTopicId
+    : undefined;
+  const template = registeredTemplate
+    ? registeredTemplate
     : source.type === "annual_leave_denial_or_scheduling"
       ? "annual_leave"
       : source.type === "overtime_assignment_or_distribution"
         ? "overtime"
         : undefined;
   if (!template) return undefined;
-  const type = template === "overtime"
-    ? "overtime_assignment_or_distribution"
-    : "annual_leave_denial_or_scheduling";
-  const topic = template === "overtime" ? "Overtime" : "Annual leave";
+  const registryTopic = publicStewardWorkflowTopic(template);
+  const type = source.type ?? (
+    template === "overtime"
+      ? "overtime_assignment_or_distribution"
+      : template === "annual_leave"
+        ? "annual_leave_denial_or_scheduling"
+        : template === "holiday_scheduling"
+          ? "holiday_scheduling_or_assignment"
+          : template === "safety_health"
+            ? "unsafe_or_unhealthful_condition"
+            : "discipline_or_just_cause"
+  );
+  const topic = registryTopic.displayName;
   return {
     ...source,
     template,
+    templateId: source.templateId ?? registryTopic.templateId,
     topic,
     type,
   } as PublicGrievanceOutline;

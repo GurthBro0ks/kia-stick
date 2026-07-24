@@ -418,7 +418,10 @@ describe("public CBA annual-leave cited grievance outline", () => {
       operatorDiagnosticsOpen: false,
       onOperatorDiagnosticsToggle: () => undefined,
     }));
-    expect(settingsHtml).toContain(currentAcceptedPushedState.local_bundle_status);
+    expect(settingsHtml).toContain(
+      "public steward workflow platform bundle 1; validation PASS; pushed no; manual QA pending operator review"
+    );
+    expect(settingsHtml).toContain("KIA-Stick-public-steward-workflow-platform-bundle-1");
     expect(settingsHtml).toContain(currentAcceptedPushedState.accepted_pushed_short_commit);
 
     const uploadHtml = renderToStaticMarkup(React.createElement(FakeUploadPanel, {

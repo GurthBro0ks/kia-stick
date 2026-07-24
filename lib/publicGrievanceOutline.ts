@@ -1,5 +1,5 @@
 import type { AnswerResult } from "@/lib/answerGovernor";
-import { citationForCbaParagraph, detectCbaIntent } from "@/lib/cbaAnswer";
+import { citationForCbaParagraph } from "@/lib/cbaAnswer";
 import {
   CBA_PROMPT_VERSION,
   CBA_PROVIDER,
@@ -12,14 +12,25 @@ import {
 import { canonicalJson, sha256Hex, verifyCbaCitation } from "@/lib/cbaCitationIntegrity";
 import type { Citation } from "@/lib/sourceModel";
 import type { RuntimeVersion } from "@/lib/version";
+import {
+  PUBLIC_STEWARD_WORKFLOW_PHASE,
+  detectPublicStewardWorkflowTopic,
+  publicStewardWorkflowTopic,
+  topicParagraphs,
+  type PublicStewardWorkflowTopic,
+  type PublicStewardWorkflowTopicId,
+} from "@/lib/publicStewardWorkflowRegistry";
 
 export const PUBLIC_GRIEVANCE_OUTLINE_PHASE =
-  "KIA-Stick-public-CBA-overtime-cited-grievance-outline-pilot" as const;
+  PUBLIC_STEWARD_WORKFLOW_PHASE;
 export const PUBLIC_GRIEVANCE_OUTLINE_TYPES = {
   annual_leave: "annual_leave_denial_or_scheduling",
   overtime: "overtime_assignment_or_distribution",
+  holiday_scheduling: "holiday_scheduling_or_assignment",
+  safety_health: "unsafe_or_unhealthful_condition",
+  discipline_just_cause: "discipline_or_just_cause",
 } as const;
-export type PublicGrievanceOutlineTemplate = keyof typeof PUBLIC_GRIEVANCE_OUTLINE_TYPES;
+export type PublicGrievanceOutlineTemplate = PublicStewardWorkflowTopicId;
 export type PublicGrievanceOutlineType =
   (typeof PUBLIC_GRIEVANCE_OUTLINE_TYPES)[PublicGrievanceOutlineTemplate];
 export const PUBLIC_GRIEVANCE_OUTLINE_SAVED_TYPE = "public_grievance_outline" as const;
@@ -37,7 +48,8 @@ export interface PublicGrievanceOutline {
   savedType: typeof PUBLIC_GRIEVANCE_OUTLINE_SAVED_TYPE;
   type: PublicGrievanceOutlineType;
   template: PublicGrievanceOutlineTemplate;
-  topic: "Annual leave" | "Overtime";
+  templateId: `public-grievance-outline.${PublicStewardWorkflowTopicId}.v1`;
+  topic: string;
   title: string;
   issue: string;
   governingContractLanguage: CitedGrievanceOutlineItem[];
@@ -96,6 +108,8 @@ interface RequiredOvertimeCitationSet extends RequiredProcedureCitationSet {
   voluntarySelectionAndMandatoryRotation: Citation;
   overtimeDesiredListLimits: Citation;
 }
+
+type RequiredOutlineCitationSet = RequiredProcedureCitationSet & Record<string, Citation>;
 
 function articleParagraphs(source: CbaSourceCache, articleNumber: string): CbaParagraph[] {
   return source.normalized.pages
@@ -236,10 +250,29 @@ function requiredOvertimeCitationSet(source: CbaSourceCache): RequiredOvertimeCi
 function requiredOutlineCitationSet(
   source: CbaSourceCache,
   template: PublicGrievanceOutlineTemplate
-): RequiredAnnualLeaveCitationSet | RequiredOvertimeCitationSet | null {
-  return template === "overtime"
-    ? requiredOvertimeCitationSet(source)
-    : requiredAnnualLeaveCitationSet(source);
+): RequiredOutlineCitationSet | null {
+  if (template === "overtime") {
+    return requiredOvertimeCitationSet(source) as RequiredOutlineCitationSet | null;
+  }
+  if (template === "annual_leave") {
+    return requiredAnnualLeaveCitationSet(source) as RequiredOutlineCitationSet | null;
+  }
+  const procedure = requiredProcedureCitationSet(source);
+  const topic = publicStewardWorkflowTopic(template);
+  const paragraphs = topicParagraphs(
+    source.normalized.pages.flatMap((page) => page.paragraphs),
+    topic
+  );
+  if (!procedure || !paragraphs) return null;
+  return {
+    ...procedure,
+    ...Object.fromEntries(
+      [...paragraphs].map(([key, paragraph]) => [
+        key,
+        citationForCbaParagraph(source, paragraph),
+      ])
+    ),
+  };
 }
 
 function requiredOutlineCitations(
@@ -268,9 +301,7 @@ export function publicGrievanceOutlineEligibility(input: {
   source: CbaSourceCache | null;
 }): PublicGrievanceOutlineEligibility {
   const { answer, source } = input;
-  const intent = detectCbaIntent(answer.question);
-  const template: PublicGrievanceOutlineTemplate | null =
-    intent === "annual_leave" ? "annual_leave" : intent === "overtime" ? "overtime" : null;
+  const template = detectPublicStewardWorkflowTopic(answer.question);
   if (
     answer.answerKind !== "public" ||
     answer.publicSourceRole !== "cba_contract" ||
@@ -281,11 +312,12 @@ export function publicGrievanceOutlineEligibility(input: {
     return { eligible: false, reason: "provider_mismatch" };
   }
   if (!source) return { eligible: false, reason: "cache_unavailable" };
+  const topic = publicStewardWorkflowTopic(template);
   const answerCitations = answer.citations.filter(
     (citation) =>
       citation.sourceId === CBA_SOURCE_ID &&
       citation.publicSourceType === "cba_contract" &&
-      citation.articleNumber === (template === "overtime" ? "8" : "10")
+      citation.articleNumber === topic.sourceSufficiency.primaryArticle
   );
   if (
     answerCitations.length === 0 ||
@@ -347,6 +379,16 @@ export function buildPublicGrievanceOutline(input: {
 }): PublicGrievanceOutline | null {
   const eligibility = publicGrievanceOutlineEligibility(input);
   if (!eligibility.eligible || !input.source) return null;
+  if (
+    eligibility.template !== "annual_leave" &&
+    eligibility.template !== "overtime"
+  ) {
+    return buildRegistryGrievanceOutline(
+      { answer: input.answer, source: input.source, createdAt: input.createdAt },
+      publicStewardWorkflowTopic(eligibility.template),
+      eligibility.citations
+    );
+  }
   if (eligibility.template === "overtime") {
     return buildOvertimeGrievanceOutline(
       { answer: input.answer, source: input.source, createdAt: input.createdAt },
@@ -371,6 +413,7 @@ export function buildPublicGrievanceOutline(input: {
     savedType: PUBLIC_GRIEVANCE_OUTLINE_SAVED_TYPE,
     type: PUBLIC_GRIEVANCE_OUTLINE_TYPES.annual_leave,
     template: "annual_leave",
+    templateId: publicStewardWorkflowTopic("annual_leave").templateId,
     topic: "Annual leave" as const,
     title: "Public annual-leave cited grievance outline",
     issue:
@@ -573,6 +616,7 @@ function buildOvertimeGrievanceOutline(
     savedType: PUBLIC_GRIEVANCE_OUTLINE_SAVED_TYPE,
     type: PUBLIC_GRIEVANCE_OUTLINE_TYPES.overtime,
     template: "overtime",
+    templateId: publicStewardWorkflowTopic("overtime").templateId,
     topic: "Overtime",
     title: "Public overtime cited grievance outline",
     issue:
@@ -747,6 +791,200 @@ function buildOvertimeGrievanceOutline(
   return finalizePublicGrievanceOutline(core, input.createdAt);
 }
 
+function buildRegistryGrievanceOutline(
+  input: {
+    answer: AnswerResult;
+    source: CbaSourceCache;
+    createdAt?: string;
+  },
+  topic: PublicStewardWorkflowTopic,
+  citations: Citation[]
+): PublicGrievanceOutline | null {
+  const required = requiredOutlineCitationSet(input.source, topic.id);
+  if (!required) return null;
+
+  const topicCitations = topic.citationSpecs
+    .map((spec) => required[spec.key])
+    .filter((citation): citation is Citation => Boolean(citation));
+  if (topicCitations.length !== topic.citationSpecs.length) return null;
+
+  const grievanceDefinition = [required.grievanceDefinition];
+  const stepOneTiming = [required.stepOneTiming];
+  const stepOneDecisionAndAppeal = [required.stepOneDecisionAndAppeal];
+  const stepTwoDevelopment = [required.stepTwoFactDevelopment];
+  const primaryArticle = topic.sourceSufficiency.primaryArticle;
+  const localVerification = topic.localVerification;
+
+  const core: PublicGrievanceOutlineCore = {
+    savedType: PUBLIC_GRIEVANCE_OUTLINE_SAVED_TYPE,
+    type: PUBLIC_GRIEVANCE_OUTLINE_TYPES[topic.id],
+    template: topic.id,
+    templateId: topic.templateId,
+    topic: topic.displayName,
+    title: topic.outlineLabels.title,
+    issue:
+      `Whether verified Article ${primaryArticle} language may support a grievance concerning a ${topic.outlineLabels.issueNoun} after coverage, the actual event, management's stated basis, and separately verified local rules are confirmed.`,
+    governingContractLanguage: topic.citationSpecs.map((spec, index) =>
+      item(
+        `Verified Article ${primaryArticle} language addresses ${spec.description}. Its application remains conditional on coverage and confirmed facts.`,
+        [topicCitations[index]]
+      )
+    ),
+    elementsToEstablish: [
+      item(
+        `Identify which verified Article ${primaryArticle} provision is potentially relevant and confirm that the employee and event fall within its scope.`,
+        topicCitations
+      ),
+      item(
+        "Confirm the neutral sequence of events, management's stated basis, and the records that support or contradict it; the CBA cache does not establish those facts.",
+        topicCitations
+      ),
+      item(
+        `Keep ${localVerification.toLowerCase()} separate and unverified until reviewed through the proper local process.`,
+        [...topicCitations, ...grievanceDefinition]
+      ),
+    ],
+    factsToConfirm: [
+      "The covered employee category, craft or work context, and potentially applicable contract provision.",
+      "What occurred and what management states was the basis, without entering names, dates, medical information, or other private details here.",
+      `The separately verified ${localVerification.toLowerCase()}`,
+      "When the employee or Union learned or reasonably should have learned of the grievance cause; keep actual dates outside this public pilot.",
+      "Whether another contractual procedure, incorporated authority, or local agreement changes the analysis.",
+    ],
+    evidenceToRequest: [
+      item(
+        `Neutral copies or summaries of the ${topic.outlineLabels.evidenceCategory}, obtained outside this pilot through the proper process.`,
+        topicCitations
+      ),
+      item(
+        "Management's stated basis and the neutral records it relied upon, without uploading or storing those records here.",
+        topicCitations
+      ),
+      item(
+        "Any asserted LMOU, handbook, manual, local instruction, or practice, treated as a separate source requiring verification.",
+        [...topicCitations, ...grievanceDefinition]
+      ),
+      item(
+        "Relevant papers or documents exchanged through the grievance process under the cited Article 15 fact-development procedure.",
+        stepTwoDevelopment
+      ),
+    ],
+    questionsForManagement: [
+      `Which Article ${primaryArticle} provision does management contend governed the event?`,
+      "What confirmed facts and neutral records support management's position?",
+      "Which employee category, work context, qualification, sequence, or procedural condition was applied?",
+      `Does management rely on ${localVerification.toLowerCase()} and where can that authority be verified?`,
+      "What corrective action, if any, was considered or taken?",
+      "Will management identify all relevant papers or documents for the grievance record?",
+    ],
+    stepOneArgument: [
+      item(
+        "Frame the matter conditionally as a dispute about interpretation, application, or compliance with the Agreement or a non-conflicting LMOU, not as a predetermined violation.",
+        grievanceDefinition
+      ),
+      item(
+        `Identify only the verified Article ${primaryArticle} provisions made potentially relevant by confirmed coverage and facts.`,
+        topicCitations
+      ),
+      item(
+        "Compare the verified rules with neutral records while labeling disputed facts and unverified local authority explicitly.",
+        topicCitations
+      ),
+      item(
+        "Confirm the qualified Step 1 timing trigger before proceeding; this pilot does not calculate a deadline from private dates.",
+        stepOneTiming
+      ),
+      item(
+        "State facts, contentions, particular contract provisions, and a conditional remedy category only after local-union review.",
+        stepOneDecisionAndAppeal
+      ),
+    ],
+    possibleRemedies: [
+      item(
+        "Article 15 requires a remedy sought on a Step 2 appeal, but the verified national paragraphs do not prescribe a remedy for every dispute.",
+        stepOneDecisionAndAppeal
+      ),
+      item(
+        "Depending on confirmed facts and local-union review, a remedy category might seek compliance, correction of a verified record or procedure, or another supported make-whole form; no outcome is promised.",
+        [...topicCitations, ...stepOneDecisionAndAppeal]
+      ),
+      item(
+        "Any monetary, local-rule, or local-practice remedy requires separate verification and calculation outside this public pilot.",
+        [...topicCitations, ...grievanceDefinition]
+      ),
+    ],
+    timelinessAndProcedureLimits: [
+      item(
+        "Article 15 Step 1 states a qualified fourteen-day period measured from when the employee or Union first learned or reasonably should have learned of the cause; actual timing requires fact-specific local-union review.",
+        stepOneTiming
+      ),
+      item(
+        "If Step 1 is unresolved, Article 15 addresses the supervisor's decision and a ten-day Union appeal period to Step 2 after receipt of that decision.",
+        stepOneDecisionAndAppeal
+      ),
+      item(
+        `Article ${primaryArticle} may contain topic-specific procedure or escalation language. The proper route must be confirmed before relying on the general Article 15 sequence.`,
+        topicCitations
+      ),
+      item(
+        "This pilot does not accept incident dates, calculate deadlines or money, prepare a grievance form, or choose an appeal forum.",
+        [...stepOneTiming, ...stepOneDecisionAndAppeal]
+      ),
+    ],
+    escalationReadiness: [
+      item(
+        "Escalation is not ready until facts, contentions, particular contract provisions, and a conditional remedy can be stated through the proper union process.",
+        stepOneDecisionAndAppeal
+      ),
+      item(
+        "Article 15 fact development includes the parties' positions and exchange of relevant papers or documents.",
+        stepTwoDevelopment
+      ),
+      item(
+        `Confirm whether Article ${primaryArticle} supplies a special escalation path before using the ordinary sequence.`,
+        topicCitations
+      ),
+    ],
+    limitations: [
+      item(
+        `The verified CBA supports a bounded ${topic.displayName.toLowerCase()} workflow, but unknown facts do not establish a violation, a successful grievance, or a remedy.`,
+        topicCitations
+      ),
+      item(
+        `Unsupported scope remains excluded: ${topic.unsupportedScope}`,
+        topicCitations
+      ),
+      item(
+        "This CBA-only pilot does not verify an LMOU, JCIM interpretation, handbook rule, arbitration precedent, management policy, or local practice.",
+        [...topicCitations, ...grievanceDefinition]
+      ),
+      item(
+        "This public pilot is not legal advice, makes no monetary calculation, and does not replace local union review.",
+        [...grievanceDefinition, ...stepOneDecisionAndAppeal]
+      ),
+      item(
+        "Private case details must remain outside this public pilot.",
+        [...grievanceDefinition, ...stepOneTiming]
+      ),
+    ],
+    citations,
+    privateCaseWarning: PUBLIC_GRIEVANCE_OUTLINE_PRIVATE_WARNING,
+    provider: CBA_PROVIDER,
+    promptVersion: CBA_PROMPT_VERSION,
+    buildIdentity: input.answer.version.displayVersion,
+    version: input.answer.version,
+    sourceInstanceIds: [
+      ...new Set(
+        citations
+          .map((citation) => citation.sourceInstanceId)
+          .filter((value): value is string => Boolean(value))
+      ),
+    ],
+  };
+
+  return finalizePublicGrievanceOutline(core, input.createdAt);
+}
+
 export function publicGrievanceOutlineToText(outline: PublicGrievanceOutline): string {
   const render = (
     title: string,
@@ -757,6 +995,11 @@ export function publicGrievanceOutlineToText(outline: PublicGrievanceOutline): s
   ].join("\n");
   return [
     outline.title,
+    `Topic: ${outline.topic}`,
+    `Template: ${outline.templateId}`,
+    `Generated build: ${outline.buildIdentity}`,
+    `Source ID: ${CBA_SOURCE_ID}`,
+    `Source instance: ${outline.sourceInstanceIds.join(", ")}`,
     `1. Issue\n${outline.issue}`,
     render("2. Governing contract language", outline.governingContractLanguage),
     render("3. Elements that must be established", outline.elementsToEstablish),
@@ -776,5 +1019,87 @@ export function publicGrievanceOutlineToText(outline: PublicGrievanceOutline): s
       )
     ),
     outline.privateCaseWarning,
+    "Unknown facts, local rules, and local practices require separate verification.",
+    "Conditional steward outline only. No predetermined violation, remedy, monetary calculation, or legal advice.",
   ].join("\n\n");
+}
+
+export function publicGrievanceOutlineToMarkdown(
+  outline: PublicGrievanceOutline
+): string {
+  const citationNumbers = new Map(
+    outline.citations.map((citation, index) => [citation.id, index + 1])
+  );
+  const citedList = (entries: CitedGrievanceOutlineItem[]) =>
+    entries
+      .map(
+        (entry) =>
+          `- ${entry.text} ${entry.citationIds
+            .map((id) => `[${citationNumbers.get(id) ?? "?"}]`)
+            .join(" ")}`
+      )
+      .join("\n");
+  const plainList = (entries: string[]) =>
+    entries.map((entry) => `- ${entry}`).join("\n");
+  const sources = outline.citations
+    .map(
+      (citation, index) =>
+        `${index + 1}. ${citation.article ?? "CBA"} / ${citation.section ?? "section unknown"} / ${citation.paragraphId ?? "paragraph unknown"} / ${citation.citationVerificationState ?? "unverified"} / source instance ${citation.sourceInstanceId ?? "missing"}`
+    )
+    .join("\n");
+
+  return [
+    `# ${outline.title}`,
+    `- Topic: ${outline.topic}`,
+    `- Template: ${outline.templateId}`,
+    `- Generated build: ${outline.buildIdentity}`,
+    `- Source ID: ${CBA_SOURCE_ID}`,
+    `- Source instance: ${outline.sourceInstanceIds.join(", ")}`,
+    `> ${outline.privateCaseWarning}`,
+    `## 1. Issue\n\n${outline.issue}`,
+    `## 2. Governing contract language\n\n${citedList(outline.governingContractLanguage)}`,
+    `## 3. Elements that must be established\n\n${citedList(outline.elementsToEstablish)}`,
+    `## 4. Facts still to confirm\n\n${plainList(outline.factsToConfirm)}`,
+    `## 5. Evidence or records to request\n\n${citedList(outline.evidenceToRequest)}`,
+    `## 6. Questions to ask management\n\n${plainList(outline.questionsForManagement)}`,
+    `## 7. Step 1 argument outline\n\n${citedList(outline.stepOneArgument)}`,
+    `## 8. Conditional remedy framework\n\n${citedList(outline.possibleRemedies)}`,
+    `## 9. Timeliness and procedure cautions\n\n${citedList(outline.timelinessAndProcedureLimits)}`,
+    `## 10. Step 2 or escalation readiness\n\n${citedList(outline.escalationReadiness)}`,
+    `## 11. Limitations and uncertainty\n\n${citedList(outline.limitations)}`,
+    `## 12. Sources\n\n${sources}`,
+    "Unknown facts, local rules, and local practices require separate verification.",
+    "Conditional steward outline only. No predetermined violation, remedy, monetary calculation, or legal advice.",
+  ].join("\n\n");
+}
+
+export function publicGrievanceOutlineExportEligibility(
+  outline: PublicGrievanceOutline,
+  source: CbaSourceCache | null
+): { eligible: true } | { eligible: false; reason: string } {
+  if (!source) return { eligible: false, reason: "Current CBA cache is unavailable." };
+  if (
+    outline.citations.length === 0 ||
+    outline.citations.some(
+      (citation) => !trustedCurrentCbaCitation(citation, source)
+    )
+  ) {
+    return {
+      eligible: false,
+      reason: "Export blocked because one or more CBA citations are stale or unverifiable.",
+    };
+  }
+  const topic = publicStewardWorkflowTopic(outline.template);
+  if (
+    topic.sourceSufficiency.status !== "supported" ||
+    !outline.sourceInstanceIds.includes(
+      outline.citations[0]?.sourceInstanceId ?? ""
+    )
+  ) {
+    return {
+      eligible: false,
+      reason: "Export blocked because topic or source-instance eligibility cannot be verified.",
+    };
+  }
+  return { eligible: true };
 }

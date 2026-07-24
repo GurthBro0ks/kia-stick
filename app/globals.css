@@ -802,6 +802,53 @@ a {
   background: #f4fbf8;
 }
 
+.workflowCatalog {
+  margin-top: 14px;
+  border-top: 2px solid #7ca99b;
+  padding-top: 12px;
+}
+
+.workflowCatalogHeader,
+.savedFilters {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+
+.workflowCatalogHeader h4,
+.workflowTopicCard h5 {
+  margin: 3px 0 0;
+}
+
+.workflowCatalogGrid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 9px;
+  margin-top: 10px;
+}
+
+.workflowTopicCard {
+  min-width: 0;
+  border: 1px solid #c8d6d4;
+  background: #fff;
+  padding: 10px;
+}
+
+.workflowTopicCard p + p {
+  margin-top: 7px;
+}
+
+.workflowTopicCard .button {
+  width: 100%;
+  margin-top: 9px;
+}
+
+.workflowScope {
+  font-size: 0.76rem !important;
+}
+
 .publicSourceHeader {
   display: flex;
   align-items: flex-start;
@@ -939,6 +986,24 @@ a {
   grid-template-columns: repeat(2, minmax(0, 1fr));
   gap: 6px 10px;
   margin: 9px 0 0;
+}
+
+.savedFilters {
+  align-items: end;
+  margin-bottom: 10px;
+  border: 1px solid #c8d6d4;
+  background: #eef7f6;
+  padding: 9px;
+}
+
+.savedFilters .controlPill {
+  flex: 1 1 190px;
+}
+
+.outlineExportActions {
+  border: 1px solid #c8d6d4;
+  background: #fff;
+  padding: 8px;
 }
 
 .savedDetailList dt {
@@ -1924,6 +1989,19 @@ a {
 }
 
 @media (max-width: 640px) {
+  .workflowCatalogGrid {
+    grid-template-columns: 1fr;
+  }
+
+  .savedFilters {
+    display: grid;
+    grid-template-columns: 1fr;
+  }
+
+  .outlineExportActions .button {
+    width: 100%;
+  }
+
   .visibleLaneControl {
     grid-template-columns: 1fr;
   }

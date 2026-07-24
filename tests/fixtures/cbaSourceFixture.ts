@@ -70,6 +70,34 @@ export function syntheticCbaExtraction(): string {
           "All advance commitments for granting annual leave must be honored except in serious emergency situations."
         );
       }
+      if (articleNumber === 11) {
+        lines.push(
+          "",
+          "Section 1. Holidays Observed",
+          "",
+          "The following eleven (11) days shall be considered holidays for full-time and part-time regular scheduled employees.",
+          "",
+          "Section 6. Holiday Schedule",
+          "",
+          "The Employer will determine the number and categories of employees needed for holiday work and a schedule shall be posted as of the Tuesday preceding the service week in which the holiday falls.",
+          "",
+          "As many full-time and part-time regular schedule employees as can be spared will be excused from duty on a holiday or day designated as their holiday. Such employees will not be required to work unless the stated categories and scheduling sequence have been exhausted, subject to the applicable Local Memorandum of Understanding."
+        );
+      }
+      if (articleNumber === 14) {
+        lines.push(
+          "",
+          "Section 1. Responsibilities",
+          "",
+          "It is the responsibility of management to provide safe working conditions in all present and future installations and to develop a safe working force.",
+          "",
+          "Section 2. Cooperation",
+          "",
+          "The Employer and the Union insist on correction of unsafe conditions. An employee may notify the supervisor, who will immediately investigate the condition and take corrective action if necessary, notify a steward, or use the stated grievance procedure.",
+          "",
+          "A safety grievance not resolved at Step 2 may be appealed to the Local Safety and Health Committee or appealed directly to arbitration within 21 days after receipt of the Employer's Step 2 decision."
+        );
+      }
       if (articleNumber === 15) {
         lines.push(
           "",
@@ -87,7 +115,18 @@ export function syntheticCbaExtraction(): string {
         );
       }
       if (articleNumber === 16) {
-        lines.push("", "Section 1. Principles", "", "Discipline should be corrective rather than punitive. No employee may be disciplined or discharged except for just cause. Discipline is subject to the grievance-arbitration procedure.");
+        lines.push(
+          "",
+          "Section 1. Principles",
+          "",
+          "A basic principle shall be that discipline should be corrective in nature, rather than punitive. No employee may be disciplined or discharged except for just cause.",
+          "",
+          "Any such discipline or discharge shall be subject to the grievance-arbitration procedure provided for in this Agreement.",
+          "",
+          "Section 8. Review of Discipline",
+          "",
+          "No supervisor may impose suspension or discharge unless the proposed disciplinary action has first been reviewed and concurred in by the installation head or designee."
+        );
       }
       if (articleNumber === 17) {
         lines.push("", "Section 1. Stewards", "", "Stewards may be designated for investigating, presenting and adjusting grievances.", "", "Section 3. Rights of Stewards", "", "A permission request shall not be unreasonably denied, and time reasonably necessary to write a grievance is compensated.");

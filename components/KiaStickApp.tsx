@@ -69,9 +69,16 @@ import {
 } from "@/lib/publicArgumentPlan";
 import {
   buildPublicGrievanceOutline,
+  publicGrievanceOutlineExportEligibility,
   publicGrievanceOutlineEligibility,
+  publicGrievanceOutlineToMarkdown,
+  publicGrievanceOutlineToText,
   type PublicGrievanceOutline,
 } from "@/lib/publicGrievanceOutline";
+import {
+  PUBLIC_STEWARD_WORKFLOW_PHASE,
+  PUBLIC_STEWARD_WORKFLOW_TOPICS,
+} from "@/lib/publicStewardWorkflowRegistry";
 import {
   buildSourceHierarchyGroups,
   citationLabel,
@@ -124,6 +131,7 @@ import {
   cbaPilotQuestions,
   searchCba,
   type CbaParagraph,
+  type CbaSourceCache,
   type CbaSourceRouteResponse,
 } from "@/lib/cbaSource";
 import {
@@ -731,6 +739,7 @@ export function KiaStickApp({ runtimeVersion = clientVersion }: { runtimeVersion
                         onSaveArgumentPlan={() => plan && saveArgumentPlan(message, plan)}
                         canBuildGrievanceOutline={grievanceEligibility.eligible}
                         grievanceOutline={grievanceOutline}
+                        grievanceOutlineSource={cbaSourceState.status === "available" ? cbaSourceState.source : null}
                         onBuildGrievanceOutline={() => buildGrievanceOutlineFor(message)}
                         onSaveGrievanceOutline={() => grievanceOutline && saveGrievanceOutline(message, grievanceOutline)}
                         onCitationNavigate={navigateToCitation}
@@ -898,12 +907,17 @@ export function KiaStickApp({ runtimeVersion = clientVersion }: { runtimeVersion
             <summary>Prompt shortcuts</summary>
             <div className="promptRail" aria-label={chatSourceMode === "cba" ? "CBA prompts" : chatSourceMode === "nlrb" || chatSourceMode === "public" ? "NLRB guidance prompts" : chatSourceMode === "fake" ? "fake test prompts" : "automatic public and fake prompts"}>
               {(chatSourceMode === "cba"
-                ? cbaPilotQuestions
+                ? PUBLIC_STEWARD_WORKFLOW_TOPICS.map((topic) => topic.exampleQuestion)
                 : chatSourceMode === "nlrb" || chatSourceMode === "public"
                 ? publicPilotQuestions
                 : chatSourceMode === "fake"
                   ? cannedQuestions
-                  : [...cbaPilotQuestions, ...publicPilotQuestions, ...cannedQuestions]
+                  : [
+                      ...PUBLIC_STEWARD_WORKFLOW_TOPICS.map((topic) => topic.exampleQuestion),
+                      ...cbaPilotQuestions,
+                      ...publicPilotQuestions,
+                      ...cannedQuestions,
+                    ]
               ).map((prompt) => (
                 <button className="promptChip" key={prompt} type="button" onClick={() => setDraft(prompt)}>
                   {prompt}
@@ -1001,7 +1015,9 @@ export function SettingsContent(props: {
             <dt>Channel</dt>
             <dd>{props.runtimeVersion.channel}</dd>
             <dt>Local bundle</dt>
-            <dd>{currentAcceptedPushedState.local_bundle_status}</dd>
+            <dd>public steward workflow platform bundle 1; validation PASS; pushed no; manual QA pending operator review</dd>
+            <dt>Local phase</dt>
+            <dd>{PUBLIC_STEWARD_WORKFLOW_PHASE}</dd>
           </dl>
           <a className="settingsVersionLink" href="/version">View full build identity</a>
         </section>
@@ -1324,6 +1340,42 @@ export function SourcesPanel({
             <strong>{CBA_SCOPE_WARNING} Not legal advice.</strong>
           </div>
 
+          <section className="workflowCatalog" aria-labelledby="supported-public-workflows">
+            <div className="workflowCatalogHeader">
+              <div>
+                <span className="sectionKicker">Registry-driven topic discovery</span>
+                <h4 id="supported-public-workflows">Supported public workflows</h4>
+              </div>
+              <span className="statusPill ok">{PUBLIC_STEWARD_WORKFLOW_TOPICS.length} bounded CBA topics</span>
+            </div>
+            <p className="emptyState">
+              These workflows use verified current CBA paragraphs and a shared twelve-section outline. Other grievance topics require additional verified sources or local review.
+            </p>
+            <div className="workflowCatalogGrid">
+              {PUBLIC_STEWARD_WORKFLOW_TOPICS.map((topic) => (
+                <article className="workflowTopicCard" key={topic.id}>
+                  <div>
+                    <span className="badge green">Article {topic.sourceSufficiency.primaryArticle}</span>
+                    <span className="badge">public CBA</span>
+                  </div>
+                  <h5>{topic.displayName}</h5>
+                  <p>{topic.shortDescription}</p>
+                  <p className="workflowScope"><strong>Bounded scope:</strong> {topic.supportedScope}</p>
+                  <p className="workflowScope"><strong>Requires separate verification:</strong> {topic.localVerification}</p>
+                  {onAskCbaQuestion && (
+                    <button
+                      className="button subtle"
+                      type="button"
+                      onClick={() => onAskCbaQuestion(topic.exampleQuestion)}
+                    >
+                      Ask this safe question
+                    </button>
+                  )}
+                </article>
+              ))}
+            </div>
+          </section>
+
           {cbaCitationNavigationNotice && (
             <div className="applicabilityWarning" role="alert" aria-label="CBA citation verification warning">
               <AlertTriangle size={16} />
@@ -1514,16 +1566,73 @@ export function SavedAnswersPanel(props: {
   const cbaSourceState = props.cbaSourceState ?? { status: "unavailable", reason: "cache_missing" as const };
   const [openPlanId, setOpenPlanId] = useState<string | null>(null);
   const [openOutlineId, setOpenOutlineId] = useState<string | null>(null);
+  const [typeFilter, setTypeFilter] = useState<"all" | SavedAnswer["savedType"]>("all");
+  const [topicFilter, setTopicFilter] = useState("all");
+  const topics = useMemo(
+    () =>
+      [...new Set(
+        props.saved
+          .filter((item) => item.savedType === "public_grievance_outline")
+          .map((item) => item.grievanceOutlineTopic ?? item.grievanceOutline?.topic)
+          .filter((topic): topic is string => Boolean(topic))
+      )].sort((left, right) => left.localeCompare(right)),
+    [props.saved]
+  );
+  const visibleSaved = useMemo(
+    () =>
+      props.saved
+        .filter((item) => typeFilter === "all" || item.savedType === typeFilter)
+        .filter(
+          (item) =>
+            topicFilter === "all" ||
+            (item.grievanceOutlineTopic ?? item.grievanceOutline?.topic) === topicFilter
+        )
+        .sort(
+          (left, right) =>
+            right.timestamp.localeCompare(left.timestamp) || left.id.localeCompare(right.id)
+        ),
+    [props.saved, topicFilter, typeFilter]
+  );
   return (
     <section className="tabPanel">
       <PanelHeader title="Saved" meta={`${props.saved.length} stored locally`} />
+      <div className="savedFilters" aria-label="Saved work filters">
+        <label className="controlPill">
+          <span>Saved type</span>
+          <select
+            aria-label="Filter Saved by type"
+            value={typeFilter}
+            onChange={(event) => setTypeFilter(event.target.value as typeof typeFilter)}
+          >
+            <option value="all">All types</option>
+            <option value="answer">Answer</option>
+            <option value="public_argument_plan">Argument Plan</option>
+            <option value="public_grievance_outline">Grievance Outline</option>
+          </select>
+        </label>
+        <label className="controlPill">
+          <span>Topic</span>
+          <select
+            aria-label="Filter Saved by topic"
+            value={topicFilter}
+            onChange={(event) => setTopicFilter(event.target.value)}
+          >
+            <option value="all">All topics</option>
+            {topics.map((topic) => <option key={topic} value={topic}>{topic}</option>)}
+          </select>
+        </label>
+        <span className="statusPill">{visibleSaved.length} shown</span>
+      </div>
       <div className="sourceCards">
         {props.saved.length === 0 && (
           <p className="emptyState">
             No saved fake answers yet. Answer cards retain source/provider metadata, citation count, and fake build metadata. No-answer Chat cards are blocked from Saved. No saved public-pilot answers yet. Both lanes remain separately labeled and retain local provider, prompt, source, hash, and anchor metadata.
           </p>
         )}
-        {props.saved.map((item) => {
+        {props.saved.length > 0 && visibleSaved.length === 0 && (
+          <p className="emptyState">No Saved records match these filters. Existing records were not changed.</p>
+        )}
+        {visibleSaved.map((item) => {
           const cbaVerificationState = savedCbaVerificationState(item, cbaSourceState);
           const cbaCitation = item.citations.find((citation) => citation.publicSourceType === "cba_contract");
           return (
@@ -1539,6 +1648,24 @@ export function SavedAnswersPanel(props: {
               >
                 <Archive size={16} />
               </button>
+            </div>
+            <div className="sourceMeta" aria-label="Saved record identity">
+              <span className="badge green">
+                {item.savedType === "public_argument_plan"
+                  ? "Argument Plan"
+                  : item.savedType === "public_grievance_outline"
+                    ? "Grievance Outline"
+                    : "Answer"}
+              </span>
+              {item.grievanceOutline && <span className="badge">{item.grievanceOutline.topic}</span>}
+              <span className="badge">
+                {item.answerLane === "public_cba" ? "public CBA" : item.answerLane === "public" ? "public NLRB" : "fake sample"}
+              </span>
+              {cbaVerificationState && (
+                <span className={cbaVerificationState === "verified_current" ? "badge green" : "badge red"}>
+                  {cbaVerificationState}
+                </span>
+              )}
             </div>
             <p>
               {item.savedType === "public_argument_plan"
@@ -1654,6 +1781,7 @@ export function SavedAnswersPanel(props: {
                   <PublicGrievanceOutlineView
                     outline={item.grievanceOutline}
                     onCitationNavigate={props.onCitationNavigate ?? (() => undefined)}
+                    source={cbaSourceState.status === "available" ? cbaSourceState.source : null}
                   />
                 )}
               </div>
@@ -2356,6 +2484,7 @@ export function AssistantMessageCard({
   onSaveArgumentPlan = () => undefined,
   canBuildGrievanceOutline = false,
   grievanceOutline,
+  grievanceOutlineSource,
   onBuildGrievanceOutline = () => undefined,
   onSaveGrievanceOutline = () => undefined,
   onCitationNavigate = () => undefined,
@@ -2371,6 +2500,7 @@ export function AssistantMessageCard({
   onSaveArgumentPlan?: () => void;
   canBuildGrievanceOutline?: boolean;
   grievanceOutline?: PublicGrievanceOutline;
+  grievanceOutlineSource?: CbaSourceCache | null;
   onBuildGrievanceOutline?: () => void;
   onSaveGrievanceOutline?: () => void;
   onCitationNavigate?: (citation: Citation) => void;
@@ -2543,6 +2673,7 @@ export function AssistantMessageCard({
               outline={grievanceOutline}
               onCitationNavigate={onCitationNavigate}
               onSave={onSaveGrievanceOutline}
+              source={grievanceOutlineSource ?? null}
             />
           )}
 
@@ -2720,13 +2851,47 @@ function PublicGrievanceOutlineView({
   outline,
   onCitationNavigate,
   onSave,
+  source,
 }: {
   outline: PublicGrievanceOutline;
   onCitationNavigate: (citation: Citation) => void;
   onSave?: () => void;
+  source?: CbaSourceCache | null;
 }) {
   const headingId = `grievance-outline-${outline.id}`;
   const citationNumber = new Map(outline.citations.map((citation, index) => [citation.id, index + 1]));
+  const [exportNotice, setExportNotice] = useState<string | null>(null);
+  const exportEligibility = publicGrievanceOutlineExportEligibility(outline, source ?? null);
+
+  async function copyOutline() {
+    if (!exportEligibility.eligible) {
+      setExportNotice(exportEligibility.reason);
+      return;
+    }
+    try {
+      await navigator.clipboard.writeText(publicGrievanceOutlineToText(outline));
+      setExportNotice("Copied current verified outline as plain text.");
+    } catch {
+      setExportNotice("Copy was blocked by the browser. The outline was not exported.");
+    }
+  }
+
+  function downloadOutline() {
+    if (!exportEligibility.eligible) {
+      setExportNotice(exportEligibility.reason);
+      return;
+    }
+    const blob = new Blob([publicGrievanceOutlineToMarkdown(outline)], {
+      type: "text/markdown;charset=utf-8",
+    });
+    const url = URL.createObjectURL(blob);
+    const anchor = document.createElement("a");
+    anchor.href = url;
+    anchor.download = `kia-public-${outline.template}-grievance-outline.md`;
+    anchor.click();
+    URL.revokeObjectURL(url);
+    setExportNotice("Downloaded current verified outline as Markdown.");
+  }
 
   function CitationLinks({ citationIds }: { citationIds: string[] }) {
     return (
@@ -2793,6 +2958,20 @@ function PublicGrievanceOutlineView({
         <span>Source instance: {outline.sourceInstanceIds.join(", ")}</span>
         <span>Content identity: {outline.contentIdentity}</span>
       </div>
+      <div className="compactActions outlineExportActions" aria-label="Public outline exports">
+        <button className="button subtle" type="button" onClick={copyOutline}>
+          <ClipboardList size={16} />
+          Copy outline as plain text
+        </button>
+        <button className="button subtle" type="button" onClick={downloadOutline}>
+          <Download size={16} />
+          Download outline as Markdown
+        </button>
+        <span className={exportEligibility.eligible ? "badge green" : "badge red"}>
+          {exportEligibility.eligible ? "verified-current export ready" : "export blocked"}
+        </span>
+      </div>
+      {exportNotice && <p className="saveNotice" role="status">{exportNotice}</p>}
 
       <section className="argumentPlanSection">
         <h4>1. Issue</h4>

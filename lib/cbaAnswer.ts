@@ -25,13 +25,17 @@ import { citationForPublicParagraph } from "@/lib/publicSourceAnswer";
 import { deriveCbaCitationIntegrity, verifyCbaCitation } from "@/lib/cbaCitationIntegrity";
 import type { Citation, Detail, Mode, Scope } from "@/lib/sourceModel";
 import type { RuntimeVersion } from "@/lib/version";
+import {
+  detectPublicStewardWorkflowTopic,
+  publicStewardWorkflowTopic,
+  topicParagraphs,
+  type PublicStewardWorkflowTopicId,
+} from "@/lib/publicStewardWorkflowRegistry";
 
 export type CbaQuestionIntent =
-  | "annual_leave"
-  | "overtime"
+  | PublicStewardWorkflowTopicId
   | "grievance_deadline"
   | "article_17"
-  | "article_16"
   | "cross_source"
   | "case_outcome"
   | "unsupported";
@@ -42,41 +46,13 @@ export const genericCbaRetrievalSuggestions = [
   "What does Article 17 say about steward representation?",
 ];
 
-function isAnnualLeaveIntent(normalized: string): boolean {
-  if (/\b(fake|sample|sick leave|fmla|lwop|military leave|owcp|medical|attendance|disciplin(?:e|ary))\b/.test(normalized)) {
-    return false;
-  }
-  const explicitTopic = /\b(annual leave|vacation)\b/.test(normalized);
-  const boundedGenericLeave =
-    /\bleave\b/.test(normalized) &&
-    /\b(supervisor|prime[ -]?time|tomorrow|time off)\b/.test(normalized);
-  const administrationCue =
-    /\b(request(?:ed|ing)?|submit(?:ted|ting)?|den(?:y|ied|ial)|schedul(?:e|ed|ing)|approv(?:al|e|ed)|administration|deadline|time off)\b/.test(normalized);
-  return (explicitTopic || boundedGenericLeave) && administrationCue;
-}
-
-function isOvertimeIntent(normalized: string): boolean {
-  if (/\b(fake|sample|annual leave|vacation|sick leave|fmla|lwop|owcp|medical)\b/.test(normalized)) {
-    return false;
-  }
-  const explicitTopic =
-    /\bovertime\b/.test(normalized) ||
-    /\bovertime[- ]desired[- ]list\b/.test(normalized) ||
-    /\bodl\b/.test(normalized);
-  const workedOffAssignment =
-    /\bworked off assignment\b/.test(normalized) &&
-    /\b(overtime|odl|bypass(?:ed)?|forced|mandatory)\b/.test(normalized);
-  return explicitTopic || workedOffAssignment;
-}
-
 export function detectCbaIntent(question: string): CbaQuestionIntent {
   const normalized = question.toLowerCase();
-  if (isOvertimeIntent(normalized)) return "overtime";
-  if (isAnnualLeaveIntent(normalized)) return "annual_leave";
+  const stewardTopic = detectPublicStewardWorkflowTopic(question);
+  if (stewardTopic) return stewardTopic;
   if (/\b(nlrb|weingarten)\b/.test(normalized) && /\b(cba|collective bargaining agreement|contract)\b/.test(normalized)) return "cross_source";
   if (/\b(article\s*15|grievance)\b/.test(normalized) && /\b(days?|deadline|file|filing|timely|time limit)\b/.test(normalized)) return "grievance_deadline";
   if (/\barticle\s*17\b/.test(normalized) || (/\b(representation|steward)\b/.test(normalized) && /\b(cba|contract|article)\b/.test(normalized))) return "article_17";
-  if (/\barticle\s*16\b/.test(normalized) || /\bjust[ -]?cause\b/.test(normalized) || (/\bdisciplin(?:e|ary)\b/.test(normalized) && /\b(protection|contract|cause)\b/.test(normalized))) return "article_16";
   if (/\b(my|specific|this)\s+(case|situation)\b/.test(normalized) || /\bdid management violate\b/.test(normalized)) return "case_outcome";
   if (/\barticle\s*(?:[1-9]|[1-3][0-9]|4[0-3])\b/.test(normalized)) return "unsupported";
   return "unsupported";
@@ -254,58 +230,32 @@ export function buildCbaAnswer(input: {
   if (!input.source) return unavailableAnswer({ ...input, question });
   const intent = detectCbaIntent(question);
 
-  if (intent === "overtime") {
-    const article = paragraphsForArticle(input.source, "8");
-    const matches = distinctParagraphs([
-      article.find(
-        (paragraph) =>
-          /scheduled among qualified employees doing similar work/i.test(paragraph.text) &&
-          /Overtime Desired List/i.test(paragraph.text)
-      ),
-      article.find(
-        (paragraph) =>
-          /selected in order of their seniority on a rotating basis/i.test(paragraph.text) &&
-          /not on the list may be required to work overtime on a rotating basis/i.test(paragraph.text)
-      ),
-      article.find(
-        (paragraph) =>
-          /no more than twelve \(12\) hours of work in a day/i.test(paragraph.text) &&
-          /not required to utilize employees on the Overtime Desired List at the penalty overtime rate/i.test(paragraph.text)
-      ),
-    ]);
-    if (matches.length < 3) return unavailableAnswer({ ...input, question });
+  const stewardTopicId = detectPublicStewardWorkflowTopic(question);
+  if (stewardTopicId) {
+    const topic = publicStewardWorkflowTopic(stewardTopicId);
+    const allParagraphs = input.source.normalized.pages.flatMap((page) => page.paragraphs);
+    const matched = topicParagraphs(allParagraphs, topic);
+    if (!matched || matched.size < topic.sourceSufficiency.minimumTopicParagraphs) {
+      return unavailableAnswer({ ...input, question });
+    }
+    const matches = [...matched.values()];
     return baseAnswer({
       ...input,
       question,
-      shortAnswer: "Article 8 supplies current contract language for overtime assignment and Overtime Desired List administration. It addresses qualified employees doing similar work in the work location, list creation by craft, section, or tour, seniority rotation, pass-over conditions, mandatory overtime when the voluntary list is insufficient, and stated list-utilization limits. Which provisions apply depends on employee category, craft, work location, skills, availability, list status, assignment sequence, hours, and separately verified local implementation. These passages do not by themselves establish a violation, remedy, or monetary amount.",
+      shortAnswer: `${topic.displayName} is a supported public steward workflow. ${topic.id === "discipline_just_cause" ? "Article 16 states that discipline should be corrective rather than punitive and requires just cause. " : ""}The verified Article ${topic.sourceSufficiency.primaryArticle} passages support a bounded review of ${topic.supportedScope.toLowerCase()} Which provisions apply depends on facts that are not entered here and on ${topic.localVerification.toLowerCase()} These passages do not establish a violation, remedy, monetary amount, or legal conclusion.`,
       citations: matches.map((paragraph) => citationForCbaParagraph(input.source!, paragraph)),
       noAnswer: false,
-      conflicts: ["Article 8 references local implementation and fact-specific qualifications; no LMOU, local practice, assignment record, or employee-specific fact is included in this public pilot."],
-      evidenceChecklist: ["Review the applicable Overtime Desired List and neutral assignment sequence only through the proper process.", "Confirm qualifications, availability, list status, relevant hours, and any separately verified local implementation rule."],
-      missingFacts: ["Employee category, craft, section or tour, work location, necessary skills, availability, list status, voluntary or mandatory status, assignment sequence, relevant hours, and local implementation."],
-      followUps: ["Build the cited grievance outline to separate verified Article 8 rules from facts and local procedures that still require confirmation."],
-    });
-  }
-
-  if (intent === "annual_leave") {
-    const article = paragraphsForArticle(input.source, "10");
-    const matches = distinctParagraphs([
-      article.find((paragraph) => paragraph.sectionNumber === "2" && /scheduling annual leave/i.test(paragraph.text)),
-      article.find((paragraph) => paragraph.sectionNumber === "3" && /choice vacation period/i.test(paragraph.text) && /annual leave shall be granted/i.test(paragraph.text)),
-      article.find((paragraph) => paragraph.sectionNumber === "4" && /submission of applications for annual leave/i.test(paragraph.text)),
-      article.find((paragraph) => paragraph.sectionNumber === "4" && /advance commitments for granting annual leave/i.test(paragraph.text)),
-    ]);
-    if (matches.length < 3) return unavailableAnswer({ ...input, question });
-    return baseAnswer({
-      ...input,
-      question,
-      shortAnswer: "Article 10 supplies current contract language for annual-leave scheduling and vacation planning. It addresses qualified scheduling preferences, choice-period leave, locally implemented request procedures, official schedule notice, and advance leave commitments subject to a serious-emergency exception. Which provisions apply depends on employee status, the requested period, the locally implemented procedure, and the actual request and disposition. These passages do not by themselves establish that management violated the CBA.",
-      citations: matches.map((paragraph) => citationForCbaParagraph(input.source!, paragraph)),
-      noAnswer: false,
-      conflicts: ["Article 10 expressly leaves parts of vacation planning and request administration to local implementation; no LMOU or local practice is included in this public pilot."],
-      evidenceChecklist: ["Review the leave request and its recorded disposition.", "Confirm the applicable leave calendar, approved schedule notice, and separately verified local implementation procedure."],
-      missingFacts: ["Employee status, applicable tour and skills, choice-period status, the locally implemented request procedure, the request disposition, and whether an advance commitment or serious emergency is involved."],
-      followUps: ["Build the cited grievance outline to separate verified Article 10 rules from the facts and local provisions that still require confirmation."],
+      conflicts: [`The current CBA cache does not verify ${topic.localVerification.toLowerCase()}`],
+      evidenceChecklist: [
+        `Review ${topic.outlineLabels.evidenceCategory} only through the proper process and outside this public pilot.`,
+        "Keep verified contract language separate from unknown facts and separately verified local rules.",
+      ],
+      missingFacts: [
+        `The case-specific facts and ${topic.localVerification.toLowerCase()}`,
+      ],
+      followUps: [
+        `Build the cited ${topic.displayName.toLowerCase()} grievance outline to organize verified rules, unknown facts, evidence, questions, and conditional arguments.`,
+      ],
     });
   }
 
@@ -341,24 +291,6 @@ export function buildCbaAnswer(input: {
       citations: matches.map((paragraph) => citationForCbaParagraph(input.source!, paragraph)),
       noAnswer: false,
       conflicts: [`Article 17 contract language and ${PUBLIC_SOURCE_ID} general guidance have distinct source roles and are not silently blended.`],
-    });
-  }
-
-  if (intent === "article_16") {
-    const article = paragraphsForArticle(input.source, "16");
-    const matches = distinctParagraphs([
-      article.find((paragraph) => /discipline should be corrective in nature, rather than punitive/i.test(paragraph.text)),
-      article.find((paragraph) => /no employee may be disciplined or discharged except for just cause/i.test(paragraph.text)),
-      article.find((paragraph) => /subject to the grievance-arbitration procedure/i.test(paragraph.text)),
-    ]);
-    if (matches.length === 0) return unavailableAnswer({ ...input, question });
-    return baseAnswer({
-      ...input,
-      question,
-      shortAnswer: "Article 16 states that discipline should be corrective rather than punitive and that an employee may not be disciplined or discharged except for just cause. It also makes discipline or discharge subject to the grievance-arbitration procedure. Whether those protections establish an outcome in a particular matter depends on the facts and procedural posture.",
-      citations: matches.map((paragraph) => citationForCbaParagraph(input.source!, paragraph)),
-      noAnswer: false,
-      missingFacts: ["The charge, evidence, prior record, notice, level of discipline, employee status, timing, and grievance posture."],
     });
   }
 

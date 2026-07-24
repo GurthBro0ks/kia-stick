@@ -476,7 +476,8 @@ describe("public CBA overtime cited grievance outline", () => {
       operatorDiagnosticsOpen: false,
       onOperatorDiagnosticsToggle: () => undefined,
     }));
-    expect(settings).toContain("public CBA overtime cited grievance-outline pilot");
+    expect(settings).toContain("public steward workflow platform bundle 1");
+    expect(settings).toContain("KIA-Stick-public-steward-workflow-platform-bundle-1");
     expect(settings).toContain("validation PASS; pushed no; manual QA pending operator review");
     expect(settings).toContain(runtimeVersion.gitSha);
     expect(currentAcceptedPushedState.queue_015_status).toBe("blocked");
