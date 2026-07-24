@@ -48,9 +48,9 @@ describe("accepted-state governance loop break", () => {
       external_ai: "disabled",
     });
     expect(currentAcceptedPushedState.local_implementation_proof_dir).toBe("/home/mint/kia-stick-local-proofs/proof_kia_stick_public_cba_annual_leave_post_push_accepted_state_refresh_20260724T133841Z");
-    expect(currentAcceptedPushedState.local_bundle_operator_qa_pass_proof_dir).toBe("/home/mint/kia-stick-local-proofs/proof_kia_stick_public_cba_annual_leave_cited_grievance_outline_auto_routing_repair_operator_qa_pass_recording_20260724T012508Z");
+    expect(currentAcceptedPushedState.local_bundle_operator_qa_pass_proof_dir).toBe("/home/mint/kia-stick-local-proofs/proof_kia_stick_public_cba_annual_leave_post_push_accepted_state_refresh_operator_qa_pass_recording_20260724T135655Z");
     expect(currentAcceptedPushedState.local_bundle_phase).toBe("KIA-Stick-public-CBA-annual-leave-cited-grievance-outline-post-push-accepted-state-refresh");
-    expect(currentAcceptedPushedState.local_bundle_status).toBe("public CBA annual-leave post-push accepted-state refresh; validation PASS; pushed no; manual QA pending");
+    expect(currentAcceptedPushedState.local_bundle_status).toBe("public CBA annual-leave post-push accepted-state refresh; validation PASS; pushed no; manual QA PASS");
     expect(currentAcceptedPushedState.local_bundle_status).not.toContain("stale local-bundle push-status repair");
     expect(currentAcceptedPushedState.latest_pushed_closeout_commit).toBe("370979a7108a4876fea13161d928fedc558f2fed");
     expect(currentAcceptedPushedState.latest_pushed_closeout_short_commit).toBe("370979a");

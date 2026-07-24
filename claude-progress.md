@@ -1,3 +1,10 @@
+- Phase: `KIA-Stick-public-CBA-annual-leave-post-push-accepted-state-refresh-operator-QA-PASS-recording`
+- Status: operator QA PASS explicitly recorded for `/home/mint/kia-stick-local-proofs/proof_kia_stick_public_cba_annual_leave_post_push_accepted_state_refresh_20260724T133841Z`; validation remains PASS; pushed no.
+- Local refresh commit under review: `547f612e987d6b8b86d2afb0d71795f4a0ee8665`. Accepted capability remains `9a66d37148f37d2dee16bcbe6b9a12aa4ba9946a`; repository recording and latest pushed closeout remain `370979a7108a4876fea13161d928fedc558f2fed`. Operator QA does not advance any accepted or pushed identity.
+- Operator-QA recording proof: `/home/mint/kia-stick-local-proofs/proof_kia_stick_public_cba_annual_leave_post_push_accepted_state_refresh_operator_qa_pass_recording_20260724T135655Z`.
+- Safety: no implementation change, source fetch/sync, private data, package/lock mutation, service/system/network change, Discord, or push. queue-015 and v0.9.12C remain blocked; Next/PostCSS remains parked.
+- Next: await separate closeout/push authorization. Do not push until explicitly requested.
+
 - Phase: `KIA-Stick-public-CBA-annual-leave-cited-grievance-outline-post-push-accepted-state-refresh`
 - Authorization: `AUTHORIZE_KIA_ANNUAL_LEAVE_POST_PUSH_ACCEPTED_STATE_REFRESH`.
 - Status: shared accepted-state contract and bounded consumers now record the pushed annual-leave grievance-outline capability and automatic routing repair at `9a66d37148f37d2dee16bcbe6b9a12aa4ba9946a`, with repository/closeout recording point `370979a7108a4876fea13161d928fedc558f2fed`; validation PASS; pushed no; manual QA pending.

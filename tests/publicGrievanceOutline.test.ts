@@ -394,7 +394,7 @@ describe("public CBA annual-leave cited grievance outline", () => {
       "KIA-Stick-public-CBA-annual-leave-cited-grievance-outline-post-push-accepted-state-refresh"
     );
     expect(currentAcceptedPushedState.local_bundle_status).toBe(
-      "public CBA annual-leave post-push accepted-state refresh; validation PASS; pushed no; manual QA pending"
+      "public CBA annual-leave post-push accepted-state refresh; validation PASS; pushed no; manual QA PASS"
     );
     expect(currentAcceptedPushedState.accepted_pushed_commit).toBe("9a66d37148f37d2dee16bcbe6b9a12aa4ba9946a");
     expect(currentAcceptedPushedState.repository_recording_commit).toBe("370979a7108a4876fea13161d928fedc558f2fed");

@@ -5,7 +5,7 @@
 - Canonical closeout proof: `/home/mint/kia-stick-local-proofs/proof_kia_stick_public_cba_annual_leave_cited_grievance_outline_auto_routing_repair_operator_qa_pass_recording_20260724T012508Z/closeout_push_20260724T015523Z`.
 - Shared current-state contract: `data/current-accepted-pushed-state.json`; Settings, `/health`, proof helpers, and current-state tests consume this contract rather than an independent baseline.
 - Prior accepted Settings summary/operator-diagnostics checkpoint `76c7312` is preserved as historical-only.
-- This refresh is local-only: validation `PASS`, pushed `no`, operator manual QA `pending_operator_review`.
+- This refresh is local-only: validation `PASS`, pushed `no`, operator manual QA `PASS`; operator-QA proof: `/home/mint/kia-stick-local-proofs/proof_kia_stick_public_cba_annual_leave_post_push_accepted_state_refresh_operator_qa_pass_recording_20260724T135655Z`.
 - queue-015 and v0.9.12C remain blocked; Next/PostCSS remains `WARN_SAFE_NEXT_TARGET_UNCLEAR`; product/package remain `0.7.0`.
 
 ## Public Settings Post-Closeout Repository Equality Copy Repair

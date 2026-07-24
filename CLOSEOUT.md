@@ -7,9 +7,10 @@
 - Accepted pushed proof: `/home/mint/kia-stick-local-proofs/proof_kia_stick_public_cba_annual_leave_cited_grievance_outline_auto_routing_repair_operator_qa_pass_recording_20260724T012508Z/closeout_push_20260724T015523Z`.
 - Current local refresh proof: `/home/mint/kia-stick-local-proofs/proof_kia_stick_public_cba_annual_leave_post_push_accepted_state_refresh_20260724T133841Z`.
 - Shared contract and bounded consumers now identify the annual-leave grievance-outline capability and routing repair as current; the prior Settings checkpoint `76c7312` remains preserved as historical-only.
-- Local refresh status: validation `PASS`; pushed `no`; operator manual QA `pending_operator_review`.
+- Local refresh status: validation `PASS`; pushed `no`; operator manual QA `PASS`.
+- Operator-QA PASS proof: `/home/mint/kia-stick-local-proofs/proof_kia_stick_public_cba_annual_leave_post_push_accepted_state_refresh_operator_qa_pass_recording_20260724T135655Z`.
 - Safety: no source sync, private data, upload/import capability, external AI, dependency, package, lockfile, service, scheduler, notification, or blocked-target change.
-- Next: operator manual QA for this local accepted-state refresh. Do not push without separate explicit authorization.
+- Next: await separate closeout/push authorization. Do not push until explicitly requested.
 
 ## Public CBA Annual-Leave Cited Grievance Outline Closeout and Push
 
