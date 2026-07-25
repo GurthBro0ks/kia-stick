@@ -3137,6 +3137,38 @@ function PublicArgumentPlanView({
   );
 }
 
+async function copyPublicExportText(text: string): Promise<boolean> {
+  const activeElement = document.activeElement instanceof HTMLElement
+    ? document.activeElement
+    : null;
+  const textarea = document.createElement("textarea");
+  textarea.value = text;
+  textarea.setAttribute("aria-hidden", "true");
+  textarea.setAttribute("readonly", "");
+  textarea.style.cssText =
+    "position:fixed;left:-10000px;top:0;width:1px;height:1px;opacity:0;pointer-events:none;";
+  document.body.appendChild(textarea);
+  textarea.focus();
+  textarea.select();
+  textarea.setSelectionRange(0, textarea.value.length);
+  let copied = false;
+  try {
+    copied = document.execCommand("copy");
+  } catch {
+    copied = false;
+  } finally {
+    textarea.remove();
+    activeElement?.focus();
+  }
+  if (copied) return true;
+  try {
+    await navigator.clipboard?.writeText(text);
+    return Boolean(navigator.clipboard);
+  } catch {
+    return false;
+  }
+}
+
 function PublicGrievanceOutlineView({
   outline,
   onCitationNavigate,
@@ -3158,12 +3190,12 @@ function PublicGrievanceOutlineView({
       setExportNotice(exportEligibility.reason);
       return;
     }
-    try {
-      await navigator.clipboard.writeText(publicGrievanceOutlineToText(outline));
-      setExportNotice("Copied current verified outline as plain text.");
-    } catch {
-      setExportNotice("Copy was blocked by the browser. The outline was not exported.");
-    }
+    const copied = await copyPublicExportText(publicGrievanceOutlineToText(outline));
+    setExportNotice(
+      copied
+        ? "Copied current verified outline as plain text."
+        : "Copy was blocked by the browser. The outline was not exported."
+    );
   }
 
   function downloadOutline() {
@@ -3352,12 +3384,12 @@ function PublicStewardPacketView({
       setExportNotice(eligibility.reason);
       return;
     }
-    try {
-      await navigator.clipboard.writeText(publicStewardPacketToText(packet));
-      setExportNotice("Copied current verified steward packet as plain text.");
-    } catch {
-      setExportNotice("Copy was blocked by the browser. The steward packet was not exported.");
-    }
+    const copied = await copyPublicExportText(publicStewardPacketToText(packet));
+    setExportNotice(
+      copied
+        ? "Copied current verified steward packet as plain text."
+        : "Copy was blocked by the browser. The steward packet was not exported."
+    );
   }
 
   function downloadPacket() {

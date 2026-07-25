@@ -1,3 +1,4 @@
+import { readFileSync } from "node:fs";
 import React from "react";
 import { renderToStaticMarkup } from "react-dom/server";
 import { describe, expect, it } from "vitest";
@@ -192,5 +193,13 @@ describe("public steward packet workspace", () => {
     expect(savedHtml).toContain("Filter Saved by type");
     expect(savedHtml).toContain("Filter Saved by topic");
     expect(savedHtml).toContain("Open saved packet");
+  });
+
+  it("keeps verified outline and packet copy usable when the modern Clipboard API is denied", () => {
+    const component = readFileSync("components/KiaStickApp.tsx", "utf8");
+    expect(component).toContain("function copyPublicExportText");
+    expect(component).toContain('document.execCommand("copy")');
+    expect(component).toContain("await navigator.clipboard?.writeText(text)");
+    expect(component.match(/copyPublicExportText\(/g)).toHaveLength(3);
   });
 });
