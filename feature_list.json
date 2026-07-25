@@ -12099,7 +12099,7 @@
   },
   "public_steward_workflow_platform_bundle_1_post_push_accepted_state_refresh": {
     "phase": "KIA-Stick-public-steward-workflow-platform-bundle-1-post-push-accepted-state-refresh",
-    "status": "local_validation_pass",
+    "status": "operator_qa_pass_recorded_local_only",
     "authorization": "AUTHORIZE_KIA_PUBLIC_STEWARD_WORKFLOW_PLATFORM_BUNDLE_1_POST_PUSH_ACCEPTED_STATE_REFRESH",
     "contract_file": "data/current-accepted-pushed-state.json",
     "accepted_pushed_checkpoint_label": "Public Steward Workflow Platform Bundle 1 and Discipline Copy Repair at ea0ce8d",
@@ -12110,7 +12110,8 @@
     "prior_checkpoint_short_commit": "9a66d37",
     "prior_checkpoint_status": "historical_only_not_current",
     "local_validation_status": "PASS",
-    "local_manual_qa_status": "pending_operator_review",
+    "local_manual_qa_status": "PASS",
+    "local_operator_qa_pass_proof_dir": "/home/mint/kia-stick-local-proofs/proof_kia_stick_public_steward_workflow_platform_bundle_1_post_push_accepted_state_refresh_operator_qa_pass_recording_20260725T112837Z",
     "local_pushed": false,
     "queue_015_status": "blocked",
     "next_postcss_status": "WARN_SAFE_NEXT_TARGET_UNCLEAR",

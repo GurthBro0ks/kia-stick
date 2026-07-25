@@ -394,7 +394,7 @@ describe("public CBA annual-leave cited grievance outline", () => {
       "KIA-Stick-public-steward-workflow-platform-bundle-1-post-push-accepted-state-refresh"
     );
     expect(currentAcceptedPushedState.local_bundle_status).toBe(
-      "public steward workflow platform bundle 1 post-push accepted-state refresh; validation PASS; pushed no; manual QA pending operator review"
+      "public steward workflow platform bundle 1 post-push accepted-state refresh; validation PASS; pushed no; manual QA PASS; closeout pending explicit authorization"
     );
     expect(currentAcceptedPushedState.accepted_pushed_commit).toBe("ea0ce8de9cd6b85b56528fabc9e8ca7f8bf43a52");
     expect(currentAcceptedPushedState.repository_recording_commit).toBe("24abecd2ba6a7018e5eb58b113e99ad90196eb07");
