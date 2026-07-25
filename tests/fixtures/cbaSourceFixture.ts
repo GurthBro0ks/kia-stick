@@ -68,6 +68,17 @@ export function syntheticCbaExtraction(): string {
           "The installation head shall determine a final date for submission of applications for vacation periods and provide official notice to each employee of the vacation schedule approved for each employee. A procedure in each office for submission of applications for annual leave for periods other than the choice period may be established pursuant to the local implementation procedure.",
           "",
           "All advance commitments for granting annual leave must be honored except in serious emergency situations."
+          ,
+          "",
+          "Section 5. Sick Leave",
+          "",
+          "The Employer agrees to continue the administration of the present sick leave program. For periods of absence of three days or less, a supervisor may accept an employee's certification as reason for an absence.",
+          "",
+          "Section 6. Minimum Charge for Leave",
+          "",
+          "The minimum unit charged for sick leave and annual leave for regular workforce employees is one hundredth of an hour.",
+          "",
+          "Employees may utilize annual and sick leave in conjunction with leave without pay, subject to normal leave approval procedures."
         );
       }
       if (articleNumber === 11) {
@@ -129,7 +140,60 @@ export function syntheticCbaExtraction(): string {
         );
       }
       if (articleNumber === 17) {
-        lines.push("", "Section 1. Stewards", "", "Stewards may be designated for investigating, presenting and adjusting grievances.", "", "Section 3. Rights of Stewards", "", "A permission request shall not be unreasonably denied, and time reasonably necessary to write a grievance is compensated.");
+        lines.push(
+          "",
+          "Section 1. Stewards",
+          "",
+          "Stewards may be designated for the purpose of investigating, presenting and adjusting grievances.",
+          "",
+          "Section 3. Rights of Stewards",
+          "",
+          "When it is necessary for a steward to investigate and adjust grievances, the steward shall request permission from the immediate supervisor and the request shall not be unreasonably denied. A properly certified steward may review the documents, files and other records necessary for processing a grievance and has the right to interview the aggrieved employee, supervisors and witnesses.",
+          "",
+          "Section 4. Payment of Stewards",
+          "",
+          "The Employer compensates time actually spent in grievance handling and time reasonably necessary to write a grievance."
+        );
+      }
+      if (articleNumber === 25) {
+        lines.push(
+          "",
+          "Section 1. Definitions",
+          "",
+          "Higher-level work is defined as an assignment to a ranked higher- level position, whether or not such position has been authorized at the installation.",
+          "",
+          "Section 3. Written Orders",
+          "",
+          "An employee detailed to higher-level work shall be given a written management order. The failure of management to give a written order is not grounds for denial if the employee was otherwise directed to perform the duties.",
+          "",
+          "Section 4. Higher-Level Details",
+          "",
+          "Higher-level bargaining unit details shall be from eligible, qualified and available employees in each craft in the immediate work area where the temporarily vacant higher-level position exists."
+        );
+      }
+      if (articleNumber === 26) {
+        lines.push(
+          "",
+          "Section 1. Uniform Control Committee",
+          "",
+          "The Uniform Control Committee considers uniform and work-clothes items and the current administration of the Uniform and Work Clothes Program shall continue unless otherwise changed.",
+          "",
+          "Section 2. Annual Allowance - Regular Uniform Program",
+          "",
+          "The annual allowance for eligible employees in the regular uniform program follows the stated eligibility and anniversary framework.",
+          "",
+          "Section 3. Annual Allowance - Work Clothing Program",
+          "",
+          "The annual allowance for eligible employees in the Work Clothing Program follows the stated categories. Unused portions of an eligible employee's annual allowance for uniform and work clothing will be carried over under the stated framework."
+        );
+      }
+      if (articleNumber === 27) {
+        lines.push(
+          "",
+          "ARTICLE 27 EMPLOYEE CLAIMS",
+          "",
+          "An employee may file a claim for loss or damage to his/her personal property suffered in connection with employment, subject to the stated scope and exclusions. Claims should be documented, if possible, and submitted with recommendations by the Union steward to the Employer at the Local Level. An adverse determination on the claim may be appealed, and a denial letter includes the right to appeal the decision to arbitration under Article 15."
+        );
       }
     }
     if (pageIndex === 190) lines.unshift("APPENDIX A — FIXTURE APPENDIX", "");

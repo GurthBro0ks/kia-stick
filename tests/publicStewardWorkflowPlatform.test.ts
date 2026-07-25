@@ -76,16 +76,21 @@ function outlineFor(question: string) {
 }
 
 describe("public steward workflow platform registry", () => {
-  it("has five deterministic, unique, source-supported topic and template identities", () => {
-    expect(PUBLIC_STEWARD_WORKFLOW_TOPICS).toHaveLength(5);
-    expect(new Set(PUBLIC_STEWARD_WORKFLOW_TOPICS.map((topic) => topic.id))).toHaveLength(5);
-    expect(new Set(PUBLIC_STEWARD_WORKFLOW_TOPICS.map((topic) => topic.templateId))).toHaveLength(5);
+  it("has ten deterministic, unique, source-supported topic and template identities", () => {
+    expect(PUBLIC_STEWARD_WORKFLOW_TOPICS).toHaveLength(10);
+    expect(new Set(PUBLIC_STEWARD_WORKFLOW_TOPICS.map((topic) => topic.id))).toHaveLength(10);
+    expect(new Set(PUBLIC_STEWARD_WORKFLOW_TOPICS.map((topic) => topic.templateId))).toHaveLength(10);
     expect(PUBLIC_STEWARD_WORKFLOW_TOPICS.map((topic) => topic.id)).toEqual([
       "annual_leave",
       "overtime",
       "holiday_scheduling",
       "safety_health",
       "discipline_just_cause",
+      "sick_leave",
+      "higher_level_assignments",
+      "uniforms_work_clothes",
+      "employee_claims",
+      "steward_grievance_handling",
     ]);
     for (const topic of PUBLIC_STEWARD_WORKFLOW_TOPICS) {
       expect(topic.requiredSourceId).toBe("apwu-usps-cba-2024-2027");
@@ -126,7 +131,9 @@ describe("public steward workflow platform registry", () => {
     expect(outline.timelinessAndProcedureLimits.length).toBeGreaterThan(0);
     expect(outline.escalationReadiness.length).toBeGreaterThan(0);
     expect(outline.limitations.length).toBeGreaterThan(0);
-    expect(outline.citations.length).toBeGreaterThanOrEqual(7);
+    expect(outline.citations.length).toBeGreaterThanOrEqual(
+      topicId === "employee_claims" ? 5 : 7
+    );
     expect(outline.citations.every((citation) => citation.citationVerificationState === "verified_current")).toBe(true);
     for (const section of [
       outline.governingContractLanguage,
@@ -142,7 +149,7 @@ describe("public steward workflow platform registry", () => {
     }
   });
 
-  it("keeps local-verification fragments grammatical and deterministic across all five topics", () => {
+  it("keeps local-verification fragments grammatical and deterministic across all ten topics", () => {
     for (const topic of PUBLIC_STEWARD_WORKFLOW_TOPICS) {
       const first = outlineFor(topic.exampleQuestion).outline;
       const second = outlineFor(topic.exampleQuestion).outline;
@@ -335,19 +342,19 @@ describe("public steward workflow exports, persistence, and discovery", () => {
         ...defaults,
       });
     });
-    expect(new Set(outlineRecords.map((record) => record.id))).toHaveLength(5);
+    expect(new Set(outlineRecords.map((record) => record.id))).toHaveLength(10);
     expect(outlineRecords.every((record) => record.saveKey.includes(record.grievanceOutlineTemplate!))).toBe(true);
 
     let saved = upsertSavedAnswer([], answerRecord).saved;
     for (const record of outlineRecords) saved = upsertSavedAnswer(saved, record).saved;
-    expect(saved).toHaveLength(6);
+    expect(saved).toHaveLength(11);
     const duplicate = upsertSavedAnswer(saved, structuredClone(outlineRecords[0]));
     expect(duplicate.status).toBe("duplicate");
-    expect(duplicate.saved).toHaveLength(6);
+    expect(duplicate.saved).toHaveLength(11);
     const migrated = migrateSavedAnswers(structuredClone(duplicate.saved));
     expect(migrateSavedAnswers(structuredClone(migrated))).toEqual(migrated);
     const afterDelete = migrated.filter((record) => record.id !== outlineRecords[2].id);
-    expect(afterDelete).toHaveLength(5);
+    expect(afterDelete).toHaveLength(10);
     expect(afterDelete.some((record) => record.id === answerRecord.id)).toBe(true);
     expect(afterDelete.some((record) => record.id === outlineRecords[3].id)).toBe(true);
 
@@ -375,7 +382,7 @@ describe("public steward workflow exports, persistence, and discovery", () => {
       })
     );
     expect(html).toContain("Supported public workflows");
-    expect(html).toContain("5 bounded CBA topics");
+    expect(html).toContain("10 bounded CBA topics");
     for (const topic of PUBLIC_STEWARD_WORKFLOW_TOPICS) {
       expect(html).toContain(topic.displayName);
       expect(html).toContain(topic.shortDescription);

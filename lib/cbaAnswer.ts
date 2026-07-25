@@ -28,6 +28,7 @@ import type { RuntimeVersion } from "@/lib/version";
 import {
   detectPublicStewardWorkflowTopic,
   publicStewardWorkflowTopic,
+  publicStewardWorkflowMatch,
   topicParagraphs,
   type PublicStewardWorkflowTopicId,
 } from "@/lib/publicStewardWorkflowRegistry";
@@ -228,7 +229,24 @@ export function buildCbaAnswer(input: {
 }): AnswerResult {
   const question = input.question.trim();
   if (!input.source) return unavailableAnswer({ ...input, question });
+  const workflowMatch = publicStewardWorkflowMatch(question);
+  if (workflowMatch.ambiguous) {
+    return buildSafeRouterNoAnswer({
+      question,
+      runtimeVersion: input.runtimeVersion,
+      mode: input.mode,
+      scope: input.scope,
+    });
+  }
   const intent = detectCbaIntent(question);
+  if (intent === "unsupported" && workflowMatch.unsupportedCandidateId) {
+    return buildSafeRouterNoAnswer({
+      question,
+      runtimeVersion: input.runtimeVersion,
+      mode: input.mode,
+      scope: input.scope,
+    });
+  }
 
   const stewardTopicId = detectPublicStewardWorkflowTopic(question);
   if (stewardTopicId) {

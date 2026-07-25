@@ -29,6 +29,11 @@ export const PUBLIC_GRIEVANCE_OUTLINE_TYPES = {
   holiday_scheduling: "holiday_scheduling_or_assignment",
   safety_health: "unsafe_or_unhealthful_condition",
   discipline_just_cause: "discipline_or_just_cause",
+  sick_leave: "sick_leave_administration",
+  higher_level_assignments: "higher_level_assignment_or_detail",
+  uniforms_work_clothes: "uniform_or_work_clothes_administration",
+  employee_claims: "employee_property_claim",
+  steward_grievance_handling: "steward_grievance_handling",
 } as const;
 export type PublicGrievanceOutlineTemplate = PublicStewardWorkflowTopicId;
 export type PublicGrievanceOutlineType =
@@ -848,7 +853,7 @@ function buildRegistryGrievanceOutline(
     factsToConfirm: [
       "The covered employee category, craft or work context, and potentially applicable contract provision.",
       "What occurred and what management states was the basis, without entering names, dates, medical information, or other private details here.",
-      `The separately verified ${localVerification.toLowerCase()}`,
+      `The separately verified ${localVerification.toLowerCase()}.`,
       "When the employee or Union learned or reasonably should have learned of the grievance cause; keep actual dates outside this public pilot.",
       "Whether another contractual procedure, incorporated authority, or local agreement changes the analysis.",
     ],
