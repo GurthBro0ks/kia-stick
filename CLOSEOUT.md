@@ -1,3 +1,16 @@
+## Public Steward Workflow Platform Bundle 1 Post-Push Accepted-State Refresh
+
+- Phase: `KIA-Stick-public-steward-workflow-platform-bundle-1-post-push-accepted-state-refresh`.
+- Authorization: `AUTHORIZE_KIA_PUBLIC_STEWARD_WORKFLOW_PLATFORM_BUNDLE_1_POST_PUSH_ACCEPTED_STATE_REFRESH`.
+- Current accepted pushed capability: `Public Steward Workflow Platform Bundle 1 and Discipline Copy Repair at ea0ce8d` (`ea0ce8de9cd6b85b56528fabc9e8ca7f8bf43a52`).
+- Repository/closeout recording point: `24abecd2ba6a7018e5eb58b113e99ad90196eb07`, where `HEAD == origin/main == remote main` was verified.
+- Accepted pushed proof: `/home/mint/kia-stick-local-proofs/proof_kia_stick_public_steward_workflow_platform_bundle_1_operator_qa_pass_recording_20260725T103233Z/closeout_push_20260725T105111Z`.
+- Current local refresh proof: `/home/mint/kia-stick-local-proofs/proof_kia_stick_public_steward_workflow_platform_bundle_1_post_push_accepted_state_refresh_20260725T105859Z`.
+- Shared contract and bounded consumers now identify Bundle 1 and its discipline-copy repair as current; the prior annual-leave capability `9a66d37` is preserved as historical-only.
+- Local refresh status: validation `PASS`; pushed `no`; operator manual QA `pending_operator_review`.
+- Safety: no source sync, private data, upload/import capability, external AI, dependency, package, lockfile, service, scheduler, notification, or blocked-target change.
+- Next: record one local refresh commit, then await operator manual QA. Do not push without separate explicit authorization.
+
 ## Public Steward Workflow Platform Bundle 1 Closeout and Push
 
 - Phase: `KIA-Stick-public-steward-workflow-platform-bundle-1-closeout-and-push`.

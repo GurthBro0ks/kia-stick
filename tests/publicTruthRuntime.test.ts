@@ -7,7 +7,7 @@ import { PUBLIC_GRIEVANCE_OUTLINE_PHASE } from "@/lib/publicGrievanceOutline";
 describe("public truth runtime identity", () => {
   it("keeps the accepted pushed phase derived from the accepted-state contract", () => {
     expect(CURRENT_PHASE).toBe(currentAcceptedPushedState.accepted_pushed_phase);
-    expect(currentAcceptedPushedState.checkpoint_label).toBe("Public CBA Annual-Leave Cited Grievance Outline and Automatic Routing Repair at 9a66d37");
+    expect(currentAcceptedPushedState.checkpoint_label).toBe("Public Steward Workflow Platform Bundle 1 and Discipline Copy Repair at ea0ce8d");
   });
 
   it("reports the local bundle phase and distinct repository identities", async () => {
@@ -15,16 +15,16 @@ describe("public truth runtime identity", () => {
     const payload = await response.json();
     expect(payload.phase).toBe(PUBLIC_GRIEVANCE_OUTLINE_PHASE);
     expect(currentAcceptedPushedState.local_bundle_phase).toBe(
-      "KIA-Stick-public-steward-workflow-platform-bundle-1-discipline-copy-repair"
+      "KIA-Stick-public-steward-workflow-platform-bundle-1-post-push-accepted-state-refresh"
     );
     expect(payload.phase).not.toBe(currentAcceptedPushedState.local_bundle_phase);
     expect(payload.acceptedCheckpoint).toBe(currentAcceptedPushedState.checkpoint_label);
     expect(payload.acceptedCommit).toBe(currentAcceptedPushedState.accepted_pushed_commit);
-    expect(payload.acceptedCommit).toBe("9a66d37148f37d2dee16bcbe6b9a12aa4ba9946a");
+    expect(payload.acceptedCommit).toBe("ea0ce8de9cd6b85b56528fabc9e8ca7f8bf43a52");
     expect(payload.repositoryRecordingCommit).toBe(currentAcceptedPushedState.repository_recording_commit);
-    expect(payload.repositoryRecordingCommit).toBe("370979a7108a4876fea13161d928fedc558f2fed");
+    expect(payload.repositoryRecordingCommit).toBe("24abecd2ba6a7018e5eb58b113e99ad90196eb07");
     expect(payload.latestPushedCloseoutCommit).toBe(currentAcceptedPushedState.latest_pushed_closeout_commit);
-    expect(payload.latestPushedCloseoutCommit).toBe("370979a7108a4876fea13161d928fedc558f2fed");
+    expect(payload.latestPushedCloseoutCommit).toBe("24abecd2ba6a7018e5eb58b113e99ad90196eb07");
     expect(new Set([
       payload.acceptedCommit,
       payload.repositoryRecordingCommit,

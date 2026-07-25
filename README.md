@@ -1,3 +1,13 @@
+## Public Steward Workflow Platform Bundle 1 Post-Push Accepted-State Refresh
+
+- The current accepted pushed capability is `Public Steward Workflow Platform Bundle 1 and Discipline Copy Repair at ea0ce8d`.
+- The accepted capability repair commit is `ea0ce8de9cd6b85b56528fabc9e8ca7f8bf43a52`; the distinct repository/closeout recording point is `24abecd2ba6a7018e5eb58b113e99ad90196eb07`.
+- Canonical closeout proof: `/home/mint/kia-stick-local-proofs/proof_kia_stick_public_steward_workflow_platform_bundle_1_operator_qa_pass_recording_20260725T103233Z/closeout_push_20260725T105111Z`.
+- Shared current-state contract: `data/current-accepted-pushed-state.json`; Settings, `/health`, proof helpers, and current-state tests consume this contract rather than independent literals.
+- The prior annual-leave capability `9a66d37` is preserved as historical-only.
+- This refresh is local-only: validation `PASS`, pushed `no`, operator manual QA `pending_operator_review`.
+- queue-015 and v0.9.12C remain blocked; Next/PostCSS remains `WARN_SAFE_NEXT_TARGET_UNCLEAR`; product/package remain `0.7.0`.
+
 ## Public CBA Annual-Leave Post-Push Accepted-State Refresh
 
 - The current accepted pushed capability is `Public CBA Annual-Leave Cited Grievance Outline and Automatic Routing Repair at 9a66d37`.

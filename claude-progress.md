@@ -1,3 +1,12 @@
+- Phase: `KIA-Stick-public-steward-workflow-platform-bundle-1-post-push-accepted-state-refresh`
+- Authorization: `AUTHORIZE_KIA_PUBLIC_STEWARD_WORKFLOW_PLATFORM_BUNDLE_1_POST_PUSH_ACCEPTED_STATE_REFRESH`.
+- Status: shared accepted-state contract and bounded consumers now record pushed Bundle 1 plus the discipline-copy repair at `ea0ce8de9cd6b85b56528fabc9e8ca7f8bf43a52`, with repository/closeout recording point `24abecd2ba6a7018e5eb58b113e99ad90196eb07`; validation PASS; pushed no; manual QA pending.
+- Accepted pushed proof: `/home/mint/kia-stick-local-proofs/proof_kia_stick_public_steward_workflow_platform_bundle_1_operator_qa_pass_recording_20260725T103233Z/closeout_push_20260725T105111Z`. Local refresh proof: `/home/mint/kia-stick-local-proofs/proof_kia_stick_public_steward_workflow_platform_bundle_1_post_push_accepted_state_refresh_20260725T105859Z`.
+- Historical preservation: prior annual-leave capability `9a66d37148f37d2dee16bcbe6b9a12aa4ba9946a` is historical-only, not deleted or rewritten.
+- Files: `data/current-accepted-pushed-state.json`, bounded current-state tests, `CLOSEOUT.md`, `README.md`, `feature_list.json`, and this progress record.
+- Safety: no source sync, private data, file chooser, real upload/import, OCR, embeddings, vector database, LLM, dependency/package/lockfile mutation, service/system/network change, Discord, or push. queue-015 and v0.9.12C remain blocked; Next/PostCSS remains parked.
+- Next: operator manual QA for this local refresh. Do not push without separate explicit authorization.
+
 - Phase: `KIA-Stick-public-steward-workflow-platform-bundle-1-closeout-and-push`
 - Authorization: `CLOSEOUT_AND_PUSH_KIA_PUBLIC_STEWARD_WORKFLOW_PLATFORM_BUNDLE_1_AUTHORIZED`.
 - Status: Bundle 1 implementation/repairs through `ea0ce8d` and operator-QA PASS recording `1c8f9ae` passed the bounded closeout gate and are authorized for one push.
