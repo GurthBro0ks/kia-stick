@@ -391,10 +391,10 @@ describe("public CBA annual-leave cited grievance outline", () => {
 
   it("keeps Settings, health, accepted identities, product, and blocked gates truthful", async () => {
     expect(currentAcceptedPushedState.local_bundle_phase).toBe(
-      "KIA-Stick-public-CBA-overtime-cited-grievance-outline-pilot"
+      "KIA-Stick-public-steward-workflow-platform-bundle-1-discipline-copy-repair"
     );
     expect(currentAcceptedPushedState.local_bundle_status).toBe(
-      "public CBA overtime cited grievance-outline pilot; validation PASS; pushed no; manual QA pending operator review"
+      "public steward workflow platform bundle 1 with discipline-copy repair; validation PASS; pushed no; manual QA PASS; closeout pending explicit authorization"
     );
     expect(currentAcceptedPushedState.accepted_pushed_commit).toBe("9a66d37148f37d2dee16bcbe6b9a12aa4ba9946a");
     expect(currentAcceptedPushedState.repository_recording_commit).toBe("370979a7108a4876fea13161d928fedc558f2fed");
@@ -419,9 +419,9 @@ describe("public CBA annual-leave cited grievance outline", () => {
       onOperatorDiagnosticsToggle: () => undefined,
     }));
     expect(settingsHtml).toContain(
-      "public steward workflow platform bundle 1; validation PASS; pushed no; manual QA pending operator review"
+      currentAcceptedPushedState.local_bundle_status
     );
-    expect(settingsHtml).toContain("KIA-Stick-public-steward-workflow-platform-bundle-1");
+    expect(settingsHtml).toContain(currentAcceptedPushedState.local_bundle_phase);
     expect(settingsHtml).toContain(currentAcceptedPushedState.accepted_pushed_short_commit);
 
     const uploadHtml = renderToStaticMarkup(React.createElement(FakeUploadPanel, {

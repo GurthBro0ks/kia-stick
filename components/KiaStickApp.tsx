@@ -75,10 +75,7 @@ import {
   publicGrievanceOutlineToText,
   type PublicGrievanceOutline,
 } from "@/lib/publicGrievanceOutline";
-import {
-  PUBLIC_STEWARD_WORKFLOW_PHASE,
-  PUBLIC_STEWARD_WORKFLOW_TOPICS,
-} from "@/lib/publicStewardWorkflowRegistry";
+import { PUBLIC_STEWARD_WORKFLOW_TOPICS } from "@/lib/publicStewardWorkflowRegistry";
 import {
   buildSourceHierarchyGroups,
   citationLabel,
@@ -1015,9 +1012,9 @@ export function SettingsContent(props: {
             <dt>Channel</dt>
             <dd>{props.runtimeVersion.channel}</dd>
             <dt>Local bundle</dt>
-            <dd>public steward workflow platform bundle 1; validation PASS; pushed no; manual QA pending operator review</dd>
+            <dd>{currentAcceptedPushedState.local_bundle_status}</dd>
             <dt>Local phase</dt>
-            <dd>{PUBLIC_STEWARD_WORKFLOW_PHASE}</dd>
+            <dd>{currentAcceptedPushedState.local_bundle_phase}</dd>
           </dl>
           <a className="settingsVersionLink" href="/version">View full build identity</a>
         </section>

@@ -12000,16 +12000,20 @@
     "discord_sent": false
   },
   "public_steward_workflow_platform_bundle_1": {
-    "phase": "KIA-Stick-public-steward-workflow-platform-bundle-1",
-    "status": "implementation_complete_manual_qa_pending",
+    "phase": "KIA-Stick-public-steward-workflow-platform-bundle-1-discipline-copy-repair",
+    "status": "operator_qa_pass_recorded_local_only",
     "proof_dir": "/home/mint/kia-stick-local-proofs/proof_kia_stick_public_steward_workflow_platform_bundle_1_20260724T151808Z",
+    "discipline_copy_repair_proof_dir": "/home/mint/kia-stick-local-proofs/proof_kia_stick_public_steward_workflow_platform_bundle_1_discipline_copy_repair_20260724T170642Z",
+    "operator_qa_pass_recording_proof_dir": "/home/mint/kia-stick-local-proofs/proof_kia_stick_public_steward_workflow_platform_bundle_1_operator_qa_pass_recording_20260725T103233Z",
     "stage_1_overtime_commit": "4e25b517a49620498f28c30d969fded777f77916",
     "implementation_commit": "240c1a6",
+    "discipline_copy_repair_commit": "ea0ce8de9cd6b85b56528fabc9e8ca7f8bf43a52",
     "accepted_capability_commit": "9a66d37148f37d2dee16bcbe6b9a12aa4ba9946a",
     "repository_recording_commit": "370979a7108a4876fea13161d928fedc558f2fed",
     "latest_pushed_closeout_commit": "370979a7108a4876fea13161d928fedc558f2fed",
     "validation_status": "PASS",
-    "manual_qa_status": "pending_operator_review",
+    "manual_qa_status": "PASS",
+    "closeout_status": "pending_explicit_authorization",
     "pushed": false,
     "total_candidate_topics_reviewed": 10,
     "supported_topic_ids": [

@@ -15,7 +15,7 @@ describe("public truth runtime identity", () => {
     const payload = await response.json();
     expect(payload.phase).toBe(PUBLIC_GRIEVANCE_OUTLINE_PHASE);
     expect(currentAcceptedPushedState.local_bundle_phase).toBe(
-      "KIA-Stick-public-CBA-overtime-cited-grievance-outline-pilot"
+      "KIA-Stick-public-steward-workflow-platform-bundle-1-discipline-copy-repair"
     );
     expect(payload.phase).not.toBe(currentAcceptedPushedState.local_bundle_phase);
     expect(payload.acceptedCheckpoint).toBe(currentAcceptedPushedState.checkpoint_label);

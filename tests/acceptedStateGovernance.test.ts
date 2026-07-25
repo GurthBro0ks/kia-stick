@@ -47,10 +47,10 @@ describe("accepted-state governance loop break", () => {
       private_data: "blocked",
       external_ai: "disabled",
     });
-    expect(currentAcceptedPushedState.local_implementation_proof_dir).toBe("/home/mint/kia-stick-local-proofs/proof_kia_stick_public_cba_overtime_cited_grievance_outline_pilot_20260724T142716Z");
-    expect(currentAcceptedPushedState.local_bundle_operator_qa_pass_proof_dir).toBe("none_pending_operator_review");
-    expect(currentAcceptedPushedState.local_bundle_phase).toBe("KIA-Stick-public-CBA-overtime-cited-grievance-outline-pilot");
-    expect(currentAcceptedPushedState.local_bundle_status).toBe("public CBA overtime cited grievance-outline pilot; validation PASS; pushed no; manual QA pending operator review");
+    expect(currentAcceptedPushedState.local_implementation_proof_dir).toBe("/home/mint/kia-stick-local-proofs/proof_kia_stick_public_steward_workflow_platform_bundle_1_20260724T151808Z");
+    expect(currentAcceptedPushedState.local_bundle_operator_qa_pass_proof_dir).toBe("/home/mint/kia-stick-local-proofs/proof_kia_stick_public_steward_workflow_platform_bundle_1_operator_qa_pass_recording_20260725T103233Z");
+    expect(currentAcceptedPushedState.local_bundle_phase).toBe("KIA-Stick-public-steward-workflow-platform-bundle-1-discipline-copy-repair");
+    expect(currentAcceptedPushedState.local_bundle_status).toBe("public steward workflow platform bundle 1 with discipline-copy repair; validation PASS; pushed no; manual QA PASS; closeout pending explicit authorization");
     expect(currentAcceptedPushedState.local_bundle_status).not.toContain("stale local-bundle push-status repair");
     expect(currentAcceptedPushedState.latest_pushed_closeout_commit).toBe("370979a7108a4876fea13161d928fedc558f2fed");
     expect(currentAcceptedPushedState.latest_pushed_closeout_short_commit).toBe("370979a");
