@@ -340,6 +340,16 @@ function numbered(title: string, values: string[]): string {
   return [title, ...values.map((value, index) => `${index + 1}. ${value}`)].join("\n");
 }
 
+export function publicStewardPacketTopicSummaryText(
+  packet: PublicStewardPacket,
+  topic: PublicStewardPacketTopicSummary
+): string {
+  const storedOutline = packet.outlines.find(
+    (outline) => outline.template === topic.topicId
+  );
+  return `${topic.title} — Article ${topic.primaryArticle}; ${topic.supportedScope} Separate verification: ${topic.separateVerification}${storedOutline ? ` Issue: ${storedOutline.issue}` : ""}`;
+}
+
 export function publicStewardPacketToText(packet: PublicStewardPacket): string {
   return [
     packet.title,
@@ -352,7 +362,7 @@ export function publicStewardPacketToText(packet: PublicStewardPacket): string {
     `Source instance: ${packet.sourceInstanceIds.join(", ")}`,
     packet.privateCaseWarning,
     numbered("1. Selected topic summary", packet.topicSummaries.map(
-      (topic) => `${topic.title} — Article ${topic.primaryArticle}; ${topic.supportedScope} Separate verification: ${topic.separateVerification}`
+      (topic) => publicStewardPacketTopicSummaryText(packet, topic)
     )),
     numbered("2. Governing public articles and verified citations", packet.governingContractLanguage.map((entry) => entry.text)),
     numbered("3. Cross-topic overlap or conflict notes", packet.overlapConflictNotes),
@@ -383,7 +393,7 @@ export function publicStewardPacketToMarkdown(packet: PublicStewardPacket): stri
     `- Source instance: ${packet.sourceInstanceIds.join(", ")}`,
     `> ${packet.privateCaseWarning}`,
     section("1. Selected topic summary", packet.topicSummaries.map(
-      (topic) => `${topic.title} — Article ${topic.primaryArticle}; ${topic.supportedScope} Separate verification: ${topic.separateVerification}`
+      (topic) => publicStewardPacketTopicSummaryText(packet, topic)
     )),
     section("2. Governing public articles and verified citations", packet.governingContractLanguage.map((entry) => entry.text)),
     section("3. Cross-topic overlap or conflict notes", packet.overlapConflictNotes),

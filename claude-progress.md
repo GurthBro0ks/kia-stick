@@ -2574,3 +2574,13 @@
 - Automated validation: focused Bundle 2 and local-source suites PASS; lint, typecheck, all 982 tests, build, design/release/governance/queue/operator-smoke/fake/privacy/QA gates are recorded in the proof.
 - Proof: `/home/mint/kia-stick-local-proofs/proof_kia_stick_public_steward_workflow_platform_bundle_2_20260725T122841Z`.
 - Manual QA: pending operator review. No closeout or push is authorized.
+
+## Public Steward Workflow Platform Bundle 2 employee-claims copy repair
+
+- Phase: `KIA-Stick-public-steward-workflow-platform-bundle-2-employee-claims-copy-repair`.
+- Baseline: clean local Bundle 2 at `21b66aa7948468a3991d82a2012f479a7d72fd33`; accepted capability remains Bundle 1 and Discipline Copy Repair at `ea0ce8de9cd6b85b56528fabc9e8ca7f8bf43a52`; remote `main` remains `f86475f388cb8e01cc2e516fb9f5ee7a13ef7e6c`.
+- Repair: registry-driven Article 27 answer and outline copy now says “The employee property claims workflow is…” and “an employee’s personal-property claim, its handling, or its determination”; the shared answer interpolation no longer produces “bounded review of bounded”; packet summaries, UI, plain-text export, and Markdown export render the stored per-topic issue.
+- Persistence: the stable outline and packet identity algorithms are unchanged. Newly generated content receives its naturally updated content identity, unchanged corrected saves deduplicate, and migration preserves previously saved records with their stored legacy copy.
+- Validation: focused copy/persistence/export tests PASS at 5 files / 89 tests; full tests PASS at 335 files / 983 tests; lint, typecheck, production build, design/release/governance/queue/operator-smoke/aggregate-QA/fake/privacy gates and all-ten-topic copy scan PASS.
+- Proof: `/home/mint/kia-stick-local-proofs/proof_kia_stick_public_steward_workflow_platform_bundle_2_employee_claims_copy_repair_20260725T172938Z`.
+- Safety: no package, lockfile, source-cache, accepted-state, private-data, external-AI, service, scheduler, notification, Discord, or remote change. Manual QA remains pending; no closeout or push is authorized.

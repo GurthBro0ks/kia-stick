@@ -829,7 +829,7 @@ function buildRegistryGrievanceOutline(
     topic: topic.displayName,
     title: topic.outlineLabels.title,
     issue:
-      `Whether verified Article ${primaryArticle} language may support a grievance concerning a ${topic.outlineLabels.issueNoun} after coverage, the actual event, management's stated basis, and separately verified local rules are confirmed.`,
+      `Whether verified Article ${primaryArticle} language may support a grievance concerning ${topic.outlineLabels.issueDeterminer ?? "a"} ${topic.outlineLabels.issueNoun} after coverage, the actual event, management's stated basis, and separately verified local rules are confirmed.`,
     governingContractLanguage: topic.citationSpecs.map((spec, index) =>
       item(
         `Verified Article ${primaryArticle} language addresses ${spec.description}. Its application remains conditional on coverage and confirmed facts.`,

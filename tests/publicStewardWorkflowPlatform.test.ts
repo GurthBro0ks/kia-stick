@@ -52,6 +52,15 @@ const disciplineSection3 =
   "Keep charges, evidence, notice, prior record, employee status, defenses, and local handling separate and unverified until reviewed through the proper local process.";
 const disciplineSection6 =
   "Does management rely on charges, evidence, notice, prior record, employee status, defenses, or local handling, and where can that authority be verified?";
+const employeeClaimsIssue =
+  "Whether verified Article 27 language may support a grievance concerning an employee’s personal-property claim, its handling, or its determination after coverage, the actual event, management's stated basis, and separately verified local rules are confirmed.";
+const malformedEmployeeClaimsIssue =
+  "Whether verified Article 27 language may support a grievance concerning " +
+  "a " +
+  "employee personal-property claim handling or determination after coverage, the actual event, management's stated basis, and separately verified local rules are confirmed.";
+const malformedEmployeeArticlePattern = new RegExp("\\ba " + "employee\\b", "i");
+const preRepairEmployeeClaimsContentIdentity =
+  "6b58c81f8c8e5d44c40ec8698916668fc174961cf3f764fef93b506c8613acea";
 
 function answerFor(question: string) {
   return buildCbaAnswer({
@@ -151,10 +160,11 @@ describe("public steward workflow platform registry", () => {
 
   it("keeps local-verification fragments grammatical and deterministic across all ten topics", () => {
     for (const topic of PUBLIC_STEWARD_WORKFLOW_TOPICS) {
-      const first = outlineFor(topic.exampleQuestion).outline;
+      const { answer, outline: first } = outlineFor(topic.exampleQuestion);
       const second = outlineFor(topic.exampleQuestion).outline;
       const renderedCopy = publicGrievanceOutlineToText(first);
       const markdown = publicGrievanceOutlineToMarkdown(first);
+      const generatedCopy = [answer.shortAnswer, renderedCopy, markdown].join("\n");
       const malformedElement =
         `${topic.localVerification.toLowerCase()} separate`;
       const malformedQuestion =
@@ -164,6 +174,10 @@ describe("public steward workflow platform registry", () => {
       expect(renderedCopy.toLowerCase()).not.toContain(malformedQuestion);
       expect(markdown.toLowerCase()).not.toContain(malformedElement);
       expect(markdown.toLowerCase()).not.toContain(malformedQuestion);
+      expect(generatedCopy).not.toMatch(malformedEmployeeArticlePattern);
+      expect(generatedCopy).not.toMatch(/\bemployee property claims is\b/i);
+      expect(generatedCopy).not.toMatch(/\bbounded review of bounded\b/i);
+      expect(generatedCopy).not.toMatch(/\bor or\b/i);
       expect(first.id).toBe(second.id);
       expect(first.contentIdentity).toBe(second.contentIdentity);
       expect(first.citations.map((citation) => citation.id)).toEqual(
@@ -171,6 +185,119 @@ describe("public steward workflow platform registry", () => {
       );
       expect(first.sourceInstanceIds).toEqual(second.sourceInstanceIds);
     }
+  });
+
+  it("repairs Article 27 answer, outline, Saved, reopen, export, identity, and legacy-read behavior", () => {
+    const { answer, outline } = outlineFor(
+      "What process does Article 27 provide for an employee property claim?"
+    );
+    const repeated = outlineFor(
+      "What process does Article 27 provide for an employee property claim?"
+    ).outline;
+
+    expect(answer.version.provider).toBe("local-public-cba-deterministic");
+    expect(answer.version.promptVersion).toBe("prompt.public-cba.v0.1-citation-first");
+    expect(answer.shortAnswer).toContain(
+      "The employee property claims workflow is a supported public steward workflow."
+    );
+    expect(answer.shortAnswer).not.toMatch(/\bemployee property claims is\b/i);
+    expect(answer.shortAnswer).not.toMatch(/\bbounded review of bounded\b/i);
+    expect(outline.issue).toBe(employeeClaimsIssue);
+    expect(outline.citations).toHaveLength(5);
+    expect(outline.id).toBe(repeated.id);
+    expect(outline.contentIdentity).toBe(repeated.contentIdentity);
+    expect(outline.contentIdentity).not.toBe(preRepairEmployeeClaimsContentIdentity);
+    expect(outline.citations.map((citation) => citation.id)).toEqual(
+      repeated.citations.map((citation) => citation.id)
+    );
+    expect(outline.sourceInstanceIds).toEqual(repeated.sourceInstanceIds);
+
+    const text = publicGrievanceOutlineToText(outline);
+    const markdown = publicGrievanceOutlineToMarkdown(outline);
+    expect(text).toContain(employeeClaimsIssue);
+    expect(markdown).toContain(employeeClaimsIssue);
+    expect(text).not.toContain(malformedEmployeeClaimsIssue);
+    expect(markdown).not.toContain(malformedEmployeeClaimsIssue);
+
+    const message = createAssistantMessage({
+      threadId: "thread-employee-claims-copy",
+      turnId: "turn-employee-claims-copy",
+      parentMessageId: "message-user-employee-claims-copy",
+      answer,
+      modeScopeDetail: {
+        ...defaults,
+        sourceMode: "cba",
+        sourceModePolicy: "auto",
+      },
+      now: "2026-07-25T17:00:00.000Z",
+    });
+    const chatHtml = renderToStaticMarkup(
+      React.createElement(AssistantMessageCard, {
+        message,
+        onRetry: () => undefined,
+        onSave: () => undefined,
+        canBuildGrievanceOutline: true,
+        grievanceOutline: outline,
+        grievanceOutlineSource: cbaSource,
+      })
+    );
+    expect(chatHtml).toContain("The employee property claims workflow is");
+    expect(chatHtml).toContain(
+      "an employee’s personal-property claim, its handling, or its determination"
+    );
+
+    const savedRecord = createSavedGrievanceOutlineRecord({
+      outline,
+      question: answer.question,
+      timestamp: "2026-07-25T17:01:00.000Z",
+      ...defaults,
+    });
+    const migrated = migrateSavedAnswers([structuredClone(savedRecord)]);
+    expect(migrated).toHaveLength(1);
+    expect(migrated[0].grievanceOutline?.issue).toBe(employeeClaimsIssue);
+    expect(migrated[0].answer).toContain(employeeClaimsIssue);
+
+    const savedHtml = renderToStaticMarkup(
+      React.createElement(SavedAnswersPanel, {
+        saved: migrated,
+        onDelete: () => undefined,
+        cbaSourceState: { status: "available", source: cbaSource },
+      })
+    );
+    expect(savedHtml).toContain(
+      "an employee’s personal-property claim, its handling, or its determination"
+    );
+
+    const duplicate = upsertSavedAnswer(
+      migrated,
+      createSavedGrievanceOutlineRecord({
+        outline: repeated,
+        question: answer.question,
+        timestamp: "2026-07-25T17:02:00.000Z",
+        ...defaults,
+      })
+    );
+    expect(duplicate.status).toBe("duplicate");
+    expect(duplicate.saved).toHaveLength(1);
+
+    const legacyOutline = structuredClone(outline);
+    legacyOutline.issue = malformedEmployeeClaimsIssue;
+    legacyOutline.contentIdentity = preRepairEmployeeClaimsContentIdentity;
+    const legacyRecord = createSavedGrievanceOutlineRecord({
+      outline: legacyOutline,
+      question: answer.question,
+      timestamp: "2026-07-25T16:59:00.000Z",
+      ...defaults,
+    });
+    const migratedLegacy = migrateSavedAnswers([structuredClone(legacyRecord)]);
+    expect(migratedLegacy).toHaveLength(1);
+    expect(migratedLegacy[0].grievanceOutline?.issue).toBe(
+      malformedEmployeeClaimsIssue
+    );
+    expect(migratedLegacy[0].answer).toContain(malformedEmployeeClaimsIssue);
+    expect(migratedLegacy[0].grievanceOutline?.contentIdentity).toBe(
+      preRepairEmployeeClaimsContentIdentity
+    );
   });
 
   it("renders, saves, reopens, and exports the corrected discipline copy without changing citation or dedupe behavior", () => {

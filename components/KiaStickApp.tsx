@@ -88,6 +88,7 @@ import {
 import {
   buildPublicStewardPacket,
   publicStewardPacketExportEligibility,
+  publicStewardPacketTopicSummaryText,
   publicStewardPacketToMarkdown,
   publicStewardPacketToText,
   type PublicStewardPacket,
@@ -3488,7 +3489,7 @@ function PublicStewardPacketView({
       <section className="argumentPlanSection">
         <h4>1. Selected topic summary</h4>
         <PlainList values={packet.topicSummaries.map(
-          (topic) => `${topic.title} — Article ${topic.primaryArticle}; ${topic.supportedScope} Separate verification: ${topic.separateVerification}`
+          (topic) => publicStewardPacketTopicSummaryText(packet, topic)
         )} />
       </section>
       <section className="argumentPlanSection">

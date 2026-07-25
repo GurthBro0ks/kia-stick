@@ -29,6 +29,7 @@ export interface PublicStewardWorkflowTopic {
   id: PublicStewardWorkflowTopicId;
   templateId: `public-grievance-outline.${PublicStewardWorkflowTopicId}.v1`;
   displayName: string;
+  answerSubject?: string;
   shortDescription: string;
   exampleQuestion: string;
   requiredSourceId: typeof CBA_SOURCE_ID;
@@ -47,6 +48,7 @@ export interface PublicStewardWorkflowTopic {
   citationSpecs: PublicStewardWorkflowCitationSpec[];
   outlineLabels: {
     title: string;
+    issueDeterminer?: "a" | "an";
     issueNoun: string;
     evidenceCategory: string;
   };
@@ -510,6 +512,7 @@ const employeeClaims: PublicStewardWorkflowTopic = {
   id: "employee_claims",
   templateId: "public-grievance-outline.employee_claims.v1",
   displayName: "Employee property claims",
+  answerSubject: "The employee property claims workflow",
   shortDescription: "Article 27 claim scope, documentation, local recommendations, determination, and appeal.",
   exampleQuestion: "What process does Article 27 provide for an employee property claim?",
   requiredSourceId: CBA_SOURCE_ID,
@@ -556,7 +559,8 @@ const employeeClaims: PublicStewardWorkflowTopic = {
   ],
   outlineLabels: {
     title: "Public employee-property-claim cited grievance outline",
-    issueNoun: "employee personal-property claim handling or determination",
+    issueDeterminer: "an",
+    issueNoun: "employee’s personal-property claim, its handling, or its determination",
     evidenceCategory: "claim form, neutral property and incident documentation, steward recommendation, determination, notice, and appeal record",
   },
 };

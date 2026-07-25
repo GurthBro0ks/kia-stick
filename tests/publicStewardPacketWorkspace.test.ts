@@ -33,6 +33,9 @@ const runtimeVersion = createRuntimeVersion({
   buildDate: "20260725",
   gitSha: "bundle2packet",
 });
+const employeeClaimsIssue =
+  "Whether verified Article 27 language may support a grievance concerning an employee’s personal-property claim, its handling, or its determination after coverage, the actual event, management's stated basis, and separately verified local rules are confirmed.";
+const malformedEmployeeArticlePattern = new RegExp("\\ba " + "employee\\b", "i");
 
 function packet(topicIds: Parameters<typeof buildPublicStewardPacket>[0]["topicIds"]) {
   const result = buildPublicStewardPacket({
@@ -127,6 +130,12 @@ describe("public steward packet workspace", () => {
       expect(markdown).toContain(heading);
     }
     expect(text).toContain(PUBLIC_STEWARD_PACKET_PRIVATE_WARNING);
+    expect(current.outlines.find((outline) => outline.template === "employee_claims")?.issue)
+      .toBe(employeeClaimsIssue);
+    expect(text).toContain(employeeClaimsIssue);
+    expect(markdown).toContain(employeeClaimsIssue);
+    expect(text).not.toMatch(malformedEmployeeArticlePattern);
+    expect(markdown).not.toMatch(malformedEmployeeArticlePattern);
     expect(markdown).not.toMatch(/localStorage|cookie|proof_|\/home\/|process\.env|private path/i);
     expect(markdown).not.toMatch(/\b(member name|employee id|medical diagnosis|grievance file)\b/i);
 

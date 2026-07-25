@@ -260,7 +260,7 @@ export function buildCbaAnswer(input: {
     return baseAnswer({
       ...input,
       question,
-      shortAnswer: `${topic.displayName} is a supported public steward workflow. ${topic.id === "discipline_just_cause" ? "Article 16 states that discipline should be corrective rather than punitive and requires just cause. " : ""}The verified Article ${topic.sourceSufficiency.primaryArticle} passages support a bounded review of ${topic.supportedScope.toLowerCase()} Which provisions apply depends on facts that are not entered here and on ${topic.localVerification.toLowerCase()} These passages do not establish a violation, remedy, monetary amount, or legal conclusion.`,
+      shortAnswer: `${topic.answerSubject ?? topic.displayName} is a supported public steward workflow. ${topic.id === "discipline_just_cause" ? "Article 16 states that discipline should be corrective rather than punitive and requires just cause. " : ""}The verified Article ${topic.sourceSufficiency.primaryArticle} passages support a review of ${topic.supportedScope.toLowerCase()} Which provisions apply depends on facts that are not entered here and on ${topic.localVerification.toLowerCase()} These passages do not establish a violation, remedy, monetary amount, or legal conclusion.`,
       citations: matches.map((paragraph) => citationForCbaParagraph(input.source!, paragraph)),
       noAnswer: false,
       conflicts: [`The current CBA cache does not verify ${topic.localVerification.toLowerCase()}`],
