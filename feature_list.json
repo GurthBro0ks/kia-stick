@@ -28,7 +28,15 @@
     "public_cba_holiday_scheduling_outline",
     "public_cba_safety_health_outline",
     "public_cba_discipline_just_cause_outline",
+    "public_cba_sick_leave_outline",
+    "public_cba_higher_level_assignment_outline",
+    "public_cba_uniforms_work_clothes_outline",
+    "public_cba_employee_claims_outline",
+    "public_cba_steward_grievance_handling_outline",
     "supported_public_workflow_discovery",
+    "public_steward_packet_workspace",
+    "public_steward_packet_identity_dedupe",
+    "verified_current_public_steward_packet_exports",
     "saved_type_topic_filters",
     "verified_current_plain_text_outline_copy",
     "verified_current_markdown_outline_export",
@@ -12148,6 +12156,57 @@
     "package_lock_changed": false,
     "source_sync_performed": false,
     "private_data_accessed": false,
+    "discord_sent": false
+  },
+  "public_steward_workflow_platform_bundle_2": {
+    "phase": "KIA-Stick-public-steward-workflow-platform-bundle-2-topic-expansion-and-packet-workspace",
+    "status": "local_validation_pass_manual_qa_pending",
+    "baseline_commit": "f86475f388cb8e01cc2e516fb9f5ee7a13ef7e6c",
+    "proof_dir": "/home/mint/kia-stick-local-proofs/proof_kia_stick_public_steward_workflow_platform_bundle_2_20260725T122841Z",
+    "validation_status": "PASS",
+    "manual_qa_status": "pending_operator_review",
+    "pushed": false,
+    "accepted_state_rewritten": false,
+    "total_candidate_topics_reviewed": 15,
+    "supported_topic_ids": [
+      "annual_leave",
+      "overtime",
+      "holiday_scheduling",
+      "safety_health",
+      "discipline_just_cause",
+      "sick_leave",
+      "higher_level_assignments",
+      "uniforms_work_clothes",
+      "employee_claims",
+      "steward_grievance_handling"
+    ],
+    "new_topic_ids": [
+      "sick_leave",
+      "higher_level_assignments",
+      "uniforms_work_clothes",
+      "employee_claims",
+      "steward_grievance_handling"
+    ],
+    "research_only_topic_ids": [
+      "seniority_assignment_administration",
+      "hours_work_scheduling",
+      "craft_jurisdiction",
+      "training_qualification"
+    ],
+    "rejected_topic_ids": [
+      "grievance_procedure_timeliness"
+    ],
+    "packet_saved_type": "public_steward_packet_plan",
+    "packet_topic_minimum": 1,
+    "packet_topic_maximum": 3,
+    "source_sync_performed": false,
+    "private_data_accessed": false,
+    "external_ai_used": false,
+    "package_json_changed": false,
+    "package_lock_changed": false,
+    "queue_015_status": "blocked",
+    "next_postcss_status": "WARN_SAFE_NEXT_TARGET_UNCLEAR",
+    "v0912c_status": "blocked_pending_exact_target",
     "discord_sent": false
   }
 }

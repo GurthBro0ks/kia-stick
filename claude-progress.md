@@ -2563,3 +2563,14 @@
 - Safety: no new source or URL, no sync/fetch, no private data, upload, OCR, embedding, vector store, LLM, dependency, package, lockfile, service, notification, or push.
 - Proof: `/home/mint/kia-stick-local-proofs/proof_kia_stick_public_truth_and_generic_cba_retrieval_20260717T170641Z`.
 - Status: local implementation and automated validation PASS; operator QA remains pending and no push is authorized.
+
+## Public Steward Workflow Platform Bundle 2
+
+- Phase: `KIA-Stick-public-steward-workflow-platform-bundle-2-topic-expansion-and-packet-workspace`.
+- Baseline: clean `f86475f388cb8e01cc2e516fb9f5ee7a13ef7e6c`, equal to `origin/main` and remote `main` before implementation.
+- Source review: 15 bounded CBA topic candidates reviewed against the existing exact read-only APWU-USPS CBA cache; 10 are supported, including five new topics: sick leave, higher-level assignments, uniforms/work clothes, employee claims, and steward grievance handling. Four remain research-only and one was rejected as a standalone builder.
+- Capability: deterministic routing and shared cited outlines for all supported topics; visible Sources discovery with `Open workflow`; public-only 1-to-3-topic steward packet composition; stable order-independent packet identity and dedupe; Saved packet/type/topic filters; verified-current plain-text and Markdown exports; stale or unavailable source identities block reopen/export.
+- Truth and safety: `/health` and Settings identify the local Bundle 2 phase, validation PASS, pushed no, and manual QA pending while retaining accepted capability and repository-recording identities from the shared contract. No accepted-state rewrite, private-data access, source fetch/sync, external AI, dependency change, service change, notification, Discord action, or push occurred.
+- Automated validation: focused Bundle 2 and local-source suites PASS; lint, typecheck, all 981 tests, build, design/release/governance/queue/operator-smoke/fake/privacy/QA gates are recorded in the proof.
+- Proof: `/home/mint/kia-stick-local-proofs/proof_kia_stick_public_steward_workflow_platform_bundle_2_20260725T122841Z`.
+- Manual QA: pending operator review. No closeout or push is authorized.

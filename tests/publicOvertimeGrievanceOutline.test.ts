@@ -476,9 +476,9 @@ describe("public CBA overtime cited grievance outline", () => {
       operatorDiagnosticsOpen: false,
       onOperatorDiagnosticsToggle: () => undefined,
     }));
-    expect(settings).toContain("public steward workflow platform bundle 1");
-    expect(settings).toContain(currentAcceptedPushedState.local_bundle_phase);
-    expect(settings).toContain(currentAcceptedPushedState.local_bundle_status);
+    expect(settings).toContain("Public Steward Workflow Platform Bundle 2");
+    expect(settings).toContain(PUBLIC_GRIEVANCE_OUTLINE_PHASE);
+    expect(settings).toContain("pending operator review");
     expect(settings).toContain(runtimeVersion.gitSha);
     expect(currentAcceptedPushedState.queue_015_status).toBe("blocked");
     expect(currentAcceptedPushedState.v0912c_status).toBe("blocked_pending_exact_target");

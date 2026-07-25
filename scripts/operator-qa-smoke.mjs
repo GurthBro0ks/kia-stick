@@ -20,6 +20,7 @@ const smokeSurfaces = [
   "Public CBA safety-and-health cited grievance outline",
   "Public CBA discipline-and-just-cause cited grievance outline",
   "Supported public workflow discovery",
+  "Public 1-to-3-topic steward packet workspace",
   "Saved type and topic filters",
   "Verified-current public outline exports",
   "Upload fake metadata buttons only",
@@ -172,7 +173,7 @@ function checkStaticContracts(root, problems) {
     requireContains(problems, "public grievance outline", grievanceOutline, marker);
   }
   const localRuntimePhase = constantValue(health, "LOCAL_RUNTIME_PHASE", problems);
-  if (localRuntimePhase !== "KIA-Stick-public-steward-workflow-platform-bundle-1") {
+  if (localRuntimePhase !== "KIA-Stick-public-steward-workflow-platform-bundle-2-topic-expansion-and-packet-workspace") {
     problems.push(`LOCAL_RUNTIME_PHASE mismatch: ${localRuntimePhase || "missing"}`);
   }
   for (const marker of ["Display Version", "Product Version", "Build Date", "Git SHA", "Corpus", "Index", "Prompt", "Provider"]) {
