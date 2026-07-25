@@ -15,10 +15,16 @@ import {
   type PublicArgumentPlan,
 } from "@/lib/publicArgumentPlan";
 import {
+  PUBLIC_GRIEVANCE_OUTLINE_TYPES,
   PUBLIC_GRIEVANCE_OUTLINE_SAVED_TYPE,
   publicGrievanceOutlineToText,
   type PublicGrievanceOutline,
 } from "@/lib/publicGrievanceOutline";
+import {
+  PUBLIC_STEWARD_PACKET_SAVED_TYPE,
+  publicStewardPacketToText,
+  type PublicStewardPacket,
+} from "@/lib/publicStewardPacket";
 import {
   PUBLIC_STEWARD_WORKFLOW_TOPICS,
   publicStewardWorkflowTopic,
@@ -63,11 +69,14 @@ export interface SavedAnswer {
   savedType:
     | "answer"
     | typeof PUBLIC_ARGUMENT_PLAN_SAVED_TYPE
-    | typeof PUBLIC_GRIEVANCE_OUTLINE_SAVED_TYPE;
+    | typeof PUBLIC_GRIEVANCE_OUTLINE_SAVED_TYPE
+    | typeof PUBLIC_STEWARD_PACKET_SAVED_TYPE;
   argumentPlan?: PublicArgumentPlan;
   grievanceOutline?: PublicGrievanceOutline;
   grievanceOutlineTopic?: PublicGrievanceOutline["topic"];
   grievanceOutlineTemplate?: PublicGrievanceOutline["template"];
+  stewardPacket?: PublicStewardPacket;
+  stewardPacketTopicIds?: PublicStewardWorkflowTopicId[];
 }
 
 export type SavedRecordType = SavedAnswer["savedType"];
@@ -89,6 +98,8 @@ export function savedRecordId(savedType: SavedRecordType, saveKey: string): stri
     ? "public-argument-plan"
     : savedType === PUBLIC_GRIEVANCE_OUTLINE_SAVED_TYPE
       ? "public-grievance-outline"
+      : savedType === PUBLIC_STEWARD_PACKET_SAVED_TYPE
+        ? "public-steward-packet"
     : "answer";
   return `saved-${namespace}-${sha256Hex(saveKey)}`;
 }
@@ -379,6 +390,51 @@ export function createSavedGrievanceOutlineRecord(input: {
   };
 }
 
+export function createSavedStewardPacketRecord(input: {
+  packet: PublicStewardPacket;
+  timestamp: string;
+}): SavedAnswer {
+  const cbaCitation = input.packet.citations[0];
+  const saveKey = `${PUBLIC_STEWARD_PACKET_SAVED_TYPE}|${input.packet.id}`;
+  return {
+    id: savedRecordId(PUBLIC_STEWARD_PACKET_SAVED_TYPE, saveKey),
+    saveKey,
+    dataFingerprint: `${saveKey}|${input.packet.contentIdentity}`,
+    question: input.packet.title,
+    answer: publicStewardPacketToText(input.packet),
+    mode: "Strict Research",
+    scope: "Official-Like",
+    detail: "Detailed",
+    citations: input.packet.citations,
+    version: input.packet.version,
+    provider: input.packet.provider,
+    answerLane: "public_cba",
+    sourceId: cbaCitation?.sourceId,
+    sourceTitle: cbaCitation?.title,
+    sourceOwner: CBA_SOURCE_OWNER,
+    sourceStatus: cbaCitation?.status,
+    effectiveStart: cbaCitation?.effectiveStart,
+    effectiveEnd: cbaCitation?.effectiveEnd,
+    pdfSha256: cbaCitation?.responseHash,
+    scopeWarning: CBA_SCOPE_WARNING,
+    authorityClassification: cbaCitation?.class,
+    sourceRetrievedAt: cbaCitation?.retrievedAt,
+    normalizedSourceHash: cbaCitation?.contentHash,
+    sourceInstanceId: cbaCitation?.sourceInstanceId,
+    sourceInstanceAlgorithmVersion: cbaCitation?.sourceInstanceAlgorithmVersion,
+    paragraphContentSha256: cbaCitation?.paragraphContentSha256,
+    paragraphHashAlgorithmVersion: cbaCitation?.paragraphHashAlgorithmVersion,
+    citationAnchorSha256: cbaCitation?.citationAnchorSha256,
+    citationAnchorAlgorithmVersion: cbaCitation?.citationAnchorAlgorithmVersion,
+    citationVerificationStateAtSave: cbaCitation?.citationVerificationState,
+    timestamp: input.timestamp,
+    footer: `PUBLIC STEWARD PACKET | Topics:${input.packet.selectedTopicIds.join(",")} | Build:${input.packet.buildIdentity}`,
+    savedType: PUBLIC_STEWARD_PACKET_SAVED_TYPE,
+    stewardPacket: input.packet,
+    stewardPacketTopicIds: input.packet.selectedTopicIds,
+  };
+}
+
 function validPublicArgumentPlan(value: unknown): value is PublicArgumentPlan {
   if (!value || typeof value !== "object") return false;
   const source = value as Partial<PublicArgumentPlan>;
@@ -426,17 +482,7 @@ function normalizePublicGrievanceOutline(value: unknown): PublicGrievanceOutline
         : undefined;
   if (!template) return undefined;
   const registryTopic = publicStewardWorkflowTopic(template);
-  const type = source.type ?? (
-    template === "overtime"
-      ? "overtime_assignment_or_distribution"
-      : template === "annual_leave"
-        ? "annual_leave_denial_or_scheduling"
-        : template === "holiday_scheduling"
-          ? "holiday_scheduling_or_assignment"
-          : template === "safety_health"
-            ? "unsafe_or_unhealthful_condition"
-            : "discipline_or_just_cause"
-  );
+  const type = source.type ?? PUBLIC_GRIEVANCE_OUTLINE_TYPES[template];
   const topic = registryTopic.displayName;
   return {
     ...source,
@@ -445,6 +491,36 @@ function normalizePublicGrievanceOutline(value: unknown): PublicGrievanceOutline
     topic,
     type,
   } as PublicGrievanceOutline;
+}
+
+function validPublicStewardPacket(value: unknown): value is PublicStewardPacket {
+  if (!value || typeof value !== "object") return false;
+  const source = value as Partial<PublicStewardPacket>;
+  return source.savedType === PUBLIC_STEWARD_PACKET_SAVED_TYPE &&
+    typeof source.id === "string" &&
+    typeof source.contentIdentity === "string" &&
+    typeof source.title === "string" &&
+    Array.isArray(source.selectedTopicIds) &&
+    source.selectedTopicIds.length >= 1 &&
+    source.selectedTopicIds.length <= 3 &&
+    source.selectedTopicIds.every((id) =>
+      PUBLIC_STEWARD_WORKFLOW_TOPICS.some((topic) => topic.id === id)
+    ) &&
+    Array.isArray(source.templateVersions) &&
+    Array.isArray(source.topicSummaries) &&
+    Array.isArray(source.governingContractLanguage) &&
+    Array.isArray(source.overlapConflictNotes) &&
+    Array.isArray(source.factsToConfirm) &&
+    Array.isArray(source.evidenceChecklist) &&
+    Array.isArray(source.managementQuestions) &&
+    Array.isArray(source.stepOnePreparation) &&
+    Array.isArray(source.procedureCaveats) &&
+    Array.isArray(source.escalationReadiness) &&
+    Array.isArray(source.limitations) &&
+    Array.isArray(source.citations) &&
+    Array.isArray(source.sourceAppendix) &&
+    Array.isArray(source.outlines) &&
+    Array.isArray(source.sourceInstanceIds);
 }
 
 export function migrateSavedAnswers(input: unknown): SavedAnswer[] {
@@ -468,7 +544,10 @@ export function migrateSavedAnswers(input: unknown): SavedAnswer[] {
       : source.answerLane === "public" || publicCitation ? "public" : "fake";
     const argumentPlan = validPublicArgumentPlan(source.argumentPlan) ? source.argumentPlan : undefined;
     const grievanceOutline = normalizePublicGrievanceOutline(source.grievanceOutline);
-    const savedType = source.savedType === PUBLIC_GRIEVANCE_OUTLINE_SAVED_TYPE && grievanceOutline
+    const stewardPacket = validPublicStewardPacket(source.stewardPacket) ? source.stewardPacket : undefined;
+    const savedType = source.savedType === PUBLIC_STEWARD_PACKET_SAVED_TYPE && stewardPacket
+      ? PUBLIC_STEWARD_PACKET_SAVED_TYPE
+      : source.savedType === PUBLIC_GRIEVANCE_OUTLINE_SAVED_TYPE && grievanceOutline
       ? PUBLIC_GRIEVANCE_OUTLINE_SAVED_TYPE
       : source.savedType === PUBLIC_ARGUMENT_PLAN_SAVED_TYPE && argumentPlan
         ? PUBLIC_ARGUMENT_PLAN_SAVED_TYPE
@@ -525,6 +604,8 @@ export function migrateSavedAnswers(input: unknown): SavedAnswer[] {
       grievanceOutline,
       grievanceOutlineTopic: grievanceOutline?.topic,
       grievanceOutlineTemplate: grievanceOutline?.template,
+      stewardPacket,
+      stewardPacketTopicIds: stewardPacket?.selectedTopicIds,
     };
 
     const storedDataFingerprint = typeof source.dataFingerprint === "string" && source.dataFingerprint.length > 0
@@ -532,6 +613,12 @@ export function migrateSavedAnswers(input: unknown): SavedAnswer[] {
       : null;
 
     try {
+      if (savedType === PUBLIC_STEWARD_PACKET_SAVED_TYPE && stewardPacket) {
+        normalized.saveKey = `${PUBLIC_STEWARD_PACKET_SAVED_TYPE}|${stewardPacket.id}`;
+        normalized.dataFingerprint = `${normalized.saveKey}|${stewardPacket.contentIdentity}`;
+        normalized.id = savedRecordId(savedType, normalized.saveKey);
+        return upsertSavedAnswer(saved, normalized, { preferNewerDuplicate: true }).saved;
+      }
       if (savedType === PUBLIC_GRIEVANCE_OUTLINE_SAVED_TYPE && grievanceOutline) {
         normalized.saveKey = grievanceOutlineSaveKey(grievanceOutline);
         normalized.dataFingerprint = `${normalized.saveKey}|${grievanceOutline.contentIdentity}`;

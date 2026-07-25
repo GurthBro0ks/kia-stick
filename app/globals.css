@@ -849,6 +849,31 @@ a {
   font-size: 0.76rem !important;
 }
 
+.workflowSearch {
+  width: min(100%, 440px);
+}
+
+.researchCandidateCatalog,
+.stewardPacketWorkspace {
+  margin-top: 16px;
+  border-top: 1px solid #c8d6d4;
+  padding-top: 12px;
+}
+
+.workflowTopicCard.researchOnly {
+  background: #fffaf1;
+  border-color: #d8bd85;
+}
+
+.stewardPacketWorkspace {
+  display: grid;
+  gap: 10px;
+}
+
+.publicStewardPacket {
+  margin-top: 4px;
+}
+
 .publicSourceHeader {
   display: flex;
   align-items: flex-start;

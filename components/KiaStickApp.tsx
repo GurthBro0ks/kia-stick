@@ -57,6 +57,7 @@ import {
   createSavedAnswerRecord,
   createSavedArgumentPlanRecord,
   createSavedGrievanceOutlineRecord,
+  createSavedStewardPacketRecord,
   migrateSavedAnswers,
   upsertSavedAnswer,
   type SaveAnswerStatus,
@@ -73,9 +74,24 @@ import {
   publicGrievanceOutlineEligibility,
   publicGrievanceOutlineToMarkdown,
   publicGrievanceOutlineToText,
+  type CitedGrievanceOutlineItem,
   type PublicGrievanceOutline,
 } from "@/lib/publicGrievanceOutline";
-import { PUBLIC_STEWARD_WORKFLOW_TOPICS } from "@/lib/publicStewardWorkflowRegistry";
+import {
+  PUBLIC_STEWARD_RESEARCH_CANDIDATES,
+  PUBLIC_STEWARD_WORKFLOW_PHASE,
+  PUBLIC_STEWARD_WORKFLOW_TOPICS,
+  detectPublicStewardWorkflowTopic,
+  publicStewardWorkflowTopic,
+  type PublicStewardWorkflowTopicId,
+} from "@/lib/publicStewardWorkflowRegistry";
+import {
+  buildPublicStewardPacket,
+  publicStewardPacketExportEligibility,
+  publicStewardPacketToMarkdown,
+  publicStewardPacketToText,
+  type PublicStewardPacket,
+} from "@/lib/publicStewardPacket";
 import {
   buildSourceHierarchyGroups,
   citationLabel,
@@ -222,6 +238,7 @@ const acceptedOperatorCheckpoint = [
   { label: "Historical accepted-WARN meaning", value: "accepted-WARN parked, not fixed; historical only, not current; exact Next target still unproven" },
   { label: "Historical local repair", value: "v0.9.83-to-v0.9.87 operator-status runtime repair; validation PASS; manual QA PASS; later pushed by closeout" },
   { label: "This local bundle", value: currentAcceptedPushedState.local_bundle_status },
+  { label: "Current working bundle", value: "Public Steward Workflow Platform Bundle 2; validation PASS; pushed no; manual QA pending operator review" },
   { label: "Runtime status surface", value: "/health phase is refreshed for this bundle; /version identity semantics unchanged" },
   { label: "Real-doc gate", value: "queue-015 blocked; no real-doc capability beyond the exact approved public CBA source" },
   { label: "Next/PostCSS", value: "WARN_SAFE_NEXT_TARGET_UNCLEAR; parked, not fixed" },
@@ -291,6 +308,8 @@ export function KiaStickApp({ runtimeVersion = clientVersion }: { runtimeVersion
   const [saveNotice, setSaveNotice] = useState<{ status: SaveAnswerStatus; text: string } | null>(null);
   const [argumentPlans, setArgumentPlans] = useState<Record<string, PublicArgumentPlan>>({});
   const [grievanceOutlines, setGrievanceOutlines] = useState<Record<string, PublicGrievanceOutline>>({});
+  const [packetTopicIds, setPacketTopicIds] = useState<PublicStewardWorkflowTopicId[]>([]);
+  const [stewardPacket, setStewardPacket] = useState<PublicStewardPacket | null>(null);
   const [hydrated, setHydrated] = useState(false);
   const [pendingScroll, setPendingScroll] = useState(false);
   const chatScrollRef = useRef<HTMLElement>(null);
@@ -592,6 +611,72 @@ export function KiaStickApp({ runtimeVersion = clientVersion }: { runtimeVersion
     });
   }
 
+  function togglePacketTopic(topicId: PublicStewardWorkflowTopicId) {
+    setPacketTopicIds((current) => {
+      const selected = current.includes(topicId)
+        ? current.filter((id) => id !== topicId)
+        : current.length < 3 ? [...current, topicId] : current;
+      return [...selected].sort();
+    });
+    setStewardPacket(null);
+    setSaveNotice(null);
+  }
+
+  function addChatTopicToPacket(topicId: PublicStewardWorkflowTopicId) {
+    setPacketTopicIds((current) =>
+      current.includes(topicId)
+        ? current
+        : [...current.slice(0, 2), topicId].sort()
+    );
+    setStewardPacket(null);
+    setSaveNotice(null);
+    setTab("sources");
+  }
+
+  function buildStewardPacketWorkspace() {
+    const packet = buildPublicStewardPacket({
+      source: cbaSourceState.status === "available" ? cbaSourceState.source : null,
+      topicIds: packetTopicIds,
+      runtimeVersion,
+    });
+    if (!packet) {
+      setSaveNotice({
+        status: "duplicate",
+        text: "Packet creation is blocked until one to three supported topics and every current CBA citation verify.",
+      });
+      return;
+    }
+    setStewardPacket(packet);
+    setSaveNotice(null);
+  }
+
+  function saveStewardPacketWorkspace(packet: PublicStewardPacket) {
+    const source = cbaSourceState.status === "available" ? cbaSourceState.source : null;
+    if (!publicStewardPacketExportEligibility(packet, source).eligible) {
+      setSaveNotice({
+        status: "duplicate",
+        text: "Packet save is blocked because its current source and citation identity could not be verified.",
+      });
+      return;
+    }
+    const record = createSavedStewardPacketRecord({
+      packet,
+      timestamp: new Date().toISOString(),
+    });
+    setSaved((current) => {
+      const result = upsertSavedAnswer(current, record);
+      setSaveNotice({
+        status: result.status,
+        text: result.status === "created"
+          ? "Saved the current verified case-neutral steward packet."
+          : result.status === "replaced"
+            ? "Updated the steward packet with current verified metadata."
+            : "Already saved. Reordering or re-saving the same topic set created no duplicate packet.",
+      });
+      return result.saved;
+    });
+  }
+
   function startNewChat() {
     if (thread.messages.length > 0 && !window.confirm("Start a new chat and clear the current thread?")) return;
     setThread(createConversationThread());
@@ -723,6 +808,9 @@ export function KiaStickApp({ runtimeVersion = clientVersion }: { runtimeVersion
                           source: cbaSourceState.status === "available" ? cbaSourceState.source : null,
                         })
                       : { eligible: false as const, reason: "no_answer" as const };
+                    const packetTopicId = message.status === "complete"
+                      ? detectPublicStewardWorkflowTopic(message.answer.question)
+                      : null;
                     return (
                       <AssistantMessageCard
                         key={message.messageId}
@@ -739,6 +827,7 @@ export function KiaStickApp({ runtimeVersion = clientVersion }: { runtimeVersion
                         grievanceOutlineSource={cbaSourceState.status === "available" ? cbaSourceState.source : null}
                         onBuildGrievanceOutline={() => buildGrievanceOutlineFor(message)}
                         onSaveGrievanceOutline={() => grievanceOutline && saveGrievanceOutline(message, grievanceOutline)}
+                        onAddToStewardPacket={packetTopicId ? () => addChatTopicToPacket(packetTopicId) : undefined}
                         onCitationNavigate={navigateToCitation}
                         onSubmitCbaSuggestion={(suggestion) => sendMessage(suggestion, "cba")}
                       />
@@ -758,6 +847,11 @@ export function KiaStickApp({ runtimeVersion = clientVersion }: { runtimeVersion
             publicSourceState={publicSourceState}
             sourceHierarchyGroups={sourceHierarchyGroups}
             onAskCbaQuestion={prepareCbaQuestion}
+            onBuildStewardPacket={buildStewardPacketWorkspace}
+            onSaveStewardPacket={saveStewardPacketWorkspace}
+            onTogglePacketTopic={togglePacketTopic}
+            packet={stewardPacket}
+            packetTopicIds={packetTopicIds}
             runtimeVersion={runtimeVersion}
           />
         )}
@@ -769,6 +863,7 @@ export function KiaStickApp({ runtimeVersion = clientVersion }: { runtimeVersion
             cbaSourceState={cbaSourceState}
             onResearchCba={(question) => sendMessage(question, "cba")}
             onCitationNavigate={navigateToCitation}
+            onSaveStewardPacket={saveStewardPacketWorkspace}
           />
         )}
 
@@ -1005,16 +1100,22 @@ export function SettingsContent(props: {
 
         <section className="settingsSummaryCard" aria-labelledby="settings-current-build">
           <span className="sectionKicker">Current application build</span>
-          <h3 id="settings-current-build">KIA Stick {props.runtimeVersion.productVersion}</h3>
+          <h3 id="settings-current-build">Bundle 2 local build · KIA Stick {props.runtimeVersion.productVersion}</h3>
           <dl className="compactSettingsGrid">
             <dt>Current build</dt>
             <dd>{props.runtimeVersion.gitSha}</dd>
             <dt>Channel</dt>
             <dd>{props.runtimeVersion.channel}</dd>
             <dt>Local bundle</dt>
-            <dd>{currentAcceptedPushedState.local_bundle_status}</dd>
+            <dd>Public Steward Workflow Platform Bundle 2</dd>
             <dt>Local phase</dt>
-            <dd>{currentAcceptedPushedState.local_bundle_phase}</dd>
+            <dd>{PUBLIC_STEWARD_WORKFLOW_PHASE}</dd>
+            <dt>Validation</dt>
+            <dd>PASS for the local proof gate</dd>
+            <dt>Pushed</dt>
+            <dd>no</dd>
+            <dt>Manual QA</dt>
+            <dd>pending operator review</dd>
           </dl>
           <a className="settingsVersionLink" href="/version">View full build identity</a>
         </section>
@@ -1029,6 +1130,10 @@ export function SettingsContent(props: {
             <dd>{nlrbStatus}</dd>
             <dt>Fake samples</dt>
             <dd>isolated corpus available</dd>
+            <dt>Exact public sources</dt>
+            <dd>2 exact allowlisted read-only sources</dd>
+            <dt>Supported steward topics</dt>
+            <dd>{PUBLIC_STEWARD_WORKFLOW_TOPICS.length}</dd>
           </dl>
         </section>
 
@@ -1233,6 +1338,11 @@ export function SourcesPanel({
   publicSourceState = { status: "unavailable", reason: "cache_missing" },
   sourceHierarchyGroups,
   onAskCbaQuestion,
+  onBuildStewardPacket,
+  onSaveStewardPacket,
+  onTogglePacketTopic,
+  packet = null,
+  packetTopicIds = [],
   runtimeVersion,
 }: {
   cbaCitationTargetId?: string | null;
@@ -1241,9 +1351,15 @@ export function SourcesPanel({
   publicSourceState?: PublicSourceLoadState;
   sourceHierarchyGroups: ReturnType<typeof buildSourceHierarchyGroups>;
   onAskCbaQuestion?: (question: string) => void;
+  onBuildStewardPacket?: () => void;
+  onSaveStewardPacket?: (packet: PublicStewardPacket) => void;
+  onTogglePacketTopic?: (topicId: PublicStewardWorkflowTopicId) => void;
+  packet?: PublicStewardPacket | null;
+  packetTopicIds?: PublicStewardWorkflowTopicId[];
   runtimeVersion: RuntimeVersion;
 }) {
   const [cbaSearchQuery, setCbaSearchQuery] = useState("Article 15");
+  const [workflowSearchQuery, setWorkflowSearchQuery] = useState("");
   const cbaSearchResults = useMemo(
     () => cbaSourceState.status === "available" ? searchCba(cbaSourceState.source, cbaSearchQuery, 8) : [],
     [cbaSearchQuery, cbaSourceState]
@@ -1261,6 +1377,19 @@ export function SourcesPanel({
   const totalSources = sourceHierarchyGroups.reduce((total, group) => total + group.docs.length, 0);
   const citableSources = sourceHierarchyGroups.flatMap((group) => group.docs).filter((doc) => doc.citable).length;
   const contextOnlySources = totalSources - citableSources;
+  const normalizedWorkflowSearch = workflowSearchQuery.trim().toLowerCase();
+  const visibleWorkflowTopics = PUBLIC_STEWARD_WORKFLOW_TOPICS.filter((topic) =>
+    !normalizedWorkflowSearch ||
+    `${topic.displayName} ${topic.shortDescription} ${topic.supportedScope} article ${topic.sourceSufficiency.primaryArticle}`
+      .toLowerCase()
+      .includes(normalizedWorkflowSearch)
+  );
+  const visibleResearchCandidates = PUBLIC_STEWARD_RESEARCH_CANDIDATES.filter((candidate) =>
+    !normalizedWorkflowSearch ||
+    `${candidate.displayName} ${candidate.boundedScope} ${candidate.primaryArticles.join(" ")}`
+      .toLowerCase()
+      .includes(normalizedWorkflowSearch)
+  );
 
   return (
     <section className="tabPanel">
@@ -1348,8 +1477,17 @@ export function SourcesPanel({
             <p className="emptyState">
               These workflows use verified current CBA paragraphs and a shared twelve-section outline. Other grievance topics require additional verified sources or local review.
             </p>
+            <label className="controlPill workflowSearch">
+              <span>Filter workflow topics</span>
+              <input
+                aria-label="Filter public steward workflow topics"
+                onChange={(event) => setWorkflowSearchQuery(event.target.value)}
+                placeholder="Topic or article"
+                value={workflowSearchQuery}
+              />
+            </label>
             <div className="workflowCatalogGrid">
-              {PUBLIC_STEWARD_WORKFLOW_TOPICS.map((topic) => (
+              {visibleWorkflowTopics.map((topic) => (
                 <article className="workflowTopicCard" key={topic.id}>
                   <div>
                     <span className="badge green">Article {topic.sourceSufficiency.primaryArticle}</span>
@@ -1361,16 +1499,95 @@ export function SourcesPanel({
                   <p className="workflowScope"><strong>Requires separate verification:</strong> {topic.localVerification}</p>
                   {onAskCbaQuestion && (
                     <button
-                      className="button subtle"
+                      className="button primary"
                       type="button"
                       onClick={() => onAskCbaQuestion(topic.exampleQuestion)}
                     >
-                      Ask this safe question
+                      Open workflow
+                    </button>
+                  )}
+                  {onTogglePacketTopic && (
+                    <button
+                      aria-pressed={packetTopicIds.includes(topic.id)}
+                      className="button subtle"
+                      disabled={!packetTopicIds.includes(topic.id) && packetTopicIds.length >= 3}
+                      type="button"
+                      onClick={() => onTogglePacketTopic(topic.id)}
+                    >
+                      {packetTopicIds.includes(topic.id) ? "Remove from packet" : "Select for packet"}
                     </button>
                   )}
                 </article>
               ))}
             </div>
+            {visibleWorkflowTopics.length === 0 && (
+              <p className="emptyState">No supported workflow matches this filter.</p>
+            )}
+
+            <section className="researchCandidateCatalog" aria-labelledby="research-only-workflows">
+              <div className="workflowCatalogHeader">
+                <div>
+                  <span className="sectionKicker">Truthful source-sufficiency boundary</span>
+                  <h4 id="research-only-workflows">Research-only or rejected candidates</h4>
+                </div>
+                <span className="statusPill warning">{PUBLIC_STEWARD_RESEARCH_CANDIDATES.length} not supported builders</span>
+              </div>
+              <div className="workflowCatalogGrid">
+                {visibleResearchCandidates.map((candidate) => (
+                  <article className="workflowTopicCard researchOnly" key={candidate.id}>
+                    <div>
+                      <span className="badge red">{candidate.result.replace("_", " ")}</span>
+                      <span className="badge">Article {candidate.primaryArticles.join(", ")}</span>
+                    </div>
+                    <h5>{candidate.displayName}</h5>
+                    <p>{candidate.reason}</p>
+                    <p className="workflowScope"><strong>Available scope:</strong> {candidate.boundedScope}</p>
+                    <p className="workflowScope"><strong>Requires separate verification:</strong> {candidate.separateVerification}</p>
+                  </article>
+                ))}
+              </div>
+            </section>
+
+            <section className="stewardPacketWorkspace" aria-labelledby="steward-packet-workspace">
+              <div className="workflowCatalogHeader">
+                <div>
+                  <span className="sectionKicker">Public-only case-neutral workspace</span>
+                  <h4 id="steward-packet-workspace">Build steward packet</h4>
+                </div>
+                <span className={packetTopicIds.length > 0 ? "statusPill ok" : "statusPill"}>
+                  {packetTopicIds.length}/3 topics selected
+                </span>
+              </div>
+              <p className="argumentPlanPrivateWarning" role="note">
+                <AlertTriangle size={16} />
+                <strong>No private input field exists. Select one to three supported topics only; names, dates, case facts, medical or personnel data, financial facts, and grievance documents remain outside this workspace.</strong>
+              </p>
+              <div className="sourceMeta" aria-label="Selected steward packet topics">
+                {packetTopicIds.length === 0 && <span className="badge">No topics selected</span>}
+                {packetTopicIds.map((topicId) => (
+                  <span className="badge green" key={topicId}>{publicStewardWorkflowTopic(topicId).displayName}</span>
+                ))}
+              </div>
+              {onBuildStewardPacket && (
+                <button
+                  className="button primary"
+                  disabled={packetTopicIds.length < 1 || packetTopicIds.length > 3}
+                  onClick={onBuildStewardPacket}
+                  type="button"
+                >
+                  <ClipboardList size={16} />
+                  Build case-neutral steward packet
+                </button>
+              )}
+              {packet && (
+                <PublicStewardPacketView
+                  onCitationNavigate={() => undefined}
+                  onSave={onSaveStewardPacket ? () => onSaveStewardPacket(packet) : undefined}
+                  packet={packet}
+                  source={cbaSourceState.source}
+                />
+              )}
+            </section>
           </section>
 
           {cbaCitationNavigationNotice && (
@@ -1557,25 +1774,34 @@ export function normalizeSavedTopicFilter(topicFilter: string, topics: readonly 
   return topicFilter === "all" || topics.includes(topicFilter) ? topicFilter : "all";
 }
 
+function savedTopicLabels(item: SavedAnswer): string[] {
+  if (item.savedType === "public_steward_packet_plan" && item.stewardPacket) {
+    return item.stewardPacket.selectedTopicIds.map(
+      (topicId) => publicStewardWorkflowTopic(topicId).displayName
+    );
+  }
+  const outlineTopic = item.grievanceOutlineTopic ?? item.grievanceOutline?.topic;
+  return outlineTopic ? [outlineTopic] : [];
+}
+
 export function SavedAnswersPanel(props: {
   saved: SavedAnswer[];
   onDelete: (id: string) => void;
   cbaSourceState?: CbaSourceLoadState;
   onResearchCba?: (question: string) => void;
   onCitationNavigate?: (citation: Citation) => void;
+  onSaveStewardPacket?: (packet: PublicStewardPacket) => void;
 }) {
   const cbaSourceState = props.cbaSourceState ?? { status: "unavailable", reason: "cache_missing" as const };
   const [openPlanId, setOpenPlanId] = useState<string | null>(null);
   const [openOutlineId, setOpenOutlineId] = useState<string | null>(null);
+  const [openPacketId, setOpenPacketId] = useState<string | null>(null);
   const [typeFilter, setTypeFilter] = useState<"all" | SavedAnswer["savedType"]>("all");
   const [topicFilter, setTopicFilter] = useState("all");
   const topics = useMemo(
     () =>
       [...new Set(
-        props.saved
-          .filter((item) => item.savedType === "public_grievance_outline")
-          .map((item) => item.grievanceOutlineTopic ?? item.grievanceOutline?.topic)
-          .filter((topic): topic is string => Boolean(topic))
+        props.saved.flatMap(savedTopicLabels)
       )].sort((left, right) => left.localeCompare(right)),
     [props.saved]
   );
@@ -1590,7 +1816,7 @@ export function SavedAnswersPanel(props: {
         .filter(
           (item) =>
             effectiveTopicFilter === "all" ||
-            (item.grievanceOutlineTopic ?? item.grievanceOutline?.topic) === effectiveTopicFilter
+            savedTopicLabels(item).includes(effectiveTopicFilter)
         )
         .sort(
           (left, right) =>
@@ -1613,6 +1839,7 @@ export function SavedAnswersPanel(props: {
             <option value="answer">Answer</option>
             <option value="public_argument_plan">Argument Plan</option>
             <option value="public_grievance_outline">Grievance Outline</option>
+            <option value="public_steward_packet_plan">Steward Packet</option>
           </select>
         </label>
         <label className="controlPill">
@@ -1640,10 +1867,16 @@ export function SavedAnswersPanel(props: {
         {visibleSaved.map((item) => {
           const cbaVerificationState = savedCbaVerificationState(item, cbaSourceState);
           const cbaCitation = item.citations.find((citation) => citation.publicSourceType === "cba_contract");
+          const packetEligibility = item.stewardPacket
+            ? publicStewardPacketExportEligibility(
+                item.stewardPacket,
+                cbaSourceState.status === "available" ? cbaSourceState.source : null
+              )
+            : null;
           return (
           <article className="savedCard" key={item.id}>
             <div className="savedHeader">
-              <h3>{item.argumentPlan?.title ?? item.grievanceOutline?.title ?? item.question}</h3>
+              <h3>{item.stewardPacket?.title ?? item.argumentPlan?.title ?? item.grievanceOutline?.title ?? item.question}</h3>
               <button
                 className="button iconOnly subtle"
                 type="button"
@@ -1660,9 +1893,14 @@ export function SavedAnswersPanel(props: {
                   ? "Argument Plan"
                   : item.savedType === "public_grievance_outline"
                     ? "Grievance Outline"
+                    : item.savedType === "public_steward_packet_plan"
+                      ? "Steward Packet"
                     : "Answer"}
               </span>
               {item.grievanceOutline && <span className="badge">{item.grievanceOutline.topic}</span>}
+              {item.stewardPacket && item.stewardPacket.topicSummaries.map((topic) => (
+                <span className="badge" key={topic.topicId}>{topic.title}</span>
+              ))}
               <span className="badge">
                 {item.answerLane === "public_cba" ? "public CBA" : item.answerLane === "public" ? "public NLRB" : "fake sample"}
               </span>
@@ -1677,6 +1915,8 @@ export function SavedAnswersPanel(props: {
                 ? item.argumentPlan?.issueSummary
                 : item.savedType === "public_grievance_outline"
                   ? item.grievanceOutline?.issue
+                  : item.savedType === "public_steward_packet_plan"
+                    ? `${item.stewardPacket?.selectedTopicIds.length ?? 0}-topic case-neutral preparation packet with verified-current CBA citations.`
                   : item.answer.split("\n\n")[0]}
             </p>
             <dl className="savedDetailList" aria-label="Saved answer metadata">
@@ -1688,6 +1928,16 @@ export function SavedAnswersPanel(props: {
                   <dd>{item.grievanceOutlineTopic ?? item.grievanceOutline.topic}</dd>
                   <dt>Saved template</dt>
                   <dd>{item.grievanceOutlineTemplate ?? item.grievanceOutline.template}</dd>
+                </>
+              )}
+              {item.savedType === "public_steward_packet_plan" && item.stewardPacket && (
+                <>
+                  <dt>Packet topics</dt>
+                  <dd>{item.stewardPacket.topicSummaries.map((topic) => topic.title).join(", ")}</dd>
+                  <dt>Packet templates</dt>
+                  <dd>{item.stewardPacket.templateVersions.join(", ")}</dd>
+                  <dt>Packet identity</dt>
+                  <dd>{item.stewardPacket.id}</dd>
                 </>
               )}
               <dt>Product</dt>
@@ -1786,6 +2036,33 @@ export function SavedAnswersPanel(props: {
                   <PublicGrievanceOutlineView
                     outline={item.grievanceOutline}
                     onCitationNavigate={props.onCitationNavigate ?? (() => undefined)}
+                    source={cbaSourceState.status === "available" ? cbaSourceState.source : null}
+                  />
+                )}
+              </div>
+            )}
+            {item.savedType === "public_steward_packet_plan" && item.stewardPacket && (
+              <div className="savedPlanActions">
+                <button
+                  aria-expanded={openPacketId === item.id}
+                  className="button primary"
+                  disabled={!packetEligibility?.eligible}
+                  type="button"
+                  onClick={() => setOpenPacketId((current) => current === item.id ? null : item.id)}
+                >
+                  <ClipboardList size={16} />
+                  {openPacketId === item.id ? "Close saved packet" : "Open saved packet"}
+                </button>
+                {!packetEligibility?.eligible && (
+                  <p className="applicabilityWarning" role="alert">
+                    {packetEligibility?.reason ?? "Saved packet is not verified against the current CBA source."}
+                  </p>
+                )}
+                {openPacketId === item.id && packetEligibility?.eligible && (
+                  <PublicStewardPacketView
+                    onCitationNavigate={props.onCitationNavigate ?? (() => undefined)}
+                    onSave={props.onSaveStewardPacket ? () => props.onSaveStewardPacket?.(item.stewardPacket!) : undefined}
+                    packet={item.stewardPacket}
                     source={cbaSourceState.status === "available" ? cbaSourceState.source : null}
                   />
                 )}
@@ -2492,6 +2769,7 @@ export function AssistantMessageCard({
   grievanceOutlineSource,
   onBuildGrievanceOutline = () => undefined,
   onSaveGrievanceOutline = () => undefined,
+  onAddToStewardPacket,
   onCitationNavigate = () => undefined,
   onSubmitCbaSuggestion,
 }: {
@@ -2508,6 +2786,7 @@ export function AssistantMessageCard({
   grievanceOutlineSource?: CbaSourceCache | null;
   onBuildGrievanceOutline?: () => void;
   onSaveGrievanceOutline?: () => void;
+  onAddToStewardPacket?: () => void;
   onCitationNavigate?: (citation: Citation) => void;
   onSubmitCbaSuggestion?: (question: string) => void;
 }) {
@@ -2626,6 +2905,12 @@ export function AssistantMessageCard({
               <button className="button primary" type="button" onClick={onBuildGrievanceOutline}>
                 <ClipboardList size={16} />
                 Build cited grievance outline
+              </button>
+            )}
+            {canBuildGrievanceOutline && onAddToStewardPacket && (
+              <button className="button subtle" type="button" onClick={onAddToStewardPacket}>
+                <Plus size={16} />
+                Add topic to steward packet
               </button>
             )}
             <button
@@ -3044,6 +3329,192 @@ function PublicGrievanceOutlineView({
           <span>Saved type: public_grievance_outline</span>
         </div>
       )}
+    </section>
+  );
+}
+
+function PublicStewardPacketView({
+  packet,
+  source,
+  onCitationNavigate,
+  onSave,
+}: {
+  packet: PublicStewardPacket;
+  source: CbaSourceCache | null;
+  onCitationNavigate: (citation: Citation) => void;
+  onSave?: () => void;
+}) {
+  const [exportNotice, setExportNotice] = useState<string | null>(null);
+  const eligibility = publicStewardPacketExportEligibility(packet, source);
+
+  async function copyPacket() {
+    if (!eligibility.eligible) {
+      setExportNotice(eligibility.reason);
+      return;
+    }
+    try {
+      await navigator.clipboard.writeText(publicStewardPacketToText(packet));
+      setExportNotice("Copied current verified steward packet as plain text.");
+    } catch {
+      setExportNotice("Copy was blocked by the browser. The steward packet was not exported.");
+    }
+  }
+
+  function downloadPacket() {
+    if (!eligibility.eligible) {
+      setExportNotice(eligibility.reason);
+      return;
+    }
+    const blob = new Blob([publicStewardPacketToMarkdown(packet)], {
+      type: "text/markdown;charset=utf-8",
+    });
+    const url = URL.createObjectURL(blob);
+    const anchor = document.createElement("a");
+    anchor.href = url;
+    anchor.download = `kia-public-steward-packet-${packet.selectedTopicIds.join("-")}.md`;
+    anchor.click();
+    URL.revokeObjectURL(url);
+    setExportNotice("Downloaded current verified steward packet as Markdown.");
+  }
+
+  function PlainList({ values }: { values: string[] }) {
+    return <ul className="argumentPlanList">{values.map((value) => <li key={value}>{value}</li>)}</ul>;
+  }
+
+  function CitedList({ values }: { values: CitedGrievanceOutlineItem[] }) {
+    return (
+      <ul className="argumentPlanList">
+        {values.map((value) => (
+          <li key={`${value.text}-${value.citationIds.join("-")}`}>
+            <span>{value.text}</span>
+            <span className="argumentPlanCitationLinks" aria-label="Supporting citations">
+              {value.citationIds.map((citationId) => {
+                const citation = packet.citations.find((candidate) => candidate.id === citationId);
+                if (!citation) return null;
+                return (
+                  <button
+                    aria-label={`Open packet citation ${citationId}`}
+                    className="argumentPlanCitationButton"
+                    key={citationId}
+                    onClick={() => onCitationNavigate(citation)}
+                    type="button"
+                  >
+                    [{packet.citations.indexOf(citation) + 1}]
+                  </button>
+                );
+              })}
+            </span>
+          </li>
+        ))}
+      </ul>
+    );
+  }
+
+  return (
+    <section className="publicArgumentPlan publicStewardPacket" aria-labelledby={`packet-${packet.id}`}>
+      <div className="argumentPlanHeader">
+        <div>
+          <span className="sectionKicker">Deterministic public steward packet</span>
+          <h3 id={`packet-${packet.id}`}>{packet.title}</h3>
+        </div>
+        <span className={eligibility.eligible ? "statusPill ok" : "statusPill warning"}>
+          {eligibility.eligible ? `${packet.citations.length} verified citations` : "packet blocked"}
+        </span>
+      </div>
+      <p className="argumentPlanPrivateWarning" role="note">
+        <AlertTriangle size={16} />
+        <strong>{packet.privateCaseWarning}</strong>
+      </p>
+      <div className="argumentPlanMeta" aria-label="Steward packet identity">
+        <span>Saved type: {packet.savedType}</span>
+        <span>Topics: {packet.selectedTopicIds.join(", ")}</span>
+        <span>Templates: {packet.templateVersions.join(", ")}</span>
+        <span>Provider: {packet.provider}</span>
+        <span>Prompt: {packet.promptVersion}</span>
+        <span>Source instance: {packet.sourceInstanceIds.join(", ")}</span>
+        <span>Packet identity: {packet.id}</span>
+      </div>
+      <div className="compactActions outlineExportActions">
+        <button className="button subtle" disabled={!eligibility.eligible} onClick={copyPacket} type="button">
+          <ClipboardList size={16} />
+          Copy packet as plain text
+        </button>
+        <button className="button subtle" disabled={!eligibility.eligible} onClick={downloadPacket} type="button">
+          <Download size={16} />
+          Download packet as Markdown
+        </button>
+        {onSave && (
+          <button className="button primary" disabled={!eligibility.eligible} onClick={onSave} type="button">
+            <Save size={16} />
+            Save steward packet
+          </button>
+        )}
+      </div>
+      {exportNotice && <p className="saveNotice" role="status">{exportNotice}</p>}
+      {!eligibility.eligible && <p className="applicabilityWarning" role="alert">{eligibility.reason}</p>}
+
+      <section className="argumentPlanSection">
+        <h4>1. Selected topic summary</h4>
+        <PlainList values={packet.topicSummaries.map(
+          (topic) => `${topic.title} — Article ${topic.primaryArticle}; ${topic.supportedScope} Separate verification: ${topic.separateVerification}`
+        )} />
+      </section>
+      <section className="argumentPlanSection">
+        <h4>2. Governing public articles and verified citations</h4>
+        <CitedList values={packet.governingContractLanguage} />
+      </section>
+      <section className="argumentPlanSection">
+        <h4>3. Cross-topic overlap or conflict notes</h4>
+        <PlainList values={packet.overlapConflictNotes} />
+      </section>
+      <section className="argumentPlanSection">
+        <h4>4. Combined facts-to-confirm checklist</h4>
+        <PlainList values={packet.factsToConfirm} />
+      </section>
+      <section className="argumentPlanSection">
+        <h4>5. Combined evidence-category checklist</h4>
+        <CitedList values={packet.evidenceChecklist} />
+      </section>
+      <section className="argumentPlanSection">
+        <h4>6. Combined management-question checklist</h4>
+        <PlainList values={packet.managementQuestions} />
+      </section>
+      <section className="argumentPlanSection">
+        <h4>7. Conditional Step 1 preparation outline</h4>
+        <CitedList values={packet.stepOnePreparation} />
+      </section>
+      <section className="argumentPlanSection">
+        <h4>8. Procedural and timeliness caveats</h4>
+        <CitedList values={packet.procedureCaveats} />
+      </section>
+      <section className="argumentPlanSection argumentPlanEscalation">
+        <h4>9. Step 2 or escalation readiness checklist</h4>
+        <CitedList values={packet.escalationReadiness} />
+      </section>
+      <section className="argumentPlanSection">
+        <h4>10. Limitations and unsupported scope</h4>
+        <CitedList values={packet.limitations} />
+      </section>
+      <section className="argumentPlanSection">
+        <h4>11. Complete verified-current source appendix</h4>
+        <ol className="argumentPlanSources">
+          {packet.sourceAppendix.map((entry) => (
+            <li key={entry.citationId}>
+              <button
+                className="citationAnchorButton"
+                onClick={() => {
+                  const citation = packet.citations.find((candidate) => candidate.id === entry.citationId);
+                  if (citation) onCitationNavigate(citation);
+                }}
+                type="button"
+              >
+                Article {entry.articleNumber} / {entry.section} / {entry.paragraphId}
+              </button>
+              <span>{entry.verificationState}</span>
+            </li>
+          ))}
+        </ol>
+      </section>
     </section>
   );
 }
