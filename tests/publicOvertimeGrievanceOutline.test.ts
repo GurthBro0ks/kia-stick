@@ -456,13 +456,13 @@ describe("public CBA overtime cited grievance outline", () => {
     expect(migratedAgain).toEqual(migrated);
   });
 
-  it("keeps Settings and health truthful without advancing accepted identities or safety gates", async () => {
+  it("keeps Settings and health truthful with refreshed accepted identities and unchanged safety gates", async () => {
     const health = await GET().json();
     expect(health.phase).toBe(PUBLIC_GRIEVANCE_OUTLINE_PHASE);
     expect(health.productVersion).toBe("0.7.0");
-    expect(health.acceptedCommit).toBe("ea0ce8de9cd6b85b56528fabc9e8ca7f8bf43a52");
-    expect(health.repositoryRecordingCommit).toBe("24abecd2ba6a7018e5eb58b113e99ad90196eb07");
-    expect(health.latestPushedCloseoutCommit).toBe("24abecd2ba6a7018e5eb58b113e99ad90196eb07");
+    expect(health.acceptedCommit).toBe("3baedc9c327fbb7a528706ec442a63f88172e425");
+    expect(health.repositoryRecordingCommit).toBe("aabfaebe3a50bc54cd89ffefaffa69fab734099a");
+    expect(health.latestPushedCloseoutCommit).toBe("aabfaebe3a50bc54cd89ffefaffa69fab734099a");
     expect(health.dataModes.private_data).toBe("blocked");
     expect(health.dataModes.external_ai).toBe("disabled");
     expect(health.realDbTouched).toBe(false);

@@ -1,3 +1,13 @@
+## Public Steward Workflow Platform Bundle 2 Post-Push Accepted-State Refresh
+
+- The current accepted pushed capability is `Public Steward Workflow Platform Bundle 2 and Employee Claims Copy Repair at 3baedc9`.
+- The accepted capability repair commit is `3baedc9c327fbb7a528706ec442a63f88172e425`; the distinct repository/closeout recording point is `aabfaebe3a50bc54cd89ffefaffa69fab734099a`.
+- Canonical closeout proof: `/home/mint/kia-stick-local-proofs/proof_kia_stick_public_steward_workflow_platform_bundle_2_employee_claims_copy_repair_20260725T172938Z/closeout_push_20260729T110942Z`.
+- Shared current-state contract: `data/current-accepted-pushed-state.json`; Settings, `/health`, proof helpers, and current-state tests consume this contract rather than independent literals.
+- The prior Bundle 1 capability `ea0ce8d` is preserved as historical-only.
+- This refresh is local-only: validation `PASS`, pushed `no`, operator manual QA `pending_operator_review`.
+- queue-015 and v0.9.12C remain blocked; Next/PostCSS remains `WARN_SAFE_NEXT_TARGET_UNCLEAR`; product/package remain `0.7.0`.
+
 ## Public Steward Workflow Platform Bundle 1 Post-Push Accepted-State Refresh
 
 - The current accepted pushed capability is `Public Steward Workflow Platform Bundle 1 and Discipline Copy Repair at ea0ce8d`.

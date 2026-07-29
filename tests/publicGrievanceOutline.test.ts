@@ -391,14 +391,14 @@ describe("public CBA annual-leave cited grievance outline", () => {
 
   it("keeps Settings, health, accepted identities, product, and blocked gates truthful", async () => {
     expect(currentAcceptedPushedState.local_bundle_phase).toBe(
-      "KIA-Stick-public-steward-workflow-platform-bundle-1-post-push-accepted-state-refresh"
+      "KIA-Stick-public-steward-workflow-platform-bundle-2-post-push-accepted-state-refresh"
     );
     expect(currentAcceptedPushedState.local_bundle_status).toBe(
-      "public steward workflow platform bundle 1 post-push accepted-state refresh; validation PASS; pushed no; manual QA PASS; closeout pending explicit authorization"
+      "public steward workflow platform bundle 2 post-push accepted-state refresh; validation PASS; pushed no; manual QA pending operator review"
     );
-    expect(currentAcceptedPushedState.accepted_pushed_commit).toBe("ea0ce8de9cd6b85b56528fabc9e8ca7f8bf43a52");
-    expect(currentAcceptedPushedState.repository_recording_commit).toBe("24abecd2ba6a7018e5eb58b113e99ad90196eb07");
-    expect(currentAcceptedPushedState.latest_pushed_closeout_commit).toBe("24abecd2ba6a7018e5eb58b113e99ad90196eb07");
+    expect(currentAcceptedPushedState.accepted_pushed_commit).toBe("3baedc9c327fbb7a528706ec442a63f88172e425");
+    expect(currentAcceptedPushedState.repository_recording_commit).toBe("aabfaebe3a50bc54cd89ffefaffa69fab734099a");
+    expect(currentAcceptedPushedState.latest_pushed_closeout_commit).toBe("aabfaebe3a50bc54cd89ffefaffa69fab734099a");
 
     const healthResponse = GET();
     const health = await healthResponse.json();
