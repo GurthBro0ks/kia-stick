@@ -1,3 +1,23 @@
+## Public Steward Workflow Platform Bundle 2 Closeout and Push
+
+- Phase: `KIA-Stick-public-steward-workflow-platform-bundle-2-closeout-and-push`.
+- Authorization: `CLOSEOUT_AND_PUSH_KIA_PUBLIC_STEWARD_WORKFLOW_PLATFORM_BUNDLE_2_AUTHORIZED`.
+- Topic-expansion commit: `06c562c553e7a8d4ed4633b00280a5f7563497ba`.
+- Steward-packet workspace commit: `7249fb897365494271a72fee9030981be68164cf`.
+- Runtime/project-state alignment commit: `7a25bf311c4af7fc58ee9e87d87162ca55d82af3`.
+- Resilient plain-text export repair commit: `eba1c953007c671f78f6ab6c8b45b365535f5877`.
+- Validation-count reconciliation commit: `21b66aa7948468a3991d82a2012f479a7d72fd33`.
+- Employee-claims copy repair commit: `3baedc9c327fbb7a528706ec442a63f88172e425`.
+- Bundle implementation and operator-QA PASS proof: `/home/mint/kia-stick-local-proofs/proof_kia_stick_public_steward_workflow_platform_bundle_2_20260725T122841Z`.
+- Employee-claims repair and operator-QA PASS proof: `/home/mint/kia-stick-local-proofs/proof_kia_stick_public_steward_workflow_platform_bundle_2_employee_claims_copy_repair_20260725T172938Z`.
+- Canonical closeout/push proof: `/home/mint/kia-stick-local-proofs/proof_kia_stick_public_steward_workflow_platform_bundle_2_employee_claims_copy_repair_20260725T172938Z/closeout_push_20260729T110942Z`.
+- Validation and manual QA: `PASS` / `PASS`; the ten-topic public steward workflow registry, shared twelve-section outline path, one-to-three-topic packet workspace, Saved/reopen/dedupe behavior, current-only exports, employee-claims copy repair, fake/public separation, and Settings/runtime truth are accepted.
+- Scope: `CLOSEOUT.md`, `claude-progress.md`, and `feature_list.json` only for this closeout commit; no runtime, source, private-data, package/lockfile, service, scheduler, network, notification, or blocked-target change.
+- Push gate: one authorized non-force push of `main`; final closeout SHA and `HEAD == origin/main == remote main` equality are recorded in the canonical proof.
+- Contract note: accepted capability `ea0ce8de9cd6b85b56528fabc9e8ca7f8bf43a52`, repository-recording identity `24abecd2ba6a7018e5eb58b113e99ad90196eb07`, and prior latest pushed closeout `24abecd2ba6a7018e5eb58b113e99ad90196eb07` remain unchanged until a separately authorized post-push accepted-state bookkeeping refresh.
+- Blocked states preserved: queue-015 remains blocked; Next/PostCSS remains `WARN_SAFE_NEXT_TARGET_UNCLEAR`; v0.9.12C remains blocked; product/package remain `0.7.0`.
+- Notifications: Discord disabled; no duplicate notification; no report URL.
+
 ## Public Steward Workflow Platform Bundle 1 Post-Push Accepted-State Refresh Closeout and Push
 
 - Phase: `KIA-Stick-public-steward-workflow-platform-bundle-1-post-push-accepted-state-refresh-closeout-and-push`.

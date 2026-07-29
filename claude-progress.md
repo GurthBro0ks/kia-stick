@@ -1,3 +1,13 @@
+- Phase: `KIA-Stick-public-steward-workflow-platform-bundle-2-closeout-and-push`
+- Authorization: `CLOSEOUT_AND_PUSH_KIA_PUBLIC_STEWARD_WORKFLOW_PLATFORM_BUNDLE_2_AUTHORIZED`.
+- Status: Bundle 2 implementation through `eba1c95`, validation reconciliation `21b66aa`, employee-claims copy repair `3baedc9`, and explicit operator QA PASS for both proof bundles passed the bounded closeout gate and are authorized for one non-force push.
+- Bundle proof: `/home/mint/kia-stick-local-proofs/proof_kia_stick_public_steward_workflow_platform_bundle_2_20260725T122841Z`.
+- Employee-claims repair proof: `/home/mint/kia-stick-local-proofs/proof_kia_stick_public_steward_workflow_platform_bundle_2_employee_claims_copy_repair_20260725T172938Z`.
+- Canonical closeout/push proof: `/home/mint/kia-stick-local-proofs/proof_kia_stick_public_steward_workflow_platform_bundle_2_employee_claims_copy_repair_20260725T172938Z/closeout_push_20260729T110942Z`.
+- Scope: `CLOSEOUT.md`, `claude-progress.md`, and `feature_list.json` only for the closeout commit. No runtime/source/private-data/package/lockfile/service/system/network/Discord change; queue-015 and v0.9.12C remain blocked; Next/PostCSS remains parked.
+- Identity truth: accepted capability remains `ea0ce8de9cd6b85b56528fabc9e8ca7f8bf43a52`; pre-closeout repository recording and latest pushed closeout remain `24abecd2ba6a7018e5eb58b113e99ad90196eb07`. Final push equality is recorded only in the canonical proof.
+- Next: complete the authorized closeout push. Any later accepted-state bookkeeping remains separately authorized.
+
 - Phase: `KIA-Stick-public-steward-workflow-platform-bundle-1-post-push-accepted-state-refresh-closeout-and-push`
 - Authorization: `CLOSEOUT_AND_PUSH_KIA_STEWARD_WORKFLOW_PLATFORM_BUNDLE_1_POST_PUSH_ACCEPTED_STATE_REFRESH_AUTHORIZED`.
 - Status: accepted-state refresh `faa1123` and operator-QA PASS recording `4106749` passed the closeout gate and are authorized for one push.
