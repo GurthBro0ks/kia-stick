@@ -68,6 +68,14 @@ export function localDataModeLabel(state: CurrentAcceptedPushedState = currentAc
   return modes?.fake_corpus === "available" ? "local fake samples" : "local isolated data modes";
 }
 
+// Derives the local refresh cycle's operator-QA status from local_bundle_status
+// instead of a hand-maintained literal, so it can't go stale the way the prior
+// hardcoded /health.manualQa value did. Binary PASS/pending only; does not
+// distinguish an ACCEPTED_WARN local cycle from a pending one.
+export function localBundleManualQaStatus(state: CurrentAcceptedPushedState = currentAcceptedPushedState): "PASS" | "pending_operator_review" {
+  return state.local_bundle_status.includes("manual QA PASS") ? "PASS" : "pending_operator_review";
+}
+
 export const historicalAcceptedPushedShortCommits = currentAcceptedPushedState.historical_prior_checkpoints
   .map((checkpoint) => checkpoint.short_commit)
   .join(", ");

@@ -1,7 +1,7 @@
 import { NextResponse } from "next/server";
 import { corpus } from "@/lib/sourceModel";
 import { getRuntimeVersion } from "@/lib/serverVersion";
-import { currentAcceptedPushedState } from "@/lib/acceptedState";
+import { currentAcceptedPushedState, localBundleManualQaStatus } from "@/lib/acceptedState";
 import {
   PUBLIC_STEWARD_WORKFLOW_TOPICS,
 } from "@/lib/publicStewardWorkflowRegistry";
@@ -20,7 +20,7 @@ export function GET() {
     localBundle: "Public Steward Workflow Platform Bundle 2",
     localValidation: "PASS",
     pushed: false,
-    manualQa: "pending_operator_review",
+    manualQa: localBundleManualQaStatus(),
     acceptedCheckpoint: currentAcceptedPushedState.checkpoint_label,
     acceptedCommit: currentAcceptedPushedState.accepted_pushed_commit,
     repositoryRecordingCommit: currentAcceptedPushedState.repository_recording_commit,

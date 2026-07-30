@@ -1,6 +1,6 @@
 import { describe, expect, it } from "vitest";
 import { GET } from "@/app/health/route";
-import { currentAcceptedPushedState } from "@/lib/acceptedState";
+import { currentAcceptedPushedState, localBundleManualQaStatus } from "@/lib/acceptedState";
 import { CURRENT_PHASE } from "@/lib/version";
 import { PUBLIC_GRIEVANCE_OUTLINE_PHASE } from "@/lib/publicGrievanceOutline";
 
@@ -49,5 +49,24 @@ describe("public truth runtime identity", () => {
     expect(payload.realDbTouched).toBe(false);
     expect(payload.cloudRequired).toBe(false);
     expect(payload.apiKeyRequired).toBe(false);
+  });
+
+  it("derives the local refresh's manual QA status from the accepted-state contract instead of a stale literal", async () => {
+    const response = GET();
+    const payload = await response.json();
+    expect(currentAcceptedPushedState.local_bundle_status).toContain("manual QA PASS");
+    expect(localBundleManualQaStatus()).toBe("PASS");
+    expect(payload.manualQa).toBe(localBundleManualQaStatus());
+    expect(payload.manualQa).toBe("PASS");
+    expect(payload.pushed).toBe(false);
+    expect(payload.acceptedCommit).toBe("3baedc9c327fbb7a528706ec442a63f88172e425");
+    expect(payload.latestPushedCloseoutCommit).toBe("aabfaebe3a50bc54cd89ffefaffa69fab734099a");
+    expect(payload.productVersion).toBe("0.7.0");
+    expect(currentAcceptedPushedState.historical_prior_checkpoints[0]).toEqual({
+      checkpoint: "Public Steward Workflow Platform Bundle 1 and Discipline Copy Repair",
+      commit: "ea0ce8de9cd6b85b56528fabc9e8ca7f8bf43a52",
+      short_commit: "ea0ce8d",
+      status: "historical_only_not_current",
+    });
   });
 });
