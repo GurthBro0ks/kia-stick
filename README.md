@@ -1,3 +1,12 @@
+## Public Steward Workflow Platform Bundle 2 Truth Repairs Post-Push Accepted-State Refresh
+
+- The current accepted pushed capability remains `Public Steward Workflow Platform Bundle 2 and Employee Claims Copy Repair at 3baedc9`.
+- The distinct repository-recording/latest-closeout point is now `a79ce762b6bcabb87b928dd03d3748f187b2ea86`, which contains the accepted-state refresh and both manual-QA truth repairs.
+- Canonical closeout proof: `/home/mint/kia-stick-local-proofs/proof_kia_stick_bundle_2_settings_manual_qa_truth_repair_20260730T143732Z/closeout_push_20260730T150910Z`.
+- Shared current-state contract: `data/current-accepted-pushed-state.json`; Settings, `/health`, proof helpers, and current-state tests consume this contract.
+- This bookkeeping refresh is local-only: validation `PASS`, pushed `no`, operator manual QA `pending_operator_review`.
+- queue-015 and v0.9.12C remain blocked; Next/PostCSS remains `WARN_SAFE_NEXT_TARGET_UNCLEAR`; product/package remain `0.7.0`.
+
 ## Public Steward Workflow Platform Bundle 2 Post-Push Accepted-State Refresh
 
 - The current accepted pushed capability is `Public Steward Workflow Platform Bundle 2 and Employee Claims Copy Repair at 3baedc9`.

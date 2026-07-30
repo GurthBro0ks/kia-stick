@@ -1,3 +1,12 @@
+- Phase: `KIA-Stick-public-steward-workflow-platform-bundle-2-truth-repairs-post-push-accepted-state-refresh`
+- Authorization: `AUTHORIZE_KIA_BUNDLE_2_TRUTH_REPAIRS_POST_PUSH_ACCEPTED_STATE_REFRESH`.
+- Status: shared accepted-state contract and bounded consumers retain accepted capability `3baedc9c327fbb7a528706ec442a63f88172e425` while advancing the distinct repository-recording/latest-closeout identity to pushed closeout `a79ce762b6bcabb87b928dd03d3748f187b2ea86`; validation PASS; pushed no; manual QA pending.
+- Canonical closeout proof: `/home/mint/kia-stick-local-proofs/proof_kia_stick_bundle_2_settings_manual_qa_truth_repair_20260730T143732Z/closeout_push_20260730T150910Z`. Local refresh proof: `/home/mint/kia-stick-local-proofs/proof_kia_stick_bundle_2_truth_repairs_post_push_accepted_state_refresh_20260730T161036Z`.
+- Identity truth: capability, repository recording, latest pushed closeout, local refresh, and runtime build identity remain separate.
+- Files: `data/current-accepted-pushed-state.json`, bounded current-state tests, `CLOSEOUT.md`, `README.md`, `feature_list.json`, and this progress record.
+- Safety: no source sync, private data, file chooser, real upload/import, OCR, embeddings, vector database, LLM, dependency/package/lockfile mutation, service/system/network change, Discord, or push. queue-015 and v0.9.12C remain blocked; Next/PostCSS remains parked.
+- Next: operator manual QA for this exact local refresh. Do not push without separate explicit authorization.
+
 - Phase: `KIA-Stick-public-steward-workflow-platform-bundle-2-post-push-accepted-state-refresh-and-truth-repairs-closeout-and-push`
 - Authorization: `CLOSEOUT_AND_PUSH_KIA_PUBLIC_STEWARD_WORKFLOW_PLATFORM_BUNDLE_2_POST_PUSH_ACCEPTED_STATE_REFRESH_AND_TRUTH_REPAIRS_AUTHORIZED`.
 - Status: accepted-state refresh `2d16c07`, its QA recording `b2b7952`, `/health` truth repair `1d6fcbf`, and Settings truth repair `c8da4e6` passed the combined closeout gate and are authorized for one non-force push.

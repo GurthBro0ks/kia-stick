@@ -7,7 +7,9 @@ export function expectCurrentCloseoutSummary(output: string): void {
   expect(output).toContain(`PROOF_CHAIN_LOCAL_IMPLEMENTATION_PROOF=${currentAcceptedPushedState.local_implementation_proof_dir}`);
   expect(output).toContain(
     `PROOF_CHAIN_OPERATOR_QA_PROOF=${
-      currentAcceptedPushedState.local_bundle_operator_qa_pass_proof_dir ??
+      ("local_bundle_operator_qa_pass_proof_dir" in currentAcceptedPushedState
+        ? currentAcceptedPushedState.local_bundle_operator_qa_pass_proof_dir
+        : undefined) ??
       currentAcceptedPushedState.operator_qa_pass_proof_dir
     }`
   );

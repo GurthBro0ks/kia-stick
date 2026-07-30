@@ -1,3 +1,16 @@
+## Public Steward Workflow Platform Bundle 2 Truth Repairs Post-Push Accepted-State Refresh
+
+- Phase: `KIA-Stick-public-steward-workflow-platform-bundle-2-truth-repairs-post-push-accepted-state-refresh`.
+- Authorization: `AUTHORIZE_KIA_BUNDLE_2_TRUTH_REPAIRS_POST_PUSH_ACCEPTED_STATE_REFRESH`.
+- Accepted capability remains `Public Steward Workflow Platform Bundle 2 and Employee Claims Copy Repair at 3baedc9` (`3baedc9c327fbb7a528706ec442a63f88172e425`).
+- Repository-recording/latest-closeout point: `a79ce762b6bcabb87b928dd03d3748f187b2ea86`, with `HEAD == origin/main == remote main` verified by the pushed closeout.
+- Canonical closeout/push proof: `/home/mint/kia-stick-local-proofs/proof_kia_stick_bundle_2_settings_manual_qa_truth_repair_20260730T143732Z/closeout_push_20260730T150910Z`.
+- Current local refresh proof: `/home/mint/kia-stick-local-proofs/proof_kia_stick_bundle_2_truth_repairs_post_push_accepted_state_refresh_20260730T161036Z`.
+- Shared contract and bounded consumers now distinguish accepted capability `3baedc9` from repository-recording/latest-closeout `a79ce76`.
+- Local refresh status: validation `PASS`; pushed `no`; operator manual QA `pending_operator_review`.
+- Safety: no source sync, private data, upload/import capability, external AI, dependency, package, lockfile, service, scheduler, notification, or blocked-target change.
+- Next: record one local refresh commit, then await operator manual QA. Do not push without separate explicit authorization.
+
 ## Public Steward Workflow Platform Bundle 2 Accepted-State Refresh and Truth Repairs Closeout and Push
 
 - Phase: `KIA-Stick-public-steward-workflow-platform-bundle-2-post-push-accepted-state-refresh-and-truth-repairs-closeout-and-push`.
