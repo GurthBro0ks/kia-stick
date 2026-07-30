@@ -1,3 +1,13 @@
+- Phase: `KIA-Stick-public-steward-workflow-platform-bundle-2-post-push-accepted-state-refresh-and-truth-repairs-closeout-and-push`
+- Authorization: `CLOSEOUT_AND_PUSH_KIA_PUBLIC_STEWARD_WORKFLOW_PLATFORM_BUNDLE_2_POST_PUSH_ACCEPTED_STATE_REFRESH_AND_TRUTH_REPAIRS_AUTHORIZED`.
+- Status: accepted-state refresh `2d16c07`, its QA recording `b2b7952`, `/health` truth repair `1d6fcbf`, and Settings truth repair `c8da4e6` passed the combined closeout gate and are authorized for one non-force push.
+- Terminal combined operator-QA PASS proof: `/home/mint/kia-stick-local-proofs/proof_kia_stick_bundle_2_settings_manual_qa_truth_repair_20260730T143732Z`.
+- Canonical closeout/push proof: `/home/mint/kia-stick-local-proofs/proof_kia_stick_bundle_2_settings_manual_qa_truth_repair_20260730T143732Z/closeout_push_20260730T150910Z`.
+- Validation: focused `51/51`, full `984/984`, lint, typecheck, build, aggregate QA, fake/privacy scans, design/release/governance, queue/operator smoke, live `/health` and `/version`, scope, secret-marker, and immutable-hash gates PASS.
+- Scope: `CLOSEOUT.md`, `claude-progress.md`, and `feature_list.json` only for the closeout commit. No runtime/source/private-data/package/lockfile/service/system/network/Discord change; queue-015 and v0.9.12C remain blocked; Next/PostCSS remains parked.
+- Identity truth: accepted capability remains `3baedc9c327fbb7a528706ec442a63f88172e425`; pre-closeout repository recording and latest pushed closeout remain `aabfaebe3a50bc54cd89ffefaffa69fab734099a`. Final push equality is recorded only in the canonical proof.
+- Next: complete the authorized closeout push. Any later post-push accepted-state bookkeeping remains separately authorized.
+
 - Phase: `KIA-Stick-public-steward-workflow-platform-bundle-2-post-push-accepted-state-refresh-operator-QA-PASS-recording`
 - Status: operator QA PASS explicitly recorded for `/home/mint/kia-stick-local-proofs/proof_kia_stick_public_steward_workflow_platform_bundle_2_post_push_accepted_state_refresh_20260729T112308Z`; validation remains PASS; pushed no.
 - Local refresh commit under review: `2d16c07544d0b979f5416a108d5e83dd333d07c2`. Accepted capability remains `3baedc9c327fbb7a528706ec442a63f88172e425`; repository recording and latest pushed closeout remain `aabfaebe3a50bc54cd89ffefaffa69fab734099a`. Operator QA does not advance any accepted or pushed identity.

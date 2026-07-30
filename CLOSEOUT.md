@@ -1,3 +1,23 @@
+## Public Steward Workflow Platform Bundle 2 Accepted-State Refresh and Truth Repairs Closeout and Push
+
+- Phase: `KIA-Stick-public-steward-workflow-platform-bundle-2-post-push-accepted-state-refresh-and-truth-repairs-closeout-and-push`.
+- Authorization: `CLOSEOUT_AND_PUSH_KIA_PUBLIC_STEWARD_WORKFLOW_PLATFORM_BUNDLE_2_POST_PUSH_ACCEPTED_STATE_REFRESH_AND_TRUTH_REPAIRS_AUTHORIZED`.
+- Accepted-state refresh commit: `2d16c07544d0b979f5416a108d5e83dd333d07c2`.
+- Accepted-state refresh operator-QA recording commit: `b2b795276eeb02fa88f1be0e4fb3e97958bfa02d`.
+- `/health` manual-QA truth repair commit: `1d6fcbf58c4b79658d971315a5052214cff8b6c4`.
+- Settings manual-QA truth repair commit: `c8da4e6fa5e755ae9bbed81458d770e2d5c25368`.
+- Refresh proof: `/home/mint/kia-stick-local-proofs/proof_kia_stick_public_steward_workflow_platform_bundle_2_post_push_accepted_state_refresh_20260729T112308Z`.
+- Refresh operator-QA PASS proof: `/home/mint/kia-stick-local-proofs/proof_kia_stick_public_steward_workflow_platform_bundle_2_post_push_accepted_state_refresh_operator_qa_pass_recording_20260730T135342Z`.
+- `/health` truth-repair proof: `/home/mint/kia-stick-local-proofs/proof_kia_stick_bundle_2_health_manual_qa_truth_contract_20260730T142259Z`.
+- Terminal Settings/health truth-repair and combined operator-QA PASS proof: `/home/mint/kia-stick-local-proofs/proof_kia_stick_bundle_2_settings_manual_qa_truth_repair_20260730T143732Z`.
+- Canonical closeout/push proof: `/home/mint/kia-stick-local-proofs/proof_kia_stick_bundle_2_settings_manual_qa_truth_repair_20260730T143732Z/closeout_push_20260730T150910Z`.
+- Validation and manual QA: `PASS` / `PASS`; the accepted-state contract, `/health.manualQa`, Settings compact card, operator diagnostics, pushed-state distinction, Bundle 1 historical-only status, fake/public separation, and blocked safety gates are accepted.
+- Scope: `CLOSEOUT.md`, `claude-progress.md`, and `feature_list.json` only for this closeout commit; no runtime, source, private-data, package/lockfile, service, scheduler, network, notification, or blocked-target change.
+- Push gate: one authorized non-force push of `main`; final closeout SHA and `HEAD == origin/main == remote main` equality are recorded in the canonical proof.
+- Contract note: accepted capability remains `3baedc9c327fbb7a528706ec442a63f88172e425`; pre-closeout repository recording and latest pushed closeout remain `aabfaebe3a50bc54cd89ffefaffa69fab734099a`. The shared contract continues to describe the pre-closeout local chain until any separately authorized later bookkeeping refresh; final push truth is recorded in the canonical closeout proof.
+- Blocked states preserved: queue-015 remains blocked; Next/PostCSS remains `WARN_SAFE_NEXT_TARGET_UNCLEAR`; v0.9.12C remains blocked; product/package remain `0.7.0`.
+- Notifications: Discord disabled; no duplicate notification; no report URL.
+
 ## Public Steward Workflow Platform Bundle 2 Post-Push Accepted-State Refresh
 
 - Phase: `KIA-Stick-public-steward-workflow-platform-bundle-2-post-push-accepted-state-refresh`.
