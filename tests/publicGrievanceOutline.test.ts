@@ -420,7 +420,7 @@ describe("public CBA annual-leave cited grievance outline", () => {
     }));
     expect(settingsHtml).toContain("Public Steward Workflow Platform Bundle 2");
     expect(settingsHtml).toContain(PUBLIC_GRIEVANCE_OUTLINE_PHASE);
-    expect(settingsHtml).toContain("pending operator review");
+    expect(settingsHtml).toContain("Manual QA</dt><dd>PASS");
     expect(settingsHtml).toContain(currentAcceptedPushedState.accepted_pushed_short_commit);
 
     const uploadHtml = renderToStaticMarkup(React.createElement(FakeUploadPanel, {

@@ -41,7 +41,8 @@ describe("public Settings summary and operator diagnostics split", () => {
     expect(html).toContain(PUBLIC_STEWARD_WORKFLOW_PHASE);
     expect(html).toContain("PASS for the local proof gate");
     expect(html).toContain("Pushed</dt><dd>no");
-    expect(html).toContain("Manual QA</dt><dd>pending operator review");
+    expect(html).toContain("Manual QA</dt><dd>PASS");
+    expect(html).not.toContain("pending operator review");
     expect(html).not.toContain("stale local-bundle push-status repair");
     expect(html).toContain("APWU-USPS CBA");
     expect(html).toContain("current source instance verified");
@@ -85,6 +86,8 @@ describe("public Settings summary and operator diagnostics split", () => {
     expect(currentAcceptedPushedState.local_bundle_status).toContain("pushed no");
     expect(currentAcceptedPushedState.local_bundle_status).toContain("manual QA PASS");
     expect(currentAcceptedPushedState.local_bundle_status).toContain("closeout pending explicit authorization");
+    expect(html).toContain("Current working bundle</dt><dd>Public Steward Workflow Platform Bundle 2; validation PASS; pushed no; manual QA PASS");
+    expect(html).not.toContain("pending operator review");
     expect(currentAcceptedPushedState.accepted_pushed_short_commit).toBe("3baedc9");
     expect(currentAcceptedPushedState.repository_recording_short_commit).toBe("aabfaeb");
     expect(currentAcceptedPushedState.latest_pushed_closeout_short_commit).toBe("aabfaeb");

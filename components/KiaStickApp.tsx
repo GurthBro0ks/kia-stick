@@ -130,7 +130,7 @@ import {
   type VaultWorkflowState,
 } from "@/lib/vaultModel";
 import { clientVersion, type RuntimeVersion } from "@/lib/version";
-import { currentAcceptedPushedState, historicalAcceptedPushedShortCommits, localDataModeLabel } from "@/lib/acceptedState";
+import { currentAcceptedPushedState, historicalAcceptedPushedShortCommits, localBundleManualQaLabel, localDataModeLabel } from "@/lib/acceptedState";
 import {
   CBA_DOCUMENT_STATUS,
   CBA_EFFECTIVE_END,
@@ -239,7 +239,7 @@ const acceptedOperatorCheckpoint = [
   { label: "Historical accepted-WARN meaning", value: "accepted-WARN parked, not fixed; historical only, not current; exact Next target still unproven" },
   { label: "Historical local repair", value: "v0.9.83-to-v0.9.87 operator-status runtime repair; validation PASS; manual QA PASS; later pushed by closeout" },
   { label: "This local bundle", value: currentAcceptedPushedState.local_bundle_status },
-  { label: "Current working bundle", value: "Public Steward Workflow Platform Bundle 2; validation PASS; pushed no; manual QA pending operator review" },
+  { label: "Current working bundle", value: `Public Steward Workflow Platform Bundle 2; validation PASS; pushed no; manual QA ${localBundleManualQaLabel()}` },
   { label: "Runtime status surface", value: "/health phase is refreshed for this bundle; /version identity semantics unchanged" },
   { label: "Real-doc gate", value: "queue-015 blocked; no real-doc capability beyond the exact approved public CBA source" },
   { label: "Next/PostCSS", value: "WARN_SAFE_NEXT_TARGET_UNCLEAR; parked, not fixed" },
@@ -1116,7 +1116,7 @@ export function SettingsContent(props: {
             <dt>Pushed</dt>
             <dd>no</dd>
             <dt>Manual QA</dt>
-            <dd>pending operator review</dd>
+            <dd>{localBundleManualQaLabel()}</dd>
           </dl>
           <a className="settingsVersionLink" href="/version">View full build identity</a>
         </section>

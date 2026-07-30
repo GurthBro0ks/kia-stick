@@ -76,6 +76,11 @@ export function localBundleManualQaStatus(state: CurrentAcceptedPushedState = cu
   return state.local_bundle_status.includes("manual QA PASS") ? "PASS" : "pending_operator_review";
 }
 
+// Human-readable copy for the same status, for Settings display surfaces.
+export function localBundleManualQaLabel(state: CurrentAcceptedPushedState = currentAcceptedPushedState): "PASS" | "pending operator review" {
+  return localBundleManualQaStatus(state) === "PASS" ? "PASS" : "pending operator review";
+}
+
 export const historicalAcceptedPushedShortCommits = currentAcceptedPushedState.historical_prior_checkpoints
   .map((checkpoint) => checkpoint.short_commit)
   .join(", ");
