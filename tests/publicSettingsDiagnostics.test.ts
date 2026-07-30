@@ -83,8 +83,8 @@ describe("public Settings summary and operator diagnostics split", () => {
     expect(html).toContain(currentAcceptedPushedState.latest_pushed_closeout_short_commit as string);
     expect(html).toContain(currentAcceptedPushedState.local_bundle_status);
     expect(currentAcceptedPushedState.local_bundle_status).toContain("pushed no");
-    expect(currentAcceptedPushedState.local_bundle_status).toContain("manual QA pending operator review");
-    expect(currentAcceptedPushedState.local_bundle_status).not.toContain("closeout pending explicit authorization");
+    expect(currentAcceptedPushedState.local_bundle_status).toContain("manual QA PASS");
+    expect(currentAcceptedPushedState.local_bundle_status).toContain("closeout pending explicit authorization");
     expect(currentAcceptedPushedState.accepted_pushed_short_commit).toBe("3baedc9");
     expect(currentAcceptedPushedState.repository_recording_short_commit).toBe("aabfaeb");
     expect(currentAcceptedPushedState.latest_pushed_closeout_short_commit).toBe("aabfaeb");
