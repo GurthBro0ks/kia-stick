@@ -12334,5 +12334,32 @@
     "source_sync_performed": false,
     "private_data_accessed": false,
     "discord_sent": false
+  },
+  "public_steward_workflow_platform_bundle_2_truth_repairs_post_push_accepted_state_refresh_closeout": {
+    "phase": "KIA-Stick-public-steward-workflow-platform-bundle-2-truth-repairs-post-push-accepted-state-refresh-closeout-and-push",
+    "status": "closeout_push_authorized",
+    "authorization": "CLOSEOUT_AND_PUSH_KIA_BUNDLE_2_TRUTH_REPAIRS_POST_PUSH_ACCEPTED_STATE_REFRESH_AUTHORIZED",
+    "accepted_state_refresh_commit": "cbedf9c27c21f08bbe8844c3491acdec31098145",
+    "operator_qa_pass_recording_commit": "55eba15d1d5550ebfef1855aabca597b212e88f5",
+    "accepted_capability_commit": "3baedc9c327fbb7a528706ec442a63f88172e425",
+    "pre_closeout_repository_recording_commit": "a79ce762b6bcabb87b928dd03d3748f187b2ea86",
+    "pre_closeout_latest_pushed_closeout_commit": "a79ce762b6bcabb87b928dd03d3748f187b2ea86",
+    "accepted_state_refresh_proof_dir": "/home/mint/kia-stick-local-proofs/proof_kia_stick_bundle_2_truth_repairs_post_push_accepted_state_refresh_20260730T161036Z",
+    "operator_qa_pass_proof_dir": "/home/mint/kia-stick-local-proofs/proof_kia_stick_bundle_2_truth_repairs_post_push_accepted_state_refresh_operator_qa_pass_recording_20260731T105647Z",
+    "closeout_push_proof_dir": "/home/mint/kia-stick-local-proofs/proof_kia_stick_bundle_2_truth_repairs_post_push_accepted_state_refresh_operator_qa_pass_recording_20260731T105647Z/closeout_push_20260731T112937Z",
+    "validation_status": "PASS",
+    "manual_qa_status": "PASS",
+    "push_completion_recorded_in_closeout_proof": true,
+    "post_push_accepted_state_bookkeeping_requires_separate_authorization": true,
+    "accepted_identity_rewritten": false,
+    "queue_015_status": "blocked",
+    "next_postcss_status": "WARN_SAFE_NEXT_TARGET_UNCLEAR",
+    "v0912c_status": "blocked_pending_exact_target",
+    "product_version": "0.7.0",
+    "package_json_changed": false,
+    "package_lock_changed": false,
+    "source_sync_performed": false,
+    "private_data_accessed": false,
+    "discord_sent": false
   }
 }
