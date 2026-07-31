@@ -60,9 +60,9 @@ describe("accepted-state governance loop break", () => {
       external_ai: "disabled",
     });
     expect(currentAcceptedPushedState.local_implementation_proof_dir).toBe("/home/mint/kia-stick-local-proofs/proof_kia_stick_bundle_2_truth_repairs_post_push_accepted_state_refresh_20260730T161036Z");
-    expect("local_bundle_operator_qa_pass_proof_dir" in currentAcceptedPushedState).toBe(false);
+    expect(currentAcceptedPushedState.local_bundle_operator_qa_pass_proof_dir).toBe("/home/mint/kia-stick-local-proofs/proof_kia_stick_bundle_2_truth_repairs_post_push_accepted_state_refresh_operator_qa_pass_recording_20260731T105647Z");
     expect(currentAcceptedPushedState.local_bundle_phase).toBe("KIA-Stick-public-steward-workflow-platform-bundle-2-truth-repairs-post-push-accepted-state-refresh");
-    expect(currentAcceptedPushedState.local_bundle_status).toBe("public steward workflow platform bundle 2 truth-repairs post-push accepted-state refresh; validation PASS; pushed no; manual QA pending operator review");
+    expect(currentAcceptedPushedState.local_bundle_status).toBe("public steward workflow platform bundle 2 truth-repairs post-push accepted-state refresh; validation PASS; pushed no; manual QA PASS; closeout pending explicit authorization");
     expect(currentAcceptedPushedState.local_bundle_status).not.toContain("stale local-bundle push-status repair");
     expect(currentAcceptedPushedState.latest_pushed_closeout_commit).toBe("a79ce762b6bcabb87b928dd03d3748f187b2ea86");
     expect(currentAcceptedPushedState.latest_pushed_closeout_short_commit).toBe("a79ce76");
