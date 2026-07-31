@@ -180,9 +180,15 @@ Weingarten-plan paths use the same pattern):
   citations are `verified_current` **at copy time**, not just at build time.
 - **Markdown**: `publicGrievanceOutlineToMarkdown(outline)` /
   `publicStewardPacketToMarkdown(packet)` build a `Blob` (`text/markdown;charset=utf-8`)
-  delivered through a `DownloadLink` component (`components/KiaStickApp.tsx:3207-3216`,
-  `:3401-3410`) with fixed filenames (`kia-stick-fake-vault-audit.md` pattern for the
-  fake-only surfaces; outline/packet exports use their own descriptive names).
+  delivered by inline `downloadOutline()`/`downloadPacket()` handlers
+  (`components/KiaStickApp.tsx:3202`, `:3396`; blob-creation bodies at `:3207-3216`,
+  `:3401-3410`) that create and click a temporary anchor element directly — this is a
+  **different** mechanism from the shared `DownloadLink` component
+  (`components/KiaStickApp.tsx:2707`), which is used only by the fake-only surfaces (e.g. the
+  `kia-stick-fake-vault-audit.md` export). Outline/packet downloads use their own descriptive,
+  content-derived filenames (`kia-public-<template>-grievance-outline.md`,
+  `kia-public-steward-packet-<topic-ids>.md`), not the `DownloadLink` component's fixed-filename
+  pattern.
 - Both paths surface a visible `verified-current export ready` / `export blocked` badge
   (`components/KiaStickApp.tsx:3293-3294`) so the fail-closed state is never silent.
 
