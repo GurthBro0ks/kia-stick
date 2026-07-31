@@ -12364,7 +12364,7 @@
   },
   "public_steward_workflow_platform_bundle_2_final_post_push_accepted_state_refresh_to_b238108": {
     "phase": "KIA-Stick-public-steward-workflow-platform-bundle-2-final-post-push-accepted-state-refresh-to-b238108",
-    "status": "local_validation_pass",
+    "status": "operator_qa_pass_recorded_local_only",
     "authorization": "AUTHORIZE_KIA_BUNDLE_2_FINAL_POST_PUSH_ACCEPTED_STATE_REFRESH_TO_B238108",
     "contract_file": "data/current-accepted-pushed-state.json",
     "accepted_pushed_checkpoint_label": "Public Steward Workflow Platform Bundle 2 and Employee Claims Copy Repair at 3baedc9",
@@ -12375,7 +12375,8 @@
     "local_refresh_proof_dir": "/home/mint/kia-stick-local-proofs/proof_kia_stick_bundle_2_final_post_push_accepted_state_refresh_to_b238108_20260731T115400Z",
     "accepted_capability_unchanged": true,
     "local_validation_status": "PASS",
-    "local_manual_qa_status": "pending_operator_review",
+    "local_manual_qa_status": "PASS",
+    "local_operator_qa_pass_proof_dir": "/home/mint/kia-stick-local-proofs/proof_kia_stick_bundle_2_final_post_push_accepted_state_refresh_to_b238108_operator_qa_pass_recording_20260731T120818Z",
     "local_pushed": false,
     "queue_015_status": "blocked",
     "next_postcss_status": "WARN_SAFE_NEXT_TARGET_UNCLEAR",

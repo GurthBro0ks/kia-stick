@@ -394,7 +394,7 @@ describe("public CBA annual-leave cited grievance outline", () => {
       "KIA-Stick-public-steward-workflow-platform-bundle-2-final-post-push-accepted-state-refresh-to-b238108"
     );
     expect(currentAcceptedPushedState.local_bundle_status).toBe(
-      "public steward workflow platform bundle 2 final post-push accepted-state refresh to b238108; validation PASS; pushed no; manual QA pending operator review"
+      "public steward workflow platform bundle 2 final post-push accepted-state refresh to b238108; validation PASS; pushed no; manual QA PASS; closeout pending explicit authorization"
     );
     expect(currentAcceptedPushedState.accepted_pushed_commit).toBe("3baedc9c327fbb7a528706ec442a63f88172e425");
     expect(currentAcceptedPushedState.repository_recording_commit).toBe("b23810834bd02eeef7cd0cbf03d8ab274d08917b");
@@ -420,7 +420,7 @@ describe("public CBA annual-leave cited grievance outline", () => {
     }));
     expect(settingsHtml).toContain("Public Steward Workflow Platform Bundle 2");
     expect(settingsHtml).toContain(PUBLIC_GRIEVANCE_OUTLINE_PHASE);
-    expect(settingsHtml).toContain("Manual QA</dt><dd>pending operator review");
+    expect(settingsHtml).toContain("Manual QA</dt><dd>PASS");
     expect(settingsHtml).toContain(currentAcceptedPushedState.accepted_pushed_short_commit);
 
     const uploadHtml = renderToStaticMarkup(React.createElement(FakeUploadPanel, {
