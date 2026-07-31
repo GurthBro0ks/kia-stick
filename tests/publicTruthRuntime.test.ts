@@ -15,9 +15,10 @@ describe("public truth runtime identity", () => {
     const payload = await response.json();
     expect(payload.phase).toBe(PUBLIC_GRIEVANCE_OUTLINE_PHASE);
     expect(currentAcceptedPushedState.local_bundle_phase).toBe(
-      "KIA-Stick-public-steward-workflow-platform-bundle-2-final-post-push-accepted-state-refresh-to-b238108"
+      "KIA-Stick-public-steward-workflow-platform-bundle-3-topic-argument-plans-and-evidence-checklists"
     );
-    expect(payload.phase).not.toBe(currentAcceptedPushedState.local_bundle_phase);
+    expect(payload.phase).toBe(currentAcceptedPushedState.local_bundle_phase);
+    expect(payload.localBundle).toBe("Public Steward Workflow Platform Bundle 3");
     expect(payload.acceptedCheckpoint).toBe(currentAcceptedPushedState.checkpoint_label);
     expect(payload.acceptedCommit).toBe(currentAcceptedPushedState.accepted_pushed_commit);
     expect(payload.acceptedCommit).toBe("3baedc9c327fbb7a528706ec442a63f88172e425");
@@ -54,10 +55,10 @@ describe("public truth runtime identity", () => {
   it("derives the local refresh's manual QA status from the accepted-state contract instead of a stale literal", async () => {
     const response = GET();
     const payload = await response.json();
-    expect(currentAcceptedPushedState.local_bundle_status).toContain("manual QA PASS");
-    expect(localBundleManualQaStatus()).toBe("PASS");
+    expect(currentAcceptedPushedState.local_bundle_status).toContain("manual QA pending operator review");
+    expect(localBundleManualQaStatus()).toBe("pending_operator_review");
     expect(payload.manualQa).toBe(localBundleManualQaStatus());
-    expect(payload.manualQa).toBe("PASS");
+    expect(payload.manualQa).toBe("pending_operator_review");
     expect(payload.pushed).toBe(false);
     expect(payload.acceptedCommit).toBe("3baedc9c327fbb7a528706ec442a63f88172e425");
     expect(payload.latestPushedCloseoutCommit).toBe("b23810834bd02eeef7cd0cbf03d8ab274d08917b");

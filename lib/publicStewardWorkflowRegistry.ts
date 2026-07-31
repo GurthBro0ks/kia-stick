@@ -2,9 +2,10 @@ import {
   CBA_SOURCE_ID,
   type CbaParagraph,
 } from "@/lib/cbaSource";
+import { currentAcceptedPushedState } from "@/lib/acceptedState";
 
 export const PUBLIC_STEWARD_WORKFLOW_PHASE =
-  "KIA-Stick-public-steward-workflow-platform-bundle-2-topic-expansion-and-packet-workspace" as const;
+  currentAcceptedPushedState.local_bundle_phase;
 
 export type PublicStewardWorkflowTopicId =
   | "annual_leave"
@@ -253,6 +254,7 @@ const safetyHealth: PublicStewardWorkflowTopic = {
   positive: [
     /\b(unsafe|unhealthful|safety hazard|unsafe condition|safe working condition)\b/,
     /\b(safety|health)\b.*\b(condition|hazard|grievance|workplace|working)\b/,
+    /\bworkplace\b.*\bsafety(?: and health)?\b.*\b(issue|concern|condition|hazard|grievance)\b/,
     /\barticle\s*14\b/,
   ],
   negative: [/\b(medical diagnosis|owcp|workers'? compensation|treatment plan|fmla)\b/],
@@ -363,6 +365,8 @@ const sickLeave: PublicStewardWorkflowTopic = {
   positive: [
     /\bsick leave\b.*\b(certif(?:y|ied|ication)|charg(?:e|ed|ing)|administration|request|absence|insufficient|minimum)\b/,
     /\b(certif(?:y|ied|ication)|charg(?:e|ed|ing)|administration|request|absence|minimum)\b.*\bsick leave\b/,
+    /\b(argument plan|grievance plan|grievance argument|argument outline)\b.*\bsick[ -]?leave\b/,
+    /\bsick[ -]?leave\b.*\b(issue|dispute|argument plan|grievance plan|grievance argument|argument outline)\b/,
     /\barticle\s*10\b.*\bsick leave\b/,
   ],
   negative: [/\b(fmla|owcp|diagnosis|medical treatment|workers'? compensation|attendance discipline)\b/],
@@ -472,6 +476,7 @@ const uniformsWorkClothes: PublicStewardWorkflowTopic = {
   positive: [
     /\b(uniform|work clothes|work clothing)\b.*\b(allowance|eligib(?:le|ility)|program|administration|credit|vendor)\b/,
     /\b(allowance|eligib(?:le|ility)|program|administration|credit)\b.*\b(uniform|work clothes|work clothing)\b/,
+    /\buniforms?\b.*\bwork[ -]?cloth(?:es|ing)\b/,
     /\barticle\s*26\b/,
   ],
   negative: [/\b(costume|dress code|calculate|how much money|personal shopping)\b/],

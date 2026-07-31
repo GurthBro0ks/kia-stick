@@ -1,3 +1,14 @@
+- Phase: `KIA-Stick-Bundle-3-operator-QA-routing-and-runtime-truth-repair`
+- Authorization: bounded repair of Bundle 3 defects found during operator browser QA; no closeout, accepted-state refresh, operator-QA PASS recording, notification, or push.
+- Initial operator QA: `FAIL_REPAIR_REQUIRED`. The safety/health, sick-leave, and uniforms/work-clothes argument-plan prompts entered the safe no-answer lane; Settings and `/health` still displayed Bundle 2 local truth and manual QA PASS.
+- Root causes: the three supported natural-language forms fell outside the ordered positive regex variants; local-runtime fields were stale Bundle 2 literals or were parsed from the old Bundle 2 local status string.
+- Repair: precise shared-registry phrase variants; all-ten exact prompt/build/export regression coverage; shared explicit local Bundle 3 runtime fields consumed by Settings, `/health`, and the workflow phase; accepted capability and repository/latest-closeout identities remain distinct and unchanged.
+- Proof directory: `/home/mint/kia-stick-local-proofs/proof_kia_stick_public_steward_workflow_platform_bundle_3_implementation_20260731T164035Z/operator_qa_routing_runtime_truth_repair_20260731T171353Z`.
+- Validation: focused routing/argument-plan/Settings/runtime/governance tests pass; full suite passes at 339 files / 1,092 tests; lint, typecheck, build, aggregate QA, design/release/governance, queue/operator smoke, fake/privacy, immutability, secret-marker, diff, and loopback Settings/health/version truth checks pass. Automated checks do not record operator QA PASS.
+- Safety: no source fetch/sync or cache mutation, private data, package/lockfile change, service/system/network change, Discord, closeout, accepted-state refresh, or push. queue-015 and v0.9.12C remain blocked; Next/PostCSS remains parked.
+- Manual QA: `PENDING_OPERATOR_REVIEW`. Required future token: `OPERATOR_QA_PASS for /home/mint/kia-stick-local-proofs/proof_kia_stick_public_steward_workflow_platform_bundle_3_implementation_20260731T164035Z/operator_qa_routing_runtime_truth_repair_20260731T171353Z`; that token does not authorize closeout or push.
+- Next: operator manual QA of the repaired Bundle 3 implementation. Do not close out, refresh accepted state, or push.
+
 - Phase: `KIA-Stick-public-steward-workflow-platform-bundle-3-topic-argument-plans-and-evidence-checklists`
 - Authorization: `AUTHORIZE_KIA_PUBLIC_STEWARD_WORKFLOW_PLATFORM_BUNDLE_3_IMPLEMENTATION`.
 - Status: implemented the planning-approved Bundle 3 scope locally: cited argument plans for all 10 existing topics, structured evidence/document-request checklists, packet sequencing/completion tracking, existing-source-only escalation guidance, native print polish, Saved persistence/migration, and fail-closed export checks. Routing and topic detection remain unchanged.

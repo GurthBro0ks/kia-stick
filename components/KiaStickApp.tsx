@@ -250,7 +250,7 @@ const acceptedOperatorCheckpoint = [
   { label: "Historical accepted-WARN meaning", value: "accepted-WARN parked, not fixed; historical only, not current; exact Next target still unproven" },
   { label: "Historical local repair", value: "v0.9.83-to-v0.9.87 operator-status runtime repair; validation PASS; manual QA PASS; later pushed by closeout" },
   { label: "This local bundle", value: currentAcceptedPushedState.local_bundle_status },
-  { label: "Current working bundle", value: `Public Steward Workflow Platform Bundle 2; validation PASS; pushed no; manual QA ${localBundleManualQaLabel()}` },
+  { label: "Current working bundle", value: `${currentAcceptedPushedState.local_bundle}; validation ${currentAcceptedPushedState.local_bundle_validation}; pushed ${currentAcceptedPushedState.local_bundle_pushed ? "yes" : "no"}; manual QA ${localBundleManualQaLabel()}` },
   { label: "Runtime status surface", value: "/health phase is refreshed for this bundle; /version identity semantics unchanged" },
   { label: "Real-doc gate", value: "queue-015 blocked; no real-doc capability beyond the exact approved public CBA source" },
   { label: "Next/PostCSS", value: "WARN_SAFE_NEXT_TARGET_UNCLEAR; parked, not fixed" },
@@ -1177,20 +1177,20 @@ export function SettingsContent(props: {
 
         <section className="settingsSummaryCard" aria-labelledby="settings-current-build">
           <span className="sectionKicker">Current application build</span>
-          <h3 id="settings-current-build">Bundle 2 local build · KIA Stick {props.runtimeVersion.productVersion}</h3>
+          <h3 id="settings-current-build">Bundle 3 local build · KIA Stick {props.runtimeVersion.productVersion}</h3>
           <dl className="compactSettingsGrid">
             <dt>Current build</dt>
             <dd>{props.runtimeVersion.gitSha}</dd>
             <dt>Channel</dt>
             <dd>{props.runtimeVersion.channel}</dd>
             <dt>Local bundle</dt>
-            <dd>Public Steward Workflow Platform Bundle 2</dd>
+            <dd>{currentAcceptedPushedState.local_bundle}</dd>
             <dt>Local phase</dt>
             <dd>{PUBLIC_STEWARD_WORKFLOW_PHASE}</dd>
             <dt>Validation</dt>
-            <dd>PASS for the local proof gate</dd>
+            <dd>{currentAcceptedPushedState.local_bundle_validation} for the local proof gate</dd>
             <dt>Pushed</dt>
-            <dd>no</dd>
+            <dd>{currentAcceptedPushedState.local_bundle_pushed ? "yes" : "no"}</dd>
             <dt>Manual QA</dt>
             <dd>{localBundleManualQaLabel()}</dd>
           </dl>

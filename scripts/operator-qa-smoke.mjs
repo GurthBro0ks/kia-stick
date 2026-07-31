@@ -172,9 +172,9 @@ function checkStaticContracts(root, problems) {
   for (const marker of ["PUBLIC_GRIEVANCE_OUTLINE_SAVED_TYPE", "verified_current", "sourceInstanceIds", "Do not enter private case details in this public pilot.", "This public pilot does not replace local union advice or legal advice."]) {
     requireContains(problems, "public grievance outline", grievanceOutline, marker);
   }
-  const localRuntimePhase = constantValue(health, "LOCAL_RUNTIME_PHASE", problems);
-  if (localRuntimePhase !== "KIA-Stick-public-steward-workflow-platform-bundle-2-topic-expansion-and-packet-workspace") {
-    problems.push(`LOCAL_RUNTIME_PHASE mismatch: ${localRuntimePhase || "missing"}`);
+  const localRuntimePhase = acceptedState.local_bundle_phase;
+  if (!health.includes("currentAcceptedPushedState.local_bundle_phase")) {
+    problems.push("health route phase must derive from the accepted-state local bundle contract");
   }
   for (const marker of ["Display Version", "Product Version", "Build Date", "Git SHA", "Corpus", "Index", "Prompt", "Provider"]) {
     requireContains(problems, "version page", versionPage, marker);

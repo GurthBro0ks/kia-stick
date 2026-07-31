@@ -1,8 +1,17 @@
+## Public Steward Workflow Platform Bundle 3 Operator-QA Routing and Runtime-Truth Repair
+
+- Phase: `KIA-Stick-Bundle-3-operator-QA-routing-and-runtime-truth-repair`. Initial browser QA result: `FAIL_REPAIR_REQUIRED`; repair remains local-only with operator manual QA `PENDING_OPERATOR_REVIEW`.
+- The deterministic shared topic matcher now recognizes the bounded natural-language forms “workplace safety and health issue,” argument-plan requests about “sick leave,” and the coupled phrase “uniforms or work clothes.” Existing negative guards, unsupported-input handling, and multi-topic ambiguity remain fail-closed.
+- The shared current-state contract now separates the current local Bundle 3 build from the accepted Bundle 2 capability. Settings and `/health` identify Bundle 3, validation `PASS`, pushed `no`, and manual QA `pending_operator_review`; `/version` continues deriving Git identity independently.
+- Focused and full regression suites, lint, typecheck, production build, design/release/governance/queue/operator-smoke/aggregate-QA/fake/privacy gates, immutability checks, and loopback runtime truth checks pass. Operator browser QA remains pending and is not upgraded by these automated checks.
+- Accepted capability remains `3baedc9c327fbb7a528706ec442a63f88172e425`; repository-recording and latest pushed closeout remain `b23810834bd02eeef7cd0cbf03d8ab274d08917b`. No accepted-state refresh or history rewrite occurred.
+- Repair proof: `/home/mint/kia-stick-local-proofs/proof_kia_stick_public_steward_workflow_platform_bundle_3_implementation_20260731T164035Z/operator_qa_routing_runtime_truth_repair_20260731T171353Z`. No closeout or push is authorized.
+
 ## Public Steward Workflow Platform Bundle 3 Topic Argument Plans and Evidence Checklists
 
 - Phase: `KIA-Stick-public-steward-workflow-platform-bundle-3-topic-argument-plans-and-evidence-checklists`. Authorization: `AUTHORIZE_KIA_PUBLIC_STEWARD_WORKFLOW_PLATFORM_BUNDLE_3_IMPLEMENTATION`.
 - Implements cited step-by-step argument plans for all 10 existing public steward workflow topics, structured evidence/document-request checklists, stable packet sequencing with completion tracking, escalation guidance bounded to the existing verified CBA sources, and native print views for eligible outlines and packets.
-- Routing and the 10-topic registry are unchanged. The implementation reuses the existing shared matcher, CBA answer, grievance-outline, packet, Saved, citation-integrity, and export architecture; stale or missing citation anchors fail closed.
+- The original implementation reused the existing shared matcher, CBA answer, grievance-outline, packet, Saved, citation-integrity, and export architecture; the later bounded operator-QA repair above adds precise phrase variants without adding a topic or parallel routing chain. Stale or missing citation anchors fail closed.
 - Saved records include the new topic argument-plan type. Legacy outlines and packets migrate without data loss; legacy packets receive the stable step sequence with every step initially incomplete.
 - Public-source and privacy boundaries remain unchanged: no contact directory, new topic/source, source sync, private data, file upload/import, OCR, embeddings, vector database, external AI, or package mutation.
 - Durable implementation proof: `/home/mint/kia-stick-local-proofs/proof_kia_stick_public_steward_workflow_platform_bundle_3_implementation_20260731T164035Z`. Code/build/repository validation is `PASS`, browser automation is `WARN_UNAVAILABLE`, and operator manual QA is `PENDING_OPERATOR_REVIEW`; closeout, accepted-state refresh, and push have not occurred.

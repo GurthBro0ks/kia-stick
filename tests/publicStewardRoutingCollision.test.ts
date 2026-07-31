@@ -44,6 +44,18 @@ const routingMatrix = [
   ["steward_grievance_handling", "May a steward review records while investigating a grievance?"],
 ] as const;
 
+const operatorQaRepairMatrix = [
+  ["safety_health", "Build an argument plan about a workplace safety and health issue."],
+  ["sick_leave", "Build an argument plan about sick leave."],
+  ["uniforms_work_clothes", "Build an argument plan about uniforms or work clothes."],
+] as const;
+
+const operatorQaSafeSynonymMatrix = [
+  ["safety_health", "Build a grievance plan for a workplace safety concern."],
+  ["sick_leave", "Prepare a grievance argument about a sick-leave dispute."],
+  ["uniforms_work_clothes", "Prepare an argument about a uniform and work-clothing issue."],
+] as const;
+
 describe("public steward deterministic routing collision matrix", () => {
   it.each(routingMatrix)("routes the supported alias %s without a collision", (topicId, question) => {
     const match = publicStewardWorkflowMatch(question);
@@ -56,6 +68,20 @@ describe("public steward deterministic routing collision matrix", () => {
     expect(detectPublicStewardWorkflowTopic(question)).toBe(topicId);
     expect(resolveChatAnswerLane(question, "auto")).toBe("cba");
   });
+
+  it.each([...operatorQaRepairMatrix, ...operatorQaSafeSynonymMatrix])(
+    "routes the repaired natural-language alias %s without broadening the lane",
+    (topicId, question) => {
+      expect(publicStewardWorkflowMatch(question)).toMatchObject({
+        topicId,
+        matchedTopicIds: [topicId],
+        ambiguous: false,
+        unsupportedCandidateId: null,
+      });
+      expect(detectPublicStewardWorkflowTopic(question)).toBe(topicId);
+      expect(resolveChatAnswerLane(question, "auto")).toBe("cba");
+    }
+  );
 
   it.each([
     ["annual_leave", "I need FMLA or sick leave advice for an annual leave request."],
@@ -90,6 +116,37 @@ describe("public steward deterministic routing collision matrix", () => {
     expect(answer.noAnswer).toBe(true);
     expect(answer.citations).toEqual([]);
     expect(buildPublicGrievanceOutline({ answer, source })).toBeNull();
+  });
+
+  it.each([
+    "Build an argument plan about holiday scheduling and a workplace safety concern.",
+    "Build an argument plan about sick-leave administration and uniform work-clothes eligibility.",
+  ])("keeps repaired cross-topic aliases ambiguous and fail-closed: %s", (question) => {
+    const match = publicStewardWorkflowMatch(question);
+    expect(match.ambiguous).toBe(true);
+    expect(match.matchedTopicIds).toHaveLength(2);
+    expect(detectPublicStewardWorkflowTopic(question)).toBeNull();
+    expect(buildCbaAnswer({
+      question,
+      source,
+      nlrbSource: publicSource,
+      runtimeVersion,
+      ...defaults,
+    })).toMatchObject({
+      publicSourceRole: "safe_no_answer",
+      noAnswer: true,
+      citations: [],
+    });
+  });
+
+  it("keeps unsupported private or local-agreement argument-plan input fail-closed", () => {
+    const question = "Build an argument plan from a private local agreement.";
+    expect(publicStewardWorkflowMatch(question)).toMatchObject({
+      topicId: null,
+      matchedTopicIds: [],
+      ambiguous: false,
+    });
+    expect(resolveChatAnswerLane(question, "auto")).toBe("safe_no_answer");
   });
 
   it.each(

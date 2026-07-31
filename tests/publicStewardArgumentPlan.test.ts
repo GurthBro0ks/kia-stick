@@ -1,5 +1,6 @@
 import { readFileSync } from "node:fs";
 import { describe, expect, it } from "vitest";
+import { buildCbaAnswer } from "@/lib/cbaAnswer";
 import {
   buildPublicStewardArgumentPlan,
   PUBLIC_STEWARD_ARGUMENT_PLAN_PRIVATE_WARNING,
@@ -10,8 +11,12 @@ import {
 } from "@/lib/publicStewardArgumentPlan";
 import {
   PUBLIC_STEWARD_CONTACT_DIRECTORY_WARNING,
+  publicGrievanceOutlineEligibility,
 } from "@/lib/publicGrievanceOutline";
-import { PUBLIC_STEWARD_WORKFLOW_TOPICS } from "@/lib/publicStewardWorkflowRegistry";
+import {
+  PUBLIC_STEWARD_WORKFLOW_TOPICS,
+  detectPublicStewardWorkflowTopic,
+} from "@/lib/publicStewardWorkflowRegistry";
 import {
   createSavedStewardArgumentPlanRecord,
   migrateSavedAnswers,
@@ -20,9 +25,23 @@ import {
 } from "@/lib/savedAnswers";
 import { createRuntimeVersion } from "@/lib/version";
 import { createCbaSourceFixtureCache } from "@/tests/fixtures/cbaSourceFixture";
+import { createPublicSourceFixtureCache } from "@/tests/fixtures/publicSourceFixture";
 
 const source = createCbaSourceFixtureCache();
+const publicSource = createPublicSourceFixtureCache();
 const runtimeVersion = createRuntimeVersion({ buildDate: "20260731", gitSha: "bundle3plan" });
+const operatorQaTopicMatrix = [
+  ["annual_leave", "Build an argument plan about an annual leave scheduling dispute."],
+  ["overtime", "Build an argument plan about an overtime distribution dispute."],
+  ["holiday_scheduling", "Build an argument plan about holiday scheduling."],
+  ["safety_health", "Build an argument plan about a workplace safety and health issue."],
+  ["discipline_just_cause", "Build an argument plan about discipline and just cause."],
+  ["sick_leave", "Build an argument plan about sick leave."],
+  ["higher_level_assignments", "Build an argument plan about a higher-level assignment."],
+  ["uniforms_work_clothes", "Build an argument plan about uniforms or work clothes."],
+  ["employee_claims", "Build an argument plan about an employee personal-property claim."],
+  ["steward_grievance_handling", "Build an argument plan about steward grievance handling."],
+] as const;
 
 function plan(topicId: (typeof PUBLIC_STEWARD_WORKFLOW_TOPICS)[number]["id"]) {
   const result = buildPublicStewardArgumentPlan({
@@ -36,6 +55,48 @@ function plan(topicId: (typeof PUBLIC_STEWARD_WORKFLOW_TOPICS)[number]["id"]) {
 }
 
 describe("Bundle 3 topic-grounded public steward argument plans", () => {
+  it.each(operatorQaTopicMatrix)(
+    "routes and builds the exact operator-QA argument plan for %s",
+    (topicId, question) => {
+      expect(detectPublicStewardWorkflowTopic(question)).toBe(topicId);
+      const answer = buildCbaAnswer({
+        question,
+        source,
+        nlrbSource: publicSource,
+        runtimeVersion,
+        mode: "Strict Research",
+        scope: "Official-Like",
+        detail: "Detailed",
+      });
+      expect(answer).toMatchObject({
+        noAnswer: false,
+        publicSourceRole: "cba_contract",
+      });
+      expect(answer.citations.length).toBeGreaterThan(0);
+      expect(answer.citations.every(
+        (citation) => citation.citationVerificationState === "verified_current"
+      )).toBe(true);
+      expect(publicGrievanceOutlineEligibility({ answer, source })).toMatchObject({
+        eligible: true,
+        template: topicId,
+      });
+
+      const result = plan(topicId);
+      expect(result.evidenceRequests.length).toBeGreaterThan(0);
+      expect(result.evidenceRequests.every((entry) =>
+        entry.document.length > 0 &&
+        entry.requestFrom.length > 0 &&
+        entry.whyItMatters.length > 0 &&
+        entry.citationIds.length > 0
+      )).toBe(true);
+      expect(publicStewardArgumentPlanExportEligibility(result, source)).toEqual({ eligible: true });
+      expect(result.privateCaseWarning).toBe(PUBLIC_STEWARD_ARGUMENT_PLAN_PRIVATE_WARNING);
+      expect(JSON.stringify(result)).not.toMatch(
+        /employeeName|memberName|grievanceNumber|caseNumber|medicalDiagnosis/i
+      );
+    }
+  );
+
   it.each(PUBLIC_STEWARD_WORKFLOW_TOPICS.map((topic) => [topic.id, topic.displayName] as const))(
     "builds a verified-current structured plan for %s",
     (topicId, displayName) => {

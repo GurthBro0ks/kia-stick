@@ -32,7 +32,11 @@ export interface CurrentAcceptedPushedState {
   latest_pushed_closeout_phase?: string;
   latest_pushed_closeout_proof_dir?: string;
   latest_pushed_closeout_status?: string;
+  local_bundle: string;
   local_bundle_phase: string;
+  local_bundle_validation: "PASS" | "WARN" | "FAIL";
+  local_bundle_pushed: boolean;
+  local_bundle_manual_qa: "PASS" | "pending_operator_review";
   local_bundle_status: string;
   historical_prior_checkpoints: AcceptedCheckpoint[];
   next_postcss_status: string;
@@ -68,12 +72,8 @@ export function localDataModeLabel(state: CurrentAcceptedPushedState = currentAc
   return modes?.fake_corpus === "available" ? "local fake samples" : "local isolated data modes";
 }
 
-// Derives the local refresh cycle's operator-QA status from local_bundle_status
-// instead of a hand-maintained literal, so it can't go stale the way the prior
-// hardcoded /health.manualQa value did. Binary PASS/pending only; does not
-// distinguish an ACCEPTED_WARN local cycle from a pending one.
 export function localBundleManualQaStatus(state: CurrentAcceptedPushedState = currentAcceptedPushedState): "PASS" | "pending_operator_review" {
-  return state.local_bundle_status.includes("manual QA PASS") ? "PASS" : "pending_operator_review";
+  return state.local_bundle_manual_qa;
 }
 
 // Human-readable copy for the same status, for Settings display surfaces.

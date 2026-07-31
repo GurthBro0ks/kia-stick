@@ -7,8 +7,6 @@ import {
 } from "@/lib/publicStewardWorkflowRegistry";
 
 export const dynamic = "force-dynamic";
-const LOCAL_RUNTIME_PHASE =
-  "KIA-Stick-public-steward-workflow-platform-bundle-2-topic-expansion-and-packet-workspace";
 
 export function GET() {
   const version = getRuntimeVersion();
@@ -16,10 +14,10 @@ export function GET() {
   return NextResponse.json({
     ok: true,
     app: "kia-stick",
-    phase: LOCAL_RUNTIME_PHASE,
-    localBundle: "Public Steward Workflow Platform Bundle 2",
-    localValidation: "PASS",
-    pushed: false,
+    phase: currentAcceptedPushedState.local_bundle_phase,
+    localBundle: currentAcceptedPushedState.local_bundle,
+    localValidation: currentAcceptedPushedState.local_bundle_validation,
+    pushed: currentAcceptedPushedState.local_bundle_pushed,
     manualQa: localBundleManualQaStatus(),
     acceptedCheckpoint: currentAcceptedPushedState.checkpoint_label,
     acceptedCommit: currentAcceptedPushedState.accepted_pushed_commit,
