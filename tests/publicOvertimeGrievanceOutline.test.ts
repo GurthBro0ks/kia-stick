@@ -461,8 +461,8 @@ describe("public CBA overtime cited grievance outline", () => {
     expect(health.phase).toBe(PUBLIC_GRIEVANCE_OUTLINE_PHASE);
     expect(health.productVersion).toBe("0.7.0");
     expect(health.acceptedCommit).toBe("3baedc9c327fbb7a528706ec442a63f88172e425");
-    expect(health.repositoryRecordingCommit).toBe("a79ce762b6bcabb87b928dd03d3748f187b2ea86");
-    expect(health.latestPushedCloseoutCommit).toBe("a79ce762b6bcabb87b928dd03d3748f187b2ea86");
+    expect(health.repositoryRecordingCommit).toBe("b23810834bd02eeef7cd0cbf03d8ab274d08917b");
+    expect(health.latestPushedCloseoutCommit).toBe("b23810834bd02eeef7cd0cbf03d8ab274d08917b");
     expect(health.dataModes.private_data).toBe("blocked");
     expect(health.dataModes.external_ai).toBe("disabled");
     expect(health.realDbTouched).toBe(false);
@@ -478,7 +478,7 @@ describe("public CBA overtime cited grievance outline", () => {
     }));
     expect(settings).toContain("Public Steward Workflow Platform Bundle 2");
     expect(settings).toContain(PUBLIC_GRIEVANCE_OUTLINE_PHASE);
-    expect(settings).toContain("Manual QA</dt><dd>PASS");
+    expect(settings).toContain("Manual QA</dt><dd>pending operator review");
     expect(settings).toContain(runtimeVersion.gitSha);
     expect(currentAcceptedPushedState.queue_015_status).toBe("blocked");
     expect(currentAcceptedPushedState.v0912c_status).toBe("blocked_pending_exact_target");

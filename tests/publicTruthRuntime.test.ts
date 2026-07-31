@@ -15,16 +15,16 @@ describe("public truth runtime identity", () => {
     const payload = await response.json();
     expect(payload.phase).toBe(PUBLIC_GRIEVANCE_OUTLINE_PHASE);
     expect(currentAcceptedPushedState.local_bundle_phase).toBe(
-      "KIA-Stick-public-steward-workflow-platform-bundle-2-truth-repairs-post-push-accepted-state-refresh"
+      "KIA-Stick-public-steward-workflow-platform-bundle-2-final-post-push-accepted-state-refresh-to-b238108"
     );
     expect(payload.phase).not.toBe(currentAcceptedPushedState.local_bundle_phase);
     expect(payload.acceptedCheckpoint).toBe(currentAcceptedPushedState.checkpoint_label);
     expect(payload.acceptedCommit).toBe(currentAcceptedPushedState.accepted_pushed_commit);
     expect(payload.acceptedCommit).toBe("3baedc9c327fbb7a528706ec442a63f88172e425");
     expect(payload.repositoryRecordingCommit).toBe(currentAcceptedPushedState.repository_recording_commit);
-    expect(payload.repositoryRecordingCommit).toBe("a79ce762b6bcabb87b928dd03d3748f187b2ea86");
+    expect(payload.repositoryRecordingCommit).toBe("b23810834bd02eeef7cd0cbf03d8ab274d08917b");
     expect(payload.latestPushedCloseoutCommit).toBe(currentAcceptedPushedState.latest_pushed_closeout_commit);
-    expect(payload.latestPushedCloseoutCommit).toBe("a79ce762b6bcabb87b928dd03d3748f187b2ea86");
+    expect(payload.latestPushedCloseoutCommit).toBe("b23810834bd02eeef7cd0cbf03d8ab274d08917b");
     expect(new Set([
       payload.acceptedCommit,
       payload.repositoryRecordingCommit,
@@ -54,13 +54,13 @@ describe("public truth runtime identity", () => {
   it("derives the local refresh's manual QA status from the accepted-state contract instead of a stale literal", async () => {
     const response = GET();
     const payload = await response.json();
-    expect(currentAcceptedPushedState.local_bundle_status).toContain("manual QA PASS");
-    expect(localBundleManualQaStatus()).toBe("PASS");
+    expect(currentAcceptedPushedState.local_bundle_status).toContain("manual QA pending operator review");
+    expect(localBundleManualQaStatus()).toBe("pending_operator_review");
     expect(payload.manualQa).toBe(localBundleManualQaStatus());
-    expect(payload.manualQa).toBe("PASS");
+    expect(payload.manualQa).toBe("pending_operator_review");
     expect(payload.pushed).toBe(false);
     expect(payload.acceptedCommit).toBe("3baedc9c327fbb7a528706ec442a63f88172e425");
-    expect(payload.latestPushedCloseoutCommit).toBe("a79ce762b6bcabb87b928dd03d3748f187b2ea86");
+    expect(payload.latestPushedCloseoutCommit).toBe("b23810834bd02eeef7cd0cbf03d8ab274d08917b");
     expect(payload.productVersion).toBe("0.7.0");
     expect(currentAcceptedPushedState.historical_prior_checkpoints[0]).toEqual({
       checkpoint: "Public Steward Workflow Platform Bundle 1 and Discipline Copy Repair",
