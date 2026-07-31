@@ -1,3 +1,14 @@
+- Phase: `KIA-Stick-public-steward-workflow-platform-bundle-2-final-post-push-accepted-state-refresh-to-b238108-closeout-and-push`
+- Authorization: `CLOSEOUT_AND_PUSH_KIA_BUNDLE_2_FINAL_POST_PUSH_ACCEPTED_STATE_REFRESH_TO_B238108_AUTHORIZED`.
+- Status: accepted-state refresh `bd36562` and operator-QA PASS recording `6a29364` passed the bounded closeout gate and are authorized for one non-force push.
+- Source refresh proof: `/home/mint/kia-stick-local-proofs/proof_kia_stick_bundle_2_final_post_push_accepted_state_refresh_to_b238108_20260731T115400Z`.
+- Operator-QA PASS proof: `/home/mint/kia-stick-local-proofs/proof_kia_stick_bundle_2_final_post_push_accepted_state_refresh_to_b238108_operator_qa_pass_recording_20260731T120818Z`.
+- Canonical closeout/push proof: `/home/mint/kia-stick-local-proofs/proof_kia_stick_bundle_2_final_post_push_accepted_state_refresh_to_b238108_operator_qa_pass_recording_20260731T120818Z/closeout_push_20260731T123305Z`.
+- Validation: focused `51/51`, full `984/984`, lint, typecheck, build, aggregate QA, fake/privacy scans, design/release/governance, queue/operator smoke, live `/health` and `/version`, scope, secret-marker, and immutable-hash gates PASS.
+- Scope: `CLOSEOUT.md`, `claude-progress.md`, and `feature_list.json` only for the closeout commit. No runtime/shared-contract/source/private-data/package/lockfile/service/system/network/Discord change; queue-015 and v0.9.12C remain blocked; Next/PostCSS remains parked.
+- Identity truth: accepted capability remains `3baedc9c327fbb7a528706ec442a63f88172e425`; pre-closeout repository recording and latest pushed closeout remain `b23810834bd02eeef7cd0cbf03d8ab274d08917b`. Final push equality is recorded only in the canonical proof.
+- Next: complete the authorized closeout push. Any later post-push accepted-state bookkeeping remains separately authorized.
+
 - Phase: `KIA-Stick-public-steward-workflow-platform-bundle-2-final-post-push-accepted-state-refresh-to-b238108-operator-QA-PASS-recording`
 - Status: operator QA PASS explicitly recorded for `/home/mint/kia-stick-local-proofs/proof_kia_stick_bundle_2_final_post_push_accepted_state_refresh_to_b238108_20260731T115400Z`; validation remains PASS; pushed no.
 - Local refresh commit under review: `bd36562943738715412907c14dc2c4267abcbb74`. Accepted capability remains `3baedc9c327fbb7a528706ec442a63f88172e425`; repository recording and latest pushed closeout remain `b23810834bd02eeef7cd0cbf03d8ab274d08917b`. Operator QA does not advance any accepted or pushed identity.
