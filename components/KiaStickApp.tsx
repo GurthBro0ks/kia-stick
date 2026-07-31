@@ -13,6 +13,7 @@ import {
   Heart,
   MessageSquareText,
   Plus,
+  Printer,
   RotateCcw,
   Save,
   Settings,
@@ -57,6 +58,7 @@ import {
   createSavedAnswerRecord,
   createSavedArgumentPlanRecord,
   createSavedGrievanceOutlineRecord,
+  createSavedStewardArgumentPlanRecord,
   createSavedStewardPacketRecord,
   migrateSavedAnswers,
   upsertSavedAnswer,
@@ -92,7 +94,16 @@ import {
   publicStewardPacketToMarkdown,
   publicStewardPacketToText,
   type PublicStewardPacket,
+  publicStewardPacketWithStepCompletion,
+  type PublicStewardPacketStep,
 } from "@/lib/publicStewardPacket";
+import {
+  buildPublicStewardArgumentPlan,
+  publicStewardArgumentPlanExportEligibility,
+  publicStewardArgumentPlanToMarkdown,
+  publicStewardArgumentPlanToText,
+  type PublicStewardArgumentPlan,
+} from "@/lib/publicStewardArgumentPlan";
 import {
   buildSourceHierarchyGroups,
   citationLabel,
@@ -308,6 +319,7 @@ export function KiaStickApp({ runtimeVersion = clientVersion }: { runtimeVersion
   const [fakeOnlyConfirmed, setFakeOnlyConfirmed] = useState(false);
   const [saveNotice, setSaveNotice] = useState<{ status: SaveAnswerStatus; text: string } | null>(null);
   const [argumentPlans, setArgumentPlans] = useState<Record<string, PublicArgumentPlan>>({});
+  const [stewardArgumentPlans, setStewardArgumentPlans] = useState<Record<string, PublicStewardArgumentPlan>>({});
   const [grievanceOutlines, setGrievanceOutlines] = useState<Record<string, PublicGrievanceOutline>>({});
   const [packetTopicIds, setPacketTopicIds] = useState<PublicStewardWorkflowTopicId[]>([]);
   const [stewardPacket, setStewardPacket] = useState<PublicStewardPacket | null>(null);
@@ -612,6 +624,53 @@ export function KiaStickApp({ runtimeVersion = clientVersion }: { runtimeVersion
     });
   }
 
+  function buildStewardArgumentPlanFor(message: AssistantMessage) {
+    const topicId = detectPublicStewardWorkflowTopic(message.answer.question);
+    const plan = topicId
+      ? buildPublicStewardArgumentPlan({
+          source: cbaSourceState.status === "available" ? cbaSourceState.source : null,
+          topicId,
+          runtimeVersion,
+        })
+      : null;
+    if (!plan) {
+      setSaveNotice({
+        status: "duplicate",
+        text: "A supported topic and current verified CBA citations are required before a topic-grounded argument plan can be built.",
+      });
+      return;
+    }
+    setStewardArgumentPlans((current) => ({ ...current, [message.messageId]: plan }));
+    setSaveNotice(null);
+  }
+
+  function saveStewardArgumentPlan(plan: PublicStewardArgumentPlan) {
+    const source = cbaSourceState.status === "available" ? cbaSourceState.source : null;
+    if (!publicStewardArgumentPlanExportEligibility(plan, source).eligible) {
+      setSaveNotice({
+        status: "duplicate",
+        text: "Argument-plan save is blocked because its current source and citation identity could not be verified.",
+      });
+      return;
+    }
+    const record = createSavedStewardArgumentPlanRecord({
+      plan,
+      timestamp: new Date().toISOString(),
+    });
+    setSaved((current) => {
+      const result = upsertSavedAnswer(current, record);
+      setSaveNotice({
+        status: result.status,
+        text: result.status === "created"
+          ? "Saved the current verified topic-grounded argument plan."
+          : result.status === "replaced"
+            ? "Updated the topic-grounded argument plan with current verified metadata."
+            : "Already saved. No duplicate topic-grounded argument plan was created.",
+      });
+      return result.saved;
+    });
+  }
+
   function togglePacketTopic(topicId: PublicStewardWorkflowTopicId) {
     setPacketTopicIds((current) => {
       const selected = current.includes(topicId)
@@ -678,10 +737,20 @@ export function KiaStickApp({ runtimeVersion = clientVersion }: { runtimeVersion
     });
   }
 
+  function updateStewardPacketStep(
+    stepId: PublicStewardPacketStep["stepId"],
+    completed: boolean
+  ) {
+    setStewardPacket((current) =>
+      current ? publicStewardPacketWithStepCompletion(current, stepId, completed) : current
+    );
+  }
+
   function startNewChat() {
     if (thread.messages.length > 0 && !window.confirm("Start a new chat and clear the current thread?")) return;
     setThread(createConversationThread());
     setArgumentPlans({});
+    setStewardArgumentPlans({});
     setGrievanceOutlines({});
     setDraft("");
     setSaveNotice(null);
@@ -796,6 +865,7 @@ export function KiaStickApp({ runtimeVersion = clientVersion }: { runtimeVersion
                 ) : (
                   (() => {
                     const plan = argumentPlans[message.messageId];
+                    const stewardArgumentPlan = stewardArgumentPlans[message.messageId];
                     const grievanceOutline = grievanceOutlines[message.messageId];
                     const argumentEligibility = message.status === "complete"
                       ? publicArgumentPlanEligibility({
@@ -823,6 +893,11 @@ export function KiaStickApp({ runtimeVersion = clientVersion }: { runtimeVersion
                         argumentPlan={plan}
                         onBuildArgument={() => buildArgumentPlanFor(message)}
                         onSaveArgumentPlan={() => plan && saveArgumentPlan(message, plan)}
+                        canBuildStewardArgumentPlan={grievanceEligibility.eligible}
+                        stewardArgumentPlan={stewardArgumentPlan}
+                        stewardArgumentPlanSource={cbaSourceState.status === "available" ? cbaSourceState.source : null}
+                        onBuildStewardArgumentPlan={() => buildStewardArgumentPlanFor(message)}
+                        onSaveStewardArgumentPlan={() => stewardArgumentPlan && saveStewardArgumentPlan(stewardArgumentPlan)}
                         canBuildGrievanceOutline={grievanceEligibility.eligible}
                         grievanceOutline={grievanceOutline}
                         grievanceOutlineSource={cbaSourceState.status === "available" ? cbaSourceState.source : null}
@@ -850,6 +925,7 @@ export function KiaStickApp({ runtimeVersion = clientVersion }: { runtimeVersion
             onAskCbaQuestion={prepareCbaQuestion}
             onBuildStewardPacket={buildStewardPacketWorkspace}
             onSaveStewardPacket={saveStewardPacketWorkspace}
+            onPacketStepCompletionChange={updateStewardPacketStep}
             onTogglePacketTopic={togglePacketTopic}
             packet={stewardPacket}
             packetTopicIds={packetTopicIds}
@@ -1340,6 +1416,7 @@ export function SourcesPanel({
   sourceHierarchyGroups,
   onAskCbaQuestion,
   onBuildStewardPacket,
+  onPacketStepCompletionChange,
   onSaveStewardPacket,
   onTogglePacketTopic,
   packet = null,
@@ -1353,6 +1430,7 @@ export function SourcesPanel({
   sourceHierarchyGroups: ReturnType<typeof buildSourceHierarchyGroups>;
   onAskCbaQuestion?: (question: string) => void;
   onBuildStewardPacket?: () => void;
+  onPacketStepCompletionChange?: (stepId: PublicStewardPacketStep["stepId"], completed: boolean) => void;
   onSaveStewardPacket?: (packet: PublicStewardPacket) => void;
   onTogglePacketTopic?: (topicId: PublicStewardWorkflowTopicId) => void;
   packet?: PublicStewardPacket | null;
@@ -1583,6 +1661,7 @@ export function SourcesPanel({
               {packet && (
                 <PublicStewardPacketView
                   onCitationNavigate={() => undefined}
+                  onStepCompletionChange={onPacketStepCompletionChange}
                   onSave={onSaveStewardPacket ? () => onSaveStewardPacket(packet) : undefined}
                   packet={packet}
                   source={cbaSourceState.source}
@@ -1781,6 +1860,9 @@ function savedTopicLabels(item: SavedAnswer): string[] {
       (topicId) => publicStewardWorkflowTopic(topicId).displayName
     );
   }
+  if (item.savedType === "public_steward_argument_plan" && item.stewardArgumentPlan) {
+    return [item.stewardArgumentPlan.topic];
+  }
   const outlineTopic = item.grievanceOutlineTopic ?? item.grievanceOutline?.topic;
   return outlineTopic ? [outlineTopic] : [];
 }
@@ -1795,6 +1877,7 @@ export function SavedAnswersPanel(props: {
 }) {
   const cbaSourceState = props.cbaSourceState ?? { status: "unavailable", reason: "cache_missing" as const };
   const [openPlanId, setOpenPlanId] = useState<string | null>(null);
+  const [openStewardPlanId, setOpenStewardPlanId] = useState<string | null>(null);
   const [openOutlineId, setOpenOutlineId] = useState<string | null>(null);
   const [openPacketId, setOpenPacketId] = useState<string | null>(null);
   const [typeFilter, setTypeFilter] = useState<"all" | SavedAnswer["savedType"]>("all");
@@ -1839,6 +1922,7 @@ export function SavedAnswersPanel(props: {
             <option value="all">All types</option>
             <option value="answer">Answer</option>
             <option value="public_argument_plan">Argument Plan</option>
+            <option value="public_steward_argument_plan">Topic Argument Plan</option>
             <option value="public_grievance_outline">Grievance Outline</option>
             <option value="public_steward_packet_plan">Steward Packet</option>
           </select>
@@ -1874,10 +1958,16 @@ export function SavedAnswersPanel(props: {
                 cbaSourceState.status === "available" ? cbaSourceState.source : null
               )
             : null;
+          const stewardPlanEligibility = item.stewardArgumentPlan
+            ? publicStewardArgumentPlanExportEligibility(
+                item.stewardArgumentPlan,
+                cbaSourceState.status === "available" ? cbaSourceState.source : null
+              )
+            : null;
           return (
           <article className="savedCard" key={item.id}>
             <div className="savedHeader">
-              <h3>{item.stewardPacket?.title ?? item.argumentPlan?.title ?? item.grievanceOutline?.title ?? item.question}</h3>
+              <h3>{item.stewardPacket?.title ?? item.stewardArgumentPlan?.title ?? item.argumentPlan?.title ?? item.grievanceOutline?.title ?? item.question}</h3>
               <button
                 className="button iconOnly subtle"
                 type="button"
@@ -1892,6 +1982,8 @@ export function SavedAnswersPanel(props: {
               <span className="badge green">
                 {item.savedType === "public_argument_plan"
                   ? "Argument Plan"
+                  : item.savedType === "public_steward_argument_plan"
+                    ? "Topic Argument Plan"
                   : item.savedType === "public_grievance_outline"
                     ? "Grievance Outline"
                     : item.savedType === "public_steward_packet_plan"
@@ -1899,6 +1991,7 @@ export function SavedAnswersPanel(props: {
                     : "Answer"}
               </span>
               {item.grievanceOutline && <span className="badge">{item.grievanceOutline.topic}</span>}
+              {item.stewardArgumentPlan && <span className="badge">{item.stewardArgumentPlan.topic}</span>}
               {item.stewardPacket && item.stewardPacket.topicSummaries.map((topic) => (
                 <span className="badge" key={topic.topicId}>{topic.title}</span>
               ))}
@@ -1914,6 +2007,8 @@ export function SavedAnswersPanel(props: {
             <p>
               {item.savedType === "public_argument_plan"
                 ? item.argumentPlan?.issueSummary
+                : item.savedType === "public_steward_argument_plan"
+                  ? item.stewardArgumentPlan?.issueSummary
                 : item.savedType === "public_grievance_outline"
                   ? item.grievanceOutline?.issue
                   : item.savedType === "public_steward_packet_plan"
@@ -1923,6 +2018,14 @@ export function SavedAnswersPanel(props: {
             <dl className="savedDetailList" aria-label="Saved answer metadata">
               <dt>Saved type</dt>
               <dd>{item.savedType}</dd>
+              {item.savedType === "public_steward_argument_plan" && item.stewardArgumentPlan && (
+                <>
+                  <dt>Argument-plan topic</dt>
+                  <dd>{item.stewardArgumentPlan.topic}</dd>
+                  <dt>Argument-plan identity</dt>
+                  <dd>{item.stewardArgumentPlan.id}</dd>
+                </>
+              )}
               {item.savedType === "public_grievance_outline" && item.grievanceOutline && (
                 <>
                   <dt>Saved topic</dt>
@@ -2022,6 +2125,32 @@ export function SavedAnswersPanel(props: {
                 )}
               </div>
             )}
+            {item.savedType === "public_steward_argument_plan" && item.stewardArgumentPlan && (
+              <div className="savedPlanActions">
+                <button
+                  aria-expanded={openStewardPlanId === item.id}
+                  className="button primary"
+                  disabled={!stewardPlanEligibility?.eligible}
+                  type="button"
+                  onClick={() => setOpenStewardPlanId((current) => current === item.id ? null : item.id)}
+                >
+                  <ClipboardList size={16} />
+                  {openStewardPlanId === item.id ? "Close saved topic plan" : "Open saved topic plan"}
+                </button>
+                {!stewardPlanEligibility?.eligible && (
+                  <p className="applicabilityWarning" role="alert">
+                    {stewardPlanEligibility?.reason ?? "Saved topic plan is not verified against the current CBA source."}
+                  </p>
+                )}
+                {openStewardPlanId === item.id && stewardPlanEligibility?.eligible && (
+                  <PublicStewardArgumentPlanView
+                    plan={item.stewardArgumentPlan}
+                    onCitationNavigate={props.onCitationNavigate ?? (() => undefined)}
+                    source={cbaSourceState.status === "available" ? cbaSourceState.source : null}
+                  />
+                )}
+              </div>
+            )}
             {item.savedType === "public_grievance_outline" && item.grievanceOutline && (
               <div className="savedPlanActions">
                 <button
@@ -2062,6 +2191,11 @@ export function SavedAnswersPanel(props: {
                 {openPacketId === item.id && packetEligibility?.eligible && (
                   <PublicStewardPacketView
                     onCitationNavigate={props.onCitationNavigate ?? (() => undefined)}
+                    onStepCompletionChange={props.onSaveStewardPacket
+                      ? (stepId, completed) => props.onSaveStewardPacket?.(
+                          publicStewardPacketWithStepCompletion(item.stewardPacket!, stepId, completed)
+                        )
+                      : undefined}
                     onSave={props.onSaveStewardPacket ? () => props.onSaveStewardPacket?.(item.stewardPacket!) : undefined}
                     packet={item.stewardPacket}
                     source={cbaSourceState.status === "available" ? cbaSourceState.source : null}
@@ -2765,6 +2899,11 @@ export function AssistantMessageCard({
   argumentPlan,
   onBuildArgument = () => undefined,
   onSaveArgumentPlan = () => undefined,
+  canBuildStewardArgumentPlan = false,
+  stewardArgumentPlan,
+  stewardArgumentPlanSource,
+  onBuildStewardArgumentPlan = () => undefined,
+  onSaveStewardArgumentPlan = () => undefined,
   canBuildGrievanceOutline = false,
   grievanceOutline,
   grievanceOutlineSource,
@@ -2782,6 +2921,11 @@ export function AssistantMessageCard({
   argumentPlan?: PublicArgumentPlan;
   onBuildArgument?: () => void;
   onSaveArgumentPlan?: () => void;
+  canBuildStewardArgumentPlan?: boolean;
+  stewardArgumentPlan?: PublicStewardArgumentPlan;
+  stewardArgumentPlanSource?: CbaSourceCache | null;
+  onBuildStewardArgumentPlan?: () => void;
+  onSaveStewardArgumentPlan?: () => void;
   canBuildGrievanceOutline?: boolean;
   grievanceOutline?: PublicGrievanceOutline;
   grievanceOutlineSource?: CbaSourceCache | null;
@@ -2908,6 +3052,12 @@ export function AssistantMessageCard({
                 Build cited grievance outline
               </button>
             )}
+            {canBuildStewardArgumentPlan && !stewardArgumentPlan && (
+              <button className="button primary" type="button" onClick={onBuildStewardArgumentPlan}>
+                <ClipboardList size={16} />
+                Build topic argument plan
+              </button>
+            )}
             {canBuildGrievanceOutline && onAddToStewardPacket && (
               <button className="button subtle" type="button" onClick={onAddToStewardPacket}>
                 <Plus size={16} />
@@ -2965,6 +3115,14 @@ export function AssistantMessageCard({
               onCitationNavigate={onCitationNavigate}
               onSave={onSaveGrievanceOutline}
               source={grievanceOutlineSource ?? null}
+            />
+          )}
+          {stewardArgumentPlan && (
+            <PublicStewardArgumentPlanView
+              plan={stewardArgumentPlan}
+              onCitationNavigate={onCitationNavigate}
+              onSave={onSaveStewardArgumentPlan}
+              source={stewardArgumentPlanSource ?? null}
             />
           )}
 
@@ -3170,6 +3328,162 @@ async function copyPublicExportText(text: string): Promise<boolean> {
   }
 }
 
+function printPublicArtifact(elementId: string): boolean {
+  const target = document.getElementById(elementId)?.closest(".publicArgumentPlan");
+  if (!(target instanceof HTMLElement)) return false;
+  target.classList.add("publicPrintTarget");
+  document.body.classList.add("publicPrintActive");
+  try {
+    window.print();
+    return true;
+  } finally {
+    target.classList.remove("publicPrintTarget");
+    document.body.classList.remove("publicPrintActive");
+  }
+}
+
+function PublicStewardArgumentPlanView({
+  plan,
+  source,
+  onCitationNavigate,
+  onSave,
+}: {
+  plan: PublicStewardArgumentPlan;
+  source: CbaSourceCache | null;
+  onCitationNavigate: (citation: Citation) => void;
+  onSave?: () => void;
+}) {
+  const headingId = `steward-argument-plan-${plan.id}`;
+  const [exportNotice, setExportNotice] = useState<string | null>(null);
+  const eligibility = publicStewardArgumentPlanExportEligibility(plan, source);
+  const citationNumber = new Map(plan.citations.map((citation, index) => [citation.id, index + 1]));
+
+  function CitationLinks({ citationIds }: { citationIds: string[] }) {
+    return (
+      <span className="argumentPlanCitationLinks" aria-label="Supporting citations">
+        {citationIds.map((citationId) => {
+          const citation = plan.citations.find((candidate) => candidate.id === citationId);
+          if (!citation) return null;
+          return (
+            <button
+              aria-label={`Open topic argument-plan citation ${citationNumber.get(citationId)}`}
+              className="argumentPlanCitationButton"
+              key={citationId}
+              onClick={() => onCitationNavigate(citation)}
+              type="button"
+            >
+              [{citationNumber.get(citationId)}]
+            </button>
+          );
+        })}
+      </span>
+    );
+  }
+
+  function CitedItems({ items, ordered = false }: {
+    items: CitedGrievanceOutlineItem[];
+    ordered?: boolean;
+  }) {
+    const List = ordered ? "ol" : "ul";
+    return (
+      <List className="argumentPlanList">
+        {items.map((entry) => (
+          <li key={`${entry.text}-${entry.citationIds.join("-")}`}>
+            <span>{entry.text}</span>
+            <CitationLinks citationIds={entry.citationIds} />
+          </li>
+        ))}
+      </List>
+    );
+  }
+
+  async function copyPlan() {
+    const current = publicStewardArgumentPlanExportEligibility(plan, source);
+    if (!current.eligible) return setExportNotice(current.reason);
+    const copied = await copyPublicExportText(publicStewardArgumentPlanToText(plan));
+    setExportNotice(copied ? "Copied current verified topic argument plan as plain text." : "Copy was blocked by the browser. The plan was not exported.");
+  }
+
+  function downloadPlan() {
+    const current = publicStewardArgumentPlanExportEligibility(plan, source);
+    if (!current.eligible) return setExportNotice(current.reason);
+    const blob = new Blob([publicStewardArgumentPlanToMarkdown(plan)], { type: "text/markdown;charset=utf-8" });
+    const url = URL.createObjectURL(blob);
+    const anchor = document.createElement("a");
+    anchor.href = url;
+    anchor.download = `kia-public-${plan.topicId}-argument-plan.md`;
+    anchor.click();
+    URL.revokeObjectURL(url);
+    setExportNotice("Downloaded current verified topic argument plan as Markdown.");
+  }
+
+  return (
+    <section className="publicArgumentPlan publicStewardArgumentPlan" aria-labelledby={headingId}>
+      <div className="argumentPlanHeader">
+        <div>
+          <span className="sectionKicker">Topic-grounded public CBA argument plan</span>
+          <h3 id={headingId}>{plan.title}</h3>
+        </div>
+        <span className={eligibility.eligible ? "statusPill ok" : "statusPill warning"}>
+          {eligibility.eligible ? `${plan.citations.length} verified citations` : "plan blocked"}
+        </span>
+      </div>
+      <p className="argumentPlanPrivateWarning" role="note"><AlertTriangle size={16} /><strong>{plan.privateCaseWarning}</strong></p>
+      <div className="argumentPlanMeta">
+        <span>Saved type: {plan.savedType}</span><span>Topic: {plan.topicId}</span>
+        <span>Provider: {plan.provider}</span><span>Prompt: {plan.promptVersion}</span>
+        <span>Source instance: {plan.sourceInstanceIds.join(", ")}</span><span>Content identity: {plan.contentIdentity}</span>
+      </div>
+      <div className="compactActions outlineExportActions">
+        <button className="button subtle" disabled={!eligibility.eligible} onClick={copyPlan} type="button"><ClipboardList size={16} />Copy plan as plain text</button>
+        <button className="button subtle" disabled={!eligibility.eligible} onClick={downloadPlan} type="button"><Download size={16} />Download plan as Markdown</button>
+        {onSave && <button className="button primary" disabled={!eligibility.eligible} onClick={onSave} type="button"><Save size={16} />Save topic argument plan</button>}
+        <span className={eligibility.eligible ? "badge green" : "badge red"}>{eligibility.eligible ? "verified-current export ready" : "export blocked"}</span>
+      </div>
+      {exportNotice && <p className="saveNotice" role="status">{exportNotice}</p>}
+      {!eligibility.eligible && <p className="applicabilityWarning" role="alert">{eligibility.reason}</p>}
+      <section className="argumentPlanSection"><h4>1. Issue</h4><p>{plan.issueSummary}</p></section>
+      <section className="argumentPlanSection"><h4>2. Governing contract language</h4><CitedItems items={plan.governingContractLanguage} /></section>
+      <section className="argumentPlanSection"><h4>3. Facts to confirm</h4><ul className="argumentPlanList">{plan.factsToConfirm.map((entry) => <li key={entry}>{entry}</li>)}</ul></section>
+      <section className="argumentPlanSection"><h4>4. Structured evidence or record requests</h4><EvidenceRequestRows citations={plan.citations} items={plan.evidenceRequests} onCitationNavigate={onCitationNavigate} /></section>
+      <section className="argumentPlanSection"><h4>5. Questions for management</h4><ul className="argumentPlanList">{plan.managementQuestions.map((entry) => <li key={entry}>{entry}</li>)}</ul></section>
+      <section className="argumentPlanSection"><h4>6. Step-by-step argument</h4><CitedItems items={plan.argumentSteps} ordered /></section>
+      <section className="argumentPlanSection"><h4>7. Procedure and timing cautions</h4><CitedItems items={plan.procedureCaveats} /></section>
+      <section className="argumentPlanSection argumentPlanEscalation"><h4>8. Escalation readiness</h4><CitedItems items={plan.escalationReadiness} /></section>
+      <section className="argumentPlanSection"><h4>9. Limitations and unsupported scope</h4><CitedItems items={plan.limitations} /></section>
+    </section>
+  );
+}
+
+function EvidenceRequestRows({
+  citations,
+  items,
+  onCitationNavigate,
+}: {
+  citations: Citation[];
+  items: PublicGrievanceOutline["evidenceRequests"];
+  onCitationNavigate: (citation: Citation) => void;
+}) {
+  return (
+    <div className="evidenceRequestList">
+      {items.map((entry) => (
+        <article className="evidenceRequestRow" key={`${entry.document}-${entry.requestFrom}`}>
+          <p><strong>Document or record</strong><span>{entry.document}</span></p>
+          <p><strong>Request from</strong><span>{entry.requestFrom}</span></p>
+          <p><strong>Why it matters</strong><span>{entry.whyItMatters}</span></p>
+          <span className="argumentPlanCitationLinks" aria-label="Evidence request citations">
+            {entry.citationIds.map((citationId) => {
+              const citation = citations.find((candidate) => candidate.id === citationId);
+              if (!citation) return null;
+              return <button className="argumentPlanCitationButton" key={citationId} onClick={() => onCitationNavigate(citation)} type="button">[{citations.indexOf(citation) + 1}]</button>;
+            })}
+          </span>
+        </article>
+      ))}
+    </div>
+  );
+}
+
 function PublicGrievanceOutlineView({
   outline,
   onCitationNavigate,
@@ -3214,6 +3528,16 @@ function PublicGrievanceOutlineView({
     anchor.click();
     URL.revokeObjectURL(url);
     setExportNotice("Downloaded current verified outline as Markdown.");
+  }
+
+  function printOutline() {
+    const current = publicGrievanceOutlineExportEligibility(outline, source ?? null);
+    if (!current.eligible) return setExportNotice(current.reason);
+    setExportNotice(
+      printPublicArtifact(headingId)
+        ? "Opened the browser print dialog for the current verified outline."
+        : "Print was blocked because the verified outline view was unavailable."
+    );
   }
 
   function CitationLinks({ citationIds }: { citationIds: string[] }) {
@@ -3290,6 +3614,10 @@ function PublicGrievanceOutlineView({
           <Download size={16} />
           Download outline as Markdown
         </button>
+        <button className="button subtle" type="button" onClick={printOutline}>
+          <Printer size={16} />
+          Print verified outline
+        </button>
         <span className={exportEligibility.eligible ? "badge green" : "badge red"}>
           {exportEligibility.eligible ? "verified-current export ready" : "export blocked"}
         </span>
@@ -3314,7 +3642,7 @@ function PublicGrievanceOutlineView({
       </section>
       <section className="argumentPlanSection">
         <h4>5. Evidence or records to request</h4>
-        <CitedItems items={outline.evidenceToRequest} />
+        <EvidenceRequestRows citations={outline.citations} items={outline.evidenceRequests} onCitationNavigate={onCitationNavigate} />
       </section>
       <section className="argumentPlanSection">
         <h4>6. Questions to ask management</h4>
@@ -3371,12 +3699,15 @@ function PublicStewardPacketView({
   source,
   onCitationNavigate,
   onSave,
+  onStepCompletionChange,
 }: {
   packet: PublicStewardPacket;
   source: CbaSourceCache | null;
   onCitationNavigate: (citation: Citation) => void;
   onSave?: () => void;
+  onStepCompletionChange?: (stepId: PublicStewardPacketStep["stepId"], completed: boolean) => void;
 }) {
+  const headingId = `packet-${packet.id}`;
   const [exportNotice, setExportNotice] = useState<string | null>(null);
   const eligibility = publicStewardPacketExportEligibility(packet, source);
 
@@ -3408,6 +3739,16 @@ function PublicStewardPacketView({
     anchor.click();
     URL.revokeObjectURL(url);
     setExportNotice("Downloaded current verified steward packet as Markdown.");
+  }
+
+  function printPacket() {
+    const current = publicStewardPacketExportEligibility(packet, source);
+    if (!current.eligible) return setExportNotice(current.reason);
+    setExportNotice(
+      printPublicArtifact(headingId)
+        ? "Opened the browser print dialog for the current verified steward packet."
+        : "Print was blocked because the verified packet view was unavailable."
+    );
   }
 
   function PlainList({ values }: { values: string[] }) {
@@ -3444,11 +3785,11 @@ function PublicStewardPacketView({
   }
 
   return (
-    <section className="publicArgumentPlan publicStewardPacket" aria-labelledby={`packet-${packet.id}`}>
+    <section className="publicArgumentPlan publicStewardPacket" aria-labelledby={headingId}>
       <div className="argumentPlanHeader">
         <div>
           <span className="sectionKicker">Deterministic public steward packet</span>
-          <h3 id={`packet-${packet.id}`}>{packet.title}</h3>
+          <h3 id={headingId}>{packet.title}</h3>
         </div>
         <span className={eligibility.eligible ? "statusPill ok" : "statusPill warning"}>
           {eligibility.eligible ? `${packet.citations.length} verified citations` : "packet blocked"}
@@ -3475,6 +3816,10 @@ function PublicStewardPacketView({
         <button className="button subtle" disabled={!eligibility.eligible} onClick={downloadPacket} type="button">
           <Download size={16} />
           Download packet as Markdown
+        </button>
+        <button className="button subtle" disabled={!eligibility.eligible} onClick={printPacket} type="button">
+          <Printer size={16} />
+          Print verified packet
         </button>
         {onSave && (
           <button className="button primary" disabled={!eligibility.eligible} onClick={onSave} type="button">
@@ -3506,30 +3851,46 @@ function PublicStewardPacketView({
       </section>
       <section className="argumentPlanSection">
         <h4>5. Combined evidence-category checklist</h4>
-        <CitedList values={packet.evidenceChecklist} />
+        <EvidenceRequestRows citations={packet.citations} items={packet.structuredEvidenceChecklist} onCitationNavigate={onCitationNavigate} />
       </section>
       <section className="argumentPlanSection">
-        <h4>6. Combined management-question checklist</h4>
+        <h4>6. Ordered preparation and completion steps</h4>
+        <div className="packetStepList">
+          {packet.sequencedSteps.map((step) => (
+            <label className="packetStepRow" key={step.stepId}>
+              <input
+                checked={step.completed}
+                disabled={!onStepCompletionChange}
+                onChange={(event) => onStepCompletionChange?.(step.stepId, event.target.checked)}
+                type="checkbox"
+              />
+              <span>{step.label}</span>
+            </label>
+          ))}
+        </div>
+      </section>
+      <section className="argumentPlanSection">
+        <h4>7. Combined management-question checklist</h4>
         <PlainList values={packet.managementQuestions} />
       </section>
       <section className="argumentPlanSection">
-        <h4>7. Conditional Step 1 preparation outline</h4>
+        <h4>8. Conditional Step 1 preparation outline</h4>
         <CitedList values={packet.stepOnePreparation} />
       </section>
       <section className="argumentPlanSection">
-        <h4>8. Procedural and timeliness caveats</h4>
+        <h4>9. Procedural and timeliness caveats</h4>
         <CitedList values={packet.procedureCaveats} />
       </section>
       <section className="argumentPlanSection argumentPlanEscalation">
-        <h4>9. Step 2 or escalation readiness checklist</h4>
+        <h4>10. Step 2 or escalation readiness checklist</h4>
         <CitedList values={packet.escalationReadiness} />
       </section>
       <section className="argumentPlanSection">
-        <h4>10. Limitations and unsupported scope</h4>
+        <h4>11. Limitations and unsupported scope</h4>
         <CitedList values={packet.limitations} />
       </section>
       <section className="argumentPlanSection">
-        <h4>11. Complete verified-current source appendix</h4>
+        <h4>12. Complete verified-current source appendix</h4>
         <ol className="argumentPlanSources">
           {packet.sourceAppendix.map((entry) => (
             <li key={entry.citationId}>

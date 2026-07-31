@@ -10,6 +10,7 @@ import {
   buildPublicGrievanceOutline,
   publicGrievanceOutlineExportEligibility,
   type CitedGrievanceOutlineItem,
+  type EvidenceRequestItem,
   type PublicGrievanceOutline,
 } from "@/lib/publicGrievanceOutline";
 import {
@@ -45,6 +46,20 @@ export interface PublicStewardPacketSourceAppendixItem {
   verificationState: "verified_current";
 }
 
+export interface PublicStewardPacketStep {
+  stepId:
+    | "confirm-topic-scope"
+    | "verify-citations"
+    | "confirm-facts-evidence"
+    | "prepare-management-questions"
+    | "frame-step-one-argument"
+    | "confirm-procedure-timing"
+    | "prepare-escalation"
+    | "export-save";
+  label: string;
+  completed: boolean;
+}
+
 export interface PublicStewardPacket {
   id: string;
   contentIdentity: string;
@@ -57,11 +72,13 @@ export interface PublicStewardPacket {
   overlapConflictNotes: string[];
   factsToConfirm: string[];
   evidenceChecklist: CitedGrievanceOutlineItem[];
+  structuredEvidenceChecklist: EvidenceRequestItem[];
   managementQuestions: string[];
   stepOnePreparation: CitedGrievanceOutlineItem[];
   procedureCaveats: CitedGrievanceOutlineItem[];
   escalationReadiness: CitedGrievanceOutlineItem[];
   limitations: CitedGrievanceOutlineItem[];
+  sequencedSteps: PublicStewardPacketStep[];
   citations: Citation[];
   sourceAppendix: PublicStewardPacketSourceAppendixItem[];
   outlines: PublicGrievanceOutline[];
@@ -89,6 +106,52 @@ function uniqueCitedItems(values: CitedGrievanceOutlineItem[]): CitedGrievanceOu
     });
   }
   return [...byText.values()];
+}
+
+function uniqueEvidenceRequests(values: EvidenceRequestItem[]): EvidenceRequestItem[] {
+  const byDocument = new Map<string, EvidenceRequestItem>();
+  for (const value of values) {
+    const key = `${value.document}|${value.requestFrom}|${value.whyItMatters}`;
+    const existing = byDocument.get(key);
+    byDocument.set(key, {
+      ...value,
+      citationIds: [...new Set([...(existing?.citationIds ?? []), ...value.citationIds])].sort(),
+    });
+  }
+  return [...byDocument.values()];
+}
+
+export function defaultPublicStewardPacketSteps(): PublicStewardPacketStep[] {
+  return [
+    { stepId: "confirm-topic-scope", label: "Confirm the selected topic scope and separately verified local authority.", completed: false },
+    { stepId: "verify-citations", label: "Verify every governing citation against the current bounded CBA source.", completed: false },
+    { stepId: "confirm-facts-evidence", label: "Confirm the fact categories and plan the evidence or record requests.", completed: false },
+    { stepId: "prepare-management-questions", label: "Prepare the case-neutral questions for management.", completed: false },
+    { stepId: "frame-step-one-argument", label: "Frame the conditional Step 1 argument without assuming a violation or outcome.", completed: false },
+    { stepId: "confirm-procedure-timing", label: "Confirm the applicable procedure and timing through the proper union process.", completed: false },
+    { stepId: "prepare-escalation", label: "Prepare escalation only after facts, citations, contentions, and remedy category are ready.", completed: false },
+    { stepId: "export-save", label: "Re-check eligibility, then export or Save the verified-current packet.", completed: false },
+  ];
+}
+
+export function publicStewardPacketWithStepCompletion(
+  packet: PublicStewardPacket,
+  stepId: PublicStewardPacketStep["stepId"],
+  completed: boolean
+): PublicStewardPacket {
+  return {
+    ...packet,
+    sequencedSteps: packet.sequencedSteps.map((step) =>
+      step.stepId === stepId ? { ...step, completed } : step
+    ),
+  };
+}
+
+export function publicStewardPacketSaveFingerprint(packet: PublicStewardPacket): string {
+  return sha256Hex(canonicalJson({
+    contentIdentity: packet.contentIdentity,
+    completion: packet.sequencedSteps.map(({ stepId, completed }) => ({ stepId, completed })),
+  }));
 }
 
 function sortedTopicIds(
@@ -243,6 +306,14 @@ export function buildPublicStewardPacket(input: {
         }))
       )
     ),
+    structuredEvidenceChecklist: uniqueEvidenceRequests(
+      currentOutlines.flatMap((outline) =>
+        outline.evidenceRequests.map((entry) => ({
+          ...entry,
+          document: `${outline.topic}: ${entry.document}`,
+        }))
+      )
+    ),
     managementQuestions: uniqueStrings(
       currentOutlines.flatMap((outline) =>
         outline.questionsForManagement.map((entry) => `${outline.topic}: ${entry}`)
@@ -274,6 +345,7 @@ export function buildPublicStewardPacket(input: {
         citationIds: citations.map((citation) => citation.id),
       },
     ]),
+    sequencedSteps: defaultPublicStewardPacketSteps(),
     citations,
     sourceAppendix: citations.map((citation) => ({
       citationId: citation.id,
@@ -300,6 +372,7 @@ export function buildPublicStewardPacket(input: {
     id,
     contentIdentity: sha256Hex(JSON.stringify({
       ...core,
+      sequencedSteps: core.sequencedSteps.map(({ stepId, label }) => ({ stepId, label })),
       outlines: currentOutlines.map((outline) => outline.contentIdentity),
       citations: identityInput.citations,
     })),
@@ -367,13 +440,18 @@ export function publicStewardPacketToText(packet: PublicStewardPacket): string {
     numbered("2. Governing public articles and verified citations", packet.governingContractLanguage.map((entry) => entry.text)),
     numbered("3. Cross-topic overlap or conflict notes", packet.overlapConflictNotes),
     numbered("4. Combined facts-to-confirm checklist", packet.factsToConfirm),
-    numbered("5. Combined evidence-category checklist", packet.evidenceChecklist.map((entry) => entry.text)),
-    numbered("6. Combined management-question checklist", packet.managementQuestions),
-    numbered("7. Conditional Step 1 preparation outline", packet.stepOnePreparation.map((entry) => entry.text)),
-    numbered("8. Procedural and timeliness caveats", packet.procedureCaveats.map((entry) => entry.text)),
-    numbered("9. Step 2 or escalation readiness checklist", packet.escalationReadiness.map((entry) => entry.text)),
-    numbered("10. Limitations and unsupported scope", packet.limitations.map((entry) => entry.text)),
-    numbered("11. Complete verified-current source appendix", packet.sourceAppendix.map(
+    numbered("5. Combined evidence-category checklist", packet.structuredEvidenceChecklist.map(
+      (entry) => `${entry.document} Request from: ${entry.requestFrom} Why it matters: ${entry.whyItMatters}`
+    )),
+    numbered("6. Ordered preparation and completion steps", packet.sequencedSteps.map(
+      (step) => `${step.completed ? "[x]" : "[ ]"} ${step.label}`
+    )),
+    numbered("7. Combined management-question checklist", packet.managementQuestions),
+    numbered("8. Conditional Step 1 preparation outline", packet.stepOnePreparation.map((entry) => entry.text)),
+    numbered("9. Procedural and timeliness caveats", packet.procedureCaveats.map((entry) => entry.text)),
+    numbered("10. Step 2 or escalation readiness checklist", packet.escalationReadiness.map((entry) => entry.text)),
+    numbered("11. Limitations and unsupported scope", packet.limitations.map((entry) => entry.text)),
+    numbered("12. Complete verified-current source appendix", packet.sourceAppendix.map(
       (source) => `Article ${source.articleNumber} / ${source.section} / ${source.paragraphId} / ${source.verificationState} / source instance ${source.sourceInstanceId} / paragraph ${source.paragraphContentSha256} / anchor ${source.citationAnchorSha256}`
     )),
   ].join("\n\n");
@@ -398,13 +476,18 @@ export function publicStewardPacketToMarkdown(packet: PublicStewardPacket): stri
     section("2. Governing public articles and verified citations", packet.governingContractLanguage.map((entry) => entry.text)),
     section("3. Cross-topic overlap or conflict notes", packet.overlapConflictNotes),
     section("4. Combined facts-to-confirm checklist", packet.factsToConfirm),
-    section("5. Combined evidence-category checklist", packet.evidenceChecklist.map((entry) => entry.text)),
-    section("6. Combined management-question checklist", packet.managementQuestions),
-    section("7. Conditional Step 1 preparation outline", packet.stepOnePreparation.map((entry) => entry.text)),
-    section("8. Procedural and timeliness caveats", packet.procedureCaveats.map((entry) => entry.text)),
-    section("9. Step 2 or escalation readiness checklist", packet.escalationReadiness.map((entry) => entry.text)),
-    section("10. Limitations and unsupported scope", packet.limitations.map((entry) => entry.text)),
-    section("11. Complete verified-current source appendix", packet.sourceAppendix.map(
+    section("5. Combined evidence-category checklist", packet.structuredEvidenceChecklist.map(
+      (entry) => `**Document or record:** ${entry.document}  \n**Request from:** ${entry.requestFrom}  \n**Why it matters:** ${entry.whyItMatters}`
+    )),
+    section("6. Ordered preparation and completion steps", packet.sequencedSteps.map(
+      (step) => `${step.completed ? "[x]" : "[ ]"} ${step.label}`
+    )),
+    section("7. Combined management-question checklist", packet.managementQuestions),
+    section("8. Conditional Step 1 preparation outline", packet.stepOnePreparation.map((entry) => entry.text)),
+    section("9. Procedural and timeliness caveats", packet.procedureCaveats.map((entry) => entry.text)),
+    section("10. Step 2 or escalation readiness checklist", packet.escalationReadiness.map((entry) => entry.text)),
+    section("11. Limitations and unsupported scope", packet.limitations.map((entry) => entry.text)),
+    section("12. Complete verified-current source appendix", packet.sourceAppendix.map(
       (source) => `Article ${source.articleNumber} / ${source.section} / ${source.paragraphId} / ${source.verificationState} / source instance ${source.sourceInstanceId} / paragraph ${source.paragraphContentSha256} / anchor ${source.citationAnchorSha256}`
     )),
   ].join("\n\n");

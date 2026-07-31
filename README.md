@@ -1,12 +1,23 @@
+## Public Steward Workflow Platform Bundle 3 Topic Argument Plans and Evidence Checklists
+
+- Phase: `KIA-Stick-public-steward-workflow-platform-bundle-3-topic-argument-plans-and-evidence-checklists`. Authorization: `AUTHORIZE_KIA_PUBLIC_STEWARD_WORKFLOW_PLATFORM_BUNDLE_3_IMPLEMENTATION`.
+- Implements cited step-by-step argument plans for all 10 existing public steward workflow topics, structured evidence/document-request checklists, stable packet sequencing with completion tracking, escalation guidance bounded to the existing verified CBA sources, and native print views for eligible outlines and packets.
+- Routing and the 10-topic registry are unchanged. The implementation reuses the existing shared matcher, CBA answer, grievance-outline, packet, Saved, citation-integrity, and export architecture; stale or missing citation anchors fail closed.
+- Saved records include the new topic argument-plan type. Legacy outlines and packets migrate without data loss; legacy packets receive the stable step sequence with every step initially incomplete.
+- Public-source and privacy boundaries remain unchanged: no contact directory, new topic/source, source sync, private data, file upload/import, OCR, embeddings, vector database, external AI, or package mutation.
+- Durable implementation proof: `/home/mint/kia-stick-local-proofs/proof_kia_stick_public_steward_workflow_platform_bundle_3_implementation_20260731T164035Z`. Code/build/repository validation is `PASS`, browser automation is `WARN_UNAVAILABLE`, and operator manual QA is `PENDING_OPERATOR_REVIEW`; closeout, accepted-state refresh, and push have not occurred.
+- The current accepted pushed capability remains `Public Steward Workflow Platform Bundle 2 and Employee Claims Copy Repair at 3baedc9` (`3baedc9c327fbb7a528706ec442a63f88172e425`), with repository-recording/latest-closeout identity `b23810834bd02eeef7cd0cbf03d8ab274d08917b`.
+- queue-015 and v0.9.12C remain blocked; Next/PostCSS remains `WARN_SAFE_NEXT_TARGET_UNCLEAR`; product/package remain `0.7.0`.
+
 ## Public Steward Workflow Platform Bundle 3 Planning and Secure Knowledge Boundary
 
 - Phase: `KIA-Stick-public-steward-workflow-platform-bundle-3-planning-and-secure-knowledge-boundary`. Status: `PLAN ONLY` — no runtime, routing, Saved, export, source, or accepted-state change.
 - The current accepted pushed capability remains unchanged: `Public Steward Workflow Platform Bundle 2 and Employee Claims Copy Repair at 3baedc9` (`3baedc9c327fbb7a528706ec442a63f88172e425`), repository-recording/latest-closeout `b23810834bd02eeef7cd0cbf03d8ab274d08917b`.
 - New planning-only documents: `docs/public-steward-workflow-platform-bundle-3-current-state-audit.md`, `docs/public-steward-workflow-platform-bundle-3-candidate-matrix.md`, `docs/public-source-sufficiency-matrix-v2.md`, `docs/user-owned-knowledge-base-secure-file-transfer-gate-plan.md`, `docs/public-steward-workflow-platform-bundle-3-implementation-packet.md`, `docs/public-steward-workflow-platform-bundle-3-decision.md`.
-- Selected Bundle 3 scope (not yet implemented): per-topic step-by-step argument plans, structured evidence/document-request checklists, packet sequencing and completion tracking, escalation-guidance strengthening within existing sources only, and print-friendly export polish — all sourced entirely from citations the registry already anchors, zero new source class, zero private data.
+- Selected Bundle 3 scope (implemented locally only in the later phase above): per-topic step-by-step argument plans, structured evidence/document-request checklists, packet sequencing and completion tracking, escalation-guidance strengthening within existing sources only, and print-friendly export polish — all sourced entirely from citations the registry already anchors, zero new source class, zero private data.
 - Explicitly deferred/excluded: public contact-directory architecture (no verified source exists), promotion of any `research_only` topic, reusable public-only workflow templates (deferred to a future bundle), and all private-data/secure-file-transfer capability.
 - Secure file-transfer and user-owned knowledge-base work is architecture-only in this phase; private-data implementation remains blocked pending a future, separately-approved sensitive-data gate sequence.
-- This planning phase is local-only: validation `PASS`, pushed `no`, manual QA `PENDING_OPERATOR_REVIEW`.
+- This planning phase is local-only: validation `PASS`, pushed `no`, manual QA `PASS`; operator-QA proof: `/home/mint/kia-stick-local-proofs/proof_kia_stick_bundle_3_planning_secure_knowledge_boundary_20260731T131020Z/operator_qa_pass_recording_20260731T162118Z`.
 - queue-015 and v0.9.12C remain blocked; Next/PostCSS remains `WARN_SAFE_NEXT_TARGET_UNCLEAR`; product/package remain `0.7.0`.
 
 ## Public Steward Workflow Platform Bundle 2 Final Post-Push Accepted-State Refresh to b238108

@@ -9,7 +9,9 @@ import {
 import {
   buildPublicStewardPacket,
   PUBLIC_STEWARD_PACKET_PRIVATE_WARNING,
+  defaultPublicStewardPacketSteps,
   publicStewardPacketExportEligibility,
+  publicStewardPacketWithStepCompletion,
   publicStewardPacketToMarkdown,
   publicStewardPacketToText,
 } from "@/lib/publicStewardPacket";
@@ -71,6 +73,11 @@ describe("public steward packet workspace", () => {
         entry.citationAnchorSha256.length === 64
     )).toBe(true);
     expect(result.privateCaseWarning).toBe(PUBLIC_STEWARD_PACKET_PRIVATE_WARNING);
+    expect(result.structuredEvidenceChecklist.length).toBeGreaterThan(0);
+    expect(result.structuredEvidenceChecklist.every(
+      (entry) => entry.document && entry.requestFrom && entry.whyItMatters && entry.citationIds.length > 0
+    )).toBe(true);
+    expect(result.sequencedSteps).toEqual(defaultPublicStewardPacketSteps());
     expect(publicStewardPacketExportEligibility(result, cbaSource)).toEqual({ eligible: true });
   });
 
@@ -119,6 +126,7 @@ describe("public steward packet workspace", () => {
       "Cross-topic overlap or conflict notes",
       "Combined facts-to-confirm checklist",
       "Combined evidence-category checklist",
+      "Ordered preparation and completion steps",
       "Combined management-question checklist",
       "Conditional Step 1 preparation outline",
       "Procedural and timeliness caveats",
@@ -138,6 +146,13 @@ describe("public steward packet workspace", () => {
     expect(markdown).not.toMatch(malformedEmployeeArticlePattern);
     expect(markdown).not.toMatch(/localStorage|cookie|proof_|\/home\/|process\.env|private path/i);
     expect(markdown).not.toMatch(/\b(member name|employee id|medical diagnosis|grievance file)\b/i);
+
+    const completed = publicStewardPacketWithStepCompletion(current, "verify-citations", true);
+    expect(completed.id).toBe(current.id);
+    expect(completed.contentIdentity).toBe(current.contentIdentity);
+    expect(completed.sequencedSteps.find((step) => step.stepId === "verify-citations")?.completed).toBe(true);
+    expect(publicStewardPacketExportEligibility(completed, cbaSource)).toEqual({ eligible: true });
+    expect(publicStewardPacketToText(completed)).toContain("[x] Verify every governing citation");
 
     const stale = structuredClone(current);
     stale.outlines[0].citations[0].citationAnchorSha256 = "0".repeat(64);
@@ -159,6 +174,29 @@ describe("public steward packet workspace", () => {
       topicIds: ["annual_leave", "overtime", "sick_leave", "safety_health"],
       runtimeVersion,
     })).toBeNull();
+  });
+
+  it("migrates pre-Bundle-3 packets with structured evidence and all steps incomplete", () => {
+    const current = packet(["annual_leave", "overtime"]);
+    const record = createSavedStewardPacketRecord({
+      packet: current,
+      timestamp: "2026-07-25T16:05:00.000Z",
+    });
+    const legacy = structuredClone(record) as unknown as {
+      stewardPacket: {
+        structuredEvidenceChecklist?: unknown;
+        sequencedSteps?: unknown;
+      };
+    };
+    delete legacy.stewardPacket.structuredEvidenceChecklist;
+    delete legacy.stewardPacket.sequencedSteps;
+
+    const migrated = migrateSavedAnswers([legacy]);
+    expect(migrated).toHaveLength(1);
+    expect(migrated[0].stewardPacket?.structuredEvidenceChecklist.length).toBeGreaterThan(0);
+    expect(migrated[0].stewardPacket?.sequencedSteps).toEqual(defaultPublicStewardPacketSteps());
+    expect(migrated[0].stewardPacket?.sequencedSteps.every((step) => !step.completed)).toBe(true);
+    expect(migrateSavedAnswers(structuredClone(migrated))).toEqual(migrated);
   });
 
   it("renders supported and research-only discovery, obvious workflow actions, packet controls, and Saved filters", () => {
@@ -209,6 +247,6 @@ describe("public steward packet workspace", () => {
     expect(component).toContain("function copyPublicExportText");
     expect(component).toContain('document.execCommand("copy")');
     expect(component).toContain("await navigator.clipboard?.writeText(text)");
-    expect(component.match(/copyPublicExportText\(/g)).toHaveLength(3);
+    expect(component.match(/copyPublicExportText\(/g)).toHaveLength(4);
   });
 });

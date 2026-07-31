@@ -47,6 +47,16 @@ export interface CitedGrievanceOutlineItem {
   citationIds: string[];
 }
 
+export interface EvidenceRequestItem {
+  document: string;
+  requestFrom: string;
+  whyItMatters: string;
+  citationIds: string[];
+}
+
+export const PUBLIC_STEWARD_CONTACT_DIRECTORY_WARNING =
+  "A verified national or official contact-directory source is not included. Use the proper local union process and do not rely on unverified contact information." as const;
+
 export interface PublicGrievanceOutline {
   id: string;
   contentIdentity: string;
@@ -61,6 +71,7 @@ export interface PublicGrievanceOutline {
   elementsToEstablish: CitedGrievanceOutlineItem[];
   factsToConfirm: string[];
   evidenceToRequest: CitedGrievanceOutlineItem[];
+  evidenceRequests: EvidenceRequestItem[];
   questionsForManagement: string[];
   stepOneArgument: CitedGrievanceOutlineItem[];
   possibleRemedies: CitedGrievanceOutlineItem[];
@@ -340,27 +351,55 @@ function item(text: string, citations: Citation[]): CitedGrievanceOutlineItem {
   return { text, citationIds: [...new Set(citations.map((citation) => citation.id))] };
 }
 
+export function evidenceRequestsFromCitedItems(
+  items: CitedGrievanceOutlineItem[]
+): EvidenceRequestItem[] {
+  return items.map((entry) => ({
+    document: entry.text,
+    requestFrom: /LMOU|handbook|manual|local instruction|practice/i.test(entry.text)
+      ? "The custodian of the asserted local authority, through the proper union process."
+      : "Management or the appropriate records custodian, through the proper union process.",
+    whyItMatters:
+      "Use this case-neutral category to compare confirmed facts with the verified public contract language. Its existence, custody, and contents are not assumed.",
+    citationIds: [...new Set(entry.citationIds)].sort(),
+  }));
+}
+
 type PublicGrievanceOutlineCore = Omit<
   PublicGrievanceOutline,
-  "id" | "contentIdentity" | "createdAt"
+  "id" | "contentIdentity" | "createdAt" | "evidenceRequests"
 >;
 
 function finalizePublicGrievanceOutline(
   core: PublicGrievanceOutlineCore,
   createdAt?: string
 ): PublicGrievanceOutline {
+  const escalationCitationIds = [...new Set(
+    core.escalationReadiness.flatMap((entry) => entry.citationIds)
+  )].sort();
+  const normalizedCore = {
+    ...core,
+    evidenceRequests: evidenceRequestsFromCitedItems(core.evidenceToRequest),
+    escalationReadiness: [
+      ...core.escalationReadiness,
+      {
+        text: PUBLIC_STEWARD_CONTACT_DIRECTORY_WARNING,
+        citationIds: escalationCitationIds,
+      },
+    ],
+  };
   const stableOutlineIdentity = sha256Hex(
     canonicalJson({
-      sourceIds: core.citations.map((citation) => citation.sourceId ?? ""),
-      template: core.template,
-      topic: core.topic,
-      type: core.type,
+      sourceIds: normalizedCore.citations.map((citation) => citation.sourceId ?? ""),
+      template: normalizedCore.template,
+      topic: normalizedCore.topic,
+      type: normalizedCore.type,
     })
   );
   const contentIdentity = sha256Hex(
     JSON.stringify({
-      ...core,
-      citations: core.citations.map((citation) => ({
+      ...normalizedCore,
+      citations: normalizedCore.citations.map((citation) => ({
         citationAnchorSha256: citation.citationAnchorSha256 ?? "",
         citationVerificationState: citation.citationVerificationState ?? "",
         id: citation.id,
@@ -370,7 +409,7 @@ function finalizePublicGrievanceOutline(
     })
   );
   return {
-    ...core,
+    ...normalizedCore,
     id: `public-grievance-outline-${stableOutlineIdentity.slice(0, 16)}`,
     contentIdentity,
     createdAt: createdAt ?? new Date().toISOString(),
@@ -1023,7 +1062,12 @@ export function publicGrievanceOutlineToText(outline: PublicGrievanceOutline): s
     render("2. Governing contract language", outline.governingContractLanguage),
     render("3. Elements that must be established", outline.elementsToEstablish),
     render("4. Facts still to confirm", outline.factsToConfirm),
-    render("5. Evidence or records to request", outline.evidenceToRequest),
+    render(
+      "5. Evidence or records to request",
+      outline.evidenceRequests.map(
+        (entry) => `${entry.document} Request from: ${entry.requestFrom} Why it matters: ${entry.whyItMatters}`
+      )
+    ),
     render("6. Questions to ask management", outline.questionsForManagement),
     render("7. Step 1 argument outline", outline.stepOneArgument),
     render("8. Possible remedy categories", outline.possibleRemedies),
@@ -1079,7 +1123,11 @@ export function publicGrievanceOutlineToMarkdown(
     `## 2. Governing contract language\n\n${citedList(outline.governingContractLanguage)}`,
     `## 3. Elements that must be established\n\n${citedList(outline.elementsToEstablish)}`,
     `## 4. Facts still to confirm\n\n${plainList(outline.factsToConfirm)}`,
-    `## 5. Evidence or records to request\n\n${citedList(outline.evidenceToRequest)}`,
+    `## 5. Evidence or records to request\n\n${outline.evidenceRequests.map((entry) =>
+      `- **Document or record:** ${entry.document}\n  - **Request from:** ${entry.requestFrom}\n  - **Why it matters:** ${entry.whyItMatters} ${entry.citationIds
+        .map((id) => `[${citationNumbers.get(id) ?? "?"}]`)
+        .join(" ")}`
+    ).join("\n")}`,
     `## 6. Questions to ask management\n\n${plainList(outline.questionsForManagement)}`,
     `## 7. Step 1 argument outline\n\n${citedList(outline.stepOneArgument)}`,
     `## 8. Conditional remedy framework\n\n${citedList(outline.possibleRemedies)}`,

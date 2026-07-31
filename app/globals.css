@@ -644,6 +644,69 @@ a {
   line-height: 1.45;
 }
 
+.evidenceRequestList,
+.packetStepList {
+  display: grid;
+  gap: 8px;
+  margin-top: 8px;
+}
+
+.evidenceRequestRow {
+  min-width: 0;
+  border: 1px solid #c8d6d4;
+  background: #fff;
+  padding: 9px;
+}
+
+.evidenceRequestRow p {
+  display: grid;
+  grid-template-columns: minmax(110px, 0.3fr) minmax(0, 1fr);
+  gap: 6px 10px;
+  margin: 0 0 6px;
+  line-height: 1.4;
+}
+
+.evidenceRequestRow p:last-of-type {
+  margin-bottom: 0;
+}
+
+.evidenceRequestRow strong {
+  color: var(--muted);
+  font-size: 0.72rem;
+  text-transform: uppercase;
+}
+
+.evidenceRequestRow span,
+.packetStepRow span {
+  min-width: 0;
+  overflow-wrap: anywhere;
+}
+
+.packetStepRow {
+  display: grid;
+  grid-template-columns: 28px minmax(0, 1fr);
+  align-items: start;
+  gap: 8px;
+  min-height: 44px;
+  border: 1px solid #c8d6d4;
+  background: #fff;
+  padding: 9px;
+  font-weight: 800;
+  line-height: 1.4;
+}
+
+.packetStepRow input {
+  width: 22px;
+  height: 22px;
+  margin: 0;
+  accent-color: var(--green);
+}
+
+.packetStepRow:focus-within {
+  outline: 3px solid var(--blue);
+  outline-offset: 2px;
+}
+
 .argumentPlanCitationLinks {
   display: inline-flex;
   flex-wrap: wrap;
@@ -2027,6 +2090,11 @@ a {
     width: 100%;
   }
 
+  .evidenceRequestRow p {
+    grid-template-columns: 1fr;
+    gap: 2px;
+  }
+
   .visibleLaneControl {
     grid-template-columns: 1fr;
   }
@@ -2119,6 +2187,43 @@ a {
     min-height: 58px;
     padding: 6px 2px;
     font-size: 0.62rem;
+  }
+}
+
+@media print {
+  body.publicPrintActive * {
+    visibility: hidden;
+  }
+
+  body.publicPrintActive .publicPrintTarget,
+  body.publicPrintActive .publicPrintTarget * {
+    visibility: visible;
+  }
+
+  body:has(.publicPrintTarget) * {
+    visibility: hidden;
+  }
+
+  body:has(.publicPrintTarget) .publicPrintTarget,
+  body:has(.publicPrintTarget) .publicPrintTarget * {
+    visibility: visible;
+  }
+
+  .publicPrintTarget {
+    position: absolute;
+    inset: 0 auto auto 0;
+    width: 100%;
+    margin: 0;
+    border: 0;
+    background: #fff;
+    color: #000;
+    box-shadow: none;
+  }
+
+  .publicPrintTarget .compactActions,
+  .publicPrintTarget .saveNotice,
+  .publicPrintTarget button {
+    display: none !important;
   }
 }
 
