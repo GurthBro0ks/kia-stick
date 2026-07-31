@@ -12414,5 +12414,63 @@
     "source_sync_performed": false,
     "private_data_accessed": false,
     "discord_sent": false
+  },
+  "public_steward_workflow_platform_bundle_3_planning_and_secure_knowledge_boundary": {
+    "phase": "KIA-Stick-public-steward-workflow-platform-bundle-3-planning-and-secure-knowledge-boundary",
+    "status": "plan_only_pending_operator_review",
+    "target_machine": "USER_LAPTOP_ONLY",
+    "base_commit": "004c8fa1a4e95713da6351a8ac7f46e129e977fb",
+    "accepted_capability_commit": "3baedc9c327fbb7a528706ec442a63f88172e425",
+    "accepted_repository_recording_commit": "b23810834bd02eeef7cd0cbf03d8ab274d08917b",
+    "proof_dir": "/home/mint/kia-stick-local-proofs/proof_kia_stick_bundle_3_planning_secure_knowledge_boundary_20260731T131020Z",
+    "docs_added": [
+      "docs/public-steward-workflow-platform-bundle-3-current-state-audit.md",
+      "docs/public-steward-workflow-platform-bundle-3-candidate-matrix.md",
+      "docs/public-source-sufficiency-matrix-v2.md",
+      "docs/user-owned-knowledge-base-secure-file-transfer-gate-plan.md",
+      "docs/public-steward-workflow-platform-bundle-3-implementation-packet.md",
+      "docs/public-steward-workflow-platform-bundle-3-decision.md"
+    ],
+    "tests_added": [
+      "tests/publicStewardBundle3Planning.test.ts",
+      "tests/publicSourceSufficiencyMatrixV2.test.ts",
+      "tests/secureKnowledgeBoundaryPlan.test.ts"
+    ],
+    "selected_bundle_3_name": "Topic-Grounded Argument & Evidence Preparation",
+    "selected_bundle_3_features": [
+      "per_topic_step_by_step_argument_plans",
+      "structured_evidence_document_request_checklist",
+      "packet_sequencing_and_completion_tracking",
+      "escalation_guidance_strengthening_within_existing_sources_only",
+      "print_friendly_export_polish"
+    ],
+    "excluded_features": [
+      "public_contact_directory_architecture",
+      "new_supported_topic_promotion",
+      "reusable_public_only_workflow_templates_deferred",
+      "any_private_data_capability"
+    ],
+    "public_source_research_required": "none_for_selected_bundle_contact_directory_remains_research_only",
+    "private_data_implementation_approved": false,
+    "secure_file_transfer_implemented": false,
+    "user_knowledge_base_implemented": false,
+    "source_sync_performed": false,
+    "sensitive_data_accessed": false,
+    "package_json_changed": false,
+    "package_lock_changed": false,
+    "source_cache_changed": false,
+    "accepted_state_identity_changed": false,
+    "real_document_access": false,
+    "private_vault_inspected": false,
+    "push_performed": false,
+    "closeout_performed": false,
+    "queue_015_status": "blocked",
+    "v0912c_status": "blocked",
+    "next_postcss_status": "WARN_SAFE_NEXT_TARGET_UNCLEAR",
+    "product_version": "0.7.0",
+    "validation_status": "PASS",
+    "manual_qa_status": "PENDING_OPERATOR_REVIEW",
+    "discord_sent": false,
+    "status_notes": "Planning-only bundle covering GOAL 1-5 of the Bundle 3 planning mission: current-state audit grounded in source/tests, ranked public-only candidate matrix, v2 source-sufficiency matrix, architecture-only secure file-transfer/user-owned-knowledge-base gate plan, and an actionable implementation packet. No runtime, routing, Saved, export, or source change. Accepted capability and repository-recording identity unchanged. Not closed out, not pushed, manual QA pending."
   }
 }

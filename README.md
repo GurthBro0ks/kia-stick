@@ -1,3 +1,14 @@
+## Public Steward Workflow Platform Bundle 3 Planning and Secure Knowledge Boundary
+
+- Phase: `KIA-Stick-public-steward-workflow-platform-bundle-3-planning-and-secure-knowledge-boundary`. Status: `PLAN ONLY` — no runtime, routing, Saved, export, source, or accepted-state change.
+- The current accepted pushed capability remains unchanged: `Public Steward Workflow Platform Bundle 2 and Employee Claims Copy Repair at 3baedc9` (`3baedc9c327fbb7a528706ec442a63f88172e425`), repository-recording/latest-closeout `b23810834bd02eeef7cd0cbf03d8ab274d08917b`.
+- New planning-only documents: `docs/public-steward-workflow-platform-bundle-3-current-state-audit.md`, `docs/public-steward-workflow-platform-bundle-3-candidate-matrix.md`, `docs/public-source-sufficiency-matrix-v2.md`, `docs/user-owned-knowledge-base-secure-file-transfer-gate-plan.md`, `docs/public-steward-workflow-platform-bundle-3-implementation-packet.md`, `docs/public-steward-workflow-platform-bundle-3-decision.md`.
+- Selected Bundle 3 scope (not yet implemented): per-topic step-by-step argument plans, structured evidence/document-request checklists, packet sequencing and completion tracking, escalation-guidance strengthening within existing sources only, and print-friendly export polish — all sourced entirely from citations the registry already anchors, zero new source class, zero private data.
+- Explicitly deferred/excluded: public contact-directory architecture (no verified source exists), promotion of any `research_only` topic, reusable public-only workflow templates (deferred to a future bundle), and all private-data/secure-file-transfer capability.
+- Secure file-transfer and user-owned knowledge-base work is architecture-only in this phase; private-data implementation remains blocked pending a future, separately-approved sensitive-data gate sequence.
+- This planning phase is local-only: validation `PASS`, pushed `no`, manual QA `PENDING_OPERATOR_REVIEW`.
+- queue-015 and v0.9.12C remain blocked; Next/PostCSS remains `WARN_SAFE_NEXT_TARGET_UNCLEAR`; product/package remain `0.7.0`.
+
 ## Public Steward Workflow Platform Bundle 2 Final Post-Push Accepted-State Refresh to b238108
 
 - The current accepted pushed capability remains `Public Steward Workflow Platform Bundle 2 and Employee Claims Copy Repair at 3baedc9`.
