@@ -6,7 +6,10 @@ Result: `PASS` for planning; no source fetch, sync, refresh, replacement, regene
 
 This is a v2 refresh of `docs/public-steward-workflow-source-matrix.md` (the Bundle 2 matrix, retained unmodified as the historical record for the ten supported topics). This document does not re-derive topic sufficiency — the Bundle 2 result stands — it extends the same allowlisted-source discipline to Bundle 3 candidate features, which by design consume the *same already-verified* citations rather than requiring new source coverage.
 
-Source boundary (unchanged): exact-allowlisted, read-only cache for `apwu-usps-cba-2024-2027`, present under `.kia-public-data/`. PDF SHA-256 `64195ca9def180ddab5bd2322e1aff85ca589534c2c1daa85b1752474b8b7a7c`. No fetch, sync, refresh, or replacement is authorized or performed in this phase.
+Source boundary (unchanged): two exact-allowlisted, read-only local source classes exist under `.kia-public-data/`, confirmed by `/health`'s `publicSources.count: 2` (`app/health/route.ts`).
+1. `apwu-usps-cba-2024-2027` (`CBA_SOURCE_ID`) — the real, public, controlling CBA text backing all 10 supported topics. PDF SHA-256 `64195ca9def180ddab5bd2322e1aff85ca589534c2c1daa85b1752474b8b7a7c`.
+2. `nlrb-weingarten-rights` (`PUBLIC_SOURCE_ID`, `lib/publicSource.ts`) — official general NLRB guidance, `PUBLIC_SOURCE_CONTROLLING_FOR_USPS = "no"`, `PUBLIC_SOURCE_POSTAL_APPLICABILITY = "unverified"`; used only by the existing Weingarten argument-plan pilot (`lib/publicArgumentPlan.ts`), not by the 10-topic steward registry, and not a candidate source for any Bundle 3 CBA-topic feature.
+No fetch, sync, refresh, or replacement of either source is authorized or performed in this phase.
 
 ## Part A — Existing Ten Supported Topics (carried forward, unchanged)
 

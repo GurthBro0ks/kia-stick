@@ -107,7 +107,8 @@ new `positive`/`negative` regex patterns as part of this packet.
   `PUBLIC_ARGUMENT_PLAN_SAVED_TYPE`/`PUBLIC_GRIEVANCE_OUTLINE_SAVED_TYPE`/
   `PUBLIC_STEWARD_PACKET_SAVED_TYPE`.
 - Extend `migrateSavedAnswers` (`lib/savedAnswers.ts:526+`) with a structural-shape guard for
-  the new type(s), mirroring `isPublicArgumentPlanLike`/similar predicates
+  the new type(s), mirroring the existing `validPublicArgumentPlan` /
+  `normalizePublicGrievanceOutline` / `validPublicStewardPacket` predicates
   (`lib/savedAnswers.ts:439-505`).
 - Extend `SaveAnswerStatus` handling (`created`/`replaced`/`duplicate`,
   `lib/savedAnswers.ts:84`) coverage to the new type(s) — no new status value needed.

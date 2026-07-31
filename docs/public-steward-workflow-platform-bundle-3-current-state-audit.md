@@ -159,7 +159,8 @@ explicitly (`tests/savedRecordIdentity.test.ts`).
 
 `migrateSavedAnswers(input)` (`lib/savedAnswers.ts:526+`) is a defensive parser: for each raw
 stored item it re-derives `savedType` from structural shape guards
-(`isPublicArgumentPlanLike`/similar predicates near `lib/savedAnswers.ts:439-505`), falls back
+(`validPublicArgumentPlan`, `normalizePublicGrievanceOutline`, `validPublicStewardPacket` —
+`lib/savedAnswers.ts:439-505`), falls back
 field-by-field (`provider`, `sourceId`, `sourceTitle`, etc.) to values recoverable from nested
 citation objects, and drops anything that cannot be reconstructed into a valid `SavedAnswer`
 rather than throwing. This is how legacy pre-Bundle-2 Saved records stay readable after schema
