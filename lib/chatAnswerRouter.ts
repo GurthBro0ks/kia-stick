@@ -14,6 +14,7 @@ import {
 import { buildPublicSourceAnswer } from "@/lib/publicSourceAnswer";
 import type { Detail, Mode, Scope } from "@/lib/sourceModel";
 import type { RuntimeVersion } from "@/lib/version";
+import { publicStewardWorkflowMatch } from "@/lib/publicStewardWorkflowRegistry";
 
 export type ChatSourcePolicy = "auto" | "fake" | "nlrb" | "cba" | "public";
 export type ChatAnswerLane = "fake" | "nlrb" | "cba" | "safe_no_answer";
@@ -57,6 +58,7 @@ export function isAutoPublicPilotQuestion(question: string): boolean {
 export function isAutoCbaQuestion(question: string): boolean {
   const normalized = normalizeQuestion(question);
   if (hasExplicitCbaSourceCue(question)) return true;
+  if (publicStewardWorkflowMatch(question).ambiguous) return true;
   if (detectCbaIntent(question) !== "unsupported") return true;
   if (/\barticle\s*(?:[1-9]|[1-3][0-9]|4[0-3])\b/.test(normalized)) return true;
   return /\b(apwu-usps cba|collective bargaining agreement|official cba)\b/.test(normalized)

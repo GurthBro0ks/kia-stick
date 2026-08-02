@@ -46,6 +46,7 @@ export interface PublicStewardWorkflowTopic {
   };
   positive: RegExp[];
   negative: RegExp[];
+  multiTopicAliases: RegExp[];
   citationSpecs: PublicStewardWorkflowCitationSpec[];
   outlineLabels: {
     title: string;
@@ -81,6 +82,7 @@ const annualLeave: PublicStewardWorkflowTopic = {
     /\b(submit|request|den(?:y|ied|ial)|schedul|approv|deadline)\b.*\bleave\b.*\b(supervisor|tomorrow|time off)\b/,
   ],
   negative: [/\b(sick leave|fmla|lwop|military leave|owcp|medical|attendance discipline)\b/],
+  multiTopicAliases: [/\bannual[ -]?leave\b/, /\bchoice[ -]?period vacation\b/],
   citationSpecs: [
     {
       key: "scheduling_preference",
@@ -146,6 +148,7 @@ const overtime: PublicStewardWorkflowTopic = {
     /\bworked off assignment\b.*\b(bypass|forced|mandatory|rotation)\b/,
   ],
   negative: [/\b(annual leave|vacation|sick leave|fmla|lwop|owcp|medical)\b/],
+  multiTopicAliases: [/\bovertime\b/, /\bovertime[ -]?desired[ -]?list\b/, /\bodl\b/],
   citationSpecs: [
     {
       key: "assignment_administration",
@@ -202,6 +205,7 @@ const holidayScheduling: PublicStewardWorkflowTopic = {
     /\bdesignated holiday\b/,
   ],
   negative: [/\b(vacation|annual leave request|religious accommodation|holiday party)\b/],
+  multiTopicAliases: [/\bholiday[ -]?scheduling\b/, /\bholiday schedule\b/],
   citationSpecs: [
     {
       key: "holiday_eligibility",
@@ -258,6 +262,11 @@ const safetyHealth: PublicStewardWorkflowTopic = {
     /\barticle\s*14\b/,
   ],
   negative: [/\b(medical diagnosis|owcp|workers'? compensation|treatment plan|fmla)\b/],
+  multiTopicAliases: [
+    /\b(?:workplace )?safety(?: and health)?\b/,
+    /\bunsafe (?:working )?condition\b/,
+    /\bsafety hazard\b/,
+  ],
   citationSpecs: [
     {
       key: "safe_conditions",
@@ -314,6 +323,7 @@ const disciplineJustCause: PublicStewardWorkflowTopic = {
     /\b(article\s*16|letter of warning|discipline procedure)\b/,
   ],
   negative: [/\b(attendance policy only|medical diagnosis|criminal advice|legal representation)\b/],
+  multiTopicAliases: [/\bdiscipline\b/, /\bjust[ -]?cause\b/],
   citationSpecs: [
     {
       key: "corrective_just_cause",
@@ -370,6 +380,7 @@ const sickLeave: PublicStewardWorkflowTopic = {
     /\barticle\s*10\b.*\bsick leave\b/,
   ],
   negative: [/\b(fmla|owcp|diagnosis|medical treatment|workers'? compensation|attendance discipline)\b/],
+  multiTopicAliases: [/\bsick[ -]?leave\b/],
   citationSpecs: [
     {
       key: "sick_leave_program",
@@ -424,6 +435,7 @@ const higherLevelAssignments: PublicStewardWorkflowTopic = {
     /\barticle\s*25\b/,
   ],
   negative: [/\b(permanent promotion|job posting|bid assignment|calculate|amount owed)\b/],
+  multiTopicAliases: [/\bhigher[ -]?level (?:assignment|assignments|detail|details|work)\b/],
   citationSpecs: [
     {
       key: "higher_level_definition",
@@ -480,6 +492,7 @@ const uniformsWorkClothes: PublicStewardWorkflowTopic = {
     /\barticle\s*26\b/,
   ],
   negative: [/\b(costume|dress code|calculate|how much money|personal shopping)\b/],
+  multiTopicAliases: [/\buniforms?\b/, /\bwork[ -]?cloth(?:es|ing)\b/],
   citationSpecs: [
     {
       key: "program_administration",
@@ -537,6 +550,11 @@ const employeeClaims: PublicStewardWorkflowTopic = {
     /\barticle\s*27\b/,
   ],
   negative: [/\b(motor vehicle|car claim|vehicle contents|calculate|dollar amount|employer claim|salary overpayment)\b/],
+  multiTopicAliases: [
+    /\bemployee (?:personal[ -]?property )?claims?\b/,
+    /\bpersonal[ -]?property claims?\b/,
+    /\barticle\s*27\b/,
+  ],
   citationSpecs: [
     {
       key: "claim_scope",
@@ -593,6 +611,7 @@ const stewardGrievanceHandling: PublicStewardWorkflowTopic = {
     /\bcontractual steward rights\b/,
   ],
   negative: [/\b(weingarten|investigatory interview|investigative interview|interrogation|disciplinary interview|request a union representative)\b/],
+  multiTopicAliases: [/\bsteward grievance handling\b/, /\bcontractual steward rights\b/],
   citationSpecs: [
     {
       key: "steward_purpose",
@@ -714,14 +733,38 @@ export function publicStewardWorkflowTopic(
 export function detectPublicStewardWorkflowTopic(
   question: string
 ): PublicStewardWorkflowTopicId | null {
-  const normalized = question.trim().toLowerCase().replace(/\s+/g, " ");
-  if (!normalized || /\b(fake|sample)\b/.test(normalized)) return null;
-  const matches = PUBLIC_STEWARD_WORKFLOW_TOPICS.filter(
-    (topic) =>
-      !topic.negative.some((guard) => guard.test(normalized)) &&
-      topic.positive.some((matcher) => matcher.test(normalized))
+  return publicStewardWorkflowMatch(question).topicId;
+}
+
+function matchedSupportedTopicIds(normalized: string): PublicStewardWorkflowTopicId[] {
+  const guardedPositiveMatches = new Set(
+    PUBLIC_STEWARD_WORKFLOW_TOPICS.filter(
+      (topic) =>
+        !topic.negative.some((guard) => guard.test(normalized)) &&
+        topic.positive.some((matcher) => matcher.test(normalized))
+    ).map((topic) => topic.id)
   );
-  return matches.length === 1 ? matches[0].id : null;
+  const hasExplicitMultiTopicStructure =
+    /[;,]/.test(normalized) ||
+    /\b(argument|grievance plan|steward packet|multi[ -]?topic)\b/.test(normalized) ||
+    /\band\b/.test(normalized);
+  const explicitMentions = new Set(
+    hasExplicitMultiTopicStructure
+      ? PUBLIC_STEWARD_WORKFLOW_TOPICS.filter((topic) =>
+          topic.multiTopicAliases.some((matcher) => matcher.test(normalized))
+        ).map((topic) => topic.id)
+      : []
+  );
+  const combinedMatches = new Set([...guardedPositiveMatches, ...explicitMentions]);
+
+  // A broad topic noun remains insufficient on its own. Explicit aliases only
+  // participate when the prompt clearly names multiple supported topics.
+  const selectedMatches = combinedMatches.size > 1
+    ? combinedMatches
+    : guardedPositiveMatches;
+  return PUBLIC_STEWARD_WORKFLOW_TOPICS
+    .filter((topic) => selectedMatches.has(topic.id))
+    .map((topic) => topic.id);
 }
 
 export function publicStewardWorkflowMatch(question: string): {
@@ -734,11 +777,7 @@ export function publicStewardWorkflowMatch(question: string): {
   if (!normalized || /\b(fake|sample)\b/.test(normalized)) {
     return { topicId: null, matchedTopicIds: [], ambiguous: false, unsupportedCandidateId: null };
   }
-  const matchedTopicIds = PUBLIC_STEWARD_WORKFLOW_TOPICS.filter(
-    (topic) =>
-      !topic.negative.some((guard) => guard.test(normalized)) &&
-      topic.positive.some((matcher) => matcher.test(normalized))
-  ).map((topic) => topic.id);
+  const matchedTopicIds = matchedSupportedTopicIds(normalized);
   const unsupportedCandidate = PUBLIC_STEWARD_RESEARCH_CANDIDATES.find(
     (candidate) => candidate.routing.some((matcher) => matcher.test(normalized))
   );

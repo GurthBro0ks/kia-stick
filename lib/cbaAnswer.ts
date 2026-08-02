@@ -236,6 +236,7 @@ export function buildCbaAnswer(input: {
       runtimeVersion: input.runtimeVersion,
       mode: input.mode,
       scope: input.scope,
+      matchedTopicIds: workflowMatch.matchedTopicIds,
     });
   }
   const intent = detectCbaIntent(question);
@@ -352,27 +353,42 @@ export function buildSafeRouterNoAnswer(input: {
   runtimeVersion: RuntimeVersion;
   mode: Mode;
   scope: Scope;
+  matchedTopicIds?: readonly PublicStewardWorkflowTopicId[];
 }): AnswerResult {
   const safeRouterProvider = "local-source-router-deterministic";
   const safeRouterPrompt = "prompt.source-router.v0.1-safe-no-answer";
+  const matchedTopicNames = (input.matchedTopicIds ?? []).map(
+    (topicId) => publicStewardWorkflowTopic(topicId).displayName
+  );
+  const ambiguousSupportedTopics = matchedTopicNames.length > 1;
   return {
     ...baseAnswer({
       ...input,
       source: null,
-      shortAnswer: "No approved deterministic source intent supports this question. The router did not substitute CBA, NLRB, or fake claims.",
+      shortAnswer: ambiguousSupportedTopics
+        ? `Multiple supported topics were detected: ${matchedTopicNames.join(", ")}. Choose one topic for a single argument plan, or use the steward packet workspace for a bounded multi-topic packet.`
+        : "No approved deterministic source intent supports this question. The router did not substitute CBA, NLRB, or fake claims.",
       citations: [],
       noAnswer: true,
       role: "safe_no_answer",
-      conflicts: ["No approved CBA intent, NLRB intent, or known fake-corpus prompt matched."],
-      missingFacts: ["An approved source lane and a source-supported question."],
-      followUps: ["Select CBA, NLRB Guidance, or Fake Sample explicitly and ask a source-bounded question."],
+      conflicts: ambiguousSupportedTopics
+        ? ["A single-topic cited answer is blocked because more than one supported public steward topic matched."]
+        : ["No approved CBA intent, NLRB intent, or known fake-corpus prompt matched."],
+      missingFacts: ambiguousSupportedTopics
+        ? ["One selected topic for a single argument plan, or an explicit one-to-three-topic packet selection."]
+        : ["An approved source lane and a source-supported question."],
+      followUps: ambiguousSupportedTopics
+        ? ["Choose one supported topic, or deliberately select one to three topics in the steward packet workspace."]
+        : ["Select CBA, NLRB Guidance, or Fake Sample explicitly and ask a source-bounded question."],
     }),
     sourceOwner: undefined,
     sourceTitle: undefined,
     sourceStatus: undefined,
     pdfSha256: undefined,
     scopeWarning: undefined,
-    authorityClassification: "unsupported_router_question",
+    authorityClassification: ambiguousSupportedTopics
+      ? "ambiguous_supported_topics"
+      : "unsupported_router_question",
     footer: `PUBLIC DATA PILOT | Lane:safe_no_answer | Sources:0 | SelectedMode:${input.mode} | Provider:${safeRouterProvider}`,
     version: { ...input.runtimeVersion, promptVersion: safeRouterPrompt, provider: safeRouterProvider },
   };

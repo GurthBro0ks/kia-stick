@@ -1,10 +1,14 @@
+import React from "react";
+import { renderToStaticMarkup } from "react-dom/server";
 import { describe, expect, it } from "vitest";
+import { AssistantMessageCard } from "@/components/KiaStickApp";
 import { buildCbaAnswer } from "@/lib/cbaAnswer";
 import {
   createChatSubmitSnapshot,
   resolveChatAnswerLane,
   routeChatQuestion,
 } from "@/lib/chatAnswerRouter";
+import { createAssistantMessage } from "@/lib/conversationModel";
 import {
   buildPublicGrievanceOutline,
   publicGrievanceOutlineToText,
@@ -30,6 +34,9 @@ const defaults = {
   scope: "Official-Like" as const,
   detail: "Detailed" as const,
 };
+
+const exactAmbiguousQuestion =
+  "Build one argument about overtime, sick leave, holiday scheduling, discipline, and uniforms.";
 
 const routingMatrix = [
   ["annual_leave", "How is annual leave scheduling administered?"],
@@ -136,6 +143,103 @@ describe("public steward deterministic routing collision matrix", () => {
       publicSourceRole: "safe_no_answer",
       noAnswer: true,
       citations: [],
+    });
+  });
+
+  it("fails the exact five-topic operator-QA prompt closed with all supported matches visible", () => {
+    const match = publicStewardWorkflowMatch(exactAmbiguousQuestion);
+    expect(match).toEqual({
+      topicId: null,
+      matchedTopicIds: [
+        "overtime",
+        "holiday_scheduling",
+        "discipline_just_cause",
+        "sick_leave",
+        "uniforms_work_clothes",
+      ],
+      ambiguous: true,
+      unsupportedCandidateId: null,
+    });
+    expect(detectPublicStewardWorkflowTopic(exactAmbiguousQuestion)).toBeNull();
+    expect(resolveChatAnswerLane(exactAmbiguousQuestion, "auto")).toBe("cba");
+
+    const snapshot = createChatSubmitSnapshot({
+      question: exactAmbiguousQuestion,
+      sourcePolicy: "auto",
+      ...defaults,
+    });
+    const answer = routeChatQuestion({
+      question: exactAmbiguousQuestion,
+      snapshot,
+      publicSource,
+      cbaSource: source,
+      runtimeVersion,
+    });
+    expect(answer).toMatchObject({
+      publicSourceRole: "safe_no_answer",
+      authorityClassification: "ambiguous_supported_topics",
+      noAnswer: true,
+      citations: [],
+    });
+    expect(answer.shortAnswer).toContain("Multiple supported topics were detected");
+    expect(answer.shortAnswer).toContain("Choose one topic");
+    expect(answer.shortAnswer).toContain("steward packet workspace");
+    expect(buildPublicGrievanceOutline({ answer, source })).toBeNull();
+
+    const message = createAssistantMessage({
+      threadId: "thread-multi-topic-ambiguity",
+      turnId: "turn-multi-topic-ambiguity",
+      parentMessageId: "message-user-multi-topic-ambiguity",
+      answer,
+      modeScopeDetail: snapshot,
+      now: "2026-08-02T09:00:00.000Z",
+    });
+    const html = renderToStaticMarkup(React.createElement(AssistantMessageCard, {
+      message,
+      onRetry: () => undefined,
+      onSave: () => undefined,
+      canBuildStewardArgumentPlan: false,
+    }));
+    expect(html).toContain("Multiple supported topics were detected");
+    expect(html).toContain("No answer to save");
+    expect(html).not.toContain("Build topic argument plan");
+    expect(html).not.toContain("Show citations");
+  });
+
+  it.each([
+    ["Build an argument plan about overtime and sick leave.", ["overtime", "sick_leave"]],
+    [
+      "Build an argument about annual leave, safety and health, and discipline and just cause.",
+      ["annual_leave", "safety_health", "discipline_just_cause"],
+    ],
+    [
+      "overtime; sick leave; holiday scheduling",
+      ["overtime", "holiday_scheduling", "sick_leave"],
+    ],
+    [
+      "uniforms/work clothes and higher-level assignments",
+      ["higher_level_assignments", "uniforms_work_clothes"],
+    ],
+  ] as const)("fails explicit multi-topic variant closed: %s", (question, matchedTopicIds) => {
+    expect(publicStewardWorkflowMatch(question)).toMatchObject({
+      topicId: null,
+      matchedTopicIds,
+      ambiguous: true,
+    });
+    expect(detectPublicStewardWorkflowTopic(question)).toBeNull();
+    expect(resolveChatAnswerLane(question, "auto")).toBe("cba");
+  });
+
+  it.each([
+    "discipline",
+    "uniforms",
+    "health",
+    "leave",
+  ])("does not make a broad single topic word sufficient by itself: %s", (question) => {
+    expect(publicStewardWorkflowMatch(question)).toMatchObject({
+      topicId: null,
+      matchedTopicIds: [],
+      ambiguous: false,
     });
   });
 

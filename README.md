@@ -1,3 +1,12 @@
+## Public Steward Workflow Platform Bundle 3 Multi-Topic Ambiguity Fail-Closed Repair
+
+- Phase: `KIA-Stick-Bundle-3-multi-topic-ambiguity-fail-closed-repair`. Initial operator QA remains `FAIL_REPAIR_REQUIRED`; the bounded repair is local-only with operator manual QA `PENDING_OPERATOR_REVIEW`.
+- Failed prompt: “Build one argument about overtime, sick leave, holiday scheduling, discipline, and uniforms.” Before repair, the shared matcher selected only `holiday_scheduling`, which exposed a cited answer and single-topic controls.
+- The shared topic registry now distinguishes guarded single-topic matching from explicit multi-topic mentions. Multi-topic aliases contribute only when the prompt has deliberate list, argument, or packet structure and more than one supported topic is recognized; broad single words remain insufficient by themselves.
+- Multiple supported matches now return `topicId=null`, preserve every matched topic ID, and route to a citation-free, unsaveable safe no-answer that directs the user to choose one topic or use the one-to-three-topic steward packet workspace. All 10 single-topic routes, prior safety/sick-leave/uniforms repairs, negative guards, unsupported inputs, research-only candidates, and explicit packet selection remain preserved.
+- Repair proof: `/home/mint/kia-stick-local-proofs/proof_kia_stick_public_steward_workflow_platform_bundle_3_implementation_20260731T164035Z/operator_qa_routing_runtime_truth_repair_20260731T171353Z/multi_topic_ambiguity_fail_closed_repair_20260802T090035Z`. Automated validation is recorded there; it does not record operator QA PASS.
+- Accepted capability remains `3baedc9c327fbb7a528706ec442a63f88172e425`; repository-recording/latest-closeout remain `b23810834bd02eeef7cd0cbf03d8ab274d08917b`. No accepted-state refresh, closeout, notification, or push is authorized.
+
 ## Public Steward Workflow Platform Bundle 3 Operator-QA Routing and Runtime-Truth Repair
 
 - Phase: `KIA-Stick-Bundle-3-operator-QA-routing-and-runtime-truth-repair`. Initial browser QA result: `FAIL_REPAIR_REQUIRED`; repair remains local-only with operator manual QA `PENDING_OPERATOR_REVIEW`.
