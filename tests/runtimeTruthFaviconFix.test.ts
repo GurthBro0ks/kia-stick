@@ -14,7 +14,7 @@ const acceptedCommit = "96be9069e7694af237823b0da3a30919be60546c";
 const repositoryRecordingCommit = "b24f28fba5301a49bcb3e65994c8c45f38ad42f4";
 
 describe("Bundle 3 QA runtime truth and favicon correction", () => {
-  it("separates the accepted checkpoint from the pending current local build", async () => {
+  it("separates the accepted checkpoint from the operator-approved current local build", async () => {
     expect(currentAcceptedPushedState.accepted_pushed_commit).toBe(acceptedCommit);
     expect(currentAcceptedPushedState.accepted_validation).toBe("PASS");
     expect(currentAcceptedPushedState.accepted_manual_qa).toBe("PASS");
@@ -26,13 +26,13 @@ describe("Bundle 3 QA runtime truth and favicon correction", () => {
     expect(currentAcceptedPushedState.local_bundle_phase).toBe(currentLocalPhase);
     expect(currentAcceptedPushedState.local_bundle_validation).toBe("PASS");
     expect(currentAcceptedPushedState.local_bundle_pushed).toBe(false);
-    expect(currentAcceptedPushedState.local_bundle_manual_qa).toBe("pending_operator_review");
+    expect(currentAcceptedPushedState.local_bundle_manual_qa).toBe("PASS");
 
     const health = await GET().json();
     expect(health.phase).toBe(currentLocalPhase);
     expect(health.localValidation).toBe("PASS");
     expect(health.pushed).toBe(false);
-    expect(health.manualQa).toBe("pending_operator_review");
+    expect(health.manualQa).toBe("PASS");
     expect(health.acceptedCommit).toBe(acceptedCommit);
     expect(health.repositoryRecordingCommit).toBe(repositoryRecordingCommit);
     expect(health.latestPushedCloseoutCommit).toBe(repositoryRecordingCommit);
@@ -56,7 +56,7 @@ describe("Bundle 3 QA runtime truth and favicon correction", () => {
     expect(html).toContain("Current application build");
     expect(html).toContain(currentLocalPhase);
     expect(html).toContain("Pushed</dt><dd>no");
-    expect(html).toContain("Manual QA</dt><dd>pending operator review");
+    expect(html).toContain("Manual QA</dt><dd>PASS");
   });
 
   it("provides a non-empty framework-native ICO derived from the KIA mark", () => {

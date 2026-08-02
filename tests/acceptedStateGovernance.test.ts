@@ -65,14 +65,14 @@ describe("accepted-state governance loop break", () => {
       private_data: "blocked",
       external_ai: "disabled",
     });
-    expect(currentAcceptedPushedState.local_implementation_proof_dir).toBe("/home/mint/kia-stick-local-proofs/proof_kia_stick_public_steward_workflow_platform_bundle_3_post_push_accepted_state_refresh_20260802T110515Z");
-    expect(currentAcceptedPushedState.local_bundle_operator_qa_pass_proof_dir).toBe("/home/mint/kia-stick-local-proofs/proof_kia_stick_public_steward_workflow_platform_bundle_3_post_push_accepted_state_refresh_operator_qa_pass_recording_20260802T114339Z");
+    expect(currentAcceptedPushedState.local_implementation_proof_dir).toBe("/home/mint/kia-stick-local-proofs/proof_kia_stick_bundle_3_core_repair_qa_runtime_truth_favicon_fix_20260802T171503Z");
+    expect(currentAcceptedPushedState.local_bundle_operator_qa_pass_proof_dir).toBe("/home/mint/kia-stick-local-proofs/proof_kia_stick_bundle_3_core_repair_qa_runtime_truth_favicon_fix_operator_qa_pass_recording_20260802T174542Z");
     expect(currentAcceptedPushedState.local_bundle).toBe("Bundle 3 Core Repair Hardening post-Fable5 Audit");
     expect(currentAcceptedPushedState.local_bundle_phase).toBe("KIA-Stick-bundle-3-core-repair-QA-runtime-truth-and-favicon-fix");
     expect(currentAcceptedPushedState.local_bundle_validation).toBe("PASS");
     expect(currentAcceptedPushedState.local_bundle_pushed).toBe(false);
-    expect(currentAcceptedPushedState.local_bundle_manual_qa).toBe("pending_operator_review");
-    expect(currentAcceptedPushedState.local_bundle_status).toBe("bundle 3 core repair QA runtime truth and favicon fix; validation PASS; pushed no; manual QA pending operator review; closeout not performed");
+    expect(currentAcceptedPushedState.local_bundle_manual_qa).toBe("PASS");
+    expect(currentAcceptedPushedState.local_bundle_status).toBe("bundle 3 core repair QA runtime truth and favicon fix; validation PASS; pushed no; manual QA PASS; closeout and push await separate explicit authorization");
     expect(currentAcceptedPushedState.local_bundle_status).not.toContain("stale local-bundle push-status repair");
     expect(currentAcceptedPushedState.latest_pushed_closeout_commit).toBe("b24f28fba5301a49bcb3e65994c8c45f38ad42f4");
     expect(currentAcceptedPushedState.latest_pushed_closeout_short_commit).toBe("b24f28f");
