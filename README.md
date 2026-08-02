@@ -1,3 +1,13 @@
+## Public Steward Workflow Platform Bundle 3 Post-Push Accepted-State Refresh
+
+- The current accepted pushed capability is `Public Steward Workflow Platform Bundle 3 and Multi-Topic Ambiguity Fail-Closed Repair at 96be906`.
+- The accepted capability repair commit is `96be9069e7694af237823b0da3a30919be60546c`; the distinct repository-recording/latest-closeout point is `b24f28fba5301a49bcb3e65994c8c45f38ad42f4`.
+- Canonical closeout proof: `/home/mint/kia-stick-local-proofs/proof_kia_stick_public_steward_workflow_platform_bundle_3_multi_topic_ambiguity_fail_closed_repair_operator_qa_pass_recording_20260802T102329Z/closeout_push_20260802T104202Z`.
+- Shared current-state contract: `data/current-accepted-pushed-state.json`; Settings, `/health`, proof helpers, and current-state tests consume this contract.
+- The prior Bundle 2 capability `3baedc9` is preserved as historical-only.
+- This bookkeeping refresh is local-only: validation `PASS`, pushed `no`, operator manual QA `pending_operator_review`.
+- queue-015 and v0.9.12C remain blocked; Next/PostCSS remains `WARN_SAFE_NEXT_TARGET_UNCLEAR`; product/package remain `0.7.0`.
+
 ## Public Steward Workflow Platform Bundle 3 Multi-Topic Ambiguity Fail-Closed Repair
 
 - Phase: `KIA-Stick-Bundle-3-multi-topic-ambiguity-fail-closed-repair`. Initial operator QA remains `FAIL_REPAIR_REQUIRED`; the bounded repair is local-only with operator manual QA `PENDING_OPERATOR_REVIEW`.

@@ -460,9 +460,9 @@ describe("public CBA overtime cited grievance outline", () => {
     const health = await GET().json();
     expect(health.phase).toBe(PUBLIC_GRIEVANCE_OUTLINE_PHASE);
     expect(health.productVersion).toBe("0.7.0");
-    expect(health.acceptedCommit).toBe("3baedc9c327fbb7a528706ec442a63f88172e425");
-    expect(health.repositoryRecordingCommit).toBe("b23810834bd02eeef7cd0cbf03d8ab274d08917b");
-    expect(health.latestPushedCloseoutCommit).toBe("b23810834bd02eeef7cd0cbf03d8ab274d08917b");
+    expect(health.acceptedCommit).toBe("96be9069e7694af237823b0da3a30919be60546c");
+    expect(health.repositoryRecordingCommit).toBe("b24f28fba5301a49bcb3e65994c8c45f38ad42f4");
+    expect(health.latestPushedCloseoutCommit).toBe("b24f28fba5301a49bcb3e65994c8c45f38ad42f4");
     expect(health.dataModes.private_data).toBe("blocked");
     expect(health.dataModes.external_ai).toBe("disabled");
     expect(health.realDbTouched).toBe(false);

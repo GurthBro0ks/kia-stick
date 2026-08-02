@@ -6,48 +6,54 @@ import currentAcceptedPushedState from "@/data/current-accepted-pushed-state.jso
 const immutableHistoricalFixture = "tests/fixtures/current-accepted-pushed-state-v1.1.72.json";
 
 describe("accepted-state governance loop break", () => {
-  it("records pushed Bundle 2 as current while retaining Bundle 1 as history", () => {
+  it("records pushed Bundle 3 as current while retaining Bundle 2 as history", () => {
     expect(currentAcceptedPushedState.checkpoint_kind).toBe("capability");
-    expect(currentAcceptedPushedState.checkpoint_label).toBe("Public Steward Workflow Platform Bundle 2 and Employee Claims Copy Repair at 3baedc9");
-    expect(currentAcceptedPushedState.accepted_bundle).toBe("KIA-Stick-public-steward-workflow-platform-bundle-2");
-    expect(currentAcceptedPushedState.accepted_pushed_commit).toBe("3baedc9c327fbb7a528706ec442a63f88172e425");
-    expect(currentAcceptedPushedState.accepted_pushed_short_commit).toBe("3baedc9");
-    expect(currentAcceptedPushedState.repository_recording_commit).toBe("b23810834bd02eeef7cd0cbf03d8ab274d08917b");
-    expect(currentAcceptedPushedState.repository_recording_short_commit).toBe("b238108");
-    expect(currentAcceptedPushedState.accepted_equality).toContain("HEAD == origin/main == remote main == b23810834bd02eeef7cd0cbf03d8ab274d08917b");
-    expect(currentAcceptedPushedState.accepted_equality).not.toContain("HEAD == origin/main == remote main == 3baedc9c");
-    expect(currentAcceptedPushedState.accepted_pushed_proof_dir).toContain("closeout_push_20260731T112937Z");
+    expect(currentAcceptedPushedState.checkpoint_label).toBe("Public Steward Workflow Platform Bundle 3 and Multi-Topic Ambiguity Fail-Closed Repair at 96be906");
+    expect(currentAcceptedPushedState.accepted_bundle).toBe("KIA-Stick-public-steward-workflow-platform-bundle-3");
+    expect(currentAcceptedPushedState.accepted_pushed_commit).toBe("96be9069e7694af237823b0da3a30919be60546c");
+    expect(currentAcceptedPushedState.accepted_pushed_short_commit).toBe("96be906");
+    expect(currentAcceptedPushedState.repository_recording_commit).toBe("b24f28fba5301a49bcb3e65994c8c45f38ad42f4");
+    expect(currentAcceptedPushedState.repository_recording_short_commit).toBe("b24f28f");
+    expect(currentAcceptedPushedState.accepted_equality).toContain("HEAD == origin/main == remote main == b24f28fba5301a49bcb3e65994c8c45f38ad42f4");
+    expect(currentAcceptedPushedState.accepted_equality).not.toContain("HEAD == origin/main == remote main == 96be9069");
+    expect(currentAcceptedPushedState.accepted_pushed_proof_dir).toContain("closeout_push_20260802T104202Z");
     expect(currentAcceptedPushedState.historical_prior_checkpoints[0]).toEqual({
+      checkpoint: "Public Steward Workflow Platform Bundle 2 and Employee Claims Copy Repair",
+      commit: "3baedc9c327fbb7a528706ec442a63f88172e425",
+      short_commit: "3baedc9",
+      status: "historical_only_not_current",
+    });
+    expect(currentAcceptedPushedState.historical_prior_checkpoints[1]).toEqual({
       checkpoint: "Public Steward Workflow Platform Bundle 1 and Discipline Copy Repair",
       commit: "ea0ce8de9cd6b85b56528fabc9e8ca7f8bf43a52",
       short_commit: "ea0ce8d",
       status: "historical_only_not_current",
     });
-    expect(currentAcceptedPushedState.historical_prior_checkpoints[1]).toEqual({
+    expect(currentAcceptedPushedState.historical_prior_checkpoints[2]).toEqual({
       checkpoint: "Public CBA Annual-Leave Cited Grievance Outline and Automatic Routing Repair",
       commit: "9a66d37148f37d2dee16bcbe6b9a12aa4ba9946a",
       short_commit: "9a66d37",
       status: "historical_only_not_current",
     });
-    expect(currentAcceptedPushedState.historical_prior_checkpoints[2]).toEqual({
+    expect(currentAcceptedPushedState.historical_prior_checkpoints[3]).toEqual({
       checkpoint: "Public Settings User Summary and Operator Diagnostics Split",
       commit: "76c73122a87cb23b5b8595a002d54d7a127fbba8",
       short_commit: "76c7312",
       status: "historical_only_not_current",
     });
-    expect(currentAcceptedPushedState.historical_prior_checkpoints[3]).toEqual({
+    expect(currentAcceptedPushedState.historical_prior_checkpoints[4]).toEqual({
       checkpoint: "CBA Citation Durability Source Instance and Resync Drift Guard",
       commit: "1e0e96b0e0cd95d1e62af1eb76cfd5b57c43f4e8",
       short_commit: "1e0e96b",
       status: "historical_only_not_current",
     });
-    expect(currentAcceptedPushedState.historical_prior_checkpoints[4]).toEqual({
+    expect(currentAcceptedPushedState.historical_prior_checkpoints[5]).toEqual({
       checkpoint: "Public Truth and Generic CBA Routing Repair",
       commit: "571436a59a7d09756b401912906377c6257680af",
       short_commit: "571436a",
       status: "historical_only_not_current",
     });
-    expect(currentAcceptedPushedState.historical_prior_checkpoints[5]).toEqual({
+    expect(currentAcceptedPushedState.historical_prior_checkpoints[6]).toEqual({
       checkpoint: "Public Data Pilot 1B",
       commit: "006da8dc25638cdbe5ebd43b04b5b5c506056ab9",
       short_commit: "006da8d",
@@ -59,28 +65,28 @@ describe("accepted-state governance loop break", () => {
       private_data: "blocked",
       external_ai: "disabled",
     });
-    expect(currentAcceptedPushedState.local_implementation_proof_dir).toBe("/home/mint/kia-stick-local-proofs/proof_kia_stick_public_steward_workflow_platform_bundle_3_implementation_20260731T164035Z");
+    expect(currentAcceptedPushedState.local_implementation_proof_dir).toBe("/home/mint/kia-stick-local-proofs/proof_kia_stick_public_steward_workflow_platform_bundle_3_post_push_accepted_state_refresh_20260802T110515Z");
     expect("local_bundle_operator_qa_pass_proof_dir" in currentAcceptedPushedState).toBe(false);
     expect(currentAcceptedPushedState.local_bundle).toBe("Public Steward Workflow Platform Bundle 3");
-    expect(currentAcceptedPushedState.local_bundle_phase).toBe("KIA-Stick-public-steward-workflow-platform-bundle-3-topic-argument-plans-and-evidence-checklists");
+    expect(currentAcceptedPushedState.local_bundle_phase).toBe("KIA-Stick-public-steward-workflow-platform-bundle-3-post-push-accepted-state-refresh");
     expect(currentAcceptedPushedState.local_bundle_validation).toBe("PASS");
     expect(currentAcceptedPushedState.local_bundle_pushed).toBe(false);
     expect(currentAcceptedPushedState.local_bundle_manual_qa).toBe("pending_operator_review");
-    expect(currentAcceptedPushedState.local_bundle_status).toBe("public steward workflow platform bundle 3 topic argument plans and evidence checklists; validation PASS; pushed no; manual QA pending operator review");
+    expect(currentAcceptedPushedState.local_bundle_status).toBe("public steward workflow platform bundle 3 post-push accepted-state refresh; validation PASS; pushed no; manual QA pending operator review");
     expect(currentAcceptedPushedState.local_bundle_status).not.toContain("stale local-bundle push-status repair");
-    expect(currentAcceptedPushedState.latest_pushed_closeout_commit).toBe("b23810834bd02eeef7cd0cbf03d8ab274d08917b");
-    expect(currentAcceptedPushedState.latest_pushed_closeout_short_commit).toBe("b238108");
+    expect(currentAcceptedPushedState.latest_pushed_closeout_commit).toBe("b24f28fba5301a49bcb3e65994c8c45f38ad42f4");
+    expect(currentAcceptedPushedState.latest_pushed_closeout_short_commit).toBe("b24f28f");
     expect(currentAcceptedPushedState.latest_pushed_closeout_status).toContain("pushed yes");
-    expect(currentAcceptedPushedState.latest_pushed_closeout_status).toContain("repository equality at b23810834bd02eeef7cd0cbf03d8ab274d08917b");
+    expect(currentAcceptedPushedState.latest_pushed_closeout_status).toContain("repository equality at b24f28fba5301a49bcb3e65994c8c45f38ad42f4");
     expect(currentAcceptedPushedState.local_bundle_status).not.toContain("pushed yes");
     expect([
       currentAcceptedPushedState.accepted_pushed_commit,
       currentAcceptedPushedState.repository_recording_commit,
       currentAcceptedPushedState.latest_pushed_closeout_commit,
     ]).toEqual([
-      "3baedc9c327fbb7a528706ec442a63f88172e425",
-      "b23810834bd02eeef7cd0cbf03d8ab274d08917b",
-      "b23810834bd02eeef7cd0cbf03d8ab274d08917b",
+      "96be9069e7694af237823b0da3a30919be60546c",
+      "b24f28fba5301a49bcb3e65994c8c45f38ad42f4",
+      "b24f28fba5301a49bcb3e65994c8c45f38ad42f4",
     ]);
     expect(new Set([
       currentAcceptedPushedState.accepted_pushed_commit,
