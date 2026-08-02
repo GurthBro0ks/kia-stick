@@ -66,13 +66,13 @@ describe("accepted-state governance loop break", () => {
       external_ai: "disabled",
     });
     expect(currentAcceptedPushedState.local_implementation_proof_dir).toBe("/home/mint/kia-stick-local-proofs/proof_kia_stick_public_steward_workflow_platform_bundle_3_post_push_accepted_state_refresh_20260802T110515Z");
-    expect("local_bundle_operator_qa_pass_proof_dir" in currentAcceptedPushedState).toBe(false);
+    expect(currentAcceptedPushedState.local_bundle_operator_qa_pass_proof_dir).toBe("/home/mint/kia-stick-local-proofs/proof_kia_stick_public_steward_workflow_platform_bundle_3_post_push_accepted_state_refresh_operator_qa_pass_recording_20260802T114339Z");
     expect(currentAcceptedPushedState.local_bundle).toBe("Public Steward Workflow Platform Bundle 3");
     expect(currentAcceptedPushedState.local_bundle_phase).toBe("KIA-Stick-public-steward-workflow-platform-bundle-3-post-push-accepted-state-refresh");
     expect(currentAcceptedPushedState.local_bundle_validation).toBe("PASS");
     expect(currentAcceptedPushedState.local_bundle_pushed).toBe(false);
-    expect(currentAcceptedPushedState.local_bundle_manual_qa).toBe("pending_operator_review");
-    expect(currentAcceptedPushedState.local_bundle_status).toBe("public steward workflow platform bundle 3 post-push accepted-state refresh; validation PASS; pushed no; manual QA pending operator review");
+    expect(currentAcceptedPushedState.local_bundle_manual_qa).toBe("PASS");
+    expect(currentAcceptedPushedState.local_bundle_status).toBe("public steward workflow platform bundle 3 post-push accepted-state refresh; validation PASS; pushed no; manual QA PASS; closeout pending explicit authorization");
     expect(currentAcceptedPushedState.local_bundle_status).not.toContain("stale local-bundle push-status repair");
     expect(currentAcceptedPushedState.latest_pushed_closeout_commit).toBe("b24f28fba5301a49bcb3e65994c8c45f38ad42f4");
     expect(currentAcceptedPushedState.latest_pushed_closeout_short_commit).toBe("b24f28f");

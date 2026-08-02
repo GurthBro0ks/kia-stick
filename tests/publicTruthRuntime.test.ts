@@ -55,10 +55,10 @@ describe("public truth runtime identity", () => {
   it("derives the local refresh's manual QA status from the accepted-state contract instead of a stale literal", async () => {
     const response = GET();
     const payload = await response.json();
-    expect(currentAcceptedPushedState.local_bundle_status).toContain("manual QA pending operator review");
-    expect(localBundleManualQaStatus()).toBe("pending_operator_review");
+    expect(currentAcceptedPushedState.local_bundle_status).toContain("manual QA PASS");
+    expect(localBundleManualQaStatus()).toBe("PASS");
     expect(payload.manualQa).toBe(localBundleManualQaStatus());
-    expect(payload.manualQa).toBe("pending_operator_review");
+    expect(payload.manualQa).toBe("PASS");
     expect(payload.pushed).toBe(false);
     expect(payload.acceptedCommit).toBe("96be9069e7694af237823b0da3a30919be60546c");
     expect(payload.latestPushedCloseoutCommit).toBe("b24f28fba5301a49bcb3e65994c8c45f38ad42f4");

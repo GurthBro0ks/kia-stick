@@ -11778,7 +11778,7 @@
   },
   "public_truth_and_generic_cba_retrieval": {
     "phase": "KIA-Stick-public-truth-and-generic-CBA-retrieval-bundle",
-    "status": "local_validation_pass",
+    "status": "operator_qa_pass_recorded_local_only",
     "authorization": "AUTHORIZE_KIA_PUBLIC_TRUTH_AND_GENERIC_CBA_RETRIEVAL_BUNDLE",
     "accepted_pushed_checkpoint": "Public Data Pilot 1B at 006da8d",
     "accepted_pushed_commit": "006da8dc25638cdbe5ebd43b04b5b5c506056ab9",
@@ -12671,7 +12671,8 @@
     "prior_checkpoint_short_commit": "3baedc9",
     "prior_checkpoint_status": "historical_only_not_current",
     "local_validation_status": "PASS",
-    "local_manual_qa_status": "pending_operator_review",
+    "local_manual_qa_status": "PASS",
+    "local_operator_qa_pass_proof_dir": "/home/mint/kia-stick-local-proofs/proof_kia_stick_public_steward_workflow_platform_bundle_3_post_push_accepted_state_refresh_operator_qa_pass_recording_20260802T114339Z",
     "local_pushed": false,
     "queue_015_status": "blocked",
     "next_postcss_status": "WARN_SAFE_NEXT_TARGET_UNCLEAR",

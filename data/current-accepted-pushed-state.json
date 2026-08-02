@@ -11,6 +11,7 @@
   "repository_recording_short_commit": "b24f28f",
   "accepted_pushed_proof_dir": "/home/mint/kia-stick-local-proofs/proof_kia_stick_public_steward_workflow_platform_bundle_3_multi_topic_ambiguity_fail_closed_repair_operator_qa_pass_recording_20260802T102329Z/closeout_push_20260802T104202Z",
   "local_implementation_proof_dir": "/home/mint/kia-stick-local-proofs/proof_kia_stick_public_steward_workflow_platform_bundle_3_post_push_accepted_state_refresh_20260802T110515Z",
+  "local_bundle_operator_qa_pass_proof_dir": "/home/mint/kia-stick-local-proofs/proof_kia_stick_public_steward_workflow_platform_bundle_3_post_push_accepted_state_refresh_operator_qa_pass_recording_20260802T114339Z",
   "operator_qa_pass_proof_dir": "/home/mint/kia-stick-local-proofs/proof_kia_stick_public_steward_workflow_platform_bundle_3_multi_topic_ambiguity_fail_closed_repair_operator_qa_pass_recording_20260802T102329Z",
   "accepted_pushed_phase": "KIA-Stick-public-steward-workflow-platform-bundle-3-closeout-and-push",
   "accepted_validation": "PASS",
@@ -26,8 +27,8 @@
   "local_bundle_phase": "KIA-Stick-public-steward-workflow-platform-bundle-3-post-push-accepted-state-refresh",
   "local_bundle_validation": "PASS",
   "local_bundle_pushed": false,
-  "local_bundle_manual_qa": "pending_operator_review",
-  "local_bundle_status": "public steward workflow platform bundle 3 post-push accepted-state refresh; validation PASS; pushed no; manual QA pending operator review",
+  "local_bundle_manual_qa": "PASS",
+  "local_bundle_status": "public steward workflow platform bundle 3 post-push accepted-state refresh; validation PASS; pushed no; manual QA PASS; closeout pending explicit authorization",
   "historical_prior_checkpoints": [
     { "checkpoint": "Public Steward Workflow Platform Bundle 2 and Employee Claims Copy Repair", "commit": "3baedc9c327fbb7a528706ec442a63f88172e425", "short_commit": "3baedc9", "status": "historical_only_not_current" },
     { "checkpoint": "Public Steward Workflow Platform Bundle 1 and Discipline Copy Repair", "commit": "ea0ce8de9cd6b85b56528fabc9e8ca7f8bf43a52", "short_commit": "ea0ce8d", "status": "historical_only_not_current" },
