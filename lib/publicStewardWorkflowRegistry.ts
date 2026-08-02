@@ -261,7 +261,11 @@ const safetyHealth: PublicStewardWorkflowTopic = {
     /\bworkplace\b.*\bsafety(?: and health)?\b.*\b(issue|concern|condition|hazard|grievance)\b/,
     /\barticle\s*14\b/,
   ],
-  negative: [/\b(medical diagnosis|owcp|workers'? compensation|treatment plan|fmla)\b/],
+  negative: [
+    /\b(medical diagnosis|owcp|workers'? compensation|treatment plan|fmla)\b/,
+    /\b(?:reasonable|disability|medical|work restriction|ada|rehabilitation act)?[ -]?accommodation(?: request| issue)?\b/,
+    /\bdisability discrimination\b/,
+  ],
   multiTopicAliases: [
     /\b(?:workplace )?safety(?: and health)?\b/,
     /\bunsafe (?:working )?condition\b/,

@@ -351,6 +351,28 @@ function item(text: string, citations: Citation[]): CitedGrievanceOutlineItem {
   return { text, citationIds: [...new Set(citations.map((citation) => citation.id))] };
 }
 
+function evidencePurpose(document: string): string {
+  const normalized = document.toLowerCase();
+  const purposes: Array<[RegExp, string]> = [
+    [/overtime desired list|overtime opportunit|rotation|daily or weekly hours/, "Check the neutral assignment sequence, eligibility, availability, and applicable limits against the cited overtime provisions without presuming an error."],
+    [/annual leave|leave request|leave calendar|vacation schedule|schedule notice/, "Clarify the request category, scheduling path, and recorded disposition that may be compared with the cited leave provisions."],
+    [/holiday schedule|holiday assignment|posting date|excusal/, "Clarify the posting, employee category, and assignment sequence that may be compared with the cited holiday-scheduling provisions."],
+    [/hazard|unsafe|inspection|corrective response|safety and health committee/, "Clarify the reported hazard, notice, inspection, and corrective-response sequence relevant to the cited safety process."],
+    [/disciplin|corrective action|notice and concurrence/, "Clarify the action, notice, concurrence, and corrective-discipline sequence relevant to the cited just-cause framework."],
+    [/sick leave|absence|certification/, "Clarify the absence category, notice, certification path, and recorded administration relevant to the cited sick-leave provisions."],
+    [/higher-level|detail|written order|assignment record/, "Clarify the assignment, written-order, duration, and qualification path relevant to the cited higher-level provisions."],
+    [/uniform|work cloth|allowance|anniversary-year|eligibility category/, "Clarify the eligibility category, assignment, allowance, and program-administration path relevant to the cited uniform provisions."],
+    [/claim|personal property|property and incident|determination|appeal record/, "Clarify the property, documentation, recommendation, determination, and appeal path relevant to the cited employee-claims provisions."],
+    [/steward|records-access|interview request|permission|grievance-handling purpose|time record/, "Clarify the steward designation, request, access, interview, and time sequence relevant to the cited grievance-handling provisions."],
+    [/lmou|handbook|manual|local instruction|local agreement|local implementation|posted instruction|practice/, "Identify the separately sourced local authority management or the Union may rely on so its applicability can be verified independently."],
+    [/management's stated basis|management’s stated basis|records it relied upon|recorded disposition/, "Clarify management's stated basis and the neutral record trail without assuming what records are available or who holds them."],
+    [/relevant papers|documents exchanged|grievance process|fact-development procedure/, "Identify the neutral materials exchanged in the grievance process that may clarify the parties' factual and contractual positions."],
+    [/request|notice|decision|schedule|record/, "Clarify the neutral event and decision trail that may be compared with the cited provisions; availability and custody remain to be verified."],
+  ];
+  return purposes.find(([pattern]) => pattern.test(normalized))?.[1] ??
+    "Clarify the neutral factual category relevant to the cited provisions; availability, custody, and contents remain to be verified.";
+}
+
 export function evidenceRequestsFromCitedItems(
   items: CitedGrievanceOutlineItem[]
 ): EvidenceRequestItem[] {
@@ -359,8 +381,7 @@ export function evidenceRequestsFromCitedItems(
     requestFrom: /LMOU|handbook|manual|local instruction|practice/i.test(entry.text)
       ? "The custodian of the asserted local authority, through the proper union process."
       : "Management or the appropriate records custodian, through the proper union process.",
-    whyItMatters:
-      "Use this case-neutral category to compare confirmed facts with the verified public contract language. Its existence, custody, and contents are not assumed.",
+    whyItMatters: evidencePurpose(entry.text),
     citationIds: [...new Set(entry.citationIds)].sort(),
   }));
 }

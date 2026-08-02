@@ -183,6 +183,44 @@ describe("Bundle 3 topic-grounded public steward argument plans", () => {
     expect(markdown).not.toMatch(/\b(member name|employee id|medical diagnosis|grievance file)\b/i);
   });
 
+  it("uses deterministic item-specific evidence rationales in saved and exported plans", () => {
+    const annual = plan("annual_leave");
+    const safety = plan("safety_health");
+    const claims = plan("employee_claims");
+    const oldGlobalRationale =
+      "Use this case-neutral category to compare confirmed facts with the verified public contract language. Its existence, custody, and contents are not assumed.";
+
+    expect(new Set(annual.evidenceRequests.map((entry) => entry.whyItMatters)).size).toBeGreaterThan(1);
+    expect(new Set([
+      ...annual.evidenceRequests,
+      ...safety.evidenceRequests,
+      ...claims.evidenceRequests,
+    ].map((entry) => entry.whyItMatters)).size).toBeGreaterThan(3);
+    expect(safety.evidenceRequests.map((entry) => entry.whyItMatters).join(" ")).toMatch(/hazard|inspection|corrective/i);
+    expect(claims.evidenceRequests.map((entry) => entry.whyItMatters).join(" ")).toMatch(/claim|property|determination/i);
+
+    for (const entry of [...annual.evidenceRequests, ...safety.evidenceRequests, ...claims.evidenceRequests]) {
+      expect(entry.whyItMatters).not.toBe("");
+      expect(entry.whyItMatters).not.toBe(oldGlobalRationale);
+      expect(entry.whyItMatters).not.toMatch(/\b(?:document|record) exists\b|\bproves? (?:a )?violation\b/i);
+    }
+
+    const text = publicStewardArgumentPlanToText(annual);
+    const markdown = publicStewardArgumentPlanToMarkdown(annual);
+    for (const entry of annual.evidenceRequests) {
+      expect(text).toContain(entry.whyItMatters);
+      expect(markdown).toContain(entry.whyItMatters);
+    }
+    const repeated = plan("annual_leave");
+    expect(repeated.evidenceRequests).toEqual(annual.evidenceRequests);
+
+    const reopened = migrateSavedAnswers([createSavedStewardArgumentPlanRecord({
+      plan: annual,
+      timestamp: "2026-08-02T16:15:00.000Z",
+    })])[0].stewardArgumentPlan;
+    expect(reopened?.evidenceRequests).toEqual(annual.evidenceRequests);
+  });
+
   it("uses the shared routed topic and native print architecture without adding a routing chain", () => {
     const component = readFileSync("components/KiaStickApp.tsx", "utf8");
     const styles = readFileSync("app/globals.css", "utf8");

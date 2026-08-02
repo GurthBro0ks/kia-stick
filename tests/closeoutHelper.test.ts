@@ -380,22 +380,49 @@ describe("closeout-helper", () => {
     expect(summary.stdout).not.toContain("PHASE=stale-tmp-proof");
   });
 
-  it("omits queue_item_missing from default persistent-root review when no actionable queue is expected", () => {
-    const review = spawnSync("node", [scriptPath, "review"], { encoding: "utf8" });
+  it("isolates default proof discovery from the accumulating persistent proof root", () => {
+    const root = createRepoFixture(null);
+    mkdirSync(join(root, "data"), { recursive: true });
+    writeFileSync(join(root, "data/current-accepted-pushed-state.json"), JSON.stringify({
+      package_lock_changed: false,
+      queue_015_status: "blocked",
+      v0912c_status: "blocked_pending_exact_target",
+      next_postcss_status: "WARN_SAFE_NEXT_TARGET_UNCLEAR",
+      real_doc_implementation_approved: false,
+    }, null, 2));
+    runGit(root, ["add", "."]);
+    runGit(root, ["commit", "-m", "Add isolated accepted-state fixture"]);
+    runGit(root, ["update-ref", "refs/remotes/origin/main", "HEAD"]);
+    const proofRoot = mkdtempSync(join(tmpdir(), "kia-closeout-isolated-default-proof-"));
+    createProof(
+      proofRoot,
+      "proof_kia_stick_isolated_default_20260802T160000Z",
+      ["RESULT=PASS", `PHASE=${phase}`, "PUSHED=no", "MANUAL_QA_STATUS=PENDING"].join("\n")
+    );
+    const runReview = () => spawnSync("node", [scriptPath, "review", "--root", root], {
+      encoding: "utf8",
+      env: { ...process.env, KIA_PROOF_ROOT: proofRoot },
+    });
+    const review = runReview();
+    const repeatedReview = runReview();
     const issueLines = review.stdout
       .split("\n")
       .filter((line) => line.startsWith("- WARN") || line.startsWith("- FAIL"))
       .join("\n");
 
     expect(review.status).toBe(0);
-    expect(review.stdout).toContain("proof_discovery_mode=default_latest_from_persistent_kia_proof_root");
+    expect(repeatedReview.status).toBe(0);
+    expect(repeatedReview.stdout).toBe(review.stdout);
+    expect(review.stdout).toContain("proof_discovery_mode=default_latest_from_env_kia_proof_root");
+    expect(review.stdout).toContain(`proof_root=${proofRoot}`);
     expect(review.stdout).toContain("queue_id=none");
     expect(review.stdout).toContain("queue_status=none");
     expect(review.stdout).toContain("queue_acceptance_allowed=false");
     expect(review.stdout).toContain("no_actionable_queue_guidance=No actionable queue items.");
-    expect(review.stdout).toMatch(/next_action_state=(operator_qa_needed|closeout_push_needed|accepted_pushed_state_recorded)/);
-    expect(issueLines).toMatch(/local_commit_without_push|worktree_dirty/);
+    expect(review.stdout).toContain("next_action_state=operator_qa_needed");
+    expect(issueLines).toContain("manual_qa_pending");
     expect(issueLines).not.toContain("queue_item_missing");
+    expect(review.stdout).not.toContain("/home/mint/kia-stick-local-proofs/");
   });
 
   it("reports the current accepted pushed baseline from the shared contract instead of stale proof-chain checkpoints", () => {

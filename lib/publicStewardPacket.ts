@@ -92,33 +92,95 @@ export interface PublicStewardPacket {
   createdAt: string;
 }
 
-function uniqueStrings(values: string[]): string[] {
-  return [...new Set(values.map((value) => value.trim()).filter(Boolean))];
+interface TopicStringContribution {
+  topic: string;
+  text: string;
+}
+
+interface TopicCitedContribution extends TopicStringContribution {
+  citationIds: string[];
+}
+
+interface TopicEvidenceContribution {
+  topic: string;
+  entry: EvidenceRequestItem;
+}
+
+function normalizedPacketText(value: string): string {
+  return value.trim().replace(/\s+/g, " ");
+}
+
+function renderedTopicText(topics: string[], text: string): string {
+  return `${topics.join(" + ")}: ${text}`;
+}
+
+function uniqueTopicStrings(values: TopicStringContribution[]): string[] {
+  const byText = new Map<string, { text: string; topics: string[] }>();
+  for (const value of values) {
+    const text = normalizedPacketText(value.text);
+    if (!text) continue;
+    const existing = byText.get(text);
+    byText.set(text, {
+      text: existing?.text ?? text,
+      topics: [...new Set([...(existing?.topics ?? []), value.topic])],
+    });
+  }
+  return [...byText.values()].map((value) => renderedTopicText(value.topics, value.text));
+}
+
+function uniqueTopicCitedItems(values: TopicCitedContribution[]): CitedGrievanceOutlineItem[] {
+  const byText = new Map<string, { text: string; topics: string[]; citationIds: string[] }>();
+  for (const value of values) {
+    const text = normalizedPacketText(value.text);
+    if (!text) continue;
+    const existing = byText.get(text);
+    byText.set(text, {
+      text: existing?.text ?? text,
+      topics: [...new Set([...(existing?.topics ?? []), value.topic])],
+      citationIds: [...new Set([...(existing?.citationIds ?? []), ...value.citationIds])].sort(),
+    });
+  }
+  return [...byText.values()].map((value) => ({
+    text: renderedTopicText(value.topics, value.text),
+    citationIds: value.citationIds,
+  }));
 }
 
 function uniqueCitedItems(values: CitedGrievanceOutlineItem[]): CitedGrievanceOutlineItem[] {
   const byText = new Map<string, CitedGrievanceOutlineItem>();
   for (const value of values) {
-    const existing = byText.get(value.text);
-    byText.set(value.text, {
-      text: value.text,
+    const text = normalizedPacketText(value.text);
+    const existing = byText.get(text);
+    byText.set(text, {
+      text,
       citationIds: [...new Set([...(existing?.citationIds ?? []), ...value.citationIds])].sort(),
     });
   }
   return [...byText.values()];
 }
 
-function uniqueEvidenceRequests(values: EvidenceRequestItem[]): EvidenceRequestItem[] {
-  const byDocument = new Map<string, EvidenceRequestItem>();
+function uniqueTopicEvidenceRequests(values: TopicEvidenceContribution[]): EvidenceRequestItem[] {
+  const byDocument = new Map<string, { entry: EvidenceRequestItem; topics: string[] }>();
   for (const value of values) {
-    const key = `${value.document}|${value.requestFrom}|${value.whyItMatters}`;
+    const document = normalizedPacketText(value.entry.document);
+    const requestFrom = normalizedPacketText(value.entry.requestFrom);
+    const whyItMatters = normalizedPacketText(value.entry.whyItMatters);
+    const key = `${document}|${requestFrom}|${whyItMatters}`;
     const existing = byDocument.get(key);
     byDocument.set(key, {
-      ...value,
-      citationIds: [...new Set([...(existing?.citationIds ?? []), ...value.citationIds])].sort(),
+      topics: [...new Set([...(existing?.topics ?? []), value.topic])],
+      entry: {
+        document,
+        requestFrom,
+        whyItMatters,
+        citationIds: [...new Set([...(existing?.entry.citationIds ?? []), ...value.entry.citationIds])].sort(),
+      },
     });
   }
-  return [...byDocument.values()];
+  return [...byDocument.values()].map(({ entry, topics }) => ({
+    ...entry,
+    document: renderedTopicText(topics, entry.document),
+  }));
 }
 
 export function defaultPublicStewardPacketSteps(): PublicStewardPacketStep[] {
@@ -284,45 +346,45 @@ export function buildPublicStewardPacket(input: {
     templateVersions: topicSummaries.map((topic) => topic.templateId).sort(),
     title: `Case-neutral steward packet: ${topicSummaries.map((topic) => topic.title).join(" + ")}`,
     topicSummaries,
-    governingContractLanguage: uniqueCitedItems(
+    governingContractLanguage: uniqueTopicCitedItems(
       currentOutlines.flatMap((outline) =>
         outline.governingContractLanguage.map((entry) => ({
-          text: `${outline.topic}: ${entry.text}`,
+          topic: outline.topic,
+          text: entry.text,
           citationIds: entry.citationIds,
         }))
       )
     ),
     overlapConflictNotes: overlapNotes(currentOutlines),
-    factsToConfirm: uniqueStrings(
+    factsToConfirm: uniqueTopicStrings(
       currentOutlines.flatMap((outline) =>
-        outline.factsToConfirm.map((entry) => `${outline.topic}: ${entry}`)
+        outline.factsToConfirm.map((entry) => ({ topic: outline.topic, text: entry }))
       )
     ),
-    evidenceChecklist: uniqueCitedItems(
+    evidenceChecklist: uniqueTopicCitedItems(
       currentOutlines.flatMap((outline) =>
         outline.evidenceToRequest.map((entry) => ({
-          text: `${outline.topic}: ${entry.text}`,
+          topic: outline.topic,
+          text: entry.text,
           citationIds: entry.citationIds,
         }))
       )
     ),
-    structuredEvidenceChecklist: uniqueEvidenceRequests(
+    structuredEvidenceChecklist: uniqueTopicEvidenceRequests(
       currentOutlines.flatMap((outline) =>
-        outline.evidenceRequests.map((entry) => ({
-          ...entry,
-          document: `${outline.topic}: ${entry.document}`,
-        }))
+        outline.evidenceRequests.map((entry) => ({ topic: outline.topic, entry }))
       )
     ),
-    managementQuestions: uniqueStrings(
+    managementQuestions: uniqueTopicStrings(
       currentOutlines.flatMap((outline) =>
-        outline.questionsForManagement.map((entry) => `${outline.topic}: ${entry}`)
+        outline.questionsForManagement.map((entry) => ({ topic: outline.topic, text: entry }))
       )
     ),
-    stepOnePreparation: uniqueCitedItems(
+    stepOnePreparation: uniqueTopicCitedItems(
       currentOutlines.flatMap((outline) =>
         outline.stepOneArgument.map((entry) => ({
-          text: `${outline.topic}: ${entry.text}`,
+          topic: outline.topic,
+          text: entry.text,
           citationIds: entry.citationIds,
         }))
       )
@@ -330,10 +392,11 @@ export function buildPublicStewardPacket(input: {
     procedureCaveats: uniqueCitedItems(
       currentOutlines.flatMap((outline) => outline.timelinessAndProcedureLimits)
     ),
-    escalationReadiness: uniqueCitedItems(
+    escalationReadiness: uniqueTopicCitedItems(
       currentOutlines.flatMap((outline) =>
         outline.escalationReadiness.map((entry) => ({
-          text: `${outline.topic}: ${entry.text}`,
+          topic: outline.topic,
+          text: entry.text,
           citationIds: entry.citationIds,
         }))
       )

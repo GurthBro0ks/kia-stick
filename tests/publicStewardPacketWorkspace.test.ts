@@ -3,6 +3,8 @@ import React from "react";
 import { renderToStaticMarkup } from "react-dom/server";
 import { describe, expect, it } from "vitest";
 import {
+  addChatTopicToPacketSelection,
+  PUBLIC_STEWARD_PACKET_TOPIC_LIMIT_NOTICE,
   SavedAnswersPanel,
   SourcesPanel,
 } from "@/components/KiaStickApp";
@@ -48,6 +50,10 @@ function packet(topicIds: Parameters<typeof buildPublicStewardPacket>[0]["topicI
   });
   expect(result).not.toBeNull();
   return result!;
+}
+
+function withoutTopicProvenance(value: string): string {
+  return value.replace(/^[^:]+:\s*/, "").replace(/\s+/g, " ").trim();
 }
 
 describe("public steward packet workspace", () => {
@@ -114,6 +120,78 @@ describe("public steward packet workspace", () => {
     expect(migrated).toHaveLength(2);
     expect(migrated.every((item) => item.savedType === "public_steward_packet_plan")).toBe(true);
     expect(migrateSavedAnswers(structuredClone(migrated))).toEqual(migrated);
+  });
+
+  it("deduplicates shared multi-topic rows before rendering combined provenance", () => {
+    const twoTopic = packet(["annual_leave", "overtime"]);
+    const threeTopic = packet(["annual_leave", "overtime", "sick_leave"]);
+    const oneTopic = packet(["annual_leave"]);
+    const sharedTimingFact =
+      "When the employee or Union learned or reasonably should have learned of the grievance cause; keep actual dates outside this public pilot.";
+    const sections = [
+      threeTopic.governingContractLanguage.map((entry) => entry.text),
+      threeTopic.factsToConfirm,
+      threeTopic.evidenceChecklist.map((entry) => entry.text),
+      threeTopic.structuredEvidenceChecklist.map((entry) => entry.document),
+      threeTopic.managementQuestions,
+      threeTopic.stepOnePreparation.map((entry) => entry.text),
+      threeTopic.escalationReadiness.map((entry) => entry.text),
+    ];
+
+    for (const section of sections) {
+      const canonicalRows = section.map(withoutTopicProvenance);
+      expect(new Set(canonicalRows).size).toBe(canonicalRows.length);
+    }
+    expect(twoTopic.factsToConfirm.find((entry) => entry.endsWith(sharedTimingFact))).toBe(
+      `Annual leave + Overtime: ${sharedTimingFact}`
+    );
+    expect(threeTopic.factsToConfirm.find((entry) => entry.endsWith(sharedTimingFact))).toBe(
+      `Annual leave + Overtime + Sick leave administration: ${sharedTimingFact}`
+    );
+    expect(oneTopic.factsToConfirm.find((entry) => entry.endsWith(sharedTimingFact))).toBe(
+      `Annual leave: ${sharedTimingFact}`
+    );
+    expect(threeTopic.factsToConfirm.some((entry) =>
+      entry.startsWith("Overtime: ") && /Overtime Desired List/i.test(entry)
+    )).toBe(true);
+
+    const text = publicStewardPacketToText(threeTopic);
+    const markdown = publicStewardPacketToMarkdown(threeTopic);
+    expect(text.split(sharedTimingFact)).toHaveLength(2);
+    expect(markdown.split(sharedTimingFact)).toHaveLength(2);
+
+    const saved = createSavedStewardPacketRecord({
+      packet: threeTopic,
+      timestamp: "2026-08-02T16:10:00.000Z",
+    });
+    const reopened = migrateSavedAnswers([structuredClone(saved)])[0].stewardPacket;
+    expect(reopened?.factsToConfirm).toEqual(threeTopic.factsToConfirm);
+    expect(reopened?.stepOnePreparation).toEqual(threeTopic.stepOnePreparation);
+  });
+
+  it("rejects a fourth chat topic without evicting or mutating the selected three", () => {
+    const selected = ["annual_leave", "overtime", "sick_leave"] as const;
+    const firstAttempt = addChatTopicToPacketSelection(selected, "safety_health");
+    const repeatedAttempt = addChatTopicToPacketSelection(firstAttempt.topicIds, "safety_health");
+
+    expect(firstAttempt).toEqual({
+      topicIds: [...selected],
+      added: false,
+      notice: PUBLIC_STEWARD_PACKET_TOPIC_LIMIT_NOTICE,
+    });
+    expect(repeatedAttempt).toEqual(firstAttempt);
+
+    const afterRemoval = firstAttempt.topicIds.filter((topicId) => topicId !== "sick_leave");
+    expect(addChatTopicToPacketSelection(afterRemoval, "safety_health")).toEqual({
+      topicIds: ["annual_leave", "overtime", "safety_health"],
+      added: true,
+      notice: null,
+    });
+    expect(buildPublicStewardPacket({
+      source: cbaSource,
+      topicIds: [...selected, "safety_health"],
+      runtimeVersion,
+    })).toBeNull();
   });
 
   it("exports only current verified content and blocks stale packet identity", () => {

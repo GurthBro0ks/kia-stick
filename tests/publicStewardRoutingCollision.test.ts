@@ -106,6 +106,49 @@ describe("public steward deterministic routing collision matrix", () => {
     expect(detectPublicStewardWorkflowTopic(question)).not.toBe(topicId);
   });
 
+  it.each([
+    "Build an argument about a disability accommodation request.",
+    "Management denied a reasonable accommodation.",
+    "An employee has a medical restriction and needs an accommodation.",
+    "Prepare an ADA-accommodation argument.",
+    "Review a Rehabilitation Act accommodation request.",
+    "Is this disability discrimination?",
+    "Management denied a disability accommodation; what now?",
+  ])("keeps accommodation-only language out of the Article 14 safety route: %s", (question) => {
+    const match = publicStewardWorkflowMatch(question);
+    expect(match.matchedTopicIds).not.toContain("safety_health");
+    expect(detectPublicStewardWorkflowTopic(question)).not.toBe("safety_health");
+    const answer = buildCbaAnswer({
+      question,
+      source,
+      nlrbSource: publicSource,
+      runtimeVersion,
+      ...defaults,
+    });
+    expect(answer.noAnswer).toBe(true);
+    expect(answer.citations).toEqual([]);
+    expect(buildPublicGrievanceOutline({ answer, source })).toBeNull();
+  });
+
+  it("keeps explicit workplace hazards supported while a mixed accommodation prompt fails conservatively", () => {
+    const hazard = "There is an unsafe exposed electrical panel creating a workplace hazard.";
+    expect(publicStewardWorkflowMatch(hazard)).toMatchObject({
+      topicId: "safety_health",
+      matchedTopicIds: ["safety_health"],
+      ambiguous: false,
+    });
+
+    const mixed = "An accommodation issue exists, and separately there is an unsafe exposed electrical panel.";
+    expect(publicStewardWorkflowMatch(mixed).matchedTopicIds).not.toContain("safety_health");
+    expect(buildCbaAnswer({
+      question: mixed,
+      source,
+      nlrbSource: publicSource,
+      runtimeVersion,
+      ...defaults,
+    })).toMatchObject({ noAnswer: true, citations: [] });
+  });
+
   it("fails an overlapping supported-topic question closed with no builder or Saved-eligible answer", () => {
     const question = "How do holiday scheduling and an unsafe condition interact under the CBA?";
     const match = publicStewardWorkflowMatch(question);

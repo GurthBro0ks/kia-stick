@@ -176,6 +176,26 @@ type PublicSourceLoadState = { status: "loading" } | PublicSourceRouteResponse;
 type CbaSourceLoadState = { status: "loading" } | CbaSourceRouteResponse;
 type CbaCitationNavigationNotice = { citation: Citation; state: CitationVerificationState };
 
+export const PUBLIC_STEWARD_PACKET_TOPIC_LIMIT_NOTICE =
+  "A steward packet can include up to three topics. Remove one selected topic before adding another." as const;
+
+export function addChatTopicToPacketSelection(
+  current: readonly PublicStewardWorkflowTopicId[],
+  topicId: PublicStewardWorkflowTopicId
+): { topicIds: PublicStewardWorkflowTopicId[]; added: boolean; notice: string | null } {
+  if (current.includes(topicId)) {
+    return { topicIds: [...current], added: false, notice: null };
+  }
+  if (current.length >= 3) {
+    return {
+      topicIds: [...current],
+      added: false,
+      notice: PUBLIC_STEWARD_PACKET_TOPIC_LIMIT_NOTICE,
+    };
+  }
+  return { topicIds: [...current, topicId].sort(), added: true, notice: null };
+}
+
 export interface QuarantineItem {
   id: string;
   name: string;
@@ -683,11 +703,16 @@ export function KiaStickApp({ runtimeVersion = clientVersion }: { runtimeVersion
   }
 
   function addChatTopicToPacket(topicId: PublicStewardWorkflowTopicId) {
-    setPacketTopicIds((current) =>
-      current.includes(topicId)
-        ? current
-        : [...current.slice(0, 2), topicId].sort()
-    );
+    const result = addChatTopicToPacketSelection(packetTopicIds, topicId);
+    if (result.notice) {
+      setSaveNotice({ status: "duplicate", text: result.notice });
+      return;
+    }
+    if (!result.added) {
+      setTab("sources");
+      return;
+    }
+    setPacketTopicIds(result.topicIds);
     setStewardPacket(null);
     setSaveNotice(null);
     setTab("sources");
