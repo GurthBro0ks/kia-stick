@@ -460,9 +460,9 @@ describe("public CBA overtime cited grievance outline", () => {
     const health = await GET().json();
     expect(health.phase).toBe(PUBLIC_GRIEVANCE_OUTLINE_PHASE);
     expect(health.productVersion).toBe("0.7.0");
-    expect(health.acceptedCommit).toBe("96be9069e7694af237823b0da3a30919be60546c");
-    expect(health.repositoryRecordingCommit).toBe("b24f28fba5301a49bcb3e65994c8c45f38ad42f4");
-    expect(health.latestPushedCloseoutCommit).toBe("b24f28fba5301a49bcb3e65994c8c45f38ad42f4");
+    expect(health.acceptedCommit).toBe("e8a4499c6bac349566d0f9eeb66d15d497bcd602");
+    expect(health.repositoryRecordingCommit).toBe("5eb113ae03d6b3db52e840ea2d1b9b5212b6e91f");
+    expect(health.latestPushedCloseoutCommit).toBe("5eb113ae03d6b3db52e840ea2d1b9b5212b6e91f");
     expect(health.dataModes.private_data).toBe("blocked");
     expect(health.dataModes.external_ai).toBe("disabled");
     expect(health.realDbTouched).toBe(false);
@@ -476,9 +476,9 @@ describe("public CBA overtime cited grievance outline", () => {
       operatorDiagnosticsOpen: false,
       onOperatorDiagnosticsToggle: () => undefined,
     }));
-    expect(settings).toContain("Bundle 3 Core Repair Hardening post-Fable5 Audit");
+    expect(settings).toContain("Bundle 3 Core Repair Post-Push Accepted-State Refresh");
     expect(settings).toContain(PUBLIC_GRIEVANCE_OUTLINE_PHASE);
-    expect(settings).toContain("Manual QA</dt><dd>PASS");
+    expect(settings).toContain("Manual QA</dt><dd>pending operator review");
     expect(settings).toContain(runtimeVersion.gitSha);
     expect(currentAcceptedPushedState.queue_015_status).toBe("blocked");
     expect(currentAcceptedPushedState.v0912c_status).toBe("blocked_pending_exact_target");

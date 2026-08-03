@@ -7,7 +7,7 @@ import { PUBLIC_GRIEVANCE_OUTLINE_PHASE } from "@/lib/publicGrievanceOutline";
 describe("public truth runtime identity", () => {
   it("keeps the accepted pushed phase derived from the accepted-state contract", () => {
     expect(CURRENT_PHASE).toBe(currentAcceptedPushedState.accepted_pushed_phase);
-    expect(currentAcceptedPushedState.checkpoint_label).toBe("Public Steward Workflow Platform Bundle 3 and Multi-Topic Ambiguity Fail-Closed Repair at 96be906");
+    expect(currentAcceptedPushedState.checkpoint_label).toBe("Public Steward Workflow Platform Bundle 3 Core Repairs and Runtime Truth/Favicon Fix at e8a4499");
   });
 
   it("reports the local bundle phase and distinct repository identities", async () => {
@@ -15,17 +15,17 @@ describe("public truth runtime identity", () => {
     const payload = await response.json();
     expect(payload.phase).toBe(PUBLIC_GRIEVANCE_OUTLINE_PHASE);
     expect(currentAcceptedPushedState.local_bundle_phase).toBe(
-      "KIA-Stick-bundle-3-core-repair-QA-runtime-truth-and-favicon-fix"
+      "KIA-Stick-bundle-3-core-repair-post-push-accepted-state-refresh"
     );
     expect(payload.phase).toBe(currentAcceptedPushedState.local_bundle_phase);
-    expect(payload.localBundle).toBe("Bundle 3 Core Repair Hardening post-Fable5 Audit");
+    expect(payload.localBundle).toBe("Bundle 3 Core Repair Post-Push Accepted-State Refresh");
     expect(payload.acceptedCheckpoint).toBe(currentAcceptedPushedState.checkpoint_label);
     expect(payload.acceptedCommit).toBe(currentAcceptedPushedState.accepted_pushed_commit);
-    expect(payload.acceptedCommit).toBe("96be9069e7694af237823b0da3a30919be60546c");
+    expect(payload.acceptedCommit).toBe("e8a4499c6bac349566d0f9eeb66d15d497bcd602");
     expect(payload.repositoryRecordingCommit).toBe(currentAcceptedPushedState.repository_recording_commit);
-    expect(payload.repositoryRecordingCommit).toBe("b24f28fba5301a49bcb3e65994c8c45f38ad42f4");
+    expect(payload.repositoryRecordingCommit).toBe("5eb113ae03d6b3db52e840ea2d1b9b5212b6e91f");
     expect(payload.latestPushedCloseoutCommit).toBe(currentAcceptedPushedState.latest_pushed_closeout_commit);
-    expect(payload.latestPushedCloseoutCommit).toBe("b24f28fba5301a49bcb3e65994c8c45f38ad42f4");
+    expect(payload.latestPushedCloseoutCommit).toBe("5eb113ae03d6b3db52e840ea2d1b9b5212b6e91f");
     expect(new Set([
       payload.acceptedCommit,
       payload.repositoryRecordingCommit,
@@ -52,21 +52,21 @@ describe("public truth runtime identity", () => {
     expect(payload.apiKeyRequired).toBe(false);
   });
 
-  it("derives the current local repair's operator QA PASS from the accepted-state contract", async () => {
+  it("keeps the local accepted-state refresh pending its own operator QA", async () => {
     const response = GET();
     const payload = await response.json();
-    expect(currentAcceptedPushedState.local_bundle_status).toContain("manual QA PASS");
-    expect(localBundleManualQaStatus()).toBe("PASS");
+    expect(currentAcceptedPushedState.local_bundle_status).toContain("manual QA pending operator review");
+    expect(localBundleManualQaStatus()).toBe("pending_operator_review");
     expect(payload.manualQa).toBe(localBundleManualQaStatus());
-    expect(payload.manualQa).toBe("PASS");
+    expect(payload.manualQa).toBe("pending_operator_review");
     expect(payload.pushed).toBe(false);
-    expect(payload.acceptedCommit).toBe("96be9069e7694af237823b0da3a30919be60546c");
-    expect(payload.latestPushedCloseoutCommit).toBe("b24f28fba5301a49bcb3e65994c8c45f38ad42f4");
+    expect(payload.acceptedCommit).toBe("e8a4499c6bac349566d0f9eeb66d15d497bcd602");
+    expect(payload.latestPushedCloseoutCommit).toBe("5eb113ae03d6b3db52e840ea2d1b9b5212b6e91f");
     expect(payload.productVersion).toBe("0.7.0");
     expect(currentAcceptedPushedState.historical_prior_checkpoints[0]).toEqual({
-      checkpoint: "Public Steward Workflow Platform Bundle 2 and Employee Claims Copy Repair",
-      commit: "3baedc9c327fbb7a528706ec442a63f88172e425",
-      short_commit: "3baedc9",
+      checkpoint: "Public Steward Workflow Platform Bundle 3 and Multi-Topic Ambiguity Fail-Closed Repair",
+      commit: "96be9069e7694af237823b0da3a30919be60546c",
+      short_commit: "96be906",
       status: "historical_only_not_current",
     });
   });

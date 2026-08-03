@@ -1,3 +1,12 @@
+- Phase: `KIA-Stick-bundle-3-core-repair-post-push-accepted-state-refresh`
+- Authorization: `AUTHORIZE_KIA_BUNDLE_3_CORE_REPAIR_POST_PUSH_ACCEPTED_STATE_REFRESH`.
+- Status: the shared accepted-state contract and bounded consumers now record the pushed Bundle 3 core repairs and runtime-truth/favicon fix at capability commit `e8a4499c6bac349566d0f9eeb66d15d497bcd602`, with repository/latest-closeout recording point `5eb113ae03d6b3db52e840ea2d1b9b5212b6e91f`; validation PASS; pushed no; manual QA pending operator review.
+- Canonical closeout proof: `/home/mint/kia-stick-local-proofs/proof_kia_stick_bundle_3_core_repair_qa_runtime_truth_favicon_fix_operator_qa_pass_recording_20260802T174542Z/closeout_push_20260803T172147Z`. Local refresh proof: `/home/mint/kia-stick-local-proofs/proof_kia_stick_bundle_3_core_repair_post_push_accepted_state_refresh_20260803T173333Z`.
+- Historical preservation: prior Bundle 3 multi-topic ambiguity capability `96be9069e7694af237823b0da3a30919be60546c` is historical-only, not deleted or rewritten.
+- Files: `data/current-accepted-pushed-state.json`, bounded current-state tests, `CLOSEOUT.md`, `README.md`, `feature_list.json`, and this progress record.
+- Safety: no source sync, private data, file chooser, real upload/import, OCR, embeddings, vector database, external AI, dependency/package/lockfile mutation, service/system/network change, Discord, closeout, or push. queue-015 and v0.9.12C remain blocked; Next/PostCSS remains parked.
+- Next: operator QA of the exact refresh proof. Operator QA recording, closeout, and push remain separate authorization gates.
+
 - Phase: `KIA-Stick-bundle-3-core-repair-QA-runtime-truth-and-favicon-fix-closeout-and-push`
 - Authorization: `CLOSEOUT_AND_PUSH_KIA_BUNDLE_3_CORE_REPAIR_QA_RUNTIME_TRUTH_AND_FAVICON_FIX_AUTHORIZED`.
 - Accepted chain: core repairs `ea6983365c8b29cbd9ac7c1f3af77ee00cc4ce1b`; runtime-truth/favicon correction `e8a4499c6bac349566d0f9eeb66d15d497bcd602`; operator-QA PASS recording `cde85779933a09540e26bafded216dd724ffce2f`.

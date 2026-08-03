@@ -1,3 +1,16 @@
+## Bundle 3 Core Repair Post-Push Accepted-State Refresh
+
+- Phase: `KIA-Stick-bundle-3-core-repair-post-push-accepted-state-refresh`.
+- Authorization: `AUTHORIZE_KIA_BUNDLE_3_CORE_REPAIR_POST_PUSH_ACCEPTED_STATE_REFRESH`.
+- Accepted pushed capability: `Public Steward Workflow Platform Bundle 3 Core Repairs and Runtime Truth/Favicon Fix at e8a4499` (`e8a4499c6bac349566d0f9eeb66d15d497bcd602`).
+- Repository-recording/latest-closeout point: `5eb113ae03d6b3db52e840ea2d1b9b5212b6e91f`, with `HEAD == origin/main == remote main` verified after the authorized core-repair closeout push.
+- Canonical closeout/push proof: `/home/mint/kia-stick-local-proofs/proof_kia_stick_bundle_3_core_repair_qa_runtime_truth_favicon_fix_operator_qa_pass_recording_20260802T174542Z/closeout_push_20260803T172147Z`.
+- Current local refresh proof: `/home/mint/kia-stick-local-proofs/proof_kia_stick_bundle_3_core_repair_post_push_accepted_state_refresh_20260803T173333Z`.
+- Shared contract and bounded consumers now distinguish accepted capability `e8a4499` from repository-recording/latest-closeout `5eb113a`; prior capability `96be906` is historical-only.
+- Local refresh status: validation `PASS`; pushed `no`; operator manual QA `PENDING_OPERATOR_REVIEW`; operator-QA recording and closeout/push require separate explicit authorization.
+- Safety: no source sync, private data, upload/import capability, external AI, dependency, package, lockfile, service, scheduler, notification, or blocked-target change.
+- Next: operator QA of the refreshed accepted-state surfaces. Do not push until separately authorized.
+
 ## Bundle 3 Core Repair QA Runtime Truth and Favicon Fix Closeout and Push
 
 - Phase: `KIA-Stick-bundle-3-core-repair-QA-runtime-truth-and-favicon-fix-closeout-and-push`.

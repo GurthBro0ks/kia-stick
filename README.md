@@ -1,3 +1,13 @@
+## Bundle 3 Core Repair Post-Push Accepted-State Refresh
+
+- The current accepted pushed capability is `Public Steward Workflow Platform Bundle 3 Core Repairs and Runtime Truth/Favicon Fix at e8a4499`.
+- The accepted capability commit is `e8a4499c6bac349566d0f9eeb66d15d497bcd602`; the distinct repository-recording/latest-closeout point is `5eb113ae03d6b3db52e840ea2d1b9b5212b6e91f`.
+- Canonical closeout proof: `/home/mint/kia-stick-local-proofs/proof_kia_stick_bundle_3_core_repair_qa_runtime_truth_favicon_fix_operator_qa_pass_recording_20260802T174542Z/closeout_push_20260803T172147Z`.
+- Shared current-state contract: `data/current-accepted-pushed-state.json`; Settings, `/health`, proof helpers, and current-state tests consume this contract.
+- The prior Bundle 3 multi-topic ambiguity capability `96be906` is preserved as historical-only.
+- This bookkeeping refresh is local-only: validation `PASS`, pushed `no`, operator manual QA `PENDING_OPERATOR_REVIEW`; proof: `/home/mint/kia-stick-local-proofs/proof_kia_stick_bundle_3_core_repair_post_push_accepted_state_refresh_20260803T173333Z`.
+- queue-015 and v0.9.12C remain blocked; Next/PostCSS remains `WARN_SAFE_NEXT_TARGET_UNCLEAR`; product/package remain `0.7.0`.
+
 ## Public Steward Workflow Platform Bundle 3 Post-Push Accepted-State Refresh
 
 - The current accepted pushed capability is `Public Steward Workflow Platform Bundle 3 and Multi-Topic Ambiguity Fail-Closed Repair at 96be906`.
