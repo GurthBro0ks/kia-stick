@@ -12712,9 +12712,38 @@
     "private_data_accessed": false,
     "discord_sent": false
   },
+  "public_steward_workflow_platform_bundle_3_core_repair_qa_runtime_truth_favicon_fix_closeout": {
+    "phase": "KIA-Stick-bundle-3-core-repair-QA-runtime-truth-and-favicon-fix-closeout-and-push",
+    "status": "closeout_push_authorized",
+    "authorization": "CLOSEOUT_AND_PUSH_KIA_BUNDLE_3_CORE_REPAIR_QA_RUNTIME_TRUTH_AND_FAVICON_FIX_AUTHORIZED",
+    "core_repair_commit": "ea6983365c8b29cbd9ac7c1f3af77ee00cc4ce1b",
+    "runtime_truth_favicon_fix_commit": "e8a4499c6bac349566d0f9eeb66d15d497bcd602",
+    "operator_qa_recording_commit": "cde85779933a09540e26bafded216dd724ffce2f",
+    "accepted_capability_commit": "96be9069e7694af237823b0da3a30919be60546c",
+    "pre_closeout_repository_recording_commit": "b24f28fba5301a49bcb3e65994c8c45f38ad42f4",
+    "pre_closeout_latest_pushed_closeout_commit": "b24f28fba5301a49bcb3e65994c8c45f38ad42f4",
+    "core_repair_proof_dir": "/home/mint/kia-stick-local-proofs/proof_kia_stick_bundle_3_core_repair_hardening_post_fable5_20260802T160655Z",
+    "runtime_truth_favicon_fix_proof_dir": "/home/mint/kia-stick-local-proofs/proof_kia_stick_bundle_3_core_repair_qa_runtime_truth_favicon_fix_20260802T171503Z",
+    "operator_qa_pass_proof_dir": "/home/mint/kia-stick-local-proofs/proof_kia_stick_bundle_3_core_repair_qa_runtime_truth_favicon_fix_operator_qa_pass_recording_20260802T174542Z",
+    "closeout_push_proof_dir": "/home/mint/kia-stick-local-proofs/proof_kia_stick_bundle_3_core_repair_qa_runtime_truth_favicon_fix_operator_qa_pass_recording_20260802T174542Z/closeout_push_20260803T172147Z",
+    "validation_status": "PASS",
+    "manual_qa_status": "PASS",
+    "push_completion_recorded_in_closeout_proof": true,
+    "post_push_accepted_state_bookkeeping_requires_separate_authorization": true,
+    "accepted_identity_rewritten": false,
+    "queue_015_status": "blocked",
+    "next_postcss_status": "WARN_SAFE_NEXT_TARGET_UNCLEAR",
+    "v0912c_status": "blocked_pending_exact_target",
+    "product_version": "0.7.0",
+    "package_json_changed": false,
+    "package_lock_changed": false,
+    "source_sync_performed": false,
+    "private_data_accessed": false,
+    "discord_sent": false
+  },
   "public_steward_workflow_platform_bundle_3_core_repair_hardening_post_fable5": {
     "phase": "KIA-Stick-bundle-3-core-repair-hardening-post-fable5-audit",
-    "status": "local_validation_pass",
+    "status": "operator_qa_pass_recorded_local_only",
     "authorized_findings": [
       "F-PACKET-01",
       "F-ROUTE-01",
@@ -12732,11 +12761,13 @@
     "fourth_topic_notice_visible": true,
     "packet_completion_preserved_on_rejection": true,
     "proof_dir": "/home/mint/kia-stick-local-proofs/proof_kia_stick_bundle_3_core_repair_hardening_post_fable5_20260802T160655Z",
+    "operator_qa_pass_token": "OPERATOR_QA_PASS for /home/mint/kia-stick-local-proofs/proof_kia_stick_bundle_3_core_repair_qa_runtime_truth_favicon_fix_20260802T171503Z",
+    "operator_qa_pass_proof_dir": "/home/mint/kia-stick-local-proofs/proof_kia_stick_bundle_3_core_repair_qa_runtime_truth_favicon_fix_operator_qa_pass_recording_20260802T174542Z",
     "focused_tests": "PASS; 10 files / 186 tests",
     "full_tests_first": "PASS; 339 files / 1112 tests",
     "full_tests_second": "PASS; 339 files / 1112 tests",
     "browser_review": "PASS; desktop and 400px rendered review",
-    "local_manual_qa_status": "PENDING_OPERATOR_REVIEW",
+    "local_manual_qa_status": "PASS",
     "local_pushed": false,
     "accepted_capability_commit": "96be9069e7694af237823b0da3a30919be60546c",
     "accepted_state_changed": false,
@@ -12752,11 +12783,11 @@
     "product_version": "0.7.0",
     "discord_sent": false,
     "push_performed": false,
-    "status_notes": "The five post-Fable5 Bundle 3 correctness and test-isolation findings are repaired locally with rendered browser evidence. Manual operator QA remains pending; accepted state, closeout, and push are separately gated."
+    "status_notes": "The five post-Fable5 Bundle 3 correctness and test-isolation findings are repaired locally with rendered browser evidence, and operator QA PASS is recorded by the combined runtime-truth/favicon QA proof. Accepted-state refresh remains separately gated."
   },
   "public_steward_workflow_platform_bundle_3_core_repair_qa_runtime_truth_favicon_fix": {
     "phase": "KIA-Stick-bundle-3-core-repair-QA-runtime-truth-and-favicon-fix",
-    "status": "local_validation_pass",
+    "status": "operator_qa_pass_recorded_local_only",
     "authorization": "AUTHORIZE_KIA_BUNDLE_3_CORE_REPAIR_QA_RUNTIME_TRUTH_AND_FAVICON_FIX",
     "runtime_truth_corrected": true,
     "favicon_http_200_required": true,
@@ -12778,7 +12809,7 @@
     "current_local_pushed": false,
     "accepted_state_anchors_changed": false,
     "closeout_performed": false,
-    "operator_qa_recorded": false,
+    "operator_qa_recorded": true,
     "source_sync_performed": false,
     "sensitive_data_accessed": false,
     "package_json_changed": false,
@@ -12790,6 +12821,6 @@
     "product_version": "0.7.0",
     "discord_sent": false,
     "push_performed": false,
-    "status_notes": "The current local build truth is separated from the accepted checkpoint and manual QA remains pending. The static KIA favicon removes the application-originated /favicon.ico 404. Push, closeout, accepted-state advancement, and operator-QA recording remain separately gated."
+    "status_notes": "The current local build truth is separated from the accepted checkpoint, operator QA PASS is recorded, and the static KIA favicon removes the application-originated /favicon.ico 404. Post-push accepted-state refresh remains separately gated."
   }
 }

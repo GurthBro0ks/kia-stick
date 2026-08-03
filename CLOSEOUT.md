@@ -1,3 +1,21 @@
+## Bundle 3 Core Repair QA Runtime Truth and Favicon Fix Closeout and Push
+
+- Phase: `KIA-Stick-bundle-3-core-repair-QA-runtime-truth-and-favicon-fix-closeout-and-push`.
+- Authorization: `CLOSEOUT_AND_PUSH_KIA_BUNDLE_3_CORE_REPAIR_QA_RUNTIME_TRUTH_AND_FAVICON_FIX_AUTHORIZED`.
+- Core-repair commit: `ea6983365c8b29cbd9ac7c1f3af77ee00cc4ce1b`.
+- Runtime-truth/favicon fix commit: `e8a4499c6bac349566d0f9eeb66d15d497bcd602`.
+- Operator-QA PASS recording commit: `cde85779933a09540e26bafded216dd724ffce2f`.
+- Core-repair proof: `/home/mint/kia-stick-local-proofs/proof_kia_stick_bundle_3_core_repair_hardening_post_fable5_20260802T160655Z`.
+- Runtime-truth/favicon proof: `/home/mint/kia-stick-local-proofs/proof_kia_stick_bundle_3_core_repair_qa_runtime_truth_favicon_fix_20260802T171503Z`.
+- Operator-QA PASS proof: `/home/mint/kia-stick-local-proofs/proof_kia_stick_bundle_3_core_repair_qa_runtime_truth_favicon_fix_operator_qa_pass_recording_20260802T174542Z`.
+- Canonical closeout/push proof: `/home/mint/kia-stick-local-proofs/proof_kia_stick_bundle_3_core_repair_qa_runtime_truth_favicon_fix_operator_qa_pass_recording_20260802T174542Z/closeout_push_20260803T172147Z`.
+- Validation and manual QA: `PASS` / `PASS`; the five bounded core repairs, corrected local runtime truth, valid static favicon, prior Bundle 3 workflows, fake/public separation, and safety boundaries are accepted.
+- Scope: `CLOSEOUT.md`, `claude-progress.md`, and `feature_list.json` only for this closeout commit; no runtime, shared accepted-state contract, public source cache, private-data capability, package/lockfile, service, scheduler, network, notification, or blocked-target change.
+- Push gate: one authorized non-force push of `main`; the final closeout SHA and `HEAD == origin/main == remote main` equality are recorded in the canonical proof.
+- Contract note: accepted capability remains `96be9069e7694af237823b0da3a30919be60546c`; pre-closeout repository-recording/latest-closeout remain `b24f28fba5301a49bcb3e65994c8c45f38ad42f4`. The shared contract is not rewritten by this closeout; any post-push accepted-state refresh requires separate authorization.
+- Blocked states preserved: queue-015 remains blocked; Next/PostCSS remains `WARN_SAFE_NEXT_TARGET_UNCLEAR`; v0.9.12C remains blocked; product/package remain `0.7.0`.
+- Notifications: Discord disabled; no duplicate notification; no report URL.
+
 ## Public Steward Workflow Platform Bundle 3 Post-Push Accepted-State Refresh Closeout and Push
 
 - Phase: `KIA-Stick-public-steward-workflow-platform-bundle-3-post-push-accepted-state-refresh-closeout-and-push`.
