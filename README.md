@@ -5,7 +5,7 @@
 - Canonical closeout proof: `/home/mint/kia-stick-local-proofs/proof_kia_stick_bundle_3_core_repair_qa_runtime_truth_favicon_fix_operator_qa_pass_recording_20260802T174542Z/closeout_push_20260803T172147Z`.
 - Shared current-state contract: `data/current-accepted-pushed-state.json`; Settings, `/health`, proof helpers, and current-state tests consume this contract.
 - The prior Bundle 3 multi-topic ambiguity capability `96be906` is preserved as historical-only.
-- This bookkeeping refresh is local-only: validation `PASS`, pushed `no`, operator manual QA `PENDING_OPERATOR_REVIEW`; proof: `/home/mint/kia-stick-local-proofs/proof_kia_stick_bundle_3_core_repair_post_push_accepted_state_refresh_20260803T173333Z`.
+- This bookkeeping refresh is local-only: validation `PASS`, pushed `no`, operator manual QA `PASS`; refresh proof: `/home/mint/kia-stick-local-proofs/proof_kia_stick_bundle_3_core_repair_post_push_accepted_state_refresh_20260803T173333Z`; operator-QA proof: `/home/mint/kia-stick-local-proofs/proof_kia_stick_bundle_3_core_repair_post_push_accepted_state_refresh_operator_qa_pass_recording_20260803T181157Z`.
 - queue-015 and v0.9.12C remain blocked; Next/PostCSS remains `WARN_SAFE_NEXT_TARGET_UNCLEAR`; product/package remain `0.7.0`.
 
 ## Public Steward Workflow Platform Bundle 3 Post-Push Accepted-State Refresh

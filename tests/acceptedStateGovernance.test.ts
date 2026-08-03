@@ -72,13 +72,13 @@ describe("accepted-state governance loop break", () => {
       external_ai: "disabled",
     });
     expect(currentAcceptedPushedState.local_implementation_proof_dir).toBe("/home/mint/kia-stick-local-proofs/proof_kia_stick_bundle_3_core_repair_post_push_accepted_state_refresh_20260803T173333Z");
-    expect(currentAcceptedPushedState).not.toHaveProperty("local_bundle_operator_qa_pass_proof_dir");
+    expect(currentAcceptedPushedState.local_bundle_operator_qa_pass_proof_dir).toBe("/home/mint/kia-stick-local-proofs/proof_kia_stick_bundle_3_core_repair_post_push_accepted_state_refresh_operator_qa_pass_recording_20260803T181157Z");
     expect(currentAcceptedPushedState.local_bundle).toBe("Bundle 3 Core Repair Post-Push Accepted-State Refresh");
     expect(currentAcceptedPushedState.local_bundle_phase).toBe("KIA-Stick-bundle-3-core-repair-post-push-accepted-state-refresh");
     expect(currentAcceptedPushedState.local_bundle_validation).toBe("PASS");
     expect(currentAcceptedPushedState.local_bundle_pushed).toBe(false);
-    expect(currentAcceptedPushedState.local_bundle_manual_qa).toBe("pending_operator_review");
-    expect(currentAcceptedPushedState.local_bundle_status).toBe("bundle 3 core repair post-push accepted-state refresh; validation PASS; pushed no; manual QA pending operator review");
+    expect(currentAcceptedPushedState.local_bundle_manual_qa).toBe("PASS");
+    expect(currentAcceptedPushedState.local_bundle_status).toBe("bundle 3 core repair post-push accepted-state refresh; validation PASS; pushed no; manual QA PASS; closeout and push await separate explicit authorization");
     expect(currentAcceptedPushedState.local_bundle_status).not.toContain("stale local-bundle push-status repair");
     expect(currentAcceptedPushedState.latest_pushed_closeout_commit).toBe("5eb113ae03d6b3db52e840ea2d1b9b5212b6e91f");
     expect(currentAcceptedPushedState.latest_pushed_closeout_short_commit).toBe("5eb113a");

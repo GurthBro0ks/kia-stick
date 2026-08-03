@@ -52,13 +52,13 @@ describe("public truth runtime identity", () => {
     expect(payload.apiKeyRequired).toBe(false);
   });
 
-  it("keeps the local accepted-state refresh pending its own operator QA", async () => {
+  it("reports operator QA PASS for the local accepted-state refresh without claiming a push", async () => {
     const response = GET();
     const payload = await response.json();
-    expect(currentAcceptedPushedState.local_bundle_status).toContain("manual QA pending operator review");
-    expect(localBundleManualQaStatus()).toBe("pending_operator_review");
+    expect(currentAcceptedPushedState.local_bundle_status).toContain("manual QA PASS");
+    expect(localBundleManualQaStatus()).toBe("PASS");
     expect(payload.manualQa).toBe(localBundleManualQaStatus());
-    expect(payload.manualQa).toBe("pending_operator_review");
+    expect(payload.manualQa).toBe("PASS");
     expect(payload.pushed).toBe(false);
     expect(payload.acceptedCommit).toBe("e8a4499c6bac349566d0f9eeb66d15d497bcd602");
     expect(payload.latestPushedCloseoutCommit).toBe("5eb113ae03d6b3db52e840ea2d1b9b5212b6e91f");

@@ -478,7 +478,7 @@ describe("public CBA overtime cited grievance outline", () => {
     }));
     expect(settings).toContain("Bundle 3 Core Repair Post-Push Accepted-State Refresh");
     expect(settings).toContain(PUBLIC_GRIEVANCE_OUTLINE_PHASE);
-    expect(settings).toContain("Manual QA</dt><dd>pending operator review");
+    expect(settings).toContain("Manual QA</dt><dd>PASS");
     expect(settings).toContain(runtimeVersion.gitSha);
     expect(currentAcceptedPushedState.queue_015_status).toBe("blocked");
     expect(currentAcceptedPushedState.v0912c_status).toBe("blocked_pending_exact_target");
