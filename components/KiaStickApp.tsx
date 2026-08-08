@@ -392,27 +392,47 @@ export function KiaStickApp({ runtimeVersion = clientVersion }: { runtimeVersion
 
   useEffect(() => {
     if (!hydrated) return;
-    window.localStorage.setItem(savedKey, JSON.stringify(saved));
+    try {
+      window.localStorage.setItem(savedKey, JSON.stringify(saved));
+    } catch {
+      setSaveNotice({ status: "duplicate", text: "Local storage is full or unavailable; state changes cannot be persisted to storage." });
+    }
   }, [hydrated, saved]);
 
   useEffect(() => {
     if (!hydrated) return;
-    window.localStorage.setItem(threadKey, JSON.stringify(thread));
+    try {
+      window.localStorage.setItem(threadKey, JSON.stringify(thread));
+    } catch {
+      setSaveNotice({ status: "duplicate", text: "Local storage is full or unavailable; state changes cannot be persisted to storage." });
+    }
   }, [hydrated, thread]);
 
   useEffect(() => {
     if (!hydrated) return;
-    window.localStorage.setItem(quarantineKey, JSON.stringify(quarantine));
+    try {
+      window.localStorage.setItem(quarantineKey, JSON.stringify(quarantine));
+    } catch {
+      setSaveNotice({ status: "duplicate", text: "Local storage is full or unavailable; state changes cannot be persisted to storage." });
+    }
   }, [hydrated, quarantine]);
 
   useEffect(() => {
     if (!hydrated) return;
-    window.localStorage.setItem(vaultKey, JSON.stringify(vaultState));
+    try {
+      window.localStorage.setItem(vaultKey, JSON.stringify(vaultState));
+    } catch {
+      setSaveNotice({ status: "duplicate", text: "Local storage is full or unavailable; state changes cannot be persisted to storage." });
+    }
   }, [hydrated, vaultState]);
 
   useEffect(() => {
     if (!hydrated) return;
-    window.localStorage.setItem(importWizardKey, JSON.stringify(importWizardState));
+    try {
+      window.localStorage.setItem(importWizardKey, JSON.stringify(importWizardState));
+    } catch {
+      setSaveNotice({ status: "duplicate", text: "Local storage is full or unavailable; state changes cannot be persisted to storage." });
+    }
   }, [hydrated, importWizardState]);
 
   const sourceHierarchyGroups = useMemo(() => buildSourceHierarchyGroups(), []);
@@ -2131,6 +2151,7 @@ export function SavedAnswersPanel(props: {
                 </>
               )}
             </dl>
+            {/* Advisory-only display for public_argument_plan is intentional per scope decision to preserve operator access to existing saved records. */}
             {item.savedType === "public_argument_plan" && item.argumentPlan && (
               <div className="savedPlanActions">
                 <button
@@ -2176,6 +2197,7 @@ export function SavedAnswersPanel(props: {
                 )}
               </div>
             )}
+            {/* Advisory-only display for public_grievance_outline is intentional per scope decision to preserve operator access to existing saved records. */}
             {item.savedType === "public_grievance_outline" && item.grievanceOutline && (
               <div className="savedPlanActions">
                 <button
@@ -3719,7 +3741,7 @@ function PublicGrievanceOutlineView({
   );
 }
 
-function PublicStewardPacketView({
+export function PublicStewardPacketView({
   packet,
   source,
   onCitationNavigate,
