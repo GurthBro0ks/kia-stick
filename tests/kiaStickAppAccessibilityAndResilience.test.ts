@@ -1,3 +1,4 @@
+import { readFileSync } from "node:fs";
 import React from "react";
 import { renderToStaticMarkup } from "react-dom/server";
 import { describe, expect, it, vi } from "vitest";
@@ -112,6 +113,11 @@ describe("Accessibility and Saved-State Resilience Hardening (Bundle 3 UX Archit
     expect(htmlBlocked).toContain("Copy packet as plain text");
     expect(htmlBlocked).toContain("Download packet as Markdown");
     expect(htmlBlocked).toContain("Print verified packet");
+  });
+
+  it("F-A11Y-01 assertion 3: preserves a visible focus indicator for the Chat composer", () => {
+    const css = readFileSync("app/globals.css", "utf8");
+    expect(css).toMatch(/\.askBox textarea:focus-visible\s*\{[^}]*outline:\s*3px solid var\(--blue\);[^}]*outline-offset:\s*3px;/s);
   });
 
   it("F-A11Y-01 assertion 3 & 4: renders aria-expanded and role='alert' for saved-tab record toggles and gated disabled reasons", () => {

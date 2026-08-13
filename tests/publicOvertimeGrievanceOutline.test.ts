@@ -25,7 +25,6 @@ import {
 } from "@/lib/publicArgumentPlan";
 import {
   buildPublicGrievanceOutline,
-  PUBLIC_GRIEVANCE_OUTLINE_PHASE,
   PUBLIC_GRIEVANCE_OUTLINE_PRIVATE_WARNING,
   PUBLIC_GRIEVANCE_OUTLINE_SAVED_TYPE,
   publicGrievanceOutlineEligibility,
@@ -458,7 +457,7 @@ describe("public CBA overtime cited grievance outline", () => {
 
   it("keeps Settings and health truthful with refreshed accepted identities and unchanged safety gates", async () => {
     const health = await GET().json();
-    expect(health.phase).toBe(PUBLIC_GRIEVANCE_OUTLINE_PHASE);
+    expect(health.phase).toBe(currentAcceptedPushedState.local_bundle_phase);
     expect(health.productVersion).toBe("0.7.0");
     expect(health.acceptedCommit).toBe("e8a4499c6bac349566d0f9eeb66d15d497bcd602");
     expect(health.repositoryRecordingCommit).toBe("5eb113ae03d6b3db52e840ea2d1b9b5212b6e91f");
@@ -476,9 +475,9 @@ describe("public CBA overtime cited grievance outline", () => {
       operatorDiagnosticsOpen: false,
       onOperatorDiagnosticsToggle: () => undefined,
     }));
-    expect(settings).toContain("Bundle 3 Core Repair Post-Push Accepted-State Refresh");
-    expect(settings).toContain(PUBLIC_GRIEVANCE_OUTLINE_PHASE);
-    expect(settings).toContain("Manual QA</dt><dd>PASS");
+    expect(settings).toContain("Accessibility and Saved-State Resilience QA Failure Repair");
+    expect(settings).toContain(currentAcceptedPushedState.local_bundle_phase);
+    expect(settings).toContain("Manual QA</dt><dd>pending operator review");
     expect(settings).toContain(runtimeVersion.gitSha);
     expect(currentAcceptedPushedState.queue_015_status).toBe("blocked");
     expect(currentAcceptedPushedState.v0912c_status).toBe("blocked_pending_exact_target");

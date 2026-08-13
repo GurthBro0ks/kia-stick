@@ -2,7 +2,6 @@ import { describe, expect, it } from "vitest";
 import { GET } from "@/app/health/route";
 import { currentAcceptedPushedState, localBundleManualQaStatus } from "@/lib/acceptedState";
 import { CURRENT_PHASE } from "@/lib/version";
-import { PUBLIC_GRIEVANCE_OUTLINE_PHASE } from "@/lib/publicGrievanceOutline";
 
 describe("public truth runtime identity", () => {
   it("keeps the accepted pushed phase derived from the accepted-state contract", () => {
@@ -13,12 +12,11 @@ describe("public truth runtime identity", () => {
   it("reports the local bundle phase and distinct repository identities", async () => {
     const response = GET();
     const payload = await response.json();
-    expect(payload.phase).toBe(PUBLIC_GRIEVANCE_OUTLINE_PHASE);
     expect(currentAcceptedPushedState.local_bundle_phase).toBe(
-      "KIA-Stick-bundle-3-core-repair-post-push-accepted-state-refresh"
+      "KIA-Stick-accessibility-and-saved-state-resilience-QA-failure-repair"
     );
     expect(payload.phase).toBe(currentAcceptedPushedState.local_bundle_phase);
-    expect(payload.localBundle).toBe("Bundle 3 Core Repair Post-Push Accepted-State Refresh");
+    expect(payload.localBundle).toBe("Accessibility and Saved-State Resilience QA Failure Repair");
     expect(payload.acceptedCheckpoint).toBe(currentAcceptedPushedState.checkpoint_label);
     expect(payload.acceptedCommit).toBe(currentAcceptedPushedState.accepted_pushed_commit);
     expect(payload.acceptedCommit).toBe("e8a4499c6bac349566d0f9eeb66d15d497bcd602");
@@ -52,13 +50,13 @@ describe("public truth runtime identity", () => {
     expect(payload.apiKeyRequired).toBe(false);
   });
 
-  it("reports operator QA PASS for the local accepted-state refresh without claiming a push", async () => {
+  it("reports pending operator QA for the local repair without changing accepted identities", async () => {
     const response = GET();
     const payload = await response.json();
-    expect(currentAcceptedPushedState.local_bundle_status).toContain("manual QA PASS");
-    expect(localBundleManualQaStatus()).toBe("PASS");
+    expect(currentAcceptedPushedState.local_bundle_status).toContain("manual QA pending operator review");
+    expect(localBundleManualQaStatus()).toBe("pending_operator_review");
     expect(payload.manualQa).toBe(localBundleManualQaStatus());
-    expect(payload.manualQa).toBe("PASS");
+    expect(payload.manualQa).toBe("pending_operator_review");
     expect(payload.pushed).toBe(false);
     expect(payload.acceptedCommit).toBe("e8a4499c6bac349566d0f9eeb66d15d497bcd602");
     expect(payload.latestPushedCloseoutCommit).toBe("5eb113ae03d6b3db52e840ea2d1b9b5212b6e91f");

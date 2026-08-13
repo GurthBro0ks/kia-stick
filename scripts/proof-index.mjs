@@ -5,7 +5,8 @@ import { spawnSync } from "node:child_process";
 
 const DEFAULT_PROOF_ROOT = "/tmp";
 const PROOF_PREFIX = "proof_kia_stick_";
-const DURABILITY_SAFE_ROOTS = ["/tmp", "/home/mint/kia-stick-local-proofs"];
+const CODEX_DESKTOP_TMP_ROOT = "/home/mint/.local/state/codex-desktop/tmp";
+const DURABILITY_SAFE_ROOTS = [DEFAULT_PROOF_ROOT, CODEX_DESKTOP_TMP_ROOT, "/home/mint/kia-stick-local-proofs"];
 
 function fieldValue(text, field) {
   const escaped = field.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");

@@ -8,7 +8,8 @@ import { readCurrentAcceptedPushedState } from "./accepted-state.mjs";
 
 const FALLBACK_PROOF_ROOT = "/tmp";
 const PERSISTENT_KIA_PROOF_ROOT = "/home/mint/kia-stick-local-proofs";
-const SAFE_PROOF_ROOTS = ["/tmp", "/home/mint/kia-stick-local-proofs"];
+const CODEX_DESKTOP_TMP_ROOT = "/home/mint/.local/state/codex-desktop/tmp";
+const SAFE_PROOF_ROOTS = [FALLBACK_PROOF_ROOT, CODEX_DESKTOP_TMP_ROOT, PERSISTENT_KIA_PROOF_ROOT];
 const readyQueueStatuses = new Set(["ready_to_push", "accepted"]);
 
 function readJson(root, relativePath, fallback = {}) {

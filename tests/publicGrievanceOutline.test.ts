@@ -24,7 +24,6 @@ import {
 } from "@/lib/publicArgumentPlan";
 import {
   buildPublicGrievanceOutline,
-  PUBLIC_GRIEVANCE_OUTLINE_PHASE,
   PUBLIC_GRIEVANCE_OUTLINE_PRIVATE_WARNING,
   PUBLIC_GRIEVANCE_OUTLINE_SAVED_TYPE,
   publicGrievanceOutlineEligibility,
@@ -391,10 +390,10 @@ describe("public CBA annual-leave cited grievance outline", () => {
 
   it("keeps Settings, health, accepted identities, product, and blocked gates truthful", async () => {
     expect(currentAcceptedPushedState.local_bundle_phase).toBe(
-      "KIA-Stick-bundle-3-core-repair-post-push-accepted-state-refresh"
+      "KIA-Stick-accessibility-and-saved-state-resilience-QA-failure-repair"
     );
     expect(currentAcceptedPushedState.local_bundle_status).toBe(
-      "bundle 3 core repair post-push accepted-state refresh; validation PASS; pushed no; manual QA PASS; closeout and push await separate explicit authorization"
+      "accessibility and saved-state resilience QA failure repair; validation PASS; pushed no; manual QA pending operator review; closeout and push await separate explicit authorization"
     );
     expect(currentAcceptedPushedState.accepted_pushed_commit).toBe("e8a4499c6bac349566d0f9eeb66d15d497bcd602");
     expect(currentAcceptedPushedState.repository_recording_commit).toBe("5eb113ae03d6b3db52e840ea2d1b9b5212b6e91f");
@@ -402,7 +401,7 @@ describe("public CBA annual-leave cited grievance outline", () => {
 
     const healthResponse = GET();
     const health = await healthResponse.json();
-    expect(health.phase).toBe(PUBLIC_GRIEVANCE_OUTLINE_PHASE);
+    expect(health.phase).toBe(currentAcceptedPushedState.local_bundle_phase);
     expect(health.productVersion).toBe("0.7.0");
     expect(health.dataModes.private_data).toBe("blocked");
     expect(health.dataModes.external_ai).toBe("disabled");
@@ -418,9 +417,9 @@ describe("public CBA annual-leave cited grievance outline", () => {
       operatorDiagnosticsOpen: false,
       onOperatorDiagnosticsToggle: () => undefined,
     }));
-    expect(settingsHtml).toContain("Bundle 3 Core Repair Post-Push Accepted-State Refresh");
-    expect(settingsHtml).toContain(PUBLIC_GRIEVANCE_OUTLINE_PHASE);
-    expect(settingsHtml).toContain("Manual QA</dt><dd>PASS");
+    expect(settingsHtml).toContain("Accessibility and Saved-State Resilience QA Failure Repair");
+    expect(settingsHtml).toContain(currentAcceptedPushedState.local_bundle_phase);
+    expect(settingsHtml).toContain("Manual QA</dt><dd>pending operator review");
     expect(settingsHtml).toContain(currentAcceptedPushedState.accepted_pushed_short_commit);
 
     const uploadHtml = renderToStaticMarkup(React.createElement(FakeUploadPanel, {
