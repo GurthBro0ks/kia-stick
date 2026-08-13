@@ -5,7 +5,8 @@
 - Canonical closeout proof: `/home/mint/kia-stick-local-proofs/proof_kia_stick_accessibility_saved_state_qa_failure_repair_local_commit_20260813T133538Z/closeout_push_20260813T142316Z`.
 - Shared current-state contract: `data/current-accepted-pushed-state.json`; Settings, `/health`, proof helpers, and current-state tests consume this contract.
 - The prior Bundle 3 core-repair capability `e8a4499` is preserved as historical-only.
-- This bookkeeping refresh is local-only: validation `PASS`, pushed `no`, operator manual QA `PENDING_OPERATOR_REVIEW`; proof: `/home/mint/kia-stick-local-proofs/proof_kia_stick_accessibility_saved_state_resilience_post_push_accepted_state_refresh_20260813T143953Z`.
+- This bookkeeping refresh is local-only: validation `PASS`, pushed `no`, operator manual QA `PASS`; refresh proof: `/home/mint/kia-stick-local-proofs/proof_kia_stick_accessibility_saved_state_resilience_post_push_accepted_state_refresh_20260813T143953Z`; operator-QA recording proof: `/home/mint/kia-stick-local-proofs/proof_kia_stick_accessibility_saved_state_resilience_post_push_accepted_state_refresh_operator_qa_pass_recording_20260813T162821Z`.
+- Operator QA PASS does not authorize closeout or push; both remain separately gated.
 - queue-015 and v0.9.12C remain blocked; Next/PostCSS remains `WARN_SAFE_NEXT_TARGET_UNCLEAR`; product/package remain `0.7.0`.
 
 ## Bundle 3 Core Repair Post-Push Accepted-State Refresh

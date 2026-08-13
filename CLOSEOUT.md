@@ -1,15 +1,16 @@
 ## Accessibility and Saved-State Resilience Post-Push Accepted-State Refresh
 
 - Phase: `KIA-Stick-accessibility-and-saved-state-resilience-post-push-accepted-state-refresh`.
-- Authorization: `AUTHORIZE_KIA_ACCESSIBILITY_SAVED_STATE_RESILIENCE_POST_PUSH_ACCEPTED_STATE_REFRESH`.
+- Authorization chain: `AUTHORIZE_KIA_ACCESSIBILITY_SAVED_STATE_RESILIENCE_POST_PUSH_ACCEPTED_STATE_REFRESH`, followed by exact operator acceptance `OPERATOR_QA_PASS for /home/mint/kia-stick-local-proofs/proof_kia_stick_accessibility_saved_state_resilience_post_push_accepted_state_refresh_20260813T143953Z`.
 - Accepted pushed capability: `Accessibility and Saved-State Resilience QA Failure Repair at 9960323` (`996032370846952e59756caa23cde2eed9a1d458`).
 - Repository-recording/latest-closeout point: `4d0f6e2338f2b327933a80e26ec2a83c56530350`, with `HEAD == origin/main == remote main` verified after the authorized closeout push.
 - Canonical closeout/push proof: `/home/mint/kia-stick-local-proofs/proof_kia_stick_accessibility_saved_state_qa_failure_repair_local_commit_20260813T133538Z/closeout_push_20260813T142316Z`.
 - Current local refresh proof: `/home/mint/kia-stick-local-proofs/proof_kia_stick_accessibility_saved_state_resilience_post_push_accepted_state_refresh_20260813T143953Z`.
+- Operator-QA PASS recording proof: `/home/mint/kia-stick-local-proofs/proof_kia_stick_accessibility_saved_state_resilience_post_push_accepted_state_refresh_operator_qa_pass_recording_20260813T162821Z`.
 - Shared contract and bounded consumers now distinguish accepted capability `9960323` from repository-recording/latest-closeout `4d0f6e2`; prior capability `e8a4499` is historical-only.
-- Local refresh status: validation `PASS`; pushed `no`; operator manual QA `PENDING_OPERATOR_REVIEW`; operator-QA recording, closeout, and push require separate explicit authorization.
+- Local refresh status: validation `PASS`; pushed `no`; operator manual QA `PASS`; closeout and push require separate explicit authorization.
 - Safety: no source sync, private data, upload/import capability, external AI, dependency, package, lockfile, service, scheduler, notification, or blocked-target change.
-- Next: operator QA of the refreshed accepted-state surfaces. Do not close out or push without separate authorization.
+- Next: await separate closeout/push authorization. Operator QA PASS does not authorize closeout or push.
 
 ## Bundle 3 Core Repair Post-Push Accepted-State Refresh Closeout and Push
 

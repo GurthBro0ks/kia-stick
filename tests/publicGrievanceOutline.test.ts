@@ -393,7 +393,7 @@ describe("public CBA annual-leave cited grievance outline", () => {
       "KIA-Stick-accessibility-and-saved-state-resilience-post-push-accepted-state-refresh"
     );
     expect(currentAcceptedPushedState.local_bundle_status).toBe(
-      "accessibility and saved-state resilience post-push accepted-state refresh; validation PASS; pushed no; manual QA pending operator review"
+      "accessibility and saved-state resilience post-push accepted-state refresh; validation PASS; pushed no; manual QA PASS; closeout and push await separate explicit authorization"
     );
     expect(currentAcceptedPushedState.accepted_pushed_commit).toBe("996032370846952e59756caa23cde2eed9a1d458");
     expect(currentAcceptedPushedState.repository_recording_commit).toBe("4d0f6e2338f2b327933a80e26ec2a83c56530350");
@@ -419,7 +419,7 @@ describe("public CBA annual-leave cited grievance outline", () => {
     }));
     expect(settingsHtml).toContain("Accessibility and Saved-State Resilience Post-Push Accepted-State Refresh");
     expect(settingsHtml).toContain(currentAcceptedPushedState.local_bundle_phase);
-    expect(settingsHtml).toContain("Manual QA</dt><dd>pending operator review");
+    expect(settingsHtml).toContain("Manual QA</dt><dd>PASS");
     expect(settingsHtml).toContain(currentAcceptedPushedState.accepted_pushed_short_commit);
 
     const uploadHtml = renderToStaticMarkup(React.createElement(FakeUploadPanel, {
