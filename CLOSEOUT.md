@@ -3744,3 +3744,19 @@ This phase must be planning-only. It must not read, copy, index, scan, ingest, s
 - Future closeout pushes require a separate fake-only contract refresh before baseline-sensitive work.
 - Next/PostCSS remains `WARN_SAFE_NEXT_TARGET_UNCLEAR`; v0.9.12C and queue-015 remain blocked; real-doc work remains unapproved.
 - Package/product version remains `0.7.0`; no push in this local checkpoint; manual QA is pending.
+## Accessibility and Saved-State Resilience QA Failure Repair Closeout and Push
+
+- Phase: `KIA-Stick-accessibility-and-saved-state-resilience-QA-failure-repair-closeout-and-push`.
+- Authorization: `CLOSEOUT_AND_PUSH_KIA_ACCESSIBILITY_SAVED_STATE_RESILIENCE_QA_FAILURE_REPAIR_AUTHORIZED`.
+- Original implementation commit: `1a771632fabba1ee55c4133a07f2db9c406ff025`.
+- QA failure repair commit: `996032370846952e59756caa23cde2eed9a1d458`.
+- Operator-QA PASS recording commit: `7101339226aed740fabc4fb407a3eb998893c54e`.
+- Source implementation proof: `/home/mint/kia-stick-local-proofs/proof_kia_stick_accessibility_saved_state_qa_failure_repair_20260813T124812Z`.
+- Operator-QA PASS proof: `/home/mint/kia-stick-local-proofs/proof_kia_stick_accessibility_saved_state_qa_failure_repair_local_commit_20260813T133538Z`.
+- Canonical closeout/push proof: `/home/mint/kia-stick-local-proofs/proof_kia_stick_accessibility_saved_state_qa_failure_repair_local_commit_20260813T133538Z/closeout_push_20260813T142316Z`.
+- Validation and manual QA: `PASS` / `PASS`; accessibility focus visibility, Saved-state fail-closed recovery, proof-root safety, current local runtime truth, desktop and 400px behavior, fake/public separation, and blocked safety gates are accepted.
+- Scope: the closeout commit changes `CLOSEOUT.md`, `claude-progress.md`, and `feature_list.json` only. The preceding QA-recording commit changes the current local QA status and six matching tests only; no accepted/pushed identity, runtime capability, public source cache, private-data capability, dependency, package/lockfile, service, scheduler, network, notification, or blocked target changes.
+- Push gate: one authorized non-force push of `main`; the final closeout SHA and `HEAD == origin/main == remote main` equality are recorded in the canonical proof.
+- Contract note: accepted capability remains `e8a4499c6bac349566d0f9eeb66d15d497bcd602`; pre-closeout repository recording and latest pushed closeout remain `5eb113ae03d6b3db52e840ea2d1b9b5212b6e91f`. The shared contract is not advanced to the final push by this closeout; any post-push accepted-state refresh requires separate authorization.
+- Blocked states preserved: queue-015 remains blocked; Next/PostCSS remains `WARN_SAFE_NEXT_TARGET_UNCLEAR`; v0.9.12C remains blocked; product/package remain `0.7.0`.
+- Notifications: Discord disabled; no duplicate notification; no report URL.
