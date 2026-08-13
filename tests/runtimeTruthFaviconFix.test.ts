@@ -9,9 +9,9 @@ import { createRuntimeVersion } from "@/lib/version";
 import { createCbaSourceFixtureCache } from "@/tests/fixtures/cbaSourceFixture";
 import { createPublicSourceFixtureCache } from "@/tests/fixtures/publicSourceFixture";
 
-const currentLocalPhase = "KIA-Stick-accessibility-and-saved-state-resilience-QA-failure-repair";
-const acceptedCommit = "e8a4499c6bac349566d0f9eeb66d15d497bcd602";
-const repositoryRecordingCommit = "5eb113ae03d6b3db52e840ea2d1b9b5212b6e91f";
+const currentLocalPhase = "KIA-Stick-accessibility-and-saved-state-resilience-post-push-accepted-state-refresh";
+const acceptedCommit = "996032370846952e59756caa23cde2eed9a1d458";
+const repositoryRecordingCommit = "4d0f6e2338f2b327933a80e26ec2a83c56530350";
 
 describe("Bundle 3 QA runtime truth and favicon correction", () => {
   it("separates the accepted pushed repair from the local bookkeeping refresh", async () => {
@@ -22,17 +22,17 @@ describe("Bundle 3 QA runtime truth and favicon correction", () => {
     expect(currentAcceptedPushedState.repository_recording_commit).toBe(repositoryRecordingCommit);
     expect(currentAcceptedPushedState.latest_pushed_closeout_commit).toBe(repositoryRecordingCommit);
 
-    expect(currentAcceptedPushedState.local_bundle).toBe("Accessibility and Saved-State Resilience QA Failure Repair");
+    expect(currentAcceptedPushedState.local_bundle).toBe("Accessibility and Saved-State Resilience Post-Push Accepted-State Refresh");
     expect(currentAcceptedPushedState.local_bundle_phase).toBe(currentLocalPhase);
     expect(currentAcceptedPushedState.local_bundle_validation).toBe("PASS");
     expect(currentAcceptedPushedState.local_bundle_pushed).toBe(false);
-    expect(currentAcceptedPushedState.local_bundle_manual_qa).toBe("PASS");
+    expect(currentAcceptedPushedState.local_bundle_manual_qa).toBe("pending_operator_review");
 
     const health = await GET().json();
     expect(health.phase).toBe(currentLocalPhase);
     expect(health.localValidation).toBe("PASS");
     expect(health.pushed).toBe(false);
-    expect(health.manualQa).toBe("PASS");
+    expect(health.manualQa).toBe("pending_operator_review");
     expect(health.acceptedCommit).toBe(acceptedCommit);
     expect(health.repositoryRecordingCommit).toBe(repositoryRecordingCommit);
     expect(health.latestPushedCloseoutCommit).toBe(repositoryRecordingCommit);
@@ -51,12 +51,12 @@ describe("Bundle 3 QA runtime truth and favicon correction", () => {
       onOperatorDiagnosticsToggle: () => undefined,
     }));
     expect(html).toContain("Current accepted capability");
-    expect(html).toContain("Feature commit</dt><dd>e8a4499");
+    expect(html).toContain("Feature commit</dt><dd>9960323");
     expect(html).toContain("Operator QA</dt><dd>PASS");
     expect(html).toContain("Current application build");
     expect(html).toContain(currentLocalPhase);
     expect(html).toContain("Pushed</dt><dd>no");
-    expect(html).toContain("Manual QA</dt><dd>PASS");
+    expect(html).toContain("Manual QA</dt><dd>pending operator review");
   });
 
   it("provides a non-empty framework-native ICO derived from the KIA mark", () => {

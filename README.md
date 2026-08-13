@@ -1,3 +1,13 @@
+## Accessibility and Saved-State Resilience Post-Push Accepted-State Refresh
+
+- The current accepted pushed capability is `Accessibility and Saved-State Resilience QA Failure Repair at 9960323`.
+- The accepted capability commit is `996032370846952e59756caa23cde2eed9a1d458`; the distinct repository-recording/latest-closeout point is `4d0f6e2338f2b327933a80e26ec2a83c56530350`.
+- Canonical closeout proof: `/home/mint/kia-stick-local-proofs/proof_kia_stick_accessibility_saved_state_qa_failure_repair_local_commit_20260813T133538Z/closeout_push_20260813T142316Z`.
+- Shared current-state contract: `data/current-accepted-pushed-state.json`; Settings, `/health`, proof helpers, and current-state tests consume this contract.
+- The prior Bundle 3 core-repair capability `e8a4499` is preserved as historical-only.
+- This bookkeeping refresh is local-only: validation `PASS`, pushed `no`, operator manual QA `PENDING_OPERATOR_REVIEW`; proof: `/home/mint/kia-stick-local-proofs/proof_kia_stick_accessibility_saved_state_resilience_post_push_accepted_state_refresh_20260813T143953Z`.
+- queue-015 and v0.9.12C remain blocked; Next/PostCSS remains `WARN_SAFE_NEXT_TARGET_UNCLEAR`; product/package remain `0.7.0`.
+
 ## Bundle 3 Core Repair Post-Push Accepted-State Refresh
 
 - The current accepted pushed capability is `Public Steward Workflow Platform Bundle 3 Core Repairs and Runtime Truth/Favicon Fix at e8a4499`.
