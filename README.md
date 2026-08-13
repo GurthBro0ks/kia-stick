@@ -1,3 +1,13 @@
+## Export and Print Hardening
+
+- The current local bundle is `Export and Print Hardening` in phase `KIA-Stick-post-Bundle-3-export-print-hardening-implementation`.
+- Single-topic argument plans now expose the same verified-current Print action as grievance outlines and steward packets.
+- Plain-text and Markdown plan exports include the complete verified-current source appendix; packet export order, evidence rationales, completion state, and deduplication remain deterministic.
+- Print media preserves citation/source text and uses reusable pagination semantics: document sections may split, while headings, evidence rows, checklist steps, list items, and source rows avoid internal breaks.
+- The accepted pushed capability remains `996032370846952e59756caa23cde2eed9a1d458`; repository/latest-closeout anchors remain `4d0f6e2338f2b327933a80e26ec2a83c56530350`.
+- Implementation proof: `/home/mint/kia-stick-local-proofs/proof_kia_stick_export_print_hardening_implementation_20260813T170908Z`; validation `PASS`, pushed `no`, operator manual QA `pending_operator_review`.
+- Product/package remain `0.7.0`; no PDF product format, source expansion, private-data capability, dependency change, closeout, accepted-state advancement, or push is part of this bundle.
+
 ## Accessibility and Saved-State Resilience Post-Push Accepted-State Refresh
 
 - The current accepted pushed capability is `Accessibility and Saved-State Resilience QA Failure Repair at 9960323`.

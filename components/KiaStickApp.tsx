@@ -3389,7 +3389,7 @@ function printPublicArtifact(elementId: string): boolean {
   }
 }
 
-function PublicStewardArgumentPlanView({
+export function PublicStewardArgumentPlanView({
   plan,
   source,
   onCitationNavigate,
@@ -3435,7 +3435,7 @@ function PublicStewardArgumentPlanView({
     return (
       <List className="argumentPlanList">
         {items.map((entry) => (
-          <li key={`${entry.text}-${entry.citationIds.join("-")}`}>
+          <li className="print-atomic" key={`${entry.text}-${entry.citationIds.join("-")}`}>
             <span>{entry.text}</span>
             <CitationLinks citationIds={entry.citationIds} />
           </li>
@@ -3464,9 +3464,19 @@ function PublicStewardArgumentPlanView({
     setExportNotice("Downloaded current verified topic argument plan as Markdown.");
   }
 
+  function printPlan() {
+    const current = publicStewardArgumentPlanExportEligibility(plan, source);
+    if (!current.eligible) return setExportNotice(current.reason);
+    setExportNotice(
+      printPublicArtifact(headingId)
+        ? "Opened the browser print dialog for the current verified topic argument plan."
+        : "Print was blocked because the verified topic argument plan view was unavailable."
+    );
+  }
+
   return (
-    <section className="publicArgumentPlan publicStewardArgumentPlan" aria-labelledby={headingId}>
-      <div className="argumentPlanHeader">
+    <section className="publicArgumentPlan publicStewardArgumentPlan print-document" aria-labelledby={headingId}>
+      <div className="argumentPlanHeader print-atomic">
         <div>
           <span className="sectionKicker">Topic-grounded public CBA argument plan</span>
           <h3 id={headingId}>{plan.title}</h3>
@@ -3475,29 +3485,43 @@ function PublicStewardArgumentPlanView({
           {eligibility.eligible ? `${plan.citations.length} verified citations` : "plan blocked"}
         </span>
       </div>
-      <p className="argumentPlanPrivateWarning" role="note"><AlertTriangle size={16} /><strong>{plan.privateCaseWarning}</strong></p>
-      <div className="argumentPlanMeta">
+      <p className="argumentPlanPrivateWarning print-atomic" role="note"><AlertTriangle size={16} /><strong>{plan.privateCaseWarning}</strong></p>
+      <div className="argumentPlanMeta print-atomic">
         <span>Saved type: {plan.savedType}</span><span>Topic: {plan.topicId}</span>
         <span>Provider: {plan.provider}</span><span>Prompt: {plan.promptVersion}</span>
         <span>Source instance: {plan.sourceInstanceIds.join(", ")}</span><span>Content identity: {plan.contentIdentity}</span>
       </div>
-      <div className="compactActions outlineExportActions">
+      <div className="compactActions outlineExportActions print-hide">
         <button className="button subtle" disabled={!eligibility.eligible} onClick={copyPlan} type="button"><ClipboardList size={16} />Copy plan as plain text</button>
         <button className="button subtle" disabled={!eligibility.eligible} onClick={downloadPlan} type="button"><Download size={16} />Download plan as Markdown</button>
+        <button className="button subtle" disabled={!eligibility.eligible} onClick={printPlan} type="button"><Printer size={16} />Print verified plan</button>
         {onSave && <button className="button primary" disabled={!eligibility.eligible} onClick={onSave} type="button"><Save size={16} />Save topic argument plan</button>}
         <span className={eligibility.eligible ? "badge green" : "badge red"}>{eligibility.eligible ? "verified-current export ready" : "export blocked"}</span>
       </div>
       {exportNotice && <p className="saveNotice" role="status">{exportNotice}</p>}
       {!eligibility.eligible && <p className="applicabilityWarning" role="alert">{eligibility.reason}</p>}
-      <section className="argumentPlanSection"><h4>1. Issue</h4><p>{plan.issueSummary}</p></section>
-      <section className="argumentPlanSection"><h4>2. Governing contract language</h4><CitedItems items={plan.governingContractLanguage} /></section>
-      <section className="argumentPlanSection"><h4>3. Facts to confirm</h4><ul className="argumentPlanList">{plan.factsToConfirm.map((entry) => <li key={entry}>{entry}</li>)}</ul></section>
-      <section className="argumentPlanSection"><h4>4. Structured evidence or record requests</h4><EvidenceRequestRows citations={plan.citations} items={plan.evidenceRequests} onCitationNavigate={onCitationNavigate} /></section>
-      <section className="argumentPlanSection"><h4>5. Questions for management</h4><ul className="argumentPlanList">{plan.managementQuestions.map((entry) => <li key={entry}>{entry}</li>)}</ul></section>
-      <section className="argumentPlanSection"><h4>6. Step-by-step argument</h4><CitedItems items={plan.argumentSteps} ordered /></section>
-      <section className="argumentPlanSection"><h4>7. Procedure and timing cautions</h4><CitedItems items={plan.procedureCaveats} /></section>
-      <section className="argumentPlanSection argumentPlanEscalation"><h4>8. Escalation readiness</h4><CitedItems items={plan.escalationReadiness} /></section>
-      <section className="argumentPlanSection"><h4>9. Limitations and unsupported scope</h4><CitedItems items={plan.limitations} /></section>
+      <section className="argumentPlanSection print-section"><h4 className="print-heading">1. Issue</h4><p className="print-atomic">{plan.issueSummary}</p></section>
+      <section className="argumentPlanSection print-section"><h4 className="print-heading">2. Governing contract language</h4><CitedItems items={plan.governingContractLanguage} /></section>
+      <section className="argumentPlanSection print-section"><h4 className="print-heading">3. Facts to confirm</h4><ul className="argumentPlanList">{plan.factsToConfirm.map((entry) => <li className="print-atomic" key={entry}>{entry}</li>)}</ul></section>
+      <section className="argumentPlanSection print-section"><h4 className="print-heading">4. Structured evidence or record requests</h4><EvidenceRequestRows citations={plan.citations} items={plan.evidenceRequests} onCitationNavigate={onCitationNavigate} /></section>
+      <section className="argumentPlanSection print-section"><h4 className="print-heading">5. Questions for management</h4><ul className="argumentPlanList">{plan.managementQuestions.map((entry) => <li className="print-atomic" key={entry}>{entry}</li>)}</ul></section>
+      <section className="argumentPlanSection print-section"><h4 className="print-heading">6. Step-by-step argument</h4><CitedItems items={plan.argumentSteps} ordered /></section>
+      <section className="argumentPlanSection print-section"><h4 className="print-heading">7. Procedure and timing cautions</h4><CitedItems items={plan.procedureCaveats} /></section>
+      <section className="argumentPlanSection print-section argumentPlanEscalation"><h4 className="print-heading">8. Escalation readiness</h4><CitedItems items={plan.escalationReadiness} /></section>
+      <section className="argumentPlanSection print-section"><h4 className="print-heading">9. Limitations and unsupported scope</h4><CitedItems items={plan.limitations} /></section>
+      <section className="argumentPlanSection print-section">
+        <h4 className="print-heading">10. Complete verified-current source appendix</h4>
+        <ol className="argumentPlanSources">
+          {plan.citations.map((citation) => (
+            <li className="print-atomic" key={citation.id}>
+              <button className="citationAnchorButton" onClick={() => onCitationNavigate(citation)} type="button">
+                Article {citation.articleNumber ?? citation.article} / {citation.section} / {citation.paragraphId}
+              </button>
+              <span>{citation.citationVerificationState}</span>
+            </li>
+          ))}
+        </ol>
+      </section>
     </section>
   );
 }
@@ -3514,7 +3538,7 @@ function EvidenceRequestRows({
   return (
     <div className="evidenceRequestList">
       {items.map((entry) => (
-        <article className="evidenceRequestRow" key={`${entry.document}-${entry.requestFrom}`}>
+        <article className="evidenceRequestRow print-atomic" key={`${entry.document}-${entry.requestFrom}`}>
           <p><strong>Document or record</strong><span>{entry.document}</span></p>
           <p><strong>Request from</strong><span>{entry.requestFrom}</span></p>
           <p><strong>Why it matters</strong><span>{entry.whyItMatters}</span></p>
@@ -3617,7 +3641,7 @@ function PublicGrievanceOutlineView({
     return (
       <List className="argumentPlanList">
         {items.map((entry) => (
-          <li key={`${entry.text}-${entry.citationIds.join("-")}`}>
+          <li className="print-atomic" key={`${entry.text}-${entry.citationIds.join("-")}`}>
             <span>{entry.text}</span>
             <CitationLinks citationIds={entry.citationIds} />
           </li>
@@ -3627,23 +3651,23 @@ function PublicGrievanceOutlineView({
   }
 
   function PlainItems({ items }: { items: string[] }) {
-    return <ul className="argumentPlanList">{items.map((entry) => <li key={entry}>{entry}</li>)}</ul>;
+    return <ul className="argumentPlanList">{items.map((entry) => <li className="print-atomic" key={entry}>{entry}</li>)}</ul>;
   }
 
   return (
-    <section className="publicArgumentPlan publicGrievanceOutline" aria-labelledby={headingId}>
-      <div className="argumentPlanHeader">
+    <section className="publicArgumentPlan publicGrievanceOutline print-document" aria-labelledby={headingId}>
+      <div className="argumentPlanHeader print-atomic">
         <div>
           <span className="sectionKicker">Deterministic public CBA outline builder</span>
           <h3 id={headingId}>{outline.title}</h3>
         </div>
         <span className="statusPill ok">{outline.citations.length} verified citations</span>
       </div>
-      <p className="argumentPlanPrivateWarning" role="note">
+      <p className="argumentPlanPrivateWarning print-atomic" role="note">
         <AlertTriangle size={16} />
         <strong>{outline.privateCaseWarning}</strong>
       </p>
-      <div className="argumentPlanMeta" aria-label="Grievance outline identity">
+      <div className="argumentPlanMeta print-atomic" aria-label="Grievance outline identity">
         <span>Topic: {outline.topic}</span>
         <span>Template: {outline.template}</span>
         <span>Provider: {outline.provider}</span>
@@ -3652,7 +3676,7 @@ function PublicGrievanceOutlineView({
         <span>Source instance: {outline.sourceInstanceIds.join(", ")}</span>
         <span>Content identity: {outline.contentIdentity}</span>
       </div>
-      <div className="compactActions outlineExportActions" aria-label="Public outline exports">
+      <div className="compactActions outlineExportActions print-hide" aria-label="Public outline exports">
         <button className="button subtle" type="button" onClick={copyOutline}>
           <ClipboardList size={16} />
           Copy outline as plain text
@@ -3671,55 +3695,55 @@ function PublicGrievanceOutlineView({
       </div>
       {exportNotice && <p className="saveNotice" role="status">{exportNotice}</p>}
 
-      <section className="argumentPlanSection">
-        <h4>1. Issue</h4>
+      <section className="argumentPlanSection print-section">
+        <h4 className="print-heading">1. Issue</h4>
         <p>{outline.issue}</p>
       </section>
-      <section className="argumentPlanSection">
-        <h4>2. Governing contract language</h4>
+      <section className="argumentPlanSection print-section">
+        <h4 className="print-heading">2. Governing contract language</h4>
         <CitedItems items={outline.governingContractLanguage} />
       </section>
-      <section className="argumentPlanSection">
-        <h4>3. Elements that must be established</h4>
+      <section className="argumentPlanSection print-section">
+        <h4 className="print-heading">3. Elements that must be established</h4>
         <CitedItems items={outline.elementsToEstablish} />
       </section>
-      <section className="argumentPlanSection">
-        <h4>4. Facts still to confirm</h4>
+      <section className="argumentPlanSection print-section">
+        <h4 className="print-heading">4. Facts still to confirm</h4>
         <PlainItems items={outline.factsToConfirm} />
       </section>
-      <section className="argumentPlanSection">
-        <h4>5. Evidence or records to request</h4>
+      <section className="argumentPlanSection print-section">
+        <h4 className="print-heading">5. Evidence or records to request</h4>
         <EvidenceRequestRows citations={outline.citations} items={outline.evidenceRequests} onCitationNavigate={onCitationNavigate} />
       </section>
-      <section className="argumentPlanSection">
-        <h4>6. Questions to ask management</h4>
+      <section className="argumentPlanSection print-section">
+        <h4 className="print-heading">6. Questions to ask management</h4>
         <PlainItems items={outline.questionsForManagement} />
       </section>
-      <section className="argumentPlanSection">
-        <h4>7. Step 1 argument outline</h4>
+      <section className="argumentPlanSection print-section">
+        <h4 className="print-heading">7. Step 1 argument outline</h4>
         <CitedItems items={outline.stepOneArgument} ordered />
       </section>
-      <section className="argumentPlanSection">
-        <h4>8. Possible remedy categories</h4>
+      <section className="argumentPlanSection print-section">
+        <h4 className="print-heading">8. Possible remedy categories</h4>
         <CitedItems items={outline.possibleRemedies} />
       </section>
-      <section className="argumentPlanSection">
-        <h4>9. Timeliness and procedural limits</h4>
+      <section className="argumentPlanSection print-section">
+        <h4 className="print-heading">9. Timeliness and procedural limits</h4>
         <CitedItems items={outline.timelinessAndProcedureLimits} />
       </section>
-      <section className="argumentPlanSection argumentPlanEscalation">
-        <h4>10. Step 2 or escalation readiness</h4>
+      <section className="argumentPlanSection print-section argumentPlanEscalation">
+        <h4 className="print-heading">10. Step 2 or escalation readiness</h4>
         <CitedItems items={outline.escalationReadiness} />
       </section>
-      <section className="argumentPlanSection">
-        <h4>11. Limitations and uncertainty</h4>
+      <section className="argumentPlanSection print-section">
+        <h4 className="print-heading">11. Limitations and uncertainty</h4>
         <CitedItems items={outline.limitations} />
       </section>
-      <section className="argumentPlanSection">
-        <h4>12. Sources</h4>
+      <section className="argumentPlanSection print-section">
+        <h4 className="print-heading">12. Sources</h4>
         <ol className="argumentPlanSources">
           {outline.citations.map((citation) => (
-            <li key={citation.id}>
+            <li className="print-atomic" key={citation.id}>
               <button className="citationAnchorButton" type="button" onClick={() => onCitationNavigate(citation)}>
                 {citationLabel(citation)}
               </button>
@@ -3729,7 +3753,7 @@ function PublicGrievanceOutlineView({
         </ol>
       </section>
       {onSave && (
-        <div className="compactActions argumentPlanSaveActions">
+        <div className="compactActions argumentPlanSaveActions print-hide">
           <button className="button primary" type="button" onClick={onSave}>
             <Save size={16} />
             Save cited grievance outline
@@ -3799,14 +3823,14 @@ export function PublicStewardPacketView({
   }
 
   function PlainList({ values }: { values: string[] }) {
-    return <ul className="argumentPlanList">{values.map((value) => <li key={value}>{value}</li>)}</ul>;
+    return <ul className="argumentPlanList">{values.map((value) => <li className="print-atomic" key={value}>{value}</li>)}</ul>;
   }
 
   function CitedList({ values }: { values: CitedGrievanceOutlineItem[] }) {
     return (
       <ul className="argumentPlanList">
         {values.map((value) => (
-          <li key={`${value.text}-${value.citationIds.join("-")}`}>
+          <li className="print-atomic" key={`${value.text}-${value.citationIds.join("-")}`}>
             <span>{value.text}</span>
             <span className="argumentPlanCitationLinks" aria-label="Supporting citations">
               {value.citationIds.map((citationId) => {
@@ -3832,8 +3856,8 @@ export function PublicStewardPacketView({
   }
 
   return (
-    <section className="publicArgumentPlan publicStewardPacket" aria-labelledby={headingId}>
-      <div className="argumentPlanHeader">
+    <section className="publicArgumentPlan publicStewardPacket print-document" aria-labelledby={headingId}>
+      <div className="argumentPlanHeader print-atomic">
         <div>
           <span className="sectionKicker">Deterministic public steward packet</span>
           <h3 id={headingId}>{packet.title}</h3>
@@ -3842,11 +3866,11 @@ export function PublicStewardPacketView({
           {eligibility.eligible ? `${packet.citations.length} verified citations` : "packet blocked"}
         </span>
       </div>
-      <p className="argumentPlanPrivateWarning" role="note">
+      <p className="argumentPlanPrivateWarning print-atomic" role="note">
         <AlertTriangle size={16} />
         <strong>{packet.privateCaseWarning}</strong>
       </p>
-      <div className="argumentPlanMeta" aria-label="Steward packet identity">
+      <div className="argumentPlanMeta print-atomic" aria-label="Steward packet identity">
         <span>Saved type: {packet.savedType}</span>
         <span>Topics: {packet.selectedTopicIds.join(", ")}</span>
         <span>Templates: {packet.templateVersions.join(", ")}</span>
@@ -3855,7 +3879,7 @@ export function PublicStewardPacketView({
         <span>Source instance: {packet.sourceInstanceIds.join(", ")}</span>
         <span>Packet identity: {packet.id}</span>
       </div>
-      <div className="compactActions outlineExportActions">
+      <div className="compactActions outlineExportActions print-hide">
         <button className="button subtle" disabled={!eligibility.eligible} onClick={copyPacket} type="button">
           <ClipboardList size={16} />
           Copy packet as plain text
@@ -3878,33 +3902,33 @@ export function PublicStewardPacketView({
       {exportNotice && <p className="saveNotice" role="status">{exportNotice}</p>}
       {!eligibility.eligible && <p className="applicabilityWarning" role="alert">{eligibility.reason}</p>}
 
-      <section className="argumentPlanSection">
-        <h4>1. Selected topic summary</h4>
+      <section className="argumentPlanSection print-section">
+        <h4 className="print-heading">1. Selected topic summary</h4>
         <PlainList values={packet.topicSummaries.map(
           (topic) => publicStewardPacketTopicSummaryText(packet, topic)
         )} />
       </section>
-      <section className="argumentPlanSection">
-        <h4>2. Governing public articles and verified citations</h4>
+      <section className="argumentPlanSection print-section">
+        <h4 className="print-heading">2. Governing public articles and verified citations</h4>
         <CitedList values={packet.governingContractLanguage} />
       </section>
-      <section className="argumentPlanSection">
-        <h4>3. Cross-topic overlap or conflict notes</h4>
+      <section className="argumentPlanSection print-section">
+        <h4 className="print-heading">3. Cross-topic overlap or conflict notes</h4>
         <PlainList values={packet.overlapConflictNotes} />
       </section>
-      <section className="argumentPlanSection">
-        <h4>4. Combined facts-to-confirm checklist</h4>
+      <section className="argumentPlanSection print-section">
+        <h4 className="print-heading">4. Combined facts-to-confirm checklist</h4>
         <PlainList values={packet.factsToConfirm} />
       </section>
-      <section className="argumentPlanSection">
-        <h4>5. Combined evidence-category checklist</h4>
+      <section className="argumentPlanSection print-section">
+        <h4 className="print-heading">5. Combined evidence-category checklist</h4>
         <EvidenceRequestRows citations={packet.citations} items={packet.structuredEvidenceChecklist} onCitationNavigate={onCitationNavigate} />
       </section>
-      <section className="argumentPlanSection">
-        <h4>6. Ordered preparation and completion steps</h4>
+      <section className="argumentPlanSection print-section">
+        <h4 className="print-heading">6. Ordered preparation and completion steps</h4>
         <div className="packetStepList">
           {packet.sequencedSteps.map((step) => (
-            <label className="packetStepRow" key={step.stepId}>
+            <label className="packetStepRow print-atomic" data-print-state={step.completed ? "[x]" : "[ ]"} key={step.stepId}>
               <input
                 checked={step.completed}
                 disabled={!onStepCompletionChange}
@@ -3916,31 +3940,31 @@ export function PublicStewardPacketView({
           ))}
         </div>
       </section>
-      <section className="argumentPlanSection">
-        <h4>7. Combined management-question checklist</h4>
+      <section className="argumentPlanSection print-section">
+        <h4 className="print-heading">7. Combined management-question checklist</h4>
         <PlainList values={packet.managementQuestions} />
       </section>
-      <section className="argumentPlanSection">
-        <h4>8. Conditional Step 1 preparation outline</h4>
+      <section className="argumentPlanSection print-section">
+        <h4 className="print-heading">8. Conditional Step 1 preparation outline</h4>
         <CitedList values={packet.stepOnePreparation} />
       </section>
-      <section className="argumentPlanSection">
-        <h4>9. Procedural and timeliness caveats</h4>
+      <section className="argumentPlanSection print-section">
+        <h4 className="print-heading">9. Procedural and timeliness caveats</h4>
         <CitedList values={packet.procedureCaveats} />
       </section>
-      <section className="argumentPlanSection argumentPlanEscalation">
-        <h4>10. Step 2 or escalation readiness checklist</h4>
+      <section className="argumentPlanSection print-section argumentPlanEscalation">
+        <h4 className="print-heading">10. Step 2 or escalation readiness checklist</h4>
         <CitedList values={packet.escalationReadiness} />
       </section>
-      <section className="argumentPlanSection">
-        <h4>11. Limitations and unsupported scope</h4>
+      <section className="argumentPlanSection print-section">
+        <h4 className="print-heading">11. Limitations and unsupported scope</h4>
         <CitedList values={packet.limitations} />
       </section>
-      <section className="argumentPlanSection">
-        <h4>12. Complete verified-current source appendix</h4>
+      <section className="argumentPlanSection print-section">
+        <h4 className="print-heading">12. Complete verified-current source appendix</h4>
         <ol className="argumentPlanSources">
           {packet.sourceAppendix.map((entry) => (
-            <li key={entry.citationId}>
+            <li className="print-atomic" key={entry.citationId}>
               <button
                 className="citationAnchorButton"
                 onClick={() => {

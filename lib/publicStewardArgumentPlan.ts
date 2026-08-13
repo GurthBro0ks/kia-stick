@@ -204,6 +204,10 @@ function numbered(title: string, values: string[]): string {
   return [title, ...values.map((value, index) => `${index + 1}. ${value}`)].join("\n");
 }
 
+function sourceAppendixEntry(citation: Citation): string {
+  return `Article ${citation.articleNumber ?? citation.article} / ${citation.section} / ${citation.paragraphId ?? ""} / ${citation.citationVerificationState ?? "invalid_metadata"} / source instance ${citation.sourceInstanceId ?? ""} / paragraph ${citation.paragraphContentSha256 ?? ""} / anchor ${citation.citationAnchorSha256 ?? ""}`;
+}
+
 export function publicStewardArgumentPlanToText(plan: PublicStewardArgumentPlan): string {
   return [
     plan.title,
@@ -224,6 +228,7 @@ export function publicStewardArgumentPlanToText(plan: PublicStewardArgumentPlan)
     numbered("7. Procedure and timing cautions", plan.procedureCaveats.map((entry) => entry.text)),
     numbered("8. Escalation readiness", plan.escalationReadiness.map((entry) => entry.text)),
     numbered("9. Limitations and unsupported scope", plan.limitations.map((entry) => entry.text)),
+    numbered("10. Complete verified-current source appendix", plan.citations.map(sourceAppendixEntry)),
   ].join("\n\n");
 }
 
@@ -249,5 +254,6 @@ export function publicStewardArgumentPlanToMarkdown(plan: PublicStewardArgumentP
     section("7. Procedure and timing cautions", plan.procedureCaveats.map((entry) => entry.text)),
     section("8. Escalation readiness", plan.escalationReadiness.map((entry) => entry.text)),
     section("9. Limitations and unsupported scope", plan.limitations.map((entry) => entry.text)),
+    section("10. Complete verified-current source appendix", plan.citations.map(sourceAppendixEntry)),
   ].join("\n\n");
 }

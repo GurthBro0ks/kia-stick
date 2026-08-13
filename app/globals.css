@@ -2196,6 +2196,10 @@ a {
 }
 
 @media print {
+  @page {
+    margin: 0.55in;
+  }
+
   body.publicPrintActive * {
     visibility: hidden;
   }
@@ -2218,17 +2222,76 @@ a {
     position: absolute;
     inset: 0 auto auto 0;
     width: 100%;
+    max-width: 100%;
     margin: 0;
     border: 0;
+    border-radius: 0;
     background: #fff;
     color: #000;
     box-shadow: none;
+    overflow: visible;
+    font-size: 10pt;
+    line-height: 1.35;
   }
 
-  .publicPrintTarget .compactActions,
-  .publicPrintTarget .saveNotice,
-  .publicPrintTarget button {
+  .publicPrintTarget .print-hide,
+  .publicPrintTarget .saveNotice {
     display: none !important;
+  }
+
+  .publicPrintTarget .print-section {
+    break-inside: auto;
+    page-break-inside: auto;
+  }
+
+  .publicPrintTarget .print-heading {
+    break-after: avoid;
+    page-break-after: avoid;
+  }
+
+  .publicPrintTarget .print-atomic {
+    break-inside: avoid;
+    page-break-inside: avoid;
+  }
+
+  .publicPrintTarget .argumentPlanCitationButton,
+  .publicPrintTarget .citationAnchorButton {
+    display: inline;
+    min-width: 0;
+    min-height: 0;
+    border: 0;
+    background: transparent;
+    padding: 0;
+    color: #000;
+    font: inherit;
+    text-align: left;
+  }
+
+  .publicPrintTarget .argumentPlanMeta,
+  .publicPrintTarget .evidenceRequestRow,
+  .publicPrintTarget .packetStepRow {
+    border-color: #777;
+    background: #fff;
+    color: #000;
+  }
+
+  .publicPrintTarget .packetStepRow {
+    grid-template-columns: max-content minmax(0, 1fr);
+  }
+
+  .publicPrintTarget .packetStepRow::before {
+    content: attr(data-print-state);
+    font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+  }
+
+  .publicPrintTarget .packetStepRow input {
+    display: none;
+  }
+
+  .publicPrintTarget,
+  .publicPrintTarget * {
+    box-sizing: border-box;
+    overflow-wrap: anywhere;
   }
 }
 

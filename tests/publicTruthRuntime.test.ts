@@ -13,10 +13,10 @@ describe("public truth runtime identity", () => {
     const response = GET();
     const payload = await response.json();
     expect(currentAcceptedPushedState.local_bundle_phase).toBe(
-      "KIA-Stick-accessibility-and-saved-state-resilience-post-push-accepted-state-refresh"
+      "KIA-Stick-post-Bundle-3-export-print-hardening-implementation"
     );
     expect(payload.phase).toBe(currentAcceptedPushedState.local_bundle_phase);
-    expect(payload.localBundle).toBe("Accessibility and Saved-State Resilience Post-Push Accepted-State Refresh");
+    expect(payload.localBundle).toBe("Export and Print Hardening");
     expect(payload.acceptedCheckpoint).toBe(currentAcceptedPushedState.checkpoint_label);
     expect(payload.acceptedCommit).toBe(currentAcceptedPushedState.accepted_pushed_commit);
     expect(payload.acceptedCommit).toBe("996032370846952e59756caa23cde2eed9a1d458");
@@ -50,13 +50,13 @@ describe("public truth runtime identity", () => {
     expect(payload.apiKeyRequired).toBe(false);
   });
 
-  it("reports operator QA PASS for the local accepted-state refresh without claiming a push", async () => {
+  it("reports pending operator QA for the local hardening bundle without claiming a push", async () => {
     const response = GET();
     const payload = await response.json();
-    expect(currentAcceptedPushedState.local_bundle_status).toContain("manual QA PASS");
-    expect(localBundleManualQaStatus()).toBe("PASS");
+    expect(currentAcceptedPushedState.local_bundle_status).toContain("manual QA pending operator review");
+    expect(localBundleManualQaStatus()).toBe("pending_operator_review");
     expect(payload.manualQa).toBe(localBundleManualQaStatus());
-    expect(payload.manualQa).toBe("PASS");
+    expect(payload.manualQa).toBe("pending_operator_review");
     expect(payload.pushed).toBe(false);
     expect(payload.acceptedCommit).toBe("996032370846952e59756caa23cde2eed9a1d458");
     expect(payload.latestPushedCloseoutCommit).toBe("4d0f6e2338f2b327933a80e26ec2a83c56530350");

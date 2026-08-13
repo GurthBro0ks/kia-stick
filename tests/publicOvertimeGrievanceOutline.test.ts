@@ -475,9 +475,9 @@ describe("public CBA overtime cited grievance outline", () => {
       operatorDiagnosticsOpen: false,
       onOperatorDiagnosticsToggle: () => undefined,
     }));
-    expect(settings).toContain("Accessibility and Saved-State Resilience Post-Push Accepted-State Refresh");
+    expect(settings).toContain("Export and Print Hardening");
     expect(settings).toContain(currentAcceptedPushedState.local_bundle_phase);
-    expect(settings).toContain("Manual QA</dt><dd>PASS");
+    expect(settings).toContain("Manual QA</dt><dd>pending operator review");
     expect(settings).toContain(runtimeVersion.gitSha);
     expect(currentAcceptedPushedState.queue_015_status).toBe("blocked");
     expect(currentAcceptedPushedState.v0912c_status).toBe("blocked_pending_exact_target");
