@@ -1,3 +1,13 @@
+## Export, Print, and Copy-Helper Repair Operator-QA PASS Recording
+
+- Phase: `KIA-Stick-export-print-copy-helper-committed-final-QA-operator-QA-PASS-recording`.
+- Authorization: exact token `OPERATOR_QA_PASS for /home/mint/kia-stick-local-proofs/proof_kia_stick_export_print_copy_helper_committed_final_QA_20260814T151205Z`; record operator acceptance locally only, without closeout, accepted-state advancement, or push.
+- Repair commit: `76653608353ab0bb59210aa6fb241346efeb82a9`; source final committed-state QA proof: `/home/mint/kia-stick-local-proofs/proof_kia_stick_export_print_copy_helper_committed_final_QA_20260814T151205Z`; operator-QA recording proof: `/home/mint/kia-stick-local-proofs/proof_kia_stick_export_print_copy_helper_committed_final_QA_operator_qa_pass_recording_20260814T153248Z`.
+- Validation and manual QA: `PASS` / `PASS`; `F-EXPORT-01` and `F-EXPORT-02` are `PASS/CLOSED`, the modern Clipboard API remains authoritative, legacy boolean success remains unverified, and total failure retains truthful manual-copy guidance.
+- Identity boundary: accepted capability remains `996032370846952e59756caa23cde2eed9a1d458`; repository recording and latest pushed closeout remain `4d0f6e2338f2b327933a80e26ec2a83c56530350`; local pushed remains `no`.
+- Safety: no implementation, source sync, private-data, dependency/package/lockfile, service/system/network, Discord, accepted-state identity, blocked-target, closeout, or push change.
+- Next: await separate explicit closeout/push authorization. Operator QA PASS does not authorize closeout or push.
+
 ## Accessibility and Saved-State Resilience Post-Push Accepted-State Refresh Closeout and Push
 
 - Phase: `KIA-Stick-accessibility-and-saved-state-resilience-post-push-accepted-state-refresh-closeout-and-push`.

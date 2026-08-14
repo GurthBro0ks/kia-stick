@@ -41,7 +41,7 @@ describe("public Settings summary and operator diagnostics split", () => {
     expect(html).toContain(PUBLIC_STEWARD_WORKFLOW_PHASE);
     expect(html).toContain("PASS for the local proof gate");
     expect(html).toContain("Pushed</dt><dd>no");
-    expect(html).toContain("Manual QA</dt><dd>pending operator review");
+    expect(html).toContain("Manual QA</dt><dd>PASS");
     expect(html).not.toContain("stale local-bundle push-status repair");
     expect(html).toContain("APWU-USPS CBA");
     expect(html).toContain("current source instance verified");
@@ -83,8 +83,8 @@ describe("public Settings summary and operator diagnostics split", () => {
     expect(html).toContain(currentAcceptedPushedState.latest_pushed_closeout_short_commit as string);
     expect(html).toContain(currentAcceptedPushedState.local_bundle_status);
     expect(currentAcceptedPushedState.local_bundle_status).toContain("pushed no");
-    expect(currentAcceptedPushedState.local_bundle_status).toContain("manual QA pending operator review");
-    expect(html).toContain("Current working bundle</dt><dd>Export and Print Copy Helper False-Positive and Runtime Truth Repair; validation PASS; pushed no; manual QA pending operator review");
+    expect(currentAcceptedPushedState.local_bundle_status).toContain("manual QA PASS");
+    expect(html).toContain("Current working bundle</dt><dd>Export and Print Copy Helper False-Positive and Runtime Truth Repair; validation PASS; pushed no; manual QA PASS");
     expect(currentAcceptedPushedState.accepted_pushed_short_commit).toBe("9960323");
     expect(currentAcceptedPushedState.repository_recording_short_commit).toBe("4d0f6e2");
     expect(currentAcceptedPushedState.latest_pushed_closeout_short_commit).toBe("4d0f6e2");
@@ -119,7 +119,7 @@ describe("public Settings summary and operator diagnostics split", () => {
     expect(html).toContain(currentAcceptedPushedState.local_bundle_phase);
     expect(html).toContain("Current Local Validation</dt><dd>PASS");
     expect(html).toContain("Current Local Pushed</dt><dd>no");
-    expect(html).toContain("Current Local Manual QA</dt><dd>pending operator review");
+    expect(html).toContain("Current Local Manual QA</dt><dd>PASS");
     expect(html).toContain("Accepted Capability</dt><dd>9960323");
     for (const label of ["Product Version", "Channel", "Build Date", "Git SHA", "Corpus", "Index", "Prompt", "Provider", "Source Classes"]) {
       expect(html).toContain(label);

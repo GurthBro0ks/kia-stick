@@ -6,8 +6,9 @@
 - Print media preserves citation/source text and uses reusable pagination semantics: document sections may split, while headings, evidence rows, checklist steps, list items, and source rows avoid internal breaks.
 - The Promise-based Clipboard API remains authoritative. A legacy `execCommand("copy")` attempt is now explicitly unverified and can never produce a verified success solely from its boolean return; failure notices direct the user to manual selection and copying.
 - The accepted pushed capability remains `996032370846952e59756caa23cde2eed9a1d458`; repository/latest-closeout anchors remain `4d0f6e2338f2b327933a80e26ec2a83c56530350`.
-- Implementation proof: `/home/mint/kia-stick-local-proofs/proof_kia_stick_export_print_copy_helper_false_positive_runtime_truth_repair_20260814T125201Z`; validation `PASS`, pushed `no`, operator manual QA `pending_operator_review`.
-- `F-EXPORT-01` remains closed. `F-EXPORT-02` is repaired locally and remains open pending fresh independent browser QA; this implementation phase does not record operator QA.
+- Implementation proof: `/home/mint/kia-stick-local-proofs/proof_kia_stick_export_print_copy_helper_false_positive_runtime_truth_repair_20260814T125201Z`; final committed-state QA proof: `/home/mint/kia-stick-local-proofs/proof_kia_stick_export_print_copy_helper_committed_final_QA_20260814T151205Z`; operator-QA recording proof: `/home/mint/kia-stick-local-proofs/proof_kia_stick_export_print_copy_helper_committed_final_QA_operator_qa_pass_recording_20260814T153248Z`.
+- Validation `PASS`, independent browser QA `PASS`, operator manual QA `PASS`, pushed `no`. `F-EXPORT-01` and `F-EXPORT-02` are `PASS/CLOSED` for the exact committed repair at `76653608353ab0bb59210aa6fb241346efeb82a9`.
+- Operator QA PASS does not authorize closeout, accepted-state advancement, or push; each remains separately gated.
 - Product/package remain `0.7.0`; no PDF product format, source expansion, private-data capability, dependency change, closeout, accepted-state advancement, or push is part of this bundle.
 
 ## Accessibility and Saved-State Resilience Post-Push Accepted-State Refresh

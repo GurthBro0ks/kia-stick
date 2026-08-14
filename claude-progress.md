@@ -1,3 +1,11 @@
+- Phase: `KIA-Stick-export-print-copy-helper-committed-final-QA-operator-QA-PASS-recording`.
+- Authorization: exact token `OPERATOR_QA_PASS for /home/mint/kia-stick-local-proofs/proof_kia_stick_export_print_copy_helper_committed_final_QA_20260814T151205Z`; record operator acceptance for the exact final committed-state proof, locally only, without closeout, accepted-state advancement, or push.
+- Status: operator QA PASS is recorded for repair commit `76653608353ab0bb59210aa6fb241346efeb82a9`. `F-EXPORT-01` and `F-EXPORT-02` are `PASS/CLOSED`; the current local bundle remains validation PASS, manual QA PASS, pushed no.
+- Source proof: `/home/mint/kia-stick-local-proofs/proof_kia_stick_export_print_copy_helper_committed_final_QA_20260814T151205Z`; operator-QA recording proof: `/home/mint/kia-stick-local-proofs/proof_kia_stick_export_print_copy_helper_committed_final_QA_operator_qa_pass_recording_20260814T153248Z`.
+- Identity boundary: accepted capability remains `996032370846952e59756caa23cde2eed9a1d458`; repository/latest pushed closeout anchors remain `4d0f6e2338f2b327933a80e26ec2a83c56530350`; product/package remain `0.7.0`.
+- Safety: no implementation, source sync, private data, dependency/package/lockfile, service/system/network configuration, Discord, secret, accepted-state identity, blocked-target, closeout, or push change.
+- Next: await separate explicit closeout/push authorization. Operator QA PASS does not authorize closeout or push.
+
 - Phase: `KIA-Stick-export-print-copy-helper-false-positive-and-runtime-truth-repair`.
 - Authorization: `AUTHORIZE_KIA_EXPORT_PRINT_COPY_HELPER_FALSE_POSITIVE_AND_RUNTIME_TRUTH_REPAIR`; repair only the independently confirmed false-positive legacy trust defect and stale current-local runtime truth, without commit, operator-QA recording, closeout, accepted-state advancement, or push.
 - Status: the Promise-based Clipboard API remains the authoritative success path. After modern rejection or unavailability, the legacy selection attempt is compatibility-only and always returns unverified/failure; `execCommand("copy") === true` can no longer create a verified success. Plan, outline, and packet failure notices direct users to manual selection and copying. Settings, `/health`, and `/version` now report the current repair phase, validation PASS, pushed no, and manual QA pending.
