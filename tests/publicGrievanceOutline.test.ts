@@ -390,10 +390,10 @@ describe("public CBA annual-leave cited grievance outline", () => {
 
   it("keeps Settings, health, accepted identities, product, and blocked gates truthful", async () => {
     expect(currentAcceptedPushedState.local_bundle_phase).toBe(
-      "KIA-Stick-post-Bundle-3-export-print-hardening-implementation"
+      "KIA-Stick-export-print-copy-helper-false-positive-and-runtime-truth-repair"
     );
     expect(currentAcceptedPushedState.local_bundle_status).toBe(
-      "export and print hardening implementation; validation PASS; pushed no; manual QA pending operator review; closeout and push require separate explicit authorization"
+      "export and print copy-helper false-positive and runtime-truth repair; validation PASS; pushed no; manual QA pending operator review; independent QA, closeout, and push require separate explicit authorization"
     );
     expect(currentAcceptedPushedState.accepted_pushed_commit).toBe("996032370846952e59756caa23cde2eed9a1d458");
     expect(currentAcceptedPushedState.repository_recording_commit).toBe("4d0f6e2338f2b327933a80e26ec2a83c56530350");
@@ -417,7 +417,7 @@ describe("public CBA annual-leave cited grievance outline", () => {
       operatorDiagnosticsOpen: false,
       onOperatorDiagnosticsToggle: () => undefined,
     }));
-    expect(settingsHtml).toContain("Export and Print Hardening");
+    expect(settingsHtml).toContain("Export and Print Copy Helper False-Positive and Runtime Truth Repair");
     expect(settingsHtml).toContain(currentAcceptedPushedState.local_bundle_phase);
     expect(settingsHtml).toContain("Manual QA</dt><dd>pending operator review");
     expect(settingsHtml).toContain(currentAcceptedPushedState.accepted_pushed_short_commit);

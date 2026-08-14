@@ -13,10 +13,10 @@ describe("public truth runtime identity", () => {
     const response = GET();
     const payload = await response.json();
     expect(currentAcceptedPushedState.local_bundle_phase).toBe(
-      "KIA-Stick-post-Bundle-3-export-print-hardening-implementation"
+      "KIA-Stick-export-print-copy-helper-false-positive-and-runtime-truth-repair"
     );
     expect(payload.phase).toBe(currentAcceptedPushedState.local_bundle_phase);
-    expect(payload.localBundle).toBe("Export and Print Hardening");
+    expect(payload.localBundle).toBe("Export and Print Copy Helper False-Positive and Runtime Truth Repair");
     expect(payload.acceptedCheckpoint).toBe(currentAcceptedPushedState.checkpoint_label);
     expect(payload.acceptedCommit).toBe(currentAcceptedPushedState.accepted_pushed_commit);
     expect(payload.acceptedCommit).toBe("996032370846952e59756caa23cde2eed9a1d458");

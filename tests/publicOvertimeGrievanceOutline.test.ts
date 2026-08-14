@@ -475,7 +475,7 @@ describe("public CBA overtime cited grievance outline", () => {
       operatorDiagnosticsOpen: false,
       onOperatorDiagnosticsToggle: () => undefined,
     }));
-    expect(settings).toContain("Export and Print Hardening");
+    expect(settings).toContain("Export and Print Copy Helper False-Positive and Runtime Truth Repair");
     expect(settings).toContain(currentAcceptedPushedState.local_bundle_phase);
     expect(settings).toContain("Manual QA</dt><dd>pending operator review");
     expect(settings).toContain(runtimeVersion.gitSha);

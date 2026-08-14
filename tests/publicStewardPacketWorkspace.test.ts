@@ -320,11 +320,12 @@ describe("public steward packet workspace", () => {
     expect(savedHtml).toContain("Open saved packet");
   });
 
-  it("keeps verified outline and packet copy usable when the modern Clipboard API is denied", () => {
+  it("routes all verified public Copy controls through the shared clipboard helper", () => {
     const component = readFileSync("components/KiaStickApp.tsx", "utf8");
-    expect(component).toContain("function copyPublicExportText");
-    expect(component).toContain('document.execCommand("copy")');
-    expect(component).toContain("await navigator.clipboard?.writeText(text)");
-    expect(component.match(/copyPublicExportText\(/g)).toHaveLength(4);
+    expect(component).toContain('import { copyPublicExportText } from "@/lib/publicClipboard"');
+    expect(component.match(/copyPublicExportText\(/g)).toHaveLength(3);
+    expect(component.match(/Automatic copy could not be verified\./g)).toHaveLength(3);
+    expect(component).not.toContain("Copy was blocked by the browser.");
+    expect(component).not.toContain('document.execCommand("copy")');
   });
 });

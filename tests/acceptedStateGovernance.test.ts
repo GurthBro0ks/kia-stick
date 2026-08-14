@@ -77,14 +77,14 @@ describe("accepted-state governance loop break", () => {
       private_data: "blocked",
       external_ai: "disabled",
     });
-    expect(currentAcceptedPushedState.local_implementation_proof_dir).toBe("/home/mint/kia-stick-local-proofs/proof_kia_stick_export_print_hardening_implementation_20260813T170908Z");
+    expect(currentAcceptedPushedState.local_implementation_proof_dir).toBe("/home/mint/kia-stick-local-proofs/proof_kia_stick_export_print_copy_helper_false_positive_runtime_truth_repair_20260814T125201Z");
     expect("local_bundle_operator_qa_pass_proof_dir" in currentAcceptedPushedState).toBe(false);
-    expect(currentAcceptedPushedState.local_bundle).toBe("Export and Print Hardening");
-    expect(currentAcceptedPushedState.local_bundle_phase).toBe("KIA-Stick-post-Bundle-3-export-print-hardening-implementation");
+    expect(currentAcceptedPushedState.local_bundle).toBe("Export and Print Copy Helper False-Positive and Runtime Truth Repair");
+    expect(currentAcceptedPushedState.local_bundle_phase).toBe("KIA-Stick-export-print-copy-helper-false-positive-and-runtime-truth-repair");
     expect(currentAcceptedPushedState.local_bundle_validation).toBe("PASS");
     expect(currentAcceptedPushedState.local_bundle_pushed).toBe(false);
     expect(currentAcceptedPushedState.local_bundle_manual_qa).toBe("pending_operator_review");
-    expect(currentAcceptedPushedState.local_bundle_status).toBe("export and print hardening implementation; validation PASS; pushed no; manual QA pending operator review; closeout and push require separate explicit authorization");
+    expect(currentAcceptedPushedState.local_bundle_status).toBe("export and print copy-helper false-positive and runtime-truth repair; validation PASS; pushed no; manual QA pending operator review; independent QA, closeout, and push require separate explicit authorization");
     expect(currentAcceptedPushedState.local_bundle_status).not.toContain("stale local-bundle push-status repair");
     expect(currentAcceptedPushedState.latest_pushed_closeout_commit).toBe("4d0f6e2338f2b327933a80e26ec2a83c56530350");
     expect(currentAcceptedPushedState.latest_pushed_closeout_short_commit).toBe("4d0f6e2");

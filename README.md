@@ -1,11 +1,13 @@
-## Export and Print Hardening
+## Export, Print, and Copy-Helper Repair
 
-- The current local bundle is `Export and Print Hardening` in phase `KIA-Stick-post-Bundle-3-export-print-hardening-implementation`.
+- The current local bundle is `Export and Print Copy Helper False-Positive and Runtime Truth Repair` in phase `KIA-Stick-export-print-copy-helper-false-positive-and-runtime-truth-repair`.
 - Single-topic argument plans now expose the same verified-current Print action as grievance outlines and steward packets.
 - Plain-text and Markdown plan exports include the complete verified-current source appendix; packet export order, evidence rationales, completion state, and deduplication remain deterministic.
 - Print media preserves citation/source text and uses reusable pagination semantics: document sections may split, while headings, evidence rows, checklist steps, list items, and source rows avoid internal breaks.
+- The Promise-based Clipboard API remains authoritative. A legacy `execCommand("copy")` attempt is now explicitly unverified and can never produce a verified success solely from its boolean return; failure notices direct the user to manual selection and copying.
 - The accepted pushed capability remains `996032370846952e59756caa23cde2eed9a1d458`; repository/latest-closeout anchors remain `4d0f6e2338f2b327933a80e26ec2a83c56530350`.
-- Implementation proof: `/home/mint/kia-stick-local-proofs/proof_kia_stick_export_print_hardening_implementation_20260813T170908Z`; validation `PASS`, pushed `no`, operator manual QA `pending_operator_review`.
+- Implementation proof: `/home/mint/kia-stick-local-proofs/proof_kia_stick_export_print_copy_helper_false_positive_runtime_truth_repair_20260814T125201Z`; validation `PASS`, pushed `no`, operator manual QA `pending_operator_review`.
+- `F-EXPORT-01` remains closed. `F-EXPORT-02` is repaired locally and remains open pending fresh independent browser QA; this implementation phase does not record operator QA.
 - Product/package remain `0.7.0`; no PDF product format, source expansion, private-data capability, dependency change, closeout, accepted-state advancement, or push is part of this bundle.
 
 ## Accessibility and Saved-State Resilience Post-Push Accepted-State Refresh

@@ -1,7 +1,11 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import React from "react";
-import { localDataModeLabel } from "@/lib/acceptedState";
+import {
+  currentAcceptedPushedState,
+  localBundleManualQaLabel,
+  localDataModeLabel,
+} from "@/lib/acceptedState";
 import { corpus, sourceClassLabels } from "@/lib/sourceModel";
 import { getRuntimeVersion } from "@/lib/serverVersion";
 
@@ -55,6 +59,16 @@ export default function VersionPage() {
           <dd>{version.promptVersion}</dd>
           <dt>Provider</dt>
           <dd>{version.provider}</dd>
+          <dt>Current Local Phase</dt>
+          <dd>{currentAcceptedPushedState.local_bundle_phase}</dd>
+          <dt>Current Local Validation</dt>
+          <dd>{currentAcceptedPushedState.local_bundle_validation}</dd>
+          <dt>Current Local Pushed</dt>
+          <dd>{currentAcceptedPushedState.local_bundle_pushed ? "yes" : "no"}</dd>
+          <dt>Current Local Manual QA</dt>
+          <dd>{localBundleManualQaLabel()}</dd>
+          <dt>Accepted Capability</dt>
+          <dd>{currentAcceptedPushedState.accepted_pushed_short_commit}</dd>
         </dl>
       </section>
 

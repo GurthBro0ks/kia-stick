@@ -70,6 +70,7 @@ import {
   publicArgumentPlanEligibility,
   type PublicArgumentPlan,
 } from "@/lib/publicArgumentPlan";
+import { copyPublicExportText } from "@/lib/publicClipboard";
 import {
   buildPublicGrievanceOutline,
   publicGrievanceOutlineExportEligibility,
@@ -3343,38 +3344,6 @@ function PublicArgumentPlanView({
   );
 }
 
-async function copyPublicExportText(text: string): Promise<boolean> {
-  const activeElement = document.activeElement instanceof HTMLElement
-    ? document.activeElement
-    : null;
-  const textarea = document.createElement("textarea");
-  textarea.value = text;
-  textarea.setAttribute("aria-hidden", "true");
-  textarea.setAttribute("readonly", "");
-  textarea.style.cssText =
-    "position:fixed;left:-10000px;top:0;width:1px;height:1px;opacity:0;pointer-events:none;";
-  document.body.appendChild(textarea);
-  textarea.focus();
-  textarea.select();
-  textarea.setSelectionRange(0, textarea.value.length);
-  let copied = false;
-  try {
-    copied = document.execCommand("copy");
-  } catch {
-    copied = false;
-  } finally {
-    textarea.remove();
-    activeElement?.focus();
-  }
-  if (copied) return true;
-  try {
-    await navigator.clipboard?.writeText(text);
-    return Boolean(navigator.clipboard);
-  } catch {
-    return false;
-  }
-}
-
 function printPublicArtifact(elementId: string): boolean {
   const target = document.getElementById(elementId)?.closest(".publicArgumentPlan");
   if (!(target instanceof HTMLElement)) return false;
@@ -3448,7 +3417,7 @@ export function PublicStewardArgumentPlanView({
     const current = publicStewardArgumentPlanExportEligibility(plan, source);
     if (!current.eligible) return setExportNotice(current.reason);
     const copied = await copyPublicExportText(publicStewardArgumentPlanToText(plan));
-    setExportNotice(copied ? "Copied current verified topic argument plan as plain text." : "Copy was blocked by the browser. The plan was not exported.");
+    setExportNotice(copied ? "Copied current verified topic argument plan as plain text." : "Automatic copy could not be verified. Select and copy the plan text manually.");
   }
 
   function downloadPlan() {
@@ -3580,7 +3549,7 @@ function PublicGrievanceOutlineView({
     setExportNotice(
       copied
         ? "Copied current verified outline as plain text."
-        : "Copy was blocked by the browser. The outline was not exported."
+        : "Automatic copy could not be verified. Select and copy the outline text manually."
     );
   }
 
@@ -3791,7 +3760,7 @@ export function PublicStewardPacketView({
     setExportNotice(
       copied
         ? "Copied current verified steward packet as plain text."
-        : "Copy was blocked by the browser. The steward packet was not exported."
+        : "Automatic copy could not be verified. Select and copy the steward packet text manually."
     );
   }
 
