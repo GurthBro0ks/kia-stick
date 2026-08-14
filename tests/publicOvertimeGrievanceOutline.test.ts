@@ -459,9 +459,9 @@ describe("public CBA overtime cited grievance outline", () => {
     const health = await GET().json();
     expect(health.phase).toBe(currentAcceptedPushedState.local_bundle_phase);
     expect(health.productVersion).toBe("0.7.0");
-    expect(health.acceptedCommit).toBe("996032370846952e59756caa23cde2eed9a1d458");
-    expect(health.repositoryRecordingCommit).toBe("4d0f6e2338f2b327933a80e26ec2a83c56530350");
-    expect(health.latestPushedCloseoutCommit).toBe("4d0f6e2338f2b327933a80e26ec2a83c56530350");
+    expect(health.acceptedCommit).toBe("76653608353ab0bb59210aa6fb241346efeb82a9");
+    expect(health.repositoryRecordingCommit).toBe("2f696b089f9d39e571500d83841b8d5c43e6d624");
+    expect(health.latestPushedCloseoutCommit).toBe("2f696b089f9d39e571500d83841b8d5c43e6d624");
     expect(health.dataModes.private_data).toBe("blocked");
     expect(health.dataModes.external_ai).toBe("disabled");
     expect(health.realDbTouched).toBe(false);
@@ -475,9 +475,9 @@ describe("public CBA overtime cited grievance outline", () => {
       operatorDiagnosticsOpen: false,
       onOperatorDiagnosticsToggle: () => undefined,
     }));
-    expect(settings).toContain("Export and Print Copy Helper False-Positive and Runtime Truth Repair");
+    expect(settings).toContain("Export, Print, and Copy-Helper Post-Push Accepted-State Refresh");
     expect(settings).toContain(currentAcceptedPushedState.local_bundle_phase);
-    expect(settings).toContain("Manual QA</dt><dd>PASS");
+    expect(settings).toContain("Manual QA</dt><dd>pending operator review");
     expect(settings).toContain(runtimeVersion.gitSha);
     expect(currentAcceptedPushedState.queue_015_status).toBe("blocked");
     expect(currentAcceptedPushedState.v0912c_status).toBe("blocked_pending_exact_target");

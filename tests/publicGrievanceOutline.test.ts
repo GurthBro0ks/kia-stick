@@ -390,14 +390,14 @@ describe("public CBA annual-leave cited grievance outline", () => {
 
   it("keeps Settings, health, accepted identities, product, and blocked gates truthful", async () => {
     expect(currentAcceptedPushedState.local_bundle_phase).toBe(
-      "KIA-Stick-export-print-copy-helper-false-positive-and-runtime-truth-repair"
+      "KIA-Stick-export-print-copy-helper-post-push-accepted-state-refresh"
     );
     expect(currentAcceptedPushedState.local_bundle_status).toBe(
-      "export and print copy-helper false-positive and runtime-truth repair; validation PASS; pushed no; manual QA PASS; independent QA PASS; closeout and push require separate explicit authorization"
+      "export, print, and copy-helper post-push accepted-state refresh; validation PASS; pushed no; manual QA pending operator review"
     );
-    expect(currentAcceptedPushedState.accepted_pushed_commit).toBe("996032370846952e59756caa23cde2eed9a1d458");
-    expect(currentAcceptedPushedState.repository_recording_commit).toBe("4d0f6e2338f2b327933a80e26ec2a83c56530350");
-    expect(currentAcceptedPushedState.latest_pushed_closeout_commit).toBe("4d0f6e2338f2b327933a80e26ec2a83c56530350");
+    expect(currentAcceptedPushedState.accepted_pushed_commit).toBe("76653608353ab0bb59210aa6fb241346efeb82a9");
+    expect(currentAcceptedPushedState.repository_recording_commit).toBe("2f696b089f9d39e571500d83841b8d5c43e6d624");
+    expect(currentAcceptedPushedState.latest_pushed_closeout_commit).toBe("2f696b089f9d39e571500d83841b8d5c43e6d624");
 
     const healthResponse = GET();
     const health = await healthResponse.json();
@@ -417,9 +417,9 @@ describe("public CBA annual-leave cited grievance outline", () => {
       operatorDiagnosticsOpen: false,
       onOperatorDiagnosticsToggle: () => undefined,
     }));
-    expect(settingsHtml).toContain("Export and Print Copy Helper False-Positive and Runtime Truth Repair");
+    expect(settingsHtml).toContain("Export, Print, and Copy-Helper Post-Push Accepted-State Refresh");
     expect(settingsHtml).toContain(currentAcceptedPushedState.local_bundle_phase);
-    expect(settingsHtml).toContain("Manual QA</dt><dd>PASS");
+    expect(settingsHtml).toContain("Manual QA</dt><dd>pending operator review");
     expect(settingsHtml).toContain(currentAcceptedPushedState.accepted_pushed_short_commit);
 
     const uploadHtml = renderToStaticMarkup(React.createElement(FakeUploadPanel, {

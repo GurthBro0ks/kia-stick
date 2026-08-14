@@ -1,3 +1,13 @@
+## Export, Print, and Copy-Helper Post-Push Accepted-State Refresh
+
+- The current accepted pushed capability is `Export and Print Copy Helper False-Positive and Runtime Truth Repair at 7665360`.
+- The accepted capability commit is `76653608353ab0bb59210aa6fb241346efeb82a9`; the distinct repository-recording/latest-closeout point is `2f696b089f9d39e571500d83841b8d5c43e6d624`.
+- Canonical closeout proof: `/home/mint/kia-stick-local-proofs/proof_kia_stick_export_print_copy_helper_committed_final_QA_operator_qa_pass_recording_20260814T153248Z/closeout_push_20260814T154818Z`.
+- Shared current-state contract: `data/current-accepted-pushed-state.json`; Settings, `/health`, proof helpers, and current-state tests consume this contract.
+- The prior accessibility and saved-state resilience capability `9960323` is preserved as historical-only.
+- This bookkeeping refresh is local-only: validation `PASS`, pushed `no`, operator manual QA `PENDING_OPERATOR_REVIEW`; proof: `/home/mint/kia-stick-local-proofs/proof_kia_stick_export_print_copy_helper_post_push_accepted_state_refresh_20260814T160138Z`.
+- queue-015 and v0.9.12C remain blocked; Next/PostCSS remains `WARN_SAFE_NEXT_TARGET_UNCLEAR`; product/package remain `0.7.0`.
+
 ## Export, Print, and Copy-Helper Repair
 
 - The current local bundle is `Export and Print Copy Helper False-Positive and Runtime Truth Repair` in phase `KIA-Stick-export-print-copy-helper-false-positive-and-runtime-truth-repair`.
