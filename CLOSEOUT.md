@@ -1,3 +1,16 @@
+## Export, Print, and Copy-Helper Repair Closeout and Push
+
+- Phase: `KIA-Stick-export-print-copy-helper-repair-closeout-and-push`.
+- Authorization: `CLOSEOUT_AND_PUSH_KIA_EXPORT_PRINT_COPY_HELPER_REPAIR_AUTHORIZED`.
+- Export/print hardening commit: `9f045833fd57e275b0f948ee00f43426a1a27067`; verified copy-helper repair commit: `76653608353ab0bb59210aa6fb241346efeb82a9`; operator-QA PASS recording commit: `90de36215e79a7816979896436deb73b2b8a0dc1`.
+- Implementation proof: `/home/mint/kia-stick-local-proofs/proof_kia_stick_export_print_copy_helper_false_positive_runtime_truth_repair_20260814T125201Z`; final committed-state QA proof: `/home/mint/kia-stick-local-proofs/proof_kia_stick_export_print_copy_helper_committed_final_QA_20260814T151205Z`; operator-QA PASS proof: `/home/mint/kia-stick-local-proofs/proof_kia_stick_export_print_copy_helper_committed_final_QA_operator_qa_pass_recording_20260814T153248Z`; canonical closeout/push proof: `/home/mint/kia-stick-local-proofs/proof_kia_stick_export_print_copy_helper_committed_final_QA_operator_qa_pass_recording_20260814T153248Z/closeout_push_20260814T154818Z`.
+- Validation and manual QA: `PASS` / `PASS`; `F-EXPORT-01` and `F-EXPORT-02` are `PASS/CLOSED`, exact Copy/paste, truthful legacy and total-failure handling, Markdown, print, runtime truth, responsive layout, console, network, and automated gates are accepted.
+- Scope: `CLOSEOUT.md`, `claude-progress.md`, and `feature_list.json` only for the closeout commit; no implementation, shared accepted-state contract, public source cache, private-data capability, dependency/package/lockfile, service, scheduler, network, notification, or blocked-target change.
+- Push gate: one authorized non-force push of `main`; the final closeout SHA and `HEAD == origin/main == remote main` equality are recorded in the canonical proof.
+- Contract note: accepted capability remains `996032370846952e59756caa23cde2eed9a1d458`; pre-closeout repository recording and latest pushed closeout remain `4d0f6e2338f2b327933a80e26ec2a83c56530350`. The shared contract remains unchanged until a separately authorized post-push accepted-state refresh; final push truth belongs to the canonical closeout proof.
+- Blocked states preserved: queue-015 remains blocked; Next/PostCSS remains `WARN_SAFE_NEXT_TARGET_UNCLEAR`; v0.9.12C remains blocked; product/package remain `0.7.0`.
+- Notifications: Discord disabled; no duplicate notification; no report URL.
+
 ## Export, Print, and Copy-Helper Repair Operator-QA PASS Recording
 
 - Phase: `KIA-Stick-export-print-copy-helper-committed-final-QA-operator-QA-PASS-recording`.
