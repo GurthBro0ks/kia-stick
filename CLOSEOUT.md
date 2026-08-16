@@ -1,3 +1,20 @@
+## Export, Print, and Copy-Helper Post-Push Accepted-State Refresh Closeout and Push
+
+- Phase: `KIA-Stick-export-print-copy-helper-post-push-accepted-state-refresh-closeout-and-push`.
+- Authorization: `CLOSEOUT_AND_PUSH_KIA_EXPORT_PRINT_COPY_HELPER_POST_PUSH_ACCEPTED_STATE_REFRESH_AUTHORIZED`.
+- Accepted-state refresh commit: `bbac321270f4cf5096a1d740c5e4d17a6182e3fe`.
+- Operator-QA PASS recording commit: `737cccd2c26abf7b35aeb2ce32bf1e33b73a148b`.
+- Refresh proof: `/home/mint/kia-stick-local-proofs/proof_kia_stick_export_print_copy_helper_post_push_accepted_state_refresh_20260814T160138Z`.
+- Independent Codex Desktop QA proof: `/home/mint/kia-stick-local-proofs/proof_kia_stick_export_print_copy_helper_post_push_refresh_codex_desktop_QA_20260814T163046Z`.
+- Operator-QA PASS proof: `/home/mint/kia-stick-local-proofs/proof_kia_stick_export_print_copy_helper_post_push_accepted_state_refresh_operator_qa_pass_recording_20260816T210444Z`.
+- Canonical closeout/push proof: `/home/mint/kia-stick-local-proofs/proof_kia_stick_export_print_copy_helper_post_push_accepted_state_refresh_operator_qa_pass_recording_20260816T210444Z/closeout_push_20260816T212824Z`.
+- Export/Print hardening and the copy-helper false-positive repair are complete. `F-EXPORT-01` and `F-EXPORT-02` are `PASS/CLOSED`; the final functional repair commit is `76653608353ab0bb59210aa6fb241346efeb82a9`; validation and manual QA are `PASS` / `PASS`.
+- Scope: `CLOSEOUT.md`, `claude-progress.md`, and `feature_list.json` only for this closeout commit; no implementation, shared accepted-state contract, public source cache, private-data capability, package/lockfile, product version, service, scheduler, network, notification, or blocked-target change.
+- Push gate: one authorized normal non-force push of `main`; actual push success, the terminal closeout SHA, and `HEAD == origin/main == remote main` equality belong to the canonical proof and must not be inferred before verification.
+- Contract note: accepted capability remains `76653608353ab0bb59210aa6fb241346efeb82a9`; pre-closeout repository recording and latest pushed closeout remain `2f696b089f9d39e571500d83841b8d5c43e6d624`. No further accepted-state refresh is implied by terminal closeout.
+- Safety: private-data implementation remains blocked; real upload/import remains disabled; external AI remains disabled; AirLLM remains `watchlist_only`; queue-015 remains blocked; Next/PostCSS remains `WARN_SAFE_NEXT_TARGET_UNCLEAR`; v0.9.12C remains blocked; product/package remain `0.7.0`.
+- Notifications: Discord disabled; no duplicate notification; no report URL.
+
 ## Export, Print, and Copy-Helper Post-Push Accepted-State Refresh
 
 - Phase: `KIA-Stick-export-print-copy-helper-post-push-accepted-state-refresh`.
