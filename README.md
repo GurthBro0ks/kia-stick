@@ -5,7 +5,8 @@
 - Canonical closeout proof: `/home/mint/kia-stick-local-proofs/proof_kia_stick_export_print_copy_helper_committed_final_QA_operator_qa_pass_recording_20260814T153248Z/closeout_push_20260814T154818Z`.
 - Shared current-state contract: `data/current-accepted-pushed-state.json`; Settings, `/health`, proof helpers, and current-state tests consume this contract.
 - The prior accessibility and saved-state resilience capability `9960323` is preserved as historical-only.
-- This bookkeeping refresh is local-only: validation `PASS`, pushed `no`, operator manual QA `PENDING_OPERATOR_REVIEW`; proof: `/home/mint/kia-stick-local-proofs/proof_kia_stick_export_print_copy_helper_post_push_accepted_state_refresh_20260814T160138Z`.
+- This bookkeeping refresh is local-only: validation `PASS`, pushed `no`, operator manual QA `PASS`; refresh proof: `/home/mint/kia-stick-local-proofs/proof_kia_stick_export_print_copy_helper_post_push_accepted_state_refresh_20260814T160138Z`; operator-QA recording proof: `/home/mint/kia-stick-local-proofs/proof_kia_stick_export_print_copy_helper_post_push_accepted_state_refresh_operator_qa_pass_recording_20260816T210444Z`.
+- Operator QA PASS does not authorize closeout or push; both remain separately gated.
 - queue-015 and v0.9.12C remain blocked; Next/PostCSS remains `WARN_SAFE_NEXT_TARGET_UNCLEAR`; product/package remain `0.7.0`.
 
 ## Export, Print, and Copy-Helper Repair

@@ -84,13 +84,13 @@ describe("accepted-state governance loop break", () => {
       external_ai: "disabled",
     });
     expect(currentAcceptedPushedState.local_implementation_proof_dir).toBe("/home/mint/kia-stick-local-proofs/proof_kia_stick_export_print_copy_helper_post_push_accepted_state_refresh_20260814T160138Z");
-    expect(currentAcceptedPushedState).not.toHaveProperty("local_bundle_operator_qa_pass_proof_dir");
+    expect(currentAcceptedPushedState.local_bundle_operator_qa_pass_proof_dir).toBe("/home/mint/kia-stick-local-proofs/proof_kia_stick_export_print_copy_helper_post_push_accepted_state_refresh_operator_qa_pass_recording_20260816T210444Z");
     expect(currentAcceptedPushedState.local_bundle).toBe("Export, Print, and Copy-Helper Post-Push Accepted-State Refresh");
     expect(currentAcceptedPushedState.local_bundle_phase).toBe("KIA-Stick-export-print-copy-helper-post-push-accepted-state-refresh");
     expect(currentAcceptedPushedState.local_bundle_validation).toBe("PASS");
     expect(currentAcceptedPushedState.local_bundle_pushed).toBe(false);
-    expect(currentAcceptedPushedState.local_bundle_manual_qa).toBe("pending_operator_review");
-    expect(currentAcceptedPushedState.local_bundle_status).toBe("export, print, and copy-helper post-push accepted-state refresh; validation PASS; pushed no; manual QA pending operator review");
+    expect(currentAcceptedPushedState.local_bundle_manual_qa).toBe("PASS");
+    expect(currentAcceptedPushedState.local_bundle_status).toBe("export, print, and copy-helper post-push accepted-state refresh; validation PASS; pushed no; manual QA PASS; closeout and push await separate explicit authorization");
     expect(currentAcceptedPushedState.local_bundle_status).not.toContain("stale local-bundle push-status repair");
     expect(currentAcceptedPushedState.latest_pushed_closeout_commit).toBe("2f696b089f9d39e571500d83841b8d5c43e6d624");
     expect(currentAcceptedPushedState.latest_pushed_closeout_short_commit).toBe("2f696b0");
