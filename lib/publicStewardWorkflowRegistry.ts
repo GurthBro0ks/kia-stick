@@ -312,7 +312,7 @@ const disciplineJustCause: PublicStewardWorkflowTopic = {
   requiredSourceId: CBA_SOURCE_ID,
   requiredArticles: ["16", "15"],
   supportedScope: "Bounded just-cause, corrective-discipline, notice, and concurrence outline.",
-  unsupportedScope: "Merits findings, legal defenses, MSPB strategy, back-pay calculation, and case outcomes.",
+  unsupportedScope: "Merits findings, legal defenses, MSPB strategy, back-pay calculation, and case outcomes. The bounded CBA-only source set does not verify arbitral precedent or interpretive authority; that authority requires separate verification before reliance.",
   localVerification: "Charges, evidence, notice, prior record, employee status, defenses, and local handling.",
   sourceSufficiency: {
     status: "supported",

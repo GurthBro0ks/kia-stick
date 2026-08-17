@@ -288,6 +288,30 @@ function cbaParagraphs(source: CbaSourceCache): CbaParagraph[] {
   return source.normalized.pages.flatMap((page) => page.paragraphs);
 }
 
+interface CitationParagraphLookup {
+  byContentHash: Map<string, CbaParagraph[]>;
+  byId: Map<string, CbaParagraph>;
+}
+
+const citationParagraphLookupCache = new WeakMap<CbaSourceCache, CitationParagraphLookup>();
+
+function citationParagraphLookup(source: CbaSourceCache): CitationParagraphLookup {
+  const cached = citationParagraphLookupCache.get(source);
+  if (cached) return cached;
+
+  const paragraphs = cbaParagraphs(source);
+  const byId = new Map<string, CbaParagraph>();
+  const byContentHash = new Map<string, CbaParagraph[]>();
+  for (const paragraph of paragraphs) {
+    byId.set(paragraph.id, paragraph);
+    const hash = paragraphContentSha256(paragraph.text);
+    byContentHash.set(hash, [...(byContentHash.get(hash) ?? []), paragraph]);
+  }
+  const lookup = { byContentHash, byId };
+  citationParagraphLookupCache.set(source, lookup);
+  return lookup;
+}
+
 function hasNoIntegrityMetadata(citation: CbaCitationMetadata): boolean {
   return [
     citation.sourceInstanceId,
@@ -319,10 +343,12 @@ export function verifyCbaCitation(citation: CbaCitationMetadata, source: CbaSour
     return { state: "source_instance_changed", sourceInstance };
   }
 
-  const exactParagraph = cbaParagraphs(source).find((paragraph) => paragraph.id === citation.paragraphId);
+  const lookup = citationParagraphLookup(source);
+  const sameContent = lookup.byContentHash.get(citation.paragraphContentSha256) ?? [];
+  if (sameContent.length > 1) return { state: "ambiguous_duplicate", sourceInstance };
+
+  const exactParagraph = lookup.byId.get(citation.paragraphId);
   if (!exactParagraph) {
-    const sameContent = cbaParagraphs(source).filter((paragraph) => paragraphContentSha256(paragraph.text) === citation.paragraphContentSha256);
-    if (sameContent.length > 1) return { state: "ambiguous_duplicate", sourceInstance };
     if (sameContent.length === 1) return { state: "locator_changed", sourceInstance, currentParagraph: sameContent[0] };
     return { state: "paragraph_missing", sourceInstance };
   }

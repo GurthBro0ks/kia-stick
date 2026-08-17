@@ -23,7 +23,7 @@ import {
 } from "@/lib/publicSource";
 import { citationForPublicParagraph } from "@/lib/publicSourceAnswer";
 import { deriveCbaCitationIntegrity, verifyCbaCitation } from "@/lib/cbaCitationIntegrity";
-import type { Citation, Detail, Mode, Scope } from "@/lib/sourceModel";
+import { dedupeCitations, type Citation, type Detail, type Mode, type Scope } from "@/lib/sourceModel";
 import type { RuntimeVersion } from "@/lib/version";
 import {
   detectPublicStewardWorkflowTopic,
@@ -141,7 +141,8 @@ function baseAnswer(input: {
   followUps?: string[];
   suggestedQuestions?: string[];
 }): AnswerResult {
-  const citationVerificationFailed = input.citations.some(
+  const citations = dedupeCitations(input.citations);
+  const citationVerificationFailed = citations.some(
     (citation) => citation.publicSourceType === "cba_contract" && citation.citationVerificationState !== "verified_current"
   );
   return {
@@ -164,7 +165,7 @@ function baseAnswer(input: {
     noAnswer: input.noAnswer || citationVerificationFailed,
     bestGuessDisabled: input.noAnswer || citationVerificationFailed,
     sourceGroups: [],
-    citations: citationVerificationFailed ? [] : input.citations,
+    citations: citationVerificationFailed ? [] : citations,
     conflicts: input.conflicts ?? ["Application depends on coverage, craft, employee status, local agreements, memoranda, and case facts."],
     evidenceChecklist: input.evidenceChecklist ?? ["Read the exact cited contract passage.", "Confirm the applicable craft, status, trigger date, and procedural posture."],
     missingFacts: input.missingFacts ?? ["Employee coverage and the facts that trigger the cited provision."],

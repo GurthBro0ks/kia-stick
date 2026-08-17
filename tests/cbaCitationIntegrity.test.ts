@@ -17,6 +17,7 @@ import type { CbaSourceCache } from "@/lib/cbaSource";
 import { createSavedAnswerRecord, migrateSavedAnswers } from "@/lib/savedAnswers";
 import { createCbaSourceFixtureCache } from "@/tests/fixtures/cbaSourceFixture";
 import { createRuntimeVersion } from "@/lib/version";
+import { cbaCitationIdentityKey, dedupeCitations } from "@/lib/sourceModel";
 
 const runtimeVersion = createRuntimeVersion({ buildDate: "20260721", gitSha: "citation-integrity" });
 
@@ -121,6 +122,32 @@ describe("CBA citation source-instance integrity", () => {
       .filter((item) => item.id !== citation.paragraphId)
       .concat([{ ...target, id: "duplicate-one" }, { ...target, id: "duplicate-two" }]);
     expect(verifyCbaCitation(citation, duplicate).state).toBe("ambiguous_duplicate");
+  });
+
+  it("fails symmetrically when duplicate content exists beside the original paragraph id", () => {
+    const { source, citation } = firstCbaCitation();
+    const duplicate = cloneCache(source);
+    const target = duplicate.normalized.pages
+      .flatMap((page) => page.paragraphs)
+      .find((item) => item.id === citation.paragraphId)!;
+    const page = duplicate.normalized.pages.find((item) =>
+      item.paragraphs.some((candidate) => candidate.id === citation.paragraphId)
+    )!;
+    page.paragraphs.push({ ...target, id: "duplicate-beside-original" });
+
+    expect(verifyCbaCitation(citation, duplicate).state).toBe("ambiguous_duplicate");
+  });
+
+  it("deduplicates only the exact canonical CBA citation identity", () => {
+    const { citation } = firstCbaCitation();
+    expect(cbaCitationIdentityKey(citation)).toMatch(/cba_contract/);
+    expect(dedupeCitations([citation, { ...citation }])).toHaveLength(1);
+    expect(dedupeCitations([
+      citation,
+      { ...citation, paragraphId: `${citation.paragraphId}-different` },
+      { ...citation, paragraphContentSha256: "a".repeat(64) },
+      { ...citation, citationAnchorSha256: "b".repeat(64) },
+    ])).toHaveLength(4);
   });
 
   it("keeps new Saved CBA metadata complete and legacy records readable without fabrication", () => {

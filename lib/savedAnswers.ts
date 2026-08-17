@@ -7,7 +7,7 @@ import {
 } from "@/lib/publicSource";
 import { CBA_SCOPE_WARNING, CBA_SOURCE_OWNER } from "@/lib/cbaSource";
 import { sha256Hex, type CitationVerificationState } from "@/lib/cbaCitationIntegrity";
-import type { Detail, Mode, Scope } from "@/lib/sourceModel";
+import { cbaCitationIdentityKey, type Detail, type Mode, type Scope } from "@/lib/sourceModel";
 import { clientVersion } from "@/lib/version";
 import {
   PUBLIC_ARGUMENT_PLAN_SAVED_TYPE,
@@ -140,6 +140,8 @@ function validDetail(value: unknown): Detail {
 type CitationLike = Partial<AnswerResult["citations"][number]>;
 
 function normalizedCitationLocator(citation: CitationLike): string {
+  const cbaIdentity = cbaCitationIdentityKey(citation);
+  if (cbaIdentity) return cbaIdentity;
   const locator = [
     citation.id,
     citation.title,

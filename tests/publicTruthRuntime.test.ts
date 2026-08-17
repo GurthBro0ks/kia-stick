@@ -13,10 +13,10 @@ describe("public truth runtime identity", () => {
     const response = GET();
     const payload = await response.json();
     expect(currentAcceptedPushedState.local_bundle_phase).toBe(
-      "KIA-Stick-export-print-copy-helper-post-push-accepted-state-refresh"
+      "KIA-Stick-post-Bundle-3-source-citation-integrity-hardening-implementation"
     );
     expect(payload.phase).toBe(currentAcceptedPushedState.local_bundle_phase);
-    expect(payload.localBundle).toBe("Export, Print, and Copy-Helper Post-Push Accepted-State Refresh");
+    expect(payload.localBundle).toBe("Source and Citation Integrity Hardening");
     expect(payload.acceptedCheckpoint).toBe(currentAcceptedPushedState.checkpoint_label);
     expect(payload.acceptedCommit).toBe(currentAcceptedPushedState.accepted_pushed_commit);
     expect(payload.acceptedCommit).toBe("76653608353ab0bb59210aa6fb241346efeb82a9");
@@ -50,13 +50,13 @@ describe("public truth runtime identity", () => {
     expect(payload.apiKeyRequired).toBe(false);
   });
 
-  it("reports operator QA PASS for the local accepted-state refresh without claiming a push", async () => {
+  it("reports pending operator QA for the local hardening implementation without claiming a push", async () => {
     const response = GET();
     const payload = await response.json();
-    expect(currentAcceptedPushedState.local_bundle_status).toContain("manual QA PASS");
-    expect(localBundleManualQaStatus()).toBe("PASS");
+    expect(currentAcceptedPushedState.local_bundle_status).toContain("manual QA pending operator review");
+    expect(localBundleManualQaStatus()).toBe("pending_operator_review");
     expect(payload.manualQa).toBe(localBundleManualQaStatus());
-    expect(payload.manualQa).toBe("PASS");
+    expect(payload.manualQa).toBe("pending_operator_review");
     expect(payload.pushed).toBe(false);
     expect(payload.acceptedCommit).toBe("76653608353ab0bb59210aa6fb241346efeb82a9");
     expect(payload.latestPushedCloseoutCommit).toBe("2f696b089f9d39e571500d83841b8d5c43e6d624");

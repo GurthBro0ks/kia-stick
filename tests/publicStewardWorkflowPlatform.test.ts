@@ -381,6 +381,15 @@ describe("public steward workflow platform registry", () => {
     expect(duplicate.saved[0].dataFingerprint).toBe(savedRecord.dataFingerprint);
   });
 
+  it("keeps arbitral precedent outside the bounded discipline CBA source set", () => {
+    const topic = PUBLIC_STEWARD_WORKFLOW_TOPICS.find((entry) => entry.id === "discipline_just_cause")!;
+    const disclosure = `${topic.unsupportedScope} ${topic.localVerification}`;
+    expect(disclosure).toMatch(/arbitral precedent/i);
+    expect(disclosure).toMatch(/separate verification|separately verified/i);
+    expect(disclosure).toMatch(/CBA-only|bounded CBA/i);
+    expect(disclosure).not.toMatch(/seven tests|case citation|arbitration award/i);
+  });
+
   it.each([
     "Tell me about workplace culture",
     "What is my schedule?",

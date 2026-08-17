@@ -13161,5 +13161,38 @@
     "source_sync_performed": false,
     "private_data_accessed": false,
     "discord_sent": false
+  },
+  "source_citation_integrity_hardening_implementation": {
+    "phase": "KIA-Stick-post-Bundle-3-source-citation-integrity-hardening-implementation",
+    "status": "implementation_pass_pending_operator_qa",
+    "authorization": "AUTHORIZE_KIA_SOURCE_CITATION_INTEGRITY_HARDENING_IMPLEMENTATION",
+    "authority_clarification": "AUTHORIZE_KIA_BOUNDED_PUBLIC_SOURCE_CACHE_AUTHORITY_CLARIFICATION",
+    "proof_dir": "/home/mint/kia-stick-local-proofs/proof_kia_stick_source_citation_integrity_hardening_implementation_20260817T001316Z",
+    "findings": {
+      "F-CITE-01": "PASS_CLOSED",
+      "F-SOURCE-01": "PASS_CLOSED",
+      "F-SOURCE-02": "PASS_CLOSED",
+      "F-CITE-02": "PASS_CLOSED"
+    },
+    "real_cache_topic_count": 10,
+    "real_cache_topic_resolution": "PASS",
+    "canonical_cba_citation_identity_dedupe": true,
+    "discipline_arbitral_authority_boundary_explicit": true,
+    "accepted_capability_commit": "76653608353ab0bb59210aa6fb241346efeb82a9",
+    "repository_recording_commit": "2f696b089f9d39e571500d83841b8d5c43e6d624",
+    "latest_pushed_closeout_commit": "2f696b089f9d39e571500d83841b8d5c43e6d624",
+    "validation_status": "PASS",
+    "manual_qa_status": "pending_operator_review",
+    "local_pushed": false,
+    "accepted_identity_advanced": false,
+    "product_version": "0.7.0",
+    "airllm_status": "watchlist_only",
+    "package_json_changed": false,
+    "package_lock_changed": false,
+    "source_sync_performed": false,
+    "private_data_accessed": false,
+    "external_ai_enabled": false,
+    "discord_sent": false,
+    "push_performed": false
   }
 }

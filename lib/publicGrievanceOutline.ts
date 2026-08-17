@@ -10,7 +10,7 @@ import {
   type CbaSourceCache,
 } from "@/lib/cbaSource";
 import { canonicalJson, sha256Hex, verifyCbaCitation } from "@/lib/cbaCitationIntegrity";
-import type { Citation } from "@/lib/sourceModel";
+import { cbaCitationIdentityKey, type Citation } from "@/lib/sourceModel";
 import type { RuntimeVersion } from "@/lib/version";
 import {
   PUBLIC_STEWARD_WORKFLOW_PHASE,
@@ -297,7 +297,12 @@ function requiredOutlineCitations(
 ): Citation[] | null {
   const citationSet = requiredOutlineCitationSet(source, template);
   if (!citationSet) return null;
-  return [...new Map(Object.values(citationSet).map((citation) => [citation.id, citation])).values()];
+  return [...new Map(
+    Object.values(citationSet).map((citation) => [
+      cbaCitationIdentityKey(citation) ?? citation.id,
+      citation,
+    ])
+  ).values()];
 }
 
 function trustedCurrentCbaCitation(citation: Citation, source: CbaSourceCache): boolean {

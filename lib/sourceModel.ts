@@ -281,12 +281,33 @@ export function citationForDoc(doc: FakeDocument): Citation {
   };
 }
 
+export function cbaCitationIdentityKey(citation: Partial<Citation>): string | null {
+  if (
+    citation.sourceKind !== "public" ||
+    citation.publicSourceType !== "cba_contract" ||
+    !citation.sourceId ||
+    !citation.sourceInstanceId ||
+    !citation.paragraphId ||
+    !citation.paragraphContentSha256 ||
+    !citation.citationAnchorSha256
+  ) return null;
+  return JSON.stringify([
+    "cba_contract",
+    citation.sourceId,
+    citation.sourceInstanceId,
+    citation.paragraphId,
+    citation.paragraphContentSha256,
+    citation.citationAnchorSha256,
+  ]);
+}
+
 export function dedupeCitations(citations: Citation[]): Citation[] {
   const seen = new Set<string>();
   const unique: Citation[] = [];
   for (const citation of citations) {
-    if (seen.has(citation.id)) continue;
-    seen.add(citation.id);
+    const identity = cbaCitationIdentityKey(citation) ?? citation.id;
+    if (seen.has(identity)) continue;
+    seen.add(identity);
     unique.push(citation);
   }
   return unique;

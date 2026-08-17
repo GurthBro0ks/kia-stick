@@ -18,7 +18,7 @@ import {
   publicStewardWorkflowTopic,
   type PublicStewardWorkflowTopicId,
 } from "@/lib/publicStewardWorkflowRegistry";
-import type { Citation } from "@/lib/sourceModel";
+import { cbaCitationIdentityKey, type Citation } from "@/lib/sourceModel";
 import type { RuntimeVersion } from "@/lib/version";
 
 export const PUBLIC_STEWARD_PACKET_SAVED_TYPE = "public_steward_packet_plan" as const;
@@ -294,7 +294,7 @@ export function buildPublicStewardPacket(input: {
   const citations = [...new Map(
     currentOutlines
       .flatMap((outline) => outline.citations)
-      .map((citation) => [citation.id, citation])
+      .map((citation) => [cbaCitationIdentityKey(citation) ?? citation.id, citation])
   ).values()].sort((left, right) => left.id.localeCompare(right.id));
   if (
     citations.length === 0 ||
