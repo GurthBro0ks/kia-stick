@@ -1,3 +1,15 @@
+## Source and Citation Integrity Hardening Omarchy Terminal Closeout and Push
+
+- Phase: `KIA-Stick-source-citation-integrity-Omarchy-closeout-and-push`.
+- Authorization: `CLOSEOUT_AND_PUSH_KIA_SOURCE_CITATION_INTEGRITY_OMARCHY_AUTHORIZED`.
+- Chain: remote baseline `a4a3ec849830b71c060803a1bc705acf6ced45d2`; functional implementation `9b0fda9f562fb7e632e571e6299eb2dcc77b7b1e`; Omarchy migration/QA target `830b1c68f7843c408299dabf95f192a6e05581fe`; operator-QA recording `d83f43a642c277e191955eebf343dd78c9a44f1d`.
+- Evidence: implementation `/home/slimy/.local/state/kia-stick/proofs/proof_kia_stick_source_citation_integrity_hardening_implementation_20260817T001316Z`; independent QA `/home/slimy/.local/state/kia-stick/proofs/proof_kia_stick_source_citation_integrity_hardening_independent_QA_omarchy_20260909T142653Z`; network/mobile requalification `/home/slimy/.local/state/kia-stick/proofs/proof_kia_stick_evidence_requalification_omarchy_20260909T145030Z`; operator acceptance `/home/slimy/.local/state/kia-stick/proofs/proof_kia_stick_source_citation_integrity_omarchy_operator_qa_pass_recording_20260909T152344Z`. All four input manifests verify (86, 71, 36 and 41 entries).
+- Canonical terminal closeout/push proof: `/home/slimy/.local/state/kia-stick/proofs/proof_kia_stick_source_citation_integrity_omarchy_closeout_push_20260909T154604Z`. Actual push success, terminal commit SHA and `HEAD == origin/main == remote main` equality are recorded externally there; they are not inferred from this pre-push bookkeeping.
+- Validation and manual QA: `PASS` / `PASS`; `F-CITE-01`, `F-SOURCE-01`, `F-SOURCE-02` and `F-CITE-02` are `PASS/CLOSED`. The prior independent evidence is retained, including targeted PASS closure of both browser evidence gaps.
+- Scope: `CLOSEOUT.md`, `claude-progress.md` and `feature_list.json` only. Exactly one terminal commit followed by one normal non-force push of `HEAD:main` from `omarchy-path-setup` after complete validation.
+- Identity boundary: the shared contract remains unchanged, with accepted capability `76653608353ab0bb59210aa6fb241346efeb82a9` and repository/latest-closeout anchors `2f696b089f9d39e571500d83841b8d5c43e6d624`. Terminal push truth belongs to the canonical proof; no post-push accepted-state refresh is implied.
+- Safety: no product code, source sync, public-cache or package/lockfile change, private-data access, service/system/network configuration, real notification or Discord action. AirLLM remains `watchlist_only`; queue-015 and v0.9.12C remain blocked; Next/PostCSS remains parked; product/package remain `0.7.0`. F-MAINT-01 and the next hardening phase are not started.
+
 ## Source and Citation Integrity Hardening Omarchy Operator-QA PASS Recording
 
 - Phase: `KIA-Stick-source-citation-integrity-Omarchy-operator-QA-PASS-recording`.
