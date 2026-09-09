@@ -6,7 +6,7 @@ export const queueStatuses = ["planned", "running", "needs_review", "ready_to_pu
 export const nonActionableQueueStatuses = ["accepted", "blocked", "parked"];
 const queuePath = "docs/phase-backlog.json";
 const privatePathPatterns = [
-  /\/media\/mint\/SHARED\/APWU/i,
+  /\/(?:run\/)?media\/[^/\s]+\/SHARED\/APWU/i,
   /(?:~|\/home\/[^/\s]+)\/kia-stick-private-vault/i,
   /\bkia-stick-private-vault\b/i,
   /\bdata\/real-documents\b/i,

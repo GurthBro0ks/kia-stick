@@ -82,6 +82,7 @@ describe("proof-index", () => {
     const redacted = mod.redactProofText(
       [
         "path=/media/mint/SHARED/APWU/private.pdf",
+        "path=/run/media/slimy/SHARED/APWU/private.pdf",
         "vault=~/kia-stick-private-vault/doc.md",
         "<input type=\"file\" name=\"upload\" />",
         syntheticApiKey,
@@ -90,6 +91,7 @@ describe("proof-index", () => {
     );
 
     expect(redacted.text).not.toContain("/media/mint/SHARED/APWU");
+    expect(redacted.text).not.toContain("/run/media/slimy/SHARED/APWU");
     expect(redacted.text).not.toContain("kia-stick-private-vault");
     expect(redacted.text).not.toContain(["super", "secretvalue123"].join(""));
     expect(redacted.flags).toEqual(["apwu_path", "file_input", "private_vault", "secret_like"]);

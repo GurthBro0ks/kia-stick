@@ -2,11 +2,11 @@
 import { existsSync, readdirSync, readFileSync, statSync } from "node:fs";
 import path from "node:path";
 import { spawnSync } from "node:child_process";
+import { CODEX_DESKTOP_TMP_ROOT, PERSISTENT_KIA_PROOF_ROOT, resolveProofPath } from "./proof-paths.mjs";
 
-const DEFAULT_PROOF_ROOT = "/tmp";
+const DEFAULT_PROOF_ROOT = process.env.KIA_PROOF_ROOT || PERSISTENT_KIA_PROOF_ROOT;
 const PROOF_PREFIX = "proof_kia_stick_";
-const CODEX_DESKTOP_TMP_ROOT = "/home/mint/.local/state/codex-desktop/tmp";
-const DURABILITY_SAFE_ROOTS = [DEFAULT_PROOF_ROOT, CODEX_DESKTOP_TMP_ROOT, "/home/mint/kia-stick-local-proofs"];
+const DURABILITY_SAFE_ROOTS = ["/tmp", CODEX_DESKTOP_TMP_ROOT, PERSISTENT_KIA_PROOF_ROOT];
 
 function fieldValue(text, field) {
   const escaped = field.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
@@ -41,7 +41,7 @@ export function redactProofText(input) {
     });
   }
 
-  replace(/\/media\/mint\/SHARED\/APWU[^\s)`]*/g, "[REDACTED:APWU_PATH]", "apwu_path");
+  replace(/\/(?:run\/)?media\/[^/\s]+\/SHARED\/APWU[^\s)`]*/g, "[REDACTED:APWU_PATH]", "apwu_path");
   replace(/(?:~|\/home\/[^/\s]+)\/kia-stick-private-vault[^\s)`]*/g, "[REDACTED:PRIVATE_VAULT]", "private_vault");
   replace(/\bkia-stick-private-vault\b/gi, "[REDACTED:PRIVATE_VAULT]", "private_vault");
   replace(/<input[^>\n]*type=["']file["'][^>\n]*>/gi, "[FLAGGED:FILE_INPUT]", "file_input");
@@ -86,6 +86,7 @@ function readResult(proofPath) {
 }
 
 export function discoverProofDirs(root = DEFAULT_PROOF_ROOT) {
+  root = resolveProofPath(root);
   if (!existsSync(root)) return [];
   return readdirSync(root)
     .filter((entry) => entry.startsWith(PROOF_PREFIX))
@@ -131,7 +132,7 @@ export function selectLatestProof(proofs) {
 
 function safeProofPath(proofPath) {
   if (!proofPath || typeof proofPath !== "string") return false;
-  const resolved = path.resolve(proofPath);
+  const resolved = resolveProofPath(proofPath);
   const base = path.basename(resolved);
   return base.startsWith(PROOF_PREFIX) && DURABILITY_SAFE_ROOTS.some((root) => {
     const relative = path.relative(path.resolve(root), resolved);
@@ -145,7 +146,7 @@ export function assessProofDurability(record = {}) {
   const replacementProofDir = record.replacementProofDir || "";
   const originalSafe = safeProofPath(originalProofDir);
   const replacementSafe = safeProofPath(replacementProofDir);
-  const originalExists = originalSafe && existsSync(originalProofDir);
+  const originalExists = originalSafe && existsSync(resolveProofPath(originalProofDir));
 
   if (!originalSafe) {
     issues.push({
@@ -176,7 +177,7 @@ export function assessProofDurability(record = {}) {
       code: "replacement_proof_path_not_repo_safe",
       message: "Replacement proof path is outside an allowed proof root.",
     });
-  } else if (!existsSync(replacementProofDir)) {
+  } else if (!existsSync(resolveProofPath(replacementProofDir))) {
     issues.push({
       severity: "WARN",
       code: "replacement_proof_missing",

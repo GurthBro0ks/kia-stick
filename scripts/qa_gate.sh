@@ -13,7 +13,8 @@ proof_slug() {
 }
 
 PHASE="${PHASE:-$(feature_phase)}"
-PROOF_DIR="${PROOF_DIR:-/tmp/proof_$(proof_slug "$PHASE")_$(date -u +%Y%m%dT%H%M%SZ)}"
+proof_root="$(node --input-type=module -e 'import { PERSISTENT_KIA_PROOF_ROOT, resolveProofPath } from "./scripts/proof-paths.mjs"; process.stdout.write(resolveProofPath(process.env.KIA_PROOF_ROOT || PERSISTENT_KIA_PROOF_ROOT));')"
+PROOF_DIR="${PROOF_DIR:-$proof_root/proof_$(proof_slug "$PHASE")_$(date -u +%Y%m%dT%H%M%SZ)}"
 mkdir -p "$PROOF_DIR"
 
 run_step() {

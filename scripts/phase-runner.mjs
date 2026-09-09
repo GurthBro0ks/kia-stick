@@ -2,6 +2,7 @@
 import { existsSync, mkdirSync, writeFileSync } from "node:fs";
 import path from "node:path";
 import { spawnSync } from "node:child_process";
+import { PERSISTENT_KIA_PROOF_ROOT, resolveProofPath } from "./proof-paths.mjs";
 
 const safeCommitPaths = [
   ".env.example",
@@ -57,7 +58,7 @@ const validationSteps = [
   },
   {
     name: "14_apwu_boundary_grep",
-    shell: "grep -R \"/media/mint/SHARED/APWU\" docs README.md AGENTS.md CLOSEOUT.md claude-progress.md feature_list.json app components lib tests scripts 2>/dev/null || true",
+    shell: "grep -RE \"/(run/)?media/[^/]+/SHARED/APWU\" docs README.md AGENTS.md CLOSEOUT.md claude-progress.md feature_list.json app components lib tests scripts 2>/dev/null || true",
   },
 ];
 
@@ -139,7 +140,7 @@ function utcStamp() {
 }
 
 function makeProofDir(phase) {
-  const proofRoot = process.env.KIA_PHASE_RUNNER_PROOF_ROOT || "/tmp";
+  const proofRoot = resolveProofPath(process.env.KIA_PHASE_RUNNER_PROOF_ROOT || process.env.KIA_PROOF_ROOT || PERSISTENT_KIA_PROOF_ROOT);
   return path.join(proofRoot, `proof_kia_stick_${sanitizePhaseForProof(phase)}_${utcStamp()}`);
 }
 

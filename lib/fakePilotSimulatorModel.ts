@@ -184,7 +184,7 @@ const forbiddenActionKeys = new Set([
 ]);
 
 const forbiddenPrivateFragments = [
-  "/media/mint/SHARED/APWU",
+  "SHARED/APWU",
   "kia-stick-private-vault",
   "data/real-documents",
   "data/quarantine",

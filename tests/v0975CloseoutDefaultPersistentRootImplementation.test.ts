@@ -1,5 +1,7 @@
 import { spawnSync } from "node:child_process";
-import { readFileSync } from "node:fs";
+import { mkdtempSync, mkdirSync, readFileSync, writeFileSync } from "node:fs";
+import { tmpdir } from "node:os";
+import { join } from "node:path";
 import { describe, expect, it } from "vitest";
 
 const phase = "KIA-Stick-v0.9.75-closeout-default-persistent-root-implementation";
@@ -23,12 +25,20 @@ describe("v0.9.75 closeout default persistent-root implementation", () => {
   });
 
   it("shows persistent KIA proof-root mode in default summary output", () => {
-    const summary = spawnSync("node", ["scripts/closeout-helper.mjs", "summary"], { encoding: "utf8" });
+    const stateRoot = mkdtempSync(join(tmpdir(), "kia-persistent-default-"));
+    const proofRoot = join(stateRoot, "kia-stick", "proofs");
+    const proofDir = join(proofRoot, "proof_kia_stick_default_20260909T000000Z");
+    mkdirSync(proofDir, { recursive: true });
+    writeFileSync(join(proofDir, "RESULT.md"), "RESULT=PASS\nPHASE=persistent-default-fixture\n");
+    const summary = spawnSync("node", ["scripts/closeout-helper.mjs", "summary"], {
+      encoding: "utf8",
+      env: { ...process.env, XDG_STATE_HOME: stateRoot, KIA_PROOF_ROOT: "" },
+    });
 
     expect(summary.status).toBe(0);
     expect(summary.stdout).toContain("PROOF_DISCOVERY_MODE=default_latest_from_persistent_kia_proof_root");
     expect(summary.stdout).toContain("PROOF_DISCOVERY_NOTE=persistent KIA proof root selected");
-    expect(summary.stdout).toContain("PROOF_DIR=/home/mint/kia-stick-local-proofs/");
+    expect(summary.stdout).toContain(`PROOF_DIR=${proofRoot}/`);
   });
 
   it("tracks implementation details in feature state", () => {

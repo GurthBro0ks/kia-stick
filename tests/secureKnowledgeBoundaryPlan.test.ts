@@ -210,7 +210,7 @@ describe("Secure knowledge boundary plan adds no real capability to the current 
   it("keeps the existing forbidden-fragment guard in lib/redactionMetadataModel.ts unchanged in kind", () => {
     const redactionModel = readFileSync("lib/redactionMetadataModel.ts", "utf8");
     for (const fragment of [
-      "/media/mint/SHARED/APWU",
+      "SHARED/APWU",
       "kia-stick-private-vault",
       "data/real-documents",
       "data/quarantine",

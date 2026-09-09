@@ -2,6 +2,10 @@
 
 ## Scope
 
+Omarchy setup and current path conventions are documented in `docs/omarchy-setup.md`.
+The private shared-drive boundary also applies to `/run/media/<user>/SHARED/APWU`.
+Legacy Mint proof paths are historical identifiers; proof tools resolve them to the current user's state directory.
+
 This repo is a laptop-only MVP for KIA Stick / Know-It-All Stick using **fake sample documents only**.
 
 ## Design/UX Routing

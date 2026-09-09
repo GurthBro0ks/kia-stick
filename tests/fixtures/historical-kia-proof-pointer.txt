@@ -1,0 +1,16 @@
+PROOF_DIR=/tmp/proof_kia_stick_v0_9_6_to_v0_9_10_synthetic_governance_hardening_closeout_push_20260627T131000Z
+PERSISTENT_SUMMARY_DIR=/home/mint/kia-stick-local-proofs/proof_kia_stick_v0_9_6_to_v0_9_10_synthetic_governance_hardening_closeout_push_20260627T131000Z
+PHASE=KIA-Stick-v0.9.6-to-v0.9.10-synthetic-governance-hardening-closeout-and-push
+RESULT=PASS
+COMMIT_SHA=441de8984e963f3c6cb242880b1897df6d73716d
+LOCAL_COMMITS=441de89 Record v0.9 synthetic governance pushed state; bb585ae Accept v0.9 synthetic governance hardening closeout; 09ffc24 Record v0.9 synthetic governance operator QA pass; e305981 Add v0.9 synthetic governance hardening bundle
+PUSHED=YES
+HEAD_EQUALS_ORIGIN_MAIN=YES
+VALIDATION=PASS
+MANUAL_QA_STATUS=PASS
+QUEUE_015_STATUS=blocked
+QUEUE_041_TO_050_STATUS=accepted
+QUEUE_051_TO_055_STATUS=accepted
+PRODUCT_VERSION=0.7.0
+PROMPT_VERSION=prompt.fake-docs.v0.5-import-wizard-hardening
+SAFETY_BOUNDARY=docs-tests-tooling-state-only; no real-doc implementation; no private source access; no secrets; no Discord; no service changes.

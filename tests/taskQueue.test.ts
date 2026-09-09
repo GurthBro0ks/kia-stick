@@ -392,6 +392,7 @@ describe("task-queue", () => {
     const syntheticSecret = ["to", "ken=", "abcdefghijklmn"].join("");
 
     expect(() => mod.assertSafeQueueText("/media/mint/SHARED/APWU/private.pdf", "note")).toThrow(/private path/);
+    expect(() => mod.assertSafeQueueText("/run/media/slimy/SHARED/APWU/private.pdf", "note")).toThrow(/private path/);
     expect(() => mod.assertSafeQueueText("~/kia-stick-private-vault/private.md", "note")).toThrow(/private path/);
     expect(() => mod.assertSafeQueueText(syntheticSecret, "note")).toThrow(/secrets-looking/);
   });

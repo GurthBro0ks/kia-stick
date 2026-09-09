@@ -2,11 +2,12 @@
 import { existsSync, mkdirSync, readFileSync, writeFileSync } from "node:fs";
 import { tmpdir } from "node:os";
 import path from "node:path";
+import { PERSISTENT_KIA_PROOF_ROOT, resolveProofPath } from "./proof-paths.mjs";
 
 const DEFAULT_PHASE = "KIA-Stick-v0.9.23-to-v0.9.27-accepted-state-and-fake-only-operator-ux-tooling-bundle";
 const PRODUCT_VERSION = "0.7.0";
 const PROMPT_VERSION = "prompt.fake-docs.v0.5-import-wizard-hardening";
-const PROOF_ROOT = "/home/mint/kia-stick-local-proofs";
+const PROOF_ROOT = PERSISTENT_KIA_PROOF_ROOT;
 const NEXT_POSTCSS_STATUS = "WARN_SAFE_NEXT_TARGET_UNCLEAR";
 const ACCEPTED_PUSHED_BASELINE = {
   phase: "KIA-Stick-v0.9.18-to-v0.9.22-fake-only-qa-evidence-and-proof-readiness-bundle-closeout-and-push",
@@ -66,7 +67,7 @@ function isWithin(parent, child) {
 }
 
 function assertSafeOutputDir(outDir) {
-  const resolved = path.resolve(outDir);
+  const resolved = resolveProofPath(outDir);
   const proofRoot = path.resolve(PROOF_ROOT);
   const tempRoot = path.resolve(tmpdir());
   if (isWithin(proofRoot, resolved) || isWithin(tempRoot, resolved)) return resolved;

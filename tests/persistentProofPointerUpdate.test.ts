@@ -1,4 +1,4 @@
-import { existsSync, readFileSync } from "node:fs";
+import { readFileSync } from "node:fs";
 import { describe, expect, it } from "vitest";
 
 const phase = "KIA-Stick-v0.9.4-persistent-proof-pointer-update";
@@ -47,9 +47,9 @@ describe("v0.9.4 persistent proof pointer update", () => {
     expect(state.real_document_access).toBe(false);
   });
 
-  it("updates the local desktop pointer with safe metadata only", () => {
-    expect(existsSync(desktopPointer)).toBe(true);
-    const pointer = readFileSync(desktopPointer, "utf8");
+  it("preserves the historical pointer's safe metadata without requiring a Mint desktop", () => {
+    // Snapshot preserved from the archived v0.9.6-to-v0.9.10 proof collection.
+    const pointer = readFileSync("tests/fixtures/historical-kia-proof-pointer.txt", "utf8");
     const featureList = JSON.parse(readFileSync("feature_list.json", "utf8")) as {
       release_readiness: { closeout_push_proof_dir: string };
     };

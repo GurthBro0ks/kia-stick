@@ -3,8 +3,9 @@ import { existsSync, lstatSync, mkdirSync, readdirSync, readFileSync, statSync, 
 import { tmpdir } from "node:os";
 import path from "node:path";
 import { acceptedStateProofLines, readCurrentAcceptedPushedState } from "./accepted-state.mjs";
+import { PERSISTENT_KIA_PROOF_ROOT, resolveProofPath } from "./proof-paths.mjs";
 
-export const DEFAULT_LOCAL_PROOF_ROOT = "/home/mint/kia-stick-local-proofs";
+export const DEFAULT_LOCAL_PROOF_ROOT = PERSISTENT_KIA_PROOF_ROOT;
 const PROOF_PREFIX = "proof_kia_stick_";
 const SCREENSHOT_EXTENSIONS = new Set([".png", ".jpg", ".jpeg", ".webp"]);
 const SAFE_METADATA_FILES = new Set(["RESULT.md", "OPEN_THIS_FOLDER.txt"]);
@@ -24,7 +25,7 @@ function isWithin(parent, child) {
 }
 
 export function assertSafeProofRoot(root) {
-  const resolved = path.resolve(root);
+  const resolved = resolveProofPath(root);
   const localRoot = path.resolve(DEFAULT_LOCAL_PROOF_ROOT);
   const tempRoot = path.resolve(tmpdir());
   if (isWithin(localRoot, resolved) || isWithin(tempRoot, resolved)) return resolved;

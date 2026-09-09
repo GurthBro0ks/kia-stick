@@ -5,10 +5,9 @@ import { spawnSync } from "node:child_process";
 import { discoverProofDirs, parseResultMarkdown, redactProofText, selectLatestProof } from "./proof-index.mjs";
 import { loadQueue, selectNextItem } from "./task-queue.mjs";
 import { readCurrentAcceptedPushedState } from "./accepted-state.mjs";
+import { CODEX_DESKTOP_TMP_ROOT, PERSISTENT_KIA_PROOF_ROOT, resolveProofPath } from "./proof-paths.mjs";
 
 const FALLBACK_PROOF_ROOT = "/tmp";
-const PERSISTENT_KIA_PROOF_ROOT = "/home/mint/kia-stick-local-proofs";
-const CODEX_DESKTOP_TMP_ROOT = "/home/mint/.local/state/codex-desktop/tmp";
 const SAFE_PROOF_ROOTS = [FALLBACK_PROOF_ROOT, CODEX_DESKTOP_TMP_ROOT, PERSISTENT_KIA_PROOF_ROOT];
 const readyQueueStatuses = new Set(["ready_to_push", "accepted"]);
 
@@ -52,7 +51,7 @@ function isWithin(parent, child) {
 }
 
 function assertSafeProofDir(proofDir) {
-  const resolved = path.resolve(proofDir);
+  const resolved = resolveProofPath(proofDir);
   const safe = SAFE_PROOF_ROOTS.some((root) => isWithin(root, resolved));
   if (!safe) throw new Error(`Refusing to inspect proof dir outside allowed proof roots: ${resolved}`);
   return resolved;

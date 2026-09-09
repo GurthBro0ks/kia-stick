@@ -366,17 +366,27 @@ describe("closeout-helper", () => {
   });
 
   it("defaults to the persistent KIA proof root when available", () => {
+    const stateRoot = mkdtempSync(join(tmpdir(), "kia-omarchy-state-"));
+    const proofRoot = join(stateRoot, "kia-stick", "proofs");
+    createProof(
+      proofRoot,
+      "proof_kia_stick_persistent_default_20260909T000000Z",
+      ["RESULT=PASS", "PHASE=persistent-proof", "PUSHED=no", "MANUAL_QA_STATUS=PENDING"].join("\n")
+    );
     createProof(
       tmpdir(),
       "proof_kia_stick_stale_tmp_default_discovery_20200101T000000Z",
       ["RESULT=PASS", "PHASE=stale-tmp-proof", "PUSHED=yes", "MANUAL_QA_STATUS=PASS"].join("\n")
     );
-    const summary = spawnSync("node", [scriptPath, "summary"], { encoding: "utf8" });
+    const summary = spawnSync("node", [scriptPath, "summary"], {
+      encoding: "utf8",
+      env: { ...process.env, XDG_STATE_HOME: stateRoot, KIA_PROOF_ROOT: "" },
+    });
 
     expect(summary.status).toBe(0);
     expect(summary.stdout).toContain("PROOF_DISCOVERY_MODE=default_latest_from_persistent_kia_proof_root");
     expect(summary.stdout).toContain("PROOF_DISCOVERY_NOTE=persistent KIA proof root selected");
-    expect(summary.stdout).toContain("PROOF_DIR=/home/mint/kia-stick-local-proofs/");
+    expect(summary.stdout).toContain(`PROOF_DIR=${proofRoot}/`);
     expect(summary.stdout).not.toContain("PHASE=stale-tmp-proof");
   });
 

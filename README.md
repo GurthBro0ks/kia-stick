@@ -1,5 +1,7 @@
 ## Export, Print, and Copy-Helper Post-Push Accepted-State Refresh
 
+For the current laptop paths, startup commands, and migrated evidence, see [Working on Omarchy](docs/omarchy-setup.md).
+
 - The current accepted pushed capability is `Export and Print Copy Helper False-Positive and Runtime Truth Repair at 7665360`.
 - The accepted capability commit is `76653608353ab0bb59210aa6fb241346efeb82a9`; the distinct repository-recording/latest-closeout point is `2f696b089f9d39e571500d83841b8d5c43e6d624`.
 - Canonical closeout proof: `/home/mint/kia-stick-local-proofs/proof_kia_stick_export_print_copy_helper_committed_final_QA_operator_qa_pass_recording_20260814T153248Z/closeout_push_20260814T154818Z`.

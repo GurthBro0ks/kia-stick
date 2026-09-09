@@ -21,7 +21,7 @@ export interface FakeRedactionMetadata {
 }
 
 const forbiddenMetadataFragments = [
-  "/media/mint/SHARED/APWU",
+  "SHARED/APWU",
   "kia-stick-private-vault",
   "data/real-documents",
   "data/quarantine",
