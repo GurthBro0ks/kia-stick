@@ -393,7 +393,7 @@ describe("public CBA annual-leave cited grievance outline", () => {
       "KIA-Stick-post-Bundle-3-source-citation-integrity-hardening-implementation"
     );
     expect(currentAcceptedPushedState.local_bundle_status).toBe(
-      "source and citation integrity hardening implementation; validation PASS; pushed no; manual QA pending operator review; closeout and push require separate explicit authorization"
+      "source and citation integrity hardening implementation; validation PASS; pushed no; manual QA PASS; closeout and push require separate explicit authorization"
     );
     expect(currentAcceptedPushedState.accepted_pushed_commit).toBe("76653608353ab0bb59210aa6fb241346efeb82a9");
     expect(currentAcceptedPushedState.repository_recording_commit).toBe("2f696b089f9d39e571500d83841b8d5c43e6d624");
@@ -419,7 +419,7 @@ describe("public CBA annual-leave cited grievance outline", () => {
     }));
     expect(settingsHtml).toContain("Source and Citation Integrity Hardening");
     expect(settingsHtml).toContain(currentAcceptedPushedState.local_bundle_phase);
-    expect(settingsHtml).toContain("Manual QA</dt><dd>pending operator review");
+    expect(settingsHtml).toContain("Manual QA</dt><dd>PASS");
     expect(settingsHtml).toContain(currentAcceptedPushedState.accepted_pushed_short_commit);
 
     const uploadHtml = renderToStaticMarkup(React.createElement(FakeUploadPanel, {
