@@ -1,3 +1,16 @@
+## Source and Citation Integrity Post-Push Accepted-State Promotion
+
+- Phase: `KIA-Stick-source-citation-integrity-post-push-accepted-state-promotion`.
+- Authorization: `AUTHORIZE_KIA_SOURCE_CITATION_INTEGRITY_POST_PUSH_ACCEPTED_STATE_PROMOTION`.
+- Accepted pushed capability: `Source and Citation Integrity Hardening at 9b0fda9` (`9b0fda9f562fb7e632e571e6299eb2dcc77b7b1e`).
+- Repository-recording/latest-closeout point: `ca091d37fd8ff5c8f63fad084b81e5f59a749797`, with `HEAD == origin/main == remote main` verified at that commit both before and after this bookkeeping-only commit.
+- Canonical closeout/push proof: `/home/slimy/.local/state/kia-stick/proofs/proof_kia_stick_source_citation_integrity_omarchy_closeout_push_20260909T154604Z/push_blocker_resolution_20260910T143632Z`.
+- Current local promotion proof: `/home/slimy/.local/state/kia-stick/proofs/proof_kia_stick_source_citation_integrity_post_push_accepted_state_promotion_20260910T150410Z`.
+- Shared contract and bounded consumers now distinguish accepted capability `9b0fda9` from repository-recording/latest-closeout `ca091d3`; prior capability `7665360` is historical-only. The Omarchy migration/QA target `830b1c6`, operator-QA recording `d83f43a`, and terminal closeout `ca091d3` were not promoted as the functional capability.
+- Local promotion status: validation `PASS`; pushed `no`; operator manual QA `PENDING_OPERATOR_REVIEW`; closeout and push require separate explicit authorization and are not performed here.
+- Safety: no implementation, source sync, private data, upload/import capability, external AI, dependency, package, lockfile, service, scheduler, notification, or blocked-target change. `F-CITE-01`, `F-SOURCE-01`, `F-SOURCE-02`, and `F-CITE-02` remain `PASS/CLOSED`.
+- Next: operator QA of the promoted accepted-state surfaces. Do not close out, push, or begin F-MAINT-01 without separate authorization.
+
 ## Source and Citation Integrity Hardening Omarchy Terminal Closeout and Push
 
 - Phase: `KIA-Stick-source-citation-integrity-Omarchy-closeout-and-push`.

@@ -1,3 +1,15 @@
+## Source and Citation Integrity Post-Push Accepted-State Promotion
+
+- Phase: `KIA-Stick-source-citation-integrity-post-push-accepted-state-promotion`.
+- Authorization: `AUTHORIZE_KIA_SOURCE_CITATION_INTEGRITY_POST_PUSH_ACCEPTED_STATE_PROMOTION`.
+- Status: the shared accepted-state contract and bounded consumers now record the pushed source and citation integrity hardening capability at functional commit `9b0fda9f562fb7e632e571e6299eb2dcc77b7b1e`, with repository/latest-closeout recording point `ca091d37fd8ff5c8f63fad084b81e5f59a749797`; validation PASS; pushed no; manual QA pending operator review.
+- Distinct identities preserved: functional implementation `9b0fda9f562fb7e632e571e6299eb2dcc77b7b1e`; Omarchy migration/QA target `830b1c68f7843c408299dabf95f192a6e05581fe`; operator-QA recording `d83f43a642c277e191955eebf343dd78c9a44f1d`; terminal closeout/repository recording `ca091d37fd8ff5c8f63fad084b81e5f59a749797`. Only the functional implementation commit was promoted as accepted capability.
+- Canonical closeout/push proof: `/home/slimy/.local/state/kia-stick/proofs/proof_kia_stick_source_citation_integrity_omarchy_closeout_push_20260909T154604Z/push_blocker_resolution_20260910T143632Z`. Local promotion proof: `/home/slimy/.local/state/kia-stick/proofs/proof_kia_stick_source_citation_integrity_post_push_accepted_state_promotion_20260910T150410Z`.
+- Historical preservation: prior export, print, and copy-helper capability `76653608353ab0bb59210aa6fb241346efeb82a9` is historical-only, not deleted or rewritten.
+- Files: `data/current-accepted-pushed-state.json`, seven bounded current-state tests, `CLOSEOUT.md`, `README.md`, `feature_list.json`, and this progress record.
+- Safety: no implementation, source sync, private data, real upload/import, external AI, dependency/package/lockfile mutation, service/system/network change, Discord, closeout, or push. F-MAINT-01 is not started. `F-CITE-01`, `F-SOURCE-01`, `F-SOURCE-02`, and `F-CITE-02` remain `PASS/CLOSED`. queue-015 and v0.9.12C remain blocked; Next/PostCSS remains parked.
+- Next: operator QA of the exact promotion proof. Closeout, push, and any further hardening phase remain separate authorization gates.
+
 ## Source and Citation Integrity Hardening Omarchy Terminal Closeout and Push
 
 - Phase: `KIA-Stick-source-citation-integrity-Omarchy-closeout-and-push`.

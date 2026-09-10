@@ -30,18 +30,18 @@ describe("public Settings summary and operator diagnostics split", () => {
 
     expect(html).toContain("Data and privacy mode");
     expect(html).toContain("local public pilot + fake samples");
-    expect(html).toContain("Export and Print Copy Helper False-Positive and Runtime Truth Repair");
-    expect(html).toContain("7665360");
+    expect(html).toContain("Source and Citation Integrity Hardening");
+    expect(html).toContain("9b0fda9");
     expect(html).toContain("Validation</dt><dd>PASS");
     expect(html).toContain("Operator QA</dt><dd>PASS");
     expect(html).toContain("Pushed</dt><dd>yes");
     expect(html).toContain("KIA Stick 0.7.0");
     expect(html).toContain("Current build</dt><dd>9773768");
-    expect(html).toContain("Source and Citation Integrity Hardening");
+    expect(html).toContain("Source and Citation Integrity Post-Push Accepted-State Promotion");
     expect(html).toContain(PUBLIC_STEWARD_WORKFLOW_PHASE);
     expect(html).toContain("PASS for the local proof gate");
     expect(html).toContain("Pushed</dt><dd>no");
-    expect(html).toContain("Manual QA</dt><dd>PASS");
+    expect(html).toContain("Manual QA</dt><dd>pending operator review");
     expect(html).not.toContain("stale local-bundle push-status repair");
     expect(html).toContain("APWU-USPS CBA");
     expect(html).toContain("current source instance verified");
@@ -75,21 +75,21 @@ describe("public Settings summary and operator diagnostics split", () => {
     expect(html).toContain("v0.9.12C remains blocked");
     expect(html).toContain("queue-015 blocked");
     expect(html).toContain("Package lock</dt><dd>unchanged");
-    expect(html).toContain("repository equality verified at 2f696b0");
+    expect(html).toContain("repository equality verified at ca091d3");
     expect(html).toContain("accepted feature checkpoint is distinct from the repository/closeout recording point");
-    expect(html).toContain("Accepted-state recording baseline</dt><dd>2f696b089f9d39e571500d83841b8d5c43e6d624");
-    expect(html).toContain("Latest pushed repository closeout commit</dt><dd>2f696b089f9d39e571500d83841b8d5c43e6d624");
+    expect(html).toContain("Accepted-state recording baseline</dt><dd>ca091d37fd8ff5c8f63fad084b81e5f59a749797");
+    expect(html).toContain("Latest pushed repository closeout commit</dt><dd>ca091d37fd8ff5c8f63fad084b81e5f59a749797");
     expect(html).toContain("Latest pushed repository closeout");
     expect(html).toContain(currentAcceptedPushedState.latest_pushed_closeout_short_commit as string);
     expect(html).toContain(currentAcceptedPushedState.local_bundle_status);
     expect(currentAcceptedPushedState.local_bundle_status).toContain("pushed no");
-    expect(currentAcceptedPushedState.local_bundle_status).toContain("manual QA PASS");
-    expect(html).toContain("Current working bundle</dt><dd>Source and Citation Integrity Hardening; validation PASS; pushed no; manual QA PASS");
-    expect(currentAcceptedPushedState.accepted_pushed_short_commit).toBe("7665360");
-    expect(currentAcceptedPushedState.repository_recording_short_commit).toBe("2f696b0");
-    expect(currentAcceptedPushedState.latest_pushed_closeout_short_commit).toBe("2f696b0");
-    expect(html).not.toContain("HEAD == origin/main at 7665360");
-    expect(html).not.toContain("HEAD equal to origin/main at 7665360");
+    expect(currentAcceptedPushedState.local_bundle_status).toContain("manual QA pending operator review");
+    expect(html).toContain("Current working bundle</dt><dd>Source and Citation Integrity Post-Push Accepted-State Promotion; validation PASS; pushed no; manual QA pending operator review");
+    expect(currentAcceptedPushedState.accepted_pushed_short_commit).toBe("9b0fda9");
+    expect(currentAcceptedPushedState.repository_recording_short_commit).toBe("ca091d3");
+    expect(currentAcceptedPushedState.latest_pushed_closeout_short_commit).toBe("ca091d3");
+    expect(html).not.toContain("HEAD == origin/main at 9b0fda9");
+    expect(html).not.toContain("HEAD equal to origin/main at 9b0fda9");
     expect(html).toContain("Build Date");
     expect(html).toContain("Provider");
   });
@@ -119,8 +119,8 @@ describe("public Settings summary and operator diagnostics split", () => {
     expect(html).toContain(currentAcceptedPushedState.local_bundle_phase);
     expect(html).toContain("Current Local Validation</dt><dd>PASS");
     expect(html).toContain("Current Local Pushed</dt><dd>no");
-    expect(html).toContain("Current Local Manual QA</dt><dd>PASS");
-    expect(html).toContain("Accepted Capability</dt><dd>7665360");
+    expect(html).toContain("Current Local Manual QA</dt><dd>pending operator review");
+    expect(html).toContain("Accepted Capability</dt><dd>9b0fda9");
     for (const label of ["Product Version", "Channel", "Build Date", "Git SHA", "Corpus", "Index", "Prompt", "Provider", "Source Classes"]) {
       expect(html).toContain(label);
     }

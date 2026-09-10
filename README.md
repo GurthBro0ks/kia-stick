@@ -1,3 +1,17 @@
+## Source and Citation Integrity Post-Push Accepted-State Promotion
+
+For the current laptop paths, startup commands, and migrated evidence, see [Working on Omarchy](docs/omarchy-setup.md).
+
+- The current accepted pushed capability is `Source and Citation Integrity Hardening at 9b0fda9`.
+- The accepted capability commit is `9b0fda9f562fb7e632e571e6299eb2dcc77b7b1e`; the distinct repository-recording/latest-closeout point is `ca091d37fd8ff5c8f63fad084b81e5f59a749797`.
+- Canonical closeout/push proof: `/home/slimy/.local/state/kia-stick/proofs/proof_kia_stick_source_citation_integrity_omarchy_closeout_push_20260909T154604Z/push_blocker_resolution_20260910T143632Z`.
+- Shared current-state contract: `data/current-accepted-pushed-state.json`; Settings, `/health`, proof helpers, and current-state tests consume this contract.
+- The prior export, print, and copy-helper capability `7665360` is preserved as historical-only.
+- This bookkeeping promotion is local-only: validation `PASS`, pushed `no`, operator manual QA `pending operator review`; promotion proof: `/home/slimy/.local/state/kia-stick/proofs/proof_kia_stick_source_citation_integrity_post_push_accepted_state_promotion_20260910T150410Z`.
+- This promotion does not authorize closeout, push, F-MAINT-01, or any further hardening phase; those remain separately gated.
+- `F-CITE-01`, `F-SOURCE-01`, `F-SOURCE-02`, and `F-CITE-02` remain `PASS/CLOSED`.
+- queue-015 and v0.9.12C remain blocked; Next/PostCSS remains `WARN_SAFE_NEXT_TARGET_UNCLEAR`; product/package remain `0.7.0`.
+
 ## Export, Print, and Copy-Helper Post-Push Accepted-State Refresh
 
 For the current laptop paths, startup commands, and migrated evidence, see [Working on Omarchy](docs/omarchy-setup.md).
