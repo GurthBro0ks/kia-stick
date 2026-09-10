@@ -3,7 +3,8 @@
 - Phase: `KIA-Stick-source-citation-integrity-post-push-accepted-state-promotion`.
 - Authorization: `AUTHORIZE_KIA_SOURCE_CITATION_INTEGRITY_POST_PUSH_ACCEPTED_STATE_PROMOTION`.
 - Accepted pushed capability: `Source and Citation Integrity Hardening at 9b0fda9` (`9b0fda9f562fb7e632e571e6299eb2dcc77b7b1e`).
-- Repository-recording/latest-closeout point: `ca091d37fd8ff5c8f63fad084b81e5f59a749797`, with `HEAD == origin/main == remote main` verified at that commit both before and after this bookkeeping-only commit.
+- Repository-recording/latest-closeout point: `ca091d37fd8ff5c8f63fad084b81e5f59a749797`. Before promotion commit `60d39f15121c1e6a1f82ba834520b86a46e0c9d6` was created, `HEAD == origin/main == remote main` was verified at that recording point, with `0 ahead / 0 behind` and a clean worktree: the proven pushed terminal-closeout state.
+- Immediately after promotion commit `60d39f15121c1e6a1f82ba834520b86a46e0c9d6` was created, local `HEAD` was that promotion commit; `origin/main` and live remote `main` remained `ca091d37fd8ff5c8f63fad084b81e5f59a749797`, with `1 ahead / 0 behind` and a clean worktree. The promotion was pushed `no`, with manual QA `pending_operator_review`.
 - Canonical closeout/push proof: `/home/slimy/.local/state/kia-stick/proofs/proof_kia_stick_source_citation_integrity_omarchy_closeout_push_20260909T154604Z/push_blocker_resolution_20260910T143632Z`.
 - Current local promotion proof: `/home/slimy/.local/state/kia-stick/proofs/proof_kia_stick_source_citation_integrity_post_push_accepted_state_promotion_20260910T150410Z`.
 - Shared contract and bounded consumers now distinguish accepted capability `9b0fda9` from repository-recording/latest-closeout `ca091d3`; prior capability `7665360` is historical-only. The Omarchy migration/QA target `830b1c6`, operator-QA recording `d83f43a`, and terminal closeout `ca091d3` were not promoted as the functional capability.
