@@ -714,13 +714,15 @@ export function KiaStickApp({ runtimeVersion = clientVersion }: { runtimeVersion
 
   function togglePacketTopic(topicId: PublicStewardWorkflowTopicId) {
     setPacketTopicIds((current) => {
-      const selected = current.includes(topicId)
-        ? current.filter((id) => id !== topicId)
-        : current.length < 3 ? [...current, topicId] : current;
-      return [...selected].sort();
+      if (current.includes(topicId)) {
+        setSaveNotice(null);
+        return current.filter((id) => id !== topicId).sort();
+      }
+      const result = addChatTopicToPacketSelection(current, topicId);
+      setSaveNotice(result.notice ? { status: "duplicate", text: result.notice } : null);
+      return result.topicIds;
     });
     setStewardPacket(null);
-    setSaveNotice(null);
   }
 
   function addChatTopicToPacket(topicId: PublicStewardWorkflowTopicId) {

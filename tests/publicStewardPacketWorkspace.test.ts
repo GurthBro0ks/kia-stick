@@ -1,7 +1,8 @@
 import { readFileSync } from "node:fs";
 import React from "react";
 import { renderToStaticMarkup } from "react-dom/server";
-import { describe, expect, it } from "vitest";
+import { describe, expect, it, vi } from "vitest";
+import ts from "typescript";
 import {
   addChatTopicToPacketSelection,
   PUBLIC_STEWARD_PACKET_TOPIC_LIMIT_NOTICE,
@@ -192,6 +193,56 @@ describe("public steward packet workspace", () => {
       topicIds: [...selected, "safety_health"],
       runtimeVersion,
     })).toBeNull();
+  });
+
+  it("keeps catalog toggle additions on the shared cap decision, including stale clicks and removal", () => {
+    // Execute the actual component closure with controlled state setters; no DOM dependency
+    // or production export is needed to exercise a click that the rendered button disables.
+    const source = ts.createSourceFile("KiaStickApp.tsx",
+      readFileSync("components/KiaStickApp.tsx", "utf8"), ts.ScriptTarget.Latest, true, ts.ScriptKind.TSX);
+    let handler = "";
+    function findHandler(node: ts.Node) {
+      if (ts.isFunctionDeclaration(node) && node.name?.text === "togglePacketTopic") {
+        handler = node.getText(source);
+      }
+      ts.forEachChild(node, findHandler);
+    }
+    findHandler(source);
+    expect(handler).not.toBe("");
+    type TopicId = Parameters<typeof addChatTopicToPacketSelection>[1];
+    let selected: TopicId[] = ["overtime"];
+    const sharedAdd = vi.fn(addChatTopicToPacketSelection);
+    const setNotice = vi.fn();
+    const invalidatePacket = vi.fn();
+    const toggle = new Function("setPacketTopicIds", "setStewardPacket", "setSaveNotice",
+      "addChatTopicToPacketSelection",
+      ts.transpile(handler, { target: ts.ScriptTarget.ES2022 }) + "\nreturn togglePacketTopic;")(
+      (update: (current: TopicId[]) => TopicId[]) => { selected = update(selected); },
+      invalidatePacket, setNotice, sharedAdd
+    ) as (topicId: TopicId) => void;
+
+    for (const candidate of ["annual_leave", "sick_leave", "safety_health", "safety_health"] as const) {
+      const before = [...selected];
+      const expected = addChatTopicToPacketSelection(before, candidate);
+      sharedAdd.mockClear();
+      toggle(candidate);
+      expect(sharedAdd).toHaveBeenCalledExactlyOnceWith(before, candidate);
+      expect(selected).toEqual(expected.topicIds);
+      expect(selected.length).toBeLessThanOrEqual(3);
+      expect(setNotice).toHaveBeenLastCalledWith(expected.notice
+        ? { status: "duplicate", text: expected.notice } : null);
+      expect(invalidatePacket).toHaveBeenLastCalledWith(null);
+    }
+    sharedAdd.mockClear();
+    toggle("overtime");
+    expect(sharedAdd).not.toHaveBeenCalled();
+    expect(selected).toEqual(["annual_leave", "sick_leave"]);
+    expect(setNotice).toHaveBeenLastCalledWith(null);
+    expect(invalidatePacket).toHaveBeenLastCalledWith(null);
+    const expected = addChatTopicToPacketSelection(selected, "safety_health");
+    toggle("safety_health");
+    expect(selected).toEqual(expected.topicIds);
+    expect(setNotice).toHaveBeenLastCalledWith(null);
   });
 
   it("exports only current verified content and blocks stale packet identity", () => {

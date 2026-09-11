@@ -3028,3 +3028,11 @@
 - Runtime truth: local bundle `Export and Print Hardening`; validation PASS; pushed no; manual QA pending operator review. Accepted capability remains `996032370846952e59756caa23cde2eed9a1d458`; repository/latest pushed closeout anchors remain `4d0f6e2338f2b327933a80e26ec2a83c56530350`.
 - Scope and safety: no PDF product format, source expansion, private data, dependency/package/lockfile change, persistent service/system/network change, Discord, accepted-state advancement, closeout, or push. queue-015 and v0.9.12C remain blocked; Next/PostCSS remains parked.
 - Manual QA: `PENDING_OPERATOR_REVIEW`. Future token: `OPERATOR_QA_PASS for /home/mint/kia-stick-local-proofs/proof_kia_stick_export_print_hardening_implementation_20260813T170908Z`. That token will not authorize closeout, push, or accepted-state advancement.
+
+## F-MAINT-01 packet-cap invariant implementation — validation blocked
+
+- Scope: `togglePacketTopic` delegates additions to `addChatTopicToPacketSelection`; existing removal, ordering and packet invalidation retained; shared cap notice propagated per accepted plan. One regression added in `tests/publicStewardPacketWorkspace.test.ts`. This is the minimal AGENTS-required progress entry.
+- Commands: global/repo bootstrap; Git baseline and remote-main read; focused packet tests before/after repair; `bash scripts/qa_gate.sh`; design/release/governance/queue gates; read-only proof-index diagnosis; package/lock/cache SHA256 comparison; `git diff --check`.
+- Validation: focused 11/11 PASS (new test failed before fix), lint/typecheck PASS; full suite 340/344 files and 1135/1139 tests PASS, four existing proof-index failures because latest terminal proof exposes no recognized commit key. Aggregate QA stopped before build/scans; runtime smoke not started.
+- Proof: `/home/slimy/.local/state/kia-stick/proofs/proof_kia_stick_f_maint_01_packet_cap_invariant_implementation_20260911T121926Z`.
+- Status: WARN, no commit or push; F-MAINT-01 remains OPEN and unaccepted. Manual QA PENDING. Remaining blocker: PM adjudication of proof-index metadata incompatibility before required full validation can pass; no metadata repair or acceptance refresh performed.
