@@ -50,13 +50,13 @@ describe("public truth runtime identity", () => {
     expect(payload.apiKeyRequired).toBe(false);
   });
 
-  it("reports accepted-state promotion pending manual QA for the local bookkeeping bundle without claiming a push", async () => {
+  it("reports operator QA PASS for the local accepted-state promotion without claiming a push", async () => {
     const response = GET();
     const payload = await response.json();
-    expect(currentAcceptedPushedState.local_bundle_status).toContain("manual QA pending operator review");
-    expect(localBundleManualQaStatus()).toBe("pending_operator_review");
+    expect(currentAcceptedPushedState.local_bundle_status).toContain("manual QA PASS");
+    expect(localBundleManualQaStatus()).toBe("PASS");
     expect(payload.manualQa).toBe(localBundleManualQaStatus());
-    expect(payload.manualQa).toBe("pending_operator_review");
+    expect(payload.manualQa).toBe("PASS");
     expect(payload.pushed).toBe(false);
     expect(payload.acceptedCommit).toBe("9b0fda9f562fb7e632e571e6299eb2dcc77b7b1e");
     expect(payload.latestPushedCloseoutCommit).toBe("ca091d37fd8ff5c8f63fad084b81e5f59a749797");

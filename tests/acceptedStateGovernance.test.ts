@@ -83,15 +83,15 @@ describe("accepted-state governance loop break", () => {
       private_data: "blocked",
       external_ai: "disabled",
     });
-    expect(currentAcceptedPushedState.local_implementation_proof_dir).toContain("proof_kia_stick_source_citation_integrity_post_push_accepted_state_promotion_");
-    expect(currentAcceptedPushedState).not.toHaveProperty("local_bundle_operator_qa_pass_proof_dir");
+    expect(currentAcceptedPushedState.local_implementation_proof_dir).toBe("/home/slimy/.local/state/kia-stick/proofs/proof_kia_stick_source_citation_integrity_accepted_state_promotion_operator_qa_pass_recording_20260911T105246Z");
+    expect(currentAcceptedPushedState.local_bundle_operator_qa_pass_proof_dir).toBe("/home/slimy/.local/state/kia-stick/proofs/proof_kia_stick_source_citation_integrity_accepted_state_promotion_operator_qa_pass_recording_20260911T105246Z");
     expect(currentAcceptedPushedState.operator_qa_pass_proof_dir).toBe("/home/slimy/.local/state/kia-stick/proofs/proof_kia_stick_source_citation_integrity_omarchy_operator_qa_pass_recording_20260909T152344Z");
     expect(currentAcceptedPushedState.local_bundle).toBe("Source and Citation Integrity Post-Push Accepted-State Promotion");
     expect(currentAcceptedPushedState.local_bundle_phase).toBe("KIA-Stick-source-citation-integrity-post-push-accepted-state-promotion");
     expect(currentAcceptedPushedState.local_bundle_validation).toBe("PASS");
     expect(currentAcceptedPushedState.local_bundle_pushed).toBe(false);
-    expect(currentAcceptedPushedState.local_bundle_manual_qa).toBe("pending_operator_review");
-    expect(currentAcceptedPushedState.local_bundle_status).toBe("source and citation integrity post-push accepted-state promotion; validation PASS; pushed no; manual QA pending operator review");
+    expect(currentAcceptedPushedState.local_bundle_manual_qa).toBe("PASS");
+    expect(currentAcceptedPushedState.local_bundle_status).toBe("source and citation integrity post-push accepted-state promotion; validation PASS; pushed no; manual QA PASS");
     expect(currentAcceptedPushedState.local_bundle_status).not.toContain("stale local-bundle push-status repair");
     expect(currentAcceptedPushedState.latest_pushed_closeout_commit).toBe("ca091d37fd8ff5c8f63fad084b81e5f59a749797");
     expect(currentAcceptedPushedState.latest_pushed_closeout_short_commit).toBe("ca091d3");
