@@ -116,7 +116,7 @@ export function inspectLocalProof(proofPath) {
   const acceptedWarn = hasAcceptedWarn(resultMarkdown);
   const manualQaStatus = fieldValue(resultMarkdown, "MANUAL_QA_STATUS") || fieldValue(resultMarkdown, "Manual QA status") || "";
   const pushed = fieldValue(resultMarkdown, "PUSHED") || fieldValue(resultMarkdown, "Push performed") || "";
-  const commit = fieldValue(resultMarkdown, "COMMIT_SHA") || fieldValue(resultMarkdown, "Commit SHA") || "";
+  const commit = fieldValue(resultMarkdown, "COMMIT_SHA") || fieldValue(resultMarkdown, "Commit SHA") || fieldValue(resultMarkdown, "TERMINAL_CLOSEOUT_COMMIT_SHA") || "";
   const phase = fieldValue(resultMarkdown, "PHASE") || fieldValue(resultMarkdown, "Phase") || parsed?.phaseSlug || "unknown";
   const warnings = [];
   if (!resultMarkdown) warnings.push("WARN_MISSING_RESULT");

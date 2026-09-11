@@ -77,6 +77,30 @@ function makeProof(
 }
 
 describe("local proof index", () => {
+  it.each([
+    ["terminal fallback", "TERMINAL_CLOSEOUT_COMMIT_SHA", ""],
+    ["ordinary field precedence", "COMMIT_SHA", "Commit SHA"],
+    ["legacy field precedence", "Commit SHA", ""],
+  ])("indexes closeout commit identity with %s", async (_label, field, secondaryField) => {
+    const mod = await loadModule();
+    const root = makeProofRoot();
+    const expected = "1".repeat(40);
+    const other = "2".repeat(40);
+    const parent = makeProof(root, "proof_kia_stick_commit_fields_20260626T080000Z");
+    const metadata = [`${field}=${expected}`];
+    if (secondaryField) metadata.push(`${secondaryField}=${other}`);
+    if (field !== "TERMINAL_CLOSEOUT_COMMIT_SHA") metadata.push(`TERMINAL_CLOSEOUT_COMMIT_SHA=${other}`);
+    makeProof(parent, "closeout_push_20260626T090000Z", {
+      result: `RESULT=PASS\n${metadata.join("\n")}\n`,
+      pushed: "yes",
+    });
+
+    expect(mod.selectLatestAcceptedPushedCloseoutProof(mod.discoverLocalProofs(root))?.commit).toBe(expected);
+    const result = spawnSync("node", [scriptPath, "latest", "--root", root], { encoding: "utf8" });
+    expect(result.status).toBe(0);
+    expect(result.stdout).toContain(`Latest accepted pushed closeout commit: ${expected}`);
+  });
+
   it("lists local proof directories newest-first with proof review metadata", async () => {
     const mod = await loadModule();
     const root = makeProofRoot();
