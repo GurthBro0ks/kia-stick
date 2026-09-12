@@ -371,6 +371,83 @@ describe("public steward packet workspace", () => {
     expect(savedHtml).toContain("Open saved packet");
   });
 
+  it.each([
+    ["overtime"],
+    ["annual_leave", "overtime", "sick_leave"],
+  ] as const)("places one workspace above the catalog with individual ordered controls: %s", (...topicIds) => {
+    const html = renderToStaticMarkup(React.createElement(SourcesPanel, {
+      cbaSourceState: { status: "available", source: cbaSource },
+      sourceHierarchyGroups: buildSourceHierarchyGroups(),
+      packetTopicIds: [...topicIds],
+      onTogglePacketTopic: () => undefined,
+      onClearPacketSelection: () => undefined,
+      onBuildStewardPacket: () => undefined,
+      runtimeVersion,
+    }));
+    expect(html.match(/id="steward-packet-workspace"/g)).toHaveLength(1);
+    expect(html.indexOf('id="steward-packet-workspace"')).toBeLessThan(html.indexOf('aria-label="official final APWU USPS CBA source"'));
+    expect(html.indexOf('id="steward-packet-workspace"')).toBeLessThan(html.indexOf('class="workflowTopicCard"'));
+    const workspace = html.slice(html.indexOf('class="stewardPacketWorkspace"'), html.indexOf('aria-label="official final APWU USPS CBA source"'));
+    let previousPosition = -1;
+    for (const topicId of topicIds) {
+      const name = PUBLIC_STEWARD_WORKFLOW_TOPICS.find((topic) => topic.id === topicId)!.displayName;
+      const position = workspace.indexOf(`aria-label="Remove ${name} from packet"`);
+      expect(position).toBeGreaterThan(previousPosition);
+      previousPosition = position;
+    }
+    expect(workspace.match(/>Remove<|>\s+Remove\s+</g)).toHaveLength(topicIds.length);
+    expect(workspace).toContain("Clear selection");
+    expect(workspace).toContain("No private input field exists");
+    if (topicIds.length === 3) {
+      expect(html.match(/disabled=""/g)).toHaveLength(PUBLIC_STEWARD_WORKFLOW_TOPICS.length - 3);
+    }
+  });
+
+  it("keeps the empty workspace below discovery with no selected-topic actions", () => {
+    const html = renderToStaticMarkup(React.createElement(SourcesPanel, {
+      cbaSourceState: { status: "available", source: cbaSource },
+      sourceHierarchyGroups: buildSourceHierarchyGroups(),
+      onTogglePacketTopic: () => undefined,
+      onClearPacketSelection: () => undefined,
+      onBuildStewardPacket: () => undefined,
+      runtimeVersion,
+    }));
+    expect(html.match(/id="steward-packet-workspace"/g)).toHaveLength(1);
+    expect(html.indexOf('id="steward-packet-workspace"')).toBeGreaterThan(html.indexOf('class="workflowTopicCard"'));
+    expect(html).toContain("No topics selected");
+    expect(html).not.toContain("Clear selection");
+    expect(html).not.toContain('aria-label="Remove ');
+    expect(html).toMatch(/disabled=""[^>]*>.*Build case-neutral steward packet/s);
+  });
+
+  it("clears only active packet state and permits a fresh verified build", () => {
+    // Exercise the real owner closure, as in the cap-parity test above. Its only
+    // available setters are packet selection, derived packet and transient notice.
+    const source = ts.createSourceFile("KiaStickApp.tsx",
+      readFileSync("components/KiaStickApp.tsx", "utf8"), ts.ScriptTarget.Latest, true, ts.ScriptKind.TSX);
+    let handler = "";
+    function findHandler(node: ts.Node) {
+      if (ts.isFunctionDeclaration(node) && node.name?.text === "clearPacketSelection") handler = node.getText(source);
+      ts.forEachChild(node, findHandler);
+    }
+    findHandler(source);
+    expect(handler).not.toBe("");
+    let selected = ["annual_leave", "overtime"] as Parameters<typeof buildPublicStewardPacket>[0]["topicIds"];
+    const invalidatePacket = vi.fn();
+    const clearNotice = vi.fn();
+    const clear = new Function("setPacketTopicIds", "setStewardPacket", "setSaveNotice",
+      ts.transpile(handler, { target: ts.ScriptTarget.ES2022 }) + "\nreturn clearPacketSelection;")(
+      (ids: typeof selected) => { selected = ids; }, invalidatePacket, clearNotice
+    );
+    clear();
+    expect(selected).toEqual([]);
+    expect(invalidatePacket).toHaveBeenCalledExactlyOnceWith(null);
+    expect(clearNotice).toHaveBeenCalledExactlyOnceWith(null);
+    selected = addChatTopicToPacketSelection(selected, "overtime").topicIds;
+    selected = addChatTopicToPacketSelection(selected, "annual_leave").topicIds;
+    expect(packet(selected).selectedTopicIds).toEqual(["annual_leave", "overtime"]);
+  });
+
   it("routes all verified public Copy controls through the shared clipboard helper", () => {
     const component = readFileSync("components/KiaStickApp.tsx", "utf8");
     expect(component).toContain('import { copyPublicExportText } from "@/lib/publicClipboard"');

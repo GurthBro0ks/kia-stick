@@ -725,6 +725,12 @@ export function KiaStickApp({ runtimeVersion = clientVersion }: { runtimeVersion
     setStewardPacket(null);
   }
 
+  function clearPacketSelection() {
+    setPacketTopicIds([]);
+    setStewardPacket(null);
+    setSaveNotice(null);
+  }
+
   function addChatTopicToPacket(topicId: PublicStewardWorkflowTopicId) {
     const result = addChatTopicToPacketSelection(packetTopicIds, topicId);
     if (result.notice) {
@@ -975,6 +981,7 @@ export function KiaStickApp({ runtimeVersion = clientVersion }: { runtimeVersion
             onSaveStewardPacket={saveStewardPacketWorkspace}
             onPacketStepCompletionChange={updateStewardPacketStep}
             onTogglePacketTopic={togglePacketTopic}
+            onClearPacketSelection={clearPacketSelection}
             packet={stewardPacket}
             packetTopicIds={packetTopicIds}
             runtimeVersion={runtimeVersion}
@@ -1467,6 +1474,7 @@ export function SourcesPanel({
   onPacketStepCompletionChange,
   onSaveStewardPacket,
   onTogglePacketTopic,
+  onClearPacketSelection,
   packet = null,
   packetTopicIds = [],
   runtimeVersion,
@@ -1481,6 +1489,7 @@ export function SourcesPanel({
   onPacketStepCompletionChange?: (stepId: PublicStewardPacketStep["stepId"], completed: boolean) => void;
   onSaveStewardPacket?: (packet: PublicStewardPacket) => void;
   onTogglePacketTopic?: (topicId: PublicStewardWorkflowTopicId) => void;
+  onClearPacketSelection?: () => void;
   packet?: PublicStewardPacket | null;
   packetTopicIds?: PublicStewardWorkflowTopicId[];
   runtimeVersion: RuntimeVersion;
@@ -1518,6 +1527,81 @@ export function SourcesPanel({
       .includes(normalizedWorkflowSearch)
   );
 
+  const workflowSearchRef = useRef<HTMLInputElement>(null);
+  const packetRemoveRefs = useRef<Partial<Record<PublicStewardWorkflowTopicId, HTMLButtonElement | null>>>({});
+  const packetWorkspace = cbaSourceState.status === "available" ? (
+    <section className="stewardPacketWorkspace" aria-labelledby="steward-packet-workspace">
+      <div className="workflowCatalogHeader">
+        <div>
+          <span className="sectionKicker">Public-only case-neutral workspace</span>
+          <h4 id="steward-packet-workspace">Build steward packet</h4>
+        </div>
+        <span className={packetTopicIds.length > 0 ? "statusPill ok" : "statusPill"}>
+          {packetTopicIds.length}/3 topics selected
+        </span>
+      </div>
+      <p className="argumentPlanPrivateWarning" role="note">
+        <AlertTriangle size={16} />
+        <strong>No private input field exists. Select one to three supported topics only; names, dates, case facts, medical or personnel data, financial facts, and grievance documents remain outside this workspace.</strong>
+      </p>
+      <div className="sourceMeta" aria-label="Selected steward packet topics">
+        {packetTopicIds.length === 0 && <span className="badge">No topics selected</span>}
+        {packetTopicIds.map((topicId) => (
+          <div className="compactActions" key={topicId}>
+            <span className="badge green">{publicStewardWorkflowTopic(topicId).displayName}</span>
+            {onTogglePacketTopic && (
+              <button
+                className="button subtle"
+                type="button"
+                aria-label={`Remove ${publicStewardWorkflowTopic(topicId).displayName} from packet`}
+                ref={(element) => { packetRemoveRefs.current[topicId] = element; }}
+                onClick={() => {
+                  const index = packetTopicIds.indexOf(topicId);
+                  const nextTopic = packetTopicIds[index + 1] ?? packetTopicIds[index - 1];
+                  if (nextTopic) packetRemoveRefs.current[nextTopic]?.focus();
+                  else workflowSearchRef.current?.focus();
+                  onTogglePacketTopic(topicId);
+                }}
+              >
+                Remove
+              </button>
+            )}
+          </div>
+        ))}
+      </div>
+      {packetTopicIds.length > 0 && onClearPacketSelection && (
+        <div className="compactActions">
+          <button className="button subtle" type="button" onClick={() => {
+            workflowSearchRef.current?.focus();
+            onClearPacketSelection();
+          }}>
+            Clear selection
+          </button>
+        </div>
+      )}
+      {onBuildStewardPacket && (
+        <button
+          className="button primary"
+          disabled={packetTopicIds.length < 1 || packetTopicIds.length > 3}
+          onClick={onBuildStewardPacket}
+          type="button"
+        >
+          <ClipboardList size={16} />
+          Build case-neutral steward packet
+        </button>
+      )}
+      {packet && (
+        <PublicStewardPacketView
+          onCitationNavigate={() => undefined}
+          onStepCompletionChange={onPacketStepCompletionChange}
+          onSave={onSaveStewardPacket ? () => onSaveStewardPacket(packet) : undefined}
+          packet={packet}
+          source={cbaSourceState.source}
+        />
+      )}
+    </section>
+  ) : null;
+
   return (
     <section className="tabPanel">
       <PanelHeader title="Sources" meta="isolated fake and public lanes" />
@@ -1527,6 +1611,8 @@ export function SourcesPanel({
         <span>LOCAL READ-ONLY</span>
         <span>NO PRIVATE DATA</span>
       </div>
+
+      {packetTopicIds.length > 0 && packetWorkspace}
 
       {cbaSourceState.status === "loading" && (
         <article className="sourceCard publicSourceCard" aria-label="official CBA source loading">
@@ -1607,6 +1693,7 @@ export function SourcesPanel({
             <label className="controlPill workflowSearch">
               <span>Filter workflow topics</span>
               <input
+                ref={workflowSearchRef}
                 aria-label="Filter public steward workflow topics"
                 onChange={(event) => setWorkflowSearchQuery(event.target.value)}
                 placeholder="Topic or article"
@@ -1675,47 +1762,7 @@ export function SourcesPanel({
               </div>
             </section>
 
-            <section className="stewardPacketWorkspace" aria-labelledby="steward-packet-workspace">
-              <div className="workflowCatalogHeader">
-                <div>
-                  <span className="sectionKicker">Public-only case-neutral workspace</span>
-                  <h4 id="steward-packet-workspace">Build steward packet</h4>
-                </div>
-                <span className={packetTopicIds.length > 0 ? "statusPill ok" : "statusPill"}>
-                  {packetTopicIds.length}/3 topics selected
-                </span>
-              </div>
-              <p className="argumentPlanPrivateWarning" role="note">
-                <AlertTriangle size={16} />
-                <strong>No private input field exists. Select one to three supported topics only; names, dates, case facts, medical or personnel data, financial facts, and grievance documents remain outside this workspace.</strong>
-              </p>
-              <div className="sourceMeta" aria-label="Selected steward packet topics">
-                {packetTopicIds.length === 0 && <span className="badge">No topics selected</span>}
-                {packetTopicIds.map((topicId) => (
-                  <span className="badge green" key={topicId}>{publicStewardWorkflowTopic(topicId).displayName}</span>
-                ))}
-              </div>
-              {onBuildStewardPacket && (
-                <button
-                  className="button primary"
-                  disabled={packetTopicIds.length < 1 || packetTopicIds.length > 3}
-                  onClick={onBuildStewardPacket}
-                  type="button"
-                >
-                  <ClipboardList size={16} />
-                  Build case-neutral steward packet
-                </button>
-              )}
-              {packet && (
-                <PublicStewardPacketView
-                  onCitationNavigate={() => undefined}
-                  onStepCompletionChange={onPacketStepCompletionChange}
-                  onSave={onSaveStewardPacket ? () => onSaveStewardPacket(packet) : undefined}
-                  packet={packet}
-                  source={cbaSourceState.source}
-                />
-              )}
-            </section>
+            {packetTopicIds.length === 0 && packetWorkspace}
           </section>
 
           {cbaCitationNavigationNotice && (
