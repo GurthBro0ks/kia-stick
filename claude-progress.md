@@ -3036,3 +3036,33 @@
 - Validation: focused 11/11 PASS (new test failed before fix), lint/typecheck PASS; full suite 340/344 files and 1135/1139 tests PASS, four existing proof-index failures because latest terminal proof exposes no recognized commit key. Aggregate QA stopped before build/scans; runtime smoke not started.
 - Proof: `/home/slimy/.local/state/kia-stick/proofs/proof_kia_stick_f_maint_01_packet_cap_invariant_implementation_20260911T121926Z`.
 - Status: WARN, no commit or push; F-MAINT-01 remains OPEN and unaccepted. Manual QA PENDING. Remaining blocker: PM adjudication of proof-index metadata incompatibility before required full validation can pass; no metadata repair or acceptance refresh performed.
+
+## F-MAINT-01 operator QA pass recording
+
+- Phase: `KIA-Stick-F-MAINT-01-operator-QA-pass-recording-and-UX-followup-capture`.
+- Implementation commit: `2149713db47795d6649a0bec9e1966df5ea295cf` (parent proof-index compatibility commit `9b3e44f12425cdc5f2e1102c94c5c3be40ff3068`, grandparent `d50c49afdc44a7bdc486e430c48d3f2c75983ba8`).
+- Independent QA: PASS — `/home/slimy/.local/state/kia-stick/proofs/proof_kia_stick_f_maint_01_independent_qa_20260911T153704Z`. `F_MAINT_01_TECHNICAL_QA=PASS`.
+- Manual QA: the human operator explicitly supplied `OPERATOR_QA_PASS for F-MAINT-01 implementation commit 2149713db47795d6649a0bec9e1966df5ea295cf`. `MANUAL_QA_STATUS=PASS`. Operator-verified: packet cap behavior, packet generation, packet content correctness, copy output, Markdown export, print/print-preview, no source/citation regression, no private-data regression.
+- `F_MAINT_01_OPERATOR_ACCEPTANCE_RECORDED=yes`. This records operator acceptance only; it does not perform accepted-state refresh/promotion, terminal closeout, or push. `F_MAINT_01_TERMINAL_CLOSEOUT=PENDING`. `PUSHED=no`.
+- Separately, the operator raised one UX improvement request during manual QA. It is not part of the F-MAINT-01 technical defect and does not block F-MAINT-01 acceptance; it is preserved below as a non-blocking follow-up and was not implemented in this phase.
+- Proof: `/home/slimy/.local/state/kia-stick/proofs/proof_kia_stick_f_maint_01_operator_qa_pass_recording_20260912T141019Z`.
+- Next: return to PM for F-MAINT-01 terminal closeout and authorized push planning. Do not implement the UX follow-up yet and do not start F-MAINT-02 or Bundle 4.
+
+## NON-BLOCKING OPERATOR UX FOLLOW-UP: packet-builder-selected-topic-controls-and-top-placement
+
+- Status: `OPEN_NON_BLOCKING`. Discovered during F-MAINT-01 manual QA on implementation commit `2149713db47795d6649a0bec9e1966df5ea295cf`. Not implemented. Not part of F-MAINT-01, F-MAINT-02, or Bundle 4 scope.
+- Trigger: once at least one steward-packet topic is selected on the Sources page.
+- Request:
+  1. Move the entire existing "PUBLIC-ONLY CASE-NEUTRAL WORKSPACE / Build steward packet" module to the top of the relevant Sources page/content area so the current packet selection is immediately visible.
+  2. Within that module, display the currently selected packet topics as individually manageable items.
+  3. Each selected topic should have an obvious individual Remove action.
+  4. Add a clear "Start over" or equivalent "Clear selection" action that removes all selected packet topics.
+  5. Preserve the existing maximum of 3 selected topics.
+  6. Preserve existing topic ordering semantics unless later UX planning deliberately specifies otherwise.
+  7. Preserve the current packet-build behavior after selection.
+  8. Preserve Saved/reopen behavior.
+  9. Preserve copy, Markdown export, and print behavior.
+  10. Preserve citation/source behavior.
+  11. Preserve PUBLIC-ONLY / CASE-NEUTRAL restrictions.
+- Recording rationale: no existing open-backlog/operator-follow-up structure was found in `feature_list.json` (whose entries are closed per-phase acceptance records, not an open-items register) or elsewhere in the repo; `docs/phase-backlog.json` is a `kia-stick-local-task-queue.v1` queue last updated 2026-06-27 and not referenced by any phase since, so it is not the currently canonical mechanism. Per this phase's recording-rule fallback, the follow-up is recorded here in `claude-progress.md` as a clearly separate, non-blocking entry, with full detail preserved in proof at `/home/slimy/.local/state/kia-stick/proofs/proof_kia_stick_f_maint_01_operator_qa_pass_recording_20260912T141019Z/ux-followup.md`.
+- Do not implement without separate explicit authorization.
