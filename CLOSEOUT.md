@@ -1,3 +1,15 @@
+## F-MAINT-01 Terminal Closeout — 2026-09-12
+
+- Phase: `KIA-Stick-F-MAINT-01-terminal-closeout-project-state-and-push`; owner authorized exactly one terminal closeout commit and one normal `git push origin HEAD:main` after final qualification and remote race protection.
+- `F_MAINT_01_IMPLEMENTATION_COMMIT=2149713db47795d6649a0bec9e1966df5ea295cf`; `PROOF_INDEX_COMPATIBILITY_COMMIT=9b3e44f12425cdc5f2e1102c94c5c3be40ff3068`.
+- `F_MAINT_01_OPERATOR_QA_RECORDING_COMMIT=9cf4db4f14369db3e63e03d93e4453582ccec711`; `INDEPENDENT_QA_STATUS=PASS`; `MANUAL_QA_STATUS=PASS`. All six authoritative input proof manifests verified.
+- `F_MAINT_01_STATUS=ACCEPTED_AND_TERMINALLY_CLOSED`: the shared packet-cap invariant repair is accepted on its implementation, independent QA and explicit operator acceptance. Final qualification and push outcomes are recorded externally, not claimed in this pre-push record.
+- `F_MAINT_01_TERMINAL_CLOSEOUT_COMMIT` is the commit introducing this section; its full SHA is recorded as `TERMINAL_CLOSEOUT_COMMIT_SHA` in `/home/slimy/.local/state/kia-stick/proofs/proof_kia_stick_f_maint_01_terminal_closeout_push_20260912T141946Z/RESULT.md`. That sealed proof is authoritative for final validation, push and remote equality.
+- `OPERATOR_UX_FOLLOWUP_STATUS=OPEN_NON_BLOCKING`; `packet-builder-selected-topic-controls-and-top-placement` remains open and unimplemented, with its full request preserved in `claude-progress.md`.
+- `STATE_REFRESH_LOOP=CLOSED`. No accepted-state refresh/promotion or global identity advancement. Historical Source/Citation anchors remain unchanged. Product/package remain `0.7.0`; local `main` remains intentionally stale at `9b0fda9`; current branch remains `omarchy-path-setup`.
+- Scope: `CLOSEOUT.md`, `claude-progress.md`, `feature_list.json` only. PUBLIC-ONLY boundary preserved; no source acquisition/sync, private data, external AI, package/lockfile/cache mutation, system/service change or notification. AirLLM remains watchlist-only.
+- Next: return to PM after terminal proof. Address the preserved UX follow-up in a separately authorized product phase before F-MAINT-02 unless the owner reprioritizes. F-MAINT-02 and Bundle 4 are not started.
+
 ## Source and Citation Integrity Accepted-State Promotion Terminal Closeout and Push — 2026-09-11
 
 - Phase: `KIA-Stick-source-citation-integrity-accepted-state-promotion-terminal-closeout-and-push`.

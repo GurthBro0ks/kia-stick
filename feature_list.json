@@ -13342,5 +13342,31 @@
     "airllm_status": "watchlist_only",
     "private_data_accessed": false,
     "discord_sent": false
+  },
+  "f_maint_01_terminal_closeout": {
+    "phase": "KIA-Stick-F-MAINT-01-terminal-closeout-project-state-and-push",
+    "status": "ACCEPTED_AND_TERMINALLY_CLOSED",
+    "implementation_commit": "2149713db47795d6649a0bec9e1966df5ea295cf",
+    "proof_index_compatibility_commit": "9b3e44f12425cdc5f2e1102c94c5c3be40ff3068",
+    "operator_qa_recording_commit": "9cf4db4f14369db3e63e03d93e4453582ccec711",
+    "independent_qa_status": "PASS",
+    "manual_qa_status": "PASS",
+    "terminal_closeout_commit_authority": "TERMINAL_CLOSEOUT_COMMIT_SHA in external closeout proof",
+    "closeout_push_proof_dir": "/home/slimy/.local/state/kia-stick/proofs/proof_kia_stick_f_maint_01_terminal_closeout_push_20260912T141946Z",
+    "push_outcome_authority": "external_closeout_proof",
+    "push_mode": "non_force",
+    "push_refspec": "HEAD:main",
+    "operator_ux_followup_status": "OPEN_NON_BLOCKING",
+    "operator_ux_followup_label": "packet-builder-selected-topic-controls-and-top-placement",
+    "operator_ux_followup_implemented": false,
+    "state_refresh_loop": "CLOSED",
+    "accepted_identity_rewritten": false,
+    "product_version": "0.7.0",
+    "source_sync_performed": false,
+    "private_data_accessed": false,
+    "external_ai_enabled": false,
+    "airllm_status": "watchlist_only",
+    "f_maint_02_started": false,
+    "bundle_4_started": false
   }
 }
