@@ -194,6 +194,11 @@ describe("F-EXPORT-01 and F-EXPORT-02 hardening", () => {
     expect(printStyles).toMatch(/\.print-heading[^{]*{[^}]*break-after:\s*avoid/s);
     expect(printStyles).toMatch(/\.print-hide[^{]*{[^}]*display:\s*none\s*!important/s);
     expect(printStyles).not.toMatch(/\.publicPrintTarget\s+button[^{]*{[^}]*display:\s*none/s);
+    // Hidden off-target layout must not continue to consume printed pages.
+    expect(printStyles).not.toContain("visibility: hidden");
+    expect(printStyles).toMatch(/:not\(:has\(\.publicPrintTarget\)\)[^{]*{[^}]*display:\s*none\s*!important/s);
+    expect(printStyles).toMatch(/\.publicPrintTarget\s*{[^}]*position:\s*static/s);
+
   });
 
   it("preserves deterministic Markdown filenames and the existing export formats", () => {

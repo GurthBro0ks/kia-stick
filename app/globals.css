@@ -938,6 +938,87 @@ a {
   gap: 10px;
 }
 
+/* Keep each topic and its action together at every viewport width. */
+.stewardPacketWorkspace > .argumentPlanPrivateWarning {
+  margin: 0;
+  font-size: 0.8rem;
+  line-height: 1.45;
+}
+
+.packetSelectedTopics {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  min-width: 0;
+}
+
+.packetSelectedTopic {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  min-width: 0;
+  max-width: 100%;
+  padding-left: 10px;
+  border: 1px solid #a9c9bf;
+  border-radius: 4px;
+  background: #edf5f1;
+}
+
+.packetSelectedTopicName {
+  min-width: 0;
+  overflow-wrap: anywhere;
+  color: #19543e;
+  font-size: 0.8rem;
+  font-weight: 700;
+}
+
+.packetSelectedTopic .button {
+  flex: 0 0 auto;
+  min-height: 44px;
+  border: 0;
+  border-left: 1px solid #a9c9bf;
+  background: transparent;
+  box-shadow: none;
+  font-size: 0.8rem;
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}
+
+.packetSelectedTopic .button:focus-visible,
+.packetWorkspaceActions .button:focus-visible {
+  outline: 2px solid var(--blue);
+  outline-offset: 2px;
+}
+
+.packetWorkspaceActions {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  border-top: 1px solid #c8d6d4;
+  padding-top: 10px;
+}
+
+.packetWorkspaceActions .button {
+  min-height: 44px;
+}
+
+.packetWorkspaceActions .primary {
+  margin-left: auto;
+}
+
+@media (max-width: 600px) {
+  .packetSelectedTopic {
+    width: 100%;
+  }
+
+  .packetWorkspaceActions .primary {
+    flex-basis: 100%;
+  }
+}
+
 .publicStewardPacket {
   margin-top: 4px;
 }
@@ -2200,27 +2281,32 @@ a {
     margin: 0.55in;
   }
 
-  body.publicPrintActive * {
-    visibility: hidden;
+  html:has(.publicPrintTarget) {
+    background: #fff;
   }
 
-  body.publicPrintActive .publicPrintTarget,
-  body.publicPrintActive .publicPrintTarget * {
-    visibility: visible;
+  /* Visibility alone retains the entire Sources/Saved page in pagination.
+     Remove off-target branches and flatten only the target's ancestor path. */
+  body:has(.publicPrintTarget) *:not(.publicPrintTarget):not(.publicPrintTarget *):not(:has(.publicPrintTarget)) {
+    display: none !important;
   }
 
-  body:has(.publicPrintTarget) * {
-    visibility: hidden;
-  }
-
-  body:has(.publicPrintTarget) .publicPrintTarget,
-  body:has(.publicPrintTarget) .publicPrintTarget * {
-    visibility: visible;
+  body:has(.publicPrintTarget),
+  body:has(.publicPrintTarget) *:has(.publicPrintTarget) {
+    display: block !important;
+    position: static !important;
+    min-height: 0 !important;
+    height: auto !important;
+    margin: 0 !important;
+    padding: 0 !important;
+    border: 0 !important;
+    overflow: visible !important;
+    background: #fff;
+    box-shadow: none;
   }
 
   .publicPrintTarget {
-    position: absolute;
-    inset: 0 auto auto 0;
+    position: static;
     width: 100%;
     max-width: 100%;
     margin: 0;

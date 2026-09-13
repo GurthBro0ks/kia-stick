@@ -391,6 +391,9 @@ describe("public steward packet workspace", () => {
     let previousPosition = -1;
     for (const topicId of topicIds) {
       const name = PUBLIC_STEWARD_WORKFLOW_TOPICS.find((topic) => topic.id === topicId)!.displayName;
+      // A named group keeps the visible topic and its uniquely named action together.
+      const group = workspace.slice(workspace.indexOf(`role="group" aria-label="${name}"`));
+      expect(group.slice(0, group.indexOf("</div>"))).toContain(`aria-label="Remove ${name} from packet"`);
       const position = workspace.indexOf(`aria-label="Remove ${name} from packet"`);
       expect(position).toBeGreaterThan(previousPosition);
       previousPosition = position;

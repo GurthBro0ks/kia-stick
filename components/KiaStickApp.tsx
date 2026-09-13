@@ -1544,11 +1544,11 @@ export function SourcesPanel({
         <AlertTriangle size={16} />
         <strong>No private input field exists. Select one to three supported topics only; names, dates, case facts, medical or personnel data, financial facts, and grievance documents remain outside this workspace.</strong>
       </p>
-      <div className="sourceMeta" aria-label="Selected steward packet topics">
+      <div className="packetSelectedTopics" aria-label="Selected steward packet topics">
         {packetTopicIds.length === 0 && <span className="badge">No topics selected</span>}
         {packetTopicIds.map((topicId) => (
-          <div className="compactActions" key={topicId}>
-            <span className="badge green">{publicStewardWorkflowTopic(topicId).displayName}</span>
+          <div className="packetSelectedTopic" role="group" aria-label={publicStewardWorkflowTopic(topicId).displayName} key={topicId}>
+            <span className="packetSelectedTopicName">{publicStewardWorkflowTopic(topicId).displayName}</span>
             {onTogglePacketTopic && (
               <button
                 className="button subtle"
@@ -1569,27 +1569,27 @@ export function SourcesPanel({
           </div>
         ))}
       </div>
-      {packetTopicIds.length > 0 && onClearPacketSelection && (
-        <div className="compactActions">
+      <div className="packetWorkspaceActions">
+        {packetTopicIds.length > 0 && onClearPacketSelection && (
           <button className="button subtle" type="button" onClick={() => {
             workflowSearchRef.current?.focus();
             onClearPacketSelection();
           }}>
             Clear selection
           </button>
-        </div>
-      )}
-      {onBuildStewardPacket && (
-        <button
-          className="button primary"
-          disabled={packetTopicIds.length < 1 || packetTopicIds.length > 3}
-          onClick={onBuildStewardPacket}
-          type="button"
-        >
-          <ClipboardList size={16} />
-          Build case-neutral steward packet
-        </button>
-      )}
+        )}
+        {onBuildStewardPacket && (
+          <button
+            className="button primary"
+            disabled={packetTopicIds.length < 1 || packetTopicIds.length > 3}
+            onClick={onBuildStewardPacket}
+            type="button"
+          >
+            <ClipboardList size={16} />
+            Build case-neutral steward packet
+          </button>
+        )}
+      </div>
       {packet && (
         <PublicStewardPacketView
           onCitationNavigate={() => undefined}
