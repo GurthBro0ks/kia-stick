@@ -1,3 +1,15 @@
+## Packet builder selected-topic controls and top placement — Terminal Closeout — 2026-09-13
+
+- Phase: `KIA-Stick-packet-builder-selected-topic-controls-terminal-closeout-project-state-and-push`; exactly one closeout commit and one normal `git push origin HEAD:main` authorized after final qualification and remote race protection.
+- `PACKET_BUILDER_UX_IMPLEMENTATION_COMMIT=ca9682a71bcac1a7d158851da193d89b4a707e68`; `PACKET_BUILDER_UX_OPERATOR_QA_RECORDING_COMMIT=6a98a00c42613296aa0fa85ed3f91e94af395703`.
+- `INDEPENDENT_QA_STATUS=PASS`; `MANUAL_QA_STATUS=PASS`. The implementation, independent QA, operator-QA recording and prior F-MAINT-01 terminal proof manifests verified.
+- `PACKET_BUILDER_SELECTED_TOPIC_CONTROLS_STATUS=ACCEPTED_AND_TERMINALLY_CLOSED`. Acceptance rests on the existing functional implementation, independent QA and explicit human acceptance. Final qualification and push outcomes are recorded externally, not claimed in this pre-push record.
+- `PACKET_BUILDER_UX_TERMINAL_CLOSEOUT_COMMIT` is the commit introducing this section; its full SHA is recorded as `TERMINAL_CLOSEOUT_COMMIT_SHA` in `/home/slimy/.local/state/kia-stick/proofs/proof_kia_stick_packet_builder_selected_topic_controls_terminal_closeout_push_20260913T113516Z/RESULT.md`. That sealed external proof is authoritative for exact-HEAD validation, push and remote equality.
+- `VISUAL_POLISH_FOLLOWUP_STATUS=OPEN_NON_BLOCKING`; `VISUAL_POLISH_FOLLOWUP_LABEL=packet-builder-selected-topic-controls-visual-polish`. The complete follow-up remains preserved in `claude-progress.md`: cohesive selected-topic/Remove presentation, workspace hierarchy/grouping, desktop spacing/density, accessible 400px controls, and avoidable trailing blank print pages (13 observed pages; substantive packet/source appendix ends around page 9). No polish implemented.
+- `F_MAINT_01_STATUS=ACCEPTED_AND_TERMINALLY_CLOSED`; not reopened. `STATE_REFRESH_LOOP=CLOSED`; no accepted-state refresh/promotion or identity rewrite. F-MAINT-02 and Bundle 4 not started.
+- Scope: `CLOSEOUT.md`, `claude-progress.md`, `feature_list.json` only. Product remains `0.7.0`; package, lockfile and public source cache remain immutable. PUBLIC-ONLY boundary preserved; no private data, source acquisition/sync, external AI, system/service changes or notifications. AirLLM remains watchlist-only. Local `main` remains intentionally stale; current branch remains `omarchy-path-setup`.
+- Next: return to PM after terminal proof. The next separately authorized phase is visual polish, including trailing blank print-page investigation. Do not start F-MAINT-02 until that phase is adjudicated or the owner explicitly reprioritizes.
+
 ## F-MAINT-01 Terminal Closeout — 2026-09-12
 
 - Phase: `KIA-Stick-F-MAINT-01-terminal-closeout-project-state-and-push`; owner authorized exactly one terminal closeout commit and one normal `git push origin HEAD:main` after final qualification and remote race protection.
