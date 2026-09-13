@@ -27,6 +27,7 @@ import {
   migrateSavedAnswers,
   upsertSavedAnswer,
 } from "@/lib/savedAnswers";
+import { evidenceRequestsFromCitedItems } from "@/lib/publicGrievanceOutline";
 import { buildSourceHierarchyGroups } from "@/lib/sourceModel";
 import { createRuntimeVersion } from "@/lib/version";
 import { createCbaSourceFixtureCache } from "@/tests/fixtures/cbaSourceFixture";
@@ -58,6 +59,62 @@ function withoutTopicProvenance(value: string): string {
 }
 
 describe("public steward packet workspace", () => {
+  it("classifies steward certification and sick-leave evidence without crossing rationales", () => {
+    const steward = packet(["annual_leave", "overtime", "steward_grievance_handling"]);
+    const sick = packet(["sick_leave"]);
+    for (const [result, term, rationale, article] of [
+      [steward, "steward certification", "steward designation", "17"],
+      [sick, "certification request", "sick-leave provisions", "10"],
+    ] as const) {
+      const outline = result.outlines.find((entry) =>
+        entry.evidenceToRequest.some((item) => item.text.includes(term))
+      )!;
+      expect(outline).toBeDefined();
+      const sourceItem = outline.evidenceToRequest.find((item) => item.text.includes(term))!;
+      const request = outline.evidenceRequests.find((item) => item.document.includes(term))!;
+      const combined = result.structuredEvidenceChecklist.find((item) => item.document.includes(term))!;
+      expect(request.whyItMatters).toContain(rationale);
+      expect(combined.whyItMatters).toBe(request.whyItMatters);
+      expect(request.citationIds).toEqual([...new Set(sourceItem.citationIds)].sort());
+      expect(combined.citationIds).toEqual(request.citationIds);
+      expect(combined.citationIds.length).toBeGreaterThan(0);
+      for (const id of combined.citationIds) {
+        const citation = result.citations.find((entry) => entry.id === id)!;
+        expect(citation.articleNumber).toBe(article);
+        expect(citation.citationVerificationState).toBe("verified_current");
+      }
+      expect(outline.evidenceRequests.map((item) => item.document))
+        .toEqual(outline.evidenceToRequest.map((item) => item.text));
+    }
+    const stewardRequest = steward.structuredEvidenceChecklist.find((item) =>
+      item.document.includes("steward certification")
+    )!;
+    expect(stewardRequest.document).toMatch(/request and response.*records-access.*interview request.*grievance-handling purpose/);
+    expect(stewardRequest.whyItMatters).not.toMatch(/absence category|sick-leave provisions/);
+    // Stable packet identity survives the rationale repair; content identity must change.
+    expect(steward.id).toBe("public-steward-packet-ad330246a4014b88a26d");
+    expect(steward.contentIdentity).not.toBe("9458dfeb534580ed1e820cb122c2e7acaacbed6d66896e80ebddc1533163e082");
+    const reordered = packet(["steward_grievance_handling", "overtime", "annual_leave"]);
+    expect(reordered).toEqual(steward);
+    expect(publicStewardPacketToText(steward)).toContain(stewardRequest.whyItMatters);
+    expect(publicStewardPacketToMarkdown(steward)).toContain(stewardRequest.whyItMatters);
+    expect(publicStewardPacketExportEligibility(steward, cbaSource)).toEqual({ eligible: true });
+    expect(publicStewardPacketExportEligibility(sick, cbaSource)).toEqual({ eligible: true });
+  });
+
+  it("requires leave context for certification while retaining explicit sick-leave and absence rationales", () => {
+    const requests = evidenceRequestsFromCitedItems([
+      { text: "Steward certification request and records-access log", citationIds: ["article-17"] },
+      { text: "Sick leave certification", citationIds: ["article-10"] },
+      { text: "Neutral absence record", citationIds: ["article-10"] },
+      { text: "Certification request for leave administration", citationIds: ["article-10"] },
+    ]);
+    expect(requests[0].whyItMatters).toContain("steward designation");
+    for (const request of requests.slice(1)) {
+      expect(request.whyItMatters).toContain("sick-leave provisions");
+    }
+  });
+
   it.each([
     [["annual_leave"]],
     [["annual_leave", "overtime"]],

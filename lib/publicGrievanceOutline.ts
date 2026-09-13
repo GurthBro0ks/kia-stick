@@ -360,11 +360,12 @@ function evidencePurpose(document: string): string {
   const normalized = document.toLowerCase();
   const purposes: Array<[RegExp, string]> = [
     [/overtime desired list|overtime opportunit|rotation|daily or weekly hours/, "Check the neutral assignment sequence, eligibility, availability, and applicable limits against the cited overtime provisions without presuming an error."],
+    // Certification needs leave context; specific leave evidence precedes generic requests.
+    [/sick leave|absence|leave.*certification|certification.*leave/, "Clarify the absence category, notice, certification path, and recorded administration relevant to the cited sick-leave provisions."],
     [/annual leave|leave request|leave calendar|vacation schedule|schedule notice/, "Clarify the request category, scheduling path, and recorded disposition that may be compared with the cited leave provisions."],
     [/holiday schedule|holiday assignment|posting date|excusal/, "Clarify the posting, employee category, and assignment sequence that may be compared with the cited holiday-scheduling provisions."],
     [/hazard|unsafe|inspection|corrective response|safety and health committee/, "Clarify the reported hazard, notice, inspection, and corrective-response sequence relevant to the cited safety process."],
     [/disciplin|corrective action|notice and concurrence/, "Clarify the action, notice, concurrence, and corrective-discipline sequence relevant to the cited just-cause framework."],
-    [/sick leave|absence|certification/, "Clarify the absence category, notice, certification path, and recorded administration relevant to the cited sick-leave provisions."],
     [/higher-level|detail|written order|assignment record/, "Clarify the assignment, written-order, duration, and qualification path relevant to the cited higher-level provisions."],
     [/uniform|work cloth|allowance|anniversary-year|eligibility category/, "Clarify the eligibility category, assignment, allowance, and program-administration path relevant to the cited uniform provisions."],
     [/claim|personal property|property and incident|determination|appeal record/, "Clarify the property, documentation, recommendation, determination, and appeal path relevant to the cited employee-claims provisions."],
