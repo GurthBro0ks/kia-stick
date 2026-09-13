@@ -393,12 +393,18 @@ describe("public steward packet workspace", () => {
       const name = PUBLIC_STEWARD_WORKFLOW_TOPICS.find((topic) => topic.id === topicId)!.displayName;
       // A named group keeps the visible topic and its uniquely named action together.
       const group = workspace.slice(workspace.indexOf(`role="group" aria-label="${name}"`));
-      expect(group.slice(0, group.indexOf("</div>"))).toContain(`aria-label="Remove ${name} from packet"`);
+      const groupMarkup = group.slice(0, group.indexOf("</div>"));
+      expect(groupMarkup).toContain(`aria-label="Remove ${name} from packet"`);
+      // The compact control is a semantic button whose only visible content is the close glyph.
+      expect(groupMarkup).toMatch(/<button[^>]*class="[^"]*packetSelectedTopicRemove[^"]*"[^>]*>\s*<span aria-hidden="true">\u00d7<\/span>\s*<\/button>/);
       const position = workspace.indexOf(`aria-label="Remove ${name} from packet"`);
       expect(position).toBeGreaterThan(previousPosition);
       previousPosition = position;
     }
-    expect(workspace.match(/>Remove<|>\s+Remove\s+</g)).toHaveLength(topicIds.length);
+    expect(workspace.match(/<span aria-hidden="true">\u00d7<\/span>/g)).toHaveLength(topicIds.length);
+    // The bulky visible "Remove" label is gone while every accessible name still names its topic.
+    expect(workspace).not.toMatch(/>Remove<|>\s+Remove\s+</);
+    expect(workspace.match(/aria-label="Remove [^"]+ from packet"/g)).toHaveLength(topicIds.length);
     expect(workspace).toContain("Clear selection");
     expect(workspace).toContain("No private input field exists");
     if (topicIds.length === 3) {

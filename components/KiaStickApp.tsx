@@ -1551,7 +1551,7 @@ export function SourcesPanel({
             <span className="packetSelectedTopicName">{publicStewardWorkflowTopic(topicId).displayName}</span>
             {onTogglePacketTopic && (
               <button
-                className="button subtle"
+                className="button subtle packetSelectedTopicRemove"
                 type="button"
                 aria-label={`Remove ${publicStewardWorkflowTopic(topicId).displayName} from packet`}
                 ref={(element) => { packetRemoveRefs.current[topicId] = element; }}
@@ -1563,7 +1563,8 @@ export function SourcesPanel({
                   onTogglePacketTopic(topicId);
                 }}
               >
-                Remove
+                {/* Compact close glyph only; the accessible name above still identifies the topic. */}
+                <span aria-hidden="true">×</span>
               </button>
             )}
           </div>
