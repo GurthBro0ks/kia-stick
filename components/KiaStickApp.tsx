@@ -67,6 +67,7 @@ import {
 } from "@/lib/savedAnswers";
 import {
   buildPublicArgumentPlan,
+  PUBLIC_ARGUMENT_PLAN_PREPARATION_WARNING,
   publicArgumentPlanEligibility,
   type PublicArgumentPlan,
 } from "@/lib/publicArgumentPlan";
@@ -3360,6 +3361,19 @@ function PublicArgumentPlanView({
         <h4>8. Step-by-step argument</h4>
         <CitedItems items={plan.argumentSteps} ordered />
       </section>
+      {plan.evidenceRequestPreparation && (
+        <section className="argumentPlanSection">
+          <h4>Evidence / RFI-request preparation categories</h4>
+          <p role="note">{PUBLIC_ARGUMENT_PLAN_PREPARATION_WARNING}</p>
+          <CitedItems items={plan.evidenceRequestPreparation} />
+        </section>
+      )}
+      {plan.postInterviewFollowUp && (
+        <section className="argumentPlanSection">
+          <h4>Post-interview follow-up</h4>
+          <CitedItems items={plan.postInterviewFollowUp} ordered />
+        </section>
+      )}
       <section className="argumentPlanSection argumentPlanEscalation">
         <h4>9. Escalation triggers</h4>
         <CitedItems items={plan.escalationTriggers} />

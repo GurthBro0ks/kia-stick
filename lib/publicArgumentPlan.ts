@@ -22,6 +22,8 @@ export interface CitedArgumentPlanItem {
   citationIds: string[];
 }
 
+export const PUBLIC_ARGUMENT_PLAN_PREPARATION_WARNING = "Generic preparation prompts only. Citations explain relevance to the interview framework; they do not establish a right to obtain records, a request deadline, or a disclosure duty. Private data and formal case-specific RFI generation remain blocked." as const;
+
 export interface PublicArgumentPlan {
   id: string;
   contentIdentity: string;
@@ -36,6 +38,9 @@ export interface PublicArgumentPlan {
   memberActions: CitedArgumentPlanItem[];
   stewardActions: CitedArgumentPlanItem[];
   employerQuestions: string[];
+  // Optional so historical saved plans remain readable without inventing new content.
+  evidenceRequestPreparation?: CitedArgumentPlanItem[];
+  postInterviewFollowUp?: CitedArgumentPlanItem[];
   argumentSteps: CitedArgumentPlanItem[];
   escalationTriggers: CitedArgumentPlanItem[];
   limitations: CitedArgumentPlanItem[];
@@ -209,6 +214,19 @@ export function buildPublicArgumentPlan(input: {
       "Will management pause the questioning so the requested representative may be present?",
       "If representation is denied, will management end the interview or continue questioning?",
     ],
+    evidenceRequestPreparation: [
+      item("Meeting purpose and scope: identify categories such as meeting notices, stated subjects, and questions that would help distinguish investigative questioning from instructions or an already-made decision.", [...questioning, ...investigativePurpose]),
+      item("Representation request and response: identify the request, its sequence relative to questioning, management's response, and whether a representative was present as categories to review outside this pilot.", employeeRequest),
+      item("Basis for concern about discipline: identify categories of statements or notices relevant to the employee's reasonable belief, without assuming discipline occurred.", reasonableBelief),
+      item("Representative participation: identify categories covering opportunities to clarify questions, offer limited advice, and add information, together with any participation limits described.", allRoleCitations),
+      item("Unresolved information categories: distinguish what is known, disputed, and missing before discussing possible information requests with the designated union representative. Do not draft or submit a formal case-specific RFI in this pilot.", conditionCitations),
+    ],
+    postInterviewFollowUp: [
+      item("Review the interview sequence outside this pilot: distinguish observed questioning, the representation request, management's response, and unresolved facts from assumptions. Do not enter notes or private records here.", [...questioning, ...employeeRequest]),
+      item("Identify any clarification or additional information for discussion with the representative, consistent with the bounded advisor-and-witness role and truthful answers.", allRoleCitations),
+      item("Revisit each threshold condition and mark uncertainties for union review; this framework does not determine whether a violation occurred.", conditionCitations),
+      item("If denial, continued questioning, threatened discipline, or suspected retaliation remains a concern, seek follow-up through the local or designated union representative. Confirm any applicable procedure or deadline independently; this plan supplies neither a filing deadline nor a remedy determination.", conditionCitations),
+    ],
     argumentSteps: [
       item("Identify the management questioning and explain why it appears investigatory rather than an ordinary workplace conversation.", [...questioning, ...investigativePurpose]),
       item("State the facts that support a reasonable belief that discipline or another adverse job consequence may result, without assuming the outcome.", reasonableBelief),
@@ -273,6 +291,8 @@ export function publicArgumentPlanToText(plan: PublicArgumentPlan): string {
     render("Steward actions", plan.stewardActions),
     render("Questions to ask management", plan.employerQuestions),
     render("Step-by-step argument", plan.argumentSteps),
+    ...(plan.evidenceRequestPreparation ? [PUBLIC_ARGUMENT_PLAN_PREPARATION_WARNING, render("Evidence / RFI-request preparation categories", plan.evidenceRequestPreparation)] : []),
+    ...(plan.postInterviewFollowUp ? [render("Post-interview follow-up", plan.postInterviewFollowUp)] : []),
     render("Escalation triggers", plan.escalationTriggers),
     render("Limitations and uncertainty", plan.limitations),
     plan.privateCaseWarning,

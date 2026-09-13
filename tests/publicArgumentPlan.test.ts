@@ -12,6 +12,8 @@ import { createAssistantMessage } from "@/lib/conversationModel";
 import {
   buildPublicArgumentPlan,
   PUBLIC_ARGUMENT_PLAN_PRIVATE_WARNING,
+  PUBLIC_ARGUMENT_PLAN_PREPARATION_WARNING,
+  publicArgumentPlanToText,
   publicArgumentPlanEligibility,
 } from "@/lib/publicArgumentPlan";
 import {
@@ -172,6 +174,8 @@ describe("public Weingarten cited argument builder", () => {
     const citedItems = [
       plan.sourceRule,
       ...plan.thresholdElements,
+      ...plan.evidenceRequestPreparation!,
+      ...plan.postInterviewFollowUp!,
       ...plan.memberActions,
       ...plan.stewardActions,
       ...plan.argumentSteps,
@@ -187,7 +191,7 @@ describe("public Weingarten cited argument builder", () => {
     expect(plan.sourceInstanceIds).toHaveLength(1);
   });
 
-  it("renders all eleven sections, private warning, citation navigation controls, and save action", () => {
+  it("renders the extended sections, private warning, citation navigation controls, and save action", () => {
     const { answer, plan } = verifiedPlan();
     const message = createAssistantMessage({
       threadId: "thread-argument-render",
@@ -217,8 +221,11 @@ describe("public Weingarten cited argument builder", () => {
       "9. Escalation triggers",
       "10. Limitations and uncertainty",
       "11. Sources",
+      "Evidence / RFI-request preparation categories",
+      "Post-interview follow-up",
     ]) expect(html).toContain(heading);
     expect(html).toContain(PUBLIC_ARGUMENT_PLAN_PRIVATE_WARNING);
+    expect(html).toContain(PUBLIC_ARGUMENT_PLAN_PREPARATION_WARNING);
     expect(html).toContain("Open supporting citation");
     expect(html).toContain("Save to Saved");
     expect(html).toContain("Save cited argument plan");
@@ -266,4 +273,41 @@ describe("public Weingarten cited argument builder", () => {
     expect(html).toContain("public_argument_plan");
     expect(html).toContain("Open saved plan");
   });
+  it("includes preparation and follow-up in saved text with explicit scope limits", () => {
+    const { answer, plan } = verifiedPlan();
+    const text = publicArgumentPlanToText(plan);
+    expect(plan.evidenceRequestPreparation).toHaveLength(5);
+    expect(plan.postInterviewFollowUp).toHaveLength(4);
+    expect(text).toContain(PUBLIC_ARGUMENT_PLAN_PREPARATION_WARNING);
+    for (const entry of [...plan.evidenceRequestPreparation!, ...plan.postInterviewFollowUp!]) {
+      expect(text).toContain(entry.text);
+    }
+    expect(text).toContain("this plan supplies neither a filing deadline nor a remedy determination");
+    const saved = createSavedArgumentPlanRecord({ plan, question: answer.question, ...defaults, timestamp: "2026-09-13T17:00:00.000Z" });
+    expect(migrateSavedAnswers([saved])[0].argumentPlan).toEqual(plan);
+    expect(buildPublicArgumentPlan({ answer, source, createdAt: "different-time" })?.contentIdentity).toBe(plan.contentIdentity);
+  });
+
+  it("preserves historical saved plans without adding unreviewed extension content", () => {
+    const { answer, plan } = verifiedPlan();
+    delete plan.evidenceRequestPreparation;
+    delete plan.postInterviewFollowUp;
+    const saved = createSavedArgumentPlanRecord({ plan, question: answer.question, ...defaults, timestamp: "2026-09-13T17:00:00.000Z" });
+    const reopened = migrateSavedAnswers([saved])[0].argumentPlan!;
+    expect(reopened).toEqual(plan);
+    expect(publicArgumentPlanToText(reopened)).not.toContain("Post-interview follow-up");
+    expect(publicArgumentPlanToText(reopened)).not.toContain("undefined");
+  });
+
+  it.each([null, "bad", [], [{ text: "Bad reference", citationIds: ["missing"] }], [null]])(
+    "rejects malformed saved extension content: %j", (invalid) => {
+      const { answer, plan } = verifiedPlan();
+      for (const field of ["evidenceRequestPreparation", "postInterviewFollowUp"]) {
+        const saved = createSavedArgumentPlanRecord({ plan, question: answer.question, ...defaults, timestamp: "2026-09-13T17:00:00.000Z" });
+        const malformed = { ...saved, argumentPlan: { ...plan, [field]: invalid } };
+        expect(migrateSavedAnswers([malformed]).every((record) => record.argumentPlan === undefined)).toBe(true);
+      }
+    }
+  );
+
 });

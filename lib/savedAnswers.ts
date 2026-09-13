@@ -504,6 +504,13 @@ function validPublicArgumentPlan(value: unknown): value is PublicArgumentPlan {
     typeof source.title === "string" &&
     Array.isArray(source.citations) &&
     Array.isArray(source.thresholdElements) &&
+    [source.evidenceRequestPreparation, source.postInterviewFollowUp].every((items) =>
+      items === undefined || (Array.isArray(items) && items.length > 0 && items.every((entry) =>
+        entry !== null && typeof entry === "object" && typeof entry.text === "string" &&
+        Array.isArray(entry.citationIds) && entry.citationIds.length > 0 &&
+        entry.citationIds.every((id: unknown) => typeof id === "string" && source.citations?.some((citation) => citation.id === id))
+      ))
+    ) &&
     Array.isArray(source.argumentSteps) &&
     Array.isArray(source.sourceInstanceIds);
 }

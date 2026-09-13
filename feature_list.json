@@ -13461,5 +13461,16 @@
     "external_ai_enabled": false,
     "airllm_status": "watchlist_only",
     "bundle_4_started": false
+  },
+  "weingarten_plan_evidence_and_followup_extension": {
+    "phase": "KIA-Stick-weingarten-plan-evidence-and-followup-extension",
+    "status": "implemented_automated_qa_pass",
+    "architecture": "extend_existing_PublicArgumentPlan_in_place",
+    "new_packet_type": false,
+    "new_source_acquisition": false,
+    "private_data": "blocked",
+    "formal_case_specific_rfi": "blocked",
+    "legacy_saved_plans": "preserved_without_backfill",
+    "manual_qa": "pending"
   }
 }
