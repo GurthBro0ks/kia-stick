@@ -2,7 +2,7 @@
 
 Phase: `KIA-Stick-sensitive-data-gate-0B-auth-design-planning`
 
-REVISION=2 — bounded blocker revision resolving independent-QA findings F1-F6 and the F7 clarification, plus the directly related MFA-boundary, browser/TLS, authorization-bypass, threat-traceability and future-validation follow-ups. Revision 1 (commit `5127132bfd3a6107941118f2d95152d202546db8`) was independently QA'd `RESULT=FAIL`. Design areas the independent review found sound are preserved unchanged.
+REVISION=3 — bounded final-blocker revision resolving the three remaining material findings of the independent re-QA of revision 2 (commit `725b8fbc9e80d624ba44954592dce9a624174c83`, `RESULT=FAIL`): R1 the hidden fifth owner decision, now surfaced as `OWNER_DECISION_D5` (§26.5); R2 the incoherent disabled-account reactivation state machine (§9.4, §17); and R3 D3's crossing of the Gate 0C encryption boundary (§26.3). Revision 2 resolved F1-F6 and the F7 clarification against revision 1 (commit `5127132bfd3a6107941118f2d95152d202546db8`); the re-QA confirmed F1, F3, F4, F5 and F7 as resolved, and those areas — together with the MFA qualification boundary, the browser/TLS model, the authorization-bypass model and the validation-equivalence record — are preserved unchanged here. Only R1, R2, R3 and the register/traceability/future-test entries they directly touch are revised.
 
 STATUS=DESIGN/PLANNING ONLY
 
@@ -32,9 +32,9 @@ Three labels are used throughout and are not interchangeable:
 
 - **REQUIREMENT** — already fixed by accepted evidence (Gate 0A, the governing plan, or repo-local `AGENTS.md`). Gate 0B may not weaken it. A future implementation plan that contradicts one of these is rejected on that basis alone.
 - **DESIGN CHOICE** — a decision this document makes, from repo evidence, to resolve a question Gate 0A explicitly handed forward (Gate 0A §10). It is reviewable and may be overturned by the owner or by independent QA, but it is a real answer, not a deferral.
-- **UNRESOLVED OWNER DECISION** — a question that repo evidence does not settle and that this document deliberately does not guess. Each one is written out in full in the §26 owner decision register with DECISION_ID / QUESTION / WHY_OWNER_DECISION / OPTIONS / SECURITY_TRADEOFFS / RECOMMENDATION / DEPENDENCIES / MUST_BE_DECIDED_BEFORE. There are **four**. They are bounded, and none of them blocks the rest of this design from being reviewed.
+- **UNRESOLVED OWNER DECISION** — a question that repo evidence does not settle and that this document deliberately does not guess. Each one is written out in full in the §26 owner decision register with DECISION_ID / QUESTION / WHY_OWNER_DECISION / OPTIONS / SECURITY_TRADEOFFS / RECOMMENDATION / DEPENDENCIES / MUST_BE_DECIDED_BEFORE. There are **five**. They are bounded, and none of them blocks the rest of this design from being reviewed.
 
-`OWNER_DECISION_REQUIRED=yes` — see §26. `OWNER_DECISION_COUNT=4`; `OWNER_DECISIONS_ACCEPTED=0`. This is disclosed, not hidden: a planning phase may contain bounded owner decisions, and these four are named rather than resolved by guesswork. Revision 1 claimed three; independent QA established that a fourth — the credential / fallback policy — was hidden inside what read as a revisitable engineering preference (§4.8). A recommendation in this document is a recommendation and never a record of owner acceptance.
+`OWNER_DECISION_REQUIRED=yes` — see §26. `OWNER_DECISION_COUNT=5`; `OWNER_DECISION_IDS=D1,D2,D3,D4,D5`; `OWNER_DECISIONS_ACCEPTED=0`. This is disclosed, not hidden: a planning phase may contain bounded owner decisions, and these five are named rather than resolved by guesswork. Revision 1 claimed three; independent QA established that a fourth — the credential / fallback policy — was hidden inside what read as a revisitable engineering preference (§4.8). The re-QA of revision 2 established that a fifth — whether a `DISABLED` account may self-reactivate at all — was still being carried as a §17.2 "product question" outside the register, with a terminal-disable implementation default that would have settled it without an owner ever answering. It is now `D5` (§26.5). A recommendation in this document is a recommendation and never a record of owner acceptance.
 
 ---
 
@@ -523,7 +523,15 @@ Saying so plainly matters, because the alternative is to write an operator-acces
 
 **Three authorities, kept distinct.** Revision 1 blurred them; this revision does not.
 
-1. **OWNER authority (application-level).** Revoking a session, revoking all sessions, changing a credential, regenerating a recovery credential, disabling the account, reactivating it (§17) and closing it are **owner** actions. They are performed by the authenticated account owner, through the owner's own ordinary authentication and re-authentication (§4.6), and by nobody else. They were never support powers; listing them under support was the defect.
+1. **OWNER authority (application-level).** Revoking a session, revoking all sessions, changing a credential, regenerating a recovery credential, disabling the account and closing it are **owner** actions performed from the `ACTIVE` state. They are performed by the authenticated account owner, through the owner's own ordinary authentication and re-authentication (§4.6), and by nobody else. They were never support powers; listing them under support was the defect.
+
+   **Reactivation of a `DISABLED` account is an owner action too, but it does not use that proof, and this revision corrects that.** Revision 2 listed reactivation in this same sentence, which required "the owner's own ordinary authentication and re-authentication (§4.6)" — authority a `DISABLED` account by construction does not have, because disabling revokes every session and denies ordinary authentication (§17.1), and because §4.6's elevated state is session-bound and therefore unreachable without a valid ordinary session (§4.6). Independent re-QA correctly read that as reintroducing the exact unreachable precondition §17 had repaired. The governing rule, stated once and binding document-wide:
+
+   `DISABLED_ORDINARY_SESSION_AUTHORITY=invalid`
+
+   `REACTIVATION_ENTRY_USES_ORDINARY_SESSION=no`
+
+   A `DISABLED` account's entry into the limited reactivation ceremony is authorized **only** by the separately defined accepted recovery authority (§11, with the demanded credential following `OWNER_DECISION_D4`), never by an ordinary authenticated session and never by §4.6 re-authentication. Whether the ceremony exists at all is `OWNER_DECISION_D5` (§26.5). It remains an owner action under every outcome: no operator, support function or admin principal can initiate, approve or complete it (`OPERATOR_REACTIVATION_POWER=none`).
 2. **SUPPORT function (application-level, content-free, unprivileged).** Support holds **no** application identity with authority over an account. It cannot authenticate as the user, cannot act on the user's behalf, and cannot reach private content, because there is no principal for it to do so as (§9.3). What remains — and it is genuinely sufficient for a single-owner local product — is:
    - explaining recovery, reactivation, and credential-change steps so the user can perform them themselves;
    - interpreting safe, closed-enumeration error and event codes (§16.3) the user reports;
@@ -839,23 +847,36 @@ Authorization consequences only. Private-data deletion mechanics are reserved fo
 
 `DISABLED_ACCOUNT_PROTECTED_ACCESS=deny`
 
+`DISABLED_ORDINARY_SESSION_AUTHORITY=invalid`
+
+`REACTIVATION_ENTRY_USES_ORDINARY_SESSION=no`
+
 `REACTIVATION_CEREMONY_PRIVATE_DATA_ACCESS=deny`
 
-**This is a repair.** Revision 1 revoked every session and denied authentication on disable, then said a disabled account "may be re-enabled by the owner via re-authentication (§4.6)." Independent QA found that path unreachable: §4.6's elevated state is session-bound, disabling leaves no session and permits no new one, and there is no admin principal to act instead (§9.3). The state machine below is coherent — every state is reachable, and every transition names the authority that performs it.
+`REACTIVATION_SUCCESS_TRANSITION=DISABLED_TO_ACTIVE_ONLY`
 
-**States.**
+`CLOSED_REACTIVATION_ALLOWED=no`
+
+`FRESH_NORMAL_AUTH_REQUIRED_AFTER_REACTIVATION=yes`
+
+**This is a repair, twice over.** Revision 1 revoked every session and denied authentication on disable, then said a disabled account "may be re-enabled by the owner via re-authentication (§4.6)." Independent QA found that path unreachable: §4.6's elevated state is session-bound, disabling leaves no session and permits no new one, and there is no admin principal to act instead (§9.3). Revision 2 added the dedicated ceremony below, but left two contradictions that independent re-QA then failed: §9.4 still routed reactivation through ordinary authentication and §4.6 re-authentication — the same unreachable precondition — and this section allowed `DISABLED` → `CLOSED` through the same ceremony while describing the ceremony's success as returning the account to `ACTIVE`, so a closure could be read as an activation. Both are fixed here. §9.4 now states `REACTIVATION_ENTRY_USES_ORDINARY_SESSION=no` as a governing rule, and the ceremony below has exactly one success transition. The state machine is coherent in the sense that every state is reachable, every transition names the authority that performs it, no transition requires authority the originating state has by construction removed, and no outcome is described as two different things.
+
+**States.** Three account states exist under Gate 0B, plus one transient ceremony that is not an account state.
 
 | State | Authentication | Ordinary protected private-data access | Sessions |
 |---|---|---|---|
-| `ACTIVE` | permitted | permitted, subject to §7 | ordinary sessions may exist |
-| `DISABLED` | ordinary authentication **denied** | **denied**, unconditionally | none; all revoked at transition |
+| `ACTIVE` | ordinary authentication permitted | permitted, subject to §7 | ordinary sessions may exist |
+| `DISABLED` | ordinary authentication **denied** | **denied**, unconditionally | none; all revoked at transition, and never restored |
 | `CLOSED` | permanently denied | permanently denied | none; all revoked permanently |
+
+`REACTIVATION_CEREMONY` is a **transient ceremony state**, not a fourth account state. It exists only if `OWNER_DECISION_D5` (§26.5) permits self-reactivation, it holds only ceremony authority, it never holds session authority, and it terminates in exactly one outcome per attempt.
 
 **Invariants that hold regardless of any product choice below.**
 
-- `ACTIVE`: ordinary authentication and authorized protected requests may proceed.
-- `DISABLED`: ordinary protected access is denied; **all** ordinary active sessions are revoked at the moment of transition (epoch increment, §12.2); and the account **cannot use an ordinary authenticated session to bypass the disabled state** — there is none to use, and a session that predates the transition is denied on its next protected request.
-- `CLOSED` is **not** equivalent to `DISABLED`. It is terminal for authentication, and **no ordinary reactivation silently occurs** from it. Any reactivation-after-closure capability is a separate decision with its own design, because it would mean closure did not actually end access.
+- `ACTIVE`: ordinary authentication is allowed, and ordinary protected authorization may proceed if every normal check in §7 passes. Being `ACTIVE` is a precondition of protected access, never by itself a grant of it.
+- `DISABLED`: ordinary protected access is denied; **all** ordinary active sessions are revoked at the moment of transition (epoch increment, §12.2) and are non-authoritative from that instant; a session that predates the transition is denied on its next protected request; and ordinary authentication is denied, so no new one can be obtained.
+- `DISABLED`, stated as a rule rather than as an observation: **ordinary authenticated-session authority cannot be required as the prerequisite for entering the limited reactivation ceremony, because that authority is precisely what `DISABLED` removes.** `DISABLED_ORDINARY_SESSION_AUTHORITY=invalid`; `REACTIVATION_ENTRY_USES_ORDINARY_SESSION=no`. A design that demands an ordinary session or §4.6 session-bound re-authentication to reach the ceremony has defined an unreachable transition, which is the defect revisions 1 and 2 each carried in a different section.
+- `CLOSED` is **not** equivalent to `DISABLED`. It is **terminal** for ordinary authentication and for reactivation under Gate 0B. `CLOSED_REACTIVATION_ALLOWED=no`: the `DISABLED` reactivation ceremony **must not** convert a `CLOSED` account to `ACTIVE`, and presenting a `CLOSED` account to the ceremony is a denial, not a success. Any future resurrection of a `CLOSED` account would require a separate owner and design decision, is **not** authorized here, and is not implied by anything in this section — a closure that could be undone by the reactivation path would mean closure never actually ended access.
 - No transition into or out of any state is available to an operator: `OPERATOR_REACTIVATION_POWER=none` (§9.4).
 
 **Transitions.**
@@ -865,24 +886,33 @@ Authorization consequences only. Private-data deletion mechanics are reserved fo
 | (none) → `ACTIVE` | owner | explicit local bootstrap (§4.1) |
 | `ACTIVE` → `DISABLED` | owner | re-authentication (§4.6) from an ordinary session |
 | `ACTIVE` → `CLOSED` | owner | re-authentication (§4.6) from an ordinary session |
-| `DISABLED` → `ACTIVE` | owner, **only** via the reactivation ceremony below, **and only if the product permits it at all** (§17.2) | the ceremony's own authority; never an ordinary session, never an operator |
-| `DISABLED` → `CLOSED` | owner, via the same ceremony's narrow authority | as above |
+| `DISABLED` → `REACTIVATION_CEREMONY` | owner, **only if `OWNER_DECISION_D5` (§26.5) permits a ceremony at all** | the accepted recovery authority defined in §11, credential per `OWNER_DECISION_D4`; **never** an ordinary session, **never** §4.6 re-authentication, **never** an operator |
+| `REACTIVATION_CEREMONY` → `ACTIVE` | owner | ceremony authority; **the only success outcome of the ceremony** |
+| `REACTIVATION_CEREMONY` → `DISABLED` | — | failure, abandonment or expiry; the account is left exactly as it was |
+| `DISABLED` → `CLOSED` | owner | a **separate** account-closure election, not a reactivation success — see below |
 | `CLOSED` → anything | **not designed, not authorized** | — |
 
-**The reactivation / recovery ceremony (`RECOVERY_OR_REACTIVATION_CEREMONY`), if §17.2 permits one.** A dedicated, limited path — not an ordinary login, and not an admin route:
+**The reactivation ceremony (`REACTIVATION_CEREMONY`), if §26.5 / D5 permits one.** A dedicated, limited path — not an ordinary login, not a private-data session, and not an admin route:
 
-- Its authority permits **only** the minimum actions needed to restore identity and account status: prove the credential the ceremony requires, and transition `DISABLED` → `ACTIVE` (or → `CLOSED`).
-- `REACTIVATION_CEREMONY_PRIVATE_DATA_ACCESS=deny`. The ceremony **does not** grant private-data access, does not open an ordinary session, does not read, list, search, export or delete any private record, and does not disclose private content or safe-label metadata beyond the account status it is transitioning.
-- On success, the account returns to `ACTIVE` with **no sessions restored** — sessions revoked at disable stay revoked, permanently. A **fresh ordinary authentication** (§4.3, §4.4, with a new bearer credential) is required before any protected private-data request is served.
+- **Entry.** Entry is authorized **only** by the separately defined accepted recovery authority and its ceremony (§11), with the demanded credential following `OWNER_DECISION_D4` (§26.4) and the separation-of-ceremonies principle in §4.8 applying to it. Entry may **not** require, accept, or be satisfied by an existing ordinary authenticated session or by §4.6 session-bound re-authentication. The document says nowhere, in any wording, that a disabled owner should "re-authenticate using your existing ordinary session" or any equivalent.
+- **Authority while in the ceremony.** Ceremony authority permits **only** the minimal identity and account-state restoration actions: proving the credential the ceremony demands, and effecting the `DISABLED` → `ACTIVE` transition. It **must not** permit private-data reads; private-data writes; exports; search; workspace access; key or data recovery; changes of ownership; or operator/admin access. `REACTIVATION_CEREMONY_PRIVATE_DATA_ACCESS=deny`. It does not open an ordinary session, does not read, list, search, export or delete any private record, and discloses no private content or safe-label metadata beyond the account status it is transitioning.
+- **Success outcome — exactly one.** `REACTIVATION_SUCCESS_TRANSITION=DISABLED_TO_ACTIVE_ONLY`. The ceremony's only success is `DISABLED` → `ACTIVE`. Closure is **not** a success outcome of this ceremony, and `CLOSED` is never reachable through it. Revision 2's wording allowed the same ceremony to close an account and then described success as returning the account to `ACTIVE`; those are two different outcomes and are now stated separately.
+- **After success.** Ceremony authority **ends** at the transition — it is not carried forward, extended, or converted into a session. No prior session is restored; sessions revoked at disable stay revoked, permanently. Any recovery or ceremony material consumed follows the §11.2 lifecycle rules in full, including single-use consumption and invalidation. `FRESH_NORMAL_AUTH_REQUIRED_AFTER_REACTIVATION=yes`: a **fresh ordinary authentication ceremony** (§4.3, §4.4, new bearer credential) is required afterwards, and **only** the ordinary session resulting from it may later attempt a protected private-data request, subject to every normal §7 check. Returning to `ACTIVE` is therefore a precondition for protected access and never itself an access grant.
+- **Failure.** Failure, abandonment, expiry or a `CLOSED` account leaves the account in the state it was already in. There is no partial success and no fallback path.
 - It is rate-limited at least as strictly as login and recovery (§15), audited content-free (§16), and surfaced to the owner.
 - It creates **no operator backdoor**. No operator, support function, or application admin principal can initiate, approve, or complete it (§9.4). If the ceremony cannot be completed by the user, the outcome is the recovery-loss posture (§26.3) — never an operator bypass.
-- Exactly which credential the ceremony demands follows `OWNER_DECISION_D4` (§26.4); the separation-of-ceremonies principle in §4.8 applies to it.
 
-### 17.2 Whether disabled accounts are self-reactivatable — an open product question
+**Closing a `DISABLED` account, stated separately.** An owner who is in `DISABLED` and wants closure rather than reactivation elects closure explicitly. It is its own transition with its own outcome — `DISABLED` → `CLOSED`, terminal, irreversible under Gate 0B — and it is **not** an outcome of the reactivation ceremony, **not** described as a reactivation success, and not a path by which a `CLOSED` account could later be made `ACTIVE`. Which credential proof this election demands follows `OWNER_DECISION_D4`, and whether the ceremony infrastructure exists at all follows `OWNER_DECISION_D5`; if D5 chooses terminal disable, a `DISABLED` account has no reactivation path and closure is the only election available to it.
 
-**Surfaced rather than assumed.** Whether a `DISABLED` account may be reactivated by its own owner at all, or whether disable is terminal in this product exactly as closure is, is a **product decision, not an engineering invariant**. Both are coherent: terminal disable is simpler and strictly smaller in attack surface, while self-reactivation preserves a "pause my account" capability with a real user benefit. Revision 1 assumed self-reactivation without designing a path to it, which is how the unreachable transition arose.
+### 17.2 Whether disabled accounts are self-reactivatable — `OWNER_DECISION_D5`
 
-`DISABLED_SELF_REACTIVATION_POLICY=UNDECIDED`. Gate 0B does not choose. It fixes the invariants that hold either way — disable denies protected access and revokes all sessions; no operator may reactivate; any permitted reactivation runs through §17.1's limited ceremony and grants no private-data access; and a fresh ordinary authentication is required afterwards. The choice itself is recorded as an implementation blocker (§23) and is a dependency of `OWNER_DECISION_D4` (§26.4), since the ceremony's required credential depends on D4's outcome. If the owner does not decide it, the safe default at implementation time is **terminal disable** — the option that adds no ceremony — and not a silently implemented reactivation path.
+`DISABLED_SELF_REACTIVATION_POLICY=UNDECIDED_OWNER_DECISION_D5`
+
+**Registered rather than carried as a loose product question.** Whether a `DISABLED` account may be reactivated by its own owner at all, or whether disable is terminal in this product exactly as closure is, is a **product decision, not an engineering invariant**. Both are coherent: terminal disable is simpler and strictly smaller in attack surface, while self-reactivation preserves a "pause my account" capability with a real user benefit. Revision 1 assumed self-reactivation without designing a path to it, which is how the unreachable transition arose.
+
+**This subsection is a repair.** Revision 2 surfaced the question here but kept it outside the §26 register, treated it as a dependency of `OWNER_DECISION_D4`, and named **terminal disable** as the safe implementation default if the owner never answered. Independent re-QA established that this was a distinct fifth owner decision, not a D4 subquestion: holding every D4 credential choice fixed, the owner can still independently choose terminal disable or pause-and-reactivate, and that choice changes availability, account semantics and attack surface. It also established that an implementation default would settle a policy the owner never accepted, contradicting the register's completeness claim. Both are corrected. The question is now `OWNER_DECISION_D5` (§26.5), it carries the full register format, it is an implementation blocker in its own right (§23), and **there is no implementation default**: if D5 is unanswered, implementation does not begin. D5 and D4 are related — D4 fixes which credential any permitted ceremony demands — but neither determines the other.
+
+Gate 0B does not choose D5. It fixes the invariants that hold under **either** outcome, and §17.1 states them: disable denies ordinary protected access and revokes all sessions non-authoritatively; ordinary session authority is invalid in `DISABLED` and can never be the ceremony's entry condition; no operator may reactivate; any permitted reactivation runs through §17.1's limited ceremony, is entered only through the accepted recovery authority, grants no private-data access, and succeeds only as `DISABLED` → `ACTIVE`; `CLOSED` can never be reactivated; and a fresh ordinary authentication is required before any protected access afterwards.
 
 ### 17.3 Stage-by-stage authorization consequences
 
@@ -890,10 +920,10 @@ Authorization consequences only. Private-data deletion mechanics are reserved fo
 |---|---|
 | Account creation | Creates exactly one workspace atomically (§4.1). No authenticated-but-workspace-less state, because that is an unknown-owner state and §1.3 requires DENY |
 | Workspace creation | Only as part of account creation in the first architecture (§3.3) |
-| Account disable | Epoch incremented; all sessions revoked; **every subsequent protected request denied**; subsequent ordinary authentication denied. Reversible **only** through the §17.1 reactivation ceremony and **only** if §17.2 is decided to permit it; reactivation never restores old sessions and never grants private-data access by itself |
+| Account disable | Epoch incremented; all sessions revoked and non-authoritative; **every subsequent protected request denied**; subsequent ordinary authentication denied; no ordinary session authority remains or can be obtained. Reversible **only** through the §17.1 reactivation ceremony and **only** if `OWNER_DECISION_D5` (§26.5) is decided to permit it; the ceremony is entered only through the accepted recovery authority, never an ordinary session; reactivation never restores old sessions, never grants private-data access by itself, and requires a fresh ordinary authentication before any protected access |
 | Account closure | Epoch incremented; all sessions revoked permanently; authentication permanently denied; `ACCOUNT_CLOSED` recorded. Authorization ends at closure regardless of what the deletion pipeline has or has not finished |
 | Workspace no longer authorized | Next protected request denied (§12.3). No grace period, no in-flight exception |
-| Reactivation | Not designed for a closed account: `CLOSED` is terminal, and any reactivation-after-closure capability is a separate decision, because it would mean closure did not actually end access. For a **disabled** account, reactivation is governed entirely by §17.1 and §17.2 — a dedicated limited ceremony, no operator authority, no private-data access, no restored sessions, and a fresh ordinary authentication required before protected access resumes |
+| Reactivation | **Not available to a closed account at all**: `CLOSED` is terminal, `CLOSED_REACTIVATION_ALLOWED=no`, the §17.1 ceremony denies a `CLOSED` account rather than succeeding, and any reactivation-after-closure capability is a separate owner and design decision not authorized here, because it would mean closure did not actually end access. For a **disabled** account, reactivation is governed entirely by §17.1 and `OWNER_DECISION_D5` — a dedicated limited ceremony entered only through the accepted recovery authority and never an ordinary session, with no operator authority, no private-data access, no restored sessions, a single success transition `DISABLED` → `ACTIVE`, ceremony authority ending at that transition, and a fresh ordinary authentication required before protected access resumes |
 
 **Data-deletion dependency, stated separately and not solved here:** what happens to the private *content* of a closed account — across primary, derived, cache, index, export, and backup stores — is the retention/deletion gate's problem (Gate 0A §14, §17; governing plan §17, §18, §20, §21). Gate 0B asserts only the access consequence: **closure ends authorization immediately and unconditionally, and does not wait on deletion to complete.** The converse is also asserted: deletion progress is never a reason to keep authorization alive.
 
@@ -996,21 +1026,21 @@ Auth design mapped to Gate 0A threats. **No threat is declared solved** — a de
 - FUTURE_TEST: secret-scanning extended to auth secret shapes; audit-log leakage test under normal, error and crash conditions; assertion that no credential material appears in any error path; assertion that `SESSION_AUDIT_ID` cannot authenticate or be converted to the bearer credential (§22 test 28).
 
 **THREAT-020 — stale authorization**
-- AUTH_CONTROL: authoritative server-side session state plus account authorization epoch; immediate invalidation; TTL-only models explicitly rejected; no cached ALLOW is authoritative; one governing credential-change revocation rule covering the initiating session (§4.8, F7).
-- DESIGN_SECTION: §5.2, §5.3, §12, §13.2.
+- AUTH_CONTROL: authoritative server-side session state plus account authorization epoch; immediate invalidation; TTL-only models explicitly rejected; no cached ALLOW is authoritative; one governing credential-change revocation rule covering the initiating session (§4.8, F7); in `DISABLED`, every ordinary session is revoked and non-authoritative and `DISABLED_ORDINARY_SESSION_AUTHORITY=invalid`, so no stale session and no ceremony authority can stand in for a live authorization — reactivation ends its own authority at the `DISABLED` → `ACTIVE` transition and a fresh ordinary authentication is required before any protected request (§17.1).
+- DESIGN_SECTION: §5.2, §5.3, §12, §13.2, §17.1.
 - UNRESOLVED_DEPENDENCY: the invariant binds from the moment the authority **accepts** a revocation; where the sole authority is unreachable (CASE B, §13.2) there is no acceptance to act on. That is an availability-of-authority limit tied to D1, not a tolerance window, and it does not weaken the requirement. Proof is otherwise implementation-time.
-- FUTURE_TEST: the §12.3 invariant — after accepted revocation, the next protected request is denied — exercised for logout, revoke-one, revoke-all, credential reset (including the initiating session), recovery, disable, and closure; plus the CASE A/CASE B qualification tests (§22 tests 22, 23).
+- FUTURE_TEST: the §12.3 invariant — after accepted revocation, the next protected request is denied — exercised for logout, revoke-one, revoke-all, credential reset (including the initiating session), recovery, disable, and closure; the disabled-account tests distinguishing ordinary denial from the limited reactivation ceremony, and asserting that a successful `DISABLED` → `ACTIVE` transition still denies protected access until a fresh ordinary authentication succeeds (§22 tests 11, 35, 37); plus the CASE A/CASE B qualification tests (§22 tests 22, 23).
 
 **THREAT-021 — privilege escalation**
 - AUTH_CONTROL: single human role; no admin principal to escalate to; no operator account-recovery, credential-reset or reactivation power (§9.4); fail-closed on ambiguous role or owner state; service principals narrowly scoped **and workspace-bound**, with explicit, revocable, expiring grants and no interactive authentication path (§3.2, §8.3); the §17.1 reactivation ceremony bounded to status transition only, with no private-data authority.
 - DESIGN_SECTION: §1.3, §3.2, §8.2, §8.3, §9.4, §17.1.
-- UNRESOLVED_DEPENDENCY: if D1 or a later sharing gate introduces a second role, this analysis must be redone — a minimal role model is a control only while it stays minimal; grant issuance and invalidation mechanics are implementation-gate work.
+- UNRESOLVED_DEPENDENCY: if D1 or a later sharing gate introduces a second role, this analysis must be redone — a minimal role model is a control only while it stays minimal; grant issuance and invalidation mechanics are implementation-gate work; whether the §17.1 reactivation ceremony exists as an authority at all is `OWNER_DECISION_D5` (§26.5), and if it does, its containment becomes a control that must actually be built and tested rather than merely specified.
 - FUTURE_TEST: role-escalation attempts; assertion that no request can acquire authority over a workspace it does not own; service-identity grant scope and invalidation tests (§22 test 25); assertion that the reactivation ceremony cannot reach private data (§22 test 33).
 
 **THREAT-022 — operator / admin overreach**
 - AUTH_CONTROL: no admin principal, role, route, or session; `OPERATOR_ACCOUNT_RECOVERY_POWER=none`, `OPERATOR_CREDENTIAL_RESET_POWER=none`, `OPERATOR_REACTIVATION_POWER=none` (§9.4); support strictly content-free and unprivileged, with owner actions no longer misfiled as support powers; application authority explicitly separated from OS/root authority; Model A preferred; break-glass not created; any future break-glass self-audits or is a FAIL.
 - DESIGN_SECTION: §9.1, §9.3, §9.4, §9.5, §16.2, §17.1, §18.
-- UNRESOLVED_DEPENDENCY: **substantial, and larger than revision 1 admitted.** Whether the operator can technically decrypt is Gate 0C's (`DEPENDENCY_ON_ENCRYPTION_GATE=yes`); whether any break-glass path exists is D2. OS/filesystem-level operator misuse is **reachable and unmitigated by application controls** (§18), Gate 0A THREAT-022 explicitly includes direct filesystem/database access, and no no-admin-route test covers it. On a single-user laptop the operator is the owner and holds the device (§9.1).
+- UNRESOLVED_DEPENDENCY: **substantial, and larger than revision 1 admitted.** Whether the operator can technically decrypt is Gate 0C's (`DEPENDENCY_ON_ENCRYPTION_GATE=yes`); whether any break-glass path exists is D2; whether a reactivation ceremony exists at all is D5 — and under **both** D5 outcomes `OPERATOR_REACTIVATION_POWER=none`, so D5 neither creates nor can be read as creating an operator path. OS/filesystem-level operator misuse is **reachable and unmitigated by application controls** (§18), Gate 0A THREAT-022 explicitly includes direct filesystem/database access, and no no-admin-route test covers it. On a single-user laptop the operator is the owner and holds the device (§9.1).
 - FUTURE_TEST: assertion that no admin route or principal exists; assertion that no operator path can reset a credential, complete a recovery, or reactivate a disabled account (§22 test 32); break-glass audit test if one is ever authorized; audit-completeness test that operator-adjacent actions cannot be performed without a corresponding event. Explicitly **not** claimed: any application test that bounds OS-level access.
 
 **THREAT-023 — export cross-workspace leakage**
@@ -1022,10 +1052,10 @@ Auth design mapped to Gate 0A threats. **No threat is declared solved** — a de
 **THREAT-024 — device loss**
 - AUTH_CONTROL: no credential in script-readable browser storage (`HttpOnly` cookie transport excepted and required, §6.2); idle and absolute session lifetimes; individually revocable sessions; revoke-all; recovery independent of the lost device **where the authority is reachable**; MFA required before any network-exposed deployment, with a testable qualification boundary (§10.2).
 - DESIGN_SECTION: §5.5, §6.2, §10.2, §11.1, §13.1, §13.2.
-- UNRESOLVED_DEPENDENCY: **CASE B (§13.2) is a real unmitigated gap at the application layer** — where the lost device holds the sole authority, remote revocation is unavailable, and containment depends on device/OS protection plus Gate 0C at-rest design. Which case applies is determined by D1. Whether any private content is ever cached client-side is a storage-gate decision; device-level encryption is outside application control; Gate 0A rates this residual risk Medium for exactly that reason.
-- FUTURE_TEST: CASE A lost-device revocation qualification; CASE B behaviour asserting the design claims no application-level remote revocation and that a later migrated authority does not resurrect sessions (§22 tests 22, 23); shared-device/browser behaviour; assertion that no credential persists in script-readable browser storage.
+- UNRESOLVED_DEPENDENCY: **CASE B (§13.2) is a real unmitigated gap at the application layer** — where the lost device holds the sole authority, remote revocation is unavailable, and containment depends on device/OS protection plus Gate 0C at-rest design. Which case applies is determined by D1. Whether any private content is ever cached client-side is a storage-gate decision; device-level encryption is outside application control; Gate 0A rates this residual risk Medium for exactly that reason. Separately and explicitly: losing a device, a credential or the accepted recovery authority is an **authentication-authority** event, and this row claims nothing about whether previously encrypted private content remains decryptable afterwards — `PRIVATE_DATA_RECOVERABILITY_AFTER_AUTH_RECOVERY=UNRESOLVED_PENDING_GATE_0C` (§11.4, §20, D3), and no control here mandates or assumes a key-unwrap, escrow or key-recovery path.
+- FUTURE_TEST: CASE A lost-device revocation qualification; CASE B behaviour asserting the design claims no application-level remote revocation and that a later migrated authority does not resurrect sessions (§22 tests 22, 23); shared-device/browser behaviour; assertion that no credential persists in script-readable browser storage; and assertion that no auth-recovery test asserts encrypted-data recoverability or invokes a key-unwrap path (§22 tests 34, 38).
 
-`THREAT_TRACEABILITY_COMPLETE=yes`; `THREATS_DECLARED_SOLVED_BY_DESIGN=none`. Complete in the sense that every threat traced here carries AUTH_CONTROL / DESIGN_SECTION / UNRESOLVED_DEPENDENCY / FUTURE_TEST, and that the rows affected by this revision's repairs — THREAT-002, THREAT-003, THREAT-007, THREAT-020, THREAT-021, THREAT-022, THREAT-024 — have been updated to match the repaired design rather than the design that failed review. Not complete in the sense that any threat is closed: none is, no control is implemented, and THREAT-007, THREAT-022 and THREAT-024 in particular carry unresolved dependencies this document cannot discharge.
+`THREAT_TRACEABILITY_COMPLETE=yes`; `THREATS_DECLARED_SOLVED_BY_DESIGN=none`. Complete in the sense that every threat traced here carries AUTH_CONTROL / DESIGN_SECTION / UNRESOLVED_DEPENDENCY / FUTURE_TEST, and that the rows affected by each revision's repairs have been updated to match the repaired design rather than the design that failed review — revision 2 updated THREAT-002, THREAT-003, THREAT-007, THREAT-020, THREAT-021, THREAT-022 and THREAT-024, and revision 3 further updated THREAT-020, THREAT-021, THREAT-022 and THREAT-024 for the D5 registration, the reactivation state machine and the D3 Gate 0C boundary. No other row is affected by R1-R3, and none was rewritten for tidiness. Not complete in the sense that any threat is closed: none is, no control is implemented, and THREAT-007, THREAT-022 and THREAT-024 in particular carry unresolved dependencies this document cannot discharge.
 
 ---
 
@@ -1043,7 +1073,7 @@ Tests a future implementation would have to pass. **None is performed now.** All
 8. **Next-request revocation** — the §12.3 invariant, for logout, revoke-one, revoke-all, credential reset, recovery, disable, and closure (THREAT-020). For credential reset the assertion explicitly includes **the session that initiated the reset** (§4.8), and that no replacement session is silently issued to it.
 9. **Individual-session revoke** — revoking one session leaves others working.
 10. **All-session revoke** — epoch increment denies every session on its next protected request.
-11. **Disabled-account denial and state machine** — a disabled account's protected requests and ordinary authentication attempts are both denied; every session held at the moment of disable is denied on its next protected request; no pre-disable session can be used to perform any account action; and `CLOSED` neither behaves as `DISABLED` nor reactivates (§17.1).
+11. **Disabled-account ordinary denial** — a `DISABLED` account's **ordinary** protected requests and **ordinary** authentication attempts are both denied; every ordinary session held at the moment of disable is non-authoritative and denied on its next protected request; no pre-disable session can be used to perform any account action; and `CLOSED` neither behaves as `DISABLED` nor reactivates (§17.1). This test asserts **ordinary** denial only; the limited reactivation ceremony, where D5 permits one, is a distinct path asserted by tests 33 and 35-37 and must not be conflated with the denial asserted here.
 12. **Recovery abuse and lifecycle** — recovery is rate-limited, progressively delayed, single-use, and revokes all sessions on completion; at most one recovery credential is valid at a time; regeneration requires re-authentication and invalidates the previous credential on confirmed issuance of its replacement; a failed or unconfirmed replacement leaves a defined state rather than an ambiguous one; two concurrent consumption attempts yield exactly one success (§11.2).
 13. **Credential stuffing / rate limit** — progressive delay engages; no permanent lockout; limiter-unavailable fails closed.
 14. **CSRF** — every private state-changing endpoint rejects a forged cross-site request, with the check not relying solely on cookie presence.
@@ -1065,10 +1095,15 @@ Tests a future implementation would have to pass. **None is performed now.** All
 30. **Local-origin transport qualification** — on the selected local trust arrangement, assert the private surface is TLS-terminated with `Secure`, `HttpOnly`, restrictive-`SameSite`, narrowly scoped cookies in the browsers the owner uses, and that the private surface **refuses to serve** when the transport requirement is unmet (§6.1).
 31. **Credential and fallback policy (D4)** — once D4 is decided, assert that the implemented factors match the decided policy exactly; that re-authentication demands the decided proof; and that, unless D4 explicitly chose otherwise, recovery material cannot be used as an ordinary login credential (§4.8, §26.4).
 32. **No operator identity authority** — assert no application path allows an operator or support function to reset a credential, initiate/approve/complete a recovery, reactivate a disabled account, create or revoke a session, or change account state (§9.4). This test does **not** claim to bound OS-level access (§18).
-33. **Reactivation ceremony containment** — if §17.2 permits reactivation: the ceremony cannot read, list, search, export, or delete any private record, does not open an ordinary session, restores no prior session, and a fresh ordinary authentication is required before any protected private-data request succeeds (§17.1).
+33. **Reactivation ceremony containment** — if and only if `OWNER_DECISION_D5` permits reactivation: the ceremony cannot read, list, search, export, or delete any private record, cannot write private data, cannot reach workspace contents, cannot perform key or data recovery, cannot change ownership, and acquires no operator or admin access; it does not open an ordinary session; it restores no prior session; and a fresh ordinary authentication is required before any protected private-data request succeeds (§17.1).
 34. **Account recovery is not data recovery** — assert that no test, document, or implementation claims that recovering account access implies decryptability of previously stored private content, and that the relationship is deferred to Gate 0C (§11.4, §20).
+35. **Reactivation ceremony entry authority (D5)** — if and only if D5 permits reactivation: the ceremony can be **begun without any ordinary authenticated-session authority**, which a `DISABLED` account by construction does not have, and can be begun **only** with the accepted recovery authority (§11, credential per D4). Assert that no ordinary session and no §4.6 session-bound re-authentication is accepted as, or required for, entry, and that an attempt presenting a pre-disable session is denied rather than treated as proof (§9.4, §17.1).
+36. **Reactivation cannot resurrect a closed account** — presenting a `CLOSED` account to the reactivation ceremony is denied and produces no state change; `CLOSED` → `ACTIVE` is unreachable by any ceremony path; and a `CLOSED` account remains `CLOSED` after every reactivation attempt, failure mode and retry (`CLOSED_REACTIVATION_ALLOWED=no`, §17.1).
+37. **Reactivation success is bounded (D5)** — the ceremony's only success transition is `DISABLED` → `ACTIVE` (`REACTIVATION_SUCCESS_TRANSITION=DISABLED_TO_ACTIVE_ONLY`); closure is never reported or recorded as a reactivation success; ceremony authority **ends** at the transition and cannot be reused, extended or converted into a session; any recovery material consumed follows the §11.2 lifecycle including single-use invalidation; and a successfully reactivated `ACTIVE` account **still** cannot reach private data until a fresh ordinary login succeeds and every normal §7 check passes (§17.1).
+38. **Account recovery is not coupled to encryption recovery (D3 / Gate 0C boundary)** — assert that no authentication-recovery or reactivation test asserts, depends on, or implies encrypted-data recoverability; that no such path invokes a key-unwrap, escrow, recovery-key or alternate-decryption mechanism unless Gate 0C later separately authorizes one; and that an implementation **fails qualification** if it couples account recovery or reactivation to an encryption-recovery mechanism that is not separately accepted (`ALTERNATE_KEY_UNWRAP_PATH_MANDATED=no`; `PRIVATE_DATA_RECOVERABILITY_AFTER_AUTH_RECOVERY=UNRESOLVED_PENDING_GATE_0C`; §11.4, §20, §26.3).
+39. **Owner decision gate** — assert that implementation cannot begin while any required decision in `D1`-`D5` remains unaccepted, and that no unanswered decision is resolved by an implementation default (§23, §26).
 
-`FUTURE_AUTH_VALIDATION_PLAN_COMPLETE=yes` — in the sense that every area repaired in this revision now has a named future test with an expected outcome. Not in the sense that any test exists: none of these is implemented, and none may be implemented before the implementation gate is separately authorized.
+`FUTURE_AUTH_VALIDATION_PLAN_COMPLETE=yes` — in the sense that every area repaired in this and the previous revision now has a named future test with an expected outcome, including the R1 owner-decision gate (test 39), the R2 reactivation state machine (tests 11, 33, 35, 36, 37) and the R3 Gate 0C boundary (tests 34, 38). Not in the sense that any test exists: none of these is implemented, and none may be implemented before the implementation gate is separately authorized.
 
 No destructive testing, no real-data testing, and no production testing is authorized by this list. All tests use fake/synthetic identities, workspaces, and fixtures. No real accounts, no real member data, and no real documents.
 
@@ -1076,7 +1111,7 @@ No destructive testing, no real-data testing, and no production testing is autho
 
 ## 23. Implementation blockers
 
-Until every required item is resolved and separately accepted, implementation remains unauthorized.
+Until every required item is resolved and separately accepted, implementation remains unauthorized. In particular, **implementation may not begin while any of the required `OWNER_DECISION_D1`-`D5` remains unaccepted** (`OWNER_DECISION_COUNT=5`; `OWNER_DECISIONS_ACCEPTED=0`), and no unanswered decision has an implementation default that would resolve it silently.
 
 - [ ] Gate 0B auth design independently QA'd.
 - [ ] Gate 0B operator accepted.
@@ -1098,7 +1133,7 @@ Until every required item is resolved and separately accepted, implementation re
 - [ ] `OWNER_DECISION_D2` resolved (§26.2) — break-glass existence.
 - [ ] `OWNER_DECISION_D3` resolved (§26.3) — recovery-loss product posture.
 - [ ] `OWNER_DECISION_D4` resolved (§26.4) — primary credential / recovery credential / fallback policy.
-- [ ] `DISABLED_SELF_REACTIVATION_POLICY` decided (§17.2) — or terminal disable implemented as the safe default.
+- [ ] `OWNER_DECISION_D5` resolved (§26.5) — disabled-account self-reactivation policy. **No implementation default exists**: an unanswered D5 blocks implementation rather than selecting terminal disable. Revision 2's "or terminal disable implemented as the safe default" wording is withdrawn, because it would have settled an unaccepted owner decision by omission.
 - [ ] Local-origin TLS / `Secure`-cookie compatibility demonstrated for the selected deployment (§6.1, §22 test 30).
 - [ ] Deployment qualification and MFA-deferral qualification tests defined and passing (§10.2, §22 tests 26-27).
 
@@ -1128,8 +1163,8 @@ The next action is **not automatic** and does not follow from this document exis
 
 Possible next steps, in the order they would occur:
 
-1. Independent QA of the exact Gate 0B design revision commit and its sealed proof, explicitly re-testing F1-F6, the F7 clarification, D1-D4 completeness, the recovery lifecycle, lost-device authority availability, the MFA qualification boundary, the browser/TLS boundary, the authorization bypass model, threat traceability, the future-validation plan, and whole-document consistency.
-2. Operator review, including the four owner decisions in the §26 register (D1-D4) and the §17.2 disabled-reactivation product question.
+1. Independent QA of the exact Gate 0B design revision commit and its sealed proof, explicitly re-testing R1 (`OWNER_DECISION_D5` completeness), R2 (the account and reactivation state machine), R3 (the Gate 0C boundary in D3), D1-D5 register consistency, regression of the previously passed F1, F3, F4, F5 and F7 repairs, threat traceability, the future-validation plan, validation equivalence, and whole-document consistency.
+2. Operator review, including all five owner decisions in the §26 register (D1-D5).
 3. Gate 0B terminal closeout.
 4. Only after that, a separate owner decision about whether to authorize Gate 0C encryption design — or neither.
 
@@ -1143,13 +1178,29 @@ This document does **not** author the encryption-design document, does not start
 
 `OWNER_DECISION_REQUIRED=yes`
 
-`OWNER_DECISION_COUNT=4`
+`OWNER_DECISION_COUNT=5`
+
+`OWNER_DECISION_IDS=D1,D2,D3,D4,D5`
 
 `OWNER_DECISIONS_ACCEPTED=0`
 
-Four decisions. Each is bounded, each has a recommendation, and none blocks review of the rest of this design. They are surfaced rather than guessed because guessing any of them would produce false certainty about a security posture.
+`OWNER_DECISION_REGISTER_CONSISTENT=yes`
 
-**On acceptance.** `OWNER_DECISIONS_ACCEPTED=0`. None of these is accepted, and a RECOMMENDATION below is this document's reasoning, never a record of the owner's answer. No later document may cite a recommendation here as an acceptance. Revision 1 carried three decisions; independent QA established that the credential/fallback policy was a fourth, hidden inside §4.8's "preferred credential type (revisitable at implementation-plan time)" framing. It is now D4.
+`HIDDEN_OWNER_DECISIONS_FOUND=none_after_revision`
+
+Five decisions, and this register is the complete set:
+
+| ID | Decision | Section |
+|---|---|---|
+| `D1` | Deployment reach | §26.1 |
+| `D2` | Whether any break-glass private-content-access path exists | §26.2 |
+| `D3` | Recovery-loss product posture | §26.3 |
+| `D4` | Primary credential / recovery credential / fallback policy | §26.4 |
+| `D5` | Whether a `DISABLED` account may self-reactivate through a dedicated, limited recovery/reactivation ceremony | §26.5 |
+
+Each is bounded, each has a recommendation, and none blocks review of the rest of this design. They are surfaced rather than guessed because guessing any of them would produce false certainty about a security posture.
+
+**On acceptance.** `OWNER_DECISIONS_ACCEPTED=0`. **None** of D1-D5 is accepted, and a RECOMMENDATION below is this document's reasoning, never a record of the owner's answer. No later document may cite a recommendation here as an acceptance, and no decision below carries an implementation default that would settle it without an owner answering. Revision 1 carried three decisions; independent QA established that the credential/fallback policy was a fourth, hidden inside §4.8's "preferred credential type (revisitable at implementation-plan time)" framing — it is now D4. Independent re-QA of revision 2 established that disabled-account self-reactivation was a fifth, carried as a §17.2 product question outside this register and backed by a terminal-disable implementation default — it is now D5, with that default removed.
 
 ### 26.1 D1 — deployment reach
 
@@ -1197,25 +1248,39 @@ MUST_BE_DECIDED_BEFORE= Gate 0C encryption design is accepted, since operator de
 
 DECISION_ID= `D3`
 
-QUESTION= What product posture should KIA Stick take when the user loses **both** ordinary authentication authority **and** the currently accepted recovery authority?
+QUESTION= What product posture should KIA Stick take when the user loses **both** ordinary authentication authority **and** the accepted recovery authority defined in §11?
 
 WHY_OWNER_DECISION= This is a user-facing product-risk acceptance affecting real people's case material, and there is no engineering fact that settles it. Independent QA rejected revision 1's framing of this decision on two grounds, and both are corrected here. First, revision 1 presented an exhaustive binary — permanent loss, or else necessarily an external channel or an operator capability — and that was not supported: a separately enrolled, user-controlled offline authenticator or additional recovery method is a conceptual counterexample that needs neither. Second, revision 1 asserted that content loss is inevitable, while §11.3 simultaneously reserved the relationship between recovered access and recoverable content to Gate 0C. Gate 0B cannot decide whether encrypted private data remains recoverable; that depends on key design (§11.4, §20).
 
+Independent re-QA of revision 2 then found two further defects in this decision, and this revision corrects both. First, revision 2's `MUST_BE_DECIDED_BEFORE` stated that choosing (b), (c) or (d) means the encryption design must accommodate an **alternate unwrap path** — which mandates a cryptographic mechanism and pre-decides precisely the credential-to-key relationship §11.4 reserves to Gate 0C. It is also not implied: option (b) can add an authentication-only method, and regaining authentication authority does not logically require another key-unwrapping path. Gate 0B has no authority to select escrow, recovery keys, secondary key authorities, operator key recovery, alternate decryption, or any other Gate 0C mechanism, and it selects none. What this decision hands Gate 0C is a **conditional question**, not a requirement. Second, revision 2's recommendation called option (a) the "currently accepted" posture while §26 simultaneously states `OWNER_DECISIONS_ACCEPTED=0`. No posture here is accepted; a recommendation is a recommendation.
+
+**The boundary this decision may establish, and nothing beyond it.** `AUTH_RECOVERY_DISTINCT_FROM_DATA_KEY_RECOVERY=yes` (§11.4). **Authentication recovery** determines whether the account or user can regain **authentication authority**. It does **not** determine whether previously encrypted private data is decryptable after recovery. That question belongs to Gate 0C:
+
+`PRIVATE_DATA_RECOVERABILITY_AFTER_AUTH_RECOVERY=UNRESOLVED_PENDING_GATE_0C`
+
+`KEY_RECOVERY_ARCHITECTURE=UNRESOLVED_PENDING_GATE_0C`
+
+`ALTERNATE_KEY_UNWRAP_PATH_MANDATED=no`
+
+`GATE_0C_ARCHITECTURE_SELECTED=no`
+
+No Gate 0C option is accepted, selected, mandated or recommended in this document. Where a key mechanism is named anywhere in this design — §11.3's open questions, §20's handoff table — it is named as an **unresolved Gate 0C question or example**, never as a Gate 0B requirement.
+
 OPTIONS=
-(a) Account access becomes unrecoverable under the currently selected auth model. The user may create a new account and workspace; the disposition of the old encrypted data depends on Gate 0C and is not decided here.
-(b) A future, separately gated, **additional user-controlled** recovery mechanism may be designed — for example a separately enrolled offline authenticator or a second independently stored recovery credential — provided it creates no operator bypass and no external dependency.
+(a) Account access becomes unrecoverable under the auth model designed here. The user may later create a new account and workspace if a future implementation gate permits it. The disposition and recoverability of any previously encrypted data is **UNKNOWN until Gate 0C** and is not decided, predicted or implied here.
+(b) A future, separately gated, **additional user-controlled authentication** recovery mechanism may be considered — for example a separately enrolled offline authenticator or a second independently stored recovery credential — provided it creates no operator bypass and no external dependency. Considering it implies nothing about key or data recovery.
 (c) An external identity or recovery authority could be reconsidered, but only through a separate owner and design decision, with its privacy and network tradeoffs (§19) explicitly accepted rather than absorbed silently.
-(d) Another future recovery architecture that satisfies the Gate 0A invariants may be proposed and independently gated.
+(d) Another Gate-0A-compliant **authentication** recovery architecture may be separately proposed and independently gated.
 
 SECURITY_TRADEOFFS= (a) is the only option that needs nothing beyond what this document already designs; its cost is a real, permanent loss of **account access**, and — pending Gate 0C — an undetermined outcome for the content itself. (b) reduces the chance of total loss without an operator or a third party, at the cost of more user-held material to manage, a second enrolment ceremony, and more lifecycle surface (§11.2) — it also does not by itself guarantee content decryptability, which remains a Gate 0C question. (c) restores a familiar recovery experience by reintroducing precisely the external dependency and metadata-disclosure channel §19 excludes, and relocates the real key to a third-party account. (d) keeps the door open honestly but resolves nothing today. Gate 0A §2 flags this exact tension between Recoverability and Confidentiality as something that must be designed for explicitly.
 
 Three things this decision explicitly does **not** assert, each of which revision 1 implied: that operator support can simply reset access (it cannot, §9.4); that successful account recovery means encrypted private data can be decrypted (undetermined, §11.4); and that loss necessarily means permanent private-data loss (also undetermined until Gate 0C defines key and recovery semantics).
 
-RECOMMENDATION= (a) as the **currently accepted** posture, stated plainly to the user when the recovery credential is issued rather than buried — with (b) explicitly preserved as a legitimate, separately gated future improvement rather than foreclosed. The loss assumption is stated over all currently accepted user-held recovery methods, not over all conceivable ones.
+RECOMMENDATION= (a), as this document's **recommendation and nothing more** — `OWNER_DECISIONS_ACCEPTED=0`, D3 is not accepted, and no later document may cite this line as acceptance. If the owner accepts it, the posture should be stated plainly to the user when the recovery credential is issued rather than buried, and (b) should be preserved as a legitimate, separately gated future improvement rather than foreclosed. The recommendation is scoped to loss of **authentication authority** across the user-held recovery methods this design actually defines, not across all conceivable ones, and it asserts nothing about whether previously encrypted content remains decryptable — that stays `UNRESOLVED_PENDING_GATE_0C`.
 
 DEPENDENCIES= §11 (all), especially §11.2 lifecycle and §11.4 auth-vs-data recovery; §19 external dependency; §26.2 D2; §26.4 D4; Gate 0C (§20).
 
-MUST_BE_DECIDED_BEFORE= any account-creation disclosure text is written, and before Gate 0C key design is accepted — if the owner chooses (b), (c), or (d), the encryption design must accommodate an alternate unwrap path, which is a materially different key design.
+MUST_BE_DECIDED_BEFORE= any account-creation disclosure text is written, and before Gate 0C key design is accepted. What D3's outcome hands Gate 0C is a **conditional question, not a mandated mechanism**: if the owner chooses (b), (c) or (d), Gate 0C must separately decide whether the additional authentication-recovery authority has any relationship to key material at all, and if so what — a question Gate 0C may answer in the negative. Gate 0B requires no alternate unwrap path, no escrow, no recovery key, no secondary key authority and no operator key recovery under any D3 outcome, and selects no key architecture (`ALTERNATE_KEY_UNWRAP_PATH_MANDATED=no`; `KEY_RECOVERY_ARCHITECTURE=UNRESOLVED_PENDING_GATE_0C`).
 
 ### 26.4 D4 — credential and fallback policy
 
@@ -1235,9 +1300,29 @@ SECURITY_TRADEOFFS= (a) is the smallest surface and the clearest ceremony separa
 
 RECOMMENDATION= (a) for the current single-user local deployment, moving to (b) as the required posture the moment D1 permits any network exposure or a second user (§10.2) — with the §4.8 separation-of-ceremonies principle preserved in both cases. (c) is not recommended. (d) is recommended against, and if the owner chooses it, it must be chosen explicitly and knowingly, not arrived at through an implementation convenience.
 
-DEPENDENCIES= §2.2 option D; §4.6 re-authentication proof; §4.8 credential requirements and ceremony separation; §10.2 MFA deferral boundary; §11.1-§11.2 recovery model and lifecycle; §17.1 which credential the reactivation ceremony demands; §17.2; §22 tests 27 and 31; Gate 0C (§20).
+DEPENDENCIES= §2.2 option D; §4.6 re-authentication proof; §4.8 credential requirements and ceremony separation; §10.2 MFA deferral boundary; §11.1-§11.2 recovery model and lifecycle; §17.1 which credential a permitted reactivation ceremony demands; `OWNER_DECISION_D5` (§26.5), which is a **separate** decision — D4 fixes which credential such a ceremony would demand, D5 decides whether one exists at all, and neither determines the other; §22 tests 27 and 31; Gate 0C (§20).
 
-MUST_BE_DECIDED_BEFORE= any authentication implementation plan is accepted; before the §17.1 reactivation ceremony can be fully specified; and before the MFA-deferral qualification test (§22 test 27) can assert a concrete factor policy.
+MUST_BE_DECIDED_BEFORE= any authentication implementation plan is accepted; before the §17.1 reactivation ceremony can be fully specified, if `OWNER_DECISION_D5` permits one at all; and before the MFA-deferral qualification test (§22 test 27) can assert a concrete factor policy.
+
+### 26.5 D5 — disabled-account self-reactivation policy
+
+DECISION_ID= `D5`
+
+QUESTION= May a `DISABLED` account be reactivated by its own owner at all — through a dedicated, limited reactivation ceremony (§17.1) entered with the accepted recovery authority — or is `DISABLED` terminal in this product until some future, separately authorized administrative/account-management design exists?
+
+WHY_OWNER_DECISION= This is a product decision about account semantics and availability, not an engineering consequence of any other decision. Independent re-QA established it as distinct from D4: holding **every** D4 credential option fixed, the owner can still independently choose terminal disable or pause-and-reactivate, and the choice changes what "disable" means to a user, whether a self-service path back exists, and how much authenticated-but-not-yet-authorized ceremony surface the product carries. Revision 2 kept it outside this register as a §17.2 "product question" and named terminal disable as the implementation default if nobody answered — which would have settled an unaccepted policy by omission. There is no repo evidence that settles the owner's intent, and both outcomes are coherent and defensible. It also has a real user consequence: under option A, a user who disables their account has no self-service way back, which for case material is a decision the owner should make knowingly rather than inherit.
+
+OPTIONS=
+(a) **Terminal disable.** `DISABLED` is terminal until a future, **separately authorized** administrative/account-management design exists. No self-reactivation ceremony is designed or implemented. A disabled owner's only remaining election is explicit closure (§17.1), which is terminal.
+(b) **Limited self-reactivation.** A `DISABLED` account may self-reactivate through the dedicated limited ceremony of §17.1: entered **only** with the accepted recovery authority (§11) and never with an ordinary authenticated session; granting **no** private-data access, no exports, no search, no workspace access, no key or data recovery, no ownership change and no operator/admin access; succeeding **only** as `DISABLED` → `ACTIVE`; never reaching `CLOSED`; ending its authority at that transition; and requiring a fresh ordinary authentication (§4.3, §4.4) before any protected access.
+
+SECURITY_TRADEOFFS= (a) is strictly smaller in attack surface: no ceremony exists, so no ceremony can be abused, mis-scoped, or grown into an operator on-ramp at implementation time, and there is one less path an attacker holding recovery material can drive. Its cost is availability and user experience — "pause my account" becomes indistinguishable from closure in practice, and a user who disables in a moment of caution has no way back. (b) preserves a genuine pause capability with a real user benefit, at the cost of a second ceremony to specify, rate-limit, audit and test, and of making the accepted recovery authority sufficient to restore account status — which raises the value of that recovery material and makes the §11.2 lifecycle requirements load-bearing rather than merely prudent. Under **both** options the §17.1 invariants hold unchanged: ordinary session authority is invalid in `DISABLED`, no operator may reactivate (`OPERATOR_REACTIVATION_POWER=none`), `CLOSED` can never be reactivated, and nothing about reactivation implies any private-data or key access. Neither option creates an operator backdoor, and neither is permitted to acquire one at implementation time.
+
+RECOMMENDATION= (a) for the first private-data deployment — it adds no ceremony, no new authority and no new surface, and it can be revisited later without having already shipped a path. If the owner wants a pause capability, (b) is legitimate and is fully specified in §17.1 so it can be chosen without redesign; it must then be chosen explicitly. **This recommendation is not an acceptance** (`OWNER_DECISIONS_ACCEPTED=0`), and unlike revision 2 it is **not** an implementation default: if D5 is unanswered, implementation does not begin (§23).
+
+DEPENDENCIES= §4.6 (why session-bound re-authentication cannot serve a disabled account); §9.4 owner-versus-operator authority and `REACTIVATION_ENTRY_USES_ORDINARY_SESSION=no`; §11.1-§11.2 the accepted recovery authority and its lifecycle, which option (b) consumes; §15 rate limiting; §16 content-free audit; §17.1 state machine and ceremony; §17.3 lifecycle consequences; §21 THREAT-020, THREAT-021, THREAT-022; §22 tests 11, 33, 35-38; `OWNER_DECISION_D4` (§26.4), which fixes **which** credential a permitted ceremony demands but does not decide **whether** one exists; `OWNER_DECISION_D1` (§26.1), since a multi-user or network-exposed deployment raises the stakes of any reactivation path.
+
+MUST_BE_DECIDED_BEFORE= any authentication implementation plan is accepted; before §17.1's ceremony can be specified, built or tested; and before §22 tests 33 and 35-38 can assert a concrete policy. There is **no** safe implementation default: an unanswered D5 blocks implementation rather than selecting (a).
 
 ---
 
@@ -1275,7 +1360,19 @@ ACCOUNT_STATE_MACHINE_COHERENT=yes
 
 DISABLED_ACCOUNT_PROTECTED_ACCESS=deny
 
+DISABLED_ORDINARY_SESSION_AUTHORITY=invalid
+
+REACTIVATION_ENTRY_USES_ORDINARY_SESSION=no
+
 REACTIVATION_CEREMONY_PRIVATE_DATA_ACCESS=deny
+
+REACTIVATION_SUCCESS_TRANSITION=DISABLED_TO_ACTIVE_ONLY
+
+CLOSED_REACTIVATION_ALLOWED=no
+
+FRESH_NORMAL_AUTH_REQUIRED_AFTER_REACTIVATION=yes
+
+DISABLED_SELF_REACTIVATION_POLICY=UNDECIDED_OWNER_DECISION_D5
 
 APPLICATION_ADMIN_PRINCIPAL_PRESENT=no
 
@@ -1293,9 +1390,23 @@ REVOCATION_REQUIREMENT=DENY_ON_NEXT_PROTECTED_REQUEST_AFTER_AUTHORITY_ACCEPTS_RE
 
 AUTH_RECOVERY_DISTINCT_FROM_DATA_KEY_RECOVERY=yes
 
-OWNER_DECISION_COUNT=4
+PRIVATE_DATA_RECOVERABILITY_AFTER_AUTH_RECOVERY=UNRESOLVED_PENDING_GATE_0C
+
+KEY_RECOVERY_ARCHITECTURE=UNRESOLVED_PENDING_GATE_0C
+
+ALTERNATE_KEY_UNWRAP_PATH_MANDATED=no
+
+GATE_0C_ARCHITECTURE_SELECTED=no
+
+OWNER_DECISION_COUNT=5
+
+OWNER_DECISION_IDS=D1,D2,D3,D4,D5
 
 OWNER_DECISIONS_ACCEPTED=0
+
+OWNER_DECISION_REGISTER_CONSISTENT=yes
+
+HIDDEN_OWNER_DECISIONS_FOUND=none_after_revision
 
 MFA_DEFERRAL_BOUNDARY_TESTABLE=yes
 
@@ -1321,4 +1432,4 @@ WORKSPACE_SHARING_STATUS=NOT_AUTHORIZED
 
 SENSITIVE_DATA_GATE_0B_AUTH_DESIGN_ACCEPTED=no
 
-The next step is independent QA of the exact commit introducing this revision, followed by operator review of the §26 register's four decisions and the §17.2 product question, and then a separate owner authorization decision about whether any later gate begins. This revision repairs a design that independent review failed; it does not accept it.
+The next step is independent QA of the exact commit introducing this revision, followed by operator review of the §26 register's five decisions (D1-D5), and then a separate owner authorization decision about whether any later gate begins. This revision repairs a design that independent review failed; it does not accept it.
