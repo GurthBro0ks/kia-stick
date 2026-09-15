@@ -2,6 +2,8 @@
 
 Phase: `KIA-Stick-sensitive-data-gate-0B-auth-design-planning`
 
+REVISION=2 — bounded blocker revision resolving independent-QA findings F1-F6 and the F7 clarification, plus the directly related MFA-boundary, browser/TLS, authorization-bypass, threat-traceability and future-validation follow-ups. Revision 1 (commit `5127132bfd3a6107941118f2d95152d202546db8`) was independently QA'd `RESULT=FAIL`. Design areas the independent review found sound are preserved unchanged.
+
 STATUS=DESIGN/PLANNING ONLY
 
 AUTHENTICATION_IMPLEMENTATION_AUTHORIZED=no
@@ -30,9 +32,9 @@ Three labels are used throughout and are not interchangeable:
 
 - **REQUIREMENT** — already fixed by accepted evidence (Gate 0A, the governing plan, or repo-local `AGENTS.md`). Gate 0B may not weaken it. A future implementation plan that contradicts one of these is rejected on that basis alone.
 - **DESIGN CHOICE** — a decision this document makes, from repo evidence, to resolve a question Gate 0A explicitly handed forward (Gate 0A §10). It is reviewable and may be overturned by the owner or by independent QA, but it is a real answer, not a deferral.
-- **UNRESOLVED OWNER DECISION** — a question that repo evidence does not settle and that this document deliberately does not guess. Each one is written out in full in §26 with DECISION / OPTIONS / TRADEOFFS / RECOMMENDATION / WHY_OPERATOR_INPUT_IS_REQUIRED. There are three. They are bounded, and none of them blocks the rest of this design from being reviewed.
+- **UNRESOLVED OWNER DECISION** — a question that repo evidence does not settle and that this document deliberately does not guess. Each one is written out in full in the §26 owner decision register with DECISION_ID / QUESTION / WHY_OWNER_DECISION / OPTIONS / SECURITY_TRADEOFFS / RECOMMENDATION / DEPENDENCIES / MUST_BE_DECIDED_BEFORE. There are **four**. They are bounded, and none of them blocks the rest of this design from being reviewed.
 
-`OWNER_DECISION_REQUIRED=yes` — see §26. This is disclosed, not hidden: a PASS planning phase may contain bounded owner decisions, and these three are named rather than resolved by guesswork.
+`OWNER_DECISION_REQUIRED=yes` — see §26. `OWNER_DECISION_COUNT=4`; `OWNER_DECISIONS_ACCEPTED=0`. This is disclosed, not hidden: a planning phase may contain bounded owner decisions, and these four are named rather than resolved by guesswork. Revision 1 claimed three; independent QA established that a fourth — the credential / fallback policy — was hidden inside what read as a revisitable engineering preference (§4.8). A recommendation in this document is a recommendation and never a record of owner acceptance.
 
 ---
 
@@ -70,7 +72,8 @@ Each invariant below is a REQUIREMENT traced to its accepted source. These are t
 | UNKNOWN_AUTH_STATE | DENY | Gate 0A §16 |
 | UNKNOWN_OWNER | DENY | Gate 0A §16 |
 | AUTHZ_CHECK_THROWS_OR_TIMES_OUT | DENY | Gate 0A §16 |
-| REVOCATION_REQUIREMENT | DENY_ON_NEXT_PROTECTED_REQUEST | Gate 0A §3 AUTHENTICATION_DATA, §10, THREAT-020 |
+| REVOCATION_REQUIREMENT | DENY_ON_NEXT_PROTECTED_REQUEST_AFTER_AUTHORITY_ACCEPTS_REVOCATION | Gate 0A §3 AUTHENTICATION_DATA, §10, THREAT-020. The Gate 0A floor is unchanged and not weakened; the trailing clause names the precondition that was always implicit — an authority that never receives the revocation cannot have accepted it (§12.1, §13.2) |
+| AUTH_SESSION_CREDENTIAL_LOGGING_ALLOWED | no — absolute, no diagnostic exception | Gate 0A §15, THREAT-007; see §16.1 |
 | SESSION_IDENTIFIER_RENEWAL | required on successful authentication and on relevant privilege elevation | Gate 0A §9, THREAT-003 |
 | PRIVATE_CONTENT_IN_AUTH_LOGS_ALLOWED | no — absolute, no diagnostic exception | Gate 0A §15, `PRIVATE_CONTENT_LOGGING_ALLOWED=no` |
 | LEAST_PRIVILEGE | required for every principal touching private data | Gate 0A §2, §9 |
@@ -136,7 +139,8 @@ That last bullet is the tension, and it is real rather than apparent. The repo's
 
 **Option D — device-bound credential (WebAuthn/passkey) over a local-first deployment.** Not a separate identity authority so much as a credential type usable inside Option A or B.
 
-- Assessed and *not* selected as the sole model: passkeys are strong against phishing and credential stuffing, but a purely device-bound credential with no second factor makes device loss (THREAT-024) a total-loss event, and the recovery story then depends entirely on Gate 0C key design. It is recorded here as the leading candidate credential type to reconsider at implementation-plan time, not as something Gate 0B selects.
+- Assessed and *not* selected: passkeys are strong against phishing and credential stuffing, but a purely device-bound credential with no second factor makes device loss (THREAT-024) a total-loss event, and the recovery story then depends entirely on Gate 0C key design.
+- Gate 0B does **not** select a credential type, and does not express a preference dressed as a deferral. Which credential is primary, whether any fallback authentication path exists at all, and how that relates to the offline recovery credential are one coupled product/security policy, surfaced as `OWNER_DECISION_D4` (§26.4). §4.8 states the lifecycle requirements that hold whichever way D4 is decided.
 
 ### 2.3 Preferred design family
 
@@ -178,11 +182,13 @@ All future. None exists. None is authorized by naming it here.
 
 **USER_WORKSPACE** — the authorization scope and the unit of isolation. Identified by the opaque `userWorkspaceId` the governing plan §1 already names. Every private record is scoped to exactly one workspace. A workspace is not a folder and not a UI tab; it is the boundary that THREAT-001 is about.
 
-**SESSION** — an authenticated, revocable, time-bounded binding between one USER_ACCOUNT and one client, with its own opaque identifier distinct from the account identifier. Sessions are first-class records precisely because revocation must act on them individually (§12, §13).
+**SESSION** — an authenticated, revocable, time-bounded binding between one USER_ACCOUNT and one client. Each session record carries **two distinct opaque values that must never be conflated** (§5.4): a `SESSION_BEARER_CREDENTIAL`, which authenticates requests and is never logged; and a `SESSION_AUDIT_ID`, which authenticates nothing and exists solely for audit and session-list correlation. Both are distinct from the account identifier. Sessions are first-class records precisely because revocation must act on them individually (§12, §13.1).
 
 **OPERATOR_ADMIN_PRINCIPAL** — deliberately **not defined as an application principal** in the first private architecture (§8, §9). There is no admin role, no admin route, and no admin session. This is a DESIGN CHOICE, and §9 explains why defining one would be the more dangerous option.
 
 **SERVICE_PRINCIPAL** — non-human identities for background work that a private architecture may eventually need (retention expiry, deletion propagation, index maintenance). Each is narrowly scoped to one function, holds no interactive credential, cannot authenticate as a user, and cannot read private content except where its single function provably requires it. Named here so that least privilege (§1.3) has something to apply to; no service principal is authorized or specified.
+
+Function scope alone does not delimit reach, and independent QA was right to say so: "index maintenance" names *what* a job does, not *whose* records it may touch. Therefore a service principal's authority is **both** function-scoped **and** workspace-bound — it carries an explicit grant naming the single `userWorkspaceId` it may act within, that grant is issued by the same authoritative authorization decision point that governs user requests (§7.2), it is independently revocable, and it expires. A background job with no such grant has no private-data authority at all; "it is internal" is never an authorization. The absence of a user session is not a reason to skip the decision point — it is a reason the job must carry its own explicit, narrower authority (§7.2, §8.3).
 
 ### 3.3 Ownership
 
@@ -230,7 +236,7 @@ Not applicable in the local-first deployment: there is no email or phone to veri
 
 ### 4.4 Session creation and identifier regeneration
 
-**REQUIREMENT (Gate 0A §9, THREAT-003):** the authoritative session identifier is generated *after* successful authentication, and any pre-authentication identifier is invalidated rather than upgraded in place. An identifier observable before authentication must never be replayable as an authenticated identifier afterwards. This is the session-fixation control and it is not optional.
+**REQUIREMENT (Gate 0A §9, THREAT-003):** the authoritative session **bearer credential** (§5.4) is generated *after* successful authentication, and any pre-authentication value is invalidated rather than upgraded in place. A value observable before authentication must never be replayable as an authenticated credential afterwards. The session's `SESSION_AUDIT_ID` (§5.4) is a separate, non-authenticating reference and is never a substitute for this rule. This is the session-fixation control and it is not optional.
 
 The same regeneration applies on any privilege elevation (§5.4) — including, if re-authentication for a sensitive action is ever introduced, the transition into that elevated state.
 
@@ -244,9 +250,12 @@ Emits `SESSION_CREATED`.
 
 ### 4.6 Re-authentication
 
-Required for: credential change, MFA enrolment or removal (if MFA exists, §10), recovery-secret regeneration, session-revoke-all, account disable, and account closure. Each of these is an action that, if performed by a stolen session, compounds the compromise — so each requires proof of the credential, not merely proof of a session.
+Required for: credential change, MFA enrolment or removal (if MFA exists, §10), recovery-credential regeneration, session-revoke-all, account disable, and account closure. Each of these is an action that, if performed by a stolen session, compounds the compromise — so each requires proof of the credential, not merely proof of a session.
 
-Re-authentication produces a short-lived elevated state that is itself session-bound, does not survive logout, and triggers identifier rotation per §4.4.
+Re-authentication produces a short-lived elevated state that is itself **session-bound**, does not survive logout, and triggers identifier rotation per §4.4. Two consequences follow, and revision 1 stated only the first:
+
+- Because the elevated state is session-bound, it can only ever be reached by a principal that already holds a valid ordinary session. It is therefore **not** a mechanism a `DISABLED` account can use, since disabling revokes every session and denies authentication (§17). Revision 1 nevertheless routed disabled-account re-enable through this section; that path was unreachable. The coherent account state machine and the separate, narrowly scoped reactivation ceremony are specified in §17.
+- Exactly which credential proof re-authentication demands — primary credential only, primary plus a second factor, or a fallback path if one exists at all — is not settled here. It is part of `OWNER_DECISION_D4` (§26.4). What is fixed regardless: re-authentication is satisfied by **authentication** authority, never by recovery authority alone, unless D4 explicitly chooses otherwise (§11.1).
 
 ### 4.7 Session expiration
 
@@ -254,14 +263,26 @@ Defined in §5.5. Expiry is a bound on session lifetime, never a substitute for 
 
 ### 4.8 Credential requirements
 
-If the selected credential model is a user-chosen secret (a password or passphrase), the following are future requirements, stated without selecting a library or vendor:
+**What is selected here: nothing.** The credential type, the existence and shape of any fallback authentication path, and the relationship between ordinary authentication and offline recovery are one coupled policy, carried as `OWNER_DECISION_D4` (§26.4) rather than resolved by this document. Revision 1 stated a "preferred credential type (revisitable at implementation-plan time)" — a device-bound passkey primary with a passphrase secondary — while §2.2 simultaneously described the same credential type as deferred. Independent QA correctly read that as a hidden owner decision: whether the secondary is an AND factor, an alternative login, or a recovery-only path determines MFA posture, takeover resistance, hardware requirements and recovery burden, and it is not an engineering detail.
+
+What **is** fixed here are the requirements that hold under every D4 outcome.
+
+**Separation of ceremonies (REQUIREMENT under every D4 option unless D4 explicitly overrides it).** Ordinary authentication and recovery are separate ceremonies with separate authority. An offline recovery credential is **not** an ordinary alternate login credential: it authorizes a credential-reset ceremony, not a private-data session (§11). Any D4 option that would make recovery material an ordinary login path must be chosen knowingly and explicitly, because it collapses the two ceremonies into one and makes the recovery credential the weakest full-access path.
+
+If the selected credential model includes a user-chosen secret (a password or passphrase), the following are future requirements, stated without selecting a library or vendor:
 
 - Stored only as a verifier produced by a memory-hard, salted, deliberately slow password-hashing function with per-credential salt and tunable cost. Never stored reversibly, never encrypted-and-decryptable, never hashed with a fast general-purpose digest.
 - Never logged, never included in an audit event, never in proof output, never in an error message or stack trace (§1.3, Gate 0A §15).
 - Length-first strength policy with a generous maximum, screened against known-breached credential lists where that screening can be done offline; no composition rules that push users toward predictable patterns; no forced periodic rotation absent evidence of compromise.
-- Credential change requires re-authentication (§4.6) and revokes all other sessions (§12).
+- Credential change requires re-authentication (§4.6) and revokes **all** sessions for the account, **including the session that initiated the change** (§12.4).
 
-**Preferred credential type (DESIGN CHOICE, revisitable at implementation-plan time):** a device-bound passkey/WebAuthn credential as the primary factor, with a user-chosen passphrase as the recoverable secondary — because for a local-first tool the dominant credential threat is device loss (THREAT-024) rather than remote credential stuffing, and a device-bound credential paired with a user-held recovery secret (§11) addresses both without an external dependency. This is recorded as a preference with reasons, not as a vendor selection; no library is named or authorized.
+**On that last point (F7 clarification).** Revision 1 said "all other sessions" here and "all sessions including the initiating one" in §12.4. The stronger rule governs, and it governs everywhere: flow, epoch transition, user-visible outcome and future tests (§22 test 8). The single rule is:
+
+`CREDENTIAL_CHANGE_REVOCATION_SCOPE=ALL_SESSIONS_INCLUDING_THE_INITIATING_SESSION`
+
+The epoch mechanism (§12.2) satisfies it without a special case, since the initiating session's recorded epoch is stale the instant the epoch increments. The user-visible consequence is intended and must be designed for rather than patched around: after changing a credential the user re-authenticates, which is the correct outcome when the premise of the change is that the prior credential may be compromised. No implicit re-issue of a session to the initiating client is permitted, because that is a silent exception to the revocation rule.
+
+**If a device-bound credential type is chosen under D4**, one further constraint applies: WebAuthn/passkey platform assumptions — authenticator availability, platform vs roaming authenticator, and the behaviour of a device-bound credential under a strictly local deployment — are unresolved and must be validated before implementation acceptance (§22, §23). No library, vendor, or authenticator is named or authorized anywhere in this document.
 
 ### 4.9 Account closure
 
@@ -277,7 +298,7 @@ Gate 0A fixes `REVOCATION_REQUIREMENT=DENY_ON_NEXT_PROTECTED_REQUEST` with, in i
 
 ### 5.2 Design families compared
 
-**Opaque server-side session.** The session identifier is a high-entropy random value carrying no claims; all authoritative state (account, workspace, status, issue/expiry times) lives server-side and is consulted on each protected request.
+**Opaque server-side session.** The session bearer credential (§5.4) is a high-entropy random value carrying no claims; all authoritative state (account, workspace, status, issue/expiry times) lives server-side and is consulted on each protected request.
 
 - Revocation: **satisfied directly.** Deleting or invalidating the server-side record causes the very next protected request to fail its lookup and be denied. No window, no TTL dependency, no cache to reason about.
 - Cost: a lookup per protected request, and a session store to operate.
@@ -300,7 +321,14 @@ Gate 0A fixes `REVOCATION_REQUIREMENT=DENY_ON_NEXT_PROTECTED_REQUEST` with, in i
 ### 5.4 Conceptual session properties
 
 - **Authoritative session state:** server-side only. The client holds an opaque reference and nothing else. No claim presented by the client is ever trusted as an authorization input (§7.4).
-- **Session identifier:** high-entropy, cryptographically random, unpredictable, opaque, distinct from the account identifier and from the workspace identifier, and never derived from any of them.
+- **Session bearer credential** (`SESSION_BEARER_CREDENTIAL`): high-entropy, cryptographically random, unpredictable, opaque, distinct from the account identifier and from the workspace identifier, and never derived from any of them. **This value authenticates a request.** It is a credential in the full sense of §16.4 and §1.3, it is held only by the client and by the authoritative session lookup, and it may never appear in any log, audit record, telemetry stream, diagnostic output, proof artifact, notification, session list, or error path.
+- **Session audit identifier** (`SESSION_AUDIT_ID`): a **separate**, non-authenticating, content-free opaque reference to the authoritative server-side session *record*. Revision 1 used one term — "session identifier" — for both the bearer credential and the value permitted in audit events (§16.3), so a literal reading of the allowed-field list permitted logging a live credential. That is now closed. `SESSION_AUDIT_ID` is defined by what it is **not** allowed to be:
+  - it is **never accepted as an authentication credential** on any request, and a request presenting it in place of the bearer credential is denied exactly as an unauthenticated request is;
+  - the bearer credential is **not derivable** from it, in either direction — neither is a hash, truncation, encoding, or other function of the other; they are independently generated;
+  - it **cannot be replayed** to resume, resurrect, or impersonate a session;
+  - it is suitable **only** for correlating audit and session-list records, and carries no private content;
+  - it is safe to display to the owner in a session list (§13.1) and to record in audit events (§16.3).
+  Conceptually this is the distinction between an authoritative session record's internal object identity and the bearer secret that points at it; the design uses that distinction deliberately and states it rather than leaving it implied. No implementation, storage, or library for either value is chosen here.
 - **Transport:** a cookie, subject to §6, if the browser-session model is used. `AUTH_CREDENTIAL_LOCALSTORAGE_ALLOWED=no` (§6.2).
 - **Renewal / rotation:** identifier regenerated on successful authentication and on privilege elevation (§4.4). Periodic mid-session rotation is permitted but is not the revocation mechanism.
 - **Privilege-elevation rotation:** required; see §4.6.
@@ -335,6 +363,13 @@ Applies if and when a browser session model is used, which the preferred design 
 - **TLS** — required for any private endpoint without exception, explicitly including local-only builds that could ever be exposed (governing plan §3). "It's only on localhost" is not an exemption, and the repo's existing `--hostname 127.0.0.1` binding is a reduction in exposure, not a substitute for transport security.
 - Session cookies are not persisted beyond the session lifetime rules in §5.5, and are cleared on logout.
 
+**Local-first / TLS compatibility — stated honestly rather than hand-waved.** `BROWSER_SESSION_SECURITY_CONTRADICTION_RESOLVED=yes`. The requirements above are not weakened for loopback, and nothing here may be read as permission to run a private endpoint over the repo's current plain HTTP dev binding. But the interaction between `Secure` cookies and a strictly local deployment is a real unresolved compatibility question, not a solved one, and revision 1 asserted the requirement without acknowledging it:
+
+- **REQUIRED, not negotiable:** `HttpOnly`; `Secure`; restrictive `SameSite`; narrowest path/domain scope; TLS on every private endpoint; and **refusal to operate the private surface at all** if the transport requirement is not met. A private deployment that cannot satisfy transport security does not fall back to plaintext — it declines to serve private data. That refusal is itself a required behaviour, not an operational nicety.
+- **IMPLEMENTATION CHOICE, deliberately not made here:** *how* a reviewable trusted local origin is established for a loopback deployment — the trust arrangement, its certificate lifecycle, and where its private key lives. Several arrangements exist; each has different key-custody consequences that touch Gate 0C (§20). Gate 0B names the requirement and refuses to pre-select the mechanism.
+- **UNRESOLVED, and a required future validation item (§22, §23):** whether the selected arrangement actually yields `Secure`-cookie-eligible, TLS-terminated behaviour in the browsers the owner uses, on a local origin, without weakening any requirement above, and without introducing an external dependency (§19). Until that is demonstrated, the private surface is not implementation-acceptable. This is tracked under D1 (§26.1) and THREAT-003 (§21).
+- **Network-exposed requirements are not weakened by any of this.** Nothing in the local-first case reduces what a network-reachable deployment must do; if anything, exposure adds MFA (§10.2) on top.
+
 ### 6.2 Browser storage
 
 `AUTH_CREDENTIAL_LOCALSTORAGE_ALLOWED=no`
@@ -345,11 +380,15 @@ This is KIA-specific rather than generic. KIA Stick *already* persists five `loc
 
 No exception is proposed. There is no "just the session ID," no "just a non-sensitive hint," and no "only in dev." A value that determines access is a credential regardless of what it is called.
 
+**Scope clarification.** This rule governs **script-readable** browser storage. An `HttpOnly` session cookie (§6.1) is the intended transport for the bearer credential (§5.4) and is not a violation of this rule — it is the control, precisely because page JavaScript cannot read it. Where §22 test 21 asserts that "no credential persists in browser storage," it means no credential in script-readable storage; the `HttpOnly` cookie is expected and is subject to §5.5 and §6.1 instead. Independent QA flagged the earlier wording as ambiguous on exactly this point.
+
+`HttpOnly` also has a stated limit: it prevents a script from *reading* the cookie, but it cannot prevent an XSS bug from using the already-authenticated browser to read and exfiltrate private content through the application's own authorized requests. That residual is real, is not closed by any cookie attribute, and is why §6.3 assumes XSS is possible rather than absent.
+
 ### 6.3 XSS and session-fixation assumptions
 
 - **XSS is assumed possible, not assumed absent.** `HttpOnly` is load-bearing for that reason. Any future private UI inherits the repo's existing lint/type discipline and must additionally avoid raw HTML injection paths for private content — and, per THREAT-012/THREAT-013, must never treat private document text as instructions or as markup.
 - **Session fixation** is addressed by mandatory identifier regeneration at §4.4, not by cookie attributes alone.
-- **Session theft** is assumed to be possible via device compromise or an unattended unlocked device. The mitigations are idle timeout (§5.5), individually revocable sessions (§13), and revoke-all (§12) — this is why §13 refuses to treat multi-session support as a convenience feature.
+- **Session theft** is assumed to be possible via device compromise or an unattended unlocked device. The mitigations are idle timeout (§5.5), individually revocable sessions (§13.1), and revoke-all (§12) — this is why §13.1 refuses to treat multi-session support as a convenience feature — subject in every case to the authority being reachable (§13.2).
 
 ---
 
@@ -383,6 +422,19 @@ Two enforcement points, not one:
 2. **Object-level:** does the addressed record's `userWorkspaceId` match the session's authorized workspace? This runs on every ID-addressed access, independently of (1), because (1) passing is exactly the condition under which THREAT-004 bites.
 
 Deliberately **not** chosen: authorization scattered across individual route handlers. Gate 0A THREAT-002's failure mode is "missing on one route," and per-handler checks make that failure invisible — a new route is unprotected by default and nothing detects it. A single access layer makes the deny-by-default property structural: a route that does not go through it cannot reach private data at all. No middleware, helper, or layer is implemented or scaffolded by saying this.
+
+**The bypass invariant, stated testably.** `PRIVATE_ROUTE_BYPASS_MODEL_DEFINED=yes`; `BACKGROUND_JOB_AUTHORIZATION_DEFINED=yes`. Independent QA accepted the single-layer claim but found it under-specified for paths that hold no user session. The invariant is:
+
+> **NO_PRIVATE_DATA_ROUTE_OR_BACKGROUND_JOB_MAY_ACCESS_PRIVATE_DATA_WITHOUT_PASSING_THE_AUTHORITATIVE_AUTHORIZATION_DECISION_POINT.**
+
+It binds, without exception, on: API routes and any other request-reachable private handler; ID-addressed reads; list, search and index queries; export; delete; derived-artifact creation and reads (extracted text, OCR output, embeddings, caches, provenance anchors); background, scheduled, retention, deletion-propagation and index-maintenance jobs; and every service identity (§3.2). There is no "internal" caller exempt from it, and no path that reaches private storage around it. The absence of a user session changes *what authority is presented* — a service principal presents its explicit, workspace-bound, revocable, expiring grant (§3.2, §8.3) — never *whether a decision is made*.
+
+**One precision revision 1 got wrong.** Revision 1 said the decision happens "before any storage I/O," which contradicts itself: deciding requires reading the session record and the addressed object's ownership metadata, both of which are storage I/O. The accurate rule distinguishes two classes of read:
+
+- **Authority and ownership metadata** — the session record, the account status and epoch, and the addressed object's `userWorkspaceId` — *may* be read, because reading them is how the decision is made. These reads return no private payload.
+- **Protected private payload** — document content, derived text, embeddings, export bytes, search result bodies — may not be read, streamed, buffered, or emitted until the decision has returned ALLOW. A denied request must never have touched a private byte.
+
+`AUTHORIZATION_DECISION_PRECEDES_PROTECTED_PAYLOAD_ACCESS=yes`. Future tests for both halves of this invariant are at §22 (tests 1-4, 24, 25).
 
 ### 7.3 Resource ownership model
 
@@ -447,25 +499,44 @@ Saying so plainly matters, because the alternative is to write an operator-acces
 
 ### 9.3 Selection
 
-`OPERATOR_PRIVATE_CONTENT_ACCESS=NO_ROUTINE_ACCESS__NO_ADMIN_PRINCIPAL__MODEL_A_PREFERRED__BREAK_GLASS_UNRESOLVED_PENDING_GATE_0C`
+`OPERATOR_PRIVATE_CONTENT_ACCESS=NO_ROUTINE_ACCESS__NO_ADMIN_PRINCIPAL__NO_OPERATOR_IDENTITY_AUTHORITY__MODEL_A_PREFERRED__BREAK_GLASS_UNRESOLVED_PENDING_GATE_0C`
 
 **DESIGN CHOICE, with a named dependency.** For the first private architecture:
 
-- There is **no admin principal, no admin role, no admin route, and no admin session** (§3.2, §8.2). There is nothing to log in as. This is the strongest control actually available at Gate 0B, and it is available *now* rather than pending another gate.
+- There is **no admin principal, no admin role, no admin session, and no admin route** (§3.2, §8.2, §9.4). There is nothing to log in as, and no operator identity authority over any account (`APPLICATION_ADMIN_PRINCIPAL_PRESENT=no`). This is the strongest control actually available at Gate 0B, and it is available *now* rather than pending another gate.
 - Model A is the **preferred target**, consistent with governing plan §5's user-workspace key-ownership default. Gate 0B cannot select it outright, because whether the operator *technically* can decrypt is decided by key design, not by auth design.
 - Whether any break-glass path exists at all is `OWNER_DECISION_D2` (§26.2). Gate 0B does not create one. A design with no break-glass path is strictly safer and is the default in the absence of a decision.
 
 `DEPENDENCY_ON_ENCRYPTION_GATE=yes`. Specifically unresolved until Gate 0C: whether operator-held storage is decryptable without the user's credential; whether cryptographic erasure is available as a revocation mechanism for operator reach; and whether any recovery path (§11) implies an operator-usable decryption capability. Those three are the whole of the dependency, and none of them is an auth decision.
 
-### 9.4 Support without content access
+### 9.4 Support without privileged identity authority
 
-Support operations that must remain possible without reading private content, and are sufficient for realistic support:
+`OPERATOR_ACCOUNT_RECOVERY_POWER=none`
 
-- Confirm an account's status (`ACTIVE` / `DISABLED` / `CLOSED`) and whether a session exists — status, not content.
-- Read content-free auth audit events (§16): counts, outcome codes, timestamps, opaque identifiers, correlation IDs.
-- Confirm that a record exists and its safe-label metadata — type, size band, retention state, redaction state — per the metadata-minimization model the governing plan §9 and `lib/redactionMetadataModel.ts` already establish for fake data.
-- Reproduce a defect against synthetic/fake fixtures, which is the discipline this repository already runs on (Gate 0A §15).
-- Revoke sessions, disable an account, or trigger a user-initiated recovery — all of which act on access, none of which reads content.
+`OPERATOR_CREDENTIAL_RESET_POWER=none`
+
+`OPERATOR_REACTIVATION_POWER=none`
+
+`APPLICATION_ADMIN_PRINCIPAL_PRESENT=no`
+
+**This section is a repair.** Revision 1 listed "revoke sessions, disable an account, or trigger a user-initiated recovery" as support operations, and §18 treated operator misuse as unreachable. Independent QA found both wrong: §11.1 excludes operator initiation, approval and completion of recovery, §9.3 defines no admin principal, route or session — so revision 1 granted powers with no principal to exercise them and no stated authentication for them, while Gate 0A THREAT-022 explicitly includes direct filesystem/database access that §18 dismissed. An undocumented superuser is exactly what "support" must not become.
+
+**Three authorities, kept distinct.** Revision 1 blurred them; this revision does not.
+
+1. **OWNER authority (application-level).** Revoking a session, revoking all sessions, changing a credential, regenerating a recovery credential, disabling the account, reactivating it (§17) and closing it are **owner** actions. They are performed by the authenticated account owner, through the owner's own ordinary authentication and re-authentication (§4.6), and by nobody else. They were never support powers; listing them under support was the defect.
+2. **SUPPORT function (application-level, content-free, unprivileged).** Support holds **no** application identity with authority over an account. It cannot authenticate as the user, cannot act on the user's behalf, and cannot reach private content, because there is no principal for it to do so as (§9.3). What remains — and it is genuinely sufficient for a single-owner local product — is:
+   - explaining recovery, reactivation, and credential-change steps so the user can perform them themselves;
+   - interpreting safe, closed-enumeration error and event codes (§16.3) the user reports;
+   - checking service health and whether the application is running;
+   - where a future design permits it, confirming that an account state exists — `ACTIVE` / `DISABLED` / `CLOSED` — without exposing private content;
+   - reading content-free auth audit events (§16) where the deployment grants that access: counts, outcome codes, timestamps, `SESSION_AUDIT_ID` and other opaque references, correlation identifiers — never a bearer credential (§5.4, §16.4);
+   - confirming that a record exists and its safe-label metadata — type, size band, retention state, redaction state — per the metadata-minimization model the governing plan §9 and `lib/redactionMetadataModel.ts` already establish for fake data;
+   - reproducing a defect against synthetic/fake fixtures, the discipline this repository already runs on (Gate 0A §15);
+   - helping the user use their **own** recovery material, without ever receiving, holding, viewing, or transcribing it.
+   Support may **not** initiate, approve, or complete a recovery; may not reset or rotate a credential; may not reactivate a disabled account; may not revoke or create a session; and may not change account state. Those are owner actions, and none of them acquires an operator on-ramp by being listed in a support section.
+3. **OS / root authority (local, not application authority).** In some deployment scenarios whoever administers the host has root and full filesystem access to it. That is a fact about the machine, and this document states it (§9.1) rather than hiding it. It is **not** application authentication authority, it is not an application principal, and it confers no application-level account-recovery, credential-reset, or reactivation power. Whether OS/root access can technically decrypt private content is a **Gate 0C** question (§20) and is deliberately not answered here. Critically, application-level controls do not mitigate OS-level access, so THREAT-022 keeps its operator residual in full (§18, §21).
+
+No capability above is expandable at implementation time. If the owner ever wants an operator to hold real identity authority, that requires an explicit owner decision in a later design revision with its own threat model — it may not be inferred from a support requirement, a recovery convenience, or an incident.
 
 ### 9.5 If a break-glass path is ever authorized
 
@@ -480,7 +551,7 @@ Not authorized, not designed, not implemented. Minimum bar it would have to clea
 - **Normal users, local-first deployment.** The credential threats MFA is best at — remote credential stuffing, phishing, password reuse — largely do not apply to an account reachable only from loopback on one laptop. The dominant threat is THREAT-024 device loss, and a second factor stored on the same lost device adds little.
 - **Normal users, if network-exposed.** The calculus inverts completely. A network-reachable authentication endpoint holding union members' grievance and medical/OWCP-like material (Gate 0A §3, highest sensitivity) without a second factor is not defensible.
 - **Operator/admin principals.** Not applicable: there is no admin principal (§9.3). If D2 ever creates a break-glass path, MFA on it is mandatory, not optional.
-- **Recovery-sensitive actions.** Credential change, recovery-secret regeneration, revoke-all, disable, closure — these already require re-authentication (§4.6). Where a second factor exists, it is required for these regardless of whether it is required at ordinary login.
+- **Recovery-sensitive actions.** Credential change, recovery-credential regeneration, revoke-all, disable, closure — these already require re-authentication (§4.6). Where a second factor exists, it is required for these regardless of whether it is required at ordinary login.
 
 ### 10.2 Selection
 
@@ -491,6 +562,21 @@ Not authorized, not designed, not implemented. Minimum bar it would have to clea
 Why deferral is safe *for the intended first deployment*, specifically: the first deployment is one account, on one laptop, bound to `127.0.0.1`, with no registration surface, no external identity dependency, and no remote authentication endpoint to attack. The realistic compromise paths are physical device access and local malware — and both defeat a same-device second factor too. What actually mitigates them is device-level encryption plus idle timeout (§5.5) plus revocability (§12, §13), all of which this design requires.
 
 Why the deferral is conditional rather than open-ended: the moment D1 (§26.1) authorizes network exposure or a second user, the premise above is void. The condition is written into the policy value so that "we deferred MFA" cannot later be cited as precedent for shipping a network-exposed deployment without it.
+
+**The deferral boundary, made testable.** `MFA_DEFERRAL_BOUNDARY_TESTABLE=yes`. Independent QA found the deferral premise plausible but unfalsifiable: nothing required the runtime to *refuse* when the premise stopped holding, and a D1 answer on paper cannot prove what a deployment actually does. The deferral is therefore conditioned on a **deployment qualification test** whose conditions are observable, not on an intention:
+
+`MFA_DEFERRAL_ALLOWED` only while **all** of the following hold and are demonstrated by that test:
+
+- the private authentication and private-data endpoints are bound **exclusively** to an accepted local-only interface within the deployment class D1 authorizes — no non-loopback bind, no LAN bind, no wildcard bind;
+- no network-reachable path to a private endpoint exists, including via a reverse proxy, port forward, tunnel, container publish, or any other forwarding arrangement;
+- there is exactly **one** user-owner account, and no registration or enrolment surface by which a second could appear;
+- no multi-user mode is enabled or reachable;
+- no break-glass principal exists (D2 not decided as (b), §26.2);
+- the deployment qualification test itself passes and is re-run as a precondition of the deployment, not once at design time.
+
+If **any** condition ceases to hold: `MFA_REQUIRED_BEFORE_EXPOSURE=yes`, and the correct behaviour is to **refuse to serve the private surface** until a second factor is in place — not to serve it and log a warning. Conditions that fail this test include a non-loopback binding, a forwarding or proxy exposure, and the creation of a second account; the LAN case is explicitly in scope. How the test is implemented at runtime is not prescribed here. Future tests: §22 tests 26 and 27.
+
+**One assessment correction.** Revision 1's "a second factor on the same lost device adds little" is true of a same-device software factor and not true in general: a separate hardware authenticator, or a factor requiring user verification, does change the physical-access calculus. Conversely, login-time MFA does not defend against local malware or the theft of an already-live session — those are answered by idle timeout (§5.5), revocability (§12, §13) and device-level protections (§13.2), not by a login factor. Which factor, and whether any fallback exists, is `OWNER_DECISION_D4` (§26.4).
 
 If a second factor is implemented, the constraint from §19 applies: it must not introduce an external dependency. An offline, device-held authenticator factor satisfies this; SMS and email-based factors do not, and are additionally weak.
 
@@ -508,24 +594,43 @@ Recovery is treated as an authentication bypass surface, because that is what it
 
 - **Forgotten / lost credential:** a recovery path exists, but it proves possession of something the user holds, not knowledge of facts about the user.
 - **No security questions based on personal facts.** Explicitly forbidden. For KIA Stick's user population this would be doubly bad: the answers are frequently discoverable from the same employment context the tool operates in.
-- **Lost MFA factor** (if MFA exists): handled by the same user-held recovery secret, never by an operator override.
-- **Lost device:** revocation of that device's sessions (§13) is independent of, and does not require, credential recovery.
-- **Account-takeover resistance:** recovery requires proof of possession of a secret issued at account creation and held by the user. It never depends on a channel KIA Stick does not control, and never on an operator's judgment.
+- **Lost MFA factor** (if MFA exists): handled by the same user-held recovery credential, never by an operator override.
+- **Lost device:** revocation of that device's sessions (§13.1) is independent of, and does not require, credential recovery — **provided the authoritative session service is still reachable.** Where the lost device *is* the sole authority, remote revocation is unavailable and the honest posture is §13.2. Revision 1 promised revocation unconditionally; that promise was invalid for the sole-host case.
+- **Account-takeover resistance:** recovery requires proof of possession of a credential issued through an authorized ceremony and held by the user. It never depends on a channel KIA Stick does not control, and never on an operator's judgment.
+- **Recovery is a distinct ceremony, not an alternate login.** Successfully presenting recovery material authorizes a bounded credential-reset ceremony; it does **not** by itself open an ordinary authenticated session over private data, unless `OWNER_DECISION_D4` (§26.4) explicitly chooses that policy. A fresh ordinary authentication is required afterwards before any protected private-data request is served.
+- **Recovery does not disclose private content**, and does not bypass any Gate 0C encryption constraint (§11.3, §20). Recovering *access* is not recovering *content*; see §11.4.
 - **Rate limiting:** recovery attempts are rate-limited and progressively delayed exactly as authentication attempts are (§15), because an unlimited recovery endpoint is an unlimited authentication endpoint.
-- **Operator involvement:** none in the routine path. An operator cannot initiate, approve, or complete a recovery. This is the direct consequence of §9 — a recovery path an operator can drive *is* a silent admin read path, however it is labelled.
+- **Operator involvement:** none, in any path — not merely none in the routine path. An operator cannot initiate, approve, or complete a recovery, cannot reset a credential, and cannot reactivate a disabled account: `OPERATOR_ACCOUNT_RECOVERY_POWER=none`, `OPERATOR_CREDENTIAL_RESET_POWER=none`, `OPERATOR_REACTIVATION_POWER=none` (§9.4). This is the direct consequence of §9 — a recovery path an operator can drive *is* a silent admin read path, however it is labelled. Support may explain the steps and help the user use their own material, and that is the whole of it.
 - **User notification:** recovery start and completion are recorded as audit events (§16) and surfaced to the user. In a single-user local deployment the "notification" is in-application rather than out-of-band; an out-of-band channel would be an external dependency (§19).
 - **Audit:** `RECOVERY_STARTED` / `RECOVERY_COMPLETED`, content-free.
 - **Session invalidation after recovery:** **mandatory.** Completing a recovery revokes every existing session for the account (§12), because the premise of recovery is that the prior access state is no longer trusted.
 
 ### 11.2 Selection
 
-`RECOVERY_MODEL=USER_HELD_OFFLINE_SINGLE_USE_RECOVERY_SECRET_ISSUED_AT_ACCOUNT_CREATION__NO_OPERATOR_RECOVERY_PATH__NO_EXTERNAL_CHANNEL`
+`RECOVERY_MODEL=USER_HELD_OFFLINE_SINGLE_USE_RECOVERY_CREDENTIAL_ISSUED_AT_ACCOUNT_CREATION__SEPARATE_CEREMONY_FROM_ORDINARY_AUTHENTICATION__NO_OPERATOR_RECOVERY_PATH__NO_EXTERNAL_CHANNEL`
 
-**DESIGN CHOICE.** At account creation the user is issued a high-entropy recovery secret, displayed once, stored by the user outside the application (written down, or in a password manager). It is stored server-side only as a verifier, under the same rules as any other credential (§4.8). Using it authenticates a credential reset, is single-use, and forces issuance of a replacement.
+**DESIGN CHOICE.** At account creation the user is issued a high-entropy **recovery credential** — the term used consistently from here on, in place of revision 1's "recovery secret," to keep it visibly a credential subject to §4.8 and §16.4 rather than an incidental string. It is displayed once, stored by the user outside the application (written down, or in a password manager), and stored server-side only as a verifier. Using it authorizes a credential-reset ceremony — not an ordinary session (§4.8) — is single-use, and forces issuance of a replacement. Its full lifecycle is below, and holds under every `OWNER_DECISION_D4` outcome.
 
 Chosen because it is the only model that satisfies every requirement above without an external channel (§19) and without an operator (§9). Email and SMS reset are excluded on both grounds — they are external dependencies *and* they relocate the real key to a third-party account. Security questions are excluded outright. Operator-mediated reset is excluded because it recreates THREAT-022.
 
-The cost is real and must be stated to the user up front rather than discovered: **if both the credential and the recovery secret are lost, access is not recoverable by anyone, including the operator.** Gate 0A §2 lists Recoverability as an objective in explicit tension with confidentiality and provable deletion, and requires that tension be designed for rather than left implicit. This is that design: KIA Stick chooses confidentiality, discloses the consequence at account creation, and does not hold a hidden bypass.
+The cost is real and must be stated to the user up front rather than discovered: **if both the credential and the recovery credential are lost, account access is not recoverable by anyone, including the operator.** Gate 0A §2 lists Recoverability as an objective in explicit tension with confidentiality and provable deletion, and requires that tension be designed for rather than left implicit. This is that design: KIA Stick chooses confidentiality, discloses the consequence at account creation, and does not hold a hidden bypass. What that means for the *content* — as opposed to the account — is a Gate 0C question and is not asserted here (§11.4, §26.3).
+
+`RECOVERY_SECRET_LIFECYCLE_COMPLETE=yes`
+
+**Recovery credential lifecycle — complete, and binding under every D4 outcome.** Revision 1 established high entropy, verifier-only storage, single use and replacement-on-use, but left regeneration, concurrency and failure undefined: independent QA found that regenerating did not require invalidating the old unused secret, and that concurrent consumption and failed-replacement outcomes were unspecified. Those are the gaps that let two valid secrets exist at once. The full lifecycle:
+
+- **Entropy.** High entropy, generated by a cryptographically secure source, with strength sufficient that guessing is infeasible independent of the rate limits in §15. Never user-chosen, never derived from any credential, personal fact, or account identifier.
+- **Issuance.** Generated only through an explicitly authorized ceremony: account creation (§4.1), or a regeneration that itself required current strong authority (below). Never issued as a side effect of any other operation.
+- **Delivery confirmation.** Where the model uses user-held material, issuance is not complete until the user has confirmed receipt. An unconfirmed issuance leaves the previously valid credential in force rather than silently replacing it with one the user never captured.
+- **Storage.** Server-side as a verifier only, under §4.8's rules. Never stored, persisted, cached, printed, or logged as plaintext by any ordinary diagnostic, error path, telemetry, proof artifact, or notification (§16.4).
+- **Use is one-time.** A successful consumption permanently invalidates that credential. `EXACTLY_ONE_SUCCESSFUL_CONSUMPTION` — where two ceremonies race, at most one succeeds, and the other is denied as an invalid credential rather than both proceeding. Replay of a consumed credential fails closed and emits an audit event (§22 test 29).
+- **Use forces replacement.** Consumption mandates issuance of a replacement through the same confirmed-issuance rule. If replacement issuance fails or is not confirmed, the account is left in a defined state — the consumed credential remains invalid, no new credential is silently minted, and the outstanding replacement obligation is recorded and surfaced to the user — rather than in an ambiguous one.
+- **Use revokes sessions.** Completing a recovery increments the account epoch and revokes every existing session (§11.1, §12.4).
+- **Regeneration requires current strong authority.** Regenerating a recovery credential requires re-authentication (§4.6) with current ordinary authentication authority. It may **not** be driven by a weaker fallback path, and may not be driven by presenting the existing recovery credential alone. **Regeneration invalidates the previous credential immediately on confirmed issuance of its replacement** — this was the specific revision 1 gap.
+- **No silent accumulation.** At most one recovery credential is valid for an account at any time. `CONCURRENTLY_VALID_RECOVERY_CREDENTIALS=at_most_one`. Multiple forgotten copies of previously valid material must not remain acceptable; each issuance retires its predecessor.
+- **Compromise or theft has a defined response.** Suspected exposure is treated as a credential compromise (§18): immediate regeneration under re-authentication, revocation of all sessions, and an audit record. If the user cannot re-authenticate to regenerate, the correct outcome is the recovery-loss posture (§26.3), not an operator bypass.
+- **Auditable without recording the secret.** `RECOVERY_STARTED`, `RECOVERY_COMPLETED`, issuance, confirmation, regeneration, replay-rejection and replacement-failure are all recorded as content-free events (§16) that record *that* the state changed and never any fragment of the material itself.
+- **Rate-limited** at least as strictly as login (§11.1, §15).
 
 ### 11.3 Encryption dependency
 
@@ -533,11 +638,25 @@ The cost is real and must be stated to the user up front rather than discovered:
 
 Unresolved until Gate 0C, stated precisely: this section designs recovery of **access** (credential and session state). Whether recovering access also recovers **content** depends entirely on how key material relates to the user credential — a question this document does not touch. Three sub-questions handed to Gate 0C:
 
-1. If content keys derive from the user credential, does a credential reset orphan the content, and does the recovery secret therefore also need to protect key material?
-2. Can the recovery secret serve as an alternate key-unwrap path without becoming the master key the governing plan §5 forbids?
+1. If content keys derive from the user credential, does a credential reset orphan the content, and does the recovery credential therefore also need to protect key material?
+2. Can the recovery credential serve as an alternate key-unwrap path without becoming the master key the governing plan §5 forbids?
 3. Is "lost credential" designed to equal "content unrecoverable by design" — Gate 0A §11's lost-key question — and if so, is the user told at account creation?
 
-Gate 0B deliberately does not answer these. Answering them *is* encryption design. The auth-side constraint Gate 0C inherits is: whatever it chooses must not create an operator-usable decryption capability (§9), and must not require an external channel (§19).
+Gate 0B deliberately does not answer these. Answering them *is* encryption design. The auth-side constraint Gate 0C inherits is: whatever it chooses must not create an operator-usable decryption capability (§9), and must not require an external channel (§19). One conditionality is worth stating so Gate 0C is not handed a contradiction: the no-operator-unwrap constraint is written against the current preferred model, in which D2 (§26.2) is not decided as (b). If the owner ever chooses a break-glass path, that constraint must be re-derived rather than silently carried forward.
+
+### 11.4 Account recovery is not data recovery
+
+`AUTH_RECOVERY_DISTINCT_FROM_DATA_KEY_RECOVERY=yes`
+
+These are two different things and this document is responsible for only the first:
+
+- **AUTHENTICATION / ACCOUNT RECOVERY** — restoring the user's ability to authenticate and hold an authorized session. Designed here, in §11.
+- **PRIVATE-DATA / KEY RECOVERY** — whether the bytes of previously stored private content can still be decrypted and read. **Not** designed here, and not decidable here, because it depends on how key material relates to the credential — a Gate 0C question (§20).
+
+Two inferences are therefore forbidden anywhere in this design, and both appeared in revision 1:
+
+- Successful account recovery does **not** imply that encrypted private content can be decrypted.
+- Loss of account access does **not**, by itself, establish that private content is permanently lost. Until Gate 0C defines key and recovery semantics, that outcome is undetermined, and asserting either answer overstates what Gate 0B knows.
 
 ---
 
@@ -545,7 +664,11 @@ Gate 0B deliberately does not answer these. Answering them *is* encryption desig
 
 ### 12.1 Fixed requirement
 
-`REVOCATION_REQUIREMENT=DENY_ON_NEXT_PROTECTED_REQUEST` — fixed by Gate 0A, not by this document. Gate 0B selects a mechanism capable of satisfying it and does not restate, reinterpret, or soften it.
+`REVOCATION_REQUIREMENT=DENY_ON_NEXT_PROTECTED_REQUEST_AFTER_AUTHORITY_ACCEPTS_REVOCATION`
+
+The Gate 0A floor — `DENY_ON_NEXT_PROTECTED_REQUEST`, no stale-ALLOW tolerance window — is fixed by Gate 0A, not by this document, and is **not weakened here**. Gate 0B selects a mechanism capable of satisfying it and does not restate, reinterpret, or soften it. TTL-only models remain rejected (§5.2, §12.2).
+
+The trailing clause names a precondition that was always implicit and that revision 1 left unstated, which allowed §§11/13/18/22 to promise revocation in a scenario where it cannot be delivered. Once the authoritative session service has **accepted** a revocation, the very next protected request presenting that session is denied, with no window. What the requirement cannot do is bind an authority that never received the revocation: an authoritative service that is unreachable — because the device holding it was lost or stolen (§13.2) — cannot accept anything. That is an availability-of-authority limit, not a tolerance window, and it is stated honestly rather than papered over. `LOST_DEVICE_REMOTE_REVOCATION_ALWAYS_AVAILABLE=no` (§13.2).
 
 ### 12.2 Mechanism
 
@@ -567,9 +690,9 @@ Stated in this form deliberately: it is directly testable, it names the observab
 | Event | Effect |
 |---|---|
 | Logout | That session invalidated server-side; next protected request denied |
-| Individual device/session revoke | That session only; other sessions unaffected (§13) |
+| Individual device/session revoke | That session only; other sessions unaffected (§13.1), and available only where the authority is reachable (§13.2) |
 | Revoke all devices | Epoch incremented; every session denied on its next protected request |
-| Credential reset / change | Epoch incremented; all sessions revoked, including the one that made the change |
+| Credential reset / change | Epoch incremented; **all** sessions revoked, **including the session that made the change** (§4.8, the single governing rule); the initiating client re-authenticates and is not silently re-issued a session |
 | Recovery completion | Epoch incremented; all sessions revoked (§11.1) |
 | Account disable | Epoch incremented; all sessions revoked; subsequent authentication denied (§17) |
 | Account closure | Epoch incremented; all sessions revoked permanently (§17) |
@@ -578,6 +701,8 @@ Stated in this form deliberately: it is directly testable, it names the observab
 ---
 
 ## 13. Multi-device session model
+
+### 13.1 Concurrent sessions
 
 `MULTI_DEVICE_POLICY=MULTIPLE_CONCURRENT_SESSIONS_ALLOWED__EACH_INDIVIDUALLY_IDENTIFIED_AND_INDIVIDUALLY_REVOCABLE__CONTENT_FREE_SESSION_METADATA`
 
@@ -591,8 +716,31 @@ Requirements where concurrency is allowed:
 - **Session list:** the owner can enumerate their own active sessions.
 - **Revoke one:** any listed session can be revoked individually, denying its next protected request (§12).
 - **Revoke all:** available, epoch-based, and a required control after suspected compromise (§18) and after recovery (§11).
-- **Last-used metadata:** coarse and content-free — creation time, last-activity time, a coarse client descriptor. Enough for the owner to recognise a session they do not expect.
+- **Last-used metadata:** coarse and content-free — the session's `SESSION_AUDIT_ID` (§5.4, never its bearer credential), creation time, last-activity time, and a coarse client descriptor. Enough for the owner to recognise a session they do not expect. A session list that displayed the bearer credential would be a credential-disclosure surface; it displays the audit identifier instead, which cannot authenticate anything.
 - **No private content in session metadata.** REQUIREMENT (§1.3, §16). Session metadata is audit-class data (Gate 0A §3 AUDIT / SECURITY METADATA) and carries no document content, no case facts, no personal identifiers, and no private paths. Precise geolocation and any identifier-shaped value are excluded — a session list is a support surface, not a tracking surface.
+
+### 13.2 Lost or stolen device, and the reach of revocation
+
+`LOST_DEVICE_REMOTE_REVOCATION_ALWAYS_AVAILABLE=no`
+
+Revision 1 promised, across §§11/13/18/22, that a lost device's sessions could always be revoked without credential recovery. Independent QA found that promise invalid for the deployment this document actually prefers: if the only Node/session authority runs on one loopback laptop and that laptop is lost, no other device can reach the authority to revoke anything, and two browser profiles on the same lost machine are not an independent control channel. The two cases are now separated, and which one applies is a direct consequence of `OWNER_DECISION_D1` deployment reach (§26.1).
+
+**CASE A — the authoritative session service remains reachable** from a trusted device or path the user still controls (for example, the lost item is a browser client, a second machine, or a phone, while the authority runs elsewhere and is still reachable).
+
+- Individual-session revocation and revoke-all are both available and behave exactly as §12 specifies.
+- The §12.3 invariant applies in full: the next protected request from the lost device is denied.
+- This is the case the incident-response row in §18 assumes.
+
+**CASE B — a strictly local deployment in which the lost or stolen device contains the only authoritative auth/session service.**
+
+- **Application-level remote revocation is unavailable.** There is no independent reachable authority to accept a revocation, so there is nothing for the next-request invariant to act on. The design does not pretend otherwise, and no future document may cite §12 as evidence that this case is covered.
+- **Device and OS-level protection becomes a critical containment dependency** — full-disk encryption, a strong device credential, lock-screen policy, and whatever remote-wipe capability the *device platform* provides. These are outside the application boundary and outside this document's authority, but the design depends on them here and must say so.
+- **Private-data confidentiality may additionally depend on Gate 0C** encryption design and on at-rest protection of the device (§20). Whether the private content on that device is readable by whoever holds it is not an auth question and is not answered here.
+- **The user should treat the lost device as potentially compromised**, including any session that was live on it, rather than assuming a session expired safely.
+- **Any future migration or recovery to another authority must be separately designed**, and must not silently resurrect sessions: a restored or migrated authority may not reinstate session records that were live on the lost device.
+- The §12 invariant is not weakened. It applies from the moment the authoritative system accepts a revocation; it does not and cannot guarantee acceptance by an authority nobody can reach.
+
+**What this is not.** It is not a hidden requirement for a cloud service, a remote management channel, or a second always-on host. Introducing one would be a D1 decision with its own privacy and network consequences (§19, §26.1), not an implementation-time fix for this limitation. Stating the limitation honestly is the deliverable; choosing whether to pay for a remote control plane is the owner's.
 
 ---
 
@@ -644,6 +792,10 @@ No rate-limiting implementation, library, store, or configuration is added or au
 
 `PRIVATE_CONTENT_IN_AUTH_AUDIT_ALLOWED=no`
 
+`AUTH_SESSION_CREDENTIAL_LOGGING_ALLOWED=no`
+
+**Two absolute rules, not one.** The first keeps private *content* out of audit records. The second — added in this revision — keeps *authenticating material* out of them, and it is absolute in the same way: no actual session cookie, bearer credential, refresh credential, recovery credential, credential verifier, or any hash, truncation, or encoding of such material from which a request could be authenticated or a session replayed, may be placed in application logs, auth audit records, telemetry, diagnostic output, proof artifacts, or notifications. There is no diagnostic exception and no "only the first few characters." Where session events need correlating, the non-authenticating `SESSION_AUDIT_ID` (§5.4) exists for exactly that purpose. `SAFE_SESSION_AUDIT_IDENTIFIER_DEFINED=yes`.
+
 **REQUIREMENT**, from Gate 0A §15 (`PRIVATE_CONTENT_LOGGING_ALLOWED=no`, absolute, no diagnostic exception). Audit records are themselves data (Gate 0A §3 AUDIT / SECURITY METADATA) and must not become the channel that leaks what the rest of the architecture protects.
 
 The shape below deliberately reuses the append-only label/count/boolean/timestamp convention this repository already uses for its own proof and gate output (`docs/v0.6-future-implementation-gate-draft.md`, "Audit" gate type; governing plan §22), rather than inventing a new one.
@@ -658,14 +810,16 @@ The last two are defined but unreachable in the first architecture, since no adm
 
 - Event type, from the closed enumeration above.
 - Timestamp.
-- Opaque account identifier, opaque workspace identifier, opaque session identifier — references, never content, and never derived from a personal identifier.
+- Opaque account identifier, opaque workspace identifier, and `SESSION_AUDIT_ID` (§5.4) — references, never content, and never derived from a personal identifier.
+
+  **This is the F1 repair and it is the whole point of §5.4.** Revision 1 permitted an "opaque session identifier" here while using the same phrase in §5.4 for the bearer credential, so implementing this allowed-field list literally would have written a live credential into the audit log — violating Gate 0A §15 and THREAT-007. The permitted value is the **non-authenticating** `SESSION_AUDIT_ID`, and it is permitted *because* it cannot authenticate a request, cannot be replayed, and cannot be turned back into the bearer credential. The bearer credential is not permitted here in any form: not whole, not hashed, not truncated, not encoded, not "for one release." The same substitution applies wherever a session is referenced outside the authentication path — audit events, the §13.1 session list, rotation records, incident records, and every future test in §22.
 - Safe reason or error code from a closed enumeration (e.g. `NO_SESSION`, `SESSION_REVOKED`, `OWNER_MISMATCH`, `ACCOUNT_DISABLED`, `RATE_LIMITED`). Codes, not free text: free text is how private content reaches logs.
 - Correlation identifier, tying related events together without carrying content.
 - Coarse outcome (`ALLOWED` / `DENIED`) and counts.
 
 ### 16.4 Forbidden fields
 
-Passwords, passphrases, recovery secrets, credential verifiers, or any fragment of them; session tokens or any other credential; private document text; OCR output; private prompts or model output; medical, OWCP-like, personnel, employment, or financial facts; real document paths or filenames; case facts; personal identifiers; free-text diagnostic traces over private-data flows; and anything from which private content could be reconstructed.
+Passwords, passphrases, recovery credentials, credential verifiers, or any fragment of them; **session bearer credentials, session cookies, refresh credentials, and any value that authenticates a request or permits session replay, whether whole, hashed, truncated, or encoded** (§5.4, §16.1); any other credential; private document text; OCR output; private prompts or model output; medical, OWCP-like, personnel, employment, or financial facts; real document paths or filenames; case facts; personal identifiers; free-text diagnostic traces over private-data flows; and anything from which private content could be reconstructed.
 
 `ACCESS_DENIED` records *that* a denial happened and its coded reason — never the content the requester was trying to reach.
 
@@ -679,14 +833,67 @@ Bounded, longer than the underlying data where incident response requires it, bu
 
 Authorization consequences only. Private-data deletion mechanics are reserved for the retention/deletion gate and are deliberately not solved here.
 
+### 17.1 Account state machine
+
+`ACCOUNT_STATE_MACHINE_COHERENT=yes`
+
+`DISABLED_ACCOUNT_PROTECTED_ACCESS=deny`
+
+`REACTIVATION_CEREMONY_PRIVATE_DATA_ACCESS=deny`
+
+**This is a repair.** Revision 1 revoked every session and denied authentication on disable, then said a disabled account "may be re-enabled by the owner via re-authentication (§4.6)." Independent QA found that path unreachable: §4.6's elevated state is session-bound, disabling leaves no session and permits no new one, and there is no admin principal to act instead (§9.3). The state machine below is coherent — every state is reachable, and every transition names the authority that performs it.
+
+**States.**
+
+| State | Authentication | Ordinary protected private-data access | Sessions |
+|---|---|---|---|
+| `ACTIVE` | permitted | permitted, subject to §7 | ordinary sessions may exist |
+| `DISABLED` | ordinary authentication **denied** | **denied**, unconditionally | none; all revoked at transition |
+| `CLOSED` | permanently denied | permanently denied | none; all revoked permanently |
+
+**Invariants that hold regardless of any product choice below.**
+
+- `ACTIVE`: ordinary authentication and authorized protected requests may proceed.
+- `DISABLED`: ordinary protected access is denied; **all** ordinary active sessions are revoked at the moment of transition (epoch increment, §12.2); and the account **cannot use an ordinary authenticated session to bypass the disabled state** — there is none to use, and a session that predates the transition is denied on its next protected request.
+- `CLOSED` is **not** equivalent to `DISABLED`. It is terminal for authentication, and **no ordinary reactivation silently occurs** from it. Any reactivation-after-closure capability is a separate decision with its own design, because it would mean closure did not actually end access.
+- No transition into or out of any state is available to an operator: `OPERATOR_REACTIVATION_POWER=none` (§9.4).
+
+**Transitions.**
+
+| From → To | Performed by | Authority required |
+|---|---|---|
+| (none) → `ACTIVE` | owner | explicit local bootstrap (§4.1) |
+| `ACTIVE` → `DISABLED` | owner | re-authentication (§4.6) from an ordinary session |
+| `ACTIVE` → `CLOSED` | owner | re-authentication (§4.6) from an ordinary session |
+| `DISABLED` → `ACTIVE` | owner, **only** via the reactivation ceremony below, **and only if the product permits it at all** (§17.2) | the ceremony's own authority; never an ordinary session, never an operator |
+| `DISABLED` → `CLOSED` | owner, via the same ceremony's narrow authority | as above |
+| `CLOSED` → anything | **not designed, not authorized** | — |
+
+**The reactivation / recovery ceremony (`RECOVERY_OR_REACTIVATION_CEREMONY`), if §17.2 permits one.** A dedicated, limited path — not an ordinary login, and not an admin route:
+
+- Its authority permits **only** the minimum actions needed to restore identity and account status: prove the credential the ceremony requires, and transition `DISABLED` → `ACTIVE` (or → `CLOSED`).
+- `REACTIVATION_CEREMONY_PRIVATE_DATA_ACCESS=deny`. The ceremony **does not** grant private-data access, does not open an ordinary session, does not read, list, search, export or delete any private record, and does not disclose private content or safe-label metadata beyond the account status it is transitioning.
+- On success, the account returns to `ACTIVE` with **no sessions restored** — sessions revoked at disable stay revoked, permanently. A **fresh ordinary authentication** (§4.3, §4.4, with a new bearer credential) is required before any protected private-data request is served.
+- It is rate-limited at least as strictly as login and recovery (§15), audited content-free (§16), and surfaced to the owner.
+- It creates **no operator backdoor**. No operator, support function, or application admin principal can initiate, approve, or complete it (§9.4). If the ceremony cannot be completed by the user, the outcome is the recovery-loss posture (§26.3) — never an operator bypass.
+- Exactly which credential the ceremony demands follows `OWNER_DECISION_D4` (§26.4); the separation-of-ceremonies principle in §4.8 applies to it.
+
+### 17.2 Whether disabled accounts are self-reactivatable — an open product question
+
+**Surfaced rather than assumed.** Whether a `DISABLED` account may be reactivated by its own owner at all, or whether disable is terminal in this product exactly as closure is, is a **product decision, not an engineering invariant**. Both are coherent: terminal disable is simpler and strictly smaller in attack surface, while self-reactivation preserves a "pause my account" capability with a real user benefit. Revision 1 assumed self-reactivation without designing a path to it, which is how the unreachable transition arose.
+
+`DISABLED_SELF_REACTIVATION_POLICY=UNDECIDED`. Gate 0B does not choose. It fixes the invariants that hold either way — disable denies protected access and revokes all sessions; no operator may reactivate; any permitted reactivation runs through §17.1's limited ceremony and grants no private-data access; and a fresh ordinary authentication is required afterwards. The choice itself is recorded as an implementation blocker (§23) and is a dependency of `OWNER_DECISION_D4` (§26.4), since the ceremony's required credential depends on D4's outcome. If the owner does not decide it, the safe default at implementation time is **terminal disable** — the option that adds no ceremony — and not a silently implemented reactivation path.
+
+### 17.3 Stage-by-stage authorization consequences
+
 | Stage | Authorization consequence |
 |---|---|
 | Account creation | Creates exactly one workspace atomically (§4.1). No authenticated-but-workspace-less state, because that is an unknown-owner state and §1.3 requires DENY |
 | Workspace creation | Only as part of account creation in the first architecture (§3.3) |
-| Account disable | Epoch incremented; all sessions revoked; **every subsequent protected request denied**; subsequent authentication denied. Reversible by re-enable, which does not restore old sessions |
+| Account disable | Epoch incremented; all sessions revoked; **every subsequent protected request denied**; subsequent ordinary authentication denied. Reversible **only** through the §17.1 reactivation ceremony and **only** if §17.2 is decided to permit it; reactivation never restores old sessions and never grants private-data access by itself |
 | Account closure | Epoch incremented; all sessions revoked permanently; authentication permanently denied; `ACCOUNT_CLOSED` recorded. Authorization ends at closure regardless of what the deletion pipeline has or has not finished |
 | Workspace no longer authorized | Next protected request denied (§12.3). No grace period, no in-flight exception |
-| Reactivation | Not designed for a closed account. A disabled account may be re-enabled by the owner via re-authentication (§4.6); a closed account is terminal in this design. Any reactivation-after-closure capability is a separate decision, because it would mean closure did not actually end access |
+| Reactivation | Not designed for a closed account: `CLOSED` is terminal, and any reactivation-after-closure capability is a separate decision, because it would mean closure did not actually end access. For a **disabled** account, reactivation is governed entirely by §17.1 and §17.2 — a dedicated limited ceremony, no operator authority, no private-data access, no restored sessions, and a fresh ordinary authentication required before protected access resumes |
 
 **Data-deletion dependency, stated separately and not solved here:** what happens to the private *content* of a closed account — across primary, derived, cache, index, export, and backup stores — is the retention/deletion gate's problem (Gate 0A §14, §17; governing plan §17, §18, §20, §21). Gate 0B asserts only the access consequence: **closure ends authorization immediately and unconditionally, and does not wait on deletion to complete.** The converse is also asserted: deletion progress is never a reason to keep authorization alive.
 
@@ -700,11 +907,13 @@ Expected auth-side reactions. No monitoring infrastructure is designed, built, o
 |---|---|
 | Suspected account compromise | Revoke all sessions (epoch increment); require re-authentication; require credential change; audit; notify the owner |
 | Stolen session | Revoke that session individually, or all if uncertain; audit; the next protected request is denied (§12.3) |
-| Credential leak | Force credential change; revoke all sessions; re-issue the recovery secret; audit |
-| Operator misuse | Not reachable in the first architecture (no admin principal, §9.3). If D2 ever authorizes break-glass: immediate revocation of the break-glass session, audit, owner notification, and a review that the path itself survives |
+| Credential leak | Force credential change; revoke all sessions (including the initiating one, §4.8); regenerate the recovery credential under re-authentication, retiring the previous one on confirmed issuance (§11.2); audit |
+| Operator misuse — application level | No application principal exists to misuse: no admin role, route, or session, and no operator account-recovery, credential-reset, or reactivation power (§9.3, §9.4). If D2 ever authorizes break-glass: immediate revocation of the break-glass session, audit, owner notification, and a review that the path itself survives |
+| Operator misuse — OS / filesystem level | **Reachable, and retained in full.** Revision 1 called operator misuse unreachable; that was wrong, and independent QA was right to reject it. Gate 0A THREAT-022 explicitly includes direct filesystem and database access, and §9.1 acknowledges the operator holds the host. No application-level control mitigates it, and no no-admin-route test can cover it. Auth-side reaction is limited to what auth can actually do — audit what the application observes, revoke sessions, require credential change — and the substantive answer is Gate 0C at-rest key design (§20) plus device/OS controls (§13.2), not this section |
 | Repeated `ACCESS_DENIED` anomalies | Rate-limit (§15); record counts and coded reasons; treat sustained cross-workspace denial patterns as a THREAT-001/THREAT-004 signal warranting investigation |
 | Recovery abuse | Rate-limit and progressively delay (§11.1, §15); audit `RECOVERY_STARTED` without completion; notify the owner |
-| Lost device | Revoke that device's sessions individually (§13) — no credential recovery required; offer revoke-all; audit |
+| Lost device — authority still reachable (CASE A, §13.2) | Revoke that device's sessions individually (§13.1) — no credential recovery required; offer revoke-all; audit; the next protected request from that device is denied (§12.3) |
+| Lost device — the lost device holds the sole authority (CASE B, §13.2) | **Application-level remote revocation is unavailable**, and this row does not pretend otherwise. Containment falls to device/OS protection and, for content confidentiality, to Gate 0C at-rest design. Treat the device and any session live on it as potentially compromised; any later migration to a new authority must not resurrect sessions |
 
 Every reaction above is expressible with the controls this document already defines — revoke, deny, audit, notify, require re-authentication — which is the point: incident response should not require capabilities the architecture lacks. All notifications are in-application in the local-first deployment; no out-of-band channel is introduced (§19).
 
@@ -742,10 +951,10 @@ Gate 0B identifies where auth decisions constrain Gate 0C. It does **not** desig
 | Account identity is first-party and local (§2.3) | No external key custodian follows from identity; key custody is Gate 0C's to decide within governing plan §5 | Where key material lives and what protects that store |
 | Workspace is the isolation unit, 1:1 with account (§3.3) | Key scoping must be at least workspace-granular to avoid reintroducing cross-workspace reach the authorization layer forbids | Whether per-workspace keys are used, and their structure |
 | No admin principal; operator content access disfavoured (§9) | Gate 0C must not create an operator-usable decryption capability that §9 forbids at the auth layer | Whether the operator can technically decrypt (Model A) — the decisive question |
-| Recovery is a user-held offline secret, no operator path (§11) | Any key-recovery path must be drivable by the user alone, and must not become the master key governing plan §5 forbids | Whether the recovery secret participates in key unwrap at all |
+| Recovery is a user-held offline credential, no operator path (§11) | Any key-recovery path must be drivable by the user alone, and must not become the master key governing plan §5 forbids. Account recovery does **not** imply key/data recovery (§11.4) | Whether the recovery credential participates in key unwrap at all; what happens to content when account access is unrecoverable (D3, §26.3) |
 | Credential reset revokes all sessions (§12) | Session revocation must not silently orphan content; the relationship between credential change and key material needs an answer | Whether credential change implies key re-wrap |
 | Account closure ends authorization immediately (§17) | Closure must not depend on key destruction, and key destruction must not be assumed to substitute for authorization | Whether cryptographic erasure is used for deletion (Gate 0A §14) |
-| Multiple concurrent sessions per account (§13) | Key availability cannot be bound to a single session or device instance | How key material is made available across concurrent sessions |
+| Multiple concurrent sessions per account (§13.1) | Key availability cannot be bound to a single session or device instance | How key material is made available across concurrent sessions |
 | No external dependency (§19) | Key custody cannot depend on a remote KMS without contradicting this invariant | Whether local key custody is sufficient, and what protects it |
 
 `DEPENDENCY_ON_ENCRYPTION_GATE=yes`. The right-hand column is the complete set of what Gate 0B leaves open for Gate 0C. None of it is answered here.
@@ -763,16 +972,16 @@ Auth design mapped to Gate 0A threats. **No threat is declared solved** — a de
 - FUTURE_TEST: workspace B cannot read, list, search, export, or delete workspace A's record, against synthetic fixtures (§22).
 
 **THREAT-002 — broken authorization / missing server-side check**
-- AUTH_CONTROL: deny-by-default; server-authoritative decisions; two-level enforcement at a single access layer so a new route is unreachable rather than unprotected.
-- DESIGN_SECTION: §1.3, §7.1, §7.2, §7.4.
-- UNRESOLVED_DEPENDENCY: the actual route surface does not exist yet, so the route audit is future work.
-- FUTURE_TEST: unauthenticated access denial on every private route; client-only bypass test; route inventory asserting no private route bypasses the access layer.
+- AUTH_CONTROL: deny-by-default; server-authoritative decisions; two-level enforcement at a single access layer so a new route is unreachable rather than unprotected; the §7.2 bypass invariant binding routes, ID-addressed reads, list/search, export, delete, derived artifacts, background jobs and service identities alike; service principals carrying explicit workspace-bound, revocable, expiring grants (§3.2) rather than being exempt for lacking a session; authority-metadata reads distinguished from protected-payload access.
+- DESIGN_SECTION: §1.3, §3.2, §7.1, §7.2, §7.4, §8.3.
+- UNRESOLVED_DEPENDENCY: the actual route surface does not exist yet, so the route audit is future work; storage design is a later gate.
+- FUTURE_TEST: unauthenticated access denial on every private route; client-only bypass test; route inventory asserting no private route bypasses the access layer; background-job authorization test asserting a job with no valid workspace-bound grant is denied and cannot cross workspace scope (§22 tests 24, 25).
 
 **THREAT-003 — session theft / fixation**
-- AUTH_CONTROL: opaque high-entropy identifiers; mandatory regeneration on authentication and privilege elevation; `HttpOnly`/`Secure`/`SameSite`; TLS; idle and absolute lifetimes; individually revocable sessions.
-- DESIGN_SECTION: §4.4, §5.4, §5.5, §6.1, §6.3, §13.
-- UNRESOLVED_DEPENDENCY: TLS termination in a local-first deployment is an operational question (D1); device-level compromise is partly outside application control.
-- FUTURE_TEST: session-fixation test (pre-auth identifier is not valid post-auth); logout invalidation; stolen-session revocation.
+- AUTH_CONTROL: opaque high-entropy bearer credentials that are never logged (§16.1) and are distinct from the non-authenticating `SESSION_AUDIT_ID`; mandatory regeneration on authentication and privilege elevation; `HttpOnly`/`Secure`/restrictive `SameSite`; TLS with refusal to serve the private surface if transport security is unmet; idle and absolute lifetimes; individually revocable sessions.
+- DESIGN_SECTION: §4.4, §5.4, §5.5, §6.1, §6.2, §6.3, §13.1, §16.1.
+- UNRESOLVED_DEPENDENCY: the local-origin TLS trust arrangement and whether it yields `Secure`-cookie-eligible behaviour in the owner's browsers is an unvalidated compatibility question (§6.1, D1); device-level compromise is partly outside application control; `HttpOnly` does not stop XSS using the authenticated browser to exfiltrate content through authorized requests; the credential/factor policy itself is undecided (D4).
+- FUTURE_TEST: session-fixation test (pre-auth identifier is not valid post-auth, including after privilege elevation); logout invalidation; stolen-session revocation; audit-identifier non-authentication and non-replay (§22 test 28); local-origin TLS/`Secure`-cookie qualification (§22 test 30).
 
 **THREAT-004 — IDOR**
 - AUTH_CONTROL: object-level ownership check on every ID-addressed private resource, independent of the route-level check; identifiers never treated as capabilities.
@@ -781,28 +990,28 @@ Auth design mapped to Gate 0A threats. **No threat is declared solved** — a de
 - FUTURE_TEST: IDOR sweep across the private record ID space using a second synthetic workspace's identifiers.
 
 **THREAT-007 — secrets**
-- AUTH_CONTROL: no secret in Git, proof, logs, or notifications; credential verifiers only, never recoverable credentials; forbidden-field list in the audit schema; no signing key introduced, because the opaque-session choice avoids needing one.
-- DESIGN_SECTION: §1.3, §4.8, §5.3, §16.4.
-- UNRESOLVED_DEPENDENCY: secret storage for any future service credential is Gate 0C / storage-gate territory; `scripts/privacy-scan.mjs` has not been validated against future secret shapes (Gate 0A THREAT-007 `CURRENT_STATE`).
-- FUTURE_TEST: secret-scanning extended to auth secret shapes; audit-log leakage test; assertion that no credential material appears in any error path.
+- AUTH_CONTROL: no secret in Git, proof, logs, telemetry, diagnostics, or notifications; `AUTH_SESSION_CREDENTIAL_LOGGING_ALLOWED=no` as an absolute rule (§16.1) with the audit schema referencing only the non-authenticating `SESSION_AUDIT_ID` (§5.4, §16.3); credential verifiers only, never recoverable credentials; recovery material never persisted or logged in plaintext (§11.2); forbidden-field list covering bearer, refresh and recovery material whole, hashed, truncated or encoded (§16.4); no signing key introduced, because the opaque-session choice avoids needing one.
+- DESIGN_SECTION: §1.3, §4.8, §5.3, §5.4, §11.2, §16.1, §16.3, §16.4.
+- UNRESOLVED_DEPENDENCY: secret storage for any future service credential is Gate 0C / storage-gate territory; `scripts/privacy-scan.mjs` has not been validated against future secret shapes and is not claimed sufficient for them (Gate 0A THREAT-007 `CURRENT_STATE`).
+- FUTURE_TEST: secret-scanning extended to auth secret shapes; audit-log leakage test under normal, error and crash conditions; assertion that no credential material appears in any error path; assertion that `SESSION_AUDIT_ID` cannot authenticate or be converted to the bearer credential (§22 test 28).
 
 **THREAT-020 — stale authorization**
-- AUTH_CONTROL: authoritative server-side session state plus account authorization epoch; immediate invalidation; TTL-only models explicitly rejected; no cached ALLOW is authoritative.
-- DESIGN_SECTION: §5.2, §5.3, §12.
-- UNRESOLVED_DEPENDENCY: none at the design level — this is the requirement the session model was selected to satisfy. Proof is implementation-time.
-- FUTURE_TEST: the §12.3 invariant — after accepted revocation, the next protected request is denied — exercised for logout, revoke-one, revoke-all, credential reset, recovery, and disable.
+- AUTH_CONTROL: authoritative server-side session state plus account authorization epoch; immediate invalidation; TTL-only models explicitly rejected; no cached ALLOW is authoritative; one governing credential-change revocation rule covering the initiating session (§4.8, F7).
+- DESIGN_SECTION: §5.2, §5.3, §12, §13.2.
+- UNRESOLVED_DEPENDENCY: the invariant binds from the moment the authority **accepts** a revocation; where the sole authority is unreachable (CASE B, §13.2) there is no acceptance to act on. That is an availability-of-authority limit tied to D1, not a tolerance window, and it does not weaken the requirement. Proof is otherwise implementation-time.
+- FUTURE_TEST: the §12.3 invariant — after accepted revocation, the next protected request is denied — exercised for logout, revoke-one, revoke-all, credential reset (including the initiating session), recovery, disable, and closure; plus the CASE A/CASE B qualification tests (§22 tests 22, 23).
 
 **THREAT-021 — privilege escalation**
-- AUTH_CONTROL: single human role; no admin principal to escalate to; fail-closed on ambiguous role or owner state; service principals narrowly scoped with no interactive authentication path.
-- DESIGN_SECTION: §3.2, §8.2, §8.3, §1.3.
-- UNRESOLVED_DEPENDENCY: if D1 or a later sharing gate introduces a second role, this analysis must be redone — a minimal role model is a control only while it stays minimal.
-- FUTURE_TEST: role-escalation attempts; assertion that no request can acquire authority over a workspace it does not own.
+- AUTH_CONTROL: single human role; no admin principal to escalate to; no operator account-recovery, credential-reset or reactivation power (§9.4); fail-closed on ambiguous role or owner state; service principals narrowly scoped **and workspace-bound**, with explicit, revocable, expiring grants and no interactive authentication path (§3.2, §8.3); the §17.1 reactivation ceremony bounded to status transition only, with no private-data authority.
+- DESIGN_SECTION: §1.3, §3.2, §8.2, §8.3, §9.4, §17.1.
+- UNRESOLVED_DEPENDENCY: if D1 or a later sharing gate introduces a second role, this analysis must be redone — a minimal role model is a control only while it stays minimal; grant issuance and invalidation mechanics are implementation-gate work.
+- FUTURE_TEST: role-escalation attempts; assertion that no request can acquire authority over a workspace it does not own; service-identity grant scope and invalidation tests (§22 test 25); assertion that the reactivation ceremony cannot reach private data (§22 test 33).
 
 **THREAT-022 — operator / admin overreach**
-- AUTH_CONTROL: no admin principal, role, route, or session; Model A preferred; break-glass not created; content-free support surface; any future break-glass self-audits or is a FAIL.
-- DESIGN_SECTION: §9 (all), §16.2.
-- UNRESOLVED_DEPENDENCY: **substantial.** Whether the operator can technically decrypt is Gate 0C's (`DEPENDENCY_ON_ENCRYPTION_GATE=yes`); whether any break-glass path exists is D2. On a single-user laptop the operator is the owner and holds the device, which no application control changes (§9.1).
-- FUTURE_TEST: assertion that no admin route or principal exists; break-glass audit test if one is ever authorized; audit-completeness test that operator-adjacent actions cannot be performed without a corresponding event.
+- AUTH_CONTROL: no admin principal, role, route, or session; `OPERATOR_ACCOUNT_RECOVERY_POWER=none`, `OPERATOR_CREDENTIAL_RESET_POWER=none`, `OPERATOR_REACTIVATION_POWER=none` (§9.4); support strictly content-free and unprivileged, with owner actions no longer misfiled as support powers; application authority explicitly separated from OS/root authority; Model A preferred; break-glass not created; any future break-glass self-audits or is a FAIL.
+- DESIGN_SECTION: §9.1, §9.3, §9.4, §9.5, §16.2, §17.1, §18.
+- UNRESOLVED_DEPENDENCY: **substantial, and larger than revision 1 admitted.** Whether the operator can technically decrypt is Gate 0C's (`DEPENDENCY_ON_ENCRYPTION_GATE=yes`); whether any break-glass path exists is D2. OS/filesystem-level operator misuse is **reachable and unmitigated by application controls** (§18), Gate 0A THREAT-022 explicitly includes direct filesystem/database access, and no no-admin-route test covers it. On a single-user laptop the operator is the owner and holds the device (§9.1).
+- FUTURE_TEST: assertion that no admin route or principal exists; assertion that no operator path can reset a credential, complete a recovery, or reactivate a disabled account (§22 test 32); break-glass audit test if one is ever authorized; audit-completeness test that operator-adjacent actions cannot be performed without a corresponding event. Explicitly **not** claimed: any application test that bounds OS-level access.
 
 **THREAT-023 — export cross-workspace leakage**
 - AUTH_CONTROL: export paths workspace-scoped at the query; derived artifacts inherit workspace ownership; exports subject to the same object-level checks as reads.
@@ -811,12 +1020,12 @@ Auth design mapped to Gate 0A threats. **No threat is declared solved** — a de
 - FUTURE_TEST: export from workspace A contains no workspace B record, against synthetic fixtures.
 
 **THREAT-024 — device loss**
-- AUTH_CONTROL: no credential in script-readable browser storage; idle and absolute session lifetimes; individually revocable sessions; revoke-all; recovery independent of the lost device; MFA required before any network-exposed deployment.
-- DESIGN_SECTION: §5.5, §6.2, §11.1, §13, §10.2.
-- UNRESOLVED_DEPENDENCY: whether any private content is ever cached client-side is a storage-gate decision; device-level encryption is outside application control; Gate 0A rates this residual risk Medium for exactly that reason.
-- FUTURE_TEST: lost-device revocation; shared-device/browser behaviour; assertion that no credential persists in browser storage.
+- AUTH_CONTROL: no credential in script-readable browser storage (`HttpOnly` cookie transport excepted and required, §6.2); idle and absolute session lifetimes; individually revocable sessions; revoke-all; recovery independent of the lost device **where the authority is reachable**; MFA required before any network-exposed deployment, with a testable qualification boundary (§10.2).
+- DESIGN_SECTION: §5.5, §6.2, §10.2, §11.1, §13.1, §13.2.
+- UNRESOLVED_DEPENDENCY: **CASE B (§13.2) is a real unmitigated gap at the application layer** — where the lost device holds the sole authority, remote revocation is unavailable, and containment depends on device/OS protection plus Gate 0C at-rest design. Which case applies is determined by D1. Whether any private content is ever cached client-side is a storage-gate decision; device-level encryption is outside application control; Gate 0A rates this residual risk Medium for exactly that reason.
+- FUTURE_TEST: CASE A lost-device revocation qualification; CASE B behaviour asserting the design claims no application-level remote revocation and that a later migrated authority does not resurrect sessions (§22 tests 22, 23); shared-device/browser behaviour; assertion that no credential persists in script-readable browser storage.
 
-`THREAT_TRACEABILITY_COMPLETE=yes` — in the sense that every threat named by the mission is traced with an unresolved-dependency column and a future test. Not in the sense that any of them is closed.
+`THREAT_TRACEABILITY_COMPLETE=yes`; `THREATS_DECLARED_SOLVED_BY_DESIGN=none`. Complete in the sense that every threat traced here carries AUTH_CONTROL / DESIGN_SECTION / UNRESOLVED_DEPENDENCY / FUTURE_TEST, and that the rows affected by this revision's repairs — THREAT-002, THREAT-003, THREAT-007, THREAT-020, THREAT-021, THREAT-022, THREAT-024 — have been updated to match the repaired design rather than the design that failed review. Not complete in the sense that any threat is closed: none is, no control is implemented, and THREAT-007, THREAT-022 and THREAT-024 in particular carry unresolved dependencies this document cannot discharge.
 
 ---
 
@@ -828,14 +1037,14 @@ Tests a future implementation would have to pass. **None is performed now.** All
 2. **Cross-user access** — synthetic workspace B cannot read, list, search, export, or delete workspace A's records (THREAT-001; governing plan §29).
 3. **IDOR** — direct object addressing with another workspace's identifiers is denied on every ID-addressed private path (THREAT-004).
 4. **Client-only bypass** — every UI-hidden private action is denied server-side when the UI is bypassed (§7.4).
-5. **Session fixation** — a pre-authentication identifier is invalid after authentication (THREAT-003).
+5. **Session fixation and elevation rotation** — a pre-authentication bearer credential is invalid after authentication, **and** the bearer credential issued before a privilege elevation (§4.6) is invalid after it. Revision 1's test asserted only the pre/post-login half.
 6. **Session theft assumptions** — a captured identifier stops working after revocation, idle timeout, and absolute expiry.
 7. **Logout invalidation** — the next protected request after logout is denied server-side, not merely client-cleared.
-8. **Next-request revocation** — the §12.3 invariant, for logout, revoke-one, revoke-all, credential reset, recovery, disable, and closure (THREAT-020).
+8. **Next-request revocation** — the §12.3 invariant, for logout, revoke-one, revoke-all, credential reset, recovery, disable, and closure (THREAT-020). For credential reset the assertion explicitly includes **the session that initiated the reset** (§4.8), and that no replacement session is silently issued to it.
 9. **Individual-session revoke** — revoking one session leaves others working.
 10. **All-session revoke** — epoch increment denies every session on its next protected request.
-11. **Disabled-account denial** — a disabled account's protected requests and authentication attempts are both denied.
-12. **Recovery abuse** — recovery is rate-limited, progressively delayed, single-use, and revokes all sessions on completion.
+11. **Disabled-account denial and state machine** — a disabled account's protected requests and ordinary authentication attempts are both denied; every session held at the moment of disable is denied on its next protected request; no pre-disable session can be used to perform any account action; and `CLOSED` neither behaves as `DISABLED` nor reactivates (§17.1).
+12. **Recovery abuse and lifecycle** — recovery is rate-limited, progressively delayed, single-use, and revokes all sessions on completion; at most one recovery credential is valid at a time; regeneration requires re-authentication and invalidates the previous credential on confirmed issuance of its replacement; a failed or unconfirmed replacement leaves a defined state rather than an ambiguous one; two concurrent consumption attempts yield exactly one success (§11.2).
 13. **Credential stuffing / rate limit** — progressive delay engages; no permanent lockout; limiter-unavailable fails closed.
 14. **CSRF** — every private state-changing endpoint rejects a forged cross-site request, with the check not relying solely on cookie presence.
 15. **Cross-origin requests** — private APIs deny cross-origin access; no permissive reflection, no wildcard, no credentialed cross-origin.
@@ -843,12 +1052,25 @@ Tests a future implementation would have to pass. **None is performed now.** All
 17. **Admin/operator access** — assert no admin principal, role, route, or session exists (THREAT-022).
 18. **Break-glass audit** — if and only if D2 ever authorizes one: it cannot be used without emitting start and end events, and the events cannot be suppressed by the principal using it.
 19. **Auth audit log leakage** — no audit event contains any §16.4 forbidden field, under normal, error, and crash conditions, with no diagnostic path reintroducing it (Gate 0A §15).
-20. **Secret leakage** — no credential, verifier, recovery secret, or session identifier appears in Git, proof output, logs, notifications, error messages, or stack traces (THREAT-007).
-21. **Shared-device / browser behaviour** — a second browser profile or private window on the same machine gets no access; no credential persists in browser storage (§6.2).
-22. **Lost device** — that device's sessions are revocable individually without credential recovery (THREAT-024).
-23. **Account closure** — authorization ends immediately and does not wait on deletion; closure is terminal for authentication (§17).
+20. **Secret leakage** — no credential, verifier, recovery credential, or **session bearer credential** appears in Git, proof output, logs, telemetry, diagnostics, notifications, error messages, or stack traces, whole, hashed, truncated, or encoded (THREAT-007, §16.1, §16.4). The non-authenticating `SESSION_AUDIT_ID` is permitted in audit output and is asserted separately by test 28; revision 1's wording banned "any session identifier," which conflicted with the correlation field §16.3 requires.
+21. **Shared-device / browser behaviour** — a second browser profile or private window on the same machine gets no access; no credential persists in **script-readable** browser storage (`localStorage`, `sessionStorage`, IndexedDB). The required `HttpOnly` session cookie is expected and is asserted against §6.1 instead (§6.2).
+22. **Lost device, CASE A (authority reachable)** — with the authoritative session service still reachable from a trusted remaining device or path, that device's sessions are revocable individually without credential recovery, and its next protected request is denied (THREAT-024, §13.2).
+23. **Lost device, CASE B (sole authority lost)** — in a strictly local deployment whose lost device held the only authoritative auth/session service, assert that the design claims **no** application-level remote revocation, that no test or document implies otherwise, and that a later migrated or restored authority does not resurrect sessions that were live on the lost device. Run against synthetic fixtures only; **no remote channel may be introduced to make this test pass** (§13.2).
+24. **Private-route bypass inventory** — enumerate every private-data-reaching path (routes, ID-addressed reads, list, search, export, delete, derived-artifact creation and reads) and assert each passes the authoritative authorization decision point; assert a path constructed to skip it cannot reach private data (§7.2).
+25. **Background job and service-identity authorization** — a background, scheduled, retention, deletion-propagation or index-maintenance job with no valid workspace-bound grant is denied; a job whose grant names workspace A cannot read, list, modify, or emit workspace B's records; a revoked or expired grant is denied on its next use (§3.2, §7.2, §8.3).
+26. **Deployment qualification (D1)** — assert the running deployment matches the class D1 authorized: interface binding, absence of any network-reachable private endpoint including via proxy or forwarding, account count, and multi-user mode disabled (§10.2, §26.1).
+27. **MFA-deferral qualification and transition** — while every §10.2 condition holds, deferral is permitted; when any condition fails — non-loopback binding, LAN or forwarded exposure, a second account, or a break-glass principal — the private surface is **refused** rather than served without a second factor (§10.2).
+28. **Audit identifier cannot authenticate** — a request presenting `SESSION_AUDIT_ID` in place of the bearer credential is denied exactly as an unauthenticated request is; the audit identifier cannot be replayed to resume or impersonate a session; and the bearer credential is not derivable from it in either direction (§5.4, §16.3).
+29. **Used recovery credential replay** — presenting a consumed recovery credential fails closed, does not re-open the ceremony, and emits a content-free audit event (§11.2).
+30. **Local-origin transport qualification** — on the selected local trust arrangement, assert the private surface is TLS-terminated with `Secure`, `HttpOnly`, restrictive-`SameSite`, narrowly scoped cookies in the browsers the owner uses, and that the private surface **refuses to serve** when the transport requirement is unmet (§6.1).
+31. **Credential and fallback policy (D4)** — once D4 is decided, assert that the implemented factors match the decided policy exactly; that re-authentication demands the decided proof; and that, unless D4 explicitly chose otherwise, recovery material cannot be used as an ordinary login credential (§4.8, §26.4).
+32. **No operator identity authority** — assert no application path allows an operator or support function to reset a credential, initiate/approve/complete a recovery, reactivate a disabled account, create or revoke a session, or change account state (§9.4). This test does **not** claim to bound OS-level access (§18).
+33. **Reactivation ceremony containment** — if §17.2 permits reactivation: the ceremony cannot read, list, search, export, or delete any private record, does not open an ordinary session, restores no prior session, and a fresh ordinary authentication is required before any protected private-data request succeeds (§17.1).
+34. **Account recovery is not data recovery** — assert that no test, document, or implementation claims that recovering account access implies decryptability of previously stored private content, and that the relationship is deferred to Gate 0C (§11.4, §20).
 
-No destructive testing, no real-data testing, and no production testing is authorized by this list.
+`FUTURE_AUTH_VALIDATION_PLAN_COMPLETE=yes` — in the sense that every area repaired in this revision now has a named future test with an expected outcome. Not in the sense that any test exists: none of these is implemented, and none may be implemented before the implementation gate is separately authorized.
+
+No destructive testing, no real-data testing, and no production testing is authorized by this list. All tests use fake/synthetic identities, workspaces, and fixtures. No real accounts, no real member data, and no real documents.
 
 ---
 
@@ -874,7 +1096,11 @@ Until every required item is resolved and separately accepted, implementation re
 - [ ] Private-data implementation separately authorized.
 - [ ] `OWNER_DECISION_D1` resolved (§26.1) — deployment reach.
 - [ ] `OWNER_DECISION_D2` resolved (§26.2) — break-glass existence.
-- [ ] `OWNER_DECISION_D3` resolved (§26.3) — recovery loss posture.
+- [ ] `OWNER_DECISION_D3` resolved (§26.3) — recovery-loss product posture.
+- [ ] `OWNER_DECISION_D4` resolved (§26.4) — primary credential / recovery credential / fallback policy.
+- [ ] `DISABLED_SELF_REACTIVATION_POLICY` decided (§17.2) — or terminal disable implemented as the safe default.
+- [ ] Local-origin TLS / `Secure`-cookie compatibility demonstrated for the selected deployment (§6.1, §22 test 30).
+- [ ] Deployment qualification and MFA-deferral qualification tests defined and passing (§10.2, §22 tests 26-27).
 
 Gate 0A §17's thirteen private-data blockers remain open in full and are not superseded, restated, or partially closed by this document. Gate 0B is one item on that list.
 
@@ -902,8 +1128,8 @@ The next action is **not automatic** and does not follow from this document exis
 
 Possible next steps, in the order they would occur:
 
-1. Independent QA of the exact Gate 0B design commit and its sealed proof.
-2. Operator review, including the three owner decisions in §26.
+1. Independent QA of the exact Gate 0B design revision commit and its sealed proof, explicitly re-testing F1-F6, the F7 clarification, D1-D4 completeness, the recovery lifecycle, lost-device authority availability, the MFA qualification boundary, the browser/TLS boundary, the authorization bypass model, threat traceability, the future-validation plan, and whole-document consistency.
+2. Operator review, including the four owner decisions in the §26 register (D1-D4) and the §17.2 disabled-reactivation product question.
 3. Gate 0B terminal closeout.
 4. Only after that, a separate owner decision about whether to authorize Gate 0C encryption design — or neither.
 
@@ -913,55 +1139,105 @@ This document does **not** author the encryption-design document, does not start
 
 ---
 
-## 26. Unresolved owner decisions
+## 26. Owner decision register
 
 `OWNER_DECISION_REQUIRED=yes`
 
-Three decisions. Each is bounded, each has a recommendation, and none blocks review of the rest of this design. They are surfaced rather than guessed because guessing any of them would produce false certainty about a security posture.
+`OWNER_DECISION_COUNT=4`
+
+`OWNER_DECISIONS_ACCEPTED=0`
+
+Four decisions. Each is bounded, each has a recommendation, and none blocks review of the rest of this design. They are surfaced rather than guessed because guessing any of them would produce false certainty about a security posture.
+
+**On acceptance.** `OWNER_DECISIONS_ACCEPTED=0`. None of these is accepted, and a RECOMMENDATION below is this document's reasoning, never a record of the owner's answer. No later document may cite a recommendation here as an acceptance. Revision 1 carried three decisions; independent QA established that the credential/fallback policy was a fourth, hidden inside §4.8's "preferred credential type (revisitable at implementation-plan time)" framing. It is now D4.
 
 ### 26.1 D1 — deployment reach
 
-DECISION= Is the first private-data deployment permanently single-user and single-device, or is network exposure / a second user an intended future state?
+DECISION_ID= `D1`
+
+QUESTION= Is the first private-data deployment permanently single-user and single-device, or is network exposure / a second user an intended future state?
+
+WHY_OWNER_DECISION= This is a product-scope decision, not a technical one. The repository contains genuine evidence for both readings (§2.1) and no evidence that settles the owner's intent. It changes MFA policy, TLS operational requirements, identity verification, the operator model, and — as this revision establishes — whether lost-device revocation is available at all (§13.2). A wrong assumption here is the kind that gets discovered after private data already exists.
 
 OPTIONS=
 (a) Permanently local, single-user, single-device, loopback-only.
 (b) Local first, with network exposure or a second user as an accepted future intent.
 (c) Multi-user from the start.
 
-TRADEOFFS= (a) permits the deferrals this document takes — MFA deferral (§10), in-application-only notification (§18), simplest operator posture (§9) — and matches every deployment fact in the repo. (b) keeps those deferrals for now but makes each one conditional and requires the conditions to be honoured later; it is what §2.3's architecture is actually built for. (c) makes MFA, identity verification, TLS termination, and a real operator model immediately mandatory, and makes Gate 0C substantially harder. The repo's deployment evidence points at (a) while its data-model evidence (governing plan §1, §29) points at (b).
+SECURITY_TRADEOFFS= (a) permits the deferrals this document takes — MFA deferral (§10.2), in-application-only notification (§18), simplest operator posture (§9) — and matches every deployment fact in the repo; it also locks in CASE B lost-device exposure (§13.2), because a strictly local sole authority is unreachable once the device is gone. (b) keeps those deferrals for now but makes each one conditional and requires the conditions to be honoured and tested later (§10.2, §22 tests 26-27); it is what §2.3's architecture is actually built for. (c) makes MFA, identity verification, TLS termination, and a real operator model immediately mandatory, and makes Gate 0C substantially harder. The repo's deployment evidence points at (a) while its data-model evidence (governing plan §1, §29) points at (b).
 
-RECOMMENDATION= (b). Build the multi-workspace-correct architecture described here, deploy it in the single-device shape, and treat MFA and the rest as conditions that trigger on exposure rather than as things permanently waived.
+RECOMMENDATION= (b). Build the multi-workspace-correct architecture described here, deploy it in the single-device shape, and treat MFA and the rest as conditions that trigger on exposure rather than as things permanently waived. Note explicitly that neither (a) nor (b) removes the CASE B lost-device limitation by itself; only an independently reachable authority does, and that is a separate cost the owner would be choosing.
 
-WHY_OPERATOR_INPUT_IS_REQUIRED= This is a product-scope decision, not a technical one. The repository contains genuine evidence for both readings (§2.1) and no evidence that settles the owner's intent. It changes MFA policy, TLS operational requirements, identity verification, and the operator model — and a wrong assumption here is the kind that gets discovered after private data already exists.
+DEPENDENCIES= §2.3 preferred design family; §6.1 transport requirements; §10.2 MFA deferral boundary; §13.2 lost-device CASE A / CASE B; §18 incident response; §19 external dependency; Gate 0C (§20).
+
+MUST_BE_DECIDED_BEFORE= any private-data implementation plan is accepted, and before the deployment qualification test (§22 test 26) can be written against a known deployment class.
 
 ### 26.2 D2 — break-glass operator access
 
-DECISION= Should any operator break-glass path to private content exist at all?
+DECISION_ID= `D2`
+
+QUESTION= Should any operator break-glass path to private content exist at all?
+
+WHY_OWNER_DECISION= It is a risk-acceptance decision with a real cost to the owner's own future support ability, and it interacts directly with Gate 0C key design (§20). The owner must decide knowingly, not inherit it as a side effect of an auth-design default.
 
 OPTIONS=
 (a) None ever — operator access to private content is architecturally impossible (Gate 0A Model A).
-(b) Break-glass with mandatory approval, time-boxing, user notification, and unsuppressable audit (Model B).
+(b) Break-glass with mandatory approval, time-boxing, user notification, and unsuppressable audit (Model B), meeting the §9.5 bar in full.
 (c) Ordinary administrative read — **already refused** (§9.2), contradicts governing plan §26.
 
-TRADEOFFS= (a) is the strongest privacy guarantee and the best answer to THREAT-022, at the cost that no support path can ever recover a user's content; combined with §11 it means lost credential plus lost recovery secret equals permanent loss. (b) preserves a recovery-of-last-resort but creates the exact access path THREAT-022 is about, and on a solo-operator product the approver and the requester are the same person — the procedural control is largely self-approved (§9.2).
+SECURITY_TRADEOFFS= (a) is the strongest privacy guarantee and the best answer to THREAT-022, at the cost that no support path can ever recover a user's content. (b) preserves a recovery-of-last-resort but creates the exact access path THREAT-022 is about, and on a solo-operator product the approver and the requester are the same person — the procedural control is largely self-approved (§9.2). Choosing (b) also invalidates the unconditional no-operator-unwrap constraint this document hands Gate 0C (§11.3, §20), which would have to be re-derived rather than silently carried forward. Neither option changes OS/root-level reach, which is not application authority and is not bounded by this decision (§9.4, §18).
 
 RECOMMENDATION= (a). It is the default this document already implements by defining no admin principal, and it is strictly safer. Choosing (b) later is possible; unchoosing it after private data exists is not.
 
-WHY_OPERATOR_INPUT_IS_REQUIRED= It is a risk-acceptance decision with a real cost to the owner's own future support ability, and it interacts directly with Gate 0C key design (§20). The owner must decide knowingly, not inherit it as a side effect of an auth-design default.
+DEPENDENCIES= §9 (all); §10.1 (MFA mandatory on any break-glass path); §15.2; §16.2 break-glass audit events; §22 test 18; Gate 0C (§20).
 
-### 26.3 D3 — recovery loss posture
+MUST_BE_DECIDED_BEFORE= Gate 0C encryption design is accepted, since operator decryptability is the decisive key-design question; and before any private-data implementation plan is accepted.
 
-DECISION= Is "lost credential plus lost recovery secret equals permanently unrecoverable content" an accepted product behaviour?
+### 26.3 D3 — recovery-loss product posture
+
+DECISION_ID= `D3`
+
+QUESTION= What product posture should KIA Stick take when the user loses **both** ordinary authentication authority **and** the currently accepted recovery authority?
+
+WHY_OWNER_DECISION= This is a user-facing product-risk acceptance affecting real people's case material, and there is no engineering fact that settles it. Independent QA rejected revision 1's framing of this decision on two grounds, and both are corrected here. First, revision 1 presented an exhaustive binary — permanent loss, or else necessarily an external channel or an operator capability — and that was not supported: a separately enrolled, user-controlled offline authenticator or additional recovery method is a conceptual counterexample that needs neither. Second, revision 1 asserted that content loss is inevitable, while §11.3 simultaneously reserved the relationship between recovered access and recoverable content to Gate 0C. Gate 0B cannot decide whether encrypted private data remains recoverable; that depends on key design (§11.4, §20).
 
 OPTIONS=
-(a) Yes — accepted and disclosed to the user at account creation.
-(b) No — a further recovery mechanism is required, which necessarily means either an external channel (contradicting §19) or an operator-usable capability (contradicting §9 and D2(a)).
+(a) Account access becomes unrecoverable under the currently selected auth model. The user may create a new account and workspace; the disposition of the old encrypted data depends on Gate 0C and is not decided here.
+(b) A future, separately gated, **additional user-controlled** recovery mechanism may be designed — for example a separately enrolled offline authenticator or a second independently stored recovery credential — provided it creates no operator bypass and no external dependency.
+(c) An external identity or recovery authority could be reconsidered, but only through a separate owner and design decision, with its privacy and network tradeoffs (§19) explicitly accepted rather than absorbed silently.
+(d) Another future recovery architecture that satisfies the Gate 0A invariants may be proposed and independently gated.
 
-TRADEOFFS= (a) is the only option consistent with `EXTERNAL_IDENTITY_DEPENDENCY=none` and with no operator content access; its cost is a real, permanent data-loss mode for a user who loses both secrets. (b) restores recoverability by reintroducing precisely the dependency or the access path that the rest of this design excludes — it is not a free improvement, and Gate 0A §2 flags this exact tension between Recoverability and Confidentiality as something that must be designed for explicitly.
+SECURITY_TRADEOFFS= (a) is the only option that needs nothing beyond what this document already designs; its cost is a real, permanent loss of **account access**, and — pending Gate 0C — an undetermined outcome for the content itself. (b) reduces the chance of total loss without an operator or a third party, at the cost of more user-held material to manage, a second enrolment ceremony, and more lifecycle surface (§11.2) — it also does not by itself guarantee content decryptability, which remains a Gate 0C question. (c) restores a familiar recovery experience by reintroducing precisely the external dependency and metadata-disclosure channel §19 excludes, and relocates the real key to a third-party account. (d) keeps the door open honestly but resolves nothing today. Gate 0A §2 flags this exact tension between Recoverability and Confidentiality as something that must be designed for explicitly.
 
-RECOMMENDATION= (a), with the consequence stated plainly at account creation rather than buried — the user should learn this when they are issued the recovery secret, not when they need it.
+Three things this decision explicitly does **not** assert, each of which revision 1 implied: that operator support can simply reset access (it cannot, §9.4); that successful account recovery means encrypted private data can be decrypted (undetermined, §11.4); and that loss necessarily means permanent private-data loss (also undetermined until Gate 0C defines key and recovery semantics).
 
-WHY_OPERATOR_INPUT_IS_REQUIRED= This is a user-facing product-risk acceptance affecting real people's case material. It also constrains Gate 0C (§11.3, §20): if the owner chooses (b), the encryption design must accommodate an alternate unwrap path, which is a materially different key design.
+RECOMMENDATION= (a) as the **currently accepted** posture, stated plainly to the user when the recovery credential is issued rather than buried — with (b) explicitly preserved as a legitimate, separately gated future improvement rather than foreclosed. The loss assumption is stated over all currently accepted user-held recovery methods, not over all conceivable ones.
+
+DEPENDENCIES= §11 (all), especially §11.2 lifecycle and §11.4 auth-vs-data recovery; §19 external dependency; §26.2 D2; §26.4 D4; Gate 0C (§20).
+
+MUST_BE_DECIDED_BEFORE= any account-creation disclosure text is written, and before Gate 0C key design is accepted — if the owner chooses (b), (c), or (d), the encryption design must accommodate an alternate unwrap path, which is a materially different key design.
+
+### 26.4 D4 — credential and fallback policy
+
+DECISION_ID= `D4`
+
+QUESTION= What is the primary authentication credential; does any fallback authentication path exist at all; and what exactly is the offline recovery credential's relationship to both?
+
+WHY_OWNER_DECISION= Independent QA found this decision hidden rather than absent. §2.2 described the passkey credential type as deferred to implementation-plan time, while §4.8 expressed a preference for a passkey primary with a passphrase "recoverable secondary" — without ever saying whether the two are AND factors, alternative logins, or a recovery-only path, or which proof re-authentication demands. That distinction determines MFA posture, account-takeover resistance, hardware requirements, and how much recovery burden the user carries. It is a product and security policy with user-visible consequences, not an engineering preference, and this revision therefore removes the preference from §4.8 rather than restating it. Gate 0B does **not** resolve it.
+
+OPTIONS=
+(a) **Single credential, no fallback.** One primary credential; no alternative authentication path. Recovery exists only as the separate §11 ceremony.
+(b) **Primary plus a distinct second factor (AND).** Both required at login; the recovery credential remains a separate ceremony and is not a login path.
+(c) **Primary with an alternative login credential (OR).** Two credentials, either sufficient on its own.
+(d) **Primary plus recovery material usable as a login credential.** The recovery credential doubles as an alternate login.
+
+SECURITY_TRADEOFFS= (a) is the smallest surface and the clearest ceremony separation; its cost is that losing the primary credential goes straight to the recovery ceremony. (b) is the strongest against credential theft and is the only option that satisfies a future MFA requirement by construction (§10.2), at the cost of hardware or enrolment burden and a second thing to lose. (c) is the most forgiving in daily use and the weakest security posture in the set: overall strength collapses to the weaker of the two paths, and an attacker attacks only that one. (d) is the option this design most strongly cautions against: it deletes the separation of ceremonies §4.8 establishes, turns high-entropy recovery material into an everyday login secret — which encourages storing it somewhere convenient rather than offline — and makes a single stolen artifact sufficient for full private-data access. Across all four options, the §11.2 recovery lifecycle requirements hold unchanged, and key/data recovery remains a Gate 0C question (§11.4).
+
+RECOMMENDATION= (a) for the current single-user local deployment, moving to (b) as the required posture the moment D1 permits any network exposure or a second user (§10.2) — with the §4.8 separation-of-ceremonies principle preserved in both cases. (c) is not recommended. (d) is recommended against, and if the owner chooses it, it must be chosen explicitly and knowingly, not arrived at through an implementation convenience.
+
+DEPENDENCIES= §2.2 option D; §4.6 re-authentication proof; §4.8 credential requirements and ceremony separation; §10.2 MFA deferral boundary; §11.1-§11.2 recovery model and lifecycle; §17.1 which credential the reactivation ceremony demands; §17.2; §22 tests 27 and 31; Gate 0C (§20).
+
+MUST_BE_DECIDED_BEFORE= any authentication implementation plan is accepted; before the §17.1 reactivation ceremony can be fully specified; and before the MFA-deferral qualification test (§22 test 27) can assert a concrete factor policy.
 
 ---
 
@@ -991,6 +1267,58 @@ ENCRYPTION_DESIGN_STATUS=REQUIRES_SEPARATE_GATE
 
 PRODUCTION_AUTH_ARCHITECTURE_ACCEPTED=no
 
+AUTH_SESSION_CREDENTIAL_LOGGING_ALLOWED=no
+
+SAFE_SESSION_AUDIT_IDENTIFIER_DEFINED=yes
+
+ACCOUNT_STATE_MACHINE_COHERENT=yes
+
+DISABLED_ACCOUNT_PROTECTED_ACCESS=deny
+
+REACTIVATION_CEREMONY_PRIVATE_DATA_ACCESS=deny
+
+APPLICATION_ADMIN_PRINCIPAL_PRESENT=no
+
+OPERATOR_ACCOUNT_RECOVERY_POWER=none
+
+OPERATOR_CREDENTIAL_RESET_POWER=none
+
+OPERATOR_REACTIVATION_POWER=none
+
+RECOVERY_SECRET_LIFECYCLE_COMPLETE=yes
+
+LOST_DEVICE_REMOTE_REVOCATION_ALWAYS_AVAILABLE=no
+
+REVOCATION_REQUIREMENT=DENY_ON_NEXT_PROTECTED_REQUEST_AFTER_AUTHORITY_ACCEPTS_REVOCATION
+
+AUTH_RECOVERY_DISTINCT_FROM_DATA_KEY_RECOVERY=yes
+
+OWNER_DECISION_COUNT=4
+
+OWNER_DECISIONS_ACCEPTED=0
+
+MFA_DEFERRAL_BOUNDARY_TESTABLE=yes
+
+BROWSER_SESSION_SECURITY_CONTRADICTION_RESOLVED=yes
+
+PRIVATE_ROUTE_BYPASS_MODEL_DEFINED=yes
+
+BACKGROUND_JOB_AUTHORIZATION_DEFINED=yes
+
+THREAT_TRACEABILITY_COMPLETE=yes
+
+THREATS_DECLARED_SOLVED_BY_DESIGN=none
+
+FUTURE_AUTH_VALIDATION_PLAN_COMPLETE=yes
+
+PREFERRED_SESSION_MODEL=OPAQUE_SERVER_SIDE_SESSION
+
+AUTH_CREDENTIAL_LOCALSTORAGE_ALLOWED=no
+
+AUTHORIZATION_DEFAULT=deny
+
+WORKSPACE_SHARING_STATUS=NOT_AUTHORIZED
+
 SENSITIVE_DATA_GATE_0B_AUTH_DESIGN_ACCEPTED=no
 
-The next step is independent QA of the exact commit introducing this document, followed by operator review of §26's three decisions, and then a separate owner authorization decision about whether any later gate begins.
+The next step is independent QA of the exact commit introducing this revision, followed by operator review of the §26 register's four decisions and the §17.2 product question, and then a separate owner authorization decision about whether any later gate begins. This revision repairs a design that independent review failed; it does not accept it.
