@@ -12,6 +12,8 @@ PRODUCTION_SECURITY_ARCHITECTURE_ACCEPTED=no
 
 Baseline: `origin/main` verified at `de96cf8e7fe0241fda43a8ac96b63080df714627`; branch `omarchy-path-setup`, 0 ahead / 0 behind, worktree clean.
 
+REVISION=1 — this document was revised after an independent QA of its first authored commit (`1cc46f86e87f0eafbfa1c9190c076d2e18686d5b`) returned FAIL on six internal contradictions/inaccuracies plus related editorial findings. The revision reconciled: private-content logging (§3, §13, §15 — no diagnostic exception), parser/OCR isolation (§9, §12, §16 — no lower-assurance in-process fallback), backup deletion semantics (§3, §14 — one coherent model with separate completion states), the current-state runtime/trust-boundary inventory (§4.1, §7 — verified against repository source), revocation semantics (§3, §10, THREAT-020 — deny on next protected request), and malformed-file resource exhaustion (§9, §12, THREAT-029 — bounded processing resources). It also added a rating rubric and ACTOR_OR_FAILURE_SOURCE semantics to §8, a session-identifier-renewal control to THREAT-003, an explicit document-processing lifecycle to §12.1, and corrected the §7 cross-reference and the §13 AirLLM statement. No authorization status changed: this document still authorizes nothing.
+
 Governing plan document (already accepted, `PLAN ONLY`): `docs/user-owned-knowledge-base-secure-file-transfer-gate-plan.md`. That document names this exact artifact — a threat model — as the first step of its "Future Private-Data Approval Sequence." This document fulfills that step. It does not replace, relax, or restate that plan; it threat-models against it. Where the two overlap, the governing plan's `PLAN NOW` / `IMPLEMENT ONLY AFTER SENSITIVE-DATA GATE` / `NEVER ALLOW` bucketing is treated as already-accepted constraint, not as something this document re-derives.
 
 Related, already-accepted planning artifacts this document inherits rather than duplicates: `docs/v0.6-future-implementation-gate-draft.md` (one-gate/one-document discipline, GitHub-safe proof rules), `docs/v0.6-real-doc-safety-checklist.md` (pre-content blockers, gate checklist), `docs/v0.6-local-redaction-policy-plan.md` (redaction categories and PASS/WARN/FAIL discipline), `docs/v0.6-operator-approval-packet.md`, `docs/v0.2-document-vault-redaction-plan.md`.
@@ -87,7 +89,7 @@ Abstract classes only; no real examples, no real archive contents.
 ### PRIVATE_DOCUMENT_CONTENT
 - SENSITIVITY: high (raw uploaded material — the future analog of today's fake `content/fake-docs`).
 - EXPECTED_RETENTION: minimal; quarantine-then-review lifecycle per the governing plan §6.
-- ALLOWED_PROCESSING: scanned, quarantined, redaction-reviewed content only; never indexed before review passes.
+- ALLOWED_PROCESSING: the quarantine-first lifecycle in §12.1 only. Raw untrusted bytes are handled solely by policy/type/size/security checks and, if separately authorized, isolated parser/OCR processing; content is never indexed, retrieved, cited, or promoted into longer-lived application state before review passes. "Already reviewed only" describes what may enter that longer-lived state — it does not mean raw bytes bypass quarantine, and it does not authorize the parsing/OCR stage.
 - FORBIDDEN_PROCESSING: unscanned promotion to any downstream stage; any external transmission.
 - DELETION_REQUIREMENT: default deletion after processing completes or fails; no silent retention.
 
@@ -131,7 +133,7 @@ Abstract classes only; no real examples, no real archive contents.
 - EXPECTED_RETENTION: per session-lifetime policy set by the future auth-design phase.
 - ALLOWED_PROCESSING: authentication flows only, server-side.
 - FORBIDDEN_PROCESSING: logging of raw credentials or tokens; client-side-only trust.
-- DELETION_REQUIREMENT: real, immediate on logout/revocation; no residual session validity.
+- DELETION_REQUIREMENT: real, immediate on logout/revocation; no residual session validity, and no cached authorization decision that outlives an accepted revocation — the next protected request must be denied (THREAT-020, §10).
 
 ### ENCRYPTION_KEY_MATERIAL
 - SENSITIVITY: highest (compromise defeats confidentiality for every class above it protects).
@@ -157,7 +159,7 @@ Abstract classes only; no real examples, no real archive contents.
 ### OCR OUTPUT
 - SENSITIVITY: inherits source document sensitivity; treat as equally sensitive as the source until proven otherwise.
 - EXPECTED_RETENTION: minimal; ideally ephemeral, discarded once structured extraction/redaction review completes.
-- ALLOWED_PROCESSING: redaction-review pipeline only.
+- ALLOWED_PROCESSING: the redaction-review pipeline only. OCR output is untrusted derived data produced from untrusted input (§12.1 step 4) and is never treated as reviewed or trusted content merely because a parser produced it.
 - FORBIDDEN_PROCESSING: indexing or model exposure before redaction review; this class is a primary target of the "OCR/parser sandbox escape" and "malicious document" threats in §8.
 - DELETION_REQUIREMENT: real deletion, including any temp files the OCR step wrote.
 
@@ -170,7 +172,7 @@ Abstract classes only; no real examples, no real archive contents.
 
 ### MODEL INPUT / OUTPUT
 - SENSITIVITY: inherits the sensitivity of whatever private content is in the prompt/response.
-- EXPECTED_RETENTION: none by default; any logging of model I/O containing private content is forbidden absent a specific, separately approved diagnostic exception.
+- EXPECTED_RETENTION: none. Model input/output containing private content is never persisted to application logs, audit logs, telemetry, diagnostic logs, error traces, or crash reports. There is no diagnostic exception (§15).
 - ALLOWED_PROCESSING: the single request/response cycle it serves.
 - FORBIDDEN_PROCESSING: silent external submission (governing plan §25); use as training data for any model without explicit separate consent.
 - DELETION_REQUIREMENT: ephemeral by default.
@@ -180,7 +182,7 @@ Abstract classes only; no real examples, no real archive contents.
 - EXPECTED_RETENTION: explicit, bounded, and documented — "backups are in scope for retention/deletion, not exempt from it" (governing plan §20).
 - ALLOWED_PROCESSING: restore operations, scoped and authorized identically to primary data (governing plan §21).
 - FORBIDDEN_PROCESSING: being the mechanism by which a deleted record survives past its retention window.
-- DELETION_REQUIREMENT: backup deletion/rotation must be able to actually remove a specific user's data, not just age out an entire backup set (this is a named future validation requirement, §18).
+- DELETION_REQUIREMENT: backup eradication must be satisfied by one of the three accepted mechanisms defined in §14 — selective backup erasure, cryptographic erasure, or bounded backup expiry/rotation meeting every condition listed there. Until the chosen mechanism completes, deletion status must truthfully report backup eradication as pending rather than claiming full deletion (a named future validation requirement, §18).
 
 ### TEMPORARY FILES
 - SENSITIVITY: inherits source sensitivity.
@@ -202,14 +204,30 @@ DATA_CLASSIFICATION_COMPLETE=yes
 
 ## 4. Trust boundaries
 
-Hypothetical future boundaries. None of these exist today except the public/private split at the metadata-forbidden-fragment level.
+This section separates what the CURRENT public/fake MVP actually has (§4.1, verified against repository source) from the HYPOTHETICAL FUTURE private architecture this gate threat-models (§4.2). Nothing in §4.1 is private storage, and nothing in §4.1 is sufficient for private data.
 
-- **Browser/client** — today, the entire runtime; a future private-data build introduces a real client/server trust split that does not exist yet.
-- **Local app process** — currently the only compute boundary (`next dev`/`next start` on `127.0.0.1`); any future private-data handling either stays inside this single-user local process or crosses into a genuinely new boundary — this is explicitly uncertain and must be decided by the auth-design phase, not assumed here.
-- **API/backend** — does not exist today as a distinct trust boundary from the client; a future design must decide whether one is introduced.
+### 4.1 Current (public/fake MVP) boundaries — verified against repository source
+
+- **Browser/client boundary** — real and load-bearing today. `components/KiaStickApp.tsx` is a client component; the answer-generation, Saved, thread, packet, and fake-upload workflows run in the user's browser.
+- **Node/server route boundary** — exists today, contrary to any reading that the browser is the entire runtime. `app/api/public-source/route.ts` and `app/api/public-cba-source/route.ts` are `runtime = "nodejs"`, `dynamic = "force-dynamic"` GET handlers that reject any query string and return bounded public-source cache reads (`readBoundedPublicSourceCache`, `readBoundedCbaSourceCache`) with `Cache-Control: no-store`. The data crossing this boundary is public reference content only, but the client/server trust boundary itself is present: the fact that today's payload is public does not mean no boundary exists.
+- **Browser `localStorage` persistence** — exists today for public/fake workflow state. `components/KiaStickApp.tsx` persists five keys (`kia-stick.saved-answers.v0.1`, `kia-stick.current-thread.v0.4`, `kia-stick.quarantine.v0.1`, `kia-stick.vault-state.v0.4`, `kia-stick.import-wizard-state.v0.5.1`) covering Saved answers, the current conversation thread, the fake quarantine queue, fake vault state, and import-wizard state. This is durable client-side persistence, not ephemeral session state.
+- **Existing user-facing deletion path** — exists today for those records. The Saved panel exposes a per-item delete action that removes the entry from application state, which the persistence effect then writes back to `localStorage`. It is a real, user-triggered deletion path over public/fake records.
+- **Content classification of all of the above** — public reference data and synthetic/fake workflow records only. No real APWU/USPS/member/case content is stored, read, or served by any current path.
+
+PRIVATE_STORAGE_IMPLEMENTED=no
+
+These current paths are explicitly NOT private storage, NOT an accepted private-data architecture, and NOT sufficient for private data: `localStorage` is unencrypted, readable by any script on the origin and by anyone with access to the browser profile, has no per-user isolation, no server-side authorization, and no deletion guarantee beyond the one browser profile that holds it. They matter to this threat model in one specific way: they are an existing persistence and deletion surface that a future private-data implementation would be tempted to reuse or migrate. If private state is ever proposed, these patterns are directly relevant to shared-device exposure (a second person using the same browser profile), to retention (records persist until explicitly deleted, with no TTL), and to migration risk (any conversion of existing local records into private ones would carry their weaker assumptions forward). §7 treats them as "partial precedent" surfaces for exactly this reason.
+
+### 4.2 Hypothetical future boundaries
+
+None of the boundaries below exist today for private data. They are the boundaries a future private-data architecture would introduce or would have to decide about.
+
+- **Client/server split for private data** — a distinct future question from §4.1's existing public route boundary: whether private content ever crosses the existing client/server boundary, and under what authorization, is undecided here.
+- **Local app process** — currently the only compute boundary for application logic (`next dev`/`next start` on `127.0.0.1`); any future private-data handling either stays inside this single-user local process or crosses into a genuinely new boundary — this is explicitly uncertain and must be decided by the auth-design phase, not assumed here.
+- **API/backend for private data** — does not exist today; today's routes serve bounded public caches only (§4.1). Whether a private-data API surface is introduced, and what authorization it enforces server-side, is a future decision.
 - **Authentication boundary** — does not exist today (no accounts, no sessions). Entirely future.
 - **Authorization boundary** — does not exist today. Entirely future, and must be enforced server-side per governing-plan §2.
-- **Storage layer** — today, `.kia-public-data` (public corpus cache) and `data/fake-corpus.json` (fake, GitHub-safe). No private storage layer exists. `kia-stick-private-vault` is present on disk but is explicitly out of scope, untouched, and not to be read (per the governing plan and this mission's forbidden-path list).
+- **Storage layer** — today, `.kia-public-data` (public corpus cache) and `data/fake-corpus.json` (fake, GitHub-safe) server-side, plus the browser `localStorage` records in §4.1 client-side. No private storage layer exists. `kia-stick-private-vault` is present on disk but is explicitly out of scope, untouched, and not to be read (per the governing plan and this mission's forbidden-path list).
 - **Encrypted storage** — does not exist; would be a new boundary inside "storage layer" above.
 - **Temporary processing area** — does not exist for real content; would sit between quarantine and redaction review per the governing plan §6-7.
 - **OCR subsystem** — does not exist; a future boundary requiring process-level isolation per §12/§13 below.
@@ -217,11 +235,11 @@ Hypothetical future boundaries. None of these exist today except the public/priv
 - **Model/AI subsystem** — today, `local-fake-deterministic` only, operating on fake data. A future private-data-aware model boundary is a distinct, separately gated subsystem (§13).
 - **External network** — today, none for private data (there is none); `scripts/privacy-scan.mjs` and the public-source sync path are the only network-adjacent surfaces and neither touches private data.
 - **Backup system** — does not exist for private data.
-- **Logs/telemetry** — exist today only for public/fake operation; extending them to private-data-adjacent events requires the content-free discipline in §15.
+- **Logs/telemetry** — exist today only for public/fake operation, and §15's prohibition is absolute for any future private-data-adjacent event; extending them to private-data-adjacent events requires the content-free discipline in §15.
 - **Administrator/operator access** — today, the operator (repo owner) has unrestricted local filesystem access by definition of being a single-user local MVP; a future multi-boundary design must decide what "administrator" even means and log/bound it (governing-plan §26).
 - **User-to-user isolation** — not applicable today (single workspace); becomes load-bearing the moment more than one private workspace exists (governing-plan §1, §29).
 - **Export/download boundary** — today, a public-only plain-text/Markdown export exists in `components/KiaStickApp.tsx`; a future private export is a new, separately labeled boundary (governing-plan §19).
-- **Deletion path** — does not exist for private data; must be designed as its own boundary spanning every store in §3's DERIVED_DATA/EMBEDDINGS/CACHE/BACKUPS rows.
+- **Deletion path** — does not exist for private data. A user-facing deletion path does exist today for the public/fake Saved records in §4.1, but it deletes one browser's `localStorage` copy and proves nothing about the multi-store deletion contract private data would require; a private deletion path must be designed as its own boundary spanning every store in §3's DERIVED_DATA/EMBEDDINGS/CACHE/BACKUPS rows (§14).
 
 Uncertain/undecided architecture is marked explicitly above rather than assumed; in particular, whether any future private-data handling ever leaves the user's own device is **not decided by this document** and is a required output of the future auth-design and encryption-design phases.
 
@@ -278,9 +296,9 @@ Future surfaces, grouped by whether KIA Stick has any precedent for them today:
 
 **No precedent today (entirely future):** login/session handling; authorization checks; file upload; MIME/type validation; parser/OCR; archive extraction; malware payloads; filename/path traversal on uploaded content; private storage; embeddings; AI/model prompts operating on private content; API surface for private data; backups; admin/operator tooling.
 
-**Partial precedent today (extending an existing, currently public-only surface):** document rendering (today, fake documents only, in `content/fake-docs`); search (today, public corpus search only); indexing (today, `.kia-public-data` public cache only); export (today, public-only plain-text/Markdown export in `components/KiaStickApp.tsx`); clipboard/print (today, public-content-only, already the subject of real hardening work — `tests/exportPrintHardening.test.ts` and the accepted print-pagination fix in the recent `claude-progress.md` history); metadata (today, `lib/redactionMetadataModel.ts` already models category/severity/eligibility for fake data — the direct template for a future real-metadata surface); logs/diagnostics (today, public/fake operation only); temp directories/caches (today, build/dev tooling only, no user content); deletion (does not exist as a user-facing action today because there is no private content to delete).
+**Partial precedent today (extending an existing, currently public-only surface):** document rendering (today, fake documents only, in `content/fake-docs`); search (today, public corpus search only); indexing (today, `.kia-public-data` public cache only); export (today, public-only plain-text/Markdown export in `components/KiaStickApp.tsx`); clipboard/print (today, public-content-only, already the subject of real hardening work — `tests/exportPrintHardening.test.ts` and the accepted print-pagination fix in the recent `claude-progress.md` history); metadata (today, `lib/redactionMetadataModel.ts` already models category/severity/eligibility for fake data — the direct template for a future real-metadata surface); logs/diagnostics (today, public/fake operation only); temp directories/caches (today, build/dev tooling only, no real or private user content); client-side persistence (today, browser `localStorage` holding public/fake Saved answers, thread, fake quarantine, fake vault, and import-wizard state — §4.1); deletion (today, a user-facing Saved-answer delete exists over those public/fake browser-local records — §4.1; no private-content deletion path exists, because no private content exists).
 
-Every "partial precedent" surface above is a place where a future implementation is likely to reuse existing shape (a real risk in itself — see THREAT-013 below, "public-lane pattern reused without re-deriving its private-data threat model").
+Every "partial precedent" surface above is a place where a future implementation is likely to reuse the existing public-lane shape without re-deriving its private-data threat model — a real design risk in itself. The register below carries no dedicated row for that reuse risk, and none is claimed here: it is a cross-cutting requirement that the mandatory controls of §9 and the validation plan of §18 be applied to each reused surface on its own merits, rather than inherited from the public implementation that surface was built for. The browser-local persistence and Saved-deletion paths in §4.1 are the clearest current example.
 
 ATTACK_SURFACES_COMPLETE=yes
 
@@ -288,37 +306,48 @@ ATTACK_SURFACES_COMPLETE=yes
 
 ## 8. Threat / abuse case register
 
-| THREAT_ID | TITLE | ASSET | ACTOR | ENTRY_POINT | FAILURE_MODE | IMPACT | LIKELIHOOD | RISK | REQUIRED_CONTROL | RESIDUAL_RISK | BLOCKS_PRIVATE_DATA_IMPLEMENTATION |
+**Rating basis (read before the table).** This register is a Gate-0 design document for a future private-data architecture, so every IMPACT / LIKELIHOOD / RISK value is evaluated against the HYPOTHETICAL FUTURE private-data capability, assuming the described attack surface becomes reachable — not against today's public/fake MVP. `CURRENT_STATE` notes ("does not exist today", "once uploads exist", "if embeddings are ever added") record what is true now and scope when a surface becomes reachable; they do NOT lower a future rating. "The feature does not exist today" is never a reason for a Low rating in this table.
+
+**Qualitative rubric.** The three rating columns are qualitative, not numeric:
+
+- **IMPACT** — the cell states the concrete consequence; read it against these bands. *Low:* limited, recoverable, no private-content disclosure. *Medium:* partial disclosure of one user's non-highest-sensitivity data, or recoverable disruption. *High:* disclosure or loss of integrity of one user's private content or identifiers. *Critical:* cross-user or systemic disclosure, exposure of highest-sensitivity classes (§3 MEDICAL/OWCP-like, AUTHENTICATION_DATA, ENCRYPTION_KEY_MATERIAL), or irreversible loss of control over private content (for example off-device egress).
+- **LIKELIHOOD** — how probable this failure is in a future private-data implementation built without deliberate design against it. *Low:* requires an unusual combination of conditions or an already-privileged position. *Medium:* a recognized, commonly-occurring class of defect. *High:* the default outcome unless the control is deliberately designed in.
+- **RISK** — the combined qualitative judgement of impact and likelihood, not an arithmetic product; a Critical impact carries at least High risk even at Low likelihood.
+- **RESIDUAL_RISK** — what remains after the REQUIRED_CONTROL is correctly implemented and validated. Because nothing in this document is implemented, every residual value is a design-time expectation, not a measured result.
+
+**ACTOR_OR_FAILURE_SOURCE column.** Some rows in this register describe adversaries and some describe non-adversarial failures; both are legitimate. Each cell is therefore classified rather than assumed hostile, against these kinds: *malicious user* (including a malicious authenticated user or a malicious document author), *external attacker*, *operator/insider*, *compromised dependency*, *compromised component under an attacker's control* (a stolen session, a compromised browser or process, compromised storage), *non-adversarial system failure*, *misconfiguration*, and *backup/restore process*. A cell may name a more specific variant of one of these kinds, and may list more than one where a failure is reachable by several. No adversary is invented for a failure that needs none.
+
+| THREAT_ID | TITLE | ASSET | ACTOR_OR_FAILURE_SOURCE | ENTRY_POINT | FAILURE_MODE | IMPACT | LIKELIHOOD | RISK | REQUIRED_CONTROL | RESIDUAL_RISK | BLOCKS_PRIVATE_DATA_IMPLEMENTATION |
 |---|---|---|---|---|---|---|---|---|---|---|---|
 | THREAT-001 | Cross-user data exposure | Private documents, case facts | Malicious authenticated user | Any private read/list endpoint | Query or index not scoped by `userWorkspaceId` | Full private-content disclosure to another user | Medium (common class of bug) | High | Mandatory per-record workspace scoping enforced server-side on every read/write path; workspace-isolation test asserting workspace B cannot read workspace A's record (governing-plan §29) | Low if control is tested pre-launch | yes |
 | THREAT-002 | Broken authorization / missing server-side check | Private documents, case facts | Malicious authenticated user, compromised browser | Private API/route | Authorization enforced only client-side, or missing on one route | Unauthorized read/write/delete | Medium | High | Deny-by-default authorization on every private route; authorization enforced server-side, never client-only (governing-plan §2) | Low with a complete route audit | yes |
-| THREAT-003 | Session theft / fixation | Session tokens, private data reachable via session | Compromised browser, network attacker on non-TLS path | Session cookie/token | Predictable, unbound, or non-expiring session token; token sent over plaintext | Account takeover | Low-medium (depends on future transport choice) | High | Secure, HttpOnly, properly-scoped session tokens; mandatory TLS for any private endpoint (governing-plan §3); session revocation | Low with standard session hardening | yes |
+| THREAT-003 | Session theft / fixation | Session tokens, private data reachable via session | Compromised browser, network attacker on non-TLS path | Session cookie/token | Predictable, unbound, or non-expiring session token; token sent over plaintext | Account takeover | Low-medium (depends on future transport choice) | High | Secure, HttpOnly, properly-scoped session tokens; mandatory TLS for any private endpoint (governing-plan §3); session revocation; and rotation/regeneration of the authoritative session identifier or credential on successful authentication and on any relevant privilege elevation, so that an identifier known before authentication cannot be replayed afterwards (the specific framework/mechanism is chosen by the future auth-design gate, §10) | Low with standard session hardening | yes |
 | THREAT-004 | Insecure Direct Object Reference (IDOR) | Private documents, exports | Malicious authenticated user | Record ID in a URL/API parameter | Object fetched by ID without an ownership check | Cross-user disclosure via ID guessing/enumeration | Medium | High | Ownership check on every ID-addressed private resource, independent of the general authorization check | Low | yes |
 | THREAT-005 | Plaintext-at-rest leakage | Private documents, case facts | Compromised storage, insider misuse | Disk/database | Private content stored unencrypted | Full disclosure on storage compromise | Medium (default state of most systems until deliberately hardened) | High | Encryption at rest is a hard requirement (governing-plan §4); plaintext-on-disk private content is a defined `FAIL` | Medium — residual risk depends on key management quality, see THREAT-006 | yes |
 | THREAT-006 | Leaked encryption keys | Encryption key material, everything it protects | Insider misuse, compromised application process, secrets-in-repo | Key storage, source control, logs | Key committed, logged, or over-broadly accessible | Encryption-at-rest control becomes worthless | Medium | High | Key separation from encrypted data; no key material in Git/proof/logs (existing repo-wide rule, `scripts/privacy-scan.mjs`, extended without exception) | Medium — depends on the future encryption-design phase's key-management choices | yes |
-| THREAT-007 | Secrets in repo/logs | API keys, credentials, session secrets | Insider misuse, accidental commit | Git history, log files, proof output | A secret is committed or logged | Credential compromise, potential full-system compromise | Low-medium (mitigated today by the existing privacy scan, but that scan has never had to catch a *real* secret) | High | `scripts/privacy-scan.mjs` extended to cover future secret shapes; secret management (vault/KMS) never storing secrets in tracked files | Low with the existing scan extended and exercised | yes |
+| THREAT-007 | Secrets in repo/logs | API keys, credentials, session secrets | Operator/insider, non-adversarial system failure (accidental commit or log) | Git history, log files, proof output | A secret is committed or logged | Credential compromise, potential full-system compromise | Low-medium (mitigated today by the existing privacy scan, but that scan has never had to catch a *real* secret) | High | `scripts/privacy-scan.mjs` extended to cover future secret shapes; secret management (vault/KMS) never storing secrets in tracked files | Low with the existing scan extended and exercised | yes |
 | THREAT-008 | Unsafe upload handling | Uploaded private documents | Malicious document author, malicious authenticated user | Upload endpoint (does not exist today) | Missing size/type limits, path traversal in filename, unsafe storage location | Denial of service, storage exhaustion, path traversal write | Medium once an upload path exists | Medium-high | Explicit allowlist of content types; hard size ceiling; safe, non-user-controlled storage naming (governing-plan §6, §8) | Low with the control in place | yes |
-| THREAT-009 | Parser/OCR exploit | Application process, other users' data on shared infrastructure | Malicious document author | OCR/parsing subsystem (does not exist today) | Memory-unsafe or sandbox-escaping parser vulnerability triggered by a crafted file | Code execution, cross-workspace access from within a shared process | Low-medium (depends on parser choice) | High | Parser/OCR isolation or sandboxing; treat all uploaded content as untrusted input (governing-plan §7) | Medium — residual risk tracks the chosen isolation technology, an open question for a future phase | yes |
-| THREAT-010 | Zip/archive-bomb or traversal | Application process, storage | Malicious document author | Archive upload (not currently allowed, and the governing plan does not currently authorize archive formats at all) | Recursive/oversized archive extraction, or `../`-style path traversal on extracted entries | Denial of service, arbitrary file write | Low (mitigated by not allowing archives at all unless a future phase explicitly authorizes them) | Medium if archives are ever allowed | Default-deny archive formats unless a future phase explicitly authorizes and safety-reviews them | N/A while archives remain disallowed | yes |
+| THREAT-009 | Parser/OCR exploit | Application process, other users' data on shared infrastructure | Malicious document author | OCR/parsing subsystem (does not exist today) | Memory-unsafe or sandbox-escaping parser vulnerability triggered by a crafted file | Code execution, cross-workspace access from within a shared process | Low-medium (depends on parser choice) | High | Mandatory accepted isolation boundary for any parser/OCR/extraction of untrusted bytes, with no lower-assurance in-process fallback and rejection while isolation is unavailable; treat all uploaded content as untrusted input (governing-plan §7; §9, §12, §16) | Medium — residual risk tracks the chosen isolation technology, an open question for a future phase | yes |
+| THREAT-010 | Zip/archive-bomb or traversal | Application process, storage | Malicious document author | Archive upload (not currently allowed, and the governing plan does not currently authorize archive formats at all) | Recursive/oversized archive extraction, or `../`-style path traversal on extracted entries | Denial of service, arbitrary file write | Medium — rated per the §8 basis against a future capability in which archive formats have been authorized. CURRENT_STATE: archive formats are default-denied and no future phase has authorized them | Medium | Default-deny archive formats unless a future phase explicitly authorizes and safety-reviews them; if any format is ever authorized, the §9 expansion-ratio and bounded-processing-resource limits apply before extraction | N/A while archives remain default-denied; Medium once any archive format is authorized, pending validation of those bounds (§18) | yes |
 | THREAT-011 | Malware in uploaded content | User's own device, other users if content is ever shared | Malicious document author | Upload path | Malware-bearing file processed or later re-served without scanning | Malware distribution via the app | Low-medium | Medium-high | Malware scanning between quarantine and any further processing (governing-plan §7) | Low-medium — scanning is imperfect, so quarantine + minimal-processing defense-in-depth still matters | yes |
 | THREAT-012 | Direct prompt injection in a private document | Model output, user's own workflow integrity | Malicious document author, prompt injection from uploaded content | A document a user uploads | Document text is treated as trusted instructions by a model | Model produces attacker-directed output, potentially exfiltrating other context in the same session | Medium once any model reasons over uploaded content | Medium-high | Document content is always untrusted data, never instructions, to any model (governing-plan §24, §13 below) | Medium — this class of attack is still an open research problem industry-wide; defense-in-depth, not elimination | yes |
 | THREAT-013 | Indirect prompt injection via retrieved/cited content | Model output, cross-record integrity | Malicious document author | Retrieval/citation pipeline (does not exist for private data today) | A previously-ingested document's text influences an unrelated later query because it was indexed and retrieved as if it were trusted context | Attacker who got one document into a user's workspace can influence answers to unrelated questions | Low-medium | Medium | Same untrusted-content discipline as THREAT-012, applied at retrieval time, not just ingestion time; minimization of what gets retrieved automatically | Medium | yes |
-| THREAT-014 | Model/network egress of private content | Private documents, case facts | Unintended external AI/service recipient, compromised application process | Any code path that can make an outbound network call while private content is in scope | A future integration (local or external model, telemetry, error reporting) sends private content off-device without an explicit gate | Confidentiality breach to a third party, potential permanent loss of control over the data | Low today (no such path exists) but the single most consequential failure mode if one is ever added carelessly | Critical | Deny-by-default egress policy; explicit, auditable allowlist for any private-data-adjacent network call (governing-plan §25) | Low if egress is architecturally deny-by-default rather than policy-only | yes |
+| THREAT-014 | Model/network egress of private content | Private documents, case facts | Unintended external AI/service recipient, compromised application process | Any code path that can make an outbound network call while private content is in scope | A future integration (local or external model, telemetry, error reporting) sends private content off-device without an explicit gate | Confidentiality breach to a third party, potential permanent loss of control over the data | Medium — rated per the §8 basis against a future private-data capability that has any egress-capable path, where a missing egress gate is a commonly-occurring defect. CURRENT_STATE: no such path exists today | Critical | Deny-by-default egress policy; explicit, auditable allowlist for any private-data-adjacent network call (governing-plan §25) | Low if egress is architecturally deny-by-default rather than policy-only | yes |
 | THREAT-015 | Accidental cloud/API submission | Private documents | Unintended external AI/service recipient | A dependency or SDK that phones home by default (e.g., a telemetry-enabled library) | A third-party library used for OCR/parsing/AI silently transmits data as part of its normal operation | Same as THREAT-014 but via a dependency rather than first-party code | Low-medium (a known class of real-world incident) | High | Vet and pin dependencies for private-data-adjacent code paths; network egress monitoring/allowlisting at the process level, not just at the code-review level | Medium — depends on how deep the vetting goes | yes |
-| THREAT-016 | Embeddings retaining deleted content | Embeddings/indexes | Compromised storage, weak deletion semantics | Vector store (does not exist today) | A record is deleted from primary storage but its embedding remains queryable | Deleted content remains recoverable/inferable indefinitely | Medium if embeddings are ever added without deletion propagation designed in from the start | High | Deletion must propagate to every derivative, including embeddings, as a required, tested step (§14) | Low if designed in from the start; high if retrofitted later | yes |
-| THREAT-017 | Caches retaining deleted content | Cache data | Weak deletion semantics | Any caching layer (does not exist today for private data) | Cache entry outlives its source record's deletion | Deleted content briefly or indefinitely still servable | Medium | Medium | Cache invalidation synchronous with deletion, not TTL-only | Low | yes |
+| THREAT-016 | Embeddings retaining deleted content | Embeddings/indexes | Non-adversarial system failure (deletion not propagated to the vector store); compromised storage | Vector store (does not exist today) | A record is deleted from primary storage but its embedding remains queryable | Deleted content remains recoverable/inferable indefinitely | Medium if embeddings are ever added without deletion propagation designed in from the start | High | Deletion must propagate to every derivative, including embeddings, as a required, tested step (§14) | Low if designed in from the start; high if retrofitted later | yes |
+| THREAT-017 | Caches retaining deleted content | Cache data | Non-adversarial system failure (cache invalidation not tied to deletion) | Any caching layer (does not exist today for private data) | Cache entry outlives its source record's deletion | Deleted content briefly or indefinitely still servable | Medium | Medium | Cache invalidation synchronous with deletion, not TTL-only | Low | yes |
 | THREAT-018 | Logs containing sensitive content | Logs | Insider misuse, compromised storage | Application/error logs | A stack trace, debug log, or request log includes private field values | Private content leaks into a lower-security-tier system (log aggregation) | Medium-high (a very common real-world failure mode) | High | Structured, content-free logging discipline extended from the existing public/fake logging conventions (§15) | Medium — requires ongoing discipline, not a one-time fix | yes |
-| THREAT-019 | Backups preventing real deletion | Backups | Weak deletion semantics, backup system design | Backup/restore pipeline (does not exist today) | Backups are excluded from the deletion contract entirely | A user's "deleted" data persists indefinitely in backup media | Medium-high (a very common real-world gap) | High | Backups explicitly in scope for retention/deletion (governing-plan §20); bounded backup retention windows, documented and enforced | Medium — full guarantee is hard; a documented bounded window is the realistic target | yes |
-| THREAT-020 | Stale authorization | Authorization state | Compromised user session, insider misuse | Session/authorization cache | A user's access is revoked (e.g., leaves a shared workspace) but a cached authorization decision still grants access | Access persists past intended revocation | Low-medium | Medium | Short-lived authorization caching or synchronous revocation checks on private reads | Low-medium | yes |
+| THREAT-019 | Backups preventing real deletion | Backups | Backup/restore process (non-adversarial backup-design failure) | Backup/restore pipeline (does not exist today) | Backups are excluded from the deletion contract entirely | A user's "deleted" data persists indefinitely in backup media | Medium-high (a very common real-world gap) | High | Backups explicitly in scope for retention/deletion (governing-plan §20); backup eradication satisfied by one of the three accepted §14 mechanisms — selective erasure, cryptographic erasure, or bounded expiry meeting every §14 condition — with deletion status truthfully reporting BACKUP_ERADICATION_COMPLETE=no until it finishes | Medium — a bounded, truthfully reported eradication window is the realistic target; a bounded window is not by itself equivalent to completed physical erasure | yes |
+| THREAT-020 | Stale authorization | Authorization state | Compromised user session, insider misuse, non-adversarial system failure (authorization cache not invalidated) | Session/authorization cache | Access is revoked — in a HYPOTHETICAL FUTURE scenario such as a user leaving a shared workspace; shared workspaces do not exist in KIA Stick today and sharing remains out of scope — but a cached ALLOW decision still grants access | Access persists past intended revocation | Low-medium | Medium | REVOCATION_REQUIREMENT=DENY_ON_NEXT_PROTECTED_REQUEST: once the system has accepted a revocation, no cached ALLOW decision may remain authoritative, and the next protected authorization decision/request must be denied. Caching is permitted only where it is demonstrably revocation-aware (for example an authorization version/epoch, a revocation counter, authoritative invalidation, a synchronous protected-operation check, or another accepted mechanism proving equivalent next-request denial); a short-lived stale ALLOW is NOT acceptable for a protected private-data request. The mechanism is chosen by the future auth-design gate, not here | Low-medium — depends on the future auth-design gate proving next-request denial under its chosen mechanism | yes |
 | THREAT-021 | Privilege escalation | Authorization state, all private data | Malicious authenticated user, compromised application process | Any authorization-adjacent code path | A user or process gains access beyond its assigned role | Broad unauthorized access | Low-medium | High | Least-privilege role model; authorization checks that fail closed on ambiguous role state | Medium — depends entirely on the future auth-design phase's role model, an open question (§10) | yes |
 | THREAT-022 | Operator/admin overreach | All private data | Insider/operator misuse | Direct database/filesystem access, admin tooling | An operator reads a user's private data outside any logged, task-scoped reason | Undisclosed privacy violation | Low-medium for a solo/small-operator product, but consequential | Medium-high | Logged, time-boxed admin access; no silent admin read path (governing-plan §26) | Medium — a solo-operator product has an inherent tension here that must be named, not hidden | yes |
 | THREAT-023 | Export leakage | Exports | Accidental user disclosure | Private export feature (does not exist today; public-only export exists) | A private export is generated without a clear "this may contain private content" label, or accidentally bundles another workspace's data | User unintentionally shares private content, or cross-workspace bundling occurs | Low-medium | Medium | Explicit private-export labeling and workspace-scoping (governing-plan §19) | Low | yes |
 | THREAT-024 | Device loss | Locally cached/stored private data, valid sessions | Lost/stolen device | Physical device | An unlocked device or a device with locally cached plaintext private data is lost/stolen | Full local disclosure | Low-medium (depends heavily on whether any private data is ever cached client-side) | Medium-high | Minimize client-side plaintext caching of private content; session timeout; at minimum document this as a residual risk the future design must accept or mitigate | Medium — partially outside the application's control (device-level security) | yes |
-| THREAT-025 | Weak deletion semantics generally | All classes in §3 with a DELETION_REQUIREMENT | Weak deletion semantics (systemic) | Every store a private record touches | "Delete" implemented as a hidden/soft flag rather than actual removal | Data a user believes is gone is not | Medium-high (the single most common gap in systems that add private-data storage) | High | The explicit principle "DELETE != merely hide" (§14); a testable proof step per store | Medium — requires deliberate design and testing, not a default outcome | yes |
-| THREAT-026 | Restore resurrecting deleted data | All classes | Weak deletion semantics, backup system design | Restore operation | A backup restore brings back records a user had deleted after the backup was taken | Deletion is silently undone | Low-medium | Medium-high | Restore process must reconcile against deletion records, not blindly overwrite current state (governing-plan §21) | Medium | yes |
+| THREAT-025 | Weak deletion semantics generally | All classes in §3 with a DELETION_REQUIREMENT | Non-adversarial system failure (systemic deletion-semantics design failure) | Every store a private record touches | "Delete" implemented as a hidden/soft flag rather than actual removal | Data a user believes is gone is not | Medium-high (the single most common gap in systems that add private-data storage) | High | The explicit principle "DELETE != merely hide" (§14); a testable proof step per store | Medium — requires deliberate design and testing, not a default outcome | yes |
+| THREAT-026 | Restore resurrecting deleted data | All classes | Backup/restore process (non-adversarial restore-reconciliation failure) | Restore operation | A backup restore brings back records a user had deleted after the backup was taken | Deletion is silently undone | Low-medium | Medium-high | Restore process must reconcile against deletion records, not blindly overwrite current state (governing-plan §21) | Medium | yes |
 | THREAT-027 | Insecure temporary files | Temp files | Compromised storage, other local processes | OS temp directory | Temp files written world-readable, predictably named, or not cleaned up | Local disclosure to another process/user on the same machine | Low-medium | Medium | Scoped, unpredictable temp paths; guaranteed cleanup including on failure (§3, TEMPORARY FILES row) | Low | yes |
 | THREAT-028 | Filename/metadata leakage | Private document metadata | Accidental user disclosure, insider misuse | Filenames, EXIF/document metadata, proof/log output | A filename or embedded document metadata itself contains identifying/sensitive information and is displayed, logged, or included in proof | Disclosure via a channel nobody classified as "content" | Medium (filenames and embedded metadata are routinely overlooked) | Medium-high | Metadata review and minimization as a first-class step, not an afterthought (governing-plan §9); the existing `forbiddenMetadataFragments`/identifier-shaped-value check in `lib/redactionMetadataModel.ts` is the direct template to extend | Low-medium | yes |
-| THREAT-029 | Denial of service from large/malformed files | Application process, availability for all users | Malicious document author | Upload/processing path | An oversized or malformed file exhausts memory/CPU/storage | Service disruption, possibly for other users on shared infrastructure | Medium once uploads exist | Medium | Size/type limits enforced before processing begins, not after (governing-plan §8) | Low | yes |
+| THREAT-029 | Denial of service from large/malformed files | Application process, availability for all users | Malicious document author | Upload/processing path | An oversized or malformed file exhausts memory/CPU/storage during processing, not merely at intake | Service disruption, possibly for other users on shared infrastructure | Medium once uploads exist | Medium-high | Size/type limits enforced before processing begins (governing-plan §8) AND bounded processing resources enforced during processing per the §9 resource-bound control family; a small, allowlisted, well-typed file can still consume unbounded parse time or expanded memory, and isolation alone is not a resource bound. On any exceeded bound: PROCESSING_REQUEST=TERMINATE_OR_REJECT | Medium — remains meaningful until implementation and adversarial validation pass (§18); not Low merely because size/type validation is specified | yes |
 | THREAT-030 | Supply-chain/dependency compromise | Application process, all data it can reach | Malicious/compromised dependency | `npm` dependency tree | A compromised package (direct or transitive) exfiltrates data or introduces a backdoor | Broad compromise, potentially including private-data-adjacent code | Low-medium generally, but non-zero and already the subject of prior accepted security-triage work in this repo (`docs/v0.9.11-dependency-security-triage-plan.md`, `docs/v0.9.12A/B`) | High once private-data-adjacent dependencies exist | Dependency pinning/vetting, especially for any new OCR/parsing/AI/auth/crypto dependency; extend the existing triage discipline to private-data-adjacent packages specifically | Medium — supply-chain risk is never fully eliminated | yes |
 
 THREAT_REGISTER_COMPLETE=yes
@@ -331,7 +360,7 @@ These are control *families* future work must satisfy — requirements, not impl
 
 - **Deny-by-default authorization** on every private route/record access.
 - **Ownership checks** independent of general authorization, on every ID-addressed private resource (defends THREAT-004).
-- **Strong session handling** — unpredictable tokens, proper expiry, revocation.
+- **Strong session handling** — unpredictable tokens, proper expiry, revocation that denies the next protected request (THREAT-020), and rotation/regeneration of the authoritative session identifier on successful authentication and on relevant privilege elevation (THREAT-003).
 - **CSRF protection** on any private state-changing endpoint, if a browser-session model is used.
 - **Secure cookie/token handling** — HttpOnly, Secure, properly scoped.
 - **Least privilege** for every process/service touching private data.
@@ -340,16 +369,17 @@ These are control *families* future work must satisfy — requirements, not impl
 - **Key separation** from the data it protects, and from general application code where feasible.
 - **Secret management** — no secret in Git, proof, logs, or notifications, ever.
 - **Content size/type limits** enforced before processing, with default-deny for unlisted types.
+- **Bounded processing resources** for any untrusted-document processing — defined and enforced: input-byte limit; expanded/decompressed-byte limit; page/object count limit; recursion/nesting-depth limit; parser memory limit; CPU/time budget; wall-clock timeout; cancellation/kill behavior for any job exceeding a bound; worker concurrency limit; queue/backpressure limit; and an archive expansion-ratio limit if archives are ever authorized. Isolation is NOT a resource-exhaustion control — a sandbox contains a parser, it does not bound what that parser consumes. On any exceeded bound: PROCESSING_REQUEST=TERMINATE_OR_REJECT (THREAT-029, THREAT-010).
 - **Quarantine** as a mandatory stage between upload and any further processing.
-- **Parser/OCR isolation or sandboxing** for any content-parsing subsystem.
+- **Parser/OCR isolation** — mandatory for any subsystem that parses, renders, OCRs, or extracts untrusted content. The isolation technology is an open future choice; the boundary is not. No lower-assurance in-process fallback is authorized as a starting point, and processing is rejected whenever accepted isolation is unavailable (§12, §16).
 - **Malware scanning** in the quarantine stage.
 - **Safe archive handling** — default-deny until a future phase explicitly authorizes and safety-reviews specific formats.
 - **Egress deny-by-default** for any process that can touch private content.
 - **Explicit AI/network policy** — no silent default-on model or network access to private content (governing-plan §24, §25).
-- **Sensitive-content logging prohibition** — structured, content-free audit events only (§15).
+- **Sensitive-content logging prohibition** — structured, content-free audit events only; private content is never persisted to logs, audit records, telemetry, diagnostics, error traces, or crash reports, with no diagnostic exception (§15).
 - **Retention policy** with enforced expiry, not just documentation.
 - **Deletion guarantees** spanning every store a record touched (§14).
-- **Backup deletion policy** — backups are in scope, with a bounded, documented retention window.
+- **Backup deletion policy** — backups are in scope for deletion, satisfied by selective erasure, cryptographic erasure, or bounded expiry meeting every §14 condition; full deletion is never reported while recoverable backup copies of the deleted data remain.
 - **Temporary-file cleanup** guaranteed on success and failure paths.
 - **Cache invalidation** synchronous with deletion.
 - **Safe exports** — explicit labeling, workspace-scoped, never silently bundling another workspace.
@@ -369,6 +399,7 @@ This document does not answer these. It hands them to the future auth-design pha
 - Identity provider model: self-hosted accounts, or a third-party identity provider?
 - Account lifecycle: how is an account created, verified, and closed?
 - Session lifetime: how long does a session last, and what triggers re-authentication?
+- Session identifier renewal: how is the authoritative session identifier/credential rotated on successful authentication and on privilege elevation, so a pre-authentication identifier cannot be fixated and replayed (THREAT-003)?
 - MFA requirements: required, optional, or deferred to a later hardening pass?
 - Recovery: how does a user regain access if they lose credentials, and how does that not become a bypass for THREAT-002/THREAT-004?
 - Ownership model: is a workspace owned by exactly one account, or can it ever be shared (the governing plan currently treats sharing as out of scope — does that hold)?
@@ -376,11 +407,13 @@ This document does not answer these. It hands them to the future auth-design pha
 - Admin access: what can an administrator/operator do, and how is it logged (THREAT-022)?
 - Authorization enforcement location: server-side only, or does any check ever need to run client-side for UX reasons (and if so, how is that not treated as authoritative)?
 - Multi-device sessions: are concurrent sessions on multiple devices allowed, and how are they individually revocable?
-- Revoked sessions: what is the maximum window between revocation and actual access denial (THREAT-020)?
+- Revoked sessions: by what mechanism does an accepted revocation deny the NEXT protected request (THREAT-020)? The requirement itself is fixed here — REVOCATION_REQUIREMENT=DENY_ON_NEXT_PROTECTED_REQUEST, with no stale-ALLOW tolerance window for a protected private-data request — so what this gate must choose is the revocation-aware mechanism (authorization version/epoch, revocation counter, authoritative invalidation, synchronous protected-operation check, or an accepted equivalent), not the size of an allowable window.
 - Lockout/rate limiting: what prevents credential-stuffing or brute-force attempts against authentication endpoints?
 - Audit events: which authentication/authorization events are recorded, in what content-free shape?
 
 AUTH_DESIGN_STATUS=REQUIRES_SEPARATE_GATE
+
+REVOCATION_REQUIREMENT=DENY_ON_NEXT_PROTECTED_REQUEST
 
 ---
 
@@ -407,20 +440,39 @@ ENCRYPTION_DESIGN_STATUS=REQUIRES_SEPARATE_GATE
 
 ## 12. Upload / document processing questions (for future design work)
 
+### 12.1 Hypothetical future document-processing lifecycle
+
+This lifecycle is stated to remove any ambiguity between §3's "already reviewed only" rule and the scanning/parser/OCR requirements elsewhere in this document. It is HYPOTHETICAL FUTURE design context. None of it is implemented, and step 3 in particular is not authorized: UPLOAD_OCR_STATUS=NOT_AUTHORIZED.
+
+1. **Quarantine** — untrusted raw bytes arrive and are held in quarantine (governing-plan §6). Nothing downstream may read them yet.
+2. **Policy / type / size / security checks** — content-type allowlisting, magic-byte validation, size ceilings, malware scanning, and metadata review run against the quarantined bytes.
+3. **Isolated parser/OCR processing** — MAY occur only if separately authorized by its own gate, and only behind the accepted isolation boundary of §9/§16, within the bounded processing resources of §9. This stage is not authorized today.
+4. **Generated text/metadata remain untrusted** — anything a parser or OCR engine produces inherits the source's sensitivity (§3 OCR OUTPUT, DERIVED_DATA) and remains untrusted data, never instructions to a model (THREAT-012, THREAT-013).
+5. **Human/policy review** — redaction review and any other required review occurs on that derived content.
+6. **Promotion of approved derived content only** — only content that has passed step 5 may enter longer-lived or private application state, and only according to a future accepted architecture.
+
+Raw bytes never bypass steps 1-2, and no step promotes content past a review that has not passed. Deleting a source cascades to every derivative produced along this lifecycle (§14), which makes source-retention decisions at step 1 consequential for any future persistent private plan.
+
+### 12.2 Open questions
+
 - Upload limits: what size ceiling, and is it per-file or per-workspace-total?
 - Allowed types: what is the initial allowlist, and who approves additions to it?
 - Validation: content-based (magic-byte) validation, not just extension/MIME-header trust?
 - Quarantine: how long does content sit in quarantine, and what promotes it out (governing-plan §6)?
 - Malicious document handling: what happens on a scan hit — delete, hold for review, or notify the user?
 - OCR: is OCR ever performed locally only, or could it ever call an external service (governing-plan §25 would gate the latter separately)?
-- Parser isolation: process-level sandbox, container, or a lower-assurance in-process library to start?
+- Parser/OCR isolation technology: process-level sandbox, container, hardened worker, or another architecture that proves equivalent isolation? The *requirement* is not open. Any future processing of untrusted uploaded bytes by a parser, renderer, OCR engine, archive extractor, or equivalent risky document-processing component MUST execute behind an accepted isolation boundary (§9, §16). An unsandboxed or otherwise lower-assurance in-process parser is NOT an acceptable initial private-data implementation; if a future in-process implementation claims equivalent isolation, the burden of proving that security boundary falls on that separate design gate. Until accepted isolation exists: PROCESSING_REQUEST=REJECT.
 - Metadata removal: is embedded document metadata (EXIF, author fields, etc.) stripped before any further processing (THREAT-028)?
 - Temporary files: where do intermediate artifacts live, and what guarantees their cleanup (THREAT-027)?
 - Archive formats: are any ever allowed, and if so, with what traversal/bomb protections (THREAT-010)?
 - Duplicate detection: content-hash-based, scoped per-workspace, per the governing plan §13?
+- Processing resource budgets: what are the concrete values for each bound in the §9 bounded-processing-resources control family — input bytes, expanded bytes, page/object count, nesting depth, parser memory, CPU/time budget, wall-clock timeout, worker concurrency, and queue depth?
+- Bound-exceeded behavior: how is an over-budget job cancelled and killed, what is reported to the user, and what is recorded as a content-free security event (§15)?
 - Source provenance: how is "this document came from this quarantine event, reviewed by this process, on this date" captured without embedding the content itself?
 
 UPLOAD_OCR_STATUS=NOT_AUTHORIZED
+
+DOCUMENT_PROCESSING_LIFECYCLE_DEFINED=yes (as hypothetical future design context only; §12.1)
 
 ---
 
@@ -436,7 +488,7 @@ Risks and open questions for any future point where a model (local or external) 
 - Redaction — if a future workflow ever requires sending private content to a *local* model, does redaction happen first for the highest-sensitivity classes (MEDICAL/OWCP-like, per §3)?
 - Model retention/training questions — if any future model provider (local or external) could retain or train on submitted content, that must be affirmatively ruled out or disclosed before the relevant gate can pass.
 - Local vs. remote model design — this is presently undecided; §4 (trust boundaries) explicitly leaves it open, and it materially changes the threat model's THREAT-014/THREAT-015 severity.
-- Logging — model input/output containing private content is not logged by default (§3, MODEL INPUT / OUTPUT row).
+- Logging — model input/output containing private content is never persisted to any logging, telemetry, diagnostic, error-trace, or crash-reporting system; there is no diagnostic exception and no "not logged by default" posture that a later configuration change could reverse (§15, §3 MODEL INPUT / OUTPUT row).
 - User consent — per-use, not per-workspace, opt-in for any new use of a user's private data by a model.
 
 Current state, explicitly unchanged by this document:
@@ -447,7 +499,7 @@ AIRLLM_STATUS=watchlist_only
 
 AIRLLM_INTEGRATION=no
 
-(No reference to AirLLM or any external-AI integration exists anywhere in the current repository; this status is recorded here as inherited governance context from the mission brief, not as a finding derived from repo content.)
+(AirLLM may appear in this repository's project planning, ledger, and watchlist material — for example `claude-progress.md`, `CLOSEOUT.md`, and the `airllm_status` governance fields in `feature_list.json` — but no AirLLM private-data integration is authorized or implemented: there is no AirLLM client, dependency, configuration, or code path in the application. No external AirLLM system was inspected for this document; the status above is governance context, not a claim derived from external inspection.)
 
 ---
 
@@ -470,8 +522,28 @@ A future deletion design must account for every store a record can reach, per §
 Future proof requirements for deletion (not implemented now):
 
 - A deletion action must be able to produce a bounded, verifiable claim of what was removed and from which stores.
-- A deletion claim that cannot account for backups must say so explicitly ("removed from primary/derived/cache within N minutes; backups purge on the standard M-day rotation") rather than implying total, instant erasure.
+- A deletion claim must distinguish live/derived removal from backup eradication, and must never imply total, instant erasure while recoverable backup copies remain (see the backup model and completion states below).
 - Deletion verification should be a first-class future test category (§18), not an afterthought.
+
+**Backup deletion semantics (one coherent model).**
+
+For primary, active, and derived data, deletion must remove the targeted user's or private object's data from active storage and from every controllable derived representation promptly, according to the future accepted deletion contract.
+
+For backups, a future design MAY satisfy the deletion requirement through exactly one of these accepted mechanisms:
+
+- **A — selective backup erasure:** the deleted user's/object's data is removed from the backup media themselves.
+- **B — cryptographic erasure:** key destruction renders the deleted user's backup content unrecoverable (this is a legitimate technique, but a deliberate design choice with its own proof standard — §11).
+- **C — bounded backup expiry/rotation**, permitted ONLY if all of the following hold: the maximum retention window is explicitly defined and accepted; deleted data is not restored into service during that window; restores perform deletion/tombstone reconciliation before the restored system becomes authoritative (THREAT-026); normal application and user access cannot reach deleted backup data; deletion status truthfully reports that backup eradication remains pending until expiry; and the system never reports full physical deletion before the backup condition is satisfied.
+
+Whole-backup-set expiry is therefore not inherently forbidden — it is acceptable exactly when it meets every condition of mechanism C. Equally, bounded rotation alone does not immediately constitute full deletion; it is a pending state with a defined end, not a completed one.
+
+Because of this, a future deletion contract must report two distinct completion states rather than one:
+
+LIVE_DERIVED_DELETION_COMPLETE — active storage and all controllable derived representations (derived text, embeddings/indexes, caches, temp files) no longer hold the data.
+
+BACKUP_ERADICATION_COMPLETE — the accepted backup mechanism (A, B, or C) has finished for the deleted data.
+
+FULL_DELETION_COMPLETE=yes is permitted only when both of the above are true. While any recoverable backup copy of the deleted data remains, FULL_DELETION_COMPLETE=no, and the user-facing deletion status must say so rather than implying erasure it cannot yet prove.
 
 No deletion pipeline is implemented by this document.
 
@@ -485,7 +557,11 @@ RETENTION_DELETION_MODEL_COMPLETE=yes
 
 **Must NOT be recorded:** raw private document text or snippets; personal identifiers; medical, financial, or employment details; private paths that could locate a specific real source; filenames when they identify a person or case; OCR text; encryption key material; session tokens/credentials; model prompts/responses containing private content (§13); anything from which private content could be reconstructed.
 
-**Diagnostic evidence** (error reports, crash dumps, support requests) must be designed from the start to avoid capturing private content — this is materially harder to retrofit than to design in, and is called out here so the future implementation phase treats it as a first-class requirement rather than a bug found in production.
+**No private-content logging exception.** Private user/case/document/model content MUST NOT be persisted in application logs, audit logs, telemetry, diagnostic logs, error traces, or crash reports. This is absolute for any future private-data implementation: there is no diagnostic exception, no separately-approvable diagnostics carve-out, and no "not logged by default" posture that a later configuration change could reverse. A future design that needs visibility into a private-data flow does not obtain it by persisting private content.
+
+PRIVATE_CONTENT_LOGGING_ALLOWED=no
+
+**Debugging private-data flows without logging private content.** Future diagnostic capability must instead be built from controls such as: non-sensitive metadata (counts, sizes, types, durations, outcome codes); correlation IDs that tie related events together without carrying content; enumerated security/error event codes in place of free-text traces; synthetic or fake reproductions built from non-private inputs — the discipline this repository already runs on for its fake corpus; sanitized or redacted evidence only where a separately accepted design proves the redaction boundary itself; and ephemeral operator/user reproduction that never persists private content into a logging, telemetry, or crash-reporting system. These are materially harder to retrofit than to design in, which is why they are stated here as a first-class requirement of the future implementation phase rather than left to be discovered as a production incident.
 
 **Admin/operator auditing:** any future admin or operator access to a user's private data must itself generate a logged, content-free audit event, addressing THREAT-022 directly. Operator access with no corresponding log entry is a `FAIL` state for any future implementation.
 
@@ -544,11 +620,13 @@ Validation that would be required before any private-data implementation could b
 - IDOR testing across the private record ID space (THREAT-004).
 - Cross-user leakage testing — the workspace-isolation assertion named in governing-plan §29 (THREAT-001).
 - CSRF testing on private state-changing endpoints.
-- Session revocation timing testing (THREAT-020).
+- Revocation testing (THREAT-020) — confirm that the next protected request after an accepted revocation is denied, including through any authorization cache.
 - Secret scanning extended to cover any new private-data-adjacent secret shapes, building on the existing `scripts/privacy-scan.mjs`.
 - Encryption-at-rest verification — confirm private content is genuinely not plaintext-readable from storage.
-- Malformed-upload testing (THREAT-029).
+- Malformed-upload testing (THREAT-029) — including processing-resource exhaustion by small, well-typed, allowlisted files, against every bound in the §9 bounded-processing-resources family (time, memory, expansion, depth, page/object count, concurrency, queue depth) and the cancellation/kill path.
 - Oversized-upload testing (THREAT-029).
+- Log-content testing — confirm that no private content reaches logs, telemetry, diagnostics, error traces, or crash reports under normal, error, and crash conditions, with no diagnostic-exception path available to reintroduce it (§15).
+- Deletion-completion reporting testing — confirm the system reports LIVE_DERIVED_DELETION_COMPLETE and BACKUP_ERADICATION_COMPLETE separately and never claims FULL_DELETION_COMPLETE while recoverable backup copies remain (§14).
 - Path-traversal testing on any filename/path handling (THREAT-008, THREAT-028).
 - Archive-bomb testing, if archives are ever authorized (THREAT-010).
 - Malicious PDF/document testing against the parser/OCR pipeline (THREAT-009).
