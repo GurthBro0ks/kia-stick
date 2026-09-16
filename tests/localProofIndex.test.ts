@@ -78,6 +78,37 @@ function makeProof(
 
 describe("local proof index", () => {
   it.each([
+    ["accepted Gate 0B field", "CLOSEOUT_COMMIT_SHA=" + "1".repeat(40), "1".repeat(40)],
+    ["markdown closeout field", "- CLOSEOUT_COMMIT_SHA: " + "1".repeat(40), "1".repeat(40)],
+    ...["COMMIT_SHA", "Commit SHA", "TERMINAL_CLOSEOUT_COMMIT_SHA"].map((field) => [
+      `${field} retains precedence`,
+      `CLOSEOUT_COMMIT_SHA=${"2".repeat(40)}\n${field}=${"1".repeat(40)}`,
+      "1".repeat(40),
+    ]),
+    ["identical duplicates", `CLOSEOUT_COMMIT_SHA=${"1".repeat(40)}\nCLOSEOUT_COMMIT_SHA=${"1".repeat(40)}`, "1".repeat(40)],
+    ["conflicting duplicates retain first-match semantics", `CLOSEOUT_COMMIT_SHA=${"1".repeat(40)}\nCLOSEOUT_COMMIT_SHA=${"2".repeat(40)}`, "1".repeat(40)],
+    ["markdown retains precedence over env", `CLOSEOUT_COMMIT_SHA=${"2".repeat(40)}\n- CLOSEOUT_COMMIT_SHA: ${"1".repeat(40)}`, "1".repeat(40)],
+    ["absent commit", "", ""],
+    ["empty commit", "CLOSEOUT_COMMIT_SHA=", ""],
+    ["unrecognized key", `UNRECOGNIZED_CLOSEOUT_COMMIT_SHA=${"1".repeat(40)}`, ""],
+    ["malformed value remains visible as invalid evidence", "CLOSEOUT_COMMIT_SHA=not-a-sha", "not-a-sha"],
+  ])("reports closeout commit metadata: %s", async (_label, metadata, expected) => {
+    const mod = await loadModule();
+    const root = makeProofRoot();
+    makeProof(root, "proof_kia_stick_gate_0b_closeout_push_20260916T222231Z", {
+      result: `RESULT=PASS\n${metadata}\n`,
+      pushed: "yes",
+    });
+    expect(mod.selectLatestAcceptedPushedCloseoutProof(mod.discoverLocalProofs(root))?.commit).toBe(expected);
+    const result = spawnSync("node", [scriptPath, "latest", "--root", root], { encoding: "utf8" });
+    expect(result.status).toBe(0);
+    expect(result.stdout).toContain(`Latest accepted pushed closeout commit: ${expected || "none"}\n`);
+    if (!/^[0-9a-f]{40}$/.test(expected)) {
+      expect(result.stdout).not.toMatch(/^Latest accepted pushed closeout commit: [0-9a-f]{40}$/m);
+    }
+  });
+
+  it.each([
     ["terminal fallback", "TERMINAL_CLOSEOUT_COMMIT_SHA", ""],
     ["ordinary field precedence", "COMMIT_SHA", "Commit SHA"],
     ["legacy field precedence", "Commit SHA", ""],
