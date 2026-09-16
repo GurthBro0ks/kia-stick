@@ -13594,5 +13594,14 @@
     "post_push_accepted_state_refresh": "not_performed",
     "post_push_accepted_state_promotion": "not_performed",
     "accepted_identity_rewritten": false
+  },
+  "ux1_conversation_shell": {
+    "status": "IMPLEMENTED_UNCOMMITTED_VALIDATION_WARN",
+    "manual_qa": "PENDING_OPERATOR_REVIEW",
+    "proof_dir": "/home/slimy/.local/state/kia-stick/proofs/proof_kia_stick_ux_1_conversation_first_shell_20260916T224115Z",
+    "full_tests": "WARN_4_EXISTING_PROOF_INDEX_FAILURES",
+    "backend_changed": false,
+    "data_model_changed": false,
+    "pushed": false
   }
 }

@@ -3531,3 +3531,14 @@
 - No real or private document, archive or vault accessed: `REAL_DOCUMENTS_ACCESSED=no`; `CMAL_CONSTITUTION_ACCESSED=no`; `SENSITIVE_ARCHIVE_ACCESSED=no`; `REAL_USER_DATA_ACCESSED=no`.
 
 - Remaining unknowns at commit creation: terminal closeout SHA, push outcome, post-push remote equality and final proof manifest verification. Resolve only in the external terminal closeout proof; no recursive tracked-state update. Next step: UX-0 read-only route/component/Settings preservation inventory as a new separately bounded checkpoint. Do not start Gate 0C or any auth/authorization/private-data/encryption implementation.
+
+## UX-1 conversation-first application shell — 2026-09-16
+
+- Exact accepted baseline 937493103c2a442136c6cf1a39336cafc1fd3e7a verified against local and live origin/main on omarchy-path-setup; clean worktree. Global bootstrap files absent; repo bootstrap loaded. UX-0 manifest verified.
+- Implemented AppShell with desktop collapse, native modal phone drawer, session Light/Dark/System, primary Packets/Sources/Library and secondary Settings/Upload/Vault/Import/Version access. Honest Pinned/Projects/current-chat sections. Minimal Packets container reuses existing artifact; existing panels unchanged. Tokenized screen colors and replaced fixed chat offsets with shell flex layout. No backend/data/security changes.
+- Files: components/AppShell.tsx, components/KiaStickApp.tsx, app/globals.css, tests/conversationShell.test.ts, tests/answerGovernor.test.ts, feature_list.json, claude-progress.md.
+- Commands: bootstrap; exact Git/local/live baseline checks; UX-0 sha256sum verification; artifact hashing; direct eslint, tsc, vitest, next build, privacy-scan, check-fake-docs, release-check, design-contract-check; git diff --check; isolated next dev 127.0.0.1:3107 and browser/HTTP QA. No corpus-generating pre-hooks, qa_gate.sh, auto-sync, push or port-3000 access.
+- Fresh full tests: 341/345 files, 1154/1158 tests PASS. Four unchanged proof-index tests fail: parser does not recognize CLOSEOUT_COMMIT_SHA in latest sealed Gate 0B closeout. No tests skipped/weakened and no sealed proof or parser changed. Lint/typecheck/scans pass; final build and immutability outcome recorded in external proof RESULT.md.
+- RESULT=WARN; no implementation commit because full validation PASS is required. Work remains uncommitted intentionally. Screenshots/DOM measurements cover requested widths; browser captures appear scaled/cropped, and operator visual QA remains pending. Task-owned server stopped after QA.
+- Proof: /home/slimy/.local/state/kia-stick/proofs/proof_kia_stick_ux_1_conversation_first_shell_20260916T224115Z
+- Remaining blocker: separately scoped proof-index field compatibility repair and fresh full-suite pass before the authorized local commit. MANUAL_QA_STATUS=PENDING_OPERATOR_REVIEW. No push or acceptance.

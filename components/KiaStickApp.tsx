@@ -3,23 +3,19 @@
 import {
   AlertTriangle,
   Archive,
-  BookOpen,
   CheckCircle2,
   ChevronRight,
   ClipboardList,
-  Database,
   Download,
   FileSearch,
-  Heart,
   MessageSquareText,
   Plus,
   Printer,
   RotateCcw,
   Save,
-  Settings,
   ShieldCheck,
-  Upload,
 } from "lucide-react";
+import { AppShell, type ShellView } from "./AppShell";
 import React, { useEffect, useMemo, useRef, useState } from "react";
 import { cannedQuestions, type AnswerResult } from "@/lib/answerGovernor";
 import {
@@ -172,7 +168,7 @@ import {
   type PublicSourceRouteResponse,
 } from "@/lib/publicSource";
 
-type Tab = "chat" | "sources" | "saved" | "upload" | "vault" | "import" | "settings";
+type Tab = ShellView;
 type VaultView = "vault" | "quarantine" | "redaction" | "metadata" | "index" | "audit";
 type PublicSourceLoadState = { status: "loading" } | PublicSourceRouteResponse;
 type CbaSourceLoadState = { status: "loading" } | CbaSourceRouteResponse;
@@ -887,18 +883,7 @@ export function KiaStickApp({ runtimeVersion = clientVersion }: { runtimeVersion
   }
 
   return (
-    <div className="appShell">
-      <header className="topBar">
-        <div className="brandBlock">
-          <span className="brandEyebrow">Know-It-All Stick</span>
-          <h1 className="brand">KIA Stick</h1>
-        </div>
-        <div className="topMeta">
-          <span className="winBadge">{runtimeVersion.displayVersion}</span>
-          <span>{runtimeVersion.provider}</span>
-        </div>
-      </header>
-
+    <AppShell view={tab} onNavigate={setTab} onNewConversation={startNewChat} conversationTitle={thread.title} displayVersion={runtimeVersion.displayVersion}>
       <div className="fakeNotice" role="status">
         <AlertTriangle size={16} />
         <span>Fake sample mode remains isolated. PUBLIC DATA PILOT: two exact allowlisted official sources, local read-only, no private data. No cloud keys, real uploads, or unrestricted real-doc gate are active.</span>
@@ -910,8 +895,8 @@ export function KiaStickApp({ runtimeVersion = clientVersion }: { runtimeVersion
             <section className="chatThread" aria-label="Current conversation">
               {thread.messages.length === 0 && (
                 <div className="emptyChatState">
-                  <span className="messageLabel">New fake chat / public pilot</span>
-                  <p>Select the fake corpus or the one-source public pilot, then ask a cited question.</p>
+                  <span className="messageLabel">Ask KIA Stick</span>
+                  <p>Ask a question and follow the citations. Use fake samples or the two allowlisted public sources; keep private information out.</p>
                 </div>
               )}
               {thread.messages.map((message, index) =>
@@ -968,6 +953,22 @@ export function KiaStickApp({ runtimeVersion = clientVersion }: { runtimeVersion
               )}
             </section>
           </div>
+        )}
+
+        {tab === "packets" && (
+          <section className="tabPanel" aria-label="Packets">
+            <PanelHeader title="Packets" meta="Existing steward packet workspace" />
+            <p>Build a case-neutral packet from supported public topics, or reopen saved work in Library.</p>
+            <div className="packetWorkspaceActions">
+              <button className="button primary" type="button" onClick={() => setTab("sources")}>Select topics / Build packet</button>
+              <button className="button subtle" type="button" onClick={() => setTab("saved")}>Open Library</button>
+            </div>
+            {stewardPacket ? (
+              <PublicStewardPacketView packet={stewardPacket} source={cbaSourceState.status === "available" ? cbaSourceState.source : null}
+                onCitationNavigate={navigateToCitation} onStepCompletionChange={updateStewardPacketStep}
+                onSave={() => saveStewardPacketWorkspace(stewardPacket)} />
+            ) : <p className="emptyState">No current packet. Select one to three supported topics in Sources to begin.</p>}
+          </section>
         )}
 
         {tab === "sources" && (
@@ -1154,16 +1155,7 @@ export function KiaStickApp({ runtimeVersion = clientVersion }: { runtimeVersion
         </section>
       )}
 
-      <nav className="bottomNav" aria-label="KIA Stick navigation">
-        <NavButton active={tab === "chat"} label="Chat" onClick={() => setTab("chat")} icon={<MessageSquareText size={20} />} />
-        <NavButton active={tab === "sources"} label="Sources" onClick={() => setTab("sources")} icon={<BookOpen size={20} />} />
-        <NavButton active={tab === "saved"} label="Saved" onClick={() => setTab("saved")} icon={<Heart size={20} />} />
-        <NavButton active={tab === "upload"} label="Upload" onClick={() => setTab("upload")} icon={<Upload size={20} />} />
-        <NavButton active={tab === "vault"} label="Vault" onClick={() => setTab("vault")} icon={<Database size={20} />} />
-        <NavButton active={tab === "import"} label="Import" onClick={() => setTab("import")} icon={<FileSearch size={20} />} />
-        <NavButton active={tab === "settings"} label="Settings" onClick={() => setTab("settings")} icon={<Settings size={20} />} />
-      </nav>
-    </div>
+    </AppShell>
   );
 }
 
@@ -1361,7 +1353,7 @@ function PanelHeader(props: { title: string; meta: React.ReactNode }) {
   );
 }
 
-function NavButton(props: { active: boolean; label: string; icon: React.ReactNode; onClick: () => void }) {
+export function NavButton(props: { active: boolean; label: string; icon: React.ReactNode; onClick: () => void }) {
   return (
     <button className={props.active ? "navButton active" : "navButton"} type="button" onClick={props.onClick}>
       {props.icon}

@@ -529,7 +529,8 @@ describe("manual QA UX shell", () => {
 
     expect(html).toContain("chatScrollArea");
     expect(html).toContain("chatComposer chatComposerDock");
-    expect(html).toContain("New fake chat");
+    expect(html).toContain("Ask KIA Stick");
+    expect(html).toContain("keep private information out");
     expect(html).toContain("Message KIA Stick...");
     expect(html).toContain("New chat");
     expect(html).toContain("Send");
@@ -635,17 +636,18 @@ describe("manual QA UX shell", () => {
     expect(savedHtml).toContain("Delete saved answer");
   });
 
-  it("renders chronological chat layout before composer and bottom nav", () => {
+  it("renders sidebar navigation followed by chronological chat and composer", () => {
     const html = renderToStaticMarkup(React.createElement(KiaStickApp, {
       runtimeVersion: createRuntimeVersion({ buildDate: "20260620", gitSha: "abc123" }),
     }));
     const messagesIndex = html.indexOf("chatScrollArea");
     const composerIndex = html.indexOf("chatComposer chatComposerDock");
-    const navIndex = html.indexOf("bottomNav");
+    const navIndex = html.indexOf("sidebarNavigation");
 
     expect(messagesIndex).toBeGreaterThan(-1);
     expect(composerIndex).toBeGreaterThan(messagesIndex);
-    expect(navIndex).toBeGreaterThan(composerIndex);
+    expect(navIndex).toBeGreaterThan(-1);
+    expect(messagesIndex).toBeGreaterThan(navIndex);
   });
 
   it("keeps full packet detail sections collapsed by default", () => {
@@ -661,7 +663,7 @@ describe("manual QA UX shell", () => {
     expect(html).not.toContain("<details open");
   });
 
-  it("keeps the bottom navigation including Settings in the app shell", () => {
+  it("keeps sidebar navigation including Settings and secondary tools in the app shell", () => {
     const html = renderToStaticMarkup(React.createElement(KiaStickApp, {
       runtimeVersion: createRuntimeVersion({ buildDate: "20260620", gitSha: "abc123" }),
     }));
@@ -669,7 +671,9 @@ describe("manual QA UX shell", () => {
     expect(html).toContain("KIA Stick navigation");
     expect(html).toContain("Import");
     expect(html).toContain("Settings");
-    expect(html).toContain("bottomNav");
+    expect(html).toContain("sidebarNavigation");
+    expect(html).toContain("Advanced / Tools");
+    expect(html).toContain("mobileSidebarDrawer");
   });
 
   it("renders Sources hierarchy traceability with fake source IDs and build identity", () => {
