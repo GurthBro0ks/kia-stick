@@ -327,6 +327,7 @@ export function KiaStickApp({ runtimeVersion = clientVersion }: { runtimeVersion
   const [cbaCitationTargetId, setCbaCitationTargetId] = useState<string | null>(null);
   const [cbaCitationNavigationNotice, setCbaCitationNavigationNotice] = useState<CbaCitationNavigationNotice | null>(null);
   const [draft, setDraft] = useState("");
+  const [sourceHandoff, setSourceHandoff] = useState<string | null>(null);
   const [thread, setThread] = useState<ConversationThread>(() => createConversationThread());
   const [isSending, setIsSending] = useState(false);
   const [saved, setSaved] = useState<SavedAnswer[]>([]);
@@ -344,6 +345,13 @@ export function KiaStickApp({ runtimeVersion = clientVersion }: { runtimeVersion
   const [hydrated, setHydrated] = useState(false);
   const [pendingScroll, setPendingScroll] = useState(false);
   const chatScrollRef = useRef<HTMLElement>(null);
+  const conversationScrollTop = useRef(0);
+
+  useEffect(() => {
+    if (chatScrollRef.current) {
+      chatScrollRef.current.scrollTop = tab === "chat" ? conversationScrollTop.current : 0;
+    }
+  }, [tab]);
 
   useEffect(() => {
     setSaved(migrateSavedAnswers(loadJson<unknown[]>(savedKey, [])));
@@ -518,6 +526,7 @@ export function KiaStickApp({ runtimeVersion = clientVersion }: { runtimeVersion
     });
 
     setDraft("");
+    setSourceHandoff(null);
     setChatSourceMode(sourcePolicy);
     setSaveNotice(null);
     setIsSending(true);
@@ -735,13 +744,13 @@ export function KiaStickApp({ runtimeVersion = clientVersion }: { runtimeVersion
       return;
     }
     if (!result.added) {
-      setTab("sources");
+      setTab("packets");
       return;
     }
     setPacketTopicIds(result.topicIds);
     setStewardPacket(null);
     setSaveNotice(null);
-    setTab("sources");
+    setTab("packets");
   }
 
   function buildStewardPacketWorkspace() {
@@ -811,7 +820,14 @@ export function KiaStickApp({ runtimeVersion = clientVersion }: { runtimeVersion
   }
 
   function navigateToCitation(citation: Citation) {
-    if (citation.sourceKind !== "public" || !citation.paragraphId) return;
+    if (citation.sourceKind !== "public") {
+      setTab("sources");
+      window.setTimeout(() => {
+        document.getElementById(`fake-source-${citation.id}`)?.scrollIntoView({ behavior: "smooth", block: "center" });
+      }, 50);
+      return;
+    }
+    if (!citation.paragraphId) return;
     const isCba = citation.publicSourceType === "cba_contract" || citation.sourceId === CBA_SOURCE_ID;
     if (isCba) {
       const verification = verifyCbaCitation(citation, cbaSourceState.status === "available" ? cbaSourceState.source : null);
@@ -876,10 +892,15 @@ export function KiaStickApp({ runtimeVersion = clientVersion }: { runtimeVersion
     setImportWizardState((current) => applyImportWizardAction(current, { ...action, now: new Date().toISOString() }));
   }
 
-  function prepareCbaQuestion(nextQuestion: string) {
-    setDraft(nextQuestion);
-    setChatSourceMode("cba");
+  function prepareSourceQuestion(title: string, question: string, policy: ChatSourcePolicy) {
+    setDraft((current) => current.trim() ? `${current}\n\n${question}` : question);
+    setSourceHandoff(title);
+    setChatSourceMode(policy);
     setTab("chat");
+  }
+
+  function prepareCbaQuestion(nextQuestion: string) {
+    prepareSourceQuestion("Official APWU-USPS CBA", nextQuestion, "cba");
   }
 
   return (
@@ -892,7 +913,7 @@ export function KiaStickApp({ runtimeVersion = clientVersion }: { runtimeVersion
         </details>
       </div>
 
-      <main className={tab === "chat" ? "mainArea chatMain" : "mainArea"} ref={chatScrollRef}>
+      <main className={tab === "chat" ? "mainArea chatMain" : "mainArea"} ref={chatScrollRef} onScroll={(event) => { if (tab === "chat") conversationScrollTop.current = event.currentTarget.scrollTop; }}>
         {tab === "chat" && (
           <div className="chatScrollArea" aria-label="Chat messages">
             <section className="chatThread" aria-label="Current conversation">
@@ -962,8 +983,14 @@ export function KiaStickApp({ runtimeVersion = clientVersion }: { runtimeVersion
           <section className="tabPanel" aria-label="Packets">
             <PanelHeader title="Packets" meta="Existing steward packet workspace" />
             <p>Build a case-neutral packet from supported public topics, or reopen saved work in Library.</p>
+            <p role="status">{packetTopicIds.length ? "Selected topics carry forward into this case-neutral packet. Conversation text and case facts are not added." : "Choose a supported topic from a conversation or Sources to begin."}</p>
+            <div className="packetSelectedTopics" aria-label="Selected packet topics">
+              {packetTopicIds.map((topicId) => <span className="badge" key={topicId}>{publicStewardWorkflowTopic(topicId).displayName}</span>)}
+            </div>
             <div className="packetWorkspaceActions">
-              <button className="button primary" type="button" onClick={() => setTab("sources")}>Select topics / Build packet</button>
+              <button className="button primary handoffAction" type="button" disabled={cbaSourceState.status !== "available" || packetTopicIds.length < 1 || packetTopicIds.length > 3} onClick={buildStewardPacketWorkspace}>Create Steward Packet</button>
+              <button className="button subtle" type="button" onClick={() => setTab("chat")}>Back to conversation</button>
+              <button className="button subtle" type="button" onClick={() => setTab("sources")}>Select topics / Build packet</button>
               <button className="button subtle" type="button" onClick={() => setTab("saved")}>Open Library</button>
             </div>
             {stewardPacket ? (
@@ -976,6 +1003,8 @@ export function KiaStickApp({ runtimeVersion = clientVersion }: { runtimeVersion
 
         {tab === "sources" && (
           <SourcesPanel
+            onAskSource={prepareSourceQuestion}
+            onReturnToChat={() => setTab("chat")}
             cbaCitationTargetId={cbaCitationTargetId}
             cbaCitationNavigationNotice={cbaCitationNavigationNotice}
             cbaSourceState={cbaSourceState}
@@ -1065,6 +1094,7 @@ export function KiaStickApp({ runtimeVersion = clientVersion }: { runtimeVersion
           </div>
 
           <div className="askBox">
+            {sourceHandoff && <p className="emptyState" role="status">From Sources: {sourceHandoff}. A visible prompt has been added below. Review it before sending; this does not attach or ingest a source. <button className="button subtle compactButton" type="button" onClick={() => setSourceHandoff(null)}>Dismiss</button></p>}
             <textarea
               aria-label="Message KIA Stick"
               placeholder="Message KIA Stick..."
@@ -1466,6 +1496,8 @@ export function SourcesPanel({
   publicSourceState = { status: "unavailable", reason: "cache_missing" },
   sourceHierarchyGroups,
   onAskCbaQuestion,
+  onAskSource,
+  onReturnToChat,
   onBuildStewardPacket,
   onPacketStepCompletionChange,
   onSaveStewardPacket,
@@ -1481,6 +1513,8 @@ export function SourcesPanel({
   publicSourceState?: PublicSourceLoadState;
   sourceHierarchyGroups: ReturnType<typeof buildSourceHierarchyGroups>;
   onAskCbaQuestion?: (question: string) => void;
+  onAskSource?: (title: string, question: string, policy: ChatSourcePolicy) => void;
+  onReturnToChat?: () => void;
   onBuildStewardPacket?: () => void;
   onPacketStepCompletionChange?: (stepId: PublicStewardPacketStep["stepId"], completed: boolean) => void;
   onSaveStewardPacket?: (packet: PublicStewardPacket) => void;
@@ -1602,6 +1636,7 @@ export function SourcesPanel({
   return (
     <section className="tabPanel">
       <PanelHeader title="Sources" meta="isolated fake and public lanes" />
+      {onReturnToChat && <button className="button subtle" type="button" onClick={onReturnToChat}>Back to conversation</button>}
       <div className="publicPilotStatus" aria-label="public data pilot status">
         <strong>PUBLIC DATA PILOT</strong>
         <span>TWO EXACT ALLOWLISTED SOURCES</span>
@@ -1635,6 +1670,7 @@ export function SourcesPanel({
               <p>{cbaSourceState.source.source.owner}</p>
             </div>
             <div className="compactActions">
+              {onAskCbaQuestion && <button className="button primary handoffAction" type="button" onClick={() => onAskCbaQuestion(cbaCitationTarget?.articleNumber ? `What does Article ${cbaCitationTarget.articleNumber} say?` : "What does the contract say about overtime?")}>Ask KIA Stick about this</button>}
               <a className="button subtle officialSourceLink" href={CBA_SOURCE_PAGE_URL} target="_blank" rel="noreferrer">Official source page</a>
               <a className="button subtle officialSourceLink" href={CBA_SOURCE_PDF_URL} target="_blank" rel="noreferrer">Official PDF</a>
             </div>
@@ -1714,7 +1750,7 @@ export function SourcesPanel({
                       type="button"
                       onClick={() => onAskCbaQuestion(topic.exampleQuestion)}
                     >
-                      Open workflow
+                      Ask KIA Stick about this workflow
                     </button>
                   )}
                   {onTogglePacketTopic && (
@@ -1843,6 +1879,7 @@ export function SourcesPanel({
               <h3>{publicSourceState.source.source.title}</h3>
               <p>{publicSourceState.source.source.owner}</p>
             </div>
+            {onAskSource && <button className="button primary handoffAction" type="button" onClick={() => onAskSource(publicSourceState.source.source.title, "What are Weingarten rights under NLRB guidance?", "nlrb")}>Ask KIA Stick about this</button>}
             <a className="button subtle officialSourceLink" href={PUBLIC_SOURCE_URL} target="_blank" rel="noreferrer">
               Official NLRB page
             </a>
@@ -1917,8 +1954,9 @@ export function SourcesPanel({
             </div>
             <div className="hierarchyDocList">
               {docs.map((doc) => (
-                <div className="hierarchyDoc" key={doc.id}>
+                <div className="hierarchyDoc" id={`fake-source-${doc.id}`} key={doc.id}>
                   <strong>{doc.title}</strong>
+                  {onAskSource && <button className="button subtle" type="button" onClick={() => onAskSource(doc.title, `Regarding the fake sample source "${doc.title}" (${doc.id}): `, "fake")}>Ask KIA Stick about this</button>}
                   <div className="sourceMeta">
                     <span className="badge">{sourceClassLabels[doc.class]}</span>
                     <span className={doc.citable ? "badge green" : "badge red"}>{doc.citable ? "citable in Chat" : "context only"}</span>
@@ -3109,8 +3147,8 @@ export function AssistantMessageCard({
               <ul className="answerSourceLinks">
                 {answer.citations.map((citation, index) => (
                   <li key={citation.id}>
-                    <button className="citationAnchorButton" type="button" onClick={() => citation.sourceKind === "public" ? onCitationNavigate(citation) : setCitationsOpen(true)}>
-                      {citation.title} · {citation.sourceKind === "public" ? `Citation ${index + 1}` : `${citation.article} · ${citation.page}`}
+                    <button className="citationAnchorButton" type="button" onClick={() => onCitationNavigate(citation)}>
+                      View source: {citation.title} · {citation.sourceKind === "public" ? `Citation ${index + 1}` : `${citation.article} · ${citation.page}`}
                     </button>
                   </li>
                 ))}

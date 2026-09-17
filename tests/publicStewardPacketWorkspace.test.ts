@@ -400,7 +400,7 @@ describe("public steward packet workspace", () => {
         runtimeVersion,
       })
     );
-    expect(sourcesHtml.match(/Open workflow/g)).toHaveLength(PUBLIC_STEWARD_WORKFLOW_TOPICS.length);
+    expect(sourcesHtml.match(/Ask KIA Stick about this workflow/g)).toHaveLength(PUBLIC_STEWARD_WORKFLOW_TOPICS.length);
     expect(sourcesHtml).toContain("Build steward packet");
     expect(sourcesHtml).toContain("Build case-neutral steward packet");
     expect(sourcesHtml).toContain("No private input field exists");

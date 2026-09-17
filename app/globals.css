@@ -2607,3 +2607,9 @@ input::placeholder, textarea::placeholder { color: var(--text-secondary); opacit
   outline-offset: 2px;
 }
 }
+
+/* Keep source/chat handoff labels readable in wrapping action rows. */
+.button.handoffAction {
+  flex: 0 0 auto;
+  max-width: 100%;
+}
