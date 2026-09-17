@@ -307,9 +307,9 @@ function publicCitationForSaved(item: SavedAnswer): Citation | undefined {
 
 function saveStatusText(status: SaveAnswerStatus, answerKind: AnswerResult["answerKind"]): string {
   const kind = answerKind === "public" ? "public-source" : "fake";
-  if (status === "created") return `Saved ${kind} answer with source and provider metadata.`;
-  if (status === "replaced") return `Updated the saved ${kind} answer with newer metadata.`;
-  return "Already saved. No duplicate Saved record was created.";
+  if (status === "created") return `Saved ${kind} answer to Library.`;
+  if (status === "replaced") return `Updated the ${kind} answer in Library.`;
+  return "Already in Library. No duplicate was created.";
 }
 
 function formatCount(count: number, singular: string, plural = `${singular}s`): string {
@@ -886,7 +886,10 @@ export function KiaStickApp({ runtimeVersion = clientVersion }: { runtimeVersion
     <AppShell view={tab} onNavigate={setTab} onNewConversation={startNewChat} conversationTitle={thread.title} displayVersion={runtimeVersion.displayVersion}>
       <div className="fakeNotice" role="status">
         <AlertTriangle size={16} />
-        <span>Fake sample mode remains isolated. PUBLIC DATA PILOT: two exact allowlisted official sources, local read-only, no private data. No cloud keys, real uploads, or unrestricted real-doc gate are active.</span>
+        <details className="safetyNoticeDetails">
+          <summary>Fake samples / public data only — no private data</summary>
+          <p>Fake sample mode remains isolated. PUBLIC DATA PILOT: two exact allowlisted official sources, local read-only, no private data. No cloud keys, real uploads, or unrestricted real-doc gate are active.</p>
+        </details>
       </div>
 
       <main className={tab === "chat" ? "mainArea chatMain" : "mainArea"} ref={chatScrollRef}>
@@ -1053,7 +1056,7 @@ export function KiaStickApp({ runtimeVersion = clientVersion }: { runtimeVersion
               </button>
               <span className={latestAssistant?.answer.noAnswer ? "statusPill warning" : "statusPill ok"}>
                 {isSending
-                  ? chatSourceMode === "cba" ? "Checking CBA cache" : chatSourceMode === "nlrb" || chatSourceMode === "public" ? "Checking NLRB cache" : chatSourceMode === "fake" ? "Checking fake sources" : "Routing automatically"
+                  ? "Checking sources"
                   : latestAssistant?.answer.noAnswer ? "No-answer unsaved"
                   : latestAssistant ? latestAssistant.answer.answerKind === "public" ? "Public citation ready" : "Fake thread ready"
                   : "Ready"}
@@ -1062,18 +1065,6 @@ export function KiaStickApp({ runtimeVersion = clientVersion }: { runtimeVersion
           </div>
 
           <div className="askBox">
-            <div className="visibleLaneControl" aria-label="Chat answer lane policy">
-              <label className="controlPill">
-                <span>Answer lane</span>
-                <select value={chatSourceMode} onChange={(event) => setChatSourceMode(event.target.value as ChatSourcePolicy)}>
-                  <option value="auto">Automatic — official public intents first</option>
-                  <option value="cba">CBA</option>
-                  <option value="nlrb">NLRB Guidance</option>
-                  <option value="fake">Fake sample corpus</option>
-                </select>
-              </label>
-              <span className="emptyState">Automatic is the safe default: CBA intents first, then NLRB guidance, known fake prompts, and finally a no-answer lane.</span>
-            </div>
             <textarea
               aria-label="Message KIA Stick"
               placeholder="Message KIA Stick..."
@@ -1101,6 +1092,18 @@ export function KiaStickApp({ runtimeVersion = clientVersion }: { runtimeVersion
 
           <details className="composerDisclosure">
             <summary>Response options</summary>
+            <div className="visibleLaneControl" aria-label="Chat answer lane policy">
+              <label className="controlPill">
+                <span>Answer lane</span>
+                <select value={chatSourceMode} onChange={(event) => setChatSourceMode(event.target.value as ChatSourcePolicy)}>
+                  <option value="auto">Automatic — official public intents first</option>
+                  <option value="cba">CBA</option>
+                  <option value="nlrb">NLRB Guidance</option>
+                  <option value="fake">Fake sample corpus</option>
+                </select>
+              </label>
+              <span className="emptyState">Automatic is the safe default: CBA intents first, then NLRB guidance, known fake prompts, and finally a no-answer lane.</span>
+            </div>
             <div className="controlStrip">
               <label className="controlPill">
                 <span>Mode</span>
@@ -3083,22 +3086,13 @@ export function AssistantMessageCard({
                 <span className="messageLabel">KIA Stick</span>
                 {turnLabel && <span>{turnLabel}</span>}
               </div>
-              <h2>{answer.publicSourceRole === "cba_contract" ? "Official APWU-USPS CBA" : answer.publicSourceRole === "cross_source" ? "CBA and NLRB authority comparison" : answer.publicSourceRole === "safe_no_answer" ? "Safe source-router no-answer" : answer.answerKind === "public" ? "NLRB Weingarten public pilot" : intentLabels[answer.intent]}</h2>
+              <h2>{answer.publicSourceRole === "cba_contract" ? "Official APWU-USPS CBA" : answer.publicSourceRole === "cross_source" ? "CBA and NLRB authority comparison" : answer.publicSourceRole === "safe_no_answer" ? "No supported answer" : answer.answerKind === "public" ? "NLRB Weingarten guidance" : intentLabels[answer.intent]}</h2>
             </div>
             <span className={answer.noAnswer ? "statusPill warning" : "statusPill ok"}>
               {answer.noAnswer
                 ? answer.answerKind === "public" ? "Unsaved no-answer; public source unsupported" : "Unsaved no-answer; context-only trail"
                 : `${answer.citations.length} citations`}
             </span>
-          </div>
-
-          <div className="sourceMeta" aria-label="Answer lane identity">
-            <span className="badge">Selected lane: {message.modeScopeDetail.sourceModePolicy ?? "legacy"}</span>
-            <span className={answer.answerKind === "public" ? "badge green" : "badge"}>
-              Actual lane: {answer.publicSourceRole === "cba_contract" || answer.publicSourceRole === "cross_source" ? "public_cba" : answer.publicSourceRole === "nlrb_guidance" ? "public_nlrb" : answer.publicSourceRole === "safe_no_answer" ? "safe_no_answer" : answer.answerKind === "public" ? "public_nlrb" : "fake"}
-            </span>
-            <span className="badge">Provider: {answer.version.provider}</span>
-            <span className="badge">Prompt: {answer.version.promptVersion}</span>
           </div>
 
           <div className="compactAnswer">
@@ -3109,7 +3103,54 @@ export function AssistantMessageCard({
             <section>
               <span>Confidence / authority</span>
               <strong>{authoritySummary(answer)}</strong>
-              <p>{answer.modeNote}</p>
+            </section>
+            <section className="answerSources" aria-label="Supporting sources">
+              <span>Supporting sources</span>
+              <ul className="answerSourceLinks">
+                {answer.citations.map((citation, index) => (
+                  <li key={citation.id}>
+                    <button className="citationAnchorButton" type="button" onClick={() => citation.sourceKind === "public" ? onCitationNavigate(citation) : setCitationsOpen(true)}>
+                      {citation.title} · {citation.sourceKind === "public" ? `Citation ${index + 1}` : `${citation.article} · ${citation.page}`}
+                    </button>
+                  </li>
+                ))}
+              </ul>
+              {answer.citations.length === 0 ? (
+                <p className="emptyState">
+                  {answer.answerKind === "public"
+                    ? "No Saved record is created for no-answer responses. Review Sources or try a supported question."
+                    : "No Saved record is created for no-answer responses. Context-only fake sources can still be reviewed in the full packet."}
+                </p>
+              ) : (
+                <button
+                  aria-expanded={citationsOpen}
+                  className="button subtle citationToggle"
+                  type="button"
+                  onClick={() => setCitationsOpen((open) => !open)}
+                >
+                  {citationsOpen ? "Hide citations" : `Show citations (${answer.citations.length})`}
+                </button>
+              )}
+              {citationsOpen && (
+                <ol className="citationCards">
+                  {answer.citations.map((citation) => (
+                    <li key={citation.id}>
+                      {citation.sourceKind === "public" ? (
+                        <button className="citationAnchorButton" type="button" onClick={() => onCitationNavigate(citation)}>
+                          {citationLabel(citation)}
+                        </button>
+                      ) : citationLabel(citation)}
+                    </li>
+                  ))}
+                  {answer.answerKind === "public" && (
+                    <li className="officialCitationLink">
+                      <a href={answer.publicSourceRole === "cba_contract" || answer.publicSourceRole === "cross_source" ? CBA_SOURCE_PDF_URL : PUBLIC_SOURCE_URL} target="_blank" rel="noreferrer">
+                        {answer.publicSourceRole === "cba_contract" || answer.publicSourceRole === "cross_source" ? "Open the separate official CBA PDF" : "Open the separate official NLRB source"}
+                      </a>
+                    </li>
+                  )}
+                </ol>
+              )}
             </section>
             <section>
               <span>What to do next</span>
@@ -3132,19 +3173,19 @@ export function AssistantMessageCard({
 
           <div className="compactActions">
             {canBuildArgument && !argumentPlan && (
-              <button className="button primary" type="button" onClick={onBuildArgument}>
+              <button className="button subtle" type="button" onClick={onBuildArgument}>
                 <ClipboardList size={16} />
                 Build cited argument
               </button>
             )}
             {canBuildGrievanceOutline && !grievanceOutline && (
-              <button className="button primary" type="button" onClick={onBuildGrievanceOutline}>
+              <button className="button subtle" type="button" onClick={onBuildGrievanceOutline}>
                 <ClipboardList size={16} />
                 Build cited grievance outline
               </button>
             )}
             {canBuildStewardArgumentPlan && !stewardArgumentPlan && (
-              <button className="button primary" type="button" onClick={onBuildStewardArgumentPlan}>
+              <button className="button subtle" type="button" onClick={onBuildStewardArgumentPlan}>
                 <ClipboardList size={16} />
                 Build topic argument plan
               </button>
@@ -3157,7 +3198,7 @@ export function AssistantMessageCard({
             )}
             <button
               aria-expanded={packetOpen}
-              className="button primary"
+              className="button subtle"
               type="button"
               onClick={() => setPacketOpen((open) => !open)}
             >
@@ -3172,25 +3213,9 @@ export function AssistantMessageCard({
               disabled={saveDisabled}
             >
               <Save size={16} />
-              {answer.noAnswer ? "No answer to save" : hasNonCurrentCbaCitation ? "Citation verification required" : "Save to Saved"}
+              {answer.noAnswer ? "No answer to save" : hasNonCurrentCbaCitation ? "Citation verification required" : "Save to Library"}
             </button>
             {hasNonCurrentCbaCitation && <p className="emptyState">CBA citations must verify against the current bounded source before saving.</p>}
-            {answer.citations.length === 0 ? (
-              <p className="emptyState">
-                {answer.answerKind === "public"
-                  ? "No Saved record is created for no-answer responses. Public source prompt, provider, and lane metadata remain visible."
-                  : "No Saved record is created for no-answer responses. Context-only fake sources can still be reviewed in the full packet. Prompt and provider metadata remain visible there."}
-              </p>
-            ) : (
-              <button
-                aria-expanded={citationsOpen}
-                className="button subtle citationToggle"
-                type="button"
-                onClick={() => setCitationsOpen((open) => !open)}
-              >
-                {citationsOpen ? "Hide citations" : `Show citations (${answer.citations.length})`}
-              </button>
-            )}
           </div>
 
           {argumentPlan && (
@@ -3217,32 +3242,24 @@ export function AssistantMessageCard({
             />
           )}
 
-          {citationsOpen && (
-            <ol className="citationCards">
-              {answer.citations.map((citation) => (
-                <li key={citation.id}>
-                  {citation.sourceKind === "public" ? (
-                    <button className="citationAnchorButton" type="button" onClick={() => onCitationNavigate(citation)}>
-                      {citationLabel(citation)}
-                    </button>
-                  ) : citationLabel(citation)}
-                </li>
-              ))}
-              {answer.answerKind === "public" && (
-                <li className="officialCitationLink">
-                  <a href={answer.publicSourceRole === "cba_contract" || answer.publicSourceRole === "cross_source" ? CBA_SOURCE_PDF_URL : PUBLIC_SOURCE_URL} target="_blank" rel="noreferrer">
-                    {answer.publicSourceRole === "cba_contract" || answer.publicSourceRole === "cross_source" ? "Open the separate official CBA PDF" : "Open the separate official NLRB source"}
-                  </a>
-                </li>
-              )}
-            </ol>
-          )}
-
           {packetOpen && <FullPacket answer={answer} />}
 
-          <div className="footerLine">
-            {answer.footer} | AnswerLane:{answer.answerKind === "public" ? "public" : "fake"} | Prompt:{answer.version.promptVersion} | Provider:{answer.version.provider}
-          </div>
+          <details className="answerTechnicalDetails">
+            <summary>Technical details</summary>
+            <div className="sourceMeta" aria-label="Answer lane identity">
+              <span className="badge">Selected lane: {message.modeScopeDetail.sourceModePolicy ?? "legacy"}</span>
+              <span className={answer.answerKind === "public" ? "badge green" : "badge"}>
+                Actual lane: {answer.publicSourceRole === "cba_contract" || answer.publicSourceRole === "cross_source" ? "public_cba" : answer.publicSourceRole === "nlrb_guidance" ? "public_nlrb" : answer.publicSourceRole === "safe_no_answer" ? "safe_no_answer" : answer.answerKind === "public" ? "public_nlrb" : "fake"}
+              </span>
+              <span className="badge">Provider: {answer.version.provider}</span>
+              <span className="badge">Prompt: {answer.version.promptVersion}</span>
+            </div>
+
+            <p>{answer.modeNote}</p>
+            <div className="footerLine">
+              {answer.footer} | AnswerLane:{answer.answerKind === "public" ? "public" : "fake"} | Prompt:{answer.version.promptVersion} | Provider:{answer.version.provider}
+            </div>
+          </details>
         </div>
       </div>
   );

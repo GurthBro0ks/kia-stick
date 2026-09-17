@@ -23,7 +23,9 @@ describe("v0.9.15 fake evidence/Saved/Sources polish", () => {
     const component = readFileSync("components/KiaStickApp.tsx", "utf8");
 
     expect(component).toContain("Unsaved no-answer; context-only trail");
-    expect(component).toContain("Prompt and provider metadata remain visible there");
+    expect(component).toContain('<details className="answerTechnicalDetails">');
+    expect(component).toContain("Prompt: {answer.version.promptVersion}");
+    expect(component).toContain("Provider: {answer.version.provider}");
     expect(component).toContain("source IDs visible on every row");
     expect(component).toContain("citation count, and fake build metadata");
     expect(component).not.toMatch(/showOpenFilePicker|showDirectoryPicker|readAsText|readAsArrayBuffer|type=["']file["']/i);

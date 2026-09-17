@@ -84,7 +84,7 @@ describe("official CBA Chat and UI integration", () => {
       expect(result.answer.citations.every((citation) => citation.citationVerificationState === "verified_current" && /^[a-f0-9]{64}$/.test(citation.sourceInstanceId ?? "") && /^[a-f0-9]{64}$/.test(citation.paragraphContentSha256 ?? "") && /^[a-f0-9]{64}$/.test(citation.citationAnchorSha256 ?? ""))).toBe(true);
       expect(result.answer.version.provider).toBe(CBA_PROVIDER);
       expect(result.answer.version.promptVersion).toBe(CBA_PROMPT_VERSION);
-      expect(result.cardHtml).toContain("Save to Saved");
+      expect(result.cardHtml).toContain("Save to Library");
       expect(result.cardHtml).not.toContain("local-fake-deterministic");
     }
   });
@@ -133,7 +133,7 @@ describe("official CBA Chat and UI integration", () => {
     expect(result.cardHtml).toContain("Official APWU-USPS CBA");
     expect(result.cardHtml).toContain("Actual lane: public_cba");
     expect(result.cardHtml).toContain(`Provider: ${CBA_PROVIDER}`);
-    expect(result.cardHtml).toContain("Save to Saved");
+    expect(result.cardHtml).toContain("Save to Library");
     expect(result.cardHtml).not.toContain("local-fake-deterministic");
   });
 
@@ -160,7 +160,7 @@ describe("official CBA Chat and UI integration", () => {
     expect(result.answer.citations.every((citation) => citation.publicSourceType === "cba_contract")).toBe(true);
     expect(result.answer.version.provider).toBe(CBA_PROVIDER);
     expect(result.answer.version.promptVersion).toBe(CBA_PROMPT_VERSION);
-    expect(result.cardHtml).toContain("Save to Saved");
+    expect(result.cardHtml).toContain("Save to Library");
     expect(result.cardHtml).not.toContain("local-fake-deterministic");
   });
 

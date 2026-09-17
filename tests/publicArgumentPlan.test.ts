@@ -227,7 +227,7 @@ describe("public Weingarten cited argument builder", () => {
     expect(html).toContain(PUBLIC_ARGUMENT_PLAN_PRIVATE_WARNING);
     expect(html).toContain(PUBLIC_ARGUMENT_PLAN_PREPARATION_WARNING);
     expect(html).toContain("Open supporting citation");
-    expect(html).toContain("Save to Saved");
+    expect(html).toContain("Save to Library");
     expect(html).toContain("Save cited argument plan");
     expect(html).toContain("Saved type: public_argument_plan");
   });

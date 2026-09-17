@@ -281,7 +281,7 @@ describe("public CBA overtime cited grievance outline", () => {
       onSaveGrievanceOutline: () => undefined,
     }));
     expect(actionHtml).toContain("Build cited grievance outline");
-    expect(actionHtml).toContain("Save to Saved");
+    expect(actionHtml).toContain("Save to Library");
     for (const heading of [
       "1. Issue",
       "2. Governing contract language",

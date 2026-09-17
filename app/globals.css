@@ -2524,3 +2524,24 @@ a {
   .conversationShell .mainArea { padding: 14px; }
   .conversationShell .chatComposerDock { width: calc(100% - 28px); margin-bottom: max(10px, env(safe-area-inset-bottom)); padding: 10px; }
 }
+
+/* UX-2: answer-first conversation; operator metadata is explicitly disclosed. */
+.conversationShell .fakeNotice { background: var(--bg-app); border-top: 0; align-items: flex-start; }
+.safetyNoticeDetails { min-width: 0; }
+.safetyNoticeDetails summary { cursor: pointer; font-weight: 650; }
+.safetyNoticeDetails p { margin: 6px 0 0; max-width: 76ch; }
+.conversationShell .assistantBubble { border: 0; box-shadow: none; background: transparent; padding: 8px 0 20px; }
+.conversationShell .assistantBubble .answerHeader h2 { font-size: .85rem; font-weight: 500; color: var(--muted); }
+.conversationShell .compactAnswer { grid-template-columns: minmax(0, 1fr); gap: 18px; }
+.conversationShell .compactAnswer section { border: 0; padding: 0; background: transparent; }
+.conversationShell .compactAnswer .shortAnswer { color: var(--ink); font-size: 1rem; font-weight: 500; line-height: 1.65; }
+.conversationShell .compactAnswer strong { font-weight: 550; font-size: .88rem; }
+.answerSourceLinks { padding-left: 20px; margin: 8px 0; }
+.answerSourceLinks li { margin: 6px 0; overflow-wrap: anywhere; }
+.answerSourceLinks .citationAnchorButton { text-align: left; min-height: 36px; font-size: .83rem; font-weight: 500; line-height: 1.5; }
+.answerTechnicalDetails { margin-top: 18px; color: var(--muted); font-size: .75rem; overflow-wrap: anywhere; }
+.answerTechnicalDetails summary { cursor: pointer; padding: 8px 0; }
+.answerTechnicalDetails .sourceMeta { margin-top: 8px; }
+.conversationShell .assistantBubble .compactActions .button { font-size: .75rem; min-height: 40px; white-space: normal; text-align: left; }
+.conversationShell .visibleLaneControl { margin: 10px 0; }
+.conversationShell .visibleLaneControl select { min-width: 0; max-width: 100%; }

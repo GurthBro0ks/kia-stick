@@ -13644,14 +13644,31 @@
     ]
   },
   "ux2_conversation_content_simplification": {
-    "status": "NOT_STARTED",
+    "status": "IMPLEMENTED_COMMITTED_PENDING_OPERATOR_QA",
     "next_major_workstream": "UX_2_CONVERSATION_CONTENT_SIMPLIFICATION",
     "next_checkpoint": "UX_2_HIDE_INTERNAL_MACHINERY_FROM_NORMAL_CONVERSATION",
-    "technical_answer_metadata_cleanup_deferred_to_ux2": true,
+    "technical_answer_metadata_cleanup_deferred_to_ux2": false,
     "authentication_implementation_authorized": false,
     "authorization_implementation_authorized": false,
     "private_data_implementation_approved": false,
     "gate_0c_authorized": false,
-    "state_refresh_loop": "CLOSED"
+    "state_refresh_loop": "CLOSED",
+    "manual_qa": "PENDING_OPERATOR_REVIEW",
+    "proof_dir": "/home/slimy/.local/state/kia-stick/proofs/proof_kia_stick_ux_2_hide_internal_machinery_20260917T084614Z",
+    "answer_first_hierarchy": true,
+    "operator_diagnostics_preserved": true,
+    "answer_lane_semantics_changed": false,
+    "public_mode_warning_preserved": true,
+    "citation_logic_changed": false,
+    "source_links_preserved": true,
+    "save_action_label": "Save to Library",
+    "save_action_backend_changed": false,
+    "packet_build_logic_changed": false,
+    "settings_internal_behavior_changed": false,
+    "sources_behavior_preserved": true,
+    "ux1_shell_architecture_changed": false,
+    "backend_changed": false,
+    "product_version": "0.7.0",
+    "pushed": false
   }
 }

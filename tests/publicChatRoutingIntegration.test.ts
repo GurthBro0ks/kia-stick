@@ -125,11 +125,11 @@ describe("public Chat submit orchestration regression", () => {
       Boolean(citation.sectionId?.startsWith("section-")) &&
       Boolean(citation.paragraphId?.match(/-p\d{2}$/))
     ))).toBe(true);
-    expect(result.cardHtml).toContain("NLRB Weingarten public pilot");
+    expect(result.cardHtml).toContain("NLRB Weingarten guidance");
     expect(result.cardHtml).toContain("Actual lane: public_nlrb");
     expect(result.cardHtml).toContain(`Provider: ${PUBLIC_SOURCE_PROVIDER}`);
     expect(result.cardHtml).toContain(`Prompt: ${PUBLIC_SOURCE_PROMPT_VERSION}`);
-    expect(result.cardHtml).toContain("Save to Saved");
+    expect(result.cardHtml).toContain("Save to Library");
     expect(result.cardHtml).not.toContain("No answer to save");
     expect(result.cardHtml).not.toContain("local-fake-deterministic");
   });

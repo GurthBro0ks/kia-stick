@@ -574,7 +574,7 @@ describe("manual QA UX shell", () => {
     expect(assistantHtml).toContain("What to do next");
     expect(assistantHtml).toContain("Show full packet");
     expect(assistantHtml).toContain("Show citations");
-    expect(assistantHtml).toContain("Save to Saved");
+    expect(assistantHtml).toContain("Save to Library");
     expect(assistantHtml).toContain("aria-expanded=\"false\"");
     expect(assistantHtml).not.toContain("citationCards");
   });
