@@ -13669,6 +13669,14 @@
     "ux1_shell_architecture_changed": false,
     "backend_changed": false,
     "product_version": "0.7.0",
-    "pushed": false
+    "pushed": false,
+    "dark_theme_radius_polish": {
+      "status": "IMPLEMENTED_PENDING_OPERATOR_QA",
+      "runtime_scope": "CSS only; semantic dark layers and shared radii",
+      "manual_qa": "PENDING_OPERATOR_REVIEW",
+      "ux2_accepted": false,
+      "pushed": false,
+      "proof_dir": "/home/slimy/.local/state/kia-stick/proofs/proof_kia_stick_ux_2_dark_theme_radius_polish_20260917T091800Z"
+    }
   }
 }
