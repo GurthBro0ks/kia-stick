@@ -13765,5 +13765,22 @@
     "packet_build_logic_changed": false,
     "manual_qa": "PENDING_OPERATOR_REVIEW",
     "pushed": false
+  },
+  "ux4_operator_qa_simplification": {
+    "phase": "KIA-Stick-UX-4-operator-QA-packets-sources-library-simplification",
+    "status": "IMPLEMENTED_PENDING_OPERATOR_QA",
+    "owner_prior_qa": "PARTIAL_PASS",
+    "fixes": [
+      "packets_default_density",
+      "sources_default_density",
+      "saved_packet_library_handoff"
+    ],
+    "proof_dir": "/home/slimy/.local/state/kia-stick/proofs/proof_kia_stick_ux_4_operator_qa_simplification_20260917T163047Z",
+    "new_persistence": false,
+    "backend_changed": false,
+    "data_model_changed": false,
+    "manual_qa": "PENDING_OPERATOR_REVIEW",
+    "ux4_accepted": false,
+    "pushed": false
   }
 }

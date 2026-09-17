@@ -431,7 +431,7 @@ describe("public steward packet workspace", () => {
   it.each([
     ["overtime"],
     ["annual_leave", "overtime", "sick_leave"],
-  ] as const)("places one workspace above the catalog with individual ordered controls: %s", (...topicIds) => {
+  ] as const)("places one workspace inside the topic explorer above the catalog with individual ordered controls: %s", (...topicIds) => {
     const html = renderToStaticMarkup(React.createElement(SourcesPanel, {
       cbaSourceState: { status: "available", source: cbaSource },
       sourceHierarchyGroups: buildSourceHierarchyGroups(),
@@ -442,9 +442,10 @@ describe("public steward packet workspace", () => {
       runtimeVersion,
     }));
     expect(html.match(/id="steward-packet-workspace"/g)).toHaveLength(1);
-    expect(html.indexOf('id="steward-packet-workspace"')).toBeLessThan(html.indexOf('aria-label="official final APWU USPS CBA source"'));
+    expect(html.indexOf('id="steward-packet-workspace"')).toBeGreaterThan(html.indexOf('aria-label="official final APWU USPS CBA source"'));
+    expect(html.indexOf('id="steward-packet-workspace"')).toBeGreaterThan(html.indexOf('<details class="packetDisclosure sourceWorkflows">'));
     expect(html.indexOf('id="steward-packet-workspace"')).toBeLessThan(html.indexOf('class="workflowTopicCard"'));
-    const workspace = html.slice(html.indexOf('class="stewardPacketWorkspace"'), html.indexOf('aria-label="official final APWU USPS CBA source"'));
+    const workspace = html.slice(html.indexOf('class="stewardPacketWorkspace"'), html.indexOf('class="workflowCatalog"'));
     let previousPosition = -1;
     for (const topicId of topicIds) {
       const name = PUBLIC_STEWARD_WORKFLOW_TOPICS.find((topic) => topic.id === topicId)!.displayName;

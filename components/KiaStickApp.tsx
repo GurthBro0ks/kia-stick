@@ -337,7 +337,8 @@ export function KiaStickApp({ runtimeVersion = clientVersion }: { runtimeVersion
   const [vaultState, setVaultState] = useState<VaultState>(() => createInitialVaultState());
   const [importWizardState, setImportWizardState] = useState<ImportWizardState>(() => createInitialImportWizardState());
   const [fakeOnlyConfirmed, setFakeOnlyConfirmed] = useState(false);
-  const [saveNotice, setSaveNotice] = useState<{ status: SaveAnswerStatus; text: string } | null>(null);
+  const [libraryPacketTarget, setLibraryPacketTarget] = useState<string | null>(null);
+  const [saveNotice, setSaveNotice] = useState<{ status: SaveAnswerStatus; text: string; savedPacketId?: string } | null>(null);
   const [argumentPlans, setArgumentPlans] = useState<Record<string, PublicArgumentPlan>>({});
   const [stewardArgumentPlans, setStewardArgumentPlans] = useState<Record<string, PublicStewardArgumentPlan>>({});
   const [grievanceOutlines, setGrievanceOutlines] = useState<Record<string, PublicGrievanceOutline>>({});
@@ -789,11 +790,12 @@ export function KiaStickApp({ runtimeVersion = clientVersion }: { runtimeVersion
       const result = upsertSavedAnswer(current, record);
       setSaveNotice({
         status: result.status,
+        savedPacketId: result.record.id,
         text: result.status === "created"
-          ? "Saved the current verified case-neutral steward packet."
+          ? "Saved to Library."
           : result.status === "replaced"
-            ? "Updated the steward packet with current verified metadata."
-            : "Already saved. Reordering or re-saving the same topic set created no duplicate packet.",
+            ? "Saved to Library. Updated the steward packet with current verified metadata."
+            : "Already saved to Library. No duplicate packet created.",
       });
       return result.saved;
     });
@@ -846,7 +848,11 @@ export function KiaStickApp({ runtimeVersion = clientVersion }: { runtimeVersion
     setCbaCitationTargetId(isCba ? citation.paragraphId : null);
     setTab("sources");
     window.setTimeout(() => {
-      document.getElementById(targetId)?.scrollIntoView({ behavior: "smooth", block: "center" });
+      const target = document.getElementById(targetId);
+      for (let parent = target?.parentElement; parent; parent = parent.parentElement) {
+        if (parent instanceof HTMLDetailsElement) parent.open = true;
+      }
+      target?.scrollIntoView({ behavior: "smooth", block: "center" });
     }, 50);
   }
 
@@ -906,9 +912,23 @@ export function KiaStickApp({ runtimeVersion = clientVersion }: { runtimeVersion
     prepareSourceQuestion("Official APWU-USPS CBA", nextQuestion, "cba");
   }
 
+  const packetSaveConfirmation = saveNotice?.savedPacketId ? (
+    <div className="saveNotice ok packetSaveConfirmation" role="status">
+      <span>{saveNotice.text}</span>
+      <button className="button primary" type="button" onClick={() => {
+        setLibraryPacketTarget(saveNotice.savedPacketId!);
+        setTab("saved");
+      }}>Open in Library</button>
+    </div>
+  ) : null;
+
   const packetWorkspace = <>
-    <p>Build a case-neutral packet from supported public topics, or reopen saved work in Library.</p>
-    <p role="status">{packetTopicIds.length ? "Selected topics carry forward into this case-neutral packet. Conversation text and case facts are not added." : "Choose a supported topic from a conversation or Sources to begin."}</p>
+    <p role="status">{packetTopicIds.length ? "Prepare questions, evidence checklists and next steps for your selected topics." : "Choose a supported topic from a conversation or Sources to begin."}</p>
+    <details className="packetDisclosure packetWorkspaceDetails">
+      <summary>About this workspace</summary>
+      <p>Build a case-neutral packet from supported public topics, or reopen saved work in Library.</p>
+      <p>Selected topics carry forward into this case-neutral packet. Conversation text and case facts are not added.</p>
+    </details>
     <div className="packetSelectedTopics" aria-label="Selected packet topics">
       {packetTopicIds.map((topicId) => <span className="badge" key={topicId}>{publicStewardWorkflowTopic(topicId).displayName}</span>)}
     </div>
@@ -1011,13 +1031,15 @@ export function KiaStickApp({ runtimeVersion = clientVersion }: { runtimeVersion
 
         {tab === "packets" && (
           <section className="tabPanel" aria-label="Packets">
-            <PanelHeader title="Packets" meta="Existing steward packet workspace" />
+            <PanelHeader title="Steward Packet" meta="Prepare your next steps" />
+            {packetSaveConfirmation}
             {packetWorkspace}
           </section>
         )}
 
         {tab === "sources" && (
           <SourcesPanel
+            saveConfirmation={packetSaveConfirmation}
             onAskSource={prepareSourceQuestion}
             onReturnToChat={() => setTab("chat")}
             cbaCitationTargetId={cbaCitationTargetId}
@@ -1039,6 +1061,8 @@ export function KiaStickApp({ runtimeVersion = clientVersion }: { runtimeVersion
 
         {tab === "saved" && (
           <SavedAnswersPanel
+            saveConfirmation={packetSaveConfirmation}
+            highlightedPacketId={libraryPacketTarget}
             saved={saved}
             onDelete={(id) => setSaved((current) => current.filter((savedItem) => savedItem.id !== id))}
             cbaSourceState={cbaSourceState}
@@ -1207,7 +1231,8 @@ export function KiaStickApp({ runtimeVersion = clientVersion }: { runtimeVersion
       {panelVisible && (
         <WorkProductPanel title={stewardPacket?.title ?? packetTopicIds.map((id) => publicStewardWorkflowTopic(id).displayName).join(", ")}
           onClose={() => setWorkPanelOpen(false)} onFullView={() => setTab("packets")}>
-          {saveNotice && <p className={`saveNotice ${saveNotice.status === "duplicate" ? "warning" : "ok"}`} role="status">{saveNotice.text}</p>}
+          {packetSaveConfirmation}
+          {saveNotice && !saveNotice.savedPacketId && <p className={`saveNotice ${saveNotice.status === "duplicate" ? "warning" : "ok"}`} role="status">{saveNotice.text}</p>}
           {packetWorkspace}
         </WorkProductPanel>
       )}
@@ -1514,6 +1539,7 @@ function CbaPassageCard({
 }
 
 export function SourcesPanel({
+  saveConfirmation,
   cbaCitationTargetId = null,
   cbaCitationNavigationNotice = null,
   cbaSourceState = { status: "unavailable", reason: "cache_missing" },
@@ -1531,6 +1557,7 @@ export function SourcesPanel({
   packetTopicIds = [],
   runtimeVersion,
 }: {
+  saveConfirmation?: React.ReactNode;
   cbaCitationTargetId?: string | null;
   cbaCitationNavigationNotice?: CbaCitationNavigationNotice | null;
   cbaSourceState?: CbaSourceLoadState;
@@ -1659,7 +1686,8 @@ export function SourcesPanel({
 
   return (
     <section className="tabPanel">
-      <PanelHeader title="Sources" meta="isolated fake and public lanes" />
+      <PanelHeader title="Sources" meta="Find guidance and supported topics" />
+      {saveConfirmation}
       {onReturnToChat && <button className="button subtle" type="button" onClick={onReturnToChat}>Back to conversation</button>}
       <div className="publicPilotStatus" aria-label="public data pilot status">
         <strong>PUBLIC DATA PILOT</strong>
@@ -1668,7 +1696,6 @@ export function SourcesPanel({
         <span>NO PRIVATE DATA</span>
       </div>
 
-      {packetTopicIds.length > 0 && packetWorkspace}
 
       {cbaSourceState.status === "loading" && (
         <article className="sourceCard publicSourceCard" aria-label="official CBA source loading">
@@ -1689,7 +1716,7 @@ export function SourcesPanel({
         <article className="sourceCard publicSourceCard cbaSourceCard" aria-label="official final APWU USPS CBA source">
           <div className="publicSourceHeader">
             <div>
-              <span className="sectionKicker">OFFICIAL FINAL CBA</span>
+              <span className="sectionKicker">Official agreement</span>
               <h3>{cbaSourceState.source.source.title}</h3>
               <p>{cbaSourceState.source.source.owner}</p>
             </div>
@@ -1699,6 +1726,10 @@ export function SourcesPanel({
               <a className="button subtle officialSourceLink" href={CBA_SOURCE_PDF_URL} target="_blank" rel="noreferrer">Official PDF</a>
             </div>
           </div>
+          <p><strong>What you can use this for:</strong> Look up contract language and prepare questions or a Steward Packet for supported topics.</p>
+          <p className="sourceSummaryStatus">Official agreement · Public / non-sensitive · Local read-only</p>
+          <details className="packetDisclosure sourceTechnicalDetails">
+            <summary>Source details</summary>
           <div className="sourceMeta">
             <span className="badge green">OFFICIAL FINAL CBA</span>
             <span className="badge green">CONTROLLING CONTRACT LANGUAGE</span>
@@ -1731,11 +1762,16 @@ export function SourcesPanel({
               <p>Normalization algorithm: {cbaSourceInstance!.normalizationAlgorithmVersion}</p>
             </div>
           </details>
+          </details>
           <div className="applicabilityWarning" role="note">
             <AlertTriangle size={16} />
             <strong>{CBA_SCOPE_WARNING} Not legal advice.</strong>
           </div>
 
+          <p className="supportedTopicSummary"><strong>Supported topics:</strong> {PUBLIC_STEWARD_WORKFLOW_TOPICS.map((topic) => topic.displayName).join(" · ")}</p>
+          <details className="packetDisclosure sourceWorkflows">
+            <summary>Explore supported topics and workflows</summary>
+            {packetTopicIds.length > 0 && packetWorkspace}
           <section className="workflowCatalog" aria-labelledby="supported-public-workflows">
             <div className="workflowCatalogHeader">
               <div>
@@ -1822,6 +1858,8 @@ export function SourcesPanel({
             {packetTopicIds.length === 0 && packetWorkspace}
           </section>
 
+          </details>
+
           {cbaCitationNavigationNotice && (
             <div className="applicabilityWarning" role="alert" aria-label="CBA citation verification warning">
               <AlertTriangle size={16} />
@@ -1835,6 +1873,8 @@ export function SourcesPanel({
             </div>
           )}
 
+          <details className="packetDisclosure">
+            <summary>Search contract passages</summary>
           <section className="cbaSearchPanel" aria-label="deterministic CBA lexical search">
             <span className="sectionKicker">Deterministic lexical search</span>
             <label className="controlPill">
@@ -1860,6 +1900,8 @@ export function SourcesPanel({
             </div>
           </section>
 
+          </details>
+
           {cbaCitationTarget && (
             <section className="cbaCitationTarget" aria-label="selected CBA citation passage">
               <span className="sectionKicker">Selected citation passage</span>
@@ -1867,6 +1909,8 @@ export function SourcesPanel({
             </section>
           )}
 
+          <details className="packetDisclosure">
+            <summary>Article and document index</summary>
           <section className="cbaArticleIndex" aria-label="CBA structural article index">
             <h4>Article and document structure index</h4>
             <div className="sourceMeta">
@@ -1875,10 +1919,11 @@ export function SourcesPanel({
               ))}
             </div>
           </section>
+          </details>
         </article>
       )}
 
-      <h3 className="sourceLaneTitle">NLRB official general guidance — separate authority role</h3>
+      <h3 className="sourceLaneTitle">NLRB guidance</h3>
 
       {publicSourceState.status === "loading" && (
         <article className="sourceCard publicSourceCard">
@@ -1908,6 +1953,10 @@ export function SourcesPanel({
               Official NLRB page
             </a>
           </div>
+          <p><strong>What you can use this for:</strong> Understand general Weingarten representation rights. This guidance does not establish controlling USPS contract rules.</p>
+          <p className="sourceSummaryStatus">Official NLRB guidance · Public / non-sensitive · Read-only</p>
+          <details className="packetDisclosure sourceTechnicalDetails">
+            <summary>Source details</summary>
           <div className="sourceMeta">
             <span className="badge green">OFFICIAL SOURCE</span>
             <span className="badge green">PUBLIC / NON-SENSITIVE</span>
@@ -1933,10 +1982,13 @@ export function SourcesPanel({
             <dt>Access</dt>
             <dd>{publicSourceState.source.source.accessMode}</dd>
           </dl>
+          </details>
           <div className="applicabilityWarning" role="note">
             <AlertTriangle size={16} />
             <strong>{PUBLIC_SOURCE_APPLICABILITY_WARNING}</strong>
           </div>
+          <details className="packetDisclosure">
+            <summary>View source — guidance and citation details</summary>
           <div className="publicSourceSections" aria-label="normalized public source sections">
             {publicSourceState.source.normalized.sections.map((section) => (
               <section id={`public-source-${section.id}`} key={section.id} className="publicSourceSection">
@@ -1951,10 +2003,13 @@ export function SourcesPanel({
               </section>
             ))}
           </div>
+          </details>
         </article>
       )}
 
       <h3 className="sourceLaneTitle">Fake sample corpus — separate from public claims</h3>
+      <details className="packetDisclosure">
+        <summary>Fake sample collection details</summary>
       <div className="traceSummary" aria-label="source traceability summary">
         <strong>{totalSources} fake sources</strong>
         <span>{citableSources} citable in answer citations</span>
@@ -1963,6 +2018,7 @@ export function SourcesPanel({
         <span>Prompt {runtimeVersion.promptVersion}</span>
         <span>Build {runtimeVersion.displayVersion}</span>
       </div>
+      </details>
       <div className="sourceCards">
         {sourceHierarchyGroups.map(({ hierarchy, label, docs }, index) => (
           <article className="sourceCard hierarchyCard" key={hierarchy}>
@@ -1981,6 +2037,9 @@ export function SourcesPanel({
                 <div className="hierarchyDoc" id={`fake-source-${doc.id}`} key={doc.id}>
                   <strong>{doc.title}</strong>
                   {onAskSource && <button className="button subtle" type="button" onClick={() => onAskSource(doc.title, `Regarding the fake sample source "${doc.title}" (${doc.id}): `, "fake")}>Ask KIA Stick about this</button>}
+                  <p>Fake sample · {doc.citable ? "Can support fake-sample answers" : "Context only; cannot support an answer"}</p>
+                  <details className="packetDisclosure sourceTechnicalDetails">
+                    <summary>Source details</summary>
                   <div className="sourceMeta">
                     <span className="badge">{sourceClassLabels[doc.class]}</span>
                     <span className={doc.citable ? "badge green" : "badge red"}>{doc.citable ? "citable in Chat" : "context only"}</span>
@@ -1988,6 +2047,7 @@ export function SourcesPanel({
                     <span className="badge">{doc.page}</span>
                     <span className="badge">{doc.status.includes("fake") ? "fake sample" : "blocked"}</span>
                   </div>
+                  </details>
                 </div>
               ))}
             </div>
@@ -2022,6 +2082,8 @@ function savedTopicLabels(item: SavedAnswer): string[] {
 }
 
 export function SavedAnswersPanel(props: {
+  saveConfirmation?: React.ReactNode;
+  highlightedPacketId?: string | null;
   saved: SavedAnswer[];
   onDelete: (id: string) => void;
   cbaSourceState?: CbaSourceLoadState;
@@ -2033,7 +2095,14 @@ export function SavedAnswersPanel(props: {
   const [openPlanId, setOpenPlanId] = useState<string | null>(null);
   const [openStewardPlanId, setOpenStewardPlanId] = useState<string | null>(null);
   const [openOutlineId, setOpenOutlineId] = useState<string | null>(null);
-  const [openPacketId, setOpenPacketId] = useState<string | null>(null);
+  const [openPacketId, setOpenPacketId] = useState<string | null>(props.highlightedPacketId ?? null);
+  const highlightedPacketRef = useRef<HTMLElement>(null);
+  useEffect(() => {
+    if (props.highlightedPacketId) {
+      highlightedPacketRef.current?.focus({ preventScroll: true });
+      highlightedPacketRef.current?.scrollIntoView({ block: "start" });
+    }
+  }, [props.highlightedPacketId]);
   const [typeFilter, setTypeFilter] = useState<"all" | SavedAnswer["savedType"]>("all");
   const [topicFilter, setTopicFilter] = useState("all");
   const topics = useMemo(
@@ -2065,6 +2134,7 @@ export function SavedAnswersPanel(props: {
   return (
     <section className="tabPanel">
       <PanelHeader title="Saved" meta={`${props.saved.length} stored locally`} />
+      {props.saveConfirmation}
       <div className="savedFilters" aria-label="Saved work filters">
         <label className="controlPill">
           <span>Saved type</span>
@@ -2118,8 +2188,12 @@ export function SavedAnswersPanel(props: {
                 cbaSourceState.status === "available" ? cbaSourceState.source : null
               )
             : null;
+          const MetadataContainer = item.stewardPacket ? "details" : "div";
           return (
-          <article className="savedCard" key={item.id}>
+          <article className={`savedCard${item.id === props.highlightedPacketId ? " savedPacketHighlighted" : ""}`} key={item.id}
+            ref={item.id === props.highlightedPacketId ? highlightedPacketRef : undefined}
+            tabIndex={item.id === props.highlightedPacketId ? -1 : undefined}>
+            {item.id === props.highlightedPacketId && <p className="savedPacketArrival" role="status">Your saved packet</p>}
             <div className="savedHeader">
               <h3>{item.stewardPacket?.title ?? item.stewardArgumentPlan?.title ?? item.argumentPlan?.title ?? item.grievanceOutline?.title ?? item.question}</h3>
               <button
@@ -2169,6 +2243,8 @@ export function SavedAnswersPanel(props: {
                     ? `${item.stewardPacket?.selectedTopicIds.length ?? 0}-topic case-neutral preparation packet with verified-current CBA citations.`
                   : item.answer.split("\n\n")[0]}
             </p>
+            <MetadataContainer className={item.stewardPacket ? "packetDisclosure savedPacketDetails" : undefined}>
+            {item.stewardPacket && <summary>Saved packet details</summary>}
             <dl className="savedDetailList" aria-label="Saved answer metadata">
               <dt>Saved type</dt>
               <dd>{item.savedType}</dd>
@@ -2260,6 +2336,7 @@ export function SavedAnswersPanel(props: {
                 </>
               )}
             </dl>
+            </MetadataContainer>
             {/* Advisory-only display for public_argument_plan is intentional per scope decision to preserve operator access to existing saved records. */}
             {item.savedType === "public_argument_plan" && item.argumentPlan && (
               <div className="savedPlanActions">
@@ -3919,11 +3996,18 @@ export function PublicStewardPacketView({
   function printPacket() {
     const current = publicStewardPacketExportEligibility(packet, source);
     if (!current.eligible) return setExportNotice(current.reason);
-    setExportNotice(
-      printPublicArtifact(headingId)
-        ? "Opened the browser print dialog for the current verified steward packet."
-        : "Print was blocked because the verified packet view was unavailable."
-    );
+    const disclosures = Array.from(document.getElementById(headingId)?.closest(".publicStewardPacket")?.querySelectorAll("details") ?? []);
+    const previouslyOpen = disclosures.map((details) => details.open);
+    disclosures.forEach((details) => { details.open = true; });
+    try {
+      setExportNotice(
+        printPublicArtifact(headingId)
+          ? "Opened the browser print dialog for the current verified steward packet."
+          : "Print was blocked because the verified packet view was unavailable."
+      );
+    } finally {
+      disclosures.forEach((details, index) => { details.open = previouslyOpen[index]; });
+    }
   }
 
   function PlainList({ values }: { values: string[] }) {
@@ -3963,17 +4047,20 @@ export function PublicStewardPacketView({
     <section className="publicArgumentPlan publicStewardPacket print-document" aria-labelledby={headingId}>
       <div className="argumentPlanHeader print-atomic">
         <div>
-          <span className="sectionKicker">Deterministic public steward packet</span>
+          <span className="sectionKicker">Steward Packet</span>
           <h3 id={headingId}>{packet.title}</h3>
         </div>
         <span className={eligibility.eligible ? "statusPill ok" : "statusPill warning"}>
           {eligibility.eligible ? `${packet.citations.length} verified citations` : "packet blocked"}
         </span>
       </div>
+      <p className="packetPurpose"><strong>What this packet helps with:</strong> Prepare questions, evidence checklists and next steps for {packet.topicSummaries.map((topic) => topic.title).join(", ")}. Based on verified public contract sources.</p>
       <p className="argumentPlanPrivateWarning print-atomic" role="note">
         <AlertTriangle size={16} />
         <strong>{packet.privateCaseWarning}</strong>
       </p>
+      <details className="packetDisclosure packetTechnicalDetails">
+        <summary>Packet details</summary>
       <div className="argumentPlanMeta print-atomic" aria-label="Steward packet identity">
         <span>Saved type: {packet.savedType}</span>
         <span>Topics: {packet.selectedTopicIds.join(", ")}</span>
@@ -3983,6 +4070,7 @@ export function PublicStewardPacketView({
         <span>Source instance: {packet.sourceInstanceIds.join(", ")}</span>
         <span>Packet identity: {packet.id}</span>
       </div>
+      </details>
       <div className="compactActions outlineExportActions print-hide">
         <button className="button subtle" disabled={!eligibility.eligible} onClick={copyPacket} type="button">
           <ClipboardList size={16} />
@@ -4006,6 +4094,8 @@ export function PublicStewardPacketView({
       {exportNotice && <p className="saveNotice" role="status">{exportNotice}</p>}
       {!eligibility.eligible && <p className="applicabilityWarning" role="alert">{eligibility.reason}</p>}
 
+      <details className="packetDisclosure packetFullSections">
+        <summary>Full packet sections — checklists and verified sources</summary>
       <section className="argumentPlanSection print-section">
         <h4 className="print-heading">1. Selected topic summary</h4>
         <PlainList values={packet.topicSummaries.map(
@@ -4084,6 +4174,7 @@ export function PublicStewardPacketView({
           ))}
         </ol>
       </section>
+      </details>
     </section>
   );
 }
