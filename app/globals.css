@@ -1496,8 +1496,8 @@ a {
 
 .settingsSummaryCard {
   min-width: 0;
-  border: 1px solid var(--border-subtle);
-  background: var(--bg-surface);
+  border: 1px solid var(--border-strong);
+  background: var(--bg-elevated);
   padding: 11px;
 }
 

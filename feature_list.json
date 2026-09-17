@@ -13596,12 +13596,17 @@
     "accepted_identity_rewritten": false
   },
   "ux1_conversation_shell": {
-    "status": "IMPLEMENTED_UNCOMMITTED_VALIDATION_WARN",
+    "status": "IMPLEMENTED_OPERATOR_FIXES_PENDING_REVIEW",
     "manual_qa": "PENDING_OPERATOR_REVIEW",
-    "proof_dir": "/home/slimy/.local/state/kia-stick/proofs/proof_kia_stick_ux_1_conversation_first_shell_20260916T224115Z",
-    "full_tests": "WARN_4_EXISTING_PROOF_INDEX_FAILURES",
+    "proof_dir": "/home/slimy/.local/state/kia-stick/proofs/proof_kia_stick_ux_1_operator_qa_settings_menu_theme_fixes_20260917T000235Z",
+    "full_tests": "PASS_FRESH_346_FILES_1180_TESTS",
     "backend_changed": false,
     "data_model_changed": false,
-    "pushed": false
+    "pushed": false,
+    "operator_qa_fixes": [
+      "Settings card contrast",
+      "Single bottom menu",
+      "Session appearance across Version route"
+    ]
   }
 }

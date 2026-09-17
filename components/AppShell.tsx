@@ -1,10 +1,10 @@
 "use client";
 
 import React, { useEffect, useRef, useState, type ReactNode } from "react";
-import { BookOpen, ClipboardList, Library, Menu, MessageSquareText, PanelLeftClose, PanelLeftOpen, Plus, Settings, X } from "lucide-react";
+import { BookOpen, ClipboardList, Library, Menu, MessageSquareText, PanelLeftClose, PanelLeftOpen, Plus, X } from "lucide-react";
+import { applyAppearance, normalizeAppearance, readAppearance, type Appearance } from "@/lib/appearance";
 
 export type ShellView = "chat" | "packets" | "sources" | "saved" | "upload" | "vault" | "import" | "settings";
-type Appearance = "light" | "dark" | "system";
 const titles: Record<ShellView, string> = { chat: "Conversation", packets: "Packets", sources: "Sources", saved: "Library", upload: "Upload", vault: "Vault", import: "Import", settings: "Settings" };
 
 export function AppShell({ view, onNavigate, onNewConversation, conversationTitle, displayVersion, children }: {
@@ -21,9 +21,8 @@ export function AppShell({ view, onNavigate, onNewConversation, conversationTitl
   const opener = useRef<HTMLButtonElement>(null);
 
   useEffect(() => {
-    document.documentElement.dataset.theme = appearance;
-    return () => { delete document.documentElement.dataset.theme; };
-  }, [appearance]);
+    setAppearance(readAppearance());
+  }, []);
 
   useEffect(() => {
     const desktop = window.matchMedia("(min-width: 900px)");
@@ -63,11 +62,10 @@ export function AppShell({ view, onNavigate, onNewConversation, conversationTitl
         </section>
       </nav>
       <div className="sidebarFooter">
-        <button type="button" className="sidebarItem secondarySettings" aria-label="Settings" title="Settings" aria-current={view === "settings" ? "page" : undefined} onClick={() => navigate("settings")}><Settings size={18} /><span>Settings</span></button>
         <details className="sidebarMenu">
           <summary aria-label="Menu" title="Menu"><Menu size={19} /><span>Menu</span></summary>
           <div className="sidebarMenuContents">
-            <label>Appearance<select aria-label="Appearance" value={appearance} onChange={(event) => setAppearance(event.target.value as Appearance)}><option value="light">Light</option><option value="dark">Dark</option><option value="system">System</option></select></label>
+            <label>Appearance<select aria-label="Appearance" value={appearance} onChange={(event) => { const next = normalizeAppearance(event.target.value); applyAppearance(next); setAppearance(next); }}><option value="light">Light</option><option value="dark">Dark</option><option value="system">System</option></select></label>
             <button type="button" onClick={() => navigate("settings")}>Settings</button>
             <details><summary>Advanced / Tools</summary><div className="sidebarTools">{(["upload", "vault", "import"] as const).map((target) => <button key={target} type="button" aria-current={view === target ? "page" : undefined} onClick={() => navigate(target)}>{titles[target]}</button>)}</div></details>
             <a href="/version">Version / About</a><small>{displayVersion}</small>

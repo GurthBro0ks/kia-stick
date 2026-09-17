@@ -3542,3 +3542,11 @@
 - RESULT=WARN; no implementation commit because full validation PASS is required. Work remains uncommitted intentionally. Screenshots/DOM measurements cover requested widths; browser captures appear scaled/cropped, and operator visual QA remains pending. Task-owned server stopped after QA.
 - Proof: /home/slimy/.local/state/kia-stick/proofs/proof_kia_stick_ux_1_conversation_first_shell_20260916T224115Z
 - Remaining blocker: separately scoped proof-index field compatibility repair and fresh full-suite pass before the authorized local commit. MANUAL_QA_STATUS=PENDING_OPERATOR_REVIEW. No push or acceptance.
+
+## UX-1 operator QA Settings/menu/theme fixes — 2026-09-16
+
+- Exact clean baseline 921362dd0c0dfb1f8e7512cc882d8d7fe331a7cf, parent 3272a7f, origin/live main 9374931; 2 ahead / 0 behind. Prior UX-1 manifest verified.
+- Bounded fixes: Settings cards use elevated surfaces and stronger semantic borders; remove standalone footer Settings row; session-only appearance shared by root pre-paint bootstrap across app and Version/About. No Settings internals or Version diagnostic content changed. UX-2 deferred.
+- Files: app/globals.css, components/AppShell.tsx, app/layout.tsx, lib/appearance.ts, tests/appearanceMenu.test.ts, feature_list.json, claude-progress.md.
+- Commands: repo bootstrap, Git baseline/live-remote checks, prior manifest verification, immutable hashes, focused Vitest PASS (2 files / 13 tests). Fresh direct eslint/tsc/full Vitest (346 files / 1180 tests)/next build, privacy-scan/check-fake-docs/release-check/design-contract-check all PASS; isolated browser QA on task port 3108 PASS at desktop 1440px and mobile 430/390px, Light/Dark/System (current OS dark). Evidence recorded in /home/slimy/.local/state/kia-stick/proofs/proof_kia_stick_ux_1_operator_qa_settings_menu_theme_fixes_20260917T000235Z. Bypass corpus-mutating prehooks/qa_gate; no auto-sync or push.
+- Remaining at record creation: one local fix commit and manifest sealing; outcomes authoritative in external RESULT.md. Operator review remains PENDING_OPERATOR_REVIEW, UX1_ACCEPTED=no. No backend/data/auth/private/security/system changes.
