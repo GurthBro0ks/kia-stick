@@ -15,6 +15,7 @@ import {
   Save,
   ShieldCheck,
 } from "lucide-react";
+import { WorkProductPanel } from "./WorkProductPanel";
 import { AppShell, type ShellView } from "./AppShell";
 import React, { useEffect, useMemo, useRef, useState } from "react";
 import { cannedQuestions, type AnswerResult } from "@/lib/answerGovernor";
@@ -342,6 +343,7 @@ export function KiaStickApp({ runtimeVersion = clientVersion }: { runtimeVersion
   const [grievanceOutlines, setGrievanceOutlines] = useState<Record<string, PublicGrievanceOutline>>({});
   const [packetTopicIds, setPacketTopicIds] = useState<PublicStewardWorkflowTopicId[]>([]);
   const [stewardPacket, setStewardPacket] = useState<PublicStewardPacket | null>(null);
+  const [workPanelOpen, setWorkPanelOpen] = useState(false);
   const [hydrated, setHydrated] = useState(false);
   const [pendingScroll, setPendingScroll] = useState(false);
   const chatScrollRef = useRef<HTMLElement>(null);
@@ -744,13 +746,13 @@ export function KiaStickApp({ runtimeVersion = clientVersion }: { runtimeVersion
       return;
     }
     if (!result.added) {
-      setTab("packets");
+      setWorkPanelOpen(true);
       return;
     }
     setPacketTopicIds(result.topicIds);
     setStewardPacket(null);
     setSaveNotice(null);
-    setTab("packets");
+    setWorkPanelOpen(true);
   }
 
   function buildStewardPacketWorkspace() {
@@ -808,6 +810,7 @@ export function KiaStickApp({ runtimeVersion = clientVersion }: { runtimeVersion
 
   function startNewChat() {
     if (thread.messages.length > 0 && !window.confirm("Start a new chat and clear the current thread?")) return;
+    setWorkPanelOpen(false);
     setThread(createConversationThread());
     setArgumentPlans({});
     setStewardArgumentPlans({});
@@ -903,6 +906,26 @@ export function KiaStickApp({ runtimeVersion = clientVersion }: { runtimeVersion
     prepareSourceQuestion("Official APWU-USPS CBA", nextQuestion, "cba");
   }
 
+  const packetWorkspace = <>
+    <p>Build a case-neutral packet from supported public topics, or reopen saved work in Library.</p>
+    <p role="status">{packetTopicIds.length ? "Selected topics carry forward into this case-neutral packet. Conversation text and case facts are not added." : "Choose a supported topic from a conversation or Sources to begin."}</p>
+    <div className="packetSelectedTopics" aria-label="Selected packet topics">
+      {packetTopicIds.map((topicId) => <span className="badge" key={topicId}>{publicStewardWorkflowTopic(topicId).displayName}</span>)}
+    </div>
+    <div className="packetWorkspaceActions">
+      <button className="button primary handoffAction" type="button" disabled={cbaSourceState.status !== "available" || packetTopicIds.length < 1 || packetTopicIds.length > 3} onClick={buildStewardPacketWorkspace}>Create Steward Packet</button>
+      {tab === "packets" && <button className="button subtle" type="button" onClick={() => setTab("chat")}>Back to conversation</button>}
+      <button className="button subtle" type="button" onClick={() => setTab("sources")}>Select topics / Build packet</button>
+      <button className="button subtle" type="button" onClick={() => setTab("saved")}>Open Library</button>
+    </div>
+    {stewardPacket ? (
+      <PublicStewardPacketView packet={stewardPacket} source={cbaSourceState.status === "available" ? cbaSourceState.source : null}
+        onCitationNavigate={navigateToCitation} onStepCompletionChange={updateStewardPacketStep}
+        onSave={() => saveStewardPacketWorkspace(stewardPacket)} />
+    ) : <p className="emptyState">No current packet. Select one to three supported topics in Sources to begin.</p>}
+  </>;
+  const panelVisible = tab === "chat" && workPanelOpen;
+
   return (
     <AppShell view={tab} onNavigate={setTab} onNewConversation={startNewChat} conversationTitle={thread.title} displayVersion={runtimeVersion.displayVersion}>
       <div className="fakeNotice" role="status">
@@ -913,6 +936,13 @@ export function KiaStickApp({ runtimeVersion = clientVersion }: { runtimeVersion
         </details>
       </div>
 
+      <div className={`workProductLayout${panelVisible ? " workProductLayoutOpen" : ""}`}>
+      <div className="conversationWorkspace">
+      {tab === "chat" && (stewardPacket || packetTopicIds.length > 0) && (
+        <div className="workProductLauncher">
+          <button className="button subtle compactButton" type="button" aria-expanded={panelVisible} aria-controls="steward-work-product" onClick={() => setWorkPanelOpen(true)}>Open Steward Packet</button>
+        </div>
+      )}
       <main className={tab === "chat" ? "mainArea chatMain" : "mainArea"} ref={chatScrollRef} onScroll={(event) => { if (tab === "chat") conversationScrollTop.current = event.currentTarget.scrollTop; }}>
         {tab === "chat" && (
           <div className="chatScrollArea" aria-label="Chat messages">
@@ -982,22 +1012,7 @@ export function KiaStickApp({ runtimeVersion = clientVersion }: { runtimeVersion
         {tab === "packets" && (
           <section className="tabPanel" aria-label="Packets">
             <PanelHeader title="Packets" meta="Existing steward packet workspace" />
-            <p>Build a case-neutral packet from supported public topics, or reopen saved work in Library.</p>
-            <p role="status">{packetTopicIds.length ? "Selected topics carry forward into this case-neutral packet. Conversation text and case facts are not added." : "Choose a supported topic from a conversation or Sources to begin."}</p>
-            <div className="packetSelectedTopics" aria-label="Selected packet topics">
-              {packetTopicIds.map((topicId) => <span className="badge" key={topicId}>{publicStewardWorkflowTopic(topicId).displayName}</span>)}
-            </div>
-            <div className="packetWorkspaceActions">
-              <button className="button primary handoffAction" type="button" disabled={cbaSourceState.status !== "available" || packetTopicIds.length < 1 || packetTopicIds.length > 3} onClick={buildStewardPacketWorkspace}>Create Steward Packet</button>
-              <button className="button subtle" type="button" onClick={() => setTab("chat")}>Back to conversation</button>
-              <button className="button subtle" type="button" onClick={() => setTab("sources")}>Select topics / Build packet</button>
-              <button className="button subtle" type="button" onClick={() => setTab("saved")}>Open Library</button>
-            </div>
-            {stewardPacket ? (
-              <PublicStewardPacketView packet={stewardPacket} source={cbaSourceState.status === "available" ? cbaSourceState.source : null}
-                onCitationNavigate={navigateToCitation} onStepCompletionChange={updateStewardPacketStep}
-                onSave={() => saveStewardPacketWorkspace(stewardPacket)} />
-            ) : <p className="emptyState">No current packet. Select one to three supported topics in Sources to begin.</p>}
+            {packetWorkspace}
           </section>
         )}
 
@@ -1188,6 +1203,15 @@ export function KiaStickApp({ runtimeVersion = clientVersion }: { runtimeVersion
         </section>
       )}
 
+      </div>
+      {panelVisible && (
+        <WorkProductPanel title={stewardPacket?.title ?? packetTopicIds.map((id) => publicStewardWorkflowTopic(id).displayName).join(", ")}
+          onClose={() => setWorkPanelOpen(false)} onFullView={() => setTab("packets")}>
+          {saveNotice && <p className={`saveNotice ${saveNotice.status === "duplicate" ? "warning" : "ok"}`} role="status">{saveNotice.text}</p>}
+          {packetWorkspace}
+        </WorkProductPanel>
+      )}
+      </div>
     </AppShell>
   );
 }

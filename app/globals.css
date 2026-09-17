@@ -2613,3 +2613,31 @@ input::placeholder, textarea::placeholder { color: var(--text-secondary); opacit
   flex: 0 0 auto;
   max-width: 100%;
 }
+
+/* UX-4: optional packet work product, using the existing surface/radius tokens. */
+.workProductLayout { display: flex; flex: 1; min-height: 0; min-width: 0; }
+.conversationWorkspace { display: flex; flex-direction: column; flex: 1; min-height: 0; min-width: 0; }
+.workProductLauncher { padding: 4px 24px; text-align: right; }
+.workProductPanel { display: flex; flex-direction: column; min-width: 0; min-height: 0; background: var(--bg-surface); border-left: 1px solid var(--border-subtle); }
+.workProductHeader { display: flex; flex-wrap: wrap; align-items: flex-start; gap: 10px; padding: 16px; border-bottom: 1px solid var(--border-subtle); }
+.workProductHeader > div:first-child { flex: 1; min-width: 0; }
+.workProductHeader h2 { margin: 4px 0; font-size: 1rem; }
+.workProductHeader p { margin: 0; color: var(--muted); font-size: .8rem; overflow-wrap: anywhere; }
+.workProductHeaderActions { display: flex; flex-wrap: wrap; gap: 8px; width: 100%; }
+.workProductBody { padding: 16px; overflow: auto; min-height: 0; overflow-wrap: anywhere; font-size: .85rem; }
+.workProductBody > p { line-height: 1.6; }
+.workProductBody .publicStewardPacket { border-radius: var(--radius-lg); }
+.workProductBody :is(.packetWorkspaceActions, .argumentPlanActions) { display: flex; flex-wrap: wrap; gap: 8px; }
+.workProductBody .button { white-space: normal; min-width: 0; }
+.workProductBody .handoffAction { flex: 0 1 auto; }
+@media (min-width: 1200px) {
+  .workProductLayoutOpen > .conversationWorkspace { flex: 1 1 58%; }
+  .workProductPanel { flex: 0 0 42%; }
+  .workProductBack { display: none; }
+  .workProductLayoutOpen .chatMain { padding: 16px 20px; }
+}
+@media (max-width: 1199px) {
+  .workProductLayoutOpen > .conversationWorkspace { display: none; }
+  .workProductPanel { flex: 1; border-left: 0; }
+  .workProductBody { width: 100%; max-width: 820px; margin: 0 auto; }
+}

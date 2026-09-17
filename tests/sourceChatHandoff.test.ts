@@ -44,16 +44,18 @@ describe("UX-3 UI handoffs", () => {
     expect(scrollIntoView).toHaveBeenCalledOnce();
   });
 
-  it("lands additions and duplicate selections in Packets while retaining the three-topic guard", () => {
+  it("opens additions and duplicate selections alongside Chat while retaining the three-topic guard", () => {
     for (const selected of [[], ["overtime"], ["annual_leave", "sick_leave", "safety_health"]]) {
-      const setTab = vi.fn(), setPacketTopicIds = vi.fn(), setStewardPacket = vi.fn(), setSaveNotice = vi.fn();
-      handler("addChatTopicToPacket", { packetTopicIds: selected, addChatTopicToPacketSelection, setTab, setPacketTopicIds, setStewardPacket, setSaveNotice })("overtime");
+      const setTab = vi.fn(), setWorkPanelOpen = vi.fn(), setPacketTopicIds = vi.fn(), setStewardPacket = vi.fn(), setSaveNotice = vi.fn();
+      handler("addChatTopicToPacket", { packetTopicIds: selected, addChatTopicToPacketSelection, setTab, setWorkPanelOpen, setPacketTopicIds, setStewardPacket, setSaveNotice })("overtime");
       if (selected.length === 3) {
         expect(setTab).not.toHaveBeenCalled();
         expect(setPacketTopicIds).not.toHaveBeenCalled();
+        expect(setWorkPanelOpen).not.toHaveBeenCalled();
         expect(setSaveNotice).toHaveBeenCalled();
       } else {
-        expect(setTab).toHaveBeenCalledWith("packets");
+        expect(setTab).not.toHaveBeenCalled();
+        expect(setWorkPanelOpen).toHaveBeenCalledWith(true);
         if (selected.length) expect(setStewardPacket).not.toHaveBeenCalled();
         else expect(setPacketTopicIds).toHaveBeenCalledWith(["overtime"]);
       }
