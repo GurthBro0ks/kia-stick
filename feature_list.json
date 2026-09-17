@@ -13595,18 +13595,63 @@
     "post_push_accepted_state_promotion": "not_performed",
     "accepted_identity_rewritten": false
   },
+  "ux0_read_only_inventory": {
+    "status": "PASS_READ_ONLY_INVENTORY",
+    "proof_dir": "/home/slimy/.local/state/kia-stick/proofs/proof_kia_stick_ux_0_read_only_inventory_20260916T222900Z"
+  },
   "ux1_conversation_shell": {
-    "status": "IMPLEMENTED_OPERATOR_FIXES_PENDING_REVIEW",
-    "manual_qa": "PENDING_OPERATOR_REVIEW",
-    "proof_dir": "/home/slimy/.local/state/kia-stick/proofs/proof_kia_stick_ux_1_operator_qa_settings_menu_theme_fixes_20260917T000235Z",
-    "full_tests": "PASS_FRESH_346_FILES_1180_TESTS",
+    "status": "ACCEPTED_AND_TERMINALLY_CLOSED",
+    "manual_qa": "PASS",
+    "operator_qa": "PASS",
+    "operator_qa_scope": "UX_1_ONLY_NOT_UX2_NOT_GATE_0C",
+    "proof_dir": "/home/slimy/.local/state/kia-stick/proofs/proof_kia_stick_ux_1_operator_acceptance_terminal_closeout_push_rerun_20260917T004936Z",
+    "implementation_proof_dir": "/home/slimy/.local/state/kia-stick/proofs/proof_kia_stick_ux_1_operator_qa_settings_menu_theme_fixes_20260917T000235Z",
+    "preserved_stopped_closeout_proof_dir": "/home/slimy/.local/state/kia-stick/proofs/proof_kia_stick_ux_1_operator_acceptance_terminal_closeout_push_20260917T004141Z",
+    "proof_index_repair_commit": "3272a7f015129453ba48d7a3bee291345a3106d0",
+    "ux1_commit": "921362dd0c0dfb1f8e7512cc882d8d7fe331a7cf",
+    "operator_fix_commit": "291a563702e8c4963c9873e9a07406214284db8d",
+    "full_tests": "CARRIED_FORWARD_UX1_PASS_346_FILES_1180_TESTS",
+    "build": "CARRIED_FORWARD_UX1_PASS",
     "backend_changed": false,
     "data_model_changed": false,
-    "pushed": false,
+    "router_architecture_changed": false,
+    "auth_ui_added": false,
+    "pinned_data_model_added": false,
+    "projects_data_model_added": false,
+    "multi_chat_history_added": false,
+    "settings_diagnostics_preserved": true,
+    "citation_logic_changed": false,
+    "source_allowlist_changed": false,
+    "theme_options": "LIGHT,DARK,SYSTEM_session_only",
+    "operator_findings_resolved": true,
+    "operator_findings": {
+      "qa1_dark_settings_contrast": "RESOLVED",
+      "qa2_duplicate_settings_menu": "RESOLVED",
+      "qa3_version_theme_mismatch": "RESOLVED"
+    },
+    "product_version": "0.7.0",
+    "version_bumped": false,
+    "pushed": true,
+    "push_outcome_authority": "external_closeout_proof",
+    "push_mode": "non_force",
+    "push_refspec": "HEAD:main",
+    "services_restarted": false,
+    "real_documents_accessed": false,
     "operator_qa_fixes": [
       "Settings card contrast",
       "Single bottom menu",
       "Session appearance across Version route"
     ]
+  },
+  "ux2_conversation_content_simplification": {
+    "status": "NOT_STARTED",
+    "next_major_workstream": "UX_2_CONVERSATION_CONTENT_SIMPLIFICATION",
+    "next_checkpoint": "UX_2_HIDE_INTERNAL_MACHINERY_FROM_NORMAL_CONVERSATION",
+    "technical_answer_metadata_cleanup_deferred_to_ux2": true,
+    "authentication_implementation_authorized": false,
+    "authorization_implementation_authorized": false,
+    "private_data_implementation_approved": false,
+    "gate_0c_authorized": false,
+    "state_refresh_loop": "CLOSED"
   }
 }
