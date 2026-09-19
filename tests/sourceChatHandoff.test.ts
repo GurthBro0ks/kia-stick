@@ -37,11 +37,16 @@ describe("UX-3 UI handoffs", () => {
 
   it("routes fake citation identity to the matching source row", () => {
     const scrollIntoView = vi.fn(), setTab = vi.fn();
-    const getElementById = vi.fn(() => ({ scrollIntoView }));
-    handler("navigateToCitation", { setTab, document: { getElementById }, window: { setTimeout: (f: () => void) => f() } })({id: "fake-id"});
+    class DetailsStub { open = false; }
+    const collection = new DetailsStub();
+    const closest = vi.fn(() => collection);
+    const getElementById = vi.fn(() => ({ scrollIntoView, closest }));
+    handler("navigateToCitation", { HTMLDetailsElement: DetailsStub, setTab, document: { getElementById }, window: { setTimeout: (f: () => void) => f() } })({id: "fake-id"});
     expect(setTab).toHaveBeenCalledWith("sources");
     expect(getElementById).toHaveBeenCalledWith("fake-source-fake-id");
     expect(scrollIntoView).toHaveBeenCalledOnce();
+    expect(closest).toHaveBeenCalledWith("details.fakeSourceCollection");
+    expect(collection.open).toBe(true);
   });
 
   it("opens additions and duplicate selections alongside Chat while retaining the three-topic guard", () => {

@@ -2849,3 +2849,23 @@ input::placeholder, textarea::placeholder { color: var(--text-secondary); opacit
   }
   .chatMain .answerActions > .compactActions { margin-top: 8px; }
 }
+
+/* Bounded answer controls and explicit public / fictional source groups. */
+@media screen {
+  .chatMain .assistantBubble { --answer-disclosure-width: 20rem; }
+  .chatMain .assistantBubble > :is(.answerActions, .answerSources, .answerTechnicalDetails) > summary {
+    width: min(100%, var(--answer-disclosure-width));
+  }
+  .sourceGroup { margin-top: var(--section-gap, 24px); min-width: 0; }
+  .sourceGroupHeader { padding: 16px; border-left: 4px solid var(--focus); background: var(--bg-elevated); border-radius: var(--radius-md); }
+  .sourceGroupHeader h3 { margin: 0; }
+  .sourceGroupHeader p { margin: 8px 0 0; max-width: var(--content-max-readable); }
+  .fakeSourceGroup { border-top: 2px solid var(--border-subtle); padding-top: 24px; }
+  .fakeSourceGroup .sourceGroupHeader { border-left-color: var(--text-secondary); }
+  .sourceGroup > .publicSourceCard, .sourceGroup > .fakeSourceCollection { margin-top: var(--stack-gap); }
+}
+@media screen and (max-width: 640px) {
+  .chatMain .assistantBubble > :is(.answerActions, .answerSources, .answerTechnicalDetails) > summary {
+    width: 100%; min-height: var(--control-height);
+  }
+}

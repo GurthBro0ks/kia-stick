@@ -348,6 +348,8 @@ export function KiaStickApp({ runtimeVersion = clientVersion }: { runtimeVersion
   const [hydrated, setHydrated] = useState(false);
   const [pendingScroll, setPendingScroll] = useState(false);
   const chatScrollRef = useRef<HTMLElement>(null);
+  const composerToolsRef = useRef<HTMLDetailsElement>(null);
+  const composerInputRef = useRef<HTMLTextAreaElement>(null);
   const conversationScrollTop = useRef(0);
 
   useEffect(() => {
@@ -828,7 +830,10 @@ export function KiaStickApp({ runtimeVersion = clientVersion }: { runtimeVersion
     if (citation.sourceKind !== "public") {
       setTab("sources");
       window.setTimeout(() => {
-        document.getElementById(`fake-source-${citation.id}`)?.scrollIntoView({ behavior: "smooth", block: "center" });
+        const target = document.getElementById(`fake-source-${citation.id}`);
+        const collection = target?.closest("details.fakeSourceCollection");
+        if (collection instanceof HTMLDetailsElement) collection.open = true;
+        target?.scrollIntoView({ behavior: "smooth", block: "center" });
       }, 50);
       return;
     }
@@ -1135,6 +1140,7 @@ export function KiaStickApp({ runtimeVersion = clientVersion }: { runtimeVersion
           <div className="askBox">
             {sourceHandoff && <p className="emptyState" role="status">From Sources: {sourceHandoff}. A visible prompt has been added below. Review it before sending; this does not attach or ingest a source. <button className="button subtle compactButton" type="button" onClick={() => setSourceHandoff(null)}>Dismiss</button></p>}
             <textarea
+              ref={composerInputRef}
               aria-label="Message KIA Stick"
               placeholder="Message KIA Stick..."
               value={draft}
@@ -1147,7 +1153,7 @@ export function KiaStickApp({ runtimeVersion = clientVersion }: { runtimeVersion
               }}
             />
             <div className="composerFooter">
-              <details className="composerTools">
+              <details className="composerTools" ref={composerToolsRef}>
                 <summary>Tools</summary>
                 <details className="composerDisclosure">
                   <summary>Response options</summary>
@@ -1207,7 +1213,11 @@ export function KiaStickApp({ runtimeVersion = clientVersion }: { runtimeVersion
                             ...cannedQuestions,
                           ]
                     ).map((prompt) => (
-                      <button className="promptChip" key={prompt} type="button" onClick={() => setDraft(prompt)}>
+                      <button className="promptChip" key={prompt} type="button" onClick={() => {
+                        setDraft(prompt);
+                        if (composerToolsRef.current) composerToolsRef.current.open = false;
+                        composerInputRef.current?.focus();
+                      }}>
                         {prompt}
                         <ChevronRight size={14} />
                       </button>
@@ -1693,6 +1703,11 @@ export function SourcesPanel({
       <PanelHeader title="Sources" meta="Find guidance and supported topics" />
       {saveConfirmation}
       {onReturnToChat && <button className="button subtle" type="button" onClick={onReturnToChat}>Back to conversation</button>}
+      <section className="sourceGroup officialSourceGroup" aria-labelledby="official-public-sources">
+        <header className="sourceGroupHeader">
+          <h3 id="official-public-sources">Official public sources</h3>
+          <p>Two allowlisted public references available in this pilot: the APWU-USPS contract and NLRB general guidance.</p>
+        </header>
       <div className="publicPilotStatus" aria-label="public data pilot status">
         <strong>PUBLIC DATA PILOT</strong>
         <span>TWO EXACT ALLOWLISTED SOURCES</span>
@@ -1731,7 +1746,7 @@ export function SourcesPanel({
             </div>
           </div>
           <p><strong>What you can use this for:</strong> Look up contract language and prepare questions or a Steward Packet for supported topics.</p>
-          <p className="sourceSummaryStatus">Official agreement · Public / non-sensitive · Local read-only</p>
+          <p className="sourceSummaryStatus">Controlling contract language · Public / non-sensitive · Local read-only</p>
           <details className="packetDisclosure sourceTechnicalDetails">
             <summary>Source details</summary>
           <div className="sourceMeta">
@@ -1772,7 +1787,7 @@ export function SourcesPanel({
             <strong>{CBA_SCOPE_WARNING} Not legal advice.</strong>
           </div>
 
-          <p className="supportedTopicSummary"><strong>Supported topics:</strong> {PUBLIC_STEWARD_WORKFLOW_TOPICS.map((topic) => topic.displayName).join(" · ")}</p>
+          <p className="supportedTopicSummary"><strong>Supported topics:</strong> {PUBLIC_STEWARD_WORKFLOW_TOPICS.length} contract topics, including {PUBLIC_STEWARD_WORKFLOW_TOPICS.slice(0, 3).map((topic) => topic.displayName).join(", ")}. Explore the full list below.</p>
           <details className="packetDisclosure sourceWorkflows">
             <summary>Explore supported topics and workflows</summary>
             {packetTopicIds.length > 0 && packetWorkspace}
@@ -1927,7 +1942,6 @@ export function SourcesPanel({
         </article>
       )}
 
-      <h3 className="sourceLaneTitle">NLRB guidance</h3>
 
       {publicSourceState.status === "loading" && (
         <article className="sourceCard publicSourceCard">
@@ -2011,8 +2025,15 @@ export function SourcesPanel({
         </article>
       )}
 
-      <h3 className="sourceLaneTitle">Fake sample corpus — separate from public claims</h3>
-      <details className="packetDisclosure">
+      </section>
+
+      <section className="sourceGroup fakeSourceGroup" aria-labelledby="fake-sample-sources">
+        <header className="sourceGroupHeader">
+          <h3 id="fake-sample-sources">Fake sample sources</h3>
+          <p>Fictional local examples for testing and demonstration. They are not real authority and cannot support public-source claims.</p>
+          <p>{totalSources} fake sources · Separate from official public sources</p>
+        </header>
+      <details className="packetDisclosure fakeSourceCollection">
         <summary>Fake sample collection details</summary>
       <div className="traceSummary" aria-label="source traceability summary">
         <strong>{totalSources} fake sources</strong>
@@ -2022,7 +2043,6 @@ export function SourcesPanel({
         <span>Prompt {runtimeVersion.promptVersion}</span>
         <span>Build {runtimeVersion.displayVersion}</span>
       </div>
-      </details>
       <div className="sourceCards">
         {sourceHierarchyGroups.map(({ hierarchy, label, docs }, index) => (
           <article className="sourceCard hierarchyCard" key={hierarchy}>
@@ -2058,6 +2078,8 @@ export function SourcesPanel({
           </article>
         ))}
       </div>
+      </details>
+      </section>
     </section>
   );
 }

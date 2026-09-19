@@ -23,8 +23,11 @@ describe("conversation composer presentation contracts", () => {
   });
 
   it("retains Send, Enter, Shift+Enter, draft and selection bindings without toggle handlers", () => {
-    for (const binding of ['onClick={() => sendMessage()}', 'if (event.key === "Enter" && !event.shiftKey)', 'event.preventDefault();\n                  sendMessage();', 'onChange={(event) => setDraft(event.target.value)}', 'onClick={() => setDraft(prompt)}', 'onChange={(event) => setChatSourceMode(event.target.value as ChatSourcePolicy)}', 'onChange={(event) => setMode(event.target.value as Mode)}', 'onChange={(event) => setScope(event.target.value as Scope)}', 'onChange={(event) => setDetail(event.target.value as Detail)}']) expect(source).toContain(binding);
-    expect(source).toContain('<details className="composerTools">');
+    for (const binding of ['onClick={() => sendMessage()}', 'if (event.key === "Enter" && !event.shiftKey)', 'event.preventDefault();\n                  sendMessage();', 'onChange={(event) => setDraft(event.target.value)}', 'onChange={(event) => setChatSourceMode(event.target.value as ChatSourcePolicy)}', 'onChange={(event) => setMode(event.target.value as Mode)}', 'onChange={(event) => setScope(event.target.value as Scope)}', 'onChange={(event) => setDetail(event.target.value as Detail)}']) expect(source).toContain(binding);
+    expect(source).toContain('<details className="composerTools" ref={composerToolsRef}>');
+    expect(source).toContain('setDraft(prompt);');
+    expect(source).toContain('composerToolsRef.current.open = false');
+    expect(source).toContain('composerInputRef.current?.focus()');
   });
 
   it("uses a shared wider workspace with bounded prose and a compact usable phone input", () => {
