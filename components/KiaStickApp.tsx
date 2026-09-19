@@ -3264,62 +3264,66 @@ export function AssistantMessageCard({
 
           {answer.contextNote && <p className="contextNote">{answer.contextNote}</p>}
 
-          {answer.suggestedQuestions && answer.suggestedQuestions.length > 0 && onSubmitCbaSuggestion && (
-            <div className="compactActions" aria-label="CBA retrieval suggestions">
-              {answer.suggestedQuestions.map((suggestion) => (
-                <button className="button subtle" type="button" key={suggestion} onClick={() => onSubmitCbaSuggestion(suggestion)}>
-                  {suggestion}
-                </button>
-              ))}
-            </div>
-          )}
+          <details className="answerActions">
+            <summary>Actions</summary>
+            {answer.suggestedQuestions && answer.suggestedQuestions.length > 0 && onSubmitCbaSuggestion && (
+              <div className="compactActions" aria-label="CBA retrieval suggestions">
+                {answer.suggestedQuestions.map((suggestion) => (
+                  <button className="button subtle" type="button" key={suggestion} onClick={() => onSubmitCbaSuggestion(suggestion)}>
+                    {suggestion}
+                  </button>
+                ))}
+              </div>
+            )}
 
-          <div className="compactActions">
-            {canBuildArgument && !argumentPlan && (
-              <button className="button subtle" type="button" onClick={onBuildArgument}>
+            <div className="compactActions">
+              {canBuildArgument && !argumentPlan && (
+                <button className="button subtle" type="button" onClick={onBuildArgument}>
+                  <ClipboardList size={16} />
+                  Build cited argument
+                </button>
+              )}
+              {canBuildGrievanceOutline && !grievanceOutline && (
+                <button className="button subtle" type="button" onClick={onBuildGrievanceOutline}>
+                  <ClipboardList size={16} />
+                  Build cited grievance outline
+                </button>
+              )}
+              {canBuildStewardArgumentPlan && !stewardArgumentPlan && (
+                <button className="button subtle" type="button" onClick={onBuildStewardArgumentPlan}>
+                  <ClipboardList size={16} />
+                  Build topic argument plan
+                </button>
+              )}
+              {canBuildGrievanceOutline && onAddToStewardPacket && (
+                <button className="button subtle" type="button" onClick={onAddToStewardPacket}>
+                  <Plus size={16} />
+                  Add topic to steward packet
+                </button>
+              )}
+              <button
+                aria-expanded={packetOpen}
+                className="button subtle"
+                type="button"
+                onClick={() => setPacketOpen((open) => !open)}
+              >
                 <ClipboardList size={16} />
-                Build cited argument
+                {packetOpen ? "Hide full packet" : "Show full packet"}
               </button>
-            )}
-            {canBuildGrievanceOutline && !grievanceOutline && (
-              <button className="button subtle" type="button" onClick={onBuildGrievanceOutline}>
-                <ClipboardList size={16} />
-                Build cited grievance outline
+              <button
+                className="button subtle"
+                type="button"
+                onClick={onSave}
+                aria-label={saveDisabled ? "Citation-unverified or no-answer responses cannot be saved" : "Save this answer"}
+                disabled={saveDisabled}
+              >
+                <Save size={16} />
+                {answer.noAnswer ? "No answer to save" : hasNonCurrentCbaCitation ? "Citation verification required" : "Save to Library"}
               </button>
-            )}
-            {canBuildStewardArgumentPlan && !stewardArgumentPlan && (
-              <button className="button subtle" type="button" onClick={onBuildStewardArgumentPlan}>
-                <ClipboardList size={16} />
-                Build topic argument plan
-              </button>
-            )}
-            {canBuildGrievanceOutline && onAddToStewardPacket && (
-              <button className="button subtle" type="button" onClick={onAddToStewardPacket}>
-                <Plus size={16} />
-                Add topic to steward packet
-              </button>
-            )}
-            <button
-              aria-expanded={packetOpen}
-              className="button subtle"
-              type="button"
-              onClick={() => setPacketOpen((open) => !open)}
-            >
-              <ClipboardList size={16} />
-              {packetOpen ? "Hide full packet" : "Show full packet"}
-            </button>
-            <button
-              className="button subtle"
-              type="button"
-              onClick={onSave}
-              aria-label={saveDisabled ? "Citation-unverified or no-answer responses cannot be saved" : "Save this answer"}
-              disabled={saveDisabled}
-            >
-              <Save size={16} />
-              {answer.noAnswer ? "No answer to save" : hasNonCurrentCbaCitation ? "Citation verification required" : "Save to Library"}
-            </button>
-            {hasNonCurrentCbaCitation && <p className="emptyState">CBA citations must verify against the current bounded source before saving.</p>}
-          </div>
+              {hasNonCurrentCbaCitation && <p className="emptyState">CBA citations must verify against the current bounded source before saving.</p>}
+            </div>
+
+          </details>
 
           <details className="answerSources packetDisclosure" aria-label="Supporting sources">
             <summary>Sources &amp; citations</summary>

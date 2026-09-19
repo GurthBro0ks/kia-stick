@@ -1,3 +1,4 @@
+import { readFileSync } from "node:fs";
 import React from "react";
 import { renderToStaticMarkup } from "react-dom/server";
 import { describe, expect, it } from "vitest";
@@ -13,7 +14,15 @@ function card(question: string) {
 }
 
 describe("answer progressive disclosure", () => {
-  it("keeps guidance and every primary action outside closed evidence and technical details", () => {
+  it("reserves scrollbar width on the persistent chat scroll container with scoped flow rules", () => {
+    const css = readFileSync("app/globals.css", "utf8");
+    expect(css).toContain(".conversationShell .chatMain { scrollbar-gutter: stable; }");
+    expect(css).toContain(".chatMain .assistantBubble > :is(.answerActions, .answerSources, .answerTechnicalDetails)");
+    expect(css).toContain("display: block; margin: 8px 0 0; padding: 0; border: 0; background: transparent;");
+    const source = readFileSync("components/KiaStickApp.tsx", "utf8");
+    expect(source).toContain('className={tab === "chat" ? "mainArea chatMain" : "mainArea"} ref={chatScrollRef}');
+  });
+  it("keeps guidance visible and groups all actions inside a separate closed disclosure", () => {
     const { answer, html } = card("Can annual leave be denied after I submitted inside the fake window?");
     const evidence = html.match(/<details class="answerSources packetDisclosure" aria-label="Supporting sources">([\s\S]*?)<\/details>/)?.[1];
     expect(evidence).toBeDefined();
@@ -21,10 +30,21 @@ describe("answer progressive disclosure", () => {
     expect(evidence).toContain("Show citations");
     for (const citation of answer.citations) expect(evidence).toContain(citation.title);
     const visible = html.replace(/<details[\s\S]*?<\/details>/g, "");
-    for (const label of ["Short answer", "Confidence / authority", "What to do next", "Build cited argument", "Build cited grievance outline", "Build topic argument plan", "Add topic to steward packet", "Show full packet", "Save to Library"]) {
+    const actions = html.match(/<details class="answerActions">([\s\S]*?)<\/details>/)?.[1];
+    expect(actions).toContain("<summary>Actions</summary>");
+    for (const label of ["Short answer", "Confidence / authority", "What to do next"]) {
       expect(visible).toContain(label);
+      expect(actions).not.toContain(label);
+    }
+    for (const label of ["Build cited argument", "Build cited grievance outline", "Build topic argument plan", "Add topic to steward packet", "Show full packet", "Save to Library"]) {
+      expect(visible).not.toContain(label);
+      expect(actions).toContain(label);
+      expect(html.split(label)).toHaveLength(2);
       expect(evidence).not.toContain(label);
     }
+    const sequence = ["Short answer", "Confidence / authority", "What to do next", "<summary>Actions</summary>", "Sources &amp; citations", "<summary>Technical details</summary>"].map(label => html.indexOf(label));
+    expect(sequence.every(index => index >= 0)).toBe(true);
+    expect(sequence).toEqual([...sequence].sort((a, b) => a - b));
     expect(html.indexOf("What to do next")).toBeLessThan(html.indexOf("Sources &amp; citations"));
     expect(html).toContain('<details class="answerTechnicalDetails">');
     expect(html).not.toMatch(/<details[^>]*\bopen(?:=|\s|>)/);
@@ -38,7 +58,9 @@ describe("answer progressive disclosure", () => {
     expect(visible).toContain("No Saved record is created for no-answer responses.");
     expect(visible).toContain("Confidence / authority");
     expect(visible).toContain("What to do next");
-    expect(visible).toContain("No answer to save");
-    expect(visible).toContain('disabled=""');
+    expect(visible).not.toContain("No answer to save");
+    const actions = html.match(/<details class="answerActions">([\s\S]*?)<\/details>/)?.[1];
+    expect(actions).toContain("No answer to save");
+    expect(actions).toContain('disabled=""');
   });
 });
