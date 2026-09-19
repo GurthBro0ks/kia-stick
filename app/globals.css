@@ -2662,3 +2662,134 @@ input::placeholder, textarea::placeholder { color: var(--text-secondary); opacit
 .packetWorkspaceDetails[open] > summary::after, .savedPacketDetails[open] > summary::after { content: " −"; }
 .packetSaveConfirmation { position: sticky; top: 0; z-index: 2; }
 .savedPacketHighlighted { scroll-margin-top: 150px; }
+
+/* UX-4 visual polish: one control and typography scale, existing theme/radius palette. */
+:root {
+  --content-max-readable: 72ch;
+  --control-height: 44px;
+  --control-padding-inline: 14px;
+  --action-gap: 8px;
+  --stack-gap: 12px;
+  --type-page: 1.125rem;
+  --type-section: 1rem;
+  --type-body: .9375rem;
+  --type-label: .8125rem;
+  --type-small: .75rem;
+  --weight-body: 400;
+  --weight-label: 500;
+  --weight-heading: 600;
+  --weight-button: 600;
+}
+@media screen {
+  body { font-weight: var(--weight-body); }
+  .workspaceHeader h1, .versionHero h1 { font-size: var(--type-page); font-weight: var(--weight-heading); line-height: 1.35; overflow-wrap: anywhere; }
+  .panelHeader h2, .composerHeader h2, .workProductHeader h2,
+  .sourceCard h3, .savedCard h3, .settingsSummaryCard h3,
+  .argumentPlanHeader h3, .argumentPlanSection h4, .workflowCatalogHeader h4,
+  .workflowTopicCard h5 { font-size: var(--type-section); font-weight: var(--weight-heading); line-height: 1.4; }
+  .sourceCard p, .savedCard p, .settingsSummaryCard p, .settingsSummaryList,
+  .versionHero p, .workProductBody, .packetPurpose, .tabPanel > p {
+    font-size: var(--type-body); font-weight: var(--weight-body); line-height: 1.6;
+  }
+  .conversationShell .compactAnswer .shortAnswer, .conversationShell .askBox textarea { font-weight: var(--weight-body); }
+  .sectionKicker, .messageLabel, .panelHeader span, .controlPill, .fieldLabel,
+  .publicSourceMetadata dt, .savedDetailList dt, .settingsGrid dt, .versionGrid dt,
+  .compactSettingsGrid dt, .operatorDiagnosticsGrid dt {
+    font-size: var(--type-label); font-weight: var(--weight-label); line-height: 1.5;
+  }
+  .publicSourceMetadata dd, .savedDetailList dd, .settingsGrid dd, .versionGrid dd,
+  .compactSettingsGrid dd, .operatorDiagnosticsGrid dd, .argumentPlanMeta,
+  .sourceClassGrid span { font-weight: var(--weight-body); line-height: 1.6; }
+  .badge, .statusPill, .publicPilotStatus, .saveNotice, .traceSummary,
+  .sidebarWordmark, .sidebarItem[aria-current="page"] { font-weight: var(--weight-heading); }
+  .badge, .statusPill { font-size: var(--type-small); line-height: 1.4; }
+  .applicabilityWarning, .argumentPlanPrivateWarning,
+  .sourceCard .applicabilityWarning, .sourceCard .argumentPlanPrivateWarning,
+  .savedCard .argumentPlanPrivateWarning { color: var(--warning); background: var(--warning-bg); border-color: var(--warning-border); }
+  .applicabilityWarning strong, .argumentPlanPrivateWarning strong { font-weight: var(--weight-label); line-height: 1.6; }
+
+  /* Primary .primary; secondary .subtle/default; tertiary citations/menu; icon .iconOnly. */
+  .button, .button.compactButton, .button.officialSourceLink,
+  .conversationShell .assistantBubble .compactActions .button {
+    min-height: var(--control-height); padding: 10px var(--control-padding-inline);
+    gap: var(--action-gap); font-size: var(--type-label); font-weight: var(--weight-button);
+    line-height: 1.4; text-align: center; text-decoration: none;
+    white-space: normal; overflow-wrap: normal; max-width: 100%;
+    border: 1px solid var(--border-subtle); border-radius: var(--radius-md);
+  }
+  .button.primary { flex: 0 1 auto; border-color: var(--button-primary-bg); }
+  .button.subtle { background: var(--bg-surface); color: var(--text-primary); }
+  .button svg { flex-shrink: 0; }
+  .button.iconOnly, .shellIconButton, .packetSelectedTopic .button {
+    width: var(--control-height); min-width: var(--control-height); height: var(--control-height);
+    min-height: var(--control-height); flex: 0 0 var(--control-height); padding: 0;
+    align-items: center; justify-content: center; font-weight: var(--weight-button);
+  }
+  .citationAnchorButton, .sidebarMenuContents :is(button, a, summary) {
+    min-height: var(--control-height); font-weight: var(--weight-label); line-height: 1.5;
+  }
+  .controlPill :is(input, select), .sidebarMenuContents select {
+    min-height: var(--control-height); padding: 10px var(--control-padding-inline);
+    font-size: var(--type-label); font-weight: var(--weight-body);
+    color: var(--text-primary); background: var(--input-bg); border: 1px solid var(--border-subtle);
+  }
+  .compactActions, .packetWorkspaceActions, .workProductHeaderActions, .chatActions,
+  .packetSaveConfirmation, .savedPlanActions { gap: var(--action-gap); }
+  .packetWorkspaceActions { justify-content: flex-start; }
+  .packetWorkspaceActions .primary { margin-left: 0; }
+  .savedPlanActions > .button { justify-self: start; }
+  .packetSaveConfirmation .button { flex: 0 1 auto; margin-left: auto; }
+  .promptChip { min-height: var(--control-height); font-weight: var(--weight-button); }
+
+  /* Disclosures use a small, quiet control; open content retains available card width. */
+  .packetDisclosure { padding: 0; border: 0; background: transparent; }
+  .packetDisclosure > summary, .composerDisclosure > summary, .promptDetails > summary {
+    display: flex; align-items: center; min-height: var(--control-height); width: fit-content;
+    max-width: 100%; padding: 10px var(--control-padding-inline); gap: var(--action-gap);
+    border: 1px solid var(--border-subtle); border-radius: var(--radius-md);
+    background: var(--bg-elevated); color: var(--focus);
+    font-size: var(--type-label); font-weight: var(--weight-button);
+    text-transform: none; line-height: 1.5;
+  }
+  .packetDisclosure[open] > summary { margin-bottom: var(--stack-gap); }
+  .packetDisclosure > summary:hover, .composerDisclosure > summary:hover,
+  .promptDetails > summary:hover { background: var(--hover-bg); }
+
+  /* Sources cards stay wide. Controls wrap to their content rather than stretching. */
+  .publicSourceCard { padding: 16px; }
+  .publicSourceHeader { flex-wrap: wrap; align-items: flex-start; gap: var(--stack-gap); }
+  .publicSourceHeader > div:first-child { flex: 1 1 320px; }
+  .publicSourceHeader .compactActions { flex: 0 1 auto; margin-top: 0; }
+  .publicSourceHeader .button { flex: 0 1 auto; width: auto; }
+  .publicSourceCard > p, .workflowTopicCard p, .publicSourceSection p { max-width: var(--content-max-readable); }
+  .publicSourceCard > .packetDisclosure { margin-top: var(--stack-gap); }
+  .publicSourceCard > .applicabilityWarning { max-width: var(--content-max-readable); }
+  .workflowCatalogGrid { grid-template-columns: repeat(auto-fit, minmax(min(100%, 290px), 1fr)); gap: var(--stack-gap); }
+  .workflowTopicCard { padding: 14px; }
+  .workflowTopicCard .button { width: fit-content; max-width: 100%; display: flex; }
+  .workflowSearch, .cbaSearchPanel .controlPill { max-width: 440px; }
+}
+@media screen and (max-width: 640px) {
+  /* Phone action groups deliberately stack at equal width, including wrapped labels. */
+  .compactActions, .packetWorkspaceActions, .workProductHeaderActions, .chatActions,
+  .packetSaveConfirmation, .workProductBody .packetWorkspaceActions {
+    display: flex; flex-direction: column; align-items: stretch; gap: var(--action-gap);
+  }
+  .compactActions > .button, .packetWorkspaceActions > .button,
+  .workProductHeaderActions > .button, .chatActions > .button,
+  .packetSaveConfirmation > .button, .savedPlanActions > .button,
+  .workflowTopicCard .button, .publicSourceHeader .button {
+    width: 100%; flex: 0 1 auto; margin-left: 0; justify-self: stretch;
+  }
+  .publicSourceHeader { display: flex; flex-direction: column; align-items: stretch; }
+  .publicSourceHeader > div:first-child { flex: 0 1 auto; }
+  .publicSourceHeader .compactActions { width: 100%; }
+  .packetDisclosure > summary, .composerDisclosure > summary, .promptDetails > summary { width: 100%; }
+  .promptRail { display: grid; grid-template-columns: minmax(0, 1fr); gap: var(--action-gap); overflow: visible; }
+  .promptChip { width: 100%; max-width: 100%; white-space: normal; text-align: left; padding: 10px var(--control-padding-inline); line-height: 1.5; }
+  .savedFilters { gap: var(--stack-gap); }
+}
+@media screen {
+  .settingsNote, .modeNote, .contextNote { font-weight: var(--weight-label); }
+  .publicPilotStatus span, .traceSummary span { font-weight: var(--weight-label); }
+}

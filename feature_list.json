@@ -13782,5 +13782,16 @@
     "manual_qa": "PENDING_OPERATOR_REVIEW",
     "ux4_accepted": false,
     "pushed": false
+  },
+  "ux4_global_visual_consistency": {
+    "phase": "KIA-Stick-UX-4-operator-QA-global-visual-consistency-polish",
+    "status": "IMPLEMENTED_PENDING_OPERATOR_QA",
+    "runtime_scope": "CSS_ONLY",
+    "proof_dir": "/home/slimy/.local/state/kia-stick/proofs/proof_kia_stick_ux_4_global_visual_consistency_20260917T192849Z",
+    "backend_changed": false,
+    "data_model_changed": false,
+    "manual_qa": "PENDING_OPERATOR_REVIEW",
+    "ux4_accepted": false,
+    "pushed": false
   }
 }
