@@ -2793,3 +2793,36 @@ input::placeholder, textarea::placeholder { color: var(--text-secondary); opacit
   .settingsNote, .modeNote, .contextNote { font-weight: var(--weight-label); }
   .publicPilotStatus span, .traceSummary span { font-weight: var(--weight-label); }
 }
+
+/* UX-4 conversation polish: compact composer, wider workspace, bounded prose. */
+@media screen {
+  .conversationWorkspace { --conversation-workspace-max: 1280px; }
+  .conversationShell .chatMain { max-width: var(--conversation-workspace-max); }
+  .conversationShell .chatComposerDock { max-width: calc(var(--conversation-workspace-max) - 48px); }
+  .chatMain .assistantBubble { max-width: 100%; }
+  .chatMain .assistantBubble :is(p, li) { max-width: var(--content-max-readable); }
+  .chatComposerDock .askBox { margin-top: 4px; }
+  .composerFooter { display: grid; grid-template-columns: minmax(0, 1fr) auto; gap: var(--action-gap); margin-top: 8px; }
+  .composerTools { grid-area: 1 / 1 / 2 / 3; min-width: 0; }
+  .composerTools > summary {
+    display: flex; align-items: center; width: fit-content; max-width: calc(100% - 110px);
+    min-height: var(--control-height); padding: 10px var(--control-padding-inline);
+    border: 1px solid var(--border-subtle); border-radius: var(--radius-md);
+    background: var(--bg-elevated); color: var(--focus); cursor: pointer;
+    font-size: var(--type-label); font-weight: var(--weight-button); line-height: 1.5;
+  }
+  .composerTools > summary:hover { background: var(--hover-bg); }
+  .composerFooter .chatActions {
+    grid-area: 1 / 2; align-self: start; justify-self: end; margin: 0;
+    flex-direction: row; align-items: center; justify-content: flex-end;
+  }
+  .composerFooter .chatActions > .button { width: auto; margin-left: 0; }
+}
+@media screen and (max-width: 640px) {
+  .conversationShell .chatComposerDock { padding: 8px; }
+  .conversationShell .chatComposerDock .askBox { padding: 8px; }
+  .conversationShell .chatComposerDock textarea {
+    display: block; height: 56px; min-height: 56px; max-height: 120px;
+    font-size: 1rem; line-height: 1.5; overflow-y: auto;
+  }
+}

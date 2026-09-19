@@ -1146,11 +1146,81 @@ export function KiaStickApp({ runtimeVersion = clientVersion }: { runtimeVersion
                 }
               }}
             />
-            <div className="chatActions">
-              <button className="button primary" type="button" disabled={!draft.trim() || isSending} onClick={() => sendMessage()}>
-                <MessageSquareText size={17} />
-                {isSending ? "Sending" : "Send"}
-              </button>
+            <div className="composerFooter">
+              <details className="composerTools">
+                <summary>Tools</summary>
+                <details className="composerDisclosure">
+                  <summary>Response options</summary>
+                  <div className="visibleLaneControl" aria-label="Chat answer lane policy">
+                    <label className="controlPill">
+                      <span>Answer lane</span>
+                      <select value={chatSourceMode} onChange={(event) => setChatSourceMode(event.target.value as ChatSourcePolicy)}>
+                        <option value="auto">Automatic — official public intents first</option>
+                        <option value="cba">CBA</option>
+                        <option value="nlrb">NLRB Guidance</option>
+                        <option value="fake">Fake sample corpus</option>
+                      </select>
+                    </label>
+                    <span className="emptyState">Automatic is the safe default: CBA intents first, then NLRB guidance, known fake prompts, and finally a no-answer lane.</span>
+                  </div>
+                  <div className="controlStrip">
+                    <label className="controlPill">
+                      <span>Mode</span>
+                      <select value={mode} onChange={(event) => setMode(event.target.value as Mode)}>
+                        {modes.map((item) => (
+                          <option key={item}>{item}</option>
+                        ))}
+                      </select>
+                    </label>
+                    <label className="controlPill">
+                      <span>Scope</span>
+                      <select value={scope} onChange={(event) => setScope(event.target.value as Scope)}>
+                        {scopes.map((item) => (
+                          <option key={item}>{item}</option>
+                        ))}
+                      </select>
+                    </label>
+                    <label className="controlPill">
+                      <span>Detail</span>
+                      <select value={detail} onChange={(event) => setDetail(event.target.value as Detail)}>
+                        {details.map((item) => (
+                          <option key={item}>{item}</option>
+                        ))}
+                      </select>
+                    </label>
+                  </div>
+                </details>
+
+                <details className="promptDetails">
+                  <summary>Prompt shortcuts</summary>
+                  <div className="promptRail" aria-label={chatSourceMode === "cba" ? "CBA prompts" : chatSourceMode === "nlrb" || chatSourceMode === "public" ? "NLRB guidance prompts" : chatSourceMode === "fake" ? "fake test prompts" : "automatic public and fake prompts"}>
+                    {(chatSourceMode === "cba"
+                      ? PUBLIC_STEWARD_WORKFLOW_TOPICS.map((topic) => topic.exampleQuestion)
+                      : chatSourceMode === "nlrb" || chatSourceMode === "public"
+                      ? publicPilotQuestions
+                      : chatSourceMode === "fake"
+                        ? cannedQuestions
+                        : [
+                            ...PUBLIC_STEWARD_WORKFLOW_TOPICS.map((topic) => topic.exampleQuestion),
+                            ...cbaPilotQuestions,
+                            ...publicPilotQuestions,
+                            ...cannedQuestions,
+                          ]
+                    ).map((prompt) => (
+                      <button className="promptChip" key={prompt} type="button" onClick={() => setDraft(prompt)}>
+                        {prompt}
+                        <ChevronRight size={14} />
+                      </button>
+                    ))}
+                  </div>
+                </details>
+              </details>
+              <div className="chatActions">
+                <button className="button primary" type="button" disabled={!draft.trim() || isSending} onClick={() => sendMessage()}>
+                  <MessageSquareText size={17} />
+                  {isSending ? "Sending" : "Send"}
+                </button>
+              </div>
             </div>
             {saveNotice && (
               <div className={`saveNotice ${saveNotice.status === "duplicate" ? "warning" : "ok"}`} role="status" aria-live="polite">
@@ -1158,72 +1228,6 @@ export function KiaStickApp({ runtimeVersion = clientVersion }: { runtimeVersion
               </div>
             )}
           </div>
-
-          <details className="composerDisclosure">
-            <summary>Response options</summary>
-            <div className="visibleLaneControl" aria-label="Chat answer lane policy">
-              <label className="controlPill">
-                <span>Answer lane</span>
-                <select value={chatSourceMode} onChange={(event) => setChatSourceMode(event.target.value as ChatSourcePolicy)}>
-                  <option value="auto">Automatic — official public intents first</option>
-                  <option value="cba">CBA</option>
-                  <option value="nlrb">NLRB Guidance</option>
-                  <option value="fake">Fake sample corpus</option>
-                </select>
-              </label>
-              <span className="emptyState">Automatic is the safe default: CBA intents first, then NLRB guidance, known fake prompts, and finally a no-answer lane.</span>
-            </div>
-            <div className="controlStrip">
-              <label className="controlPill">
-                <span>Mode</span>
-                <select value={mode} onChange={(event) => setMode(event.target.value as Mode)}>
-                  {modes.map((item) => (
-                    <option key={item}>{item}</option>
-                  ))}
-                </select>
-              </label>
-              <label className="controlPill">
-                <span>Scope</span>
-                <select value={scope} onChange={(event) => setScope(event.target.value as Scope)}>
-                  {scopes.map((item) => (
-                    <option key={item}>{item}</option>
-                  ))}
-                </select>
-              </label>
-              <label className="controlPill">
-                <span>Detail</span>
-                <select value={detail} onChange={(event) => setDetail(event.target.value as Detail)}>
-                  {details.map((item) => (
-                    <option key={item}>{item}</option>
-                  ))}
-                </select>
-              </label>
-            </div>
-          </details>
-
-          <details className="promptDetails">
-            <summary>Prompt shortcuts</summary>
-            <div className="promptRail" aria-label={chatSourceMode === "cba" ? "CBA prompts" : chatSourceMode === "nlrb" || chatSourceMode === "public" ? "NLRB guidance prompts" : chatSourceMode === "fake" ? "fake test prompts" : "automatic public and fake prompts"}>
-              {(chatSourceMode === "cba"
-                ? PUBLIC_STEWARD_WORKFLOW_TOPICS.map((topic) => topic.exampleQuestion)
-                : chatSourceMode === "nlrb" || chatSourceMode === "public"
-                ? publicPilotQuestions
-                : chatSourceMode === "fake"
-                  ? cannedQuestions
-                  : [
-                      ...PUBLIC_STEWARD_WORKFLOW_TOPICS.map((topic) => topic.exampleQuestion),
-                      ...cbaPilotQuestions,
-                      ...publicPilotQuestions,
-                      ...cannedQuestions,
-                    ]
-              ).map((prompt) => (
-                <button className="promptChip" key={prompt} type="button" onClick={() => setDraft(prompt)}>
-                  {prompt}
-                  <ChevronRight size={14} />
-                </button>
-              ))}
-            </div>
-          </details>
         </section>
       )}
 
