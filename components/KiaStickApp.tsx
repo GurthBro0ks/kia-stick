@@ -3247,60 +3247,20 @@ export function AssistantMessageCard({
               <span>Confidence / authority</span>
               <strong>{authoritySummary(answer)}</strong>
             </section>
-            <section className="answerSources" aria-label="Supporting sources">
-              <span>Supporting sources</span>
-              <ul className="answerSourceLinks">
-                {answer.citations.map((citation, index) => (
-                  <li key={citation.id}>
-                    <button className="citationAnchorButton" type="button" onClick={() => onCitationNavigate(citation)}>
-                      View source: {citation.title} · {citation.sourceKind === "public" ? `Citation ${index + 1}` : `${citation.article} · ${citation.page}`}
-                    </button>
-                  </li>
-                ))}
-              </ul>
-              {answer.citations.length === 0 ? (
-                <p className="emptyState">
-                  {answer.answerKind === "public"
-                    ? "No Saved record is created for no-answer responses. Review Sources or try a supported question."
-                    : "No Saved record is created for no-answer responses. Context-only fake sources can still be reviewed in the full packet."}
-                </p>
-              ) : (
-                <button
-                  aria-expanded={citationsOpen}
-                  className="button subtle citationToggle"
-                  type="button"
-                  onClick={() => setCitationsOpen((open) => !open)}
-                >
-                  {citationsOpen ? "Hide citations" : `Show citations (${answer.citations.length})`}
-                </button>
-              )}
-              {citationsOpen && (
-                <ol className="citationCards">
-                  {answer.citations.map((citation) => (
-                    <li key={citation.id}>
-                      {citation.sourceKind === "public" ? (
-                        <button className="citationAnchorButton" type="button" onClick={() => onCitationNavigate(citation)}>
-                          {citationLabel(citation)}
-                        </button>
-                      ) : citationLabel(citation)}
-                    </li>
-                  ))}
-                  {answer.answerKind === "public" && (
-                    <li className="officialCitationLink">
-                      <a href={answer.publicSourceRole === "cba_contract" || answer.publicSourceRole === "cross_source" ? CBA_SOURCE_PDF_URL : PUBLIC_SOURCE_URL} target="_blank" rel="noreferrer">
-                        {answer.publicSourceRole === "cba_contract" || answer.publicSourceRole === "cross_source" ? "Open the separate official CBA PDF" : "Open the separate official NLRB source"}
-                      </a>
-                    </li>
-                  )}
-                </ol>
-              )}
-            </section>
             <section>
               <span>What to do next</span>
               <strong>{answer.followUps[0] ?? answer.evidenceChecklist[0] ?? "Review the selected source trail."}</strong>
               <p>{answer.missingFacts[0] ?? "Keep the cited source metadata attached to the answer."}</p>
             </section>
           </div>
+
+          {answer.citations.length === 0 && (
+            <p className="emptyState">
+              {answer.answerKind === "public"
+                ? "No Saved record is created for no-answer responses. Review Sources or try a supported question."
+                : "No Saved record is created for no-answer responses. Context-only fake sources can still be reviewed in the full packet."}
+            </p>
+          )}
 
           {answer.contextNote && <p className="contextNote">{answer.contextNote}</p>}
 
@@ -3360,6 +3320,49 @@ export function AssistantMessageCard({
             </button>
             {hasNonCurrentCbaCitation && <p className="emptyState">CBA citations must verify against the current bounded source before saving.</p>}
           </div>
+
+          <details className="answerSources packetDisclosure" aria-label="Supporting sources">
+            <summary>Sources &amp; citations</summary>
+            <ul className="answerSourceLinks">
+              {answer.citations.map((citation, index) => (
+                <li key={citation.id}>
+                  <button className="citationAnchorButton" type="button" onClick={() => onCitationNavigate(citation)}>
+                    View source: {citation.title} · {citation.sourceKind === "public" ? `Citation ${index + 1}` : `${citation.article} · ${citation.page}`}
+                  </button>
+                </li>
+              ))}
+            </ul>
+            {answer.citations.length > 0 && (
+              <button
+                aria-expanded={citationsOpen}
+                className="button subtle citationToggle"
+                type="button"
+                onClick={() => setCitationsOpen((open) => !open)}
+              >
+                {citationsOpen ? "Hide citations" : `Show citations (${answer.citations.length})`}
+              </button>
+            )}
+            {citationsOpen && (
+              <ol className="citationCards">
+                {answer.citations.map((citation) => (
+                  <li key={citation.id}>
+                    {citation.sourceKind === "public" ? (
+                      <button className="citationAnchorButton" type="button" onClick={() => onCitationNavigate(citation)}>
+                        {citationLabel(citation)}
+                      </button>
+                    ) : citationLabel(citation)}
+                  </li>
+                ))}
+                {answer.answerKind === "public" && (
+                  <li className="officialCitationLink">
+                    <a href={answer.publicSourceRole === "cba_contract" || answer.publicSourceRole === "cross_source" ? CBA_SOURCE_PDF_URL : PUBLIC_SOURCE_URL} target="_blank" rel="noreferrer">
+                      {answer.publicSourceRole === "cba_contract" || answer.publicSourceRole === "cross_source" ? "Open the separate official CBA PDF" : "Open the separate official NLRB source"}
+                    </a>
+                  </li>
+                )}
+              </ol>
+            )}
+          </details>
 
           {argumentPlan && (
             <PublicArgumentPlanView

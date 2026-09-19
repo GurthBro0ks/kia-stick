@@ -13804,5 +13804,16 @@
     "manual_qa": "PENDING_OPERATOR_REVIEW",
     "ux4_accepted": false,
     "pushed": false
+  },
+  "ux4_answer_progressive_disclosure": {
+    "phase": "KIA-Stick-UX-4-operator-QA-answer-progressive-disclosure-polish",
+    "status": "IMPLEMENTED_PENDING_OPERATOR_QA",
+    "runtime_scope": "ANSWER_PRESENTATION_ONLY",
+    "proof_dir": "/home/slimy/.local/state/kia-stick/proofs/proof_kia_stick_ux_4_answer_progressive_disclosure_20260919T114559Z",
+    "backend_changed": false,
+    "data_model_changed": false,
+    "manual_qa": "PENDING_OPERATOR_REVIEW",
+    "ux4_accepted": false,
+    "pushed": false
   }
 }

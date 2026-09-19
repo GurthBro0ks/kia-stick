@@ -22,7 +22,7 @@ describe("UX-2 conversation presentation preservation", () => {
     for (const value of ["Selected lane:", "Actual lane:", "Provider:", "Prompt:", answer.version.provider, answer.version.promptVersion, "AnswerLane:", answer.footer.replaceAll("&", "&amp;")]) expect(technical).toContain(value);
     const visible = html.replace(/<details class="answerTechnicalDetails">[\s\S]*?<\/details>/, "");
     for (const value of ["Selected lane:", "Actual lane:", "Provider:", "Prompt:", "AnswerLane:"]) expect(visible).not.toContain(value);
-    const sequence = ["shortAnswer", "Supporting sources", "What to do next", "Save to Library", "Technical details"].map(x => html.indexOf(x));
+    const sequence = ["shortAnswer", "What to do next", "Save to Library", "Supporting sources", "Technical details"].map(x => html.indexOf(x));
     expect(sequence.every(x => x >= 0)).toBe(true);
     expect(sequence).toEqual([...sequence].sort((a,b) => a-b));
     for (const citation of answer.citations) expect(visible).toContain(citation.title);
