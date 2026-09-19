@@ -2835,9 +2835,9 @@ input::placeholder, textarea::placeholder { color: var(--text-secondary); opacit
   }
   .chatMain .assistantBubble > :is(.answerActions, .answerSources, .answerTechnicalDetails) > summary {
     display: list-item; list-style-position: inside; box-sizing: border-box;
-    width: 100%; min-height: 36px; margin: 0; padding: 6px var(--control-padding-inline);
-    border: 1px solid var(--border-subtle); border-radius: var(--radius-md);
-    background: var(--bg-elevated); color: var(--focus); cursor: pointer;
+    width: 100%; min-height: 36px; margin: 0; padding: 6px 4px;
+    border: 0; border-radius: var(--radius-md);
+    background: transparent; color: var(--focus); cursor: pointer;
     font-size: var(--type-label); font-weight: var(--weight-button); line-height: 1.5;
     text-transform: none;
   }
@@ -2846,6 +2846,9 @@ input::placeholder, textarea::placeholder { color: var(--text-secondary); opacit
   }
   .chatMain .assistantBubble > :is(.answerActions, .answerSources, .answerTechnicalDetails) > summary:hover {
     background: var(--hover-bg);
+  }
+  .chatMain .assistantBubble > :is(.answerActions, .answerSources, .answerTechnicalDetails) > summary:focus-visible {
+    outline: 2px solid var(--accent); outline-offset: 3px;
   }
   .chatMain .answerActions > .compactActions { margin-top: 8px; }
 }
