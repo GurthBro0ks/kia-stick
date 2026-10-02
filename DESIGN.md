@@ -62,7 +62,9 @@ Sources:
 
 Library:
 
-- Show saved-answer metadata with `productVersion`, `displayVersion`, `promptVersion`, provider, mode, scope, detail, and timestamp.
+- Keep each saved item's title, human-readable type, topic or context, short summary, public-data lane, verification status, and supported actions visible by default.
+- Put implementation-facing saved-item metadata such as raw type codes, `productVersion`, `displayVersion`, `promptVersion`, provider, mode, scope, detail, hashes, internal identifiers, and timestamp behind a closed, item-aware native disclosure.
+- Keep safety, stale-source, eligibility, and re-verification warnings visible outside collapsed technical details; never hide a re-search-current-CBA warning in a disclosure.
 - Empty and duplicate states must be explicit and non-alarming.
 
 Upload:

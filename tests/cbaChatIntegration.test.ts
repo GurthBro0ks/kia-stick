@@ -233,7 +233,9 @@ describe("official CBA Chat and UI integration", () => {
     expect(html).toContain("PUBLIC DATA PILOT — CBA");
     expect(html).toContain("official controlling CBA");
     expect(html).toContain(cbaSource.response.sha256);
-    expect(html).toContain("verified_current");
+    expect(saved.citationVerificationStateAtSave).toBe("verified_current");
+    expect(html).toContain("Verified current");
+    expect(html).not.toContain("verified_current");
   });
 
   it("renders legacy and stale CBA citations as re-verification states rather than current citations", () => {

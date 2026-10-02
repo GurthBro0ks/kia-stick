@@ -334,6 +334,27 @@ export function libraryItemCopy(item: LibraryItemIdentity): { display: string; d
   }
 }
 
+export function libraryTechnicalDetailsLabel(item: LibraryItemIdentity): string {
+  switch (item.savedType) {
+    case "public_argument_plan":
+      return "Saved argument plan details";
+    case "public_steward_argument_plan":
+      return "Saved topic argument plan details";
+    case "public_grievance_outline":
+      return "Saved grievance outline details";
+    case "public_steward_packet_plan":
+      return "Saved packet details";
+    default:
+      return "Saved answer details";
+  }
+}
+
+export function libraryVerificationDisplay(state: CitationVerificationState): string {
+  return state === "verified_current"
+    ? "Verified current"
+    : state.split("_").map((word) => word[0]?.toUpperCase() + word.slice(1)).join(" ");
+}
+
 export function deleteLibraryItemWithConfirmation(
   item: LibraryItemIdentity,
   onDelete: (id: string) => void,
@@ -2255,7 +2276,9 @@ export function SavedAnswersPanel(props: {
                 cbaSourceState.status === "available" ? cbaSourceState.source : null
               )
             : null;
-          const MetadataContainer = item.stewardPacket ? "details" : "div";
+          const showCbaVerificationWarning = Boolean(
+            cbaVerificationState && cbaVerificationState !== "verified_current"
+          );
           return (
           <article className={`savedCard${item.id === props.highlightedPacketId ? " savedPacketHighlighted" : ""}`} key={item.id}
             ref={item.id === props.highlightedPacketId ? highlightedPacketRef : undefined}
@@ -2287,7 +2310,7 @@ export function SavedAnswersPanel(props: {
               </span>
               {cbaVerificationState && (
                 <span className={cbaVerificationState === "verified_current" ? "badge green" : "badge red"}>
-                  {cbaVerificationState}
+                  {libraryVerificationDisplay(cbaVerificationState)}
                 </span>
               )}
             </div>
@@ -2302,8 +2325,8 @@ export function SavedAnswersPanel(props: {
                     ? `${item.stewardPacket?.selectedTopicIds.length ?? 0}-topic case-neutral preparation packet with verified-current CBA citations.`
                   : item.answer.split("\n\n")[0]}
             </p>
-            <MetadataContainer className={item.stewardPacket ? "packetDisclosure savedPacketDetails" : undefined}>
-            {item.stewardPacket && <summary>Saved packet details</summary>}
+            <details className="packetDisclosure savedPacketDetails">
+            <summary>{libraryTechnicalDetailsLabel(item)}</summary>
             <dl className="savedDetailList" aria-label="Library item metadata">
               <dt>Item type</dt>
               <dd>{item.savedType}</dd>
@@ -2369,16 +2392,10 @@ export function SavedAnswersPanel(props: {
                       <dt>PDF SHA-256</dt><dd>{item.pdfSha256}</dd>
                       <dt>Authority</dt><dd>{item.authorityClassification}</dd>
                       <dt>Scope warning</dt><dd>{item.scopeWarning}</dd>
-                      <dt>Citation integrity</dt><dd>{cbaVerificationState ?? item.citationVerificationStateAtSave ?? "legacy_unverifiable"}</dd>
+                      <dt>Citation integrity</dt><dd>{libraryVerificationDisplay(cbaVerificationState ?? item.citationVerificationStateAtSave ?? "legacy_unverifiable")}</dd>
                       <dt>Source instance</dt><dd>{item.sourceInstanceId ? `${shortCbaDigest(item.sourceInstanceId)} (short prefix only)` : "Legacy citation - re-verification required"}</dd>
                       <dt>CBA locations</dt>
                       <dd>{item.citations.filter((citation) => citation.publicSourceType === "cba_contract").map((citation) => `Article ${citation.articleNumber} / ${citation.sectionId} / PDF ${citation.pdfPageNumber} / printed ${citation.printedPageLabel ?? "unknown"} / ${citation.paragraphId}`).join(", ")}</dd>
-                      {cbaVerificationState && cbaVerificationState !== "verified_current" && (
-                        <dd className="applicabilityWarning" role="alert">
-                          {citationVerificationMessage(cbaVerificationState)}
-                          {props.onResearchCba && <button className="button subtle" type="button" onClick={() => props.onResearchCba?.(item.question)}>Re-search current CBA</button>}
-                        </dd>
-                      )}
                       {cbaCitation && (
                         <details className="packetDisclosure">
                           <summary>Citation-integrity technical details</summary>
@@ -2395,7 +2412,25 @@ export function SavedAnswersPanel(props: {
                 </>
               )}
             </dl>
-            </MetadataContainer>
+            {!item.stewardPacket && (
+              <div className="sourceMeta" aria-label="Library item technical summary">
+                <span className="badge">{item.mode}</span>
+                <span className="badge">{item.scope}</span>
+                <span className="badge">{item.detail}</span>
+                <span className="badge">{item.citations.length} citations</span>
+                <span className={item.answerLane !== "fake" ? "badge green" : "badge"}>
+                  {item.answerLane === "public_cba" ? "official controlling CBA" : item.answerLane === "public" ? "official public guidance" : "fake claims"}
+                </span>
+                <span className="badge">{new Date(item.timestamp).toLocaleString()}</span>
+              </div>
+            )}
+            </details>
+            {showCbaVerificationWarning && (
+              <div className="applicabilityWarning" role="alert">
+                {citationVerificationMessage(cbaVerificationState!)}
+                {props.onResearchCba && <button className="button subtle" type="button" onClick={() => props.onResearchCba?.(item.question)}>Re-search current CBA</button>}
+              </div>
+            )}
             {/* Advisory-only display for public_argument_plan is intentional per scope decision to preserve operator access to existing saved records. */}
             {item.savedType === "public_argument_plan" && item.argumentPlan && (
               <div className="savedPlanActions">
@@ -2495,7 +2530,7 @@ export function SavedAnswersPanel(props: {
                 )}
               </div>
             )}
-            <div className="sourceMeta">
+            {item.stewardPacket && <div className="sourceMeta">
               <span className="badge">{item.mode}</span>
               <span className="badge">{item.scope}</span>
               <span className="badge">{item.detail}</span>
@@ -2504,7 +2539,7 @@ export function SavedAnswersPanel(props: {
                 {item.answerLane === "public_cba" ? "official controlling CBA" : item.answerLane === "public" ? "official public guidance" : "fake claims"}
               </span>
               <span className="badge">{new Date(item.timestamp).toLocaleString()}</span>
-            </div>
+            </div>}
           </article>
           );
         })}

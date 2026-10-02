@@ -504,7 +504,11 @@ describe("public steward workflow exports, persistence, and discovery", () => {
     expect(html).toContain("Filter Library by type");
     expect(html).toContain("Filter Library by topic");
     expect(html).toContain("Grievance Outline");
-    expect(html).toContain("verified_current");
+    expect(migrated.every((record) => record.citations.every(
+      (citation) => citation.citationVerificationState === "verified_current"
+    ))).toBe(true);
+    expect(html).toContain("Verified current");
+    expect(html).not.toContain("verified_current");
   });
 
   it("renders one registry-derived compact catalog with all supported topics", () => {
