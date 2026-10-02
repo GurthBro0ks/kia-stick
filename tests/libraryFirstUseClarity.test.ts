@@ -25,10 +25,27 @@ describe("UX-6 Library and first-use clarity", () => {
     expect(html).toContain("0 items");
     expect(html).toContain("Nothing in your Library yet.");
     expect(html).toContain("Save an answer or Steward Packet and it will appear here.");
+    expect(html).not.toContain("Saved to Library.");
+    expect(html).not.toContain("Open in Library");
     expect(html).not.toContain("No saved fake answers yet");
     expect(appSource).not.toContain('<PanelHeader title="Saved"');
     expect(design).toContain("Primary surfaces: Conversation, Sources, Library");
     expect(design).toContain("Use stable nouns for primary surfaces: Conversation, Sources, Library");
+  });
+
+  it("keeps packet save feedback on origin surfaces but never renders it in Library", () => {
+    const packetsRoute = appSource.slice(appSource.indexOf('{tab === "packets"'), appSource.indexOf('{tab === "sources"'));
+    const sourcesRoute = appSource.slice(appSource.indexOf('{tab === "sources"'), appSource.indexOf('{tab === "saved"'));
+    const libraryRoute = appSource.slice(appSource.indexOf('{tab === "saved"'), appSource.indexOf('{tab === "upload"'));
+    const libraryPanel = appSource.slice(appSource.indexOf("export function SavedAnswersPanel"), appSource.indexOf("export function VaultPanel"));
+
+    expect(appSource).toContain("const packetSaveConfirmation = saveNotice?.savedPacketId ? (");
+    expect(appSource).toContain('>Open in Library</button>');
+    expect(packetsRoute).toContain("{packetSaveConfirmation}");
+    expect(sourcesRoute).toContain("saveConfirmation={packetSaveConfirmation}");
+    expect(appSource).toContain("{packetSaveConfirmation}\n          {saveNotice && !saveNotice.savedPacketId");
+    expect(libraryRoute).not.toContain("saveConfirmation");
+    expect(libraryPanel).not.toContain("saveConfirmation");
   });
 
   it("provides item-aware delete copy for every existing Library type", () => {

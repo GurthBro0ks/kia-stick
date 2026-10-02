@@ -1125,7 +1125,6 @@ export function KiaStickApp({ runtimeVersion = clientVersion }: { runtimeVersion
 
         {tab === "saved" && (
           <SavedAnswersPanel
-            saveConfirmation={packetSaveConfirmation}
             highlightedPacketId={libraryPacketTarget}
             saved={saved}
             onDelete={(id) => setSaved((current) => current.filter((savedItem) => savedItem.id !== id))}
@@ -2151,7 +2150,6 @@ function savedTopicLabels(item: SavedAnswer): string[] {
 }
 
 export function SavedAnswersPanel(props: {
-  saveConfirmation?: React.ReactNode;
   highlightedPacketId?: string | null;
   saved: SavedAnswer[];
   onDelete: (id: string) => void;
@@ -2203,7 +2201,6 @@ export function SavedAnswersPanel(props: {
   return (
     <section className="tabPanel">
       <PanelHeader title="Library" meta={formatCount(props.saved.length, "item")} />
-      {props.saveConfirmation}
       <div className="savedFilters" aria-label="Library filters">
         <label className="controlPill">
           <span>Item type</span>
