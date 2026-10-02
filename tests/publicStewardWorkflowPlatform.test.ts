@@ -501,8 +501,8 @@ describe("public steward workflow exports, persistence, and discovery", () => {
         cbaSourceState: { status: "available", source: cbaSource },
       })
     );
-    expect(html).toContain("Filter Saved by type");
-    expect(html).toContain("Filter Saved by topic");
+    expect(html).toContain("Filter Library by type");
+    expect(html).toContain("Filter Library by topic");
     expect(html).toContain("Grievance Outline");
     expect(html).toContain("verified_current");
   });

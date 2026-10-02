@@ -423,8 +423,8 @@ describe("public steward packet workspace", () => {
     );
     expect(savedHtml).toContain("Steward Packet");
     expect(savedHtml).toContain("public_steward_packet_plan");
-    expect(savedHtml).toContain("Filter Saved by type");
-    expect(savedHtml).toContain("Filter Saved by topic");
+    expect(savedHtml).toContain("Filter Library by type");
+    expect(savedHtml).toContain("Filter Library by topic");
     expect(savedHtml).toContain("Open saved packet");
   });
 

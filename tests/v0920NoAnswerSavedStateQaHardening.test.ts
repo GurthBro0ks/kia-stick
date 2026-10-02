@@ -40,10 +40,10 @@ describe("v0.9.20 no-answer/Saved-state QA hardening", () => {
     };
     const state = featureList.v0920_no_answer_saved_state_qa_hardening;
 
-    expect(component).toContain("No Saved record is created for no-answer responses.");
-    expect(component).toContain("No-answer responses stay out of Saved.");
+    expect(component).toContain("No Library record is created for no-answer responses.");
+    expect(component).toContain("No-answer responses stay out of Library.");
     expect(component).toContain("Context-only fake sources");
-    expect(component).toContain("citation count, and fake build metadata");
+    expect(component).toContain("Nothing in your Library yet.");
     expect(state.phase).toBe(phase);
     expect(state.status).toBe("ready_to_push");
     expect(state.no_answer_saved_blocked).toBe(true);

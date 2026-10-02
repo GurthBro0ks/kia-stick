@@ -47,9 +47,11 @@ describe("DESIGN.md fake-only UX contract", () => {
   });
 
   it("covers required app, health, and version surfaces", () => {
-    for (const surface of ["Chat", "Sources", "Saved", "Upload", "Import", "Vault", "Settings", "`/health`", "`/version`"]) {
+    for (const surface of ["Conversation", "Sources", "Library", "Upload", "Import", "Vault", "Settings", "`/health`", "`/version`"]) {
       expect(design).toContain(surface);
     }
+
+    expect(design).not.toContain("Primary surfaces: Chat, Sources, Saved");
 
     expect(design).toContain("/health` must expose the current phase");
     expect(design).toContain("/version` must show `displayVersion`");

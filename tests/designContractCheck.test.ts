@@ -79,6 +79,15 @@ describe("design-contract-check", () => {
     expect(result.problems.join("\n")).toContain("PRODUCT_VERSION must stay 0.7.0");
   });
 
+  it("fails when the explicit Library surface contract is removed", async () => {
+    const mod = await loadModule();
+    const design = readFileSync("DESIGN.md", "utf8").replaceAll("Library", "Archive");
+    const result = mod.runDesignContractCheck(writeFixture({ design }));
+
+    expect(result.ok).toBe(false);
+    expect(result.problems.join("\n")).toContain("DESIGN.md must contain Library");
+  });
+
   it("fails when AGENTS.md no longer routes design work through DESIGN.md", async () => {
     const mod = await loadModule();
     const agents = readFileSync("AGENTS.md", "utf8").replace("For design, UI, UX, layout, copy, scan-density, or interaction work, read `DESIGN.md` first.", "");

@@ -2500,6 +2500,10 @@ a {
 .conversationShell .emptyChatState { border: 0; background: transparent; padding: clamp(24px, 8vh, 90px) 0 24px; text-align: center; }
 .conversationShell .emptyChatState .messageLabel { font-size: 1.6rem; text-transform: none; font-weight: 600; color: var(--ink); }
 .conversationShell .emptyChatState p { color: var(--muted); line-height: 1.7; max-width: 470px; margin: 16px auto; }
+.firstUseExamples { max-width: 760px; margin: 24px auto 0; text-align: left; }
+.firstUseExamples > .sectionKicker { display: block; margin-bottom: 8px; text-align: center; }
+.firstUsePromptRail { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 8px; }
+.firstUsePromptRail .promptChip { width: 100%; max-width: 100%; min-width: 0; justify-content: space-between; text-align: left; white-space: normal; overflow: visible; text-overflow: clip; line-height: 1.45; }
 .conversationShell .tabPanel { box-shadow: none; }
 .desktopSidebar, .mobileSidebarInterior { display: flex; flex-direction: column; background: var(--bg-sidebar); padding: 16px 12px; min-height: 0; color: var(--ink); }
 .desktopSidebar { border-right: 1px solid var(--border-subtle); }
@@ -2542,6 +2546,11 @@ a {
   .conversationShell .fakeNotice { padding: 8px 14px; }
   .conversationShell .mainArea { padding: 14px; }
   .conversationShell .chatComposerDock { width: calc(100% - 28px); margin-bottom: max(10px, env(safe-area-inset-bottom)); padding: 10px; }
+}
+@media (max-width: 640px) {
+  .conversationShell .emptyChatState { padding-top: 18px; }
+  .firstUseExamples { margin-top: 18px; }
+  .firstUsePromptRail { grid-template-columns: minmax(0, 1fr); }
 }
 
 /* UX-2: answer-first conversation; operator metadata is explicitly disclosed. */

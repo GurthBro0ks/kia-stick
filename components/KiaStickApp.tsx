@@ -317,6 +317,33 @@ function formatCount(count: number, singular: string, plural = `${singular}s`): 
   return `${count} ${count === 1 ? singular : plural}`;
 }
 
+type LibraryItemIdentity = Pick<SavedAnswer, "id" | "savedType">;
+
+export function libraryItemCopy(item: LibraryItemIdentity): { display: string; deleteNoun: string } {
+  switch (item.savedType) {
+    case "public_argument_plan":
+      return { display: "Argument Plan", deleteNoun: "argument plan" };
+    case "public_steward_argument_plan":
+      return { display: "Topic Argument Plan", deleteNoun: "topic argument plan" };
+    case "public_grievance_outline":
+      return { display: "Grievance Outline", deleteNoun: "grievance outline" };
+    case "public_steward_packet_plan":
+      return { display: "Steward Packet", deleteNoun: "Steward Packet" };
+    default:
+      return { display: "Answer", deleteNoun: "saved answer" };
+  }
+}
+
+export function deleteLibraryItemWithConfirmation(
+  item: LibraryItemIdentity,
+  onDelete: (id: string) => void,
+  confirmDelete: (message: string) => boolean = (message) => window.confirm(message)
+): boolean {
+  if (!confirmDelete(`Delete this ${libraryItemCopy(item).deleteNoun}?`)) return false;
+  onDelete(item.id);
+  return true;
+}
+
 export function KiaStickApp({ runtimeVersion = clientVersion }: { runtimeVersion?: RuntimeVersion }) {
   const [tab, setTab] = useState<Tab>("chat");
   const [mode, setMode] = useState<Mode>("Strict Research");
@@ -351,6 +378,27 @@ export function KiaStickApp({ runtimeVersion = clientVersion }: { runtimeVersion
   const composerToolsRef = useRef<HTMLDetailsElement>(null);
   const composerInputRef = useRef<HTMLTextAreaElement>(null);
   const conversationScrollTop = useRef(0);
+  const promptShortcuts = useMemo(
+    () => chatSourceMode === "cba"
+      ? PUBLIC_STEWARD_WORKFLOW_TOPICS.map((topic) => topic.exampleQuestion)
+      : chatSourceMode === "nlrb" || chatSourceMode === "public"
+        ? publicPilotQuestions
+        : chatSourceMode === "fake"
+          ? cannedQuestions
+          : [
+              ...PUBLIC_STEWARD_WORKFLOW_TOPICS.map((topic) => topic.exampleQuestion),
+              ...cbaPilotQuestions,
+              ...publicPilotQuestions,
+              ...cannedQuestions,
+            ],
+    [chatSourceMode]
+  );
+
+  function selectPromptShortcut(prompt: string) {
+    setDraft(prompt);
+    if (composerToolsRef.current) composerToolsRef.current.open = false;
+    composerInputRef.current?.focus();
+  }
 
   useEffect(() => {
     if (chatScrollRef.current) {
@@ -571,8 +619,8 @@ export function KiaStickApp({ runtimeVersion = clientVersion }: { runtimeVersion
       setSaveNotice({
         status: "duplicate",
         text: message.answer.answerKind === "public"
-          ? "No-answer responses stay out of Saved. Review the one-source public pilot instead."
-          : "No-answer responses stay out of Saved. Review the context-only fake trail instead.",
+          ? "No-answer responses stay out of Library. Review the one-source public pilot instead."
+          : "No-answer responses stay out of Library. Review the context-only fake trail instead.",
       });
       return;
     }
@@ -581,7 +629,7 @@ export function KiaStickApp({ runtimeVersion = clientVersion }: { runtimeVersion
       (citation) => verifyCbaCitation(citation, cbaSourceState.status === "available" ? cbaSourceState.source : null).state === "verified_current"
     );
     if (!cbaSaveEligible) {
-      setSaveNotice({ status: "duplicate", text: "CBA citation verification is required before this answer can be Saved. Re-search the current CBA source." });
+      setSaveNotice({ status: "duplicate", text: "CBA citation verification is required before this answer can be saved to Library. Re-search the current CBA source." });
       return;
     }
     const record = createSavedAnswerRecord({
@@ -976,6 +1024,17 @@ export function KiaStickApp({ runtimeVersion = clientVersion }: { runtimeVersion
                 <div className="emptyChatState">
                   <span className="messageLabel">Ask KIA Stick</span>
                   <p>Ask a question and follow the citations. Use fake samples or the two allowlisted public sources; keep private information out.</p>
+                  <div className="firstUseExamples">
+                    <span className="sectionKicker">Try an example</span>
+                    <div className="firstUsePromptRail" aria-label="Example questions">
+                      {promptShortcuts.slice(0, 3).map((prompt) => (
+                        <button className="promptChip" key={prompt} type="button" onClick={() => selectPromptShortcut(prompt)}>
+                          {prompt}
+                          <ChevronRight size={14} />
+                        </button>
+                      ))}
+                    </div>
+                  </div>
                 </div>
               )}
               {thread.messages.map((message, index) =>
@@ -1200,24 +1259,8 @@ export function KiaStickApp({ runtimeVersion = clientVersion }: { runtimeVersion
                 <details className="promptDetails">
                   <summary>Prompt shortcuts</summary>
                   <div className="promptRail" aria-label={chatSourceMode === "cba" ? "CBA prompts" : chatSourceMode === "nlrb" || chatSourceMode === "public" ? "NLRB guidance prompts" : chatSourceMode === "fake" ? "fake test prompts" : "automatic public and fake prompts"}>
-                    {(chatSourceMode === "cba"
-                      ? PUBLIC_STEWARD_WORKFLOW_TOPICS.map((topic) => topic.exampleQuestion)
-                      : chatSourceMode === "nlrb" || chatSourceMode === "public"
-                      ? publicPilotQuestions
-                      : chatSourceMode === "fake"
-                        ? cannedQuestions
-                        : [
-                            ...PUBLIC_STEWARD_WORKFLOW_TOPICS.map((topic) => topic.exampleQuestion),
-                            ...cbaPilotQuestions,
-                            ...publicPilotQuestions,
-                            ...cannedQuestions,
-                          ]
-                    ).map((prompt) => (
-                      <button className="promptChip" key={prompt} type="button" onClick={() => {
-                        setDraft(prompt);
-                        if (composerToolsRef.current) composerToolsRef.current.open = false;
-                        composerInputRef.current?.focus();
-                      }}>
+                    {promptShortcuts.map((prompt) => (
+                      <button className="promptChip" key={prompt} type="button" onClick={() => selectPromptShortcut(prompt)}>
                         {prompt}
                         <ChevronRight size={14} />
                       </button>
@@ -2159,13 +2202,13 @@ export function SavedAnswersPanel(props: {
   );
   return (
     <section className="tabPanel">
-      <PanelHeader title="Saved" meta={`${props.saved.length} stored locally`} />
+      <PanelHeader title="Library" meta={formatCount(props.saved.length, "item")} />
       {props.saveConfirmation}
-      <div className="savedFilters" aria-label="Saved work filters">
+      <div className="savedFilters" aria-label="Library filters">
         <label className="controlPill">
-          <span>Saved type</span>
+          <span>Item type</span>
           <select
-            aria-label="Filter Saved by type"
+            aria-label="Filter Library by type"
             value={typeFilter}
             onChange={(event) => setTypeFilter(event.target.value as typeof typeFilter)}
           >
@@ -2180,7 +2223,7 @@ export function SavedAnswersPanel(props: {
         <label className="controlPill">
           <span>Topic</span>
           <select
-            aria-label="Filter Saved by topic"
+            aria-label="Filter Library by topic"
             value={effectiveTopicFilter}
             onChange={(event) => setTopicFilter(event.target.value)}
           >
@@ -2188,18 +2231,19 @@ export function SavedAnswersPanel(props: {
             {topics.map((topic) => <option key={topic} value={topic}>{topic}</option>)}
           </select>
         </label>
-        <span className="statusPill">{visibleSaved.length} shown</span>
+        <span className="statusPill">{formatCount(visibleSaved.length, "item")} shown</span>
       </div>
       <div className="sourceCards">
         {props.saved.length === 0 && (
           <p className="emptyState">
-            No saved fake answers yet. Answer cards retain source/provider metadata, citation count, and fake build metadata. No-answer Chat cards are blocked from Saved. No saved public-pilot answers yet. Both lanes remain separately labeled and retain local provider, prompt, source, hash, and anchor metadata.
+            Nothing in your Library yet. Save an answer or Steward Packet and it will appear here.
           </p>
         )}
         {props.saved.length > 0 && visibleSaved.length === 0 && (
-          <p className="emptyState">No Saved records match these filters. Existing records were not changed.</p>
+          <p className="emptyState">No Library items match these filters. Your saved items were not changed.</p>
         )}
         {visibleSaved.map((item) => {
+          const itemCopy = libraryItemCopy(item);
           const cbaVerificationState = savedCbaVerificationState(item, cbaSourceState);
           const cbaCitation = item.citations.find((citation) => citation.publicSourceType === "cba_contract");
           const packetEligibility = item.stewardPacket
@@ -2225,24 +2269,16 @@ export function SavedAnswersPanel(props: {
               <button
                 className="button iconOnly subtle"
                 type="button"
-                title="Delete saved answer"
-                aria-label="Delete saved answer"
-                onClick={() => props.onDelete(item.id)}
+                title={`Delete ${itemCopy.deleteNoun}`}
+                aria-label={`Delete ${itemCopy.deleteNoun}`}
+                onClick={() => deleteLibraryItemWithConfirmation(item, props.onDelete)}
               >
                 <Archive size={16} />
               </button>
             </div>
-            <div className="sourceMeta" aria-label="Saved record identity">
+            <div className="sourceMeta" aria-label="Library item identity">
               <span className="badge green">
-                {item.savedType === "public_argument_plan"
-                  ? "Argument Plan"
-                  : item.savedType === "public_steward_argument_plan"
-                    ? "Topic Argument Plan"
-                  : item.savedType === "public_grievance_outline"
-                    ? "Grievance Outline"
-                    : item.savedType === "public_steward_packet_plan"
-                      ? "Steward Packet"
-                    : "Answer"}
+                {itemCopy.display}
               </span>
               {item.grievanceOutline && <span className="badge">{item.grievanceOutline.topic}</span>}
               {item.stewardArgumentPlan && <span className="badge">{item.stewardArgumentPlan.topic}</span>}
@@ -2271,8 +2307,8 @@ export function SavedAnswersPanel(props: {
             </p>
             <MetadataContainer className={item.stewardPacket ? "packetDisclosure savedPacketDetails" : undefined}>
             {item.stewardPacket && <summary>Saved packet details</summary>}
-            <dl className="savedDetailList" aria-label="Saved answer metadata">
-              <dt>Saved type</dt>
+            <dl className="savedDetailList" aria-label="Library item metadata">
+              <dt>Item type</dt>
               <dd>{item.savedType}</dd>
               {item.savedType === "public_steward_argument_plan" && item.stewardArgumentPlan && (
                 <>
@@ -2284,9 +2320,9 @@ export function SavedAnswersPanel(props: {
               )}
               {item.savedType === "public_grievance_outline" && item.grievanceOutline && (
                 <>
-                  <dt>Saved topic</dt>
+                  <dt>Topic</dt>
                   <dd>{item.grievanceOutlineTopic ?? item.grievanceOutline.topic}</dd>
-                  <dt>Saved template</dt>
+                  <dt>Template</dt>
                   <dd>{item.grievanceOutlineTemplate ?? item.grievanceOutline.template}</dd>
                 </>
               )}
@@ -3279,8 +3315,8 @@ export function AssistantMessageCard({
           {answer.citations.length === 0 && (
             <p className="emptyState">
               {answer.answerKind === "public"
-                ? "No Saved record is created for no-answer responses. Review Sources or try a supported question."
-                : "No Saved record is created for no-answer responses. Context-only fake sources can still be reviewed in the full packet."}
+                ? "No Library record is created for no-answer responses. Review Sources or try a supported question."
+                : "No Library record is created for no-answer responses. Context-only fake sources can still be reviewed in the full packet."}
             </p>
           )}
 

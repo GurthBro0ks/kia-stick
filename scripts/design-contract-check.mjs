@@ -84,7 +84,7 @@ export function runDesignContractCheck(root = process.cwd()) {
     requireContains(problems, "DESIGN.md", design, forbidden);
   }
 
-  for (const surface of ["Chat", "Sources", "Saved", "Upload", "Import", "Vault", "Settings", "`/health`", "`/version`"]) {
+  for (const surface of ["Conversation", "Sources", "Library", "Upload", "Import", "Vault", "Settings", "`/health`", "`/version`"]) {
     requireContains(problems, "DESIGN.md", design, surface);
   }
 

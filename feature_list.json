@@ -13921,5 +13921,30 @@
     "real_documents_accessed": false,
     "proof_dir_pattern": "/home/slimy/.local/state/kia-stick/proofs/proof_kia_stick_ux_4_operator_acceptance_terminal_closeout_push_*",
     "completion_authority": "External proof RESULT.md records final validation and commit outcome"
+  },
+  "ux6_library_first_use_clarity": {
+    "phase": "KIA-Stick-UX-6-library-and-first-use-clarity-pass",
+    "status": "IMPLEMENTED_COMMITTED_PENDING_OPERATOR_QA",
+    "runtime_scope": "LIBRARY_AND_FIRST_USE_PRESENTATION_ONLY",
+    "library_primary_heading": "Library",
+    "delete_labels_item_aware": true,
+    "delete_confirmation": "native_window_confirm",
+    "library_empty_state_plain_language": true,
+    "first_use_examples_visible": true,
+    "first_use_examples_reuse_prompt_shortcuts": true,
+    "first_use_prompt_auto_submit": false,
+    "pinned_placeholder": "Coming later",
+    "projects_placeholder": "Coming later",
+    "backend_changed": false,
+    "data_model_changed": false,
+    "new_persistence_added": false,
+    "multi_chat_history_added": false,
+    "pinned_feature_implemented": false,
+    "projects_feature_implemented": false,
+    "manual_qa": "PENDING_OPERATOR_REVIEW",
+    "pushed": false,
+    "product_version": "0.7.0",
+    "real_documents_accessed": false,
+    "proof_dir_pattern": "/home/slimy/.local/state/kia-stick/proofs/proof_kia_stick_ux_6_library_first_use_clarity_*"
   }
 }

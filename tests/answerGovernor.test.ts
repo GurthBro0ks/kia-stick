@@ -605,7 +605,7 @@ describe("manual QA UX shell", () => {
     expect(answer.noAnswer).toBe(true);
     expect(html).toContain("No answer to save");
     expect(html).toContain("disabled=\"\"");
-    expect(html).toContain("No Saved record is created for no-answer responses.");
+    expect(html).toContain("No Library record is created for no-answer responses.");
     expect(html).not.toContain("aria-label=\"Save this answer\"");
   });
 
@@ -627,8 +627,9 @@ describe("manual QA UX shell", () => {
       onDelete: () => undefined,
     }));
 
-    expect(emptyHtml).toContain("No saved fake answers yet.");
-    expect(savedHtml).toContain("Saved answer metadata");
+    expect(emptyHtml).toContain("Nothing in your Library yet.");
+    expect(emptyHtml).toContain("Save an answer or Steward Packet and it will appear here.");
+    expect(savedHtml).toContain("Library item metadata");
     expect(savedHtml).toContain("Product");
     expect(savedHtml).toContain(PRODUCT_VERSION);
     expect(savedHtml).toContain("Prompt");

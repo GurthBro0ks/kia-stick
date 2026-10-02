@@ -55,7 +55,7 @@ describe("answer progressive disclosure", () => {
     expect(answer.noAnswer).toBe(true);
     const visible = html.replace(/<details[\s\S]*?<\/details>/g, "");
     expect(visible).toContain(answer.shortAnswer);
-    expect(visible).toContain("No Saved record is created for no-answer responses.");
+    expect(visible).toContain("No Library record is created for no-answer responses.");
     expect(visible).toContain("Confidence / authority");
     expect(visible).toContain("What to do next");
     expect(visible).not.toContain("No answer to save");

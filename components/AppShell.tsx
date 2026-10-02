@@ -54,8 +54,8 @@ export function AppShell({ view, onNavigate, onNewConversation, conversationTitl
           {([{ view: "packets", icon: ClipboardList }, { view: "sources", icon: BookOpen }, { view: "saved", icon: Library }] as const).map(({ view: target, icon: Icon }) =>
             <button key={target} type="button" className="sidebarItem" aria-label={titles[target]} title={titles[target]} aria-current={view === target ? "page" : undefined} onClick={() => navigate(target)}><Icon size={19} /><span>{titles[target]}</span></button>)}
         </div>
-        <section className="sidebarSection"><h2>Pinned</h2><p>Nothing pinned yet</p></section>
-        <section className="sidebarSection"><h2>Projects</h2><p>No projects yet</p></section>
+        <section className="sidebarSection"><h2>Pinned</h2><p>Coming later</p></section>
+        <section className="sidebarSection"><h2>Projects</h2><p>Coming later</p></section>
         <section className="sidebarSection chatSection"><h2>Chats</h2>
           <button type="button" className="sidebarItem" aria-label="Current conversation" title={conversationTitle} aria-current={view === "chat" ? "page" : undefined} onClick={() => navigate("chat")}><MessageSquareText size={19} /><span>{conversationTitle}</span></button>
           <p>Only the current conversation is stored. Starting a new one replaces it.</p>

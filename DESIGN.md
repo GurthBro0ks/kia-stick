@@ -22,7 +22,7 @@ The current identity contract is:
 - `displayVersion`: `productVersion-channel.buildDate+gitSha`
 - `promptVersion`: `prompt.fake-docs.v0.5-import-wizard-hardening`
 - `provider`: local fake deterministic provider
-- Primary surfaces: Chat, Sources, Saved, Upload, Import, Vault, Settings, `/health`, and `/version`
+- Primary surfaces: Conversation, Sources, Library, Upload, Import, Vault, Settings, `/health`, and `/version`
 
 ## Fake-Only Boundary
 
@@ -60,7 +60,7 @@ Sources:
 - Surface fake source IDs, hierarchy ranks, citable/context-only status, and version traceability.
 - Make citation-to-source review faster than browsing prose.
 
-Saved:
+Library:
 
 - Show saved-answer metadata with `productVersion`, `displayVersion`, `promptVersion`, provider, mode, scope, detail, and timestamp.
 - Empty and duplicate states must be explicit and non-alarming.
@@ -105,7 +105,7 @@ Use consistent language across Upload, Import, Vault, proof/export, and no-answe
 - `not indexable`
 - `blocked`
 - `export blocked`
-- `No Saved record is created for no-answer responses.`
+- `No Library record is created for no-answer responses.`
 
 Avoid labels that imply real capability:
 
@@ -114,7 +114,7 @@ Avoid labels that imply real capability:
 
 ## Component And State Labels
 
-- Use stable nouns for tabs: Chat, Sources, Saved, Upload, Vault, Import, Settings.
+- Use stable nouns for primary surfaces: Conversation, Sources, Library, Upload, Vault, Import, Settings.
 - Use explicit fake prefixes where a surface might otherwise imply a real workflow.
 - Use PASS/WARN/FAIL only for proof, review, or validation artifacts where the gate is deterministic.
 - Use `blocked` for forbidden real-doc actions and unsafe fake export states.

@@ -416,8 +416,8 @@ describe("public CBA overtime cited grievance outline", () => {
         onDelete: () => undefined,
         cbaSourceState: { status: "available", source: cbaSource },
       }));
-      expect(html).toContain("Saved topic");
-      expect(html).toContain("Saved template");
+      expect(html).toContain("Topic");
+      expect(html).toContain("Template");
       expect(html).toContain("overtime");
       expect(html).toContain("annual_leave");
       expect(html.match(/Open saved outline/g)).toHaveLength(2);

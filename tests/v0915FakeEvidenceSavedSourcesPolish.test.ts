@@ -27,7 +27,8 @@ describe("v0.9.15 fake evidence/Saved/Sources polish", () => {
     expect(component).toContain("Prompt: {answer.version.promptVersion}");
     expect(component).toContain("Provider: {answer.version.provider}");
     expect(component).toContain("source IDs visible on every row");
-    expect(component).toContain("citation count, and fake build metadata");
+    expect(component).toContain("Nothing in your Library yet.");
+    expect(component).toContain("Save an answer or Steward Packet and it will appear here.");
     expect(component).not.toMatch(/showOpenFilePicker|showDirectoryPicker|readAsText|readAsArrayBuffer|type=["']file["']/i);
   });
 

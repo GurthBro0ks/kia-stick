@@ -20,11 +20,11 @@ describe("v0.8.7 Chat/Saved no-answer polish", () => {
   it("adds visible no-answer save blocking and Saved empty-state copy", () => {
     const component = readFileSync("components/KiaStickApp.tsx", "utf8");
 
-    expect(component).toContain("No-answer responses stay out of Saved. Review the context-only fake trail instead.");
+    expect(component).toContain("No-answer responses stay out of Library. Review the context-only fake trail instead.");
     expect(component).toContain("No-answer unsaved");
     expect(component).toContain("Unsaved no-answer");
     expect(component).toContain("Context-only fake sources can still be reviewed in the full packet.");
-    expect(component).toContain("No-answer Chat cards are blocked from Saved.");
+    expect(component).toContain("Nothing in your Library yet.");
     expect(component).toContain("if (message.answer.noAnswer)");
     expect(component).toContain("createSavedAnswerRecord");
     expect(component).toContain("upsertSavedAnswer");

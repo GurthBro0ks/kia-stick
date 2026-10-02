@@ -142,8 +142,8 @@ function checkStaticContracts(root, problems) {
   for (const marker of [
     "Queue fake sample metadata",
     "Queue fake batch metadata",
-    "No Saved record is created for no-answer responses.",
-    "No-answer responses stay out of Saved.",
+    "No Library record is created for no-answer responses.",
+    "No-answer responses stay out of Library.",
     "Context-only fake sources",
     "Upload fake-only checks",
     "Vault operator QA summary",

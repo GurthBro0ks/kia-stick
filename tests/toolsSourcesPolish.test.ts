@@ -15,7 +15,7 @@ describe("Tools and Sources operator polish", () => {
     const tree = ts.createSourceFile("app.tsx", source, ts.ScriptTarget.Latest, true, ts.ScriptKind.TSX);
     let handler = "";
     function visit(node: ts.Node) {
-      if (ts.isArrowFunction(node) && node.getText(tree).includes("setDraft(prompt);")) handler = node.getText(tree);
+      if (ts.isFunctionDeclaration(node) && node.name?.text === "selectPromptShortcut") handler = node.getText(tree);
       ts.forEachChild(node, visit);
     }
     visit(tree);
@@ -25,7 +25,7 @@ describe("Tools and Sources operator polish", () => {
     const prompt = "What does Article 17 say about representation?";
     const bindings = { setDraft, composerToolsRef, composerInputRef: { current: { focus } }, prompt, sendMessage };
     const run = new Function(...Object.keys(bindings), "return " + ts.transpile(handler, { target: ts.ScriptTarget.ES2022 }))(...Object.values(bindings));
-    run();
+    run(prompt);
     expect(setDraft).toHaveBeenCalledExactlyOnceWith(prompt);
     expect(composerToolsRef.current.open).toBe(false);
     expect(focus).toHaveBeenCalledOnce();
