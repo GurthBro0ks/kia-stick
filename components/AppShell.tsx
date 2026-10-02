@@ -54,9 +54,9 @@ export function AppShell({ view, onNavigate, onNewConversation, conversationTitl
           {([{ view: "packets", icon: ClipboardList }, { view: "sources", icon: BookOpen }, { view: "saved", icon: Library }] as const).map(({ view: target, icon: Icon }) =>
             <button key={target} type="button" className="sidebarItem" aria-label={titles[target]} title={titles[target]} aria-current={view === target ? "page" : undefined} onClick={() => navigate(target)}><Icon size={19} /><span>{titles[target]}</span></button>)}
         </div>
-        <section className="sidebarSection"><h2>Pinned</h2><p>Coming later</p></section>
-        <section className="sidebarSection"><h2>Projects</h2><p>Coming later</p></section>
-        <section className="sidebarSection chatSection"><h2>Chats</h2>
+        <section className="sidebarSection"><div className="sidebarSectionLabel">Pinned</div><p>Coming later</p></section>
+        <section className="sidebarSection"><div className="sidebarSectionLabel">Projects</div><p>Coming later</p></section>
+        <section className="sidebarSection chatSection"><div className="sidebarSectionLabel">Chats</div>
           <button type="button" className="sidebarItem" aria-label="Current conversation" title={conversationTitle} aria-current={view === "chat" ? "page" : undefined} onClick={() => navigate("chat")}><MessageSquareText size={19} /><span>{conversationTitle}</span></button>
           <p>Only the current conversation is stored. Starting a new one replaces it.</p>
         </section>
@@ -76,6 +76,7 @@ export function AppShell({ view, onNavigate, onNewConversation, conversationTitl
   }
 
   return <div className={`appShell conversationShell${collapsed ? " sidebarCollapsed" : ""}`}>
+    <a href="#main-content" className="skipLink">Skip to main content</a>
     <aside className="desktopSidebar" aria-label="Sidebar">{navigation(false)}</aside>
     <dialog ref={drawer} className="mobileSidebarDrawer" aria-label="Navigation" onClose={() => opener.current?.focus()} onClick={(event) => { if (event.target === event.currentTarget) drawer.current?.close(); }}>
       <div className="mobileSidebarInterior">{navigation(true)}</div>

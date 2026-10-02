@@ -379,6 +379,7 @@ export function KiaStickApp({ runtimeVersion = clientVersion }: { runtimeVersion
   const [sourceHandoff, setSourceHandoff] = useState<string | null>(null);
   const [thread, setThread] = useState<ConversationThread>(() => createConversationThread());
   const [isSending, setIsSending] = useState(false);
+  const [answerAnnouncement, setAnswerAnnouncement] = useState("");
   const [saved, setSaved] = useState<SavedAnswer[]>([]);
   const [quarantine, setQuarantine] = useState<QuarantineItem[]>([]);
   const [vaultView, setVaultView] = useState<VaultView>("vault");
@@ -560,6 +561,7 @@ export function KiaStickApp({ runtimeVersion = clientVersion }: { runtimeVersion
           modeScopeDetail: input.snapshot,
         });
         setThread((current) => replaceAssistantMessage(current, input.loadingMessage.messageId, assistantMessage));
+        setAnswerAnnouncement("Answer ready.");
       } catch (error) {
         const failedMessage: AssistantMessage = {
           ...input.loadingMessage,
@@ -569,6 +571,7 @@ export function KiaStickApp({ runtimeVersion = clientVersion }: { runtimeVersion
           createdAt: new Date().toISOString(),
         };
         setThread((current) => replaceAssistantMessage(current, input.loadingMessage.messageId, failedMessage));
+        setAnswerAnnouncement("Answer failed. Please try again.");
       } finally {
         setIsSending(false);
         setPendingScroll(true);
@@ -603,6 +606,7 @@ export function KiaStickApp({ runtimeVersion = clientVersion }: { runtimeVersion
     setSourceHandoff(null);
     setChatSourceMode(sourcePolicy);
     setSaveNotice(null);
+    setAnswerAnnouncement("");
     setIsSending(true);
     setPendingScroll(true);
     setTab("chat");
@@ -628,6 +632,7 @@ export function KiaStickApp({ runtimeVersion = clientVersion }: { runtimeVersion
     };
 
     setSaveNotice(null);
+    setAnswerAnnouncement("");
     setIsSending(true);
     setPendingScroll(true);
     setThread((current) => replaceAssistantMessage(current, message.messageId, loadingMessage));
@@ -890,6 +895,7 @@ export function KiaStickApp({ runtimeVersion = clientVersion }: { runtimeVersion
     setGrievanceOutlines({});
     setDraft("");
     setSaveNotice(null);
+    setAnswerAnnouncement("");
     setIsSending(false);
     setPendingScroll(true);
     setTab("chat");
@@ -1022,7 +1028,8 @@ export function KiaStickApp({ runtimeVersion = clientVersion }: { runtimeVersion
 
   return (
     <AppShell view={tab} onNavigate={setTab} onNewConversation={startNewChat} conversationTitle={thread.title} displayVersion={runtimeVersion.displayVersion}>
-      <div className="fakeNotice" role="status">
+      <div className="answerAnnouncement" aria-live="polite" aria-atomic="true">{answerAnnouncement}</div>
+      <div className="fakeNotice">
         <AlertTriangle size={16} />
         <details className="safetyNoticeDetails">
           <summary>Fake samples / public data only — no private data</summary>
@@ -1037,7 +1044,7 @@ export function KiaStickApp({ runtimeVersion = clientVersion }: { runtimeVersion
           <button className="button subtle compactButton" type="button" aria-expanded={panelVisible} aria-controls="steward-work-product" onClick={() => setWorkPanelOpen(true)}>Open Steward Packet</button>
         </div>
       )}
-      <main className={tab === "chat" ? "mainArea chatMain" : "mainArea"} ref={chatScrollRef} onScroll={(event) => { if (tab === "chat") conversationScrollTop.current = event.currentTarget.scrollTop; }}>
+      <main id="main-content" tabIndex={-1} className={tab === "chat" ? "mainArea chatMain" : "mainArea"} ref={chatScrollRef} onScroll={(event) => { if (tab === "chat") conversationScrollTop.current = event.currentTarget.scrollTop; }}>
         {tab === "chat" && (
           <div className="chatScrollArea" aria-label="Chat messages">
             <section className="chatThread" aria-label="Current conversation">
@@ -3272,7 +3279,7 @@ export function AssistantMessageCard({
 
   if (message.status === "loading") {
     return (
-      <div className="messageRow assistantMessage" aria-live="polite">
+      <div className="messageRow assistantMessage">
         <div className="messageBubble assistantBubble thinkingBubble">
           <div className="messageMeta">
             <span className="messageLabel">KIA Stick</span>
@@ -3286,7 +3293,7 @@ export function AssistantMessageCard({
 
   if (message.status === "failed") {
     return (
-      <div className="messageRow assistantMessage" aria-live="assertive">
+      <div className="messageRow assistantMessage">
         <div className="messageBubble assistantBubble">
           <div className="answerHeader">
             <div>

@@ -20,7 +20,7 @@ describe("answer progressive disclosure", () => {
     expect(css).toContain(".chatMain .assistantBubble > :is(.answerActions, .answerSources, .answerTechnicalDetails)");
     expect(css).toContain("display: block; margin: 8px 0 0; padding: 0; border: 0; background: transparent;");
     const source = readFileSync("components/KiaStickApp.tsx", "utf8");
-    expect(source).toContain('className={tab === "chat" ? "mainArea chatMain" : "mainArea"} ref={chatScrollRef}');
+    expect(source).toContain('id="main-content" tabIndex={-1} className={tab === "chat" ? "mainArea chatMain" : "mainArea"} ref={chatScrollRef}');
   });
   it("keeps guidance visible and groups all actions inside a separate closed disclosure", () => {
     const { answer, html } = card("Can annual leave be denied after I submitted inside the fake window?");

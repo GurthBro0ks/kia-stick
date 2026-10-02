@@ -133,6 +133,8 @@ Avoid labels that imply real capability:
 ## Accessibility And Mobile
 
 - Maintain keyboard-reachable controls with real button/link elements.
+- Keep an always-mounted polite, concise answer completion/failure announcement without moving focus or reading the full answer. Static safety guidance is not a live status.
+- Offer a keyboard-first Skip to main content link; keep the page h1 as the first heading in document order and treat sidebar navigation group labels as labels rather than page headings.
 - Keep touch targets large enough for bottom navigation and action rows.
 - Preserve visible focus states and semantic landmarks where practical.
 - Avoid text overlap in chips, buttons, nav items, cards, and proof labels.

@@ -92,8 +92,10 @@ describe("UX-6 Library and first-use clarity", () => {
   });
 
   it("labels Pinned and Projects as unavailable without adding controls or storage", () => {
-    expect(shellSource).toContain('<h2>Pinned</h2><p>Coming later</p>');
-    expect(shellSource).toContain('<h2>Projects</h2><p>Coming later</p>');
+    expect(shellSource).toContain('<div className="sidebarSectionLabel">Pinned</div><p>Coming later</p>');
+    expect(shellSource).toContain('<div className="sidebarSectionLabel">Projects</div><p>Coming later</p>');
+    expect(shellSource).not.toContain('<h2>Pinned</h2>');
+    expect(shellSource).not.toContain('<h2>Projects</h2>');
     expect(shellSource).not.toContain("Nothing pinned yet");
     expect(shellSource).not.toContain("No projects yet");
     expect(shellSource).not.toContain("localStorage");

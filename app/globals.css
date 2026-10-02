@@ -2482,6 +2482,9 @@ a {
 /* Conversation shell: natural header/banner/composer tracks replace fixed offsets. */
 .conversationShell { display: grid; grid-template-columns: 260px minmax(0, 1fr); height: 100dvh; min-height: 0; overflow: hidden; background: var(--bg-app); }
 .conversationShell.sidebarCollapsed { grid-template-columns: 76px minmax(0, 1fr); }
+.skipLink { position: fixed; z-index: 100; top: 8px; left: 8px; width: 1px; height: 1px; padding: 0; overflow: hidden; clip-path: inset(50%); white-space: nowrap; }
+.skipLink:focus-visible { width: auto; height: auto; padding: 10px 14px; overflow: visible; clip-path: none; background: var(--bg-surface); color: var(--ink); border: 2px solid var(--blue); }
+.answerAnnouncement { position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px; overflow: hidden; clip-path: inset(50%); white-space: nowrap; border: 0; }
 .shellWorkspace { display: flex; flex-direction: column; min-width: 0; min-height: 0; }
 .workspaceHeader { display: flex; align-items: center; gap: 12px; min-height: 52px; padding: 8px 24px; }
 .workspaceHeader h1 { font-size: 1rem; font-weight: 600; margin: 0; }
@@ -2519,7 +2522,7 @@ a {
 .sidebarItem.newConversation { border: 1px solid var(--accent-border); color: var(--accent-text); margin-bottom: 20px; }
 .sidebarPrimary { margin-bottom: 28px; }
 .sidebarSection { margin: 22px 0; }
-.sidebarSection h2 { font-size: .7rem; color: var(--muted); font-weight: 600; padding: 0 10px; }
+.sidebarSectionLabel { font-size: .7rem; color: var(--muted); font-weight: 600; padding: 0 10px; margin-block: .83em; }
 .sidebarSection p { color: var(--muted); font-size: .73rem; line-height: 1.5; padding: 0 10px; }
 .sidebarFooter { border-top: 1px solid var(--border-subtle); padding-top: 8px; position: relative; }
 .sidebarMenu > summary { display: flex; gap: 10px; align-items: center; min-height: 44px; padding: 10px; border-radius: var(--radius-md); cursor: pointer; font-size: .85rem; }
@@ -2530,7 +2533,7 @@ a {
 .sidebarMenuContents small { color: var(--muted); overflow-wrap: anywhere; font-size: .67rem; }
 .sidebarTools { display: grid; padding-left: 12px; }
 .sidebarCollapsed .desktopSidebar .sidebarBrand { flex-direction: column; }
-.sidebarCollapsed .desktopSidebar .sidebarItem span, .sidebarCollapsed .desktopSidebar .sidebarSection h2, .sidebarCollapsed .desktopSidebar .sidebarSection p, .sidebarCollapsed .desktopSidebar .sidebarMenu > summary span { display: none; }
+.sidebarCollapsed .desktopSidebar .sidebarItem span, .sidebarCollapsed .desktopSidebar .sidebarSectionLabel, .sidebarCollapsed .desktopSidebar .sidebarSection p, .sidebarCollapsed .desktopSidebar .sidebarMenu > summary span { display: none; }
 .sidebarCollapsed .desktopSidebar .sidebarItem, .sidebarCollapsed .desktopSidebar .sidebarMenu > summary { justify-content: center; }
 .sidebarCollapsed .desktopSidebar .sidebarSection:not(.chatSection) { display: none; }
 .mobileMenuButton { display: none; }

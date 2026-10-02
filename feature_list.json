@@ -14188,5 +14188,30 @@
     "real_documents_accessed": false,
     "proof_dir_pattern": "/home/slimy/.local/state/kia-stick/proofs/proof_kia_stick_ux_7_operator_acceptance_terminal_closeout_push_*",
     "completion_authority": "External proof RESULT.md records final validation and commit outcome"
+  },
+  "ux8_accessibility_semantics_navigation": {
+    "phase": "KIA-Stick-UX-8-accessibility-semantics-and-navigation",
+    "status": "IMPLEMENTED_COMMITTED_PENDING_REAL_SCREEN_READER_AND_OPERATOR_QA",
+    "scope": "ANSWER_ANNOUNCEMENT_STATIC_SAFETY_SEMANTICS_SKIP_LINK_SIDEBAR_HEADING_LABELS",
+    "answer_live_region_always_mounted": true,
+    "answer_live_region_politeness": "polite",
+    "answer_completion_announcement": "Answer ready.",
+    "answer_failure_announcement": "Answer failed. Please try again.",
+    "full_answer_in_live_region": false,
+    "answer_focus_move_added": false,
+    "static_safety_notice_live_role_removed": true,
+    "skip_link_targets_main_content": true,
+    "sidebar_labels_as_headings": false,
+    "page_primary_h1_preserved": true,
+    "backend_changed": false,
+    "data_model_changed": false,
+    "new_persistence_added": false,
+    "real_screen_reader_qa": "PENDING_OPERATOR_REVIEW",
+    "manual_qa": "PENDING_OPERATOR_REVIEW",
+    "pushed": false,
+    "post_ux8_state_if_operator_qa_and_terminal_closeout_pass": "PAUSE_ACCEPTED_PUBLIC_MVP",
+    "product_version": "0.7.0",
+    "real_documents_accessed": false,
+    "proof_dir_pattern": "/home/slimy/.local/state/kia-stick/proofs/proof_kia_stick_ux_8_accessibility_semantics_navigation_*"
   }
 }
