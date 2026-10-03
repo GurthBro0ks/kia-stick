@@ -15,6 +15,8 @@ import { buildPublicSourceAnswer } from "@/lib/publicSourceAnswer";
 import type { Detail, Mode, Scope } from "@/lib/sourceModel";
 import type { RuntimeVersion } from "@/lib/version";
 import { publicStewardWorkflowMatch } from "@/lib/publicStewardWorkflowRegistry";
+import { enrichCbaAnswerWithJcim } from "@/lib/jcimAnswer";
+import type { JcimCache } from "@/lib/jcimSource";
 
 export type ChatSourcePolicy = "auto" | "fake" | "nlrb" | "cba" | "public";
 export type ChatAnswerLane = "fake" | "nlrb" | "cba" | "safe_no_answer";
@@ -97,11 +99,12 @@ export function routeChatQuestion(input: {
   snapshot: ModeScopeDetailSnapshot;
   publicSource: PublicSourceCache | null;
   cbaSource?: CbaSourceCache | null;
+  jcimSource?: JcimCache | null;
   runtimeVersion: RuntimeVersion;
   threadHistory?: AnswerHistoryMessage[];
 }): AnswerResult {
   if (input.snapshot.sourceMode === "cba") {
-    return buildCbaAnswer({
+    return enrichCbaAnswerWithJcim(buildCbaAnswer({
       question: input.question,
       source: input.cbaSource ?? null,
       nlrbSource: input.publicSource,
@@ -109,7 +112,7 @@ export function routeChatQuestion(input: {
       mode: input.snapshot.mode,
       scope: input.snapshot.scope,
       detail: input.snapshot.detail,
-    });
+    }), input.question, input.jcimSource ?? null);
   }
 
   if (input.snapshot.sourceMode === "nlrb" || input.snapshot.sourceMode === "public") {

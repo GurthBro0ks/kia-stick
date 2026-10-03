@@ -14463,5 +14463,17 @@
     "real_documents_accessed": false,
     "proof_dir_pattern": "/home/slimy/.local/state/kia-stick/proofs/proof_kia_stick_packet_public_source_provenance_operator_acceptance_terminal_closeout_push_*",
     "completion_authority": "External proof RESULT.md records final validation and commit outcome"
+  },
+  "jcim_bounded_admission_retry": {
+    "source_id": "apwu-usps-jcim-2025",
+    "authority_class": "joint_national_interpretation",
+    "admitted_sections": ["preface", "introduction", "article-15", "article-16", "article-17", "article-19"],
+    "supported_topic_ids": ["discipline_just_cause", "steward_grievance_handling"],
+    "generic_packet_provenance": true,
+    "fail_closed_currentness": true,
+    "manual_qa_status": "PENDING_OPERATOR_REVIEW",
+    "admission_status": "IMPLEMENTED_PENDING_ACCEPTANCE",
+    "public_safe_mvp_status": "ACCEPTED_PAUSED",
+    "pushed": false
   }
 }

@@ -98,6 +98,9 @@ import {
   type PublicStewardPacketStep,
 } from "@/lib/publicStewardPacket";
 import { nlrbPacketSourceVerifier, type SupplementalSourceVerifier } from "@/lib/publicPacketProvenance";
+import { JCIM_AUTHORITY_LABEL, JCIM_LANDING_URL, JCIM_PDF_URL, JCIM_SOURCE_ID,
+  jcimPacketSourceVerifier, jcimTopicCitation, verifyJcimCitation } from "@/lib/jcimSource";
+import type { JcimState } from "@/lib/jcimSourceServer";
 import {
   buildPublicStewardArgumentPlan,
   publicStewardArgumentPlanExportEligibility,
@@ -175,6 +178,7 @@ type Tab = ShellView;
 type VaultView = "vault" | "quarantine" | "redaction" | "metadata" | "index" | "audit";
 type PublicSourceLoadState = { status: "loading" } | PublicSourceRouteResponse;
 type CbaSourceLoadState = { status: "loading" } | CbaSourceRouteResponse;
+type JcimSourceLoadState = { status: "loading" } | JcimState;
 type CbaCitationNavigationNotice = { citation: Citation; state: CitationVerificationState };
 
 export const PUBLIC_STEWARD_PACKET_TOPIC_LIMIT_NOTICE =
@@ -375,6 +379,7 @@ export function KiaStickApp({ runtimeVersion = clientVersion }: { runtimeVersion
   const [chatSourceMode, setChatSourceMode] = useState<ChatSourcePolicy>("auto");
   const [publicSourceState, setPublicSourceState] = useState<PublicSourceLoadState>({ status: "loading" });
   const [cbaSourceState, setCbaSourceState] = useState<CbaSourceLoadState>({ status: "loading" });
+  const [jcimSourceState, setJcimSourceState] = useState<JcimSourceLoadState>({ status: "loading" });
   const [cbaCitationTargetId, setCbaCitationTargetId] = useState<string | null>(null);
   const [cbaCitationNavigationNotice, setCbaCitationNavigationNotice] = useState<CbaCitationNavigationNotice | null>(null);
   const [draft, setDraft] = useState("");
@@ -474,6 +479,18 @@ export function KiaStickApp({ runtimeVersion = clientVersion }: { runtimeVersion
   }, []);
 
   useEffect(() => {
+    let cancelled = false;
+    setJcimSourceState({ status: "loading" });
+    fetch("/api/public-jcim-source", { method: "GET", cache: "no-store" })
+      .then(async (response) => {
+        const payload = (await response.json()) as JcimState;
+        if (!cancelled && (payload.status === "available" || payload.status === "unavailable")) setJcimSourceState(payload);
+      })
+      .catch(() => { if (!cancelled) setJcimSourceState({ status: "unavailable", reason: "unverified_current" }); });
+    return () => { cancelled = true; };
+  }, [tab]);
+
+  useEffect(() => {
     if (!hydrated) return;
     try {
       window.localStorage.setItem(savedKey, JSON.stringify(saved));
@@ -552,6 +569,7 @@ export function KiaStickApp({ runtimeVersion = clientVersion }: { runtimeVersion
           snapshot: input.snapshot,
           publicSource: publicSourceState.status === "available" ? publicSourceState.source : null,
           cbaSource: cbaSourceState.status === "available" ? cbaSourceState.source : null,
+          jcimSource: jcimSourceState.status === "available" ? jcimSourceState.source : null,
           runtimeVersion,
           threadHistory: recentAnswerHistory(input.baseThread),
         });
@@ -839,6 +857,8 @@ export function KiaStickApp({ runtimeVersion = clientVersion }: { runtimeVersion
       source: cbaSourceState.status === "available" ? cbaSourceState.source : null,
       topicIds: packetTopicIds,
       runtimeVersion,
+      supplementalCitations: packetTopicIds.flatMap((topic) => jcimTopicCitation(jcimSourceState.status === "available" ? jcimSourceState.source : null, topic)),
+      supplementalSourceVerifiers: [jcimPacketSourceVerifier(jcimSourceState.status === "available" ? jcimSourceState.source : null)],
     });
     if (!packet) {
       setSaveNotice({
@@ -853,7 +873,7 @@ export function KiaStickApp({ runtimeVersion = clientVersion }: { runtimeVersion
 
   function saveStewardPacketWorkspace(packet: PublicStewardPacket) {
     const source = cbaSourceState.status === "available" ? cbaSourceState.source : null;
-    if (!publicStewardPacketExportEligibility(packet, source, [nlrbPacketSourceVerifier(publicSourceState.status === "available" ? publicSourceState.source : null)]).eligible) {
+    if (!publicStewardPacketExportEligibility(packet, source, [nlrbPacketSourceVerifier(publicSourceState.status === "available" ? publicSourceState.source : null), jcimPacketSourceVerifier(jcimSourceState.status === "available" ? jcimSourceState.source : null)]).eligible) {
       setSaveNotice({
         status: "duplicate",
         text: "Packet save is blocked because its current source and citation identity could not be verified.",
@@ -915,6 +935,18 @@ export function KiaStickApp({ runtimeVersion = clientVersion }: { runtimeVersion
       return;
     }
     if (!citation.paragraphId) return;
+    if (citation.sourceId === JCIM_SOURCE_ID) {
+      if (verifyJcimCitation(citation, jcimSourceState.status === "available" ? jcimSourceState.source : null) !== "verified_current") return;
+      setTab("sources");
+      window.setTimeout(() => {
+        const target = document.getElementById(`jcim-${citation.paragraphId}`);
+        for (let parent = target?.parentElement; parent; parent = parent.parentElement) {
+          if (parent instanceof HTMLDetailsElement) parent.open = true;
+        }
+        target?.scrollIntoView({ behavior: "smooth", block: "center" });
+      }, 50);
+      return;
+    }
     const isCba = citation.publicSourceType === "cba_contract" || citation.sourceId === CBA_SOURCE_ID;
     if (isCba) {
       const verification = verifyCbaCitation(citation, cbaSourceState.status === "available" ? cbaSourceState.source : null);
@@ -1022,7 +1054,7 @@ export function KiaStickApp({ runtimeVersion = clientVersion }: { runtimeVersion
     </div>
     {stewardPacket ? (
       <PublicStewardPacketView packet={stewardPacket} source={cbaSourceState.status === "available" ? cbaSourceState.source : null}
-        supplementalSourceVerifiers={[nlrbPacketSourceVerifier(publicSourceState.status === "available" ? publicSourceState.source : null)]}
+        supplementalSourceVerifiers={[nlrbPacketSourceVerifier(publicSourceState.status === "available" ? publicSourceState.source : null), jcimPacketSourceVerifier(jcimSourceState.status === "available" ? jcimSourceState.source : null)]}
         onCitationNavigate={navigateToCitation} onStepCompletionChange={updateStewardPacketStep}
         onSave={() => saveStewardPacketWorkspace(stewardPacket)} />
     ) : <p className="emptyState">No current packet. Select one to three supported topics in Sources to begin.</p>}
@@ -1141,6 +1173,7 @@ export function KiaStickApp({ runtimeVersion = clientVersion }: { runtimeVersion
             cbaCitationNavigationNotice={cbaCitationNavigationNotice}
             cbaSourceState={cbaSourceState}
             publicSourceState={publicSourceState}
+            jcimSourceState={jcimSourceState}
             sourceHierarchyGroups={sourceHierarchyGroups}
             onAskCbaQuestion={prepareCbaQuestion}
             onBuildStewardPacket={buildStewardPacketWorkspace}
@@ -1161,6 +1194,7 @@ export function KiaStickApp({ runtimeVersion = clientVersion }: { runtimeVersion
             onDelete={(id) => setSaved((current) => current.filter((savedItem) => savedItem.id !== id))}
             cbaSourceState={cbaSourceState}
             publicSourceState={publicSourceState}
+            jcimSourceState={jcimSourceState}
             onResearchCba={(question) => sendMessage(question, "cba")}
             onCitationNavigate={navigateToCitation}
             onSaveStewardPacket={saveStewardPacketWorkspace}
@@ -1632,6 +1666,7 @@ export function SourcesPanel({
   cbaCitationNavigationNotice = null,
   cbaSourceState = { status: "unavailable", reason: "cache_missing" },
   publicSourceState = { status: "unavailable", reason: "cache_missing" },
+  jcimSourceState = { status: "unavailable", reason: "cache_missing" },
   sourceHierarchyGroups,
   onAskCbaQuestion,
   onAskSource,
@@ -1650,6 +1685,7 @@ export function SourcesPanel({
   cbaCitationNavigationNotice?: CbaCitationNavigationNotice | null;
   cbaSourceState?: CbaSourceLoadState;
   publicSourceState?: PublicSourceLoadState;
+  jcimSourceState?: JcimSourceLoadState;
   sourceHierarchyGroups: ReturnType<typeof buildSourceHierarchyGroups>;
   onAskCbaQuestion?: (question: string) => void;
   onAskSource?: (title: string, question: string, policy: ChatSourcePolicy) => void;
@@ -1766,7 +1802,7 @@ export function SourcesPanel({
           onStepCompletionChange={onPacketStepCompletionChange}
           onSave={onSaveStewardPacket ? () => onSaveStewardPacket(packet) : undefined}
           packet={packet}
-          supplementalSourceVerifiers={[nlrbPacketSourceVerifier(publicSourceState.status === "available" ? publicSourceState.source : null)]}
+          supplementalSourceVerifiers={[nlrbPacketSourceVerifier(publicSourceState.status === "available" ? publicSourceState.source : null), jcimPacketSourceVerifier(jcimSourceState.status === "available" ? jcimSourceState.source : null)]}
           source={cbaSourceState.source}
         />
       )}
@@ -1781,14 +1817,34 @@ export function SourcesPanel({
       <section className="sourceGroup officialSourceGroup" aria-labelledby="official-public-sources">
         <header className="sourceGroupHeader">
           <h3 id="official-public-sources">Official public sources</h3>
-          <p>Two allowlisted public references available in this pilot: the APWU-USPS contract and NLRB general guidance.</p>
+          <p>Three bounded public references: the APWU-USPS contract, JCIM joint interpretation, and NLRB general guidance.</p>
         </header>
       <div className="publicPilotStatus" aria-label="public data pilot status">
         <strong>PUBLIC DATA PILOT</strong>
-        <span>TWO EXACT ALLOWLISTED SOURCES</span>
+        <span>THREE BOUNDED PUBLIC SOURCES</span>
         <span>LOCAL READ-ONLY</span>
         <span>NO PRIVATE DATA</span>
       </div>
+
+      {jcimSourceState.status === "loading" && <article className="sourceCard publicSourceCard"><h3>Checking JCIM currentness</h3></article>}
+      {jcimSourceState.status === "unavailable" && <article className="sourceCard publicSourceCard" aria-label="JCIM source unavailable">
+        <h3>JCIM 2025 unavailable</h3><p>Joint interpretation is blocked ({jcimSourceState.reason}). Operator review is required before current citations or packet exports.</p>
+      </article>}
+      {jcimSourceState.status === "available" && <article className="sourceCard publicSourceCard" aria-label="official JCIM joint interpretation source">
+        <div className="publicSourceHeader"><div><span className="sectionKicker">{JCIM_AUTHORITY_LABEL}</span>
+          <h3>{jcimSourceState.source.source.title} · {jcimSourceState.source.source.edition}</h3>
+          <p>Secondary joint interpretation. The CBA remains the controlling contract.</p></div>
+          <div className="compactActions"><a className="button subtle officialSourceLink" href={JCIM_LANDING_URL} target="_blank" rel="noreferrer">Official source page</a>
+            <a className="button subtle officialSourceLink" href={JCIM_PDF_URL} target="_blank" rel="noreferrer">Official PDF</a></div></div>
+        <p className="statusPill ok">Verified current · bounded Introduction, Preface, Articles 15, 16, 17, 19</p>
+        <details className="packetDisclosure"><summary>Bounded citation units and technical identity</summary>
+          <p>Source ID {JCIM_SOURCE_ID}; normalized SHA-256 {jcimSourceState.source.normalized.sha256}</p>
+          {jcimSourceState.source.normalized.sections.map((section) => <section key={section.id}>
+            <h4>{section.title}</h4>{section.paragraphs.map((paragraph) => <p id={`jcim-${paragraph.id}`} key={paragraph.id}>
+              PDF {paragraph.pdfPageNumber}{paragraph.printedPageLabel ? ` · printed ${paragraph.printedPageLabel}` : ""} · {paragraph.text}
+            </p>)}</section>)}
+        </details>
+      </article>}
 
 
       {cbaSourceState.status === "loading" && (
@@ -2188,6 +2244,7 @@ export function SavedAnswersPanel(props: {
   onDelete: (id: string) => void;
   cbaSourceState?: CbaSourceLoadState;
   publicSourceState?: PublicSourceLoadState;
+  jcimSourceState?: JcimSourceLoadState;
   onResearchCba?: (question: string) => void;
   onCitationNavigate?: (citation: Citation) => void;
   onSaveStewardPacket?: (packet: PublicStewardPacket) => void;
@@ -2281,7 +2338,7 @@ export function SavedAnswersPanel(props: {
             ? publicStewardPacketExportEligibility(
                 item.stewardPacket,
                 cbaSourceState.status === "available" ? cbaSourceState.source : null,
-                [nlrbPacketSourceVerifier(props.publicSourceState?.status === "available" ? props.publicSourceState.source : null)]
+                [nlrbPacketSourceVerifier(props.publicSourceState?.status === "available" ? props.publicSourceState.source : null), jcimPacketSourceVerifier(props.jcimSourceState?.status === "available" ? props.jcimSourceState.source : null)]
               )
             : null;
           const stewardPlanEligibility = item.stewardArgumentPlan
@@ -2545,7 +2602,7 @@ export function SavedAnswersPanel(props: {
                     onSave={props.onSaveStewardPacket ? () => props.onSaveStewardPacket?.(item.stewardPacket!) : undefined}
                     packet={item.stewardPacket}
                     source={cbaSourceState.status === "available" ? cbaSourceState.source : null}
-                    supplementalSourceVerifiers={[nlrbPacketSourceVerifier(props.publicSourceState?.status === "available" ? props.publicSourceState.source : null)]}
+                    supplementalSourceVerifiers={[nlrbPacketSourceVerifier(props.publicSourceState?.status === "available" ? props.publicSourceState.source : null), jcimPacketSourceVerifier(props.jcimSourceState?.status === "available" ? props.jcimSourceState.source : null)]}
                   />
                 )}
               </div>
