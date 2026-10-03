@@ -100,7 +100,7 @@ export interface Citation {
   retrievedAt?: string;
   contentHash?: string;
   officialUrl?: string;
-  publicSourceType?: "nlrb_guidance" | "cba_contract";
+  publicSourceType?: "nlrb_guidance" | "cba_contract" | (string & {});
   sourcePageUrl?: string;
   officialPdfUrl?: string;
   responseHash?: string;
@@ -295,6 +295,24 @@ export function cbaCitationIdentityKey(citation: Partial<Citation>): string | nu
     "cba_contract",
     citation.sourceId,
     citation.sourceInstanceId,
+    citation.paragraphId,
+    citation.paragraphContentSha256,
+    citation.citationAnchorSha256,
+  ]);
+}
+
+export function supplementalCitationIdentityKey(citation: Partial<Citation>): string | null {
+  if (
+    citation.sourceKind !== "public" ||
+    !citation.publicSourceType || citation.publicSourceType === "cba_contract" ||
+    !citation.sourceId || !citation.sourceInstanceId || !citation.sectionId ||
+    !citation.paragraphId || !citation.paragraphContentSha256 || !citation.citationAnchorSha256
+  ) return null;
+  return JSON.stringify([
+    citation.publicSourceType,
+    citation.sourceId,
+    citation.sourceInstanceId,
+    citation.sectionId,
     citation.paragraphId,
     citation.paragraphContentSha256,
     citation.citationAnchorSha256,

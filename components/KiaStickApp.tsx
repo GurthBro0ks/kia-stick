@@ -92,10 +92,12 @@ import {
   publicStewardPacketTopicSummaryText,
   publicStewardPacketToMarkdown,
   publicStewardPacketToText,
+  publicStewardPacketSupplementalSourceLines,
   type PublicStewardPacket,
   publicStewardPacketWithStepCompletion,
   type PublicStewardPacketStep,
 } from "@/lib/publicStewardPacket";
+import { nlrbPacketSourceVerifier, type SupplementalSourceVerifier } from "@/lib/publicPacketProvenance";
 import {
   buildPublicStewardArgumentPlan,
   publicStewardArgumentPlanExportEligibility,
@@ -851,7 +853,7 @@ export function KiaStickApp({ runtimeVersion = clientVersion }: { runtimeVersion
 
   function saveStewardPacketWorkspace(packet: PublicStewardPacket) {
     const source = cbaSourceState.status === "available" ? cbaSourceState.source : null;
-    if (!publicStewardPacketExportEligibility(packet, source).eligible) {
+    if (!publicStewardPacketExportEligibility(packet, source, [nlrbPacketSourceVerifier(publicSourceState.status === "available" ? publicSourceState.source : null)]).eligible) {
       setSaveNotice({
         status: "duplicate",
         text: "Packet save is blocked because its current source and citation identity could not be verified.",
@@ -1020,6 +1022,7 @@ export function KiaStickApp({ runtimeVersion = clientVersion }: { runtimeVersion
     </div>
     {stewardPacket ? (
       <PublicStewardPacketView packet={stewardPacket} source={cbaSourceState.status === "available" ? cbaSourceState.source : null}
+        supplementalSourceVerifiers={[nlrbPacketSourceVerifier(publicSourceState.status === "available" ? publicSourceState.source : null)]}
         onCitationNavigate={navigateToCitation} onStepCompletionChange={updateStewardPacketStep}
         onSave={() => saveStewardPacketWorkspace(stewardPacket)} />
     ) : <p className="emptyState">No current packet. Select one to three supported topics in Sources to begin.</p>}
@@ -1157,6 +1160,7 @@ export function KiaStickApp({ runtimeVersion = clientVersion }: { runtimeVersion
             saved={saved}
             onDelete={(id) => setSaved((current) => current.filter((savedItem) => savedItem.id !== id))}
             cbaSourceState={cbaSourceState}
+            publicSourceState={publicSourceState}
             onResearchCba={(question) => sendMessage(question, "cba")}
             onCitationNavigate={navigateToCitation}
             onSaveStewardPacket={saveStewardPacketWorkspace}
@@ -1762,6 +1766,7 @@ export function SourcesPanel({
           onStepCompletionChange={onPacketStepCompletionChange}
           onSave={onSaveStewardPacket ? () => onSaveStewardPacket(packet) : undefined}
           packet={packet}
+          supplementalSourceVerifiers={[nlrbPacketSourceVerifier(publicSourceState.status === "available" ? publicSourceState.source : null)]}
           source={cbaSourceState.source}
         />
       )}
@@ -2182,6 +2187,7 @@ export function SavedAnswersPanel(props: {
   saved: SavedAnswer[];
   onDelete: (id: string) => void;
   cbaSourceState?: CbaSourceLoadState;
+  publicSourceState?: PublicSourceLoadState;
   onResearchCba?: (question: string) => void;
   onCitationNavigate?: (citation: Citation) => void;
   onSaveStewardPacket?: (packet: PublicStewardPacket) => void;
@@ -2274,7 +2280,8 @@ export function SavedAnswersPanel(props: {
           const packetEligibility = item.stewardPacket
             ? publicStewardPacketExportEligibility(
                 item.stewardPacket,
-                cbaSourceState.status === "available" ? cbaSourceState.source : null
+                cbaSourceState.status === "available" ? cbaSourceState.source : null,
+                [nlrbPacketSourceVerifier(props.publicSourceState?.status === "available" ? props.publicSourceState.source : null)]
               )
             : null;
           const stewardPlanEligibility = item.stewardArgumentPlan
@@ -2315,7 +2322,12 @@ export function SavedAnswersPanel(props: {
               <span className="badge">
                 {item.answerLane === "public_cba" ? "public CBA" : item.answerLane === "public" ? "public NLRB" : "fake sample"}
               </span>
-              {cbaVerificationState && (
+              {item.stewardPacket?.supplementalSourceAppendix && (
+                <span className={packetEligibility?.eligible ? "badge green" : "badge red"}>
+                  {packetEligibility?.eligible ? "Verified current" : "Packet not current"}
+                </span>
+              )}
+              {!item.stewardPacket?.supplementalSourceAppendix && cbaVerificationState && (
                 <span className={cbaVerificationState === "verified_current" ? "badge green" : "badge red"}>
                   {libraryVerificationDisplay(cbaVerificationState)}
                 </span>
@@ -2510,7 +2522,7 @@ export function SavedAnswersPanel(props: {
                 <button
                   aria-expanded={openPacketId === item.id}
                   className="button primary"
-                  disabled={!packetEligibility?.eligible}
+                  disabled={!packetEligibility?.eligible && !(item.stewardPacket.supplementalSourceAppendix && cbaVerificationState === "verified_current")}
                   type="button"
                   onClick={() => setOpenPacketId((current) => current === item.id ? null : item.id)}
                 >
@@ -2522,7 +2534,7 @@ export function SavedAnswersPanel(props: {
                     {packetEligibility?.reason ?? "Saved packet is not verified against the current CBA source."}
                   </p>
                 )}
-                {openPacketId === item.id && packetEligibility?.eligible && (
+                {openPacketId === item.id && (packetEligibility?.eligible || (item.stewardPacket.supplementalSourceAppendix !== undefined && cbaVerificationState === "verified_current")) && (
                   <PublicStewardPacketView
                     onCitationNavigate={props.onCitationNavigate ?? (() => undefined)}
                     onStepCompletionChange={props.onSaveStewardPacket
@@ -2533,6 +2545,7 @@ export function SavedAnswersPanel(props: {
                     onSave={props.onSaveStewardPacket ? () => props.onSaveStewardPacket?.(item.stewardPacket!) : undefined}
                     packet={item.stewardPacket}
                     source={cbaSourceState.status === "available" ? cbaSourceState.source : null}
+                    supplementalSourceVerifiers={[nlrbPacketSourceVerifier(props.publicSourceState?.status === "available" ? props.publicSourceState.source : null)]}
                   />
                 )}
               </div>
@@ -4060,16 +4073,18 @@ export function PublicStewardPacketView({
   onCitationNavigate,
   onSave,
   onStepCompletionChange,
+  supplementalSourceVerifiers = [],
 }: {
   packet: PublicStewardPacket;
   source: CbaSourceCache | null;
   onCitationNavigate: (citation: Citation) => void;
   onSave?: () => void;
   onStepCompletionChange?: (stepId: PublicStewardPacketStep["stepId"], completed: boolean) => void;
+  supplementalSourceVerifiers?: readonly SupplementalSourceVerifier[];
 }) {
   const headingId = `packet-${packet.id}`;
   const [exportNotice, setExportNotice] = useState<string | null>(null);
-  const eligibility = publicStewardPacketExportEligibility(packet, source);
+  const eligibility = publicStewardPacketExportEligibility(packet, source, supplementalSourceVerifiers);
 
   async function copyPacket() {
     if (!eligibility.eligible) {
@@ -4102,7 +4117,7 @@ export function PublicStewardPacketView({
   }
 
   function printPacket() {
-    const current = publicStewardPacketExportEligibility(packet, source);
+    const current = publicStewardPacketExportEligibility(packet, source, supplementalSourceVerifiers);
     if (!current.eligible) return setExportNotice(current.reason);
     const disclosures = Array.from(document.getElementById(headingId)?.closest(".publicStewardPacket")?.querySelectorAll("details") ?? []);
     const previouslyOpen = disclosures.map((details) => details.open);
@@ -4163,6 +4178,7 @@ export function PublicStewardPacketView({
         </span>
       </div>
       <p className="packetPurpose"><strong>What this packet helps with:</strong> Prepare questions, evidence checklists and next steps for {packet.topicSummaries.map((topic) => topic.title).join(", ")}. Based on verified public contract sources.</p>
+      {packet.supplementalSourceAppendix && <p className="packetPurpose print-atomic"><strong>Sources:</strong> Controlling contract (CBA); {Array.isArray(packet.supplementalSourceAppendix) ? packet.supplementalSourceAppendix.filter(Boolean).map((item) => `${item.sourceId} (${item.authorityClass === "joint_interpretation" ? "Joint interpretation" : item.authorityClass === "public_guidance" ? "Public guidance" : "Unknown authority"})`).join("; ") || "Malformed supplemental provenance" : "Malformed supplemental provenance"}.</p>}
       <p className="argumentPlanPrivateWarning print-atomic" role="note">
         <AlertTriangle size={16} />
         <strong>{packet.privateCaseWarning}</strong>
@@ -4282,6 +4298,12 @@ export function PublicStewardPacketView({
           ))}
         </ol>
       </section>
+      {packet.supplementalSourceAppendix && <section className="argumentPlanSection print-section">
+        <h4 className="print-heading">13. Supplemental public-source provenance</h4>
+        <ol className="argumentPlanSources">
+          {publicStewardPacketSupplementalSourceLines(packet, supplementalSourceVerifiers).map((line) => <li className="print-atomic" key={line}>{line}</li>)}
+        </ol>
+      </section>}
       </details>
     </section>
   );

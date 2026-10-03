@@ -18,7 +18,13 @@ import {
   publicStewardWorkflowTopic,
   type PublicStewardWorkflowTopicId,
 } from "@/lib/publicStewardWorkflowRegistry";
-import { cbaCitationIdentityKey, type Citation } from "@/lib/sourceModel";
+import { cbaCitationIdentityKey, supplementalCitationIdentityKey, type Citation } from "@/lib/sourceModel";
+import {
+  supplementalAuthorityRole,
+  validSupplementalAppendixItem,
+  type PublicStewardPacketSupplementalSourceAppendixItem,
+  type SupplementalSourceVerifier,
+} from "@/lib/publicPacketProvenance";
 import type { RuntimeVersion } from "@/lib/version";
 
 export const PUBLIC_STEWARD_PACKET_SAVED_TYPE = "public_steward_packet_plan" as const;
@@ -81,6 +87,8 @@ export interface PublicStewardPacket {
   sequencedSteps: PublicStewardPacketStep[];
   citations: Citation[];
   sourceAppendix: PublicStewardPacketSourceAppendixItem[];
+  supplementalCitations?: Citation[];
+  supplementalSourceAppendix?: PublicStewardPacketSupplementalSourceAppendixItem[];
   outlines: PublicGrievanceOutline[];
   provider: typeof CBA_PROVIDER;
   promptVersion: typeof CBA_PROMPT_VERSION;
@@ -272,6 +280,8 @@ export function buildPublicStewardPacket(input: {
   topicIds: readonly PublicStewardWorkflowTopicId[];
   runtimeVersion: RuntimeVersion;
   createdAt?: string;
+  supplementalCitations?: readonly Citation[];
+  supplementalSourceVerifiers?: readonly SupplementalSourceVerifier[];
 }): PublicStewardPacket | null {
   if (!input.source) return null;
   const selectedTopicIds = sortedTopicIds(input.topicIds);
@@ -290,6 +300,7 @@ export function buildPublicStewardPacket(input: {
         !publicGrievanceOutlineExportEligibility(outline!, input.source).eligible
     )
   ) return null;
+
   const currentOutlines = outlines as PublicGrievanceOutline[];
   const citations = [...new Map(
     currentOutlines
@@ -308,6 +319,41 @@ export function buildPublicStewardPacket(input: {
         !citation.articleNumber
     )
   ) return null;
+
+  const supplementalByIdentity = new Map<string, Citation>();
+  for (const citation of [...(input.supplementalCitations ?? [])].sort((left, right) =>
+    (supplementalCitationIdentityKey(left) ?? left.id).localeCompare(supplementalCitationIdentityKey(right) ?? right.id) ||
+    left.id.localeCompare(right.id) || JSON.stringify(left).localeCompare(JSON.stringify(right))
+  )) {
+    const identity = supplementalCitationIdentityKey(citation) ?? citation.id;
+    if (!supplementalByIdentity.has(identity)) supplementalByIdentity.set(identity, citation);
+  }
+  const supplementalCitations = [...supplementalByIdentity.values()].sort((left, right) => left.id.localeCompare(right.id));
+  if (new Set(supplementalCitations.map((citation) => citation.id)).size !== supplementalCitations.length) return null;
+  const supplementalSourceAppendix: PublicStewardPacketSupplementalSourceAppendixItem[] = [];
+  for (const citation of supplementalCitations) {
+    const key = supplementalCitationIdentityKey(citation);
+    const verifier = input.supplementalSourceVerifiers?.find((entry) =>
+      entry.sourceId === citation.sourceId && entry.publicSourceType === citation.publicSourceType
+    );
+    if (!key || !verifier || citation.citable !== true || citation.citationVerificationState !== "verified_current" ||
+      verifier.verify(citation) !== "verified_current" ||
+      citations.some((primary) => primary.id === citation.id)) return null;
+    const appendixItem: PublicStewardPacketSupplementalSourceAppendixItem = {
+      citationId: citation.id,
+      sourceId: citation.sourceId!,
+      authorityClass: verifier.authorityClass,
+      publicSourceType: verifier.publicSourceType,
+      sourceInstanceId: citation.sourceInstanceId!,
+      sectionId: citation.sectionId!,
+      paragraphId: citation.paragraphId!,
+      paragraphContentSha256: citation.paragraphContentSha256!,
+      citationAnchorSha256: citation.citationAnchorSha256!,
+      verificationState: "verified_current",
+    };
+    if (!validSupplementalAppendixItem(appendixItem)) return null;
+    supplementalSourceAppendix.push(appendixItem);
+  }
 
   const topicSummaries = selectedTopicIds.map((topicId) => {
     const topic = publicStewardWorkflowTopic(topicId);
@@ -337,6 +383,18 @@ export function buildPublicStewardPacket(input: {
     })),
     provider: CBA_PROVIDER,
     promptVersion: CBA_PROMPT_VERSION,
+    ...(supplementalCitations.length > 0 ? { supplementalCitations: supplementalSourceAppendix.map((item) => ({
+      citationId: item.citationId,
+      sourceId: item.sourceId,
+      authorityClass: item.authorityClass,
+      publicSourceType: item.publicSourceType,
+      sourceInstanceId: item.sourceInstanceId,
+      sectionId: item.sectionId,
+      paragraphId: item.paragraphId,
+      paragraphContentSha256: item.paragraphContentSha256,
+      citationAnchorSha256: item.citationAnchorSha256,
+      verificationState: item.verificationState,
+    })) } : {}),
   };
   const id = `public-steward-packet-${sha256Hex(canonicalJson(identityInput)).slice(0, 20)}`;
 
@@ -421,6 +479,7 @@ export function buildPublicStewardPacket(input: {
       citationAnchorSha256: citation.citationAnchorSha256 as string,
       verificationState: "verified_current" as const,
     })),
+    ...(supplementalCitations.length > 0 ? { supplementalCitations, supplementalSourceAppendix } : {}),
     outlines: currentOutlines,
     provider: CBA_PROVIDER,
     promptVersion: CBA_PROMPT_VERSION,
@@ -438,6 +497,7 @@ export function buildPublicStewardPacket(input: {
       sequencedSteps: core.sequencedSteps.map(({ stepId, label }) => ({ stepId, label })),
       outlines: currentOutlines.map((outline) => outline.contentIdentity),
       citations: identityInput.citations,
+      ...(supplementalCitations.length > 0 ? { supplementalCitations: supplementalSourceAppendix } : {}),
     })),
     createdAt: input.createdAt ?? new Date().toISOString(),
   };
@@ -445,7 +505,8 @@ export function buildPublicStewardPacket(input: {
 
 export function publicStewardPacketExportEligibility(
   packet: PublicStewardPacket,
-  source: CbaSourceCache | null
+  source: CbaSourceCache | null,
+  supplementalSourceVerifiers: readonly SupplementalSourceVerifier[] = []
 ): { eligible: true } | { eligible: false; reason: string } {
   const selectedTopicIds = sortedTopicIds(packet.selectedTopicIds);
   if (!selectedTopicIds || selectedTopicIds.join("|") !== packet.selectedTopicIds.join("|")) {
@@ -460,11 +521,51 @@ export function publicStewardPacketExportEligibility(
   ) {
     return { eligible: false, reason: "Packet blocked because an outline citation is stale or unverifiable." };
   }
+  const supplemental = packet.supplementalCitations;
+  const appendix = packet.supplementalSourceAppendix;
+  if (supplemental !== undefined || appendix !== undefined) {
+    if (!Array.isArray(supplemental) || !Array.isArray(appendix) ||
+      supplemental.length === 0 || supplemental.length !== appendix.length) {
+      return { eligible: false, reason: "Packet blocked because supplemental provenance is malformed." };
+    }
+    const identities = new Set<string>();
+    for (let index = 0; index < supplemental.length; index++) {
+      const citation = supplemental[index];
+      const item = appendix[index];
+      if (!citation || typeof citation !== "object" || !validSupplementalAppendixItem(item)) {
+        const sourceId = item && typeof item === "object" && typeof item.sourceId === "string"
+          ? item.sourceId : "unknown source";
+        return { eligible: false, reason: `Packet blocked because supplemental source ${sourceId} is invalid_metadata.` };
+      }
+      const identity = supplementalCitationIdentityKey(citation);
+      if (!identity || identities.has(identity) || citation.citable !== true || item.citationId !== citation.id ||
+        item.sourceId !== citation.sourceId || item.publicSourceType !== citation.publicSourceType ||
+        item.sourceInstanceId !== citation.sourceInstanceId || item.sectionId !== citation.sectionId ||
+        item.paragraphId !== citation.paragraphId ||
+        item.paragraphContentSha256 !== citation.paragraphContentSha256 ||
+        item.citationAnchorSha256 !== citation.citationAnchorSha256 ||
+        item.verificationState !== "verified_current" ||
+        citation.citationVerificationState !== "verified_current") {
+        return { eligible: false, reason: `Packet blocked because supplemental provenance for ${item.sourceId} is invalid_metadata.` };
+      }
+      identities.add(identity);
+      const verifier = supplementalSourceVerifiers.find((entry) =>
+        entry.sourceId === item.sourceId && entry.publicSourceType === item.publicSourceType &&
+        entry.authorityClass === item.authorityClass
+      );
+      const state = verifier?.verify(citation) ?? "cache_unavailable";
+      if (state !== "verified_current") {
+        return { eligible: false, reason: `Packet blocked because supplemental source ${item.sourceId} is ${state}.` };
+      }
+    }
+  }
   const rebuilt = buildPublicStewardPacket({
     source,
     topicIds: selectedTopicIds,
     runtimeVersion: packet.version,
     createdAt: packet.createdAt,
+    supplementalCitations: supplemental,
+    supplementalSourceVerifiers,
   });
   if (!rebuilt || rebuilt.id !== packet.id || rebuilt.contentIdentity !== packet.contentIdentity) {
     return { eligible: false, reason: "Packet blocked because its source, template, or citation identity is no longer current." };
@@ -474,6 +575,32 @@ export function publicStewardPacketExportEligibility(
 
 function numbered(title: string, values: string[]): string {
   return [title, ...values.map((value, index) => `${index + 1}. ${value}`)].join("\n");
+}
+
+export function publicStewardPacketSupplementalSourceLines(
+  packet: PublicStewardPacket,
+  supplementalSourceVerifiers?: readonly SupplementalSourceVerifier[]
+): string[] {
+  if (!Array.isArray(packet.supplementalSourceAppendix)) return ["Malformed supplemental provenance record"];
+  const appendix = packet.supplementalSourceAppendix.filter(validSupplementalAppendixItem);
+  const citations = Array.isArray(packet.supplementalCitations) ? packet.supplementalCitations : [];
+  const grouped = (["joint_interpretation", "public_guidance"] as const).flatMap((role) =>
+    appendix.filter((item) => item.authorityClass === role).map((item) => {
+      const citation = citations.find((candidate) => candidate.id === item.citationId);
+      const verifier = supplementalSourceVerifiers?.find((candidate) =>
+        candidate.sourceId === item.sourceId && candidate.publicSourceType === item.publicSourceType &&
+        candidate.authorityClass === item.authorityClass
+      );
+      const currentState = supplementalSourceVerifiers
+        ? citation && verifier ? verifier.verify(citation) : "cache_unavailable"
+        : item.verificationState;
+      return `${supplementalAuthorityRole(role)} / ${citation?.title ?? item.sourceId} / ${item.sourceId} / ${item.publicSourceType} / ${item.sectionId} / ${item.paragraphId} / ${currentState} / source instance ${item.sourceInstanceId} / paragraph ${item.paragraphContentSha256} / anchor ${item.citationAnchorSha256}`;
+    })
+  );
+  const malformed = (packet.supplementalSourceAppendix as unknown[]).filter((item) => !validSupplementalAppendixItem(item)).map((item) =>
+    `Malformed supplemental provenance / ${item && typeof item === "object" && "sourceId" in item && typeof item.sourceId === "string" ? item.sourceId : "unknown source"} / invalid_metadata`
+  );
+  return [...grouped, ...malformed];
 }
 
 export function publicStewardPacketTopicSummaryText(
@@ -496,6 +623,9 @@ export function publicStewardPacketToText(packet: PublicStewardPacket): string {
     `Prompt: ${packet.promptVersion}`,
     `Build: ${packet.buildIdentity}`,
     `Source instance: ${packet.sourceInstanceIds.join(", ")}`,
+    ...(packet.supplementalSourceAppendix?.length ? [
+      `Sources: Controlling contract (CBA); ${[...new Set(packet.supplementalSourceAppendix.map((item) => supplementalAuthorityRole(item.authorityClass)))].join("; ")}`,
+    ] : []),
     packet.privateCaseWarning,
     numbered("1. Selected topic summary", packet.topicSummaries.map(
       (topic) => publicStewardPacketTopicSummaryText(packet, topic)
@@ -517,6 +647,9 @@ export function publicStewardPacketToText(packet: PublicStewardPacket): string {
     numbered("12. Complete verified-current source appendix", packet.sourceAppendix.map(
       (source) => `Article ${source.articleNumber} / ${source.section} / ${source.paragraphId} / ${source.verificationState} / source instance ${source.sourceInstanceId} / paragraph ${source.paragraphContentSha256} / anchor ${source.citationAnchorSha256}`
     )),
+    ...(packet.supplementalSourceAppendix?.length ? [
+      numbered("13. Supplemental public-source provenance", publicStewardPacketSupplementalSourceLines(packet)),
+    ] : []),
   ].join("\n\n");
 }
 
@@ -532,6 +665,9 @@ export function publicStewardPacketToMarkdown(packet: PublicStewardPacket): stri
     `- Prompt: ${packet.promptVersion}`,
     `- Build: ${packet.buildIdentity}`,
     `- Source instance: ${packet.sourceInstanceIds.join(", ")}`,
+    ...(packet.supplementalSourceAppendix?.length ? [
+      `- Sources: Controlling contract (CBA); ${[...new Set(packet.supplementalSourceAppendix.map((item) => supplementalAuthorityRole(item.authorityClass)))].join("; ")}`,
+    ] : []),
     `> ${packet.privateCaseWarning}`,
     section("1. Selected topic summary", packet.topicSummaries.map(
       (topic) => publicStewardPacketTopicSummaryText(packet, topic)
@@ -553,5 +689,8 @@ export function publicStewardPacketToMarkdown(packet: PublicStewardPacket): stri
     section("12. Complete verified-current source appendix", packet.sourceAppendix.map(
       (source) => `Article ${source.articleNumber} / ${source.section} / ${source.paragraphId} / ${source.verificationState} / source instance ${source.sourceInstanceId} / paragraph ${source.paragraphContentSha256} / anchor ${source.citationAnchorSha256}`
     )),
+    ...(packet.supplementalSourceAppendix?.length ? [
+      section("13. Supplemental public-source provenance", publicStewardPacketSupplementalSourceLines(packet)),
+    ] : []),
   ].join("\n\n");
 }

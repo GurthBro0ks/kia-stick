@@ -1,3 +1,12 @@
+## Generic public-source packet provenance implementation — 2026-10-03
+
+- Phase: `KIA-Stick-public-source-packet-provenance-generic-model-implementation`. Exact clean baseline `4b85260662fd00b66951089e6e47bcbaf9124144` on `omarchy-path-setup`, equal to origin and live `main` (0/0). Global bootstrap files absent; repo instructions and init used. Design proof manifest PASS and JCIM WARN proof manifest PASS; JCIM remains NOT_ADMITTED.
+- Scope: optional `supplementalCitations` and `supplementalSourceAppendix` on CBA-eligible packets; generic authority roles, source-specific re-verification, pinned saved selection, secondary drift export blocking, conditional text/Markdown and print provenance, Library warning and derived packet status. CBA-only primary fields, packet identity and exports remain byte-identical to pre-edit golden hashes. No production NLRB packet emission or JCIM admission.
+- Files: `lib/publicPacketProvenance.ts`, `lib/publicStewardPacket.ts`, `lib/sourceModel.ts`, `components/KiaStickApp.tsx`, `tests/publicPacketGolden.test.ts`, `tests/publicPacketProvenance.test.ts`, `DESIGN.md`, `feature_list.json`, and this ledger. Package, lockfile, fake corpus, public source caches, Gate 0A and Gate 0B artifacts unchanged.
+- Commands: exact Git baseline and prior SHA256SUMS checks; pre-edit golden Vitest; focused and full Vitest; direct ESLint, TypeScript and Next build; privacy/fake scans; release/design checks; `git diff --check`; task-owned production runtime on port 3120 and synthetic static component fixture on port 3121. At 390px the live saved CBA packet and synthetic supplemental/current/drift component views had no horizontal overflow; keyboard Tab reached Packet details. QA servers were stopped. Corpus-mutating wrappers were avoided; direct equivalents used.
+- Proof: `/home/slimy/.local/state/kia-stick/proofs/proof_kia_stick_packet_public_source_provenance_implementation_20261003T120416Z`. Manual operator QA remains pending. Exactly one local implementation commit follows final PASS; no push. `PACKET_PROVENANCE_STATUS=IMPLEMENTED_COMMITTED_PENDING_OPERATOR_QA`; `PUBLIC_SAFE_MVP_STATUS=ACCEPTED_PAUSED`.
+- Remaining unknowns: owner visual/keyboard/print acceptance, and future joint-interpretation source admission and verifier wiring. This phase does not ingest a new source, authorize private data, or start Gate 0C.
+
 ## Source and Citation Integrity Accepted-State Promotion Terminal Closeout and Push — 2026-09-11
 
 - Phase: `KIA-Stick-source-citation-integrity-accepted-state-promotion-terminal-closeout-and-push`.

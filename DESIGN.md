@@ -140,6 +140,15 @@ Avoid labels that imply real capability:
 - Avoid text overlap in chips, buttons, nav items, cards, and proof labels.
 - Dense panels should wrap into readable stacks on mobile without hiding safety labels.
 
+## Public Steward Packet Provenance
+
+- The current CBA remains the controlling source for packet eligibility. A secondary public source or public guidance source cannot create packet eligibility by itself.
+- Supplemental public citations and source appendix records are optional. A CBA-only packet omits both fields, preserving its saved identity, serialized form, view, and text and Markdown exports.
+- Each supplemental record keeps its public source type, source identity, authority class, citation anchor, and verification state. The packet view derives the fixed roles Controlling contract, Joint interpretation, and Public guidance; it does not merge these roles into one authority claim.
+- Saved packets pin their selected supplemental citations at build time. Reopening verifies those same citations against the available public source cache and does not add newly available sources.
+- If any included supplemental citation is malformed or no longer verified current, the packet stays visible with its provenance and a source-specific warning. Copy, download, export, and print remain blocked until every included source verifies current.
+- Production NLRB routing and packet eligibility remain unchanged. The public NLRB source may serve as a synthetic test stand-in for generic supplemental provenance; this contract does not admit another source.
+
 ## Proof-Safe Output Expectations
 
 Screenshots, proof exports, logs, and summaries must be GitHub-safe.

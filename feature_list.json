@@ -14338,5 +14338,16 @@
     "real_documents_accessed": false,
     "proof_dir_pattern": "/home/slimy/.local/state/kia-stick/proofs/proof_kia_stick_ux_8_operator_acceptance_terminal_closeout_push_*",
     "completion_authority": "External proof RESULT.md records final validation and commit outcome"
+  },
+  "public_source_packet_provenance": {
+    "phase": "KIA-Stick-public-source-packet-provenance-generic-model-implementation",
+    "status": "IMPLEMENTED_COMMITTED_PENDING_OPERATOR_QA",
+    "cba_eligibility_controlling": true,
+    "supplemental_selection_pinned": true,
+    "secondary_drift_export_policy": "BLOCK_ALL_PACKET_EXPORT_ACTIONS",
+    "jcim_admission_status": "NOT_ADMITTED",
+    "public_safe_mvp_status": "ACCEPTED_PAUSED",
+    "pushed": false,
+    "manual_qa_status": "PENDING_OPERATOR_REVIEW"
   }
 }
