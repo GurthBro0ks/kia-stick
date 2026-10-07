@@ -1,6 +1,9 @@
 import { describe, expect, it } from "vitest";
 import { readFileSync } from "node:fs";
 import { buildCbaAnswer } from "@/lib/cbaAnswer";
+import { CBA_SOURCE_ID, type CbaSourceCache } from "@/lib/cbaSource";
+import { verifyCbaCitation } from "@/lib/cbaCitationIntegrity";
+import { createChatSubmitSnapshot, routeChatQuestion } from "@/lib/chatAnswerRouter";
 import { enrichCbaAnswerWithJcim } from "@/lib/jcimAnswer";
 import { buildPublicStewardPacket, publicStewardPacketExportEligibility, publicStewardPacketToMarkdown, publicStewardPacketToText } from "@/lib/publicStewardPacket";
 import { createSavedStewardPacketRecord, migrateSavedAnswers } from "@/lib/savedAnswers";
@@ -19,7 +22,59 @@ import { readJcimCache, validateJcimCache, verifyJcimLiveIdentity } from "@/lib/
 const cache = JSON.parse(readFileSync(`.kia-public-data/${JCIM_SOURCE_ID}.json`, "utf8")) as JcimCache;
 const pdf = readFileSync(`.kia-public-data/${JCIM_SOURCE_ID}.pdf`);
 const cba = createCbaSourceFixtureCache();
+const realCba = JSON.parse(readFileSync(`.kia-public-data/${CBA_SOURCE_ID}.json`, "utf8")) as CbaSourceCache;
 const version = createRuntimeVersion({ buildDate: "20261003", gitSha: "jcimqa01" });
+
+function routeWithRealCaches(question: string) {
+  const snapshot = createChatSubmitSnapshot({ question, sourcePolicy: "auto", mode: "Strict Research",
+    scope: "Official-Like", detail: "Detailed" });
+  return { snapshot, answer: routeChatQuestion({ question, snapshot, publicSource: null,
+    cbaSource: realCba, jcimSource: cache, runtimeVersion: version }) };
+}
+
+describe("Article 19 real-cache Chat routing regression", () => {
+  it.each([
+    "What does Article 19 let KIA Stick tell me about USPS handbooks and manuals?",
+    "What does Article 19 say about handbooks and manuals?",
+  ])("keeps verified CBA first and bounded JCIM second for %s", (question) => {
+    const { snapshot, answer } = routeWithRealCaches(question);
+    expect(snapshot.sourceMode).toBe("cba");
+    expect(answer.noAnswer).toBe(false);
+    expect(answer.citations.map((citation) => citation.publicSourceType)).toEqual([
+      "cba_contract", "cba_contract", "jcim_joint_interpretation",
+    ]);
+    expect(answer.citations.slice(0, 2).map((citation) => citation.paragraphId)).toEqual([
+      "cba-pdf-p127-p05", "cba-pdf-p127-p06",
+    ]);
+    for (const citation of answer.citations.slice(0, 2)) {
+      expect(citation.citationVerificationState).toBe("verified_current");
+      expect(verifyCbaCitation(citation, realCba).state).toBe("verified_current");
+    }
+    const jcim = answer.citations[2];
+    expect(jcim.sourceId).toBe(JCIM_SOURCE_ID);
+    expect(jcim.articleNumber).toBe("19");
+    expect(jcim.status).toContain(JCIM_AUTHORITY_LABEL);
+    expect(verifyJcimCitation(jcim, cache)).toBe("verified_current");
+    expect(answer.citations.some((citation) => citation.paragraphId === "cba-pdf-p127-p01")).toBe(false);
+    expect(answer.shortAnswer).toContain("does not supply the underlying handbook rule");
+    expect(answer.shortAnswer).not.toMatch(/ELM\s+\d|Step\s+4\s+(?:says|provides)/i);
+  });
+
+  it.each([
+    ["What does the JCIM say in Article 18?", []],
+    ["What do the contract and JCIM say about just cause and discipline?", ["16"]],
+    ["What do the contract and JCIM say about steward representation and grievance handling?", ["15", "17"]],
+  ])("preserves the bounded route for %s", (question, expectedArticles) => {
+    const { answer } = routeWithRealCaches(question);
+    const jcimCitations = answer.citations.filter((citation) => citation.sourceId === JCIM_SOURCE_ID);
+    expect(jcimCitations.map((citation) => citation.articleNumber)).toEqual(expect.arrayContaining(expectedArticles));
+    expect(jcimCitations.every((citation) => citation.articleNumber !== "18")).toBe(true);
+    if (expectedArticles.length) {
+      expect(answer.noAnswer).toBe(false);
+      expect(answer.citations[0].publicSourceType).toBe("cba_contract");
+    }
+  });
+});
 
 describe("bounded JCIM 2025 admission", () => {
   it("pins exact public source identity and six authorized sections", () => {
@@ -92,7 +147,7 @@ describe("bounded JCIM 2025 admission", () => {
       "How does annual leave scheduling work?", cache);
     expect(unrelated.citations.some((citation) => citation.sourceId === JCIM_SOURCE_ID)).toBe(false);
     const article19Question = "What does Article 19 say about handbooks and manuals?";
-    const article19 = enrichCbaAnswerWithJcim(buildCbaAnswer({ question: article19Question, source: cba,
+    const article19 = enrichCbaAnswerWithJcim(buildCbaAnswer({ question: article19Question, source: realCba,
       nlrbSource: null, runtimeVersion: version, mode: "Strict Research", scope: "Official-Like", detail: "Detailed" }),
       article19Question, cache);
     expect(article19.citations[0].publicSourceType).toBe("cba_contract");
