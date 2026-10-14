@@ -17,10 +17,18 @@ permissions, not the original cache directory, which may not meet the rules.
 KIA_REAL_PUBLIC_DATA_DIR=/abs/.kia-public-data ./node_modules/.bin/vitest run tests/jcimSource.realCache.integration.test.ts tests/publicSourceSufficiencyMatrixV2.test.ts
 ```
 
-If the variable is unset or empty, the suite is skipped and prints `NOT_RUN`.
+If the variable is unset or empty, each opt-in suite is skipped and prints `NOT_RUN`.
 A skipped run is not a PASS.
-A supplied but unusable path fails an explicit prerequisite test. Unsafe
-permissions fail the real-cache suite's explicit permission test.
+A supplied but unusable path fails the top-level test
+"opt-in prerequisite: KIA_REAL_PUBLIC_DATA_DIR supplied but unusable".
+A supplied cache with unsafe permissions (for example, directory 0755, a file
+0644, a symlink, or wrong owner) fails the top-level test
+"opt-in prerequisite: supplied cache has safe permissions (dir 0700, files 0600, owned by current uid)"
+in each opt-in file. The opt-in suites themselves are skipped; they do not run
+on an unsafe cache. With a safe cache, the same permission test passes and the
+opt-in suites run. Both opt-in files enforce these rules.
+
+scripts/phase-runner.mjs never sets KIA_REAL_PUBLIC_DATA_DIR (verified by reading it). Its child steps inherit the caller's environment unchanged ({...process.env}), so the opt-in suites run under the runner only if the operator exported the variable beforehand.
 
 For real npm phase-runner integration, set `KIA_PHASE_RUNNER_REAL_NPM=1`:
 

@@ -1,6 +1,6 @@
 import { createHash } from "node:crypto";
 import path from "node:path";
-import { realPublicDataAvailable, realPublicDataDirectory, realPublicDataMissingPrerequisite, realPublicDataSuppliedButUnusable } from "@/tests/fixtures/realPublicDataPrerequisite";
+import { realPublicDataAvailable, realPublicDataDirectory, realPublicDataReason, realPublicDataStatus, realPublicDataPermissionProblem } from "@/tests/fixtures/realPublicDataPrerequisite";
 import { readFileSync } from "node:fs";
 import { PINNED_CBA_PDF_SHA256 } from "@/tests/fixtures/cbaSourceIdentityFixture";
 import { describe, expect, it } from "vitest";
@@ -84,13 +84,20 @@ describe("Public source-sufficiency matrix v2 aligns with the selected Bundle 3 
   });
 });
 
-if (realPublicDataSuppliedButUnusable) {
+if (realPublicDataStatus === "unusable") {
   it("opt-in prerequisite: KIA_REAL_PUBLIC_DATA_DIR supplied but unusable", () => {
-    throw new Error(realPublicDataMissingPrerequisite);
+    throw new Error(realPublicDataReason);
   });
 }
 
-if (!realPublicDataDirectory) console.info(`NOT_RUN: matrix v2 live CBA cache hash: ${realPublicDataMissingPrerequisite}`);
+if (realPublicDataStatus === "not_supplied") console.info(`NOT_RUN: matrix v2 live CBA cache hash: ${realPublicDataReason}`);
+
+if (realPublicDataStatus === "unsafe" || realPublicDataStatus === "ready") {
+  it("opt-in prerequisite: supplied cache has safe permissions (dir 0700, files 0600, owned by current uid)", () => {
+    if (realPublicDataStatus === "unsafe") throw new Error(realPublicDataReason);
+    expect(realPublicDataPermissionProblem(realPublicDataDirectory!)).toBeUndefined();
+  });
+}
 
 describe.runIf(realPublicDataAvailable)("matrix v2 live CBA cache hash (opt-in; requires KIA_REAL_PUBLIC_DATA_DIR)", () => {
   it("carries the real CBA PDF SHA256 and matches the pinned identity", () => {

@@ -1,9 +1,9 @@
 import { createHash } from "node:crypto";
 import { createJcimLiveIdentityFetcher } from "@/tests/fixtures/jcimLiveIdentityFixture";
 import path from "node:path";
-import { realPublicDataAvailable, realPublicDataDirectory, realPublicDataMissingPrerequisite, realPublicDataSuppliedButUnusable, realPublicDataRequiredFiles } from "@/tests/fixtures/realPublicDataPrerequisite";
+import { realPublicDataAvailable, realPublicDataDirectory, realPublicDataReason, realPublicDataStatus, realPublicDataPermissionProblem } from "@/tests/fixtures/realPublicDataPrerequisite";
 import { beforeAll, describe, expect, it, vi } from "vitest";
-import { lstatSync, readFileSync } from "node:fs";
+import { readFileSync } from "node:fs";
 import { buildCbaAnswer } from "@/lib/cbaAnswer";
 import { CBA_SOURCE_ID, type CbaSourceCache } from "@/lib/cbaSource";
 import { verifyCbaCitation } from "@/lib/cbaCitationIntegrity";
@@ -23,13 +23,20 @@ import {
 } from "@/lib/jcimSource";
 import { readJcimCache, validateJcimCache, verifyJcimLiveIdentity } from "@/lib/jcimSourceServer";
 
-if (realPublicDataSuppliedButUnusable) {
+if (realPublicDataStatus === "unusable") {
   it("opt-in prerequisite: KIA_REAL_PUBLIC_DATA_DIR supplied but unusable", () => {
-    throw new Error(realPublicDataMissingPrerequisite);
+    throw new Error(realPublicDataReason);
   });
 }
 
-if (!realPublicDataDirectory) console.info(`NOT_RUN: JCIM/CBA real-cache integration: ${realPublicDataMissingPrerequisite}`);
+if (realPublicDataStatus === "not_supplied") console.info(`NOT_RUN: JCIM/CBA real-cache integration: ${realPublicDataReason}`);
+
+if (realPublicDataStatus === "unsafe" || realPublicDataStatus === "ready") {
+  it("opt-in prerequisite: supplied cache has safe permissions (dir 0700, files 0600, owned by current uid)", () => {
+    if (realPublicDataStatus === "unsafe") throw new Error(realPublicDataReason);
+    expect(realPublicDataPermissionProblem(realPublicDataDirectory!)).toBeUndefined();
+  });
+}
 
 let cache: JcimCache;
 let pdf: Buffer<ArrayBuffer>;
@@ -38,25 +45,7 @@ let realCba: CbaSourceCache;
 const version = createRuntimeVersion({ buildDate: "20261003", gitSha: "jcimqa01" });
 
 describe.runIf(realPublicDataAvailable)("JCIM/CBA real-cache integration (opt-in; requires KIA_REAL_PUBLIC_DATA_DIR)", () => {
-  function assertSafePermissions() {
-    const uid = process.getuid?.();
-    if (uid === undefined) throw new Error("Cannot verify supplied cache ownership: current uid unavailable");
-    for (const [target, mode, directory] of [
-      [realPublicDataDirectory!, 0o700, true],
-      ...realPublicDataRequiredFiles.map((name) => [path.join(realPublicDataDirectory!, name), 0o600, false] as const),
-    ] as const) {
-      const stat = lstatSync(target);
-      if (stat.isSymbolicLink() || (directory ? !stat.isDirectory() : !stat.isFile()) ||
-          (stat.mode & 0o7777) !== mode || stat.uid !== uid) {
-        throw new Error(`Unsafe supplied cache: ${target} must be a ${directory ? "directory" : "regular file"} with mode ${mode.toString(8)} owned by current uid ${uid}; symlinks are forbidden`);
-      }
-    }
-  }
-
-  it("supplied cache has safe permissions (dir 0700, files 0600, owned by current uid)", assertSafePermissions);
-
   beforeAll(() => {
-    assertSafePermissions();
     cache = JSON.parse(readFileSync(path.join(realPublicDataDirectory!, `${JCIM_SOURCE_ID}.json`), "utf8")) as JcimCache;
     pdf = readFileSync(path.join(realPublicDataDirectory!, `${JCIM_SOURCE_ID}.pdf`));
     realCba = JSON.parse(readFileSync(path.join(realPublicDataDirectory!, `${CBA_SOURCE_ID}.json`), "utf8")) as CbaSourceCache;
