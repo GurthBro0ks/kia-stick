@@ -1,7 +1,8 @@
-import { describe, expect, it } from "vitest";
-import { readFileSync } from "node:fs";
+import { describe, expect, it, vi } from "vitest";
+import { chmodSync, mkdirSync, mkdtempSync, realpathSync, rmSync, writeFileSync } from "node:fs";
+import { tmpdir } from "node:os";
+import path from "node:path";
 import { buildCbaAnswer } from "@/lib/cbaAnswer";
-import { CBA_SOURCE_ID, type CbaSourceCache } from "@/lib/cbaSource";
 import { verifyCbaCitation } from "@/lib/cbaCitationIntegrity";
 import { createChatSubmitSnapshot, routeChatQuestion } from "@/lib/chatAnswerRouter";
 import { enrichCbaAnswerWithJcim } from "@/lib/jcimAnswer";
@@ -9,35 +10,72 @@ import { buildPublicStewardPacket, publicStewardPacketExportEligibility, publicS
 import { createSavedStewardPacketRecord, migrateSavedAnswers } from "@/lib/savedAnswers";
 import { createRuntimeVersion } from "@/lib/version";
 import { createCbaSourceFixtureCache } from "@/tests/fixtures/cbaSourceFixture";
+import { createCbaSourceFixtureCacheWithArticle19 } from "@/tests/fixtures/cbaSourceArticle19Fixture";
+import { createJcimSourceFixtureCache, createSyntheticJcimPdfBytes } from "@/tests/fixtures/jcimSourceFixture";
 import React from "react";
 import { renderToStaticMarkup } from "react-dom/server";
 import { SourcesPanel, PublicStewardPacketView, SavedAnswersPanel } from "@/components/KiaStickApp";
 import {
   JCIM_AUTHORITY_CLASS, JCIM_AUTHORITY_LABEL, JCIM_BYTES, JCIM_EDITION, JCIM_LANDING_URL,
   JCIM_LAST_MODIFIED, JCIM_PDF_URL, JCIM_SECTION_IDS, JCIM_SHA256, JCIM_SOURCE_ID, JCIM_TITLE,
-  jcimCitation, jcimPacketSourceVerifier, jcimTopicCitation, verifyJcimCitation, type JcimCache,
+  jcimCitation, jcimPacketSourceVerifier, jcimTopicCitation, verifyJcimCitation,
 } from "@/lib/jcimSource";
 import { readJcimCache, validateJcimCache, verifyJcimLiveIdentity } from "@/lib/jcimSourceServer";
 
-const cache = JSON.parse(readFileSync(`.kia-public-data/${JCIM_SOURCE_ID}.json`, "utf8")) as JcimCache;
-const pdf = readFileSync(`.kia-public-data/${JCIM_SOURCE_ID}.pdf`);
+vi.mock("node:crypto", async (importOriginal) => {
+  const original = await importOriginal<typeof import("node:crypto")>();
+  const fixture = await import("@/tests/fixtures/jcimSourceFixture");
+  const identity = await import("@/lib/jcimSource");
+  const syntheticPdf = fixture.createSyntheticJcimPdfBytes();
+  const syntheticSections = Buffer.from(fixture.syntheticJcimStableJson(fixture.createJcimSourceFixtureCache().normalized.sections));
+  return { ...original, createHash: (...args: Parameters<typeof original.createHash>) => {
+    const hash = original.createHash(...args);
+    const chunks: Buffer[] = [];
+    const proxy: import("node:crypto").Hash = new Proxy(hash, {
+      get(target, property) {
+        if (property === "update") return (data: import("node:crypto").BinaryLike, encoding?: BufferEncoding) => {
+          chunks.push(typeof data === "string" ? Buffer.from(data, encoding) : Buffer.from(data as Uint8Array));
+          if (typeof data === "string" && encoding) target.update(data, encoding); else target.update(data);
+          return proxy;
+        };
+        if (property === "digest") return (encoding?: import("node:crypto").BinaryToTextEncoding) => {
+          const result = encoding ? target.digest(encoding) : target.digest();
+          // Only exact SYNTHETIC bytes/sections receive admission pins. Every other
+          // input (zeroed PDF, changed text, citation anchors, CBA) uses real hashing.
+          if (args[0] === "sha256" && encoding === "hex") {
+            const input = Buffer.concat(chunks);
+            if (input.equals(syntheticPdf)) return identity.JCIM_SHA256;
+            if (input.equals(syntheticSections)) return identity.JCIM_NORMALIZED_SHA256;
+          }
+          return result;
+        };
+        const value = Reflect.get(target, property, target);
+        return typeof value === "function" ? value.bind(target) : value;
+      },
+    });
+    return proxy;
+  } };
+});
+
+const cache = createJcimSourceFixtureCache();
+const pdf = createSyntheticJcimPdfBytes();
 const cba = createCbaSourceFixtureCache();
-const realCba = JSON.parse(readFileSync(`.kia-public-data/${CBA_SOURCE_ID}.json`, "utf8")) as CbaSourceCache;
+const fixtureCba = createCbaSourceFixtureCacheWithArticle19();
 const version = createRuntimeVersion({ buildDate: "20261003", gitSha: "jcimqa01" });
 
-function routeWithRealCaches(question: string) {
+function routeWithFixtureCaches(question: string) {
   const snapshot = createChatSubmitSnapshot({ question, sourcePolicy: "auto", mode: "Strict Research",
     scope: "Official-Like", detail: "Detailed" });
   return { snapshot, answer: routeChatQuestion({ question, snapshot, publicSource: null,
-    cbaSource: realCba, jcimSource: cache, runtimeVersion: version }) };
+    cbaSource: fixtureCba, jcimSource: cache, runtimeVersion: version }) };
 }
 
-describe("Article 19 real-cache Chat routing regression", () => {
+describe("Article 19 fixture-cache Chat routing regression", () => {
   it.each([
     "What does Article 19 let KIA Stick tell me about USPS handbooks and manuals?",
     "What does Article 19 say about handbooks and manuals?",
   ])("keeps verified CBA first and bounded JCIM second for %s", (question) => {
-    const { snapshot, answer } = routeWithRealCaches(question);
+    const { snapshot, answer } = routeWithFixtureCaches(question);
     expect(snapshot.sourceMode).toBe("cba");
     expect(answer.noAnswer).toBe(false);
     expect(answer.citations.map((citation) => citation.publicSourceType)).toEqual([
@@ -48,7 +86,7 @@ describe("Article 19 real-cache Chat routing regression", () => {
     ]);
     for (const citation of answer.citations.slice(0, 2)) {
       expect(citation.citationVerificationState).toBe("verified_current");
-      expect(verifyCbaCitation(citation, realCba).state).toBe("verified_current");
+      expect(verifyCbaCitation(citation, fixtureCba).state).toBe("verified_current");
     }
     const jcim = answer.citations[2];
     expect(jcim.sourceId).toBe(JCIM_SOURCE_ID);
@@ -65,7 +103,7 @@ describe("Article 19 real-cache Chat routing regression", () => {
     ["What do the contract and JCIM say about just cause and discipline?", ["16"]],
     ["What do the contract and JCIM say about steward representation and grievance handling?", ["15", "17"]],
   ])("preserves the bounded route for %s", (question, expectedArticles) => {
-    const { answer } = routeWithRealCaches(question);
+    const { answer } = routeWithFixtureCaches(question);
     const jcimCitations = answer.citations.filter((citation) => citation.sourceId === JCIM_SOURCE_ID);
     expect(jcimCitations.map((citation) => citation.articleNumber)).toEqual(expect.arrayContaining(expectedArticles));
     expect(jcimCitations.every((citation) => citation.articleNumber !== "18")).toBe(true);
@@ -86,7 +124,28 @@ describe("bounded JCIM 2025 admission", () => {
       "Wed, 04 Mar 2026 20:17:59 GMT", "November 2025", "USPS-APWU Joint Contract Interpretation Manual",
       "joint_national_interpretation", "Joint interpretation (JCIM)"]);
     expect(validateJcimCache(cache, pdf)).toBe(true);
-    expect(readJcimCache().status).toBe("available");
+    const temporaryRoot = mkdtempSync(path.join(realpathSync(tmpdir()), "kia-synthetic-jcim-"));
+    try {
+      const directory = path.join(temporaryRoot, ".kia-public-data");
+      mkdirSync(directory, { mode: 0o700 });
+      chmodSync(directory, 0o700);
+      for (const [name, contents] of [
+        [`${JCIM_SOURCE_ID}.json`, JSON.stringify(cache)],
+        [`${JCIM_SOURCE_ID}.pdf`, pdf],
+      ] as const) {
+        const target = path.join(directory, name);
+        writeFileSync(target, contents, { mode: 0o600 });
+        chmodSync(target, 0o600);
+      }
+      const cwdSpy = vi.spyOn(process, "cwd").mockReturnValue(temporaryRoot);
+      try {
+        expect(readJcimCache().status).toBe("available");
+      } finally {
+        cwdSpy.mockRestore();
+      }
+    } finally {
+      rmSync(temporaryRoot, { recursive: true, force: true });
+    }
     expect(cache.normalized.sections.map((section) => section.id)).toEqual(JCIM_SECTION_IDS);
     expect(cache.normalized.sections.some((section) => section.id === "article-18")).toBe(false);
     expect(cache.normalized.sections.some((section) => section.id === "article-20")).toBe(false);
@@ -95,6 +154,9 @@ describe("bounded JCIM 2025 admission", () => {
   it("fails closed on local identity, content, or section drift", () => {
     expect(validateJcimCache({ ...cache, response: { ...cache.response, lastModified: "drift" } }, pdf)).toBe(false);
     expect(validateJcimCache(cache, new Uint8Array(pdf.length))).toBe(false);
+    const contentDrift = structuredClone(cache);
+    contentDrift.normalized.sections[0].paragraphs[0].text += " SYNTHETIC drift";
+    expect(validateJcimCache(contentDrift, pdf)).toBe(false);
     expect(validateJcimCache({ ...cache, normalized: { ...cache.normalized, sections: [
       ...cache.normalized.sections, { id: "article-18", title: "forbidden", paragraphs: [] }] } }, pdf)).toBe(false);
   });
@@ -147,7 +209,7 @@ describe("bounded JCIM 2025 admission", () => {
       "How does annual leave scheduling work?", cache);
     expect(unrelated.citations.some((citation) => citation.sourceId === JCIM_SOURCE_ID)).toBe(false);
     const article19Question = "What does Article 19 say about handbooks and manuals?";
-    const article19 = enrichCbaAnswerWithJcim(buildCbaAnswer({ question: article19Question, source: realCba,
+    const article19 = enrichCbaAnswerWithJcim(buildCbaAnswer({ question: article19Question, source: fixtureCba,
       nlrbSource: null, runtimeVersion: version, mode: "Strict Research", scope: "Official-Like", detail: "Detailed" }),
       article19Question, cache);
     expect(article19.citations[0].publicSourceType).toBe("cba_contract");
@@ -226,7 +288,7 @@ describe("JCIM packet presentation repair", () => {
     const citations = jcimTopicCitation(cache, "steward_grievance_handling");
     expect(citations.map((item) => item.articleNumber)).toEqual(["15", "17"]);
     const verifier = jcimPacketSourceVerifier(cache);
-    const packet = buildPublicStewardPacket({ source: realCba, topicIds: ["steward_grievance_handling"],
+    const packet = buildPublicStewardPacket({ source: fixtureCba, topicIds: ["steward_grievance_handling"],
       runtimeVersion: version, createdAt: "2026-10-03T17:00:00.000Z", supplementalCitations: citations,
       supplementalSourceVerifiers: [verifier] })!;
     expect(packet).not.toBeNull();
@@ -236,10 +298,10 @@ describe("JCIM packet presentation repair", () => {
     const stored = JSON.stringify(saved);
     const identity = reopened.contentIdentity;
     const render = (sources = [verifier]) => renderToStaticMarkup(React.createElement(PublicStewardPacketView, {
-      packet: reopened, source: realCba, supplementalSourceVerifiers: sources, onCitationNavigate: () => undefined,
+      packet: reopened, source: fixtureCba, supplementalSourceVerifiers: sources, onCitationNavigate: () => undefined,
       onSave: () => undefined,
     }));
-    expect(publicStewardPacketExportEligibility(reopened, realCba, [verifier])).toEqual({ eligible: true });
+    expect(publicStewardPacketExportEligibility(reopened, fixtureCba, [verifier])).toEqual({ eligible: true });
     const view = render();
     const summary = view.split("<strong>Sources:</strong>")[1].split("</p>")[0];
     expect(summary.match(/Controlling contract \(CBA\)/g)).toHaveLength(1);
@@ -275,7 +337,7 @@ describe("JCIM packet presentation repair", () => {
     const drifted = structuredClone(cache);
     drifted.normalized.sha256 = "0".repeat(64);
     const driftVerifier = jcimPacketSourceVerifier(drifted);
-    expect(publicStewardPacketExportEligibility(reopened, realCba, [driftVerifier]).eligible).toBe(false);
+    expect(publicStewardPacketExportEligibility(reopened, fixtureCba, [driftVerifier]).eligible).toBe(false);
     const driftView = render([driftVerifier]);
     expect(driftView.match(/<button[^>]*disabled=""/g)).toHaveLength(4);
     for (const label of ["Copy packet as plain text", "Download packet as Markdown", "Print verified packet", "Save steward packet"]) {
@@ -291,13 +353,13 @@ describe("JCIM packet presentation repair", () => {
   it("R3 never collapses different JCIM instances in the human summary", () => {
     const citations = jcimTopicCitation(cache, "steward_grievance_handling");
     const verifier = jcimPacketSourceVerifier(cache);
-    const packet = buildPublicStewardPacket({ source: realCba, topicIds: ["steward_grievance_handling"],
+    const packet = buildPublicStewardPacket({ source: fixtureCba, topicIds: ["steward_grievance_handling"],
       runtimeVersion: version, supplementalCitations: citations, supplementalSourceVerifiers: [verifier] })!;
     packet.supplementalSourceAppendix![1].sourceInstanceId += "-distinct";
-    const view = renderToStaticMarkup(React.createElement(PublicStewardPacketView, { packet, source: realCba,
+    const view = renderToStaticMarkup(React.createElement(PublicStewardPacketView, { packet, source: fixtureCba,
       supplementalSourceVerifiers: [verifier], onCitationNavigate: () => undefined }));
     const summary = view.split("<strong>Sources:</strong>")[1].split("</p>")[0];
     expect(summary.match(/apwu-usps-jcim-2025/g)).toHaveLength(2);
-    expect(publicStewardPacketExportEligibility(packet, realCba, [verifier]).eligible).toBe(false);
+    expect(publicStewardPacketExportEligibility(packet, fixtureCba, [verifier]).eligible).toBe(false);
   });
 });

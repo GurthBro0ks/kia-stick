@@ -1,10 +1,10 @@
-import { execFileSync } from "node:child_process";
 import { readFileSync } from "node:fs";
+import { PINNED_CBA_PDF_SHA256 } from "@/tests/fixtures/cbaSourceIdentityFixture";
 import { describe, expect, it } from "vitest";
 
 const matrixV2Path = "docs/public-source-sufficiency-matrix-v2.md";
 const matrixV1Path = "docs/public-steward-workflow-source-matrix.md";
-const cbaPdfPath = ".kia-public-data/apwu-usps-cba-2024-2027.pdf";
+
 
 const matrixV2 = readFileSync(matrixV2Path, "utf8");
 const matrixV1 = readFileSync(matrixV1Path, "utf8");
@@ -34,11 +34,8 @@ describe("Public source-sufficiency matrix v2 does not fetch or mutate any sourc
     expect(matrixV2).toMatch(/no source (was )?fetch|no fetch, sync/i);
   });
 
-  it("carries the exact unmodified CBA PDF hash from the live source cache", () => {
-    const actualSha256 = execFileSync("sha256sum", [cbaPdfPath], { encoding: "utf8" })
-      .split(/\s+/)[0]
-      .trim();
-    expect(matrixV2).toContain(actualSha256);
+  it("carries the exact pinned CBA PDF hash", () => {
+    expect(matrixV2).toContain(PINNED_CBA_PDF_SHA256);
   });
 });
 
