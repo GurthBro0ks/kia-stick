@@ -1,3 +1,4 @@
+import { createJcimLiveIdentityFetcher } from "@/tests/fixtures/jcimLiveIdentityFixture";
 import { createHash } from "node:crypto";
 import { describe, expect, it, vi } from "vitest";
 import { chmodSync, mkdirSync, mkdtempSync, realpathSync, rmSync, writeFileSync } from "node:fs";
@@ -356,5 +357,46 @@ describe("synthetic cache rejection with real SHA256", () => {
       cwdSpy.mockRestore();
       rmSync(root, { recursive: true, force: true });
     }
+  });
+});
+
+describe("PDF byte guards (real crypto)", () => {
+  const realSha256 = (bytes: Uint8Array) => createHash("sha256").update(bytes).digest("hex");
+  it("[LIVE-HASH/A] rejects different content at the pinned length", async () => {
+    const bytes = createSyntheticJcimPdfBytes();
+    expect(bytes.length).toBe(JCIM_BYTES);
+    expect(realSha256(bytes)).not.toBe(JCIM_SHA256);
+    const { fetcher, readBody } = createJcimLiveIdentityFetcher(bytes);
+    expect(await verifyJcimLiveIdentity(fetcher)).toBe(false);
+    expect(readBody).toHaveBeenCalledOnce();
+  });
+  it("[LIVE-LENGTH/B] rejects a body one byte short despite pinned headers", async () => {
+    const bytes = Buffer.from(pdf.subarray(0, JCIM_BYTES - 1));
+    expect(bytes.length).toBe(JCIM_BYTES - 1);
+    // Live verification checks length first; hash is unreachable for this body.
+    expect(realSha256(bytes)).not.toBe(JCIM_SHA256);
+    const { fetcher, readBody } = createJcimLiveIdentityFetcher(bytes);
+    expect(await verifyJcimLiveIdentity(fetcher)).toBe(false);
+    expect(readBody).toHaveBeenCalledOnce();
+  });
+  it("[LIVE-TAMPER/C] rejects a single flipped byte at the pinned length", async () => {
+    const baseline = createSyntheticJcimPdfBytes();
+    const bytes = Buffer.from(baseline);
+    bytes[0] ^= 1;
+    expect(baseline.length).toBe(JCIM_BYTES);
+    expect(bytes.length).toBe(JCIM_BYTES);
+    expect(bytes.reduce((count, byte, index) => count + Number(byte !== baseline[index]), 0)).toBe(1);
+    expect(realSha256(baseline)).not.toBe(JCIM_SHA256);
+    expect(realSha256(bytes)).not.toBe(JCIM_SHA256);
+    const { fetcher, readBody } = createJcimLiveIdentityFetcher(bytes);
+    expect(await verifyJcimLiveIdentity(fetcher)).toBe(false);
+    expect(readBody).toHaveBeenCalledOnce();
+  });
+  it("[LIVE-CONTENT-TYPE sanity] rejects before reading bytes", async () => {
+    // Real pinned bytes are unavailable here; the A/C spies prove the valid
+    // stub reaches byte guards, while this header sanity check stops earlier.
+    const { fetcher, readBody } = createJcimLiveIdentityFetcher(pdf, "text/plain");
+    expect(await verifyJcimLiveIdentity(fetcher)).toBe(false);
+    expect(readBody).not.toHaveBeenCalled();
   });
 });

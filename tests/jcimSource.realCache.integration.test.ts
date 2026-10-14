@@ -1,3 +1,5 @@
+import { createHash } from "node:crypto";
+import { createJcimLiveIdentityFetcher } from "@/tests/fixtures/jcimLiveIdentityFixture";
 import path from "node:path";
 import { realPublicDataAvailable, realPublicDataDirectory, realPublicDataMissingPrerequisite } from "@/tests/fixtures/realPublicDataPrerequisite";
 import { beforeAll, describe, expect, it, vi } from "vitest";
@@ -35,6 +37,44 @@ describe.runIf(realPublicDataAvailable)("JCIM/CBA real-cache integration (opt-in
     pdf = readFileSync(path.join(realPublicDataDirectory!, `${JCIM_SOURCE_ID}.pdf`));
     realCba = JSON.parse(readFileSync(path.join(realPublicDataDirectory!, `${CBA_SOURCE_ID}.json`), "utf8")) as CbaSourceCache;
   });
+describe("PDF byte guards on real bytes", () => {
+  const realSha256 = (bytes: Uint8Array) => createHash("sha256").update(bytes).digest("hex");
+  beforeAll(() => {
+    expect(pdf.length).toBe(JCIM_BYTES);
+    expect(realSha256(pdf)).toBe(JCIM_SHA256);
+    // Establish that every structural and normalized guard passes unchanged.
+    expect(validateJcimCache(cache, pdf)).toBe(true);
+  });
+  it("[VALIDATE-TAMPER/C] rejects exactly one flipped byte locally and live", async () => {
+    const tampered = Buffer.from(pdf);
+    tampered[0] ^= 1;
+    expect(tampered.length).toBe(JCIM_BYTES);
+    expect(tampered.reduce((count, byte, index) => count + Number(byte !== pdf[index]), 0)).toBe(1);
+    expect(realSha256(tampered)).not.toBe(JCIM_SHA256);
+    expect(validateJcimCache(cache, pdf)).toBe(true);
+    expect(validateJcimCache(cache, tampered)).toBe(false);
+    expect(await verifyJcimLiveIdentity(createJcimLiveIdentityFetcher(pdf).fetcher)).toBe(true);
+    expect(await verifyJcimLiveIdentity(createJcimLiveIdentityFetcher(tampered).fetcher)).toBe(false);
+  });
+  it("[VALIDATE-HASH/A] rejects reversed content at the pinned length", () => {
+    const reversed = Buffer.from(pdf).reverse();
+    expect(reversed.length).toBe(JCIM_BYTES);
+    expect(reversed.equals(pdf)).toBe(false);
+    expect(realSha256(reversed)).not.toBe(JCIM_SHA256);
+    expect(validateJcimCache(cache, reversed)).toBe(false);
+  });
+  it("[VALIDATE-LENGTH/B] rejects an appended byte locally and live", async () => {
+    const extended = Buffer.concat([pdf, Buffer.from([0])]);
+    expect(extended.length).toBe(JCIM_BYTES + 1);
+    expect(extended.subarray(0, JCIM_BYTES).equals(pdf)).toBe(true);
+    expect(realSha256(extended)).not.toBe(JCIM_SHA256);
+    // Local hash-first validation rejects before length; the supplementary
+    // mocked-hash test isolates that length guard. Live checks length first.
+    expect(validateJcimCache(cache, extended)).toBe(false);
+    expect(await verifyJcimLiveIdentity(createJcimLiveIdentityFetcher(extended).fetcher)).toBe(false);
+  });
+});
+
 function routeWithRealCaches(question: string) {
   const snapshot = createChatSubmitSnapshot({ question, sourcePolicy: "auto", mode: "Strict Research",
     scope: "Official-Like", detail: "Detailed" });

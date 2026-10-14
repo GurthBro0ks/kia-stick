@@ -45,3 +45,8 @@ export function syntheticJcimStableJson(value: unknown): string {
     .map(([key, item]) => `${JSON.stringify(key)}:${syntheticJcimStableJson(item)}`).join(",")}}`;
   return JSON.stringify(value);
 }
+
+// Exact additional synthetic input for the isolated mocked-hash length guard.
+export function createSyntheticShortJcimPdfBytes(): Buffer<ArrayBuffer> {
+  return Buffer.from(createSyntheticJcimPdfBytes().subarray(0, JCIM_BYTES - 1));
+}
