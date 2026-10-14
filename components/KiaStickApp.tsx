@@ -89,6 +89,7 @@ import {
 import {
   buildPublicStewardPacket,
   publicStewardPacketExportEligibility,
+  publicStewardPacketLimitationText,
   publicStewardPacketTopicSummaryText,
   publicStewardPacketToMarkdown,
   publicStewardPacketToText,
@@ -4235,7 +4236,10 @@ export function PublicStewardPacketView({
         </span>
       </div>
       <p className="packetPurpose"><strong>What this packet helps with:</strong> Prepare questions, evidence checklists and next steps for {packet.topicSummaries.map((topic) => topic.title).join(", ")}. Based on verified public contract sources.</p>
-      {packet.supplementalSourceAppendix && <p className="packetPurpose print-atomic"><strong>Sources:</strong> Controlling contract (CBA); {Array.isArray(packet.supplementalSourceAppendix) ? packet.supplementalSourceAppendix.filter(Boolean).map((item) => `${item.sourceId} (${item.authorityClass === "joint_interpretation" ? "Joint interpretation" : item.authorityClass === "public_guidance" ? "Public guidance" : "Unknown authority"})`).join("; ") || "Malformed supplemental provenance" : "Malformed supplemental provenance"}.</p>}
+      {packet.supplementalSourceAppendix && <p className="packetPurpose print-atomic"><strong>Sources:</strong> Controlling contract (CBA); {Array.isArray(packet.supplementalSourceAppendix) ? packet.supplementalSourceAppendix.filter(Boolean).filter((item, index, items) => items.findIndex((candidate) =>
+        candidate.publicSourceType === item.publicSourceType && candidate.sourceId === item.sourceId &&
+        candidate.sourceInstanceId === item.sourceInstanceId && candidate.authorityClass === item.authorityClass
+      ) === index).map((item) => `${item.sourceId} (${item.authorityClass === "joint_interpretation" ? "Joint interpretation" : item.authorityClass === "public_guidance" ? "Public guidance" : "Unknown authority"})`).join("; ") || "Malformed supplemental provenance" : "Malformed supplemental provenance"}.</p>}
       <p className="argumentPlanPrivateWarning print-atomic" role="note">
         <AlertTriangle size={16} />
         <strong>{packet.privateCaseWarning}</strong>
@@ -4333,7 +4337,7 @@ export function PublicStewardPacketView({
       </section>
       <section className="argumentPlanSection print-section">
         <h4 className="print-heading">11. Limitations and unsupported scope</h4>
-        <CitedList values={packet.limitations} />
+        <CitedList values={packet.limitations.map((item) => ({ ...item, text: publicStewardPacketLimitationText(item.text) }))} />
       </section>
       <section className="argumentPlanSection print-section">
         <h4 className="print-heading">12. Complete verified-current source appendix</h4>

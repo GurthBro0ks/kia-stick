@@ -206,3 +206,98 @@ describe("bounded JCIM 2025 admission", () => {
     expect(html).toContain("<details");
   });
 });
+
+
+describe("JCIM packet presentation repair", () => {
+  it("R16 keeps unadmitted sources and citation units outside the verification boundary", () => {
+    const citation = jcimTopicCitation(cache, "steward_grievance_handling")[0];
+    for (const sourceId of ["lmou", "handbook-manual", "arbitration-precedent", "management-policy", "local-practice", "step-4", "unadmitted-jcim"]) {
+      expect(verifyJcimCitation({ ...citation, sourceId }, cache)).not.toBe("verified_current");
+    }
+    expect(verifyJcimCitation({ ...citation, sectionId: "article-18" }, cache)).not.toBe("verified_current");
+    expect(verifyJcimCitation({ ...citation, paragraphId: "unadmitted-unit" }, cache)).not.toBe("verified_current");
+    expect(verifyJcimCitation({ ...citation, citationAnchorSha256: "0".repeat(64) }, cache)).not.toBe("verified_current");
+    expect(cache.normalized.sections.map((section) => section.id)).toEqual([
+      "preface", "introduction", "article-15", "article-16", "article-17", "article-19",
+    ]);
+  });
+
+  it("R1-R2 R4-R8 R10 R12-R17 preserves saved Article 15/17 provenance and currentness", () => {
+    const citations = jcimTopicCitation(cache, "steward_grievance_handling");
+    expect(citations.map((item) => item.articleNumber)).toEqual(["15", "17"]);
+    const verifier = jcimPacketSourceVerifier(cache);
+    const packet = buildPublicStewardPacket({ source: realCba, topicIds: ["steward_grievance_handling"],
+      runtimeVersion: version, createdAt: "2026-10-03T17:00:00.000Z", supplementalCitations: citations,
+      supplementalSourceVerifiers: [verifier] })!;
+    expect(packet).not.toBeNull();
+    // Deserialize the existing record shape directly: no migration or resave.
+    const saved = JSON.parse(JSON.stringify(createSavedStewardPacketRecord({ packet, timestamp: "2026-10-03T17:01:00.000Z" })));
+    const reopened = saved.stewardPacket;
+    const stored = JSON.stringify(saved);
+    const identity = reopened.contentIdentity;
+    const render = (sources = [verifier]) => renderToStaticMarkup(React.createElement(PublicStewardPacketView, {
+      packet: reopened, source: realCba, supplementalSourceVerifiers: sources, onCitationNavigate: () => undefined,
+      onSave: () => undefined,
+    }));
+    expect(publicStewardPacketExportEligibility(reopened, realCba, [verifier])).toEqual({ eligible: true });
+    const view = render();
+    const summary = view.split("<strong>Sources:</strong>")[1].split("</p>")[0];
+    expect(summary.match(/Controlling contract \(CBA\)/g)).toHaveLength(1);
+    expect(summary.match(/apwu-usps-jcim-2025/g)).toHaveLength(1);
+    expect(summary).toContain("(Joint interpretation)");
+    expect(summary.indexOf("Controlling contract")).toBeLessThan(summary.indexOf("Joint interpretation"));
+    const section13 = view.split("13. Supplemental public-source provenance")[1];
+    expect(section13.match(/<li /g)).toHaveLength(2);
+    const newText = 'This public pilot verifies only the admitted public sources and citations cited here. It does not determine whether a JCIM interpretation, LMOU, handbook rule, arbitration precedent, management policy, or local practice applies to a particular case.';
+    const oldText = 'This CBA-only pilot does not verify an LMOU, JCIM interpretation, handbook rule, arbitration precedent, management policy, or local practice.';
+    for (const output of [view, publicStewardPacketToText(reopened), publicStewardPacketToMarkdown(reopened)]) {
+      expect(output).toContain(newText);
+      expect(output).not.toContain(oldText);
+      const appendix = output.split("13. Supplemental public-source provenance")[1];
+      for (const item of citations) {
+        expect(appendix).toContain(item.sectionId!);
+        expect(appendix).toContain(item.paragraphId!);
+        expect(appendix).toContain(item.sourceInstanceId!);
+        expect(appendix).toContain(item.paragraphContentSha256!);
+        expect(appendix).toContain(item.citationAnchorSha256!);
+        expect(verifyJcimCitation(item, cache)).toBe("verified_current");
+      }
+    }
+    for (const output of [publicStewardPacketToText(reopened), publicStewardPacketToMarkdown(reopened)]) {
+      const summaryLine = output.split("\n").find((line) => line.includes("Sources: Controlling contract"))!;
+      expect(summaryLine.match(/Controlling contract/g)).toHaveLength(1);
+      expect(summaryLine.match(/Joint interpretation/g)).toHaveLength(1);
+    }
+    expect(reopened.limitations.some((item: {text: string}) => item.text === oldText)).toBe(true);
+    expect(reopened.citations.every((item: {publicSourceType: string}) => item.publicSourceType === "cba_contract")).toBe(true);
+    expect(reopened.supplementalCitations).toEqual(citations);
+    expect(publicStewardPacketExportEligibility(reopened, null, [verifier]).eligible).toBe(false);
+    const drifted = structuredClone(cache);
+    drifted.normalized.sha256 = "0".repeat(64);
+    const driftVerifier = jcimPacketSourceVerifier(drifted);
+    expect(publicStewardPacketExportEligibility(reopened, realCba, [driftVerifier]).eligible).toBe(false);
+    const driftView = render([driftVerifier]);
+    expect(driftView.match(/<button[^>]*disabled=""/g)).toHaveLength(4);
+    for (const label of ["Copy packet as plain text", "Download packet as Markdown", "Print verified packet", "Save steward packet"]) {
+      const button = driftView.match(/<button\b[^>]*>[\s\S]*?<\/button>/g)?.find((item) => item.includes(label));
+      expect(button).toContain('disabled=""');
+    }
+    expect(driftView).toContain(JCIM_SOURCE_ID);
+    expect(driftView).toContain("13. Supplemental public-source provenance");
+    expect(reopened.contentIdentity).toBe(identity);
+    expect(JSON.stringify(saved)).toBe(stored);
+  });
+
+  it("R3 never collapses different JCIM instances in the human summary", () => {
+    const citations = jcimTopicCitation(cache, "steward_grievance_handling");
+    const verifier = jcimPacketSourceVerifier(cache);
+    const packet = buildPublicStewardPacket({ source: realCba, topicIds: ["steward_grievance_handling"],
+      runtimeVersion: version, supplementalCitations: citations, supplementalSourceVerifiers: [verifier] })!;
+    packet.supplementalSourceAppendix![1].sourceInstanceId += "-distinct";
+    const view = renderToStaticMarkup(React.createElement(PublicStewardPacketView, { packet, source: realCba,
+      supplementalSourceVerifiers: [verifier], onCitationNavigate: () => undefined }));
+    const summary = view.split("<strong>Sources:</strong>")[1].split("</p>")[0];
+    expect(summary.match(/apwu-usps-jcim-2025/g)).toHaveLength(2);
+    expect(publicStewardPacketExportEligibility(packet, realCba, [verifier]).eligible).toBe(false);
+  });
+});

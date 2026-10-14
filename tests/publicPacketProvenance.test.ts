@@ -5,6 +5,7 @@ import { PublicStewardPacketView, SavedAnswersPanel } from "@/components/KiaStic
 import {
   buildPublicStewardPacket,
   publicStewardPacketExportEligibility,
+  publicStewardPacketLimitationText,
   publicStewardPacketToMarkdown,
   publicStewardPacketToText,
 } from "@/lib/publicStewardPacket";
@@ -125,5 +126,60 @@ describe("generic public packet provenance", () => {
     expect(view.match(/<button[^>]*disabled=""/g)?.length).toBe(4);
     const record = createSavedStewardPacketRecord({ packet: malformed, timestamp: "2026-08-13T17:01:00.000Z" });
     expect(migrateSavedAnswers([record])[0].stewardPacket?.supplementalSourceAppendix?.[0].paragraphContentSha256).toBe("bad");
+  });
+});
+
+
+describe("output-only legacy limitation compatibility", () => {
+  const oldText = 'This CBA-only pilot does not verify an LMOU, JCIM interpretation, handbook rule, arbitration precedent, management policy, or local practice.';
+  const newText = 'This public pilot verifies only the admitted public sources and citations cited here. It does not determine whether a JCIM interpretation, LMOU, handbook rule, arbitration precedent, management policy, or local practice applies to a particular case.';
+
+  it("R4-R8 maps only exact legacy text in all three outputs without mutating the stored packet", () => {
+    const packet = base();
+    const stored = JSON.stringify(packet);
+    const identity = packet.contentIdentity;
+    expect(packet.limitations.some((item) => item.text === oldText)).toBe(true);
+    const view = html(packet, []);
+    const section11 = view.split("11. Limitations and unsupported scope")[1].split("12. Complete verified-current source appendix")[0];
+    for (const output of [section11, publicStewardPacketToText(packet), publicStewardPacketToMarkdown(packet)]) {
+      expect(output).toContain(newText);
+      expect(output).not.toContain(oldText);
+    }
+    expect(JSON.stringify(packet)).toBe(stored);
+    expect(packet.contentIdentity).toBe(identity);
+    expect(publicStewardPacketLimitationText(oldText)).toBe(newText);
+    for (const adjacent of [` ${oldText}`, `${oldText} `, oldText.replace("CBA-only", "CBA"), "Unrelated limitation."]) {
+      expect(publicStewardPacketLimitationText(adjacent)).toBe(adjacent);
+    }
+  });
+
+  it("R9 R11 R17 renders a saved CBA-only packet directly without migration or resave", () => {
+    const packet = base();
+    const record = JSON.parse(JSON.stringify(createSavedStewardPacketRecord({ packet, timestamp: "2026-08-13T17:01:00.000Z" })));
+    const stored = JSON.stringify(record);
+    const reopened = record.stewardPacket;
+    expect(publicStewardPacketExportEligibility(reopened, cba)).toEqual({ eligible: true });
+    expect(reopened.supplementalCitations).toBeUndefined();
+    expect(reopened.supplementalSourceAppendix).toBeUndefined();
+    expect(html(reopened, [])).toContain(newText);
+    expect(html(reopened, [])).not.toContain("13. Supplemental public-source provenance");
+    expect(JSON.stringify(record)).toBe(stored);
+  });
+
+  it("R3 keeps every distinct source tuple visible while deduplicating repeated citations", () => {
+    const packet = withGuidance();
+    const item = packet.supplementalSourceAppendix![0];
+    packet.supplementalSourceAppendix = [item, { ...item },
+      { ...item, sourceInstanceId: `${item.sourceInstanceId}-other` },
+      { ...item, sourceId: "other-source" },
+      { ...item, publicSourceType: "joint_interpretation" },
+      { ...item, authorityClass: "joint_interpretation" }];
+    const stored = JSON.stringify(packet);
+    const summary = html(packet).split("<strong>Sources:</strong>")[1].split("</p>")[0];
+    expect(summary.match(/Controlling contract/g)).toHaveLength(1);
+    expect(summary.match(/nlrb-weingarten-rights/g)).toHaveLength(4);
+    expect(summary.match(/other-source/g)).toHaveLength(1);
+    expect(JSON.stringify(packet)).toBe(stored);
+    expect(publicStewardPacketExportEligibility(packet, cba, [verifier]).eligible).toBe(false);
   });
 });
