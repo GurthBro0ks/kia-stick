@@ -1,3 +1,4 @@
+import { createHash } from "node:crypto";
 import { describe, expect, it, vi } from "vitest";
 import { chmodSync, mkdirSync, mkdtempSync, realpathSync, rmSync, writeFileSync } from "node:fs";
 import { tmpdir } from "node:os";
@@ -11,7 +12,7 @@ import { createSavedStewardPacketRecord, migrateSavedAnswers } from "@/lib/saved
 import { createRuntimeVersion } from "@/lib/version";
 import { createCbaSourceFixtureCache } from "@/tests/fixtures/cbaSourceFixture";
 import { createCbaSourceFixtureCacheWithArticle19 } from "@/tests/fixtures/cbaSourceArticle19Fixture";
-import { createJcimSourceFixtureCache, createSyntheticJcimPdfBytes } from "@/tests/fixtures/jcimSourceFixture";
+import { createJcimSourceFixtureCache, createSyntheticJcimPdfBytes, syntheticJcimStableJson } from "@/tests/fixtures/jcimSourceFixture";
 import React from "react";
 import { renderToStaticMarkup } from "react-dom/server";
 import { SourcesPanel, PublicStewardPacketView, SavedAnswersPanel } from "@/components/KiaStickApp";
@@ -21,41 +22,6 @@ import {
   jcimCitation, jcimPacketSourceVerifier, jcimTopicCitation, verifyJcimCitation,
 } from "@/lib/jcimSource";
 import { readJcimCache, validateJcimCache, verifyJcimLiveIdentity } from "@/lib/jcimSourceServer";
-
-vi.mock("node:crypto", async (importOriginal) => {
-  const original = await importOriginal<typeof import("node:crypto")>();
-  const fixture = await import("@/tests/fixtures/jcimSourceFixture");
-  const identity = await import("@/lib/jcimSource");
-  const syntheticPdf = fixture.createSyntheticJcimPdfBytes();
-  const syntheticSections = Buffer.from(fixture.syntheticJcimStableJson(fixture.createJcimSourceFixtureCache().normalized.sections));
-  return { ...original, createHash: (...args: Parameters<typeof original.createHash>) => {
-    const hash = original.createHash(...args);
-    const chunks: Buffer[] = [];
-    const proxy: import("node:crypto").Hash = new Proxy(hash, {
-      get(target, property) {
-        if (property === "update") return (data: import("node:crypto").BinaryLike, encoding?: BufferEncoding) => {
-          chunks.push(typeof data === "string" ? Buffer.from(data, encoding) : Buffer.from(data as Uint8Array));
-          if (typeof data === "string" && encoding) target.update(data, encoding); else target.update(data);
-          return proxy;
-        };
-        if (property === "digest") return (encoding?: import("node:crypto").BinaryToTextEncoding) => {
-          const result = encoding ? target.digest(encoding) : target.digest();
-          // Only exact SYNTHETIC bytes/sections receive admission pins. Every other
-          // input (zeroed PDF, changed text, citation anchors, CBA) uses real hashing.
-          if (args[0] === "sha256" && encoding === "hex") {
-            const input = Buffer.concat(chunks);
-            if (input.equals(syntheticPdf)) return identity.JCIM_SHA256;
-            if (input.equals(syntheticSections)) return identity.JCIM_NORMALIZED_SHA256;
-          }
-          return result;
-        };
-        const value = Reflect.get(target, property, target);
-        return typeof value === "function" ? value.bind(target) : value;
-      },
-    });
-    return proxy;
-  } };
-});
 
 const cache = createJcimSourceFixtureCache();
 const pdf = createSyntheticJcimPdfBytes();
@@ -123,51 +89,18 @@ describe("bounded JCIM 2025 admission", () => {
       "6605cc0a94532a0264c0f2bd78f604f23e49c85ded15416c166858ae28a7d6f7", 3111811,
       "Wed, 04 Mar 2026 20:17:59 GMT", "November 2025", "USPS-APWU Joint Contract Interpretation Manual",
       "joint_national_interpretation", "Joint interpretation (JCIM)"]);
-    expect(validateJcimCache(cache, pdf)).toBe(true);
-    const temporaryRoot = mkdtempSync(path.join(realpathSync(tmpdir()), "kia-synthetic-jcim-"));
-    try {
-      const directory = path.join(temporaryRoot, ".kia-public-data");
-      mkdirSync(directory, { mode: 0o700 });
-      chmodSync(directory, 0o700);
-      for (const [name, contents] of [
-        [`${JCIM_SOURCE_ID}.json`, JSON.stringify(cache)],
-        [`${JCIM_SOURCE_ID}.pdf`, pdf],
-      ] as const) {
-        const target = path.join(directory, name);
-        writeFileSync(target, contents, { mode: 0o600 });
-        chmodSync(target, 0o600);
-      }
-      const cwdSpy = vi.spyOn(process, "cwd").mockReturnValue(temporaryRoot);
-      try {
-        expect(readJcimCache().status).toBe("available");
-      } finally {
-        cwdSpy.mockRestore();
-      }
-    } finally {
-      rmSync(temporaryRoot, { recursive: true, force: true });
-    }
     expect(cache.normalized.sections.map((section) => section.id)).toEqual(JCIM_SECTION_IDS);
     expect(cache.normalized.sections.some((section) => section.id === "article-18")).toBe(false);
     expect(cache.normalized.sections.some((section) => section.id === "article-20")).toBe(false);
   });
 
-  it("fails closed on local identity, content, or section drift", () => {
-    expect(validateJcimCache({ ...cache, response: { ...cache.response, lastModified: "drift" } }, pdf)).toBe(false);
-    expect(validateJcimCache(cache, new Uint8Array(pdf.length))).toBe(false);
-    const contentDrift = structuredClone(cache);
-    contentDrift.normalized.sections[0].paragraphs[0].text += " SYNTHETIC drift";
-    expect(validateJcimCache(contentDrift, pdf)).toBe(false);
-    expect(validateJcimCache({ ...cache, normalized: { ...cache.normalized, sections: [
-      ...cache.normalized.sections, { id: "article-18", title: "forbidden", paragraphs: [] }] } }, pdf)).toBe(false);
-  });
-
-  it("ignores landing dateModified and rejects linked or binary drift", async () => {
+  it("rejects synthetic binary identity even with matching headers and ignores landing dateModified", async () => {
     const mock = async (url: string) => url === JCIM_LANDING_URL
       ? new Response(`<a href="${JCIM_PDF_URL}">PDF</a><meta name="dateModified" content="tomorrow">`, { status: 200 })
       : new Response(pdf, { status: 200, headers: { "content-length": String(JCIM_BYTES),
         "last-modified": JCIM_LAST_MODIFIED, "content-type": "application/pdf" } });
     const fetcher = (async (url: string) => { const response = await mock(url); Object.defineProperty(response, "url", { value: url }); return response; }) as typeof fetch;
-    expect(await verifyJcimLiveIdentity(fetcher)).toBe(true);
+    expect(await verifyJcimLiveIdentity(fetcher)).toBe(false);
     expect(await verifyJcimLiveIdentity((async (url: string) => {
       const response = await mock(url === JCIM_LANDING_URL ? url : JCIM_PDF_URL);
       Object.defineProperty(response, "url", { value: url });
@@ -361,5 +294,67 @@ describe("JCIM packet presentation repair", () => {
     const summary = view.split("<strong>Sources:</strong>")[1].split("</p>")[0];
     expect(summary.match(/apwu-usps-jcim-2025/g)).toHaveLength(2);
     expect(publicStewardPacketExportEligibility(packet, fixtureCba, [verifier]).eligible).toBe(false);
+  });
+});
+
+describe("Article 19 synthetic semantic case", () => {
+  it("selects the heading and Section 1 before bounded JCIM interpretation", () => {
+    const { answer } = routeWithFixtureCaches("What does Article 19 say about handbooks and manuals?");
+    expect(answer.citations[0].publicSourceType).toBe("cba_contract");
+    expect(answer.citations.slice(0, 2).map((c) => c.paragraphId)).toEqual(["cba-pdf-p127-p05", "cba-pdf-p127-p06"]);
+    const paragraphs = fixtureCba.normalized.pages[126].paragraphs;
+    expect(paragraphs.find((p) => p.id.endsWith("p05"))?.text).toBe("ARTICLE 19 HANDBOOKS AND MANUALS");
+    expect(paragraphs.find((p) => p.id.endsWith("p06"))?.sectionNumber).toBe("1");
+    expect(answer.citations.some((c) => c.paragraphId === "cba-pdf-p127-p01")).toBe(false);
+    const jcim = answer.citations.find((c) => c.sourceId === JCIM_SOURCE_ID)!;
+    expect(jcim.articleNumber).toBe("19");
+    expect(verifyJcimCitation(jcim, cache)).toBe("verified_current");
+    expect(jcim.status).toContain(JCIM_AUTHORITY_LABEL);
+    expect(answer.shortAnswer).toContain("does not supply the underlying handbook rule");
+    expect(answer.shortAnswer).not.toMatch(/ELM\s+\d|Step\s+4\s+(?:says|provides)/i);
+    expect(routeWithFixtureCaches("What does the JCIM say in Article 18?").answer.citations
+      .filter((c) => c.sourceId === JCIM_SOURCE_ID)).toEqual([]);
+  });
+});
+
+describe("synthetic cache rejection with real SHA256", () => {
+  it("rejects synthetic bytes whose real hash differs from the admission pin", () => {
+    expect(createHash("sha256").update(pdf).digest("hex")).not.toBe(JCIM_SHA256);
+    expect(validateJcimCache(cache, pdf)).toBe(false);
+  });
+  it("rejects wrong-length bytes", () => {
+    expect(pdf.subarray(1).length).not.toBe(JCIM_BYTES);
+    expect(validateJcimCache(cache, pdf.subarray(1))).toBe(false);
+  });
+  it("rejects tampered response hash metadata", () => {
+    expect(validateJcimCache({ ...cache, response: { ...cache.response, sha256: "0".repeat(64) } }, pdf)).toBe(false);
+  });
+  it("rejects normalized metadata that differs from the real stableJson section hash", () => {
+    const actual = createHash("sha256").update(syntheticJcimStableJson(cache.normalized.sections)).digest("hex");
+    const tampered = structuredClone(cache);
+    tampered.normalized.sha256 = "0".repeat(64);
+    expect(tampered.normalized.sha256).not.toBe(actual);
+    expect(validateJcimCache(tampered, pdf)).toBe(false);
+  });
+  it("reports missing, drifted and unsafe temporary cache directories", () => {
+    const root = mkdtempSync(path.join(realpathSync(tmpdir()), "kia-real-hash-rejection-"));
+    const cwdSpy = vi.spyOn(process, "cwd").mockReturnValue(root);
+    try {
+      expect(readJcimCache()).toEqual({ status: "unavailable", reason: "cache_missing" });
+      const directory = path.join(root, ".kia-public-data");
+      mkdirSync(directory, { mode: 0o700 });
+      chmodSync(directory, 0o700);
+      for (const [name, contents] of [[`${JCIM_SOURCE_ID}.json`, JSON.stringify(cache)], [`${JCIM_SOURCE_ID}.pdf`, pdf]] as const) {
+        const target = path.join(directory, name);
+        writeFileSync(target, contents, { mode: 0o600 });
+        chmodSync(target, 0o600);
+      }
+      expect(readJcimCache()).toEqual({ status: "unavailable", reason: "drift_detected" });
+      chmodSync(directory, 0o755);
+      expect(readJcimCache()).toEqual({ status: "unavailable", reason: "cache_unsafe" });
+    } finally {
+      cwdSpy.mockRestore();
+      rmSync(root, { recursive: true, force: true });
+    }
   });
 });
