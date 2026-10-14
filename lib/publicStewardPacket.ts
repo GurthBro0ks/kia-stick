@@ -34,6 +34,7 @@ export const PUBLIC_STEWARD_PACKET_PRIVATE_WARNING =
 // Presentation-only compatibility mapping. Stored limitations and identity inputs stay verbatim.
 export function publicStewardPacketLimitationText(text: string): string {
   return text === "This CBA-only pilot does not verify an LMOU, JCIM interpretation, handbook rule, arbitration precedent, management policy, or local practice."
+    || text === "This CBA-only pilot does not verify an LMOU, JCIM interpretation, handbook rule, arbitration precedent, management policy, local practice, or worked-off-assignment theory beyond the cited Article 8 language."
     ? "This public pilot verifies only the admitted public sources and citations cited here. It does not determine whether a JCIM interpretation, LMOU, handbook rule, arbitration precedent, management policy, or local practice applies to a particular case."
     : text;
 }

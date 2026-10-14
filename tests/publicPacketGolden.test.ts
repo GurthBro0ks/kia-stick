@@ -9,11 +9,19 @@ import { createRuntimeVersion } from '@/lib/version';
 import { createSavedStewardPacketRecord, migrateSavedAnswers } from '@/lib/savedAnswers';
 const legacyLimitation = 'This CBA-only pilot does not verify an LMOU, JCIM interpretation, handbook rule, arbitration precedent, management policy, or local practice.';
 const displayedLimitation = 'This public pilot verifies only the admitted public sources and citations cited here. It does not determine whether a JCIM interpretation, LMOU, handbook rule, arbitration precedent, management policy, or local practice applies to a particular case.';
-const originalOutput = (value: string) => value.replaceAll(displayedLimitation, legacyLimitation);
+const overtimeLegacyLimitation = 'This CBA-only pilot does not verify an LMOU, JCIM interpretation, handbook rule, arbitration precedent, management policy, local practice, or worked-off-assignment theory beyond the cited Article 8 language.';
+// Reverse the authorized presentation replacements in stored-limitation order (both legacy literals share one display wording).
+let storedLegacyOrder: string[] = [];
+const originalOutput = (value: string) => {
+ let index = 0;
+ return value.replaceAll(displayedLimitation, () => storedLegacyOrder[index++] ?? legacyLimitation);
+};
 const sha = (value: string) => createHash('sha256').update(value).digest('hex');
 it('golden', () => {
  const source=createCbaSourceFixtureCache();
  const packet=buildPublicStewardPacket({source,topicIds:['annual_leave','overtime'],runtimeVersion:createRuntimeVersion({buildDate:'20260813',gitSha:'printqa1'}),createdAt:'2026-08-13T17:00:00.000Z'})!;
+ storedLegacyOrder=packet.limitations.map((item)=>item.text).filter((text)=>text===legacyLimitation||text===overtimeLegacyLimitation);
+ expect(storedLegacyOrder).toEqual([legacyLimitation, overtimeLegacyLimitation]);
  const values={serialized:sha(JSON.stringify(packet)),contentIdentity:packet.contentIdentity,text:sha(originalOutput(publicStewardPacketToText(packet))),markdown:sha(originalOutput(publicStewardPacketToMarkdown(packet))),view:sha(originalOutput(renderToStaticMarkup(React.createElement(PublicStewardPacketView,{packet,source,onCitationNavigate:()=>undefined,onSave:()=>undefined}))))};
  expect(publicStewardPacketToText(packet)).toContain(displayedLimitation);
  expect(publicStewardPacketToMarkdown(packet)).toContain(displayedLimitation);

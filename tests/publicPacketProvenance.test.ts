@@ -1,4 +1,5 @@
 import React from "react";
+import { readFileSync } from "node:fs";
 import { renderToStaticMarkup } from "react-dom/server";
 import { describe, expect, it } from "vitest";
 import { PublicStewardPacketView, SavedAnswersPanel } from "@/components/KiaStickApp";
@@ -18,6 +19,7 @@ import { citationForPublicParagraph } from "@/lib/publicSourceAnswer";
 import { cbaCitationIdentityKey, supplementalCitationIdentityKey } from "@/lib/sourceModel";
 import { createSavedStewardPacketRecord, migrateSavedAnswers } from "@/lib/savedAnswers";
 import { createRuntimeVersion } from "@/lib/version";
+import { JCIM_SOURCE_ID, jcimPacketSourceVerifier, jcimTopicCitation, type JcimCache } from "@/lib/jcimSource";
 import { createCbaSourceFixtureCache } from "@/tests/fixtures/cbaSourceFixture";
 import { createPublicSourceFixtureCache } from "@/tests/fixtures/publicSourceFixture";
 
@@ -132,7 +134,44 @@ describe("generic public packet provenance", () => {
 
 describe("output-only legacy limitation compatibility", () => {
   const oldText = 'This CBA-only pilot does not verify an LMOU, JCIM interpretation, handbook rule, arbitration precedent, management policy, or local practice.';
+  const overtimeText = 'This CBA-only pilot does not verify an LMOU, JCIM interpretation, handbook rule, arbitration precedent, management policy, local practice, or worked-off-assignment theory beyond the cited Article 8 language.';
   const newText = 'This public pilot verifies only the admitted public sources and citations cited here. It does not determine whether a JCIM interpretation, LMOU, handbook rule, arbitration precedent, management policy, or local practice applies to a particular case.';
+
+  it("maps only the exact Overtime legacy limitation", () => {
+    expect(publicStewardPacketLimitationText(overtimeText)).toBe(newText);
+    for (const adjacent of [` ${overtimeText}`, `${overtimeText} `, overtimeText.replace("CBA-only", "CBA")]) {
+      expect(publicStewardPacketLimitationText(adjacent)).toBe(adjacent);
+    }
+  });
+
+  it.each([false, true])("renders the Overtime legacy limitation without changing storage or identity (mixed JCIM packet: %s)", (mixed) => {
+    const jcim = JSON.parse(readFileSync(`.kia-public-data/${JCIM_SOURCE_ID}.json`, "utf8")) as JcimCache;
+    const citations = mixed ? jcimTopicCitation(jcim, "discipline_just_cause") : [];
+    const sources = mixed ? [jcimPacketSourceVerifier(jcim)] : [];
+    const packet = buildPublicStewardPacket({ source: cba,
+      topicIds: mixed ? ["overtime", "discipline_just_cause"] : ["overtime"],
+      runtimeVersion: version, createdAt: base().createdAt,
+      supplementalCitations: citations, supplementalSourceVerifiers: sources })!;
+    expect(packet).not.toBeNull();
+    expect(packet.limitations.some((item) => item.text === overtimeText)).toBe(true);
+    if (mixed) {
+      expect(citations.length).toBeGreaterThan(0);
+      expect(packet.supplementalCitations).toEqual(citations);
+    }
+    const stored = JSON.stringify(packet);
+    const identity = packet.contentIdentity;
+    for (const render of [publicStewardPacketToText, publicStewardPacketToMarkdown,
+      () => html(packet, sources)]) {
+      const output = render(packet);
+      expect(output).toContain(newText);
+      expect(output).not.toContain(overtimeText);
+      expect(output).not.toContain(oldText);
+      if (mixed) expect(output).toContain(JCIM_SOURCE_ID);
+      expect(packet.limitations.some((item) => item.text === overtimeText)).toBe(true);
+      expect(packet.contentIdentity).toBe(identity);
+      expect(JSON.stringify(packet)).toBe(stored);
+    }
+  });
 
   it("R4-R8 maps only exact legacy text in all three outputs without mutating the stored packet", () => {
     const packet = base();
