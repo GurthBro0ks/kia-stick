@@ -1,5 +1,4 @@
 import React from "react";
-import { readFileSync } from "node:fs";
 import { renderToStaticMarkup } from "react-dom/server";
 import { describe, expect, it } from "vitest";
 import { PublicStewardPacketView, SavedAnswersPanel } from "@/components/KiaStickApp";
@@ -19,7 +18,8 @@ import { citationForPublicParagraph } from "@/lib/publicSourceAnswer";
 import { cbaCitationIdentityKey, supplementalCitationIdentityKey } from "@/lib/sourceModel";
 import { createSavedStewardPacketRecord, migrateSavedAnswers } from "@/lib/savedAnswers";
 import { createRuntimeVersion } from "@/lib/version";
-import { JCIM_SOURCE_ID, jcimPacketSourceVerifier, jcimTopicCitation, type JcimCache } from "@/lib/jcimSource";
+import { JCIM_SOURCE_ID, jcimPacketSourceVerifier, jcimTopicCitation } from "@/lib/jcimSource";
+import { createJcimSyntheticFixtureCache } from "@/tests/fixtures/jcimSyntheticFixture";
 import { createCbaSourceFixtureCache } from "@/tests/fixtures/cbaSourceFixture";
 import { createPublicSourceFixtureCache } from "@/tests/fixtures/publicSourceFixture";
 
@@ -145,7 +145,7 @@ describe("output-only legacy limitation compatibility", () => {
   });
 
   it.each([false, true])("renders the Overtime legacy limitation without changing storage or identity (mixed JCIM packet: %s)", (mixed) => {
-    const jcim = JSON.parse(readFileSync(`.kia-public-data/${JCIM_SOURCE_ID}.json`, "utf8")) as JcimCache;
+    const jcim = createJcimSyntheticFixtureCache();
     const citations = mixed ? jcimTopicCitation(jcim, "discipline_just_cause") : [];
     const sources = mixed ? [jcimPacketSourceVerifier(jcim)] : [];
     const packet = buildPublicStewardPacket({ source: cba,
