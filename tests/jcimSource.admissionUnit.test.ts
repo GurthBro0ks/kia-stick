@@ -96,10 +96,10 @@ describe("supplementary isolated length guards", () => {
     expect(validateJcimCache(cache, pdf)).toBe(true);
     return bytes;
   }
-  it("[VALIDATE-LENGTH/B isolated, mocked hash] rejects solely on length", () => {
+  it("[unit-mocked VALIDATE length guard isolated] rejects solely on length", () => {
     expect(validateJcimCache(cache, shortBytes())).toBe(false);
   });
-  it("[LIVE-LENGTH/B isolated, mocked hash] rejects solely on length", async () => {
+  it("[unit-mocked LIVE length guard isolated] rejects solely on length", async () => {
     const { fetcher, readBody } = createJcimLiveIdentityFetcher(shortBytes());
     expect(await verifyJcimLiveIdentity(fetcher)).toBe(false);
     expect(readBody).toHaveBeenCalledOnce();

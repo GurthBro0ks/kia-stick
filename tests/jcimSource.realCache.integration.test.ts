@@ -1,9 +1,9 @@
 import { createHash } from "node:crypto";
 import { createJcimLiveIdentityFetcher } from "@/tests/fixtures/jcimLiveIdentityFixture";
 import path from "node:path";
-import { realPublicDataAvailable, realPublicDataDirectory, realPublicDataMissingPrerequisite } from "@/tests/fixtures/realPublicDataPrerequisite";
+import { realPublicDataAvailable, realPublicDataDirectory, realPublicDataMissingPrerequisite, realPublicDataSuppliedButUnusable, realPublicDataRequiredFiles } from "@/tests/fixtures/realPublicDataPrerequisite";
 import { beforeAll, describe, expect, it, vi } from "vitest";
-import { readFileSync } from "node:fs";
+import { lstatSync, readFileSync } from "node:fs";
 import { buildCbaAnswer } from "@/lib/cbaAnswer";
 import { CBA_SOURCE_ID, type CbaSourceCache } from "@/lib/cbaSource";
 import { verifyCbaCitation } from "@/lib/cbaCitationIntegrity";
@@ -23,7 +23,13 @@ import {
 } from "@/lib/jcimSource";
 import { readJcimCache, validateJcimCache, verifyJcimLiveIdentity } from "@/lib/jcimSourceServer";
 
-if (!realPublicDataAvailable) console.info(`NOT_RUN: JCIM/CBA real-cache integration: ${realPublicDataMissingPrerequisite}`);
+if (realPublicDataSuppliedButUnusable) {
+  it("opt-in prerequisite: KIA_REAL_PUBLIC_DATA_DIR supplied but unusable", () => {
+    throw new Error(realPublicDataMissingPrerequisite);
+  });
+}
+
+if (!realPublicDataDirectory) console.info(`NOT_RUN: JCIM/CBA real-cache integration: ${realPublicDataMissingPrerequisite}`);
 
 let cache: JcimCache;
 let pdf: Buffer<ArrayBuffer>;
@@ -32,7 +38,25 @@ let realCba: CbaSourceCache;
 const version = createRuntimeVersion({ buildDate: "20261003", gitSha: "jcimqa01" });
 
 describe.runIf(realPublicDataAvailable)("JCIM/CBA real-cache integration (opt-in; requires KIA_REAL_PUBLIC_DATA_DIR)", () => {
+  function assertSafePermissions() {
+    const uid = process.getuid?.();
+    if (uid === undefined) throw new Error("Cannot verify supplied cache ownership: current uid unavailable");
+    for (const [target, mode, directory] of [
+      [realPublicDataDirectory!, 0o700, true],
+      ...realPublicDataRequiredFiles.map((name) => [path.join(realPublicDataDirectory!, name), 0o600, false] as const),
+    ] as const) {
+      const stat = lstatSync(target);
+      if (stat.isSymbolicLink() || (directory ? !stat.isDirectory() : !stat.isFile()) ||
+          (stat.mode & 0o7777) !== mode || stat.uid !== uid) {
+        throw new Error(`Unsafe supplied cache: ${target} must be a ${directory ? "directory" : "regular file"} with mode ${mode.toString(8)} owned by current uid ${uid}; symlinks are forbidden`);
+      }
+    }
+  }
+
+  it("supplied cache has safe permissions (dir 0700, files 0600, owned by current uid)", assertSafePermissions);
+
   beforeAll(() => {
+    assertSafePermissions();
     cache = JSON.parse(readFileSync(path.join(realPublicDataDirectory!, `${JCIM_SOURCE_ID}.json`), "utf8")) as JcimCache;
     pdf = readFileSync(path.join(realPublicDataDirectory!, `${JCIM_SOURCE_ID}.pdf`));
     realCba = JSON.parse(readFileSync(path.join(realPublicDataDirectory!, `${CBA_SOURCE_ID}.json`), "utf8")) as CbaSourceCache;
@@ -45,7 +69,7 @@ describe("PDF byte guards on real bytes", () => {
     // Establish that every structural and normalized guard passes unchanged.
     expect(validateJcimCache(cache, pdf)).toBe(true);
   });
-  it("[VALIDATE-TAMPER/C] rejects exactly one flipped byte locally and live", async () => {
+  it("[real-bytes VALIDATE+LIVE hash guard, one-byte tamper] rejects exactly one flipped byte locally and live", async () => {
     const tampered = Buffer.from(pdf);
     tampered[0] ^= 1;
     expect(tampered.length).toBe(JCIM_BYTES);
@@ -56,20 +80,21 @@ describe("PDF byte guards on real bytes", () => {
     expect(await verifyJcimLiveIdentity(createJcimLiveIdentityFetcher(pdf).fetcher)).toBe(true);
     expect(await verifyJcimLiveIdentity(createJcimLiveIdentityFetcher(tampered).fetcher)).toBe(false);
   });
-  it("[VALIDATE-HASH/A] rejects reversed content at the pinned length", () => {
+  it("[real-bytes VALIDATE hash guard] rejects reversed content at the pinned length", () => {
     const reversed = Buffer.from(pdf).reverse();
     expect(reversed.length).toBe(JCIM_BYTES);
     expect(reversed.equals(pdf)).toBe(false);
     expect(realSha256(reversed)).not.toBe(JCIM_SHA256);
     expect(validateJcimCache(cache, reversed)).toBe(false);
   });
-  it("[VALIDATE-LENGTH/B] rejects an appended byte locally and live", async () => {
+  it("[real-bytes appended byte: VALIDATE rejects at hash guard, LIVE at length guard; length not isolated]", async () => {
     const extended = Buffer.concat([pdf, Buffer.from([0])]);
     expect(extended.length).toBe(JCIM_BYTES + 1);
     expect(extended.subarray(0, JCIM_BYTES).equals(pdf)).toBe(true);
     expect(realSha256(extended)).not.toBe(JCIM_SHA256);
     // Local hash-first validation rejects before length; the supplementary
-    // mocked-hash test isolates that length guard. Live checks length first.
+    // mocked-hash tests isolate length guards. Live short-circuits at length,
+    // but its hash would also reject, so this does not isolate live length.
     expect(validateJcimCache(cache, extended)).toBe(false);
     expect(await verifyJcimLiveIdentity(createJcimLiveIdentityFetcher(extended).fetcher)).toBe(false);
   });

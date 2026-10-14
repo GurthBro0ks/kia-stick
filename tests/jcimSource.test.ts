@@ -362,7 +362,7 @@ describe("synthetic cache rejection with real SHA256", () => {
 
 describe("PDF byte guards (real crypto)", () => {
   const realSha256 = (bytes: Uint8Array) => createHash("sha256").update(bytes).digest("hex");
-  it("[LIVE-HASH/A] rejects different content at the pinned length", async () => {
+  it("[real-crypto LIVE hash guard] rejects synthetic bytes at the pinned length (mutation-isolated: killed when live hash guard removed)", async () => {
     const bytes = createSyntheticJcimPdfBytes();
     expect(bytes.length).toBe(JCIM_BYTES);
     expect(realSha256(bytes)).not.toBe(JCIM_SHA256);
@@ -370,16 +370,19 @@ describe("PDF byte guards (real crypto)", () => {
     expect(await verifyJcimLiveIdentity(fetcher)).toBe(false);
     expect(readBody).toHaveBeenCalledOnce();
   });
-  it("[LIVE-LENGTH/B] rejects a body one byte short despite pinned headers", async () => {
+  it("[real-crypto LIVE length guard reached, not isolated] rejects a short body; hash guard would also reject", async () => {
     const bytes = Buffer.from(pdf.subarray(0, JCIM_BYTES - 1));
     expect(bytes.length).toBe(JCIM_BYTES - 1);
-    // Live verification checks length first; hash is unreachable for this body.
+    // Live verification short-circuits on length; its hash check is skipped.
+    // Removing the length guard still rejects because this hash differs.
     expect(realSha256(bytes)).not.toBe(JCIM_SHA256);
     const { fetcher, readBody } = createJcimLiveIdentityFetcher(bytes);
     expect(await verifyJcimLiveIdentity(fetcher)).toBe(false);
     expect(readBody).toHaveBeenCalledOnce();
   });
-  it("[LIVE-TAMPER/C] rejects a single flipped byte at the pinned length", async () => {
+  it("[real-crypto LIVE hash guard, one-byte tamper; overlaps LIVE hash test] rejects a single flipped byte at the pinned length", async () => {
+    // Duplicates LIVE hash guard coverage with a one-byte delta; kept as an
+    // explicit tamper example, adds no extra guard isolation.
     const baseline = createSyntheticJcimPdfBytes();
     const bytes = Buffer.from(baseline);
     bytes[0] ^= 1;
@@ -392,8 +395,8 @@ describe("PDF byte guards (real crypto)", () => {
     expect(await verifyJcimLiveIdentity(fetcher)).toBe(false);
     expect(readBody).toHaveBeenCalledOnce();
   });
-  it("[LIVE-CONTENT-TYPE sanity] rejects before reading bytes", async () => {
-    // Real pinned bytes are unavailable here; the A/C spies prove the valid
+  it("[real-crypto LIVE header guard] [LIVE-CONTENT-TYPE sanity] rejects before reading bytes", async () => {
+    // Real pinned bytes are unavailable here; the hash/tamper spies prove the valid
     // stub reaches byte guards, while this header sanity check stops earlier.
     const { fetcher, readBody } = createJcimLiveIdentityFetcher(pdf, "text/plain");
     expect(await verifyJcimLiveIdentity(fetcher)).toBe(false);
