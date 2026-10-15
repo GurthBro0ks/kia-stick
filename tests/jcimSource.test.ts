@@ -1,7 +1,7 @@
 import { createJcimLiveIdentityFetcher } from "@/tests/fixtures/jcimLiveIdentityFixture";
 import { createHash } from "node:crypto";
 import { describe, expect, it, vi } from "vitest";
-import { chmodSync, mkdirSync, mkdtempSync, realpathSync, rmSync, writeFileSync } from "node:fs";
+import { chmodSync, mkdirSync, mkdtempSync, readFileSync, realpathSync, rmSync, writeFileSync } from "node:fs";
 import { tmpdir } from "node:os";
 import path from "node:path";
 import { buildCbaAnswer } from "@/lib/cbaAnswer";
@@ -423,21 +423,18 @@ describe("PDF identity seam (unmocked M1–M3 isolation + production hard gate)"
     expect(matchesJcimPdfIdentity(pdf, { sha256: realSha256(pdf), byteCount: -1 })).toBe(false);
   });
 
-  it("hard gate: NODE_ENV cannot disable production pin enforcement", async () => {
-    const previous = process.env.NODE_ENV;
-    try {
-      process.env.NODE_ENV = "test";
-      expect(validateJcimCache(cache, pdf)).toBe(false);
-      expect(matchesJcimPdfIdentity(pdf)).toBe(false);
-      const { fetcher } = createJcimLiveIdentityFetcher(pdf);
-      expect(await verifyJcimLiveIdentity(fetcher)).toBe(false);
-      process.env.NODE_ENV = "production";
-      expect(validateJcimCache(cache, pdf)).toBe(false);
-      expect(await verifyJcimLiveIdentity(fetcher)).toBe(false);
-    } finally {
-      if (previous === undefined) delete process.env.NODE_ENV;
-      else process.env.NODE_ENV = previous;
-    }
+  it("hard gate: no NODE_ENV/test bypass; production defaults still enforce both pins", async () => {
+    const source = readFileSync("lib/jcimSourceServer.ts", "utf8");
+    expect(source).not.toMatch(/NODE_ENV/);
+    expect(source).not.toMatch(/process\.env/);
+    expect(source).toContain("JCIM_PDF_IDENTITY_PINS");
+    expect(source).toContain("matchesJcimPdfIdentity");
+    // Defaults reject synthetic bytes (wrong hash at production length).
+    expect(matchesJcimPdfIdentity(pdf)).toBe(false);
+    expect(validateJcimCache(cache, pdf)).toBe(false);
+    const { fetcher, readBody } = createJcimLiveIdentityFetcher(pdf);
+    expect(await verifyJcimLiveIdentity(fetcher)).toBe(false);
+    expect(readBody).toHaveBeenCalledOnce();
   });
 
   it("[seam M1 VALIDATE_HASH isolated] rejects wrong hash at matching length; survives only if hash guard remains", () => {
