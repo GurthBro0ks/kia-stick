@@ -1,59 +1,185 @@
 {
   "schema": "kia-stick-current-accepted-pushed-state.v1",
-  "phase": "KIA-Stick-post-Bundle-3-source-citation-integrity-hardening-implementation",
+  "phase": "KIA-Stick-post-hermetic-2-merge-accepted-state",
   "checkpoint_kind": "capability",
-  "checkpoint": "Source and Citation Integrity Hardening",
-  "checkpoint_label": "Source and Citation Integrity Hardening at 9b0fda9",
-  "accepted_bundle": "KIA-Stick-post-Bundle-3-source-citation-integrity-hardening-implementation",
-  "accepted_pushed_commit": "9b0fda9f562fb7e632e571e6299eb2dcc77b7b1e",
-  "accepted_pushed_short_commit": "9b0fda9",
-  "repository_recording_commit": "ca091d37fd8ff5c8f63fad084b81e5f59a749797",
-  "repository_recording_short_commit": "ca091d3",
-  "accepted_pushed_proof_dir": "/home/slimy/.local/state/kia-stick/proofs/proof_kia_stick_source_citation_integrity_omarchy_closeout_push_20260909T154604Z/push_blocker_resolution_20260910T143632Z",
-  "local_implementation_proof_dir": "/home/slimy/.local/state/kia-stick/proofs/proof_kia_stick_source_citation_integrity_accepted_state_promotion_operator_qa_pass_recording_20260911T105246Z",
-  "local_bundle_operator_qa_pass_proof_dir": "/home/slimy/.local/state/kia-stick/proofs/proof_kia_stick_source_citation_integrity_accepted_state_promotion_operator_qa_pass_recording_20260911T105246Z",
-  "operator_qa_pass_proof_dir": "/home/slimy/.local/state/kia-stick/proofs/proof_kia_stick_source_citation_integrity_omarchy_operator_qa_pass_recording_20260909T152344Z",
-  "accepted_pushed_phase": "KIA-Stick-source-citation-integrity-Omarchy-closeout-and-push",
+  "checkpoint": "Hermetic JCIM/CBA Fixtures and Opt-In Real-Cache Gates",
+  "checkpoint_label": "Hermetic JCIM/CBA Fixtures and Opt-In Real-Cache Gates at 20562b3",
+  "accepted_bundle": "KIA-Stick-hermetic-2-owner-accepted-capability",
+  "accepted_pushed_commit": "20562b3a0112f6430ac1707ec8a9f7681d4af5f7",
+  "accepted_pushed_short_commit": "20562b3",
+  "repository_recording_commit": "8b438386f2ad1bba6166a95b326c9305b39f9c2f",
+  "repository_recording_short_commit": "8b43838",
+  "accepted_pushed_proof_dir": "/workspace/galaxy-prep/kia-stick/evidence/KIA-hermetic-6-build.md",
+  "local_implementation_proof_dir": "/workspace/galaxy-prep/kia-stick/evidence/KIA-hermetic-2-pr-packet.md",
+  "local_bundle_operator_qa_pass_proof_dir": "/workspace/galaxy-prep/kia-stick/evidence/KIA-hermetic-2-pr-packet.md",
+  "operator_qa_pass_proof_dir": "/workspace/galaxy-prep/kia-stick/evidence/KIA-hermetic-6-build.md",
+  "accepted_pushed_phase": "KIA-Stick-hermetic-2-merge-closeout-and-push",
   "accepted_validation": "PASS",
   "accepted_manual_qa": "PASS",
   "accepted_pushed": true,
-  "accepted_equality": "capability commit 9b0fda9f562fb7e632e571e6299eb2dcc77b7b1e is contained in HEAD == origin/main == remote main == ca091d37fd8ff5c8f63fad084b81e5f59a749797 at the source and citation integrity Omarchy closeout push",
-  "latest_pushed_closeout_commit": "ca091d37fd8ff5c8f63fad084b81e5f59a749797",
-  "latest_pushed_closeout_short_commit": "ca091d3",
-  "latest_pushed_closeout_phase": "KIA-Stick-source-citation-integrity-Omarchy-closeout-and-push",
-  "latest_pushed_closeout_proof_dir": "/home/slimy/.local/state/kia-stick/proofs/proof_kia_stick_source_citation_integrity_omarchy_closeout_push_20260909T154604Z/push_blocker_resolution_20260910T143632Z",
-  "latest_pushed_closeout_status": "source and citation integrity hardening; validation PASS; manual QA PASS; pushed yes; repository equality at ca091d37fd8ff5c8f63fad084b81e5f59a749797",
-  "local_bundle": "Source and Citation Integrity Post-Push Accepted-State Promotion",
-  "local_bundle_phase": "KIA-Stick-source-citation-integrity-post-push-accepted-state-promotion",
+  "accepted_equality": "capability commit 20562b3a0112f6430ac1707ec8a9f7681d4af5f7 is contained in HEAD == origin/main == remote main == 8b438386f2ad1bba6166a95b326c9305b39f9c2f at the hermetic-2 merge to main",
+  "latest_pushed_closeout_commit": "8b438386f2ad1bba6166a95b326c9305b39f9c2f",
+  "latest_pushed_closeout_short_commit": "8b43838",
+  "latest_pushed_closeout_phase": "KIA-Stick-hermetic-2-merge-closeout-and-push",
+  "latest_pushed_closeout_proof_dir": "/workspace/galaxy-prep/kia-stick/evidence/KIA-hermetic-2-pr-packet.md",
+  "latest_pushed_closeout_status": "hermetic-2 owner-accepted capability merged to main; validation PASS; manual QA PASS; pushed yes; repository equality at 8b438386f2ad1bba6166a95b326c9305b39f9c2f",
+  "local_bundle": "Hermetic-2 Post-Merge Accepted-State Metadata Refresh",
+  "local_bundle_phase": "KIA-Stick-hermetic-2-post-merge-accepted-state-metadata-refresh",
   "local_bundle_validation": "PASS",
   "local_bundle_pushed": false,
   "local_bundle_manual_qa": "PASS",
-  "local_bundle_status": "source and citation integrity post-push accepted-state promotion; validation PASS; pushed no; manual QA PASS",
+  "local_bundle_status": "hermetic-2 post-merge accepted-state metadata refresh; validation PASS; pushed no; manual QA PASS",
   "historical_prior_checkpoints": [
-    { "checkpoint": "Export and Print Copy Helper False-Positive and Runtime Truth Repair", "commit": "76653608353ab0bb59210aa6fb241346efeb82a9", "short_commit": "7665360", "status": "historical_only_not_current" },
-    { "checkpoint": "Accessibility and Saved-State Resilience QA Failure Repair", "commit": "996032370846952e59756caa23cde2eed9a1d458", "short_commit": "9960323", "status": "historical_only_not_current" },
-    { "checkpoint": "Public Steward Workflow Platform Bundle 3 Core Repairs and Runtime Truth/Favicon Fix", "commit": "e8a4499c6bac349566d0f9eeb66d15d497bcd602", "short_commit": "e8a4499", "status": "historical_only_not_current" },
-    { "checkpoint": "Public Steward Workflow Platform Bundle 3 and Multi-Topic Ambiguity Fail-Closed Repair", "commit": "96be9069e7694af237823b0da3a30919be60546c", "short_commit": "96be906", "status": "historical_only_not_current" },
-    { "checkpoint": "Public Steward Workflow Platform Bundle 2 and Employee Claims Copy Repair", "commit": "3baedc9c327fbb7a528706ec442a63f88172e425", "short_commit": "3baedc9", "status": "historical_only_not_current" },
-    { "checkpoint": "Public Steward Workflow Platform Bundle 1 and Discipline Copy Repair", "commit": "ea0ce8de9cd6b85b56528fabc9e8ca7f8bf43a52", "short_commit": "ea0ce8d", "status": "historical_only_not_current" },
-    { "checkpoint": "Public CBA Annual-Leave Cited Grievance Outline and Automatic Routing Repair", "commit": "9a66d37148f37d2dee16bcbe6b9a12aa4ba9946a", "short_commit": "9a66d37", "status": "historical_only_not_current" },
-    { "checkpoint": "Public Settings User Summary and Operator Diagnostics Split", "commit": "76c73122a87cb23b5b8595a002d54d7a127fbba8", "short_commit": "76c7312", "status": "historical_only_not_current" },
-    { "checkpoint": "CBA Citation Durability Source Instance and Resync Drift Guard", "commit": "1e0e96b0e0cd95d1e62af1eb76cfd5b57c43f4e8", "short_commit": "1e0e96b", "status": "historical_only_not_current" },
-    { "checkpoint": "Public Truth and Generic CBA Routing Repair", "commit": "571436a59a7d09756b401912906377c6257680af", "short_commit": "571436a", "status": "historical_only_not_current" },
-    { "checkpoint": "Public Data Pilot 1B", "commit": "006da8dc25638cdbe5ebd43b04b5b5c506056ab9", "short_commit": "006da8d", "status": "historical_only_not_current" },
-    { "checkpoint": "Public Data Pilot 1A", "commit": "04774874c5a20b2b38d435fb66ba2b1cfb9c9e29", "short_commit": "0477487", "status": "historical_only_not_current" },
-    { "checkpoint": "v1.1.77", "commit": "80e53c74ea86c2e83c797011728efc138b800f0e", "short_commit": "80e53c7", "status": "historical_only_not_current" },
-    { "checkpoint": "v1.1.72", "commit": "ab1878e4c681c8f658e8a5bf6bd36f3ad4423fea", "short_commit": "ab1878e", "status": "historical_only_not_current" },
-    { "checkpoint": "v1.1.67", "commit": "0cb007d38c6e17d316cc25640f0fb28b2b934c55", "short_commit": "0cb007d", "status": "historical_only_not_current" },
-    { "checkpoint": "v1.1.62", "commit": "84b5dacb2bf9453040e382b44843fe775ed5b91d", "short_commit": "84b5dac", "status": "historical_only_not_current" },
-    { "checkpoint": "v1.1.57", "commit": "65f88659b238ae0cfacd51f0dab71844d885a76c", "short_commit": "65f8865", "status": "historical_only_not_current" },
-    { "checkpoint": "v1.1.52", "commit": "857ba0e0180b2bca27823367c871429ece0c5214", "short_commit": "857ba0e", "status": "historical_only_not_current" },
-    { "checkpoint": "v1.1.47", "commit": "b8fb8341b19980c33d7163a6993cc0e8ba520641", "short_commit": "b8fb834", "status": "historical_only_not_current" },
-    { "checkpoint": "v1.1.42", "commit": "0286f03ffe8055395cc4d02ee83ddc0deb6143f1", "short_commit": "0286f03", "status": "historical_only_not_current" },
-    { "checkpoint": "v1.1.37", "commit": "ac23ed94adec34bd32062018bf20b0de616da395", "short_commit": "ac23ed9", "status": "historical_only_not_current" },
-    { "checkpoint": "v1.1.32", "commit": "05cb5592758fde1dddaf10e2582e7d6222d43df5", "short_commit": "05cb559", "status": "historical_only_not_current" },
-    { "checkpoint": "v1.1.27", "commit": "a215dd4ac4687ea878263d38ea9d4bdbaf444a71", "short_commit": "a215dd4", "status": "historical_only_not_current" },
-    { "checkpoint": "v1.1.22", "commit": "0051a1503db5d5ecf062de1595129c5eac9114d6", "short_commit": "0051a15", "status": "historical_only_not_current" },
+    {
+      "checkpoint": "Source and Citation Integrity Hardening",
+      "commit": "9b0fda9f562fb7e632e571e6299eb2dcc77b7b1e",
+      "short_commit": "9b0fda9",
+      "status": "historical_only_not_current"
+    },
+    {
+      "checkpoint": "Export and Print Copy Helper False-Positive and Runtime Truth Repair",
+      "commit": "76653608353ab0bb59210aa6fb241346efeb82a9",
+      "short_commit": "7665360",
+      "status": "historical_only_not_current"
+    },
+    {
+      "checkpoint": "Accessibility and Saved-State Resilience QA Failure Repair",
+      "commit": "996032370846952e59756caa23cde2eed9a1d458",
+      "short_commit": "9960323",
+      "status": "historical_only_not_current"
+    },
+    {
+      "checkpoint": "Public Steward Workflow Platform Bundle 3 Core Repairs and Runtime Truth/Favicon Fix",
+      "commit": "e8a4499c6bac349566d0f9eeb66d15d497bcd602",
+      "short_commit": "e8a4499",
+      "status": "historical_only_not_current"
+    },
+    {
+      "checkpoint": "Public Steward Workflow Platform Bundle 3 and Multi-Topic Ambiguity Fail-Closed Repair",
+      "commit": "96be9069e7694af237823b0da3a30919be60546c",
+      "short_commit": "96be906",
+      "status": "historical_only_not_current"
+    },
+    {
+      "checkpoint": "Public Steward Workflow Platform Bundle 2 and Employee Claims Copy Repair",
+      "commit": "3baedc9c327fbb7a528706ec442a63f88172e425",
+      "short_commit": "3baedc9",
+      "status": "historical_only_not_current"
+    },
+    {
+      "checkpoint": "Public Steward Workflow Platform Bundle 1 and Discipline Copy Repair",
+      "commit": "ea0ce8de9cd6b85b56528fabc9e8ca7f8bf43a52",
+      "short_commit": "ea0ce8d",
+      "status": "historical_only_not_current"
+    },
+    {
+      "checkpoint": "Public CBA Annual-Leave Cited Grievance Outline and Automatic Routing Repair",
+      "commit": "9a66d37148f37d2dee16bcbe6b9a12aa4ba9946a",
+      "short_commit": "9a66d37",
+      "status": "historical_only_not_current"
+    },
+    {
+      "checkpoint": "Public Settings User Summary and Operator Diagnostics Split",
+      "commit": "76c73122a87cb23b5b8595a002d54d7a127fbba8",
+      "short_commit": "76c7312",
+      "status": "historical_only_not_current"
+    },
+    {
+      "checkpoint": "CBA Citation Durability Source Instance and Resync Drift Guard",
+      "commit": "1e0e96b0e0cd95d1e62af1eb76cfd5b57c43f4e8",
+      "short_commit": "1e0e96b",
+      "status": "historical_only_not_current"
+    },
+    {
+      "checkpoint": "Public Truth and Generic CBA Routing Repair",
+      "commit": "571436a59a7d09756b401912906377c6257680af",
+      "short_commit": "571436a",
+      "status": "historical_only_not_current"
+    },
+    {
+      "checkpoint": "Public Data Pilot 1B",
+      "commit": "006da8dc25638cdbe5ebd43b04b5b5c506056ab9",
+      "short_commit": "006da8d",
+      "status": "historical_only_not_current"
+    },
+    {
+      "checkpoint": "Public Data Pilot 1A",
+      "commit": "04774874c5a20b2b38d435fb66ba2b1cfb9c9e29",
+      "short_commit": "0477487",
+      "status": "historical_only_not_current"
+    },
+    {
+      "checkpoint": "v1.1.77",
+      "commit": "80e53c74ea86c2e83c797011728efc138b800f0e",
+      "short_commit": "80e53c7",
+      "status": "historical_only_not_current"
+    },
+    {
+      "checkpoint": "v1.1.72",
+      "commit": "ab1878e4c681c8f658e8a5bf6bd36f3ad4423fea",
+      "short_commit": "ab1878e",
+      "status": "historical_only_not_current"
+    },
+    {
+      "checkpoint": "v1.1.67",
+      "commit": "0cb007d38c6e17d316cc25640f0fb28b2b934c55",
+      "short_commit": "0cb007d",
+      "status": "historical_only_not_current"
+    },
+    {
+      "checkpoint": "v1.1.62",
+      "commit": "84b5dacb2bf9453040e382b44843fe775ed5b91d",
+      "short_commit": "84b5dac",
+      "status": "historical_only_not_current"
+    },
+    {
+      "checkpoint": "v1.1.57",
+      "commit": "65f88659b238ae0cfacd51f0dab71844d885a76c",
+      "short_commit": "65f8865",
+      "status": "historical_only_not_current"
+    },
+    {
+      "checkpoint": "v1.1.52",
+      "commit": "857ba0e0180b2bca27823367c871429ece0c5214",
+      "short_commit": "857ba0e",
+      "status": "historical_only_not_current"
+    },
+    {
+      "checkpoint": "v1.1.47",
+      "commit": "b8fb8341b19980c33d7163a6993cc0e8ba520641",
+      "short_commit": "b8fb834",
+      "status": "historical_only_not_current"
+    },
+    {
+      "checkpoint": "v1.1.42",
+      "commit": "0286f03ffe8055395cc4d02ee83ddc0deb6143f1",
+      "short_commit": "0286f03",
+      "status": "historical_only_not_current"
+    },
+    {
+      "checkpoint": "v1.1.37",
+      "commit": "ac23ed94adec34bd32062018bf20b0de616da395",
+      "short_commit": "ac23ed9",
+      "status": "historical_only_not_current"
+    },
+    {
+      "checkpoint": "v1.1.32",
+      "commit": "05cb5592758fde1dddaf10e2582e7d6222d43df5",
+      "short_commit": "05cb559",
+      "status": "historical_only_not_current"
+    },
+    {
+      "checkpoint": "v1.1.27",
+      "commit": "a215dd4ac4687ea878263d38ea9d4bdbaf444a71",
+      "short_commit": "a215dd4",
+      "status": "historical_only_not_current"
+    },
+    {
+      "checkpoint": "v1.1.22",
+      "commit": "0051a1503db5d5ecf062de1595129c5eac9114d6",
+      "short_commit": "0051a15",
+      "status": "historical_only_not_current"
+    },
     {
       "checkpoint": "v1.1.17",
       "commit": "aa8f8c651a000037f403abd41bc206bda161a861",
@@ -243,7 +369,10 @@
   "product_version": "0.7.0",
   "prompt_version": "prompt.fake-docs.v0.5-import-wizard-hardening",
   "public_data_pilot_approved": true,
-  "public_source_ids": ["nlrb-weingarten-rights", "apwu-usps-cba-2024-2027"],
+  "public_source_ids": [
+    "nlrb-weingarten-rights",
+    "apwu-usps-cba-2024-2027"
+  ],
   "public_pilot_provider": "local-public-static-deterministic",
   "public_pilot_prompt_version": "prompt.public-docs.v0.1-citation-first",
   "cba_public_provider": "local-public-cba-deterministic",

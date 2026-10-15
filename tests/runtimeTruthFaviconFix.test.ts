@@ -9,9 +9,9 @@ import { createRuntimeVersion } from "@/lib/version";
 import { createCbaSourceFixtureCache } from "@/tests/fixtures/cbaSourceFixture";
 import { createPublicSourceFixtureCache } from "@/tests/fixtures/publicSourceFixture";
 
-const currentLocalPhase = "KIA-Stick-source-citation-integrity-post-push-accepted-state-promotion";
-const acceptedCommit = "9b0fda9f562fb7e632e571e6299eb2dcc77b7b1e";
-const repositoryRecordingCommit = "ca091d37fd8ff5c8f63fad084b81e5f59a749797";
+const currentLocalPhase = "KIA-Stick-hermetic-2-post-merge-accepted-state-metadata-refresh";
+const acceptedCommit = "20562b3a0112f6430ac1707ec8a9f7681d4af5f7";
+const repositoryRecordingCommit = "8b438386f2ad1bba6166a95b326c9305b39f9c2f";
 
 describe("Bundle 3 QA runtime truth and favicon correction", () => {
   it("separates the accepted pushed repair from the local bookkeeping promotion", async () => {
@@ -22,7 +22,7 @@ describe("Bundle 3 QA runtime truth and favicon correction", () => {
     expect(currentAcceptedPushedState.repository_recording_commit).toBe(repositoryRecordingCommit);
     expect(currentAcceptedPushedState.latest_pushed_closeout_commit).toBe(repositoryRecordingCommit);
 
-    expect(currentAcceptedPushedState.local_bundle).toBe("Source and Citation Integrity Post-Push Accepted-State Promotion");
+    expect(currentAcceptedPushedState.local_bundle).toBe("Hermetic-2 Post-Merge Accepted-State Metadata Refresh");
     expect(currentAcceptedPushedState.local_bundle_phase).toBe(currentLocalPhase);
     expect(currentAcceptedPushedState.local_bundle_validation).toBe("PASS");
     expect(currentAcceptedPushedState.local_bundle_pushed).toBe(false);
@@ -51,7 +51,7 @@ describe("Bundle 3 QA runtime truth and favicon correction", () => {
       onOperatorDiagnosticsToggle: () => undefined,
     }));
     expect(html).toContain("Current accepted capability");
-    expect(html).toContain("Feature commit</dt><dd>9b0fda9");
+    expect(html).toContain("Feature commit</dt><dd>20562b3");
     expect(html).toContain("Operator QA</dt><dd>PASS");
     expect(html).toContain("Current application build");
     expect(html).toContain(currentLocalPhase);
