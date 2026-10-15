@@ -94,3 +94,13 @@ Recommended next command, after operator review:
 ```bash
 git push -u origin main
 ```
+
+## Gate record (GUR-106, advisory)
+
+`lib/releaseGateRecord.ts` exports `validateReleaseGateRecord(record, context)`. It classifies a push, merge or deploy gate record as `GO`, `NOT_GO`, `AMBIGUOUS` or `FAIL` and returns reason codes.
+
+- **Advisory and offline only.** It is not wired into `scripts/release-check.mjs`, `scripts/git_auto_sync.sh`, package scripts, CI, hooks or `qa_gate.sh`, and it enforces nothing. `KIA_ALLOW_PUSH` still governs `git_auto_sync.sh` on its own.
+- **It checks declared fields only.** It cannot verify who wrote the quoted approval. The Reviewer re-classifies the quoted text against the cited source and attests that it is Gurth's own words. Relays, PM text, agent-app posts and agent text quoting Gurth are `NOT_GO`.
+- **Pure and deterministic.** No file, process, network or environment access. The caller passes `now`, `consumedApprovalIds` and the candidate (`action`, full `targetSha`, `branch` or `host`, optional `tipCommittedAt`). No env var, `NODE_ENV`, flag or `KIA_ALLOW_PUSH` changes the result. It never throws: malformed input is `FAIL`.
+- **Rules** (spec v3 §3–§4): one action per record; full 40-hex SHA (a prefix or branch-only target is `AMBIGUOUS`, and `AMBIGUOUS` is never `GO`); explicit `GO` / `approved` / `yes, <action>` token; hedged, conditional, bundled, negated or revoked approvals are `NOT_GO`; TTL at most 24 h, and expired or replayed approvals are `NOT_GO`; a complete rollback (`priorSha` different from `targetSha`, trigger, authorizer, runner, steps, verify, dataImpact) is required or the result is `FAIL`.
+- The record template lives outside the repo at `galaxy-prep/kia-stick/decisions/GATE-RECORD-TEMPLATE.md`.
