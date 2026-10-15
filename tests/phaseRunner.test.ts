@@ -172,17 +172,65 @@ describe("phase-runner", () => {
     const proofDir = proofDirFromOutput(result.stdout);
     const after = runGit(root, ["rev-parse", "--short", "HEAD"]).trim();
     const resultMd = readFileSync(join(proofDir, "RESULT.md"), "utf8");
+    const npmInvocations = readNpmInvocations(result.npmLogPath);
 
-    // Stop-on-failure applies to commit/push; all validation steps still run.
-    expectNpmOrder(result.npmLogPath, root);
-    expect(readNpmInvocations(result.npmLogPath)[1].status).toBe(7);
+    // Stop-on-failure: lint fails, later validation npm scripts do not run; commit/push skipped.
+    expect(npmInvocations.map(({ args, cwd }) => ({ args, cwd }))).toEqual([
+      { args: ["run", "release:check"], cwd: root },
+      { args: ["run", "lint"], cwd: root },
+    ]);
+    expect(npmInvocations[1].status).toBe(7);
     expect(resultMd).toContain("- FAIL 03_lint (03_lint.log)");
-    expect(resultMd).toContain("- PASS 09_qa (09_qa.log)");
+    expect(resultMd).not.toContain("04_typecheck");
+    expect(resultMd).not.toContain("09_qa");
     expect(result.status).toBe(1);
     expect(after).toBe(before);
     expect(resultMd).toContain("- RESULT: FAIL");
     expect(resultMd).toContain("- Commit status: skipped_validation_failed");
     expect(existsSync(join(proofDir, "push_command.txt"))).toBe(false);
+  });
+
+  it("stops validation early after a failed step and does not run later validation steps", () => {
+    const root = createRunnerFixture({ lintExitCode: 7 });
+    const result = runPhaseRunner(root, ["--phase", "KIA-Stick-v0.5.4-stop-on-failure"]);
+    const proofDir = proofDirFromOutput(result.stdout);
+    const resultMd = readFileSync(join(proofDir, "RESULT.md"), "utf8");
+    const npmInvocations = readNpmInvocations(result.npmLogPath);
+
+    // Steps that ran before/at failure.
+    expect(resultMd).toContain("- PASS 02_release_check (02_release_check.log)");
+    expect(resultMd).toContain("- FAIL 03_lint (03_lint.log)");
+    expect(npmInvocations.map((entry) => entry.args[1])).toEqual(["release:check", "lint"]);
+
+    // Validation steps that no longer run after a failure (npm + shell).
+    const skippedAfterFailure = [
+      "04_typecheck",
+      "05_test",
+      "06_build",
+      "07_scan_fake",
+      "08_scan_privacy",
+      "09_qa",
+      "10_manifest_parse",
+      "11_feature_list_parse",
+      "12_private_tracked_paths",
+      "13_no_file_input_grep",
+      "14_apwu_boundary_grep",
+    ];
+    for (const stepName of skippedAfterFailure) {
+      expect(resultMd).not.toContain(stepName);
+    }
+    expect(npmInvocations.some((entry) => entry.args[1] === "typecheck")).toBe(false);
+    expect(npmInvocations.some((entry) => entry.args[1] === "qa")).toBe(false);
+
+    // Post-validation git trail still recorded; commit not attempted.
+    expect(resultMd).toContain("- PASS 15_git_status_after (15_git_status_after.log)");
+    expect(resultMd).toContain("- PASS 16_git_log_after (16_git_log_after.log)");
+    expect(resultMd).toContain("- PASS 17_diff_stat_after (17_diff_stat_after.log)");
+    expect(result.status).toBe(1);
+    expect(resultMd).toContain("- RESULT: FAIL");
+    expect(existsSync(join(proofDir, "03_lint.log"))).toBe(true);
+    expect(existsSync(join(proofDir, "04_typecheck.log"))).toBe(false);
+    expect(existsSync(join(proofDir, "09_qa.log"))).toBe(false);
   });
 
   it("never executes git push while producing the manual push command", () => {

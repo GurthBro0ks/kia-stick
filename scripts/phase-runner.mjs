@@ -219,12 +219,17 @@ function runPhase(args) {
   const steps = [beforeStatus, beforeLog];
 
   for (const step of validationSteps) {
+    let stepResult;
     if (step.shell) {
-      steps.push(runShell(args.root, proofDir, step.name, step.shell));
-      continue;
+      stepResult = runShell(args.root, proofDir, step.name, step.shell);
+    } else {
+      const extraEnv = step.env ? step.env(proofDir, args.phase) : {};
+      stepResult = runCommand(args.root, proofDir, step.name, step.command, step.args, extraEnv);
     }
-    const extraEnv = step.env ? step.env(proofDir, args.phase) : {};
-    steps.push(runCommand(args.root, proofDir, step.name, step.command, step.args, extraEnv));
+    steps.push(stepResult);
+    // Stop validation early after the first failed step; later validation steps do not run.
+    // Post-validation git status/log/diff steps still run for the RESULT.md trail.
+    if (stepResult.status !== 0) break;
   }
 
   const validationPassed = steps.every((step) => step.status === 0);
