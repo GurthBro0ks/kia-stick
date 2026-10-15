@@ -13,6 +13,7 @@ import { validateSyntheticApprovalPacket } from "@/lib/syntheticApprovalPacketVa
 const SHA = "a".repeat(40);
 const PRIOR = "b".repeat(40);
 const OTHER = "c".repeat(40);
+const TIP = "2026-10-15T18:00:00Z";
 
 function rollback(over: Record<string, unknown> = {}) {
   return {
@@ -111,7 +112,7 @@ describe("releaseGateRecord (advisory, GUR-106 spec v3 §6)", () => {
     expect(r.status).toBe("GO");
     expect(r.advisory).toBe(true);
     expect(isReleaseGateGo(r)).toBe(true);
-    expect(status(record({ action: "push", host: undefined, branch: "main" }), ctx({ candidate: { action: "push", targetSha: SHA, branch: "main" } }))).toBe("GO");
+    expect(status(record({ action: "push", host: undefined, branch: "main" }), ctx({ candidate: { action: "push", targetSha: SHA, branch: "main", tipCommittedAt: TIP } }))).toBe("GO");
   });
 
   it("case 10: syntheticApprovalPacketValidator is untouched and still importable", () => {
@@ -156,7 +157,7 @@ describe("releaseGateRecord (advisory, GUR-106 spec v3 §6)", () => {
 
   it("case 16: wrong host or branch is NOT_GO", () => {
     expect(status(record({ host: "other-host" }))).toBe("NOT_GO");
-    expect(status(record({ action: "merge", host: undefined, branch: "dev" }), ctx({ candidate: { action: "merge", targetSha: SHA, branch: "main" } }))).toBe("NOT_GO");
+    expect(status(record({ action: "merge", host: undefined, branch: "dev" }), ctx({ candidate: { action: "merge", targetSha: SHA, branch: "main", tipCommittedAt: TIP } }))).toBe("NOT_GO");
   });
 
   it("case 17: missing source citation is FAIL", () => {
@@ -238,5 +239,85 @@ describe("releaseGateRecord (advisory, GUR-106 spec v3 §6)", () => {
   it("case 27: several actions in one record is AMBIGUOUS", () => {
     expect(status(record({ action: ["push", "deploy"] }))).toBe("AMBIGUOUS");
     expect(status(record({ action: "push and deploy" }))).toBe("AMBIGUOUS");
+  });
+
+  // Fix round (Reviewer conditions 1-4).
+  const FALSE_GO_QUOTES = [
+    "don't go",
+    "no-go",
+    "I won't say GO",
+    "approved? no",
+    "GO?",
+    "GO, but not to prod",
+    "go later",
+    "GO tomorrow",
+    "yes, deploy\u2014just kidding",
+    "let's go home",
+  ];
+  for (const quote of FALSE_GO_QUOTES) {
+    it(`case 28: quote ${JSON.stringify(quote)} is never GO (NOT_GO)`, () => {
+      const out = validateReleaseGateRecord(record({ quote }), ctx());
+      expect(isReleaseGateGo(out)).toBe(false);
+      expect(out.status).toBe("NOT_GO");
+    });
+  }
+
+  it("case 28b: bare affirmatives with the record's own target still GO", () => {
+    for (const quote of ["GO.", "GO!", "approved", "yes, deploy", "GO deploy", "GO " + SHA.slice(0, 7), "GO, deploy " + SHA + " to kia-prod"]) {
+      expect(status(record({ quote })), quote).toBe("GO");
+    }
+  });
+
+  it("case 28c: negation and qualifier layers each fire independently (defense in depth)", () => {
+    const reasons = (quote: string) => validateReleaseGateRecord(record({ quote }), ctx()).reasons;
+    for (const quote of ["no GO", "not approved", "don't go", "no-go", "I won't say GO", "approved? no", "yes, deploy\u2014just kidding"]) {
+      expect(reasons(quote), quote).toContain("negated_approval");
+    }
+    for (const quote of ["GO?", "GO, but not to prod", "go later", "GO tomorrow", "approved? no"]) {
+      expect(reasons(quote), quote).toContain("qualified_approval");
+    }
+  });
+
+  it("case 29: isolated action mismatch is NOT_GO with only action_mismatch", () => {
+    const out = validateReleaseGateRecord(
+      record({ action: "push", host: undefined, branch: "main" }),
+      ctx({ candidate: { action: "deploy", targetSha: SHA, branch: "main", host: "kia-prod", tipCommittedAt: TIP } }),
+    );
+    expect(out.status).toBe("NOT_GO");
+    expect(out.reasons).toEqual(["action_mismatch"]);
+  });
+
+  it("case 30: approval dated in the future is NOT_GO with only approved_in_future", () => {
+    const out = validateReleaseGateRecord(record({ approvedAt: "2026-10-15T21:00:00Z", expiresAt: "2026-10-16T20:00:00Z" }), ctx());
+    expect(out.status).toBe("NOT_GO");
+    expect(out.reasons).toEqual(["approved_in_future"]);
+  });
+
+  it("case 31: destructive rollback steps are FAIL", () => {
+    for (const step of [
+      "git clean -fdx",
+      "rm -rf build",
+      "rm -fr .next",
+      "git reset --hard " + PRIOR,
+      "git push --force origin main",
+      "git push -f origin main",
+      "git push origin +" + PRIOR + ":main",
+      "git push --force-with-lease origin main",
+      "rm -r ./data/x",
+    ]) {
+      const out = validateReleaseGateRecord(record({ rollback: rollback({ steps: ["git checkout " + PRIOR, step] }) }), ctx());
+      expect(out.status, step).toBe("FAIL");
+      expect(out.reasons, step).toContain("rollback_destructive_step");
+    }
+  });
+
+  it("case 32: missing candidate tipCommittedAt is AMBIGUOUS, never GO", () => {
+    for (const tipCommittedAt of [undefined, "", "not-a-date"]) {
+      const c = ctx();
+      const out = validateReleaseGateRecord(record(), { ...c, candidate: { ...c.candidate, tipCommittedAt } });
+      expect(out.status, String(tipCommittedAt)).toBe("AMBIGUOUS");
+      expect(out.reasons).toContain("candidate_missing_tip_time");
+      expect(isReleaseGateGo(out)).toBe(false);
+    }
   });
 });

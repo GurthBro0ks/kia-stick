@@ -53,8 +53,8 @@ export interface ReleaseGateCandidate {
   targetSha: string;
   branch?: string;
   host?: string;
-  /** ISO time of the candidate tip commit; approvals older than this are NOT_GO. */
-  tipCommittedAt?: string;
+  /** Required. ISO time of the candidate tip commit; approvals older than this are NOT_GO; missing is AMBIGUOUS. */
+  tipCommittedAt: string;
 }
 
 export interface ReleaseGateContext {
@@ -89,13 +89,27 @@ const HEDGES = [
 ];
 const CONDITIONAL = /\b(once|if|when|after|until|unless|provided|assuming)\b/;
 const NEGATION = [
-  /\bno\s+go\b/,
+  /\bno\b/,
+  /\bno\s*-?\s*go\b/,
+  /\b(don'?t|do\s+not|won'?t|will\s+not|can'?t|cannot|shouldn'?t|wouldn'?t|never)\b/,
+  /\bkidding\b|\bjk\b|\bjoking\b/,
   /\bnot\s+(a\s+)?go\b/,
   /\bnot\s+approved\b/,
   /\bunapproved\b/,
   /\b(don'?t|do\s+not|never)\s+(push|merge|deploy)\b/,
   /\bnot\s+yet\b/,
   /\b(hold|stop|cancel|revoke[sd]?|retract(ed)?)\b/,
+];
+/** Fail-closed qualifiers: questions, contrast, deferral. */
+const QUALIFIER = /\?|\b(but|later|tomorrow|tonight|soon|eventually|not\s+to|except|wait)\b/;
+const DESTRUCTIVE_STEP = [
+  /\brm\b[^;&|]*\bdata\//,
+  /\brm\s+(-[a-z]*r[a-z]*f|-[a-z]*f[a-z]*r|-r\s+-f|-f\s+-r|--recursive\s+--force|--force\s+--recursive)\b/i,
+  /\bgit\s+clean\b[^;&|]*\s-[a-z]*[fdx]/i,
+  /\breset\s+--hard\b/i,
+  /\bpush\b[^;&|]*(\s--force(-with-lease)?\b|\s-f\b|\s\+[^\s]+)/i,
+  /\bbranch\s+-D\b/,
+  /\b(drop\s+(table|database)|truncate\s+table)\b/i,
 ];
 const BUNDLED = /\bapprove\s+(that|this|the|all)\s+(work|stuff|changes)\b/;
 const UNSAFE = [
@@ -140,10 +154,21 @@ function isActionList(value: unknown): boolean {
   return found.length > 1;
 }
 
-function hasAffirmative(q: string, action: ReleaseGateAction): boolean {
-  if (/\bgo\b/.test(q)) return true;
-  if (/\bapproved\b/.test(q)) return true;
-  return new RegExp(`\\byes\\s*,?\\s*${action}\\b`).test(q);
+function escapeRe(value: string): string {
+  return value.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+}
+
+/**
+ * Bare affirmative only: the whole quote must be `go`, `approved` or
+ * `yes, <action>`, optionally followed by the record's own action, SHA,
+ * branch or host, and a final `.` or `!`. Anything else is not a GO.
+ */
+function isBareAffirmative(q: string, action: ReleaseGateAction, rec: ReleaseGateRecord): boolean {
+  const extras = [action, "[0-9a-f]{7,40}"];
+  for (const v of [rec.branch, rec.host]) if (isText(v)) extras.push(escapeRe(norm(v)));
+  const extra = `(?:\\s*[,:]?\\s*(?:(?:to|on|for)\\s+)?(?:${extras.join("|")}))*`;
+  const head = `(?:go|approved|yes\\s*,?\\s*${action})`;
+  return new RegExp(`^${head}${extra}\\s*[.!]?$`).test(q);
 }
 
 function checkRollback(rollback: unknown, targetSha: string | null, reasons: string[]): void {
@@ -161,8 +186,8 @@ function checkRollback(rollback: unknown, targetSha: string | null, reasons: str
   const steps = Array.isArray(r.steps) ? r.steps : [r.steps];
   if (steps.length === 0 || !steps.every((s) => isText(s) && !PLACEHOLDER.test(norm(s)))) {
     reasons.push("rollback_missing_steps");
-  } else if (steps.some((s) => /\brm\b[^;&|]*\bdata\//.test(String(s)))) {
-    reasons.push("rollback_deletes_data");
+  } else if (steps.some((s) => DESTRUCTIVE_STEP.some((re) => re.test(String(s))))) {
+    reasons.push("rollback_destructive_step");
   }
   const d = r.dataImpact;
   if (!isText(d)) reasons.push("rollback_missing_data_impact");
@@ -252,7 +277,8 @@ function evaluate(record: unknown, context: unknown): ReleaseGateResult {
     if (HEDGES.some((h) => q.includes(h))) notGo.push("hedged_approval");
     if (CONDITIONAL.test(q)) notGo.push("conditional_approval");
     if (BUNDLED.test(q)) notGo.push("bundled_approval");
-    if (action && !hasAffirmative(q, action)) notGo.push("no_affirmative_token");
+    if (QUALIFIER.test(q)) notGo.push("qualified_approval");
+    if (action && !isBareAffirmative(q, action, rec)) notGo.push("not_bare_affirmative");
     if (action) {
       const named = ACTIONS.filter((a) => new RegExp(`\\b${a}\\b`).test(q));
       if (named.length > 0 && !named.includes(action)) notGo.push("quote_names_other_action");
@@ -271,6 +297,7 @@ function evaluate(record: unknown, context: unknown): ReleaseGateResult {
   if (expiresAt !== null && now !== null && now > expiresAt) notGo.push("expired");
   if (approvedAt !== null && now !== null && approvedAt > now) notGo.push("approved_in_future");
   const tip = cand ? toTime(cand.tipCommittedAt) : null;
+  if (tip === null) ambiguous.push("candidate_missing_tip_time");
   if (tip !== null && approvedAt !== null && approvedAt < tip) notGo.push("approval_older_than_tip");
 
   // Single use.
