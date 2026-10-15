@@ -162,8 +162,12 @@ function escapeRe(value: string): string {
  * Bare affirmative only: the whole quote must be `go`, `approved` or
  * `yes, <action>`, optionally followed by the record's own action, SHA,
  * branch or host, and a final `.` or `!`. Anything else is not a GO.
+ * Any SHA in the quote must be the record's own targetSha (full, or a
+ * matching prefix of 7+ hex chars); a different SHA is not a GO.
  */
-function isBareAffirmative(q: string, action: ReleaseGateAction, rec: ReleaseGateRecord): boolean {
+function isBareAffirmative(q: string, action: ReleaseGateAction, rec: ReleaseGateRecord, targetSha: string | null): boolean {
+  const quotedShas = q.match(/\b[0-9a-f]{7,40}\b/g) ?? [];
+  if (!quotedShas.every((h) => targetSha !== null && targetSha.startsWith(h))) return false;
   const extras = [action, "[0-9a-f]{7,40}"];
   for (const v of [rec.branch, rec.host]) if (isText(v)) extras.push(escapeRe(norm(v)));
   const extra = `(?:\\s*[,:]?\\s*(?:(?:to|on|for)\\s+)?(?:${extras.join("|")}))*`;
@@ -278,7 +282,7 @@ function evaluate(record: unknown, context: unknown): ReleaseGateResult {
     if (CONDITIONAL.test(q)) notGo.push("conditional_approval");
     if (BUNDLED.test(q)) notGo.push("bundled_approval");
     if (QUALIFIER.test(q)) notGo.push("qualified_approval");
-    if (action && !isBareAffirmative(q, action, rec)) notGo.push("not_bare_affirmative");
+    if (action && !isBareAffirmative(q, action, rec, targetSha)) notGo.push("not_bare_affirmative");
     if (action) {
       const named = ACTIONS.filter((a) => new RegExp(`\\b${a}\\b`).test(q));
       if (named.length > 0 && !named.includes(action)) notGo.push("quote_names_other_action");

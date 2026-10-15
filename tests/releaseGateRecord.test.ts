@@ -276,6 +276,24 @@ describe("releaseGateRecord (advisory, GUR-106 spec v3 §6)", () => {
     for (const quote of ["GO?", "GO, but not to prod", "go later", "GO tomorrow", "approved? no"]) {
       expect(reasons(quote), quote).toContain("qualified_approval");
     }
+    for (const quote of ["once tests pass, go", "GO after the Reviewer signs off", "GO if ready", "GO when green", "GO unless Manny objects"]) {
+      expect(reasons(quote), quote).toContain("conditional_approval");
+    }
+    for (const quote of ["looks reasonable", "probably fine, GO", "sounds good", "I think so", "maybe GO", "should be fine", "GO ok?"]) {
+      expect(reasons(quote), quote).toContain("hedged_approval");
+    }
+  });
+
+  it("case 33: a SHA in the quote must be the record's own targetSha", () => {
+    const reasons = (quote: string) => validateReleaseGateRecord(record({ quote }), ctx());
+    for (const quote of ["GO " + OTHER, "GO, deploy " + OTHER + " to kia-prod", "GO cccccccc", "GO " + SHA.slice(0, 7) + " " + OTHER]) {
+      const out = reasons(quote);
+      expect(out.status, quote).toBe("NOT_GO");
+      expect(out.reasons, quote).toEqual(["not_bare_affirmative"]);
+    }
+    for (const quote of ["GO " + SHA.slice(0, 7), "GO " + SHA.slice(0, 12), "GO " + SHA, "yes, deploy " + SHA.slice(0, 10) + " to kia-prod"]) {
+      expect(reasons(quote).status, quote).toBe("GO");
+    }
   });
 
   it("case 29: isolated action mismatch is NOT_GO with only action_mismatch", () => {
@@ -304,6 +322,10 @@ describe("releaseGateRecord (advisory, GUR-106 spec v3 §6)", () => {
       "git push origin +" + PRIOR + ":main",
       "git push --force-with-lease origin main",
       "rm -r ./data/x",
+      "git branch -D main",
+      "DROP TABLE users",
+      "drop database kia",
+      "TRUNCATE TABLE sessions",
     ]) {
       const out = validateReleaseGateRecord(record({ rollback: rollback({ steps: ["git checkout " + PRIOR, step] }) }), ctx());
       expect(out.status, step).toBe("FAIL");
