@@ -96,10 +96,11 @@ citation integrity, or routing changes, **or** source test fixtures change.
   sha256 / bytes / last-modified, normalized sha256; CBA PDF sha256) and the
   opt-in pass/fail counts **separately** from default-suite counts.
 
-- [ ] **D3 — Unavailable or unsafe cache is NOT_RUN.** If the cache is missing,
-  unusable, or unsafe, report **NOT_RUN** with the printed reason. Never count
-  that as PASS. Never substitute synthetic/default-suite results for opt-in
-  real-cache coverage.
+- [ ] **D3 — NOT_RUN vs FAIL prerequisite.** Unset/empty `KIA_REAL_PUBLIC_DATA_DIR`
+  → report **NOT_RUN** (skipped opt-in; not a PASS). Supplied but unusable or
+  unsafe cache → **FAIL** the opt-in prerequisite tests (not PASS, not NOT_RUN),
+  with the printed reason. Never substitute synthetic/default-suite results for
+  opt-in real-cache coverage.
 
 - [ ] **D4 — Phase-runner does not set the real-cache env.** 
   `scripts/phase-runner.mjs` never sets `KIA_REAL_PUBLIC_DATA_DIR`; children only
