@@ -31,6 +31,14 @@ export const PUBLIC_STEWARD_PACKET_SAVED_TYPE = "public_steward_packet_plan" as 
 export const PUBLIC_STEWARD_PACKET_PRIVATE_WARNING =
   "Case-neutral public-source workspace only. Do not enter names, dates, case facts, medical information, personnel data, financial facts, or grievance documents." as const;
 
+// Presentation-only compatibility mapping. Stored limitations and identity inputs stay verbatim.
+export function publicStewardPacketLimitationText(text: string): string {
+  return text === "This CBA-only pilot does not verify an LMOU, JCIM interpretation, handbook rule, arbitration precedent, management policy, or local practice."
+    || text === "This CBA-only pilot does not verify an LMOU, JCIM interpretation, handbook rule, arbitration precedent, management policy, local practice, or worked-off-assignment theory beyond the cited Article 8 language."
+    ? "This public pilot verifies only the admitted public sources and citations cited here. It does not determine whether a JCIM interpretation, LMOU, handbook rule, arbitration precedent, management policy, or local practice applies to a particular case."
+    : text;
+}
+
 export interface PublicStewardPacketTopicSummary {
   topicId: PublicStewardWorkflowTopicId;
   title: string;
@@ -643,7 +651,7 @@ export function publicStewardPacketToText(packet: PublicStewardPacket): string {
     numbered("8. Conditional Step 1 preparation outline", packet.stepOnePreparation.map((entry) => entry.text)),
     numbered("9. Procedural and timeliness caveats", packet.procedureCaveats.map((entry) => entry.text)),
     numbered("10. Step 2 or escalation readiness checklist", packet.escalationReadiness.map((entry) => entry.text)),
-    numbered("11. Limitations and unsupported scope", packet.limitations.map((entry) => entry.text)),
+    numbered("11. Limitations and unsupported scope", packet.limitations.map((entry) => publicStewardPacketLimitationText(entry.text))),
     numbered("12. Complete verified-current source appendix", packet.sourceAppendix.map(
       (source) => `Article ${source.articleNumber} / ${source.section} / ${source.paragraphId} / ${source.verificationState} / source instance ${source.sourceInstanceId} / paragraph ${source.paragraphContentSha256} / anchor ${source.citationAnchorSha256}`
     )),
@@ -685,7 +693,7 @@ export function publicStewardPacketToMarkdown(packet: PublicStewardPacket): stri
     section("8. Conditional Step 1 preparation outline", packet.stepOnePreparation.map((entry) => entry.text)),
     section("9. Procedural and timeliness caveats", packet.procedureCaveats.map((entry) => entry.text)),
     section("10. Step 2 or escalation readiness checklist", packet.escalationReadiness.map((entry) => entry.text)),
-    section("11. Limitations and unsupported scope", packet.limitations.map((entry) => entry.text)),
+    section("11. Limitations and unsupported scope", packet.limitations.map((entry) => publicStewardPacketLimitationText(entry.text))),
     section("12. Complete verified-current source appendix", packet.sourceAppendix.map(
       (source) => `Article ${source.articleNumber} / ${source.section} / ${source.paragraphId} / ${source.verificationState} / source instance ${source.sourceInstanceId} / paragraph ${source.paragraphContentSha256} / anchor ${source.citationAnchorSha256}`
     )),

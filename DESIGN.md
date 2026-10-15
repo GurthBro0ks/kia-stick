@@ -149,6 +149,14 @@ Avoid labels that imply real capability:
 - If any included supplemental citation is malformed or no longer verified current, the packet stays visible with its provenance and a source-specific warning. Copy, download, export, and print remain blocked until every included source verifies current.
 - Production NLRB routing and packet eligibility remain unchanged. The public NLRB source may serve as a synthetic test stand-in for generic supplemental provenance; this contract does not admit another source.
 
+## Bounded JCIM 2025 Public Source
+
+- The admitted JCIM source ID is `apwu-usps-jcim-2025`, with authority class `joint_national_interpretation` and visible label `Joint interpretation (JCIM)`. It is secondary interpretation; the CBA remains controlling contract language, and NLRB guidance keeps its separate role.
+- Only Preface, Introduction, and Articles 15, 16, 17, and 19 may enter the local normalized cache. Article 15 supports existing steward/grievance procedure; Article 16 supports existing discipline/just-cause; Article 17 supports existing steward/representation work. Article 19 explains the handbook/manual relationship only. The supported topic list is unchanged.
+- The official linked PDF URL, byte length, Last-Modified value, SHA-256, edition, and title are pinned. The local cache and each runtime source check fail closed on mismatch; an existing cache is never silently overwritten. Landing-page `dateModified` is not an identity field.
+- A JCIM citation names its own authority, article, printed page, PDF page, and verification state. JCIM-only interpretation must be introduced as JCIM interpretation, never as literal contract text. Apparent CBA/JCIM tension is displayed for review; silence in this bounded source establishes no negative rule.
+- Eligible steward packets use the existing generic `supplementalCitations` and `supplementalSourceAppendix` fields. Saved packets pin those citations, reverify them on Library reopen, and block copy, download, export, and print when JCIM is no longer current. CBA-only packet identity and output stay unchanged.
+
 ## Proof-Safe Output Expectations
 
 Screenshots, proof exports, logs, and summaries must be GitHub-safe.

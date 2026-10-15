@@ -1,10 +1,13 @@
-import { execFileSync } from "node:child_process";
+import { createHash } from "node:crypto";
+import path from "node:path";
+import { realPublicDataAvailable, realPublicDataDirectory, realPublicDataReason, realPublicDataStatus, realPublicDataPermissionProblem } from "@/tests/fixtures/realPublicDataPrerequisite";
 import { readFileSync } from "node:fs";
+import { PINNED_CBA_PDF_SHA256 } from "@/tests/fixtures/cbaSourceIdentityFixture";
 import { describe, expect, it } from "vitest";
 
 const matrixV2Path = "docs/public-source-sufficiency-matrix-v2.md";
 const matrixV1Path = "docs/public-steward-workflow-source-matrix.md";
-const cbaPdfPath = ".kia-public-data/apwu-usps-cba-2024-2027.pdf";
+
 
 const matrixV2 = readFileSync(matrixV2Path, "utf8");
 const matrixV1 = readFileSync(matrixV1Path, "utf8");
@@ -34,11 +37,8 @@ describe("Public source-sufficiency matrix v2 does not fetch or mutate any sourc
     expect(matrixV2).toMatch(/no source (was )?fetch|no fetch, sync/i);
   });
 
-  it("carries the exact unmodified CBA PDF hash from the live source cache", () => {
-    const actualSha256 = execFileSync("sha256sum", [cbaPdfPath], { encoding: "utf8" })
-      .split(/\s+/)[0]
-      .trim();
-    expect(matrixV2).toContain(actualSha256);
+  it("carries the exact pinned CBA PDF hash", () => {
+    expect(matrixV2).toContain(PINNED_CBA_PDF_SHA256);
   });
 });
 
@@ -81,5 +81,28 @@ describe("Public source-sufficiency matrix v2 aligns with the selected Bundle 3 
 
   it("states the source-sufficiency gate result for the selected bundle", () => {
     expect(matrixV2).toMatch(/PASS/);
+  });
+});
+
+if (realPublicDataStatus === "unusable") {
+  it("opt-in prerequisite: KIA_REAL_PUBLIC_DATA_DIR supplied but unusable", () => {
+    throw new Error(realPublicDataReason);
+  });
+}
+
+if (realPublicDataStatus === "not_supplied") console.info(`NOT_RUN: matrix v2 live CBA cache hash: ${realPublicDataReason}`);
+
+if (realPublicDataStatus === "unsafe" || realPublicDataStatus === "ready") {
+  it("opt-in prerequisite: supplied cache has safe permissions (dir 0700, files 0600, owned by current uid)", () => {
+    if (realPublicDataStatus === "unsafe") throw new Error(realPublicDataReason);
+    expect(realPublicDataPermissionProblem(realPublicDataDirectory!)).toBeUndefined();
+  });
+}
+
+describe.runIf(realPublicDataAvailable)("matrix v2 live CBA cache hash (opt-in; requires KIA_REAL_PUBLIC_DATA_DIR)", () => {
+  it("carries the real CBA PDF SHA256 and matches the pinned identity", () => {
+    const hash = createHash("sha256").update(readFileSync(path.join(realPublicDataDirectory!, "apwu-usps-cba-2024-2027.pdf"))).digest("hex");
+    expect(matrixV2).toContain(hash);
+    expect(hash).toBe(PINNED_CBA_PDF_SHA256);
   });
 });

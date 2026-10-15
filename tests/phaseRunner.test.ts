@@ -11,11 +11,11 @@ function runGit(root: string, args: string[], env: NodeJS.ProcessEnv = process.e
   return execFileSync("git", args, { cwd: root, encoding: "utf8", env });
 }
 
-function createRunnerFixture(options: { lintFails?: boolean } = {}): string {
+function createRunnerFixture(options: { lintExitCode?: number } = {}): string {
   const root = mkdtempSync(join(tmpdir(), "kia-phase-runner-"));
   for (const dir of ["public", "app", "components", "lib", "tests", "scripts"]) mkdirSync(join(root, dir), { recursive: true });
-  const ok = "node -e \"console.log('stub pass')\"";
-  const fail = "node -e \"console.error('stub fail'); process.exit(1)\"";
+  const ok = "echo stub pass";
+  const fail = `echo stub fail >&2; exit ${options.lintExitCode ?? 1}`;
   writeFileSync(
     join(root, "package.json"),
     JSON.stringify(
@@ -25,7 +25,7 @@ function createRunnerFixture(options: { lintFails?: boolean } = {}): string {
         private: true,
         scripts: {
           "release:check": ok,
-          lint: options.lintFails ? fail : ok,
+          lint: options.lintExitCode ? fail : ok,
           typecheck: ok,
           test: ok,
           build: ok,
@@ -52,15 +52,55 @@ function createRunnerFixture(options: { lintFails?: boolean } = {}): string {
   return root;
 }
 
-function runPhaseRunner(root: string, args: string[], env: NodeJS.ProcessEnv = process.env) {
-  return spawnSync("node", [scriptPath, "--root", root, ...args], {
+const npmScriptOrder = ["release:check", "lint", "typecheck", "test", "build", "scan:fake", "scan:privacy", "qa"];
+
+type NpmInvocation = { args: string[]; cwd: string; status: number };
+
+function createFakeNpm(env: NodeJS.ProcessEnv): NodeJS.ProcessEnv {
+  const binDir = mkdtempSync(join(tmpdir(), "kia-phase-runner-npm-bin-"));
+  const executable = join(binDir, "npm");
+  writeFileSync(executable, [
+    "#!/usr/bin/env node",
+    "const { appendFileSync, readFileSync } = require('node:fs');",
+    "const { spawnSync } = require('node:child_process');",
+    "const args = process.argv.slice(2);",
+    "const scripts = JSON.parse(readFileSync('./package.json', 'utf8')).scripts;",
+    "const command = args[0] === 'run' && Object.hasOwn(scripts, args[1]) ? scripts[args[1]] : undefined;",
+    "const result = command === undefined ? { status: 1 } : spawnSync('sh', ['-c', command], { stdio: 'inherit' });",
+    "const status = result.status ?? 1;",
+    "appendFileSync(process.env.KIA_FAKE_NPM_LOG, JSON.stringify({ args, cwd: process.cwd(), status }) + '\\n');",
+    "process.exit(status);",
+    "",
+  ].join("\n"));
+  chmodSync(executable, 0o755);
+  return {
+    ...env,
+    PATH: `${binDir}:${env.PATH ?? ""}`,
+    KIA_FAKE_NPM_LOG: join(binDir, "invocations.jsonl"),
+  };
+}
+
+function readNpmInvocations(logPath: string): NpmInvocation[] {
+  return readFileSync(logPath, "utf8").trim().split("\n").map((line) => JSON.parse(line));
+}
+
+function expectNpmOrder(logPath: string, root: string) {
+  expect(readNpmInvocations(logPath).map(({ args, cwd }) => ({ args, cwd }))).toEqual(
+    npmScriptOrder.map((name) => ({ args: ["run", name], cwd: root }))
+  );
+}
+
+function runPhaseRunner(root: string, args: string[], env: NodeJS.ProcessEnv = process.env, realNpm = false) {
+  const runnerEnv = realNpm ? env : createFakeNpm(env);
+  const result = spawnSync("node", [scriptPath, "--root", root, ...args], {
     cwd: resolve("."),
     encoding: "utf8",
     env: {
-      ...env,
+      ...runnerEnv,
       KIA_PHASE_RUNNER_PROOF_ROOT: mkdtempSync(join(tmpdir(), "kia-phase-runner-proof-root-")),
     },
   });
+  return { ...result, npmLogPath: runnerEnv.KIA_FAKE_NPM_LOG! };
 }
 
 function proofDirFromOutput(output: string): string {
@@ -95,6 +135,7 @@ describe("phase-runner", () => {
     const proofDir = proofDirFromOutput(result.stdout);
     const resultMd = readFileSync(join(proofDir, "RESULT.md"), "utf8");
 
+    expectNpmOrder(result.npmLogPath, root);
     expect(result.status).toBe(0);
     expect(resultMd).toContain("- RESULT: PASS");
     expect(resultMd).toContain("- Phase: KIA-Stick-v0.5.4-self-test");
@@ -113,6 +154,7 @@ describe("phase-runner", () => {
     const pushCommand = readFileSync(join(proofDir, "push_command.txt"), "utf8").trim();
     const log = runGit(root, ["log", "-1", "--oneline"]);
 
+    expectNpmOrder(result.npmLogPath, root);
     expect(result.status).toBe(0);
     expect(resultMd).toContain("- RESULT: PASS");
     expect(resultMd).toContain("- Commit status: committed");
@@ -122,7 +164,7 @@ describe("phase-runner", () => {
   });
 
   it("does not commit or write a push command when validation fails", () => {
-    const root = createRunnerFixture({ lintFails: true });
+    const root = createRunnerFixture({ lintExitCode: 7 });
     const before = runGit(root, ["rev-parse", "--short", "HEAD"]).trim();
     writeFileSync(join(root, "README.md"), "fixture changed but failing\n");
 
@@ -131,6 +173,11 @@ describe("phase-runner", () => {
     const after = runGit(root, ["rev-parse", "--short", "HEAD"]).trim();
     const resultMd = readFileSync(join(proofDir, "RESULT.md"), "utf8");
 
+    // Stop-on-failure applies to commit/push; all validation steps still run.
+    expectNpmOrder(result.npmLogPath, root);
+    expect(readNpmInvocations(result.npmLogPath)[1].status).toBe(7);
+    expect(resultMd).toContain("- FAIL 03_lint (03_lint.log)");
+    expect(resultMd).toContain("- PASS 09_qa (09_qa.log)");
     expect(result.status).toBe(1);
     expect(after).toBe(before);
     expect(resultMd).toContain("- RESULT: FAIL");
@@ -165,8 +212,23 @@ describe("phase-runner", () => {
     const proofDir = proofDirFromOutput(result.stdout);
     const gitCalls = readFileSync(logPath, "utf8");
 
+    expectNpmOrder(result.npmLogPath, root);
     expect(result.status).toBe(0);
     expect(readFileSync(join(proofDir, "push_command.txt"), "utf8").trim()).toBe("git push origin main");
     expect(gitCalls).not.toMatch(/^push\b/m);
+  });
+});
+
+const realNpmEnabled = process.env.KIA_PHASE_RUNNER_REAL_NPM === "1";
+if (!realNpmEnabled) console.info("NOT_RUN: set KIA_PHASE_RUNNER_REAL_NPM=1");
+
+describe.runIf(realNpmEnabled)("phase-runner real npm integration (opt-in)", () => {
+  it("writes a passing RESULT.md using real npm", () => {
+    const root = createRunnerFixture();
+    const result = runPhaseRunner(root, ["--phase", "KIA-Stick-real-npm-integration"], process.env, true);
+    const proofDir = proofDirFromOutput(result.stdout);
+
+    expect(result.status).toBe(0);
+    expect(readFileSync(join(proofDir, "RESULT.md"), "utf8")).toContain("- RESULT: PASS");
   });
 });

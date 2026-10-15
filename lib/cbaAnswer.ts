@@ -250,6 +250,23 @@ export function buildCbaAnswer(input: {
     });
   }
 
+  if (/\barticle\s*19\b/i.test(question) && /\b(handbooks?|manuals?)\b/i.test(question)) {
+    const article = paragraphsForArticle(input.source, "19");
+    const heading = article.find((paragraph) => /^ARTICLE 19 HANDBOOKS AND MANUALS$/i.test(paragraph.text.trim()));
+    const section = article.find((paragraph) => /^Section 1\. General\b/i.test(paragraph.text.trim())
+      && /\bhandbooks?\b/i.test(paragraph.text) && /\bmanuals?\b/i.test(paragraph.text));
+    if (!heading || !section) return unavailableAnswer({ ...input, question });
+    return baseAnswer({
+      ...input,
+      question,
+      shortAnswer: "Article 19, Section 1 addresses how specified parts of Postal Service handbooks, manuals, and published regulations relate to the National Agreement. The cited CBA passage controls this explanation. This bounded answer does not supply an underlying handbook or manual rule or decide whether a particular provision applies.",
+      citations: [heading, section].map((paragraph) => citationForCbaParagraph(input.source!, paragraph)),
+      noAnswer: false,
+      conflicts: ["Whether a particular handbook or manual provision applies requires that source and the relevant facts to be verified separately."],
+      missingFacts: ["The particular handbook or manual provision, its current status, and the facts needed to assess its application."],
+    });
+  }
+
   const stewardTopicId = detectPublicStewardWorkflowTopic(question);
   if (stewardTopicId) {
     const topic = publicStewardWorkflowTopic(stewardTopicId);
