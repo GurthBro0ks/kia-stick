@@ -163,14 +163,23 @@ function escapeRe(value: string): string {
  * `yes, <action>`, optionally followed by the record's own action, SHA,
  * branch or host, and a final `.` or `!`. Anything else is not a GO.
  * Any SHA in the quote must be the record's own targetSha (full, or a
- * matching prefix of 7+ hex chars); a different SHA is not a GO.
+ * matching prefix of 7+ hex chars); a different SHA, a hex run longer than
+ * 40, or a run from the middle of the target is not a GO. Extras need a
+ * separator, so two SHAs cannot sit back-to-back.
  */
+function quoteShaReasons(q: string, targetSha: string | null): string[] {
+  const out: string[] = [];
+  const quotedShas = q.match(/[0-9a-f]{7,}/g) ?? [];
+  if (quotedShas.some((h) => h.length > 40)) out.push("quote_sha_overlong");
+  if (!quotedShas.every((h) => targetSha !== null && targetSha.startsWith(h))) out.push("quote_sha_not_target");
+  return out;
+}
+
 function isBareAffirmative(q: string, action: ReleaseGateAction, rec: ReleaseGateRecord, targetSha: string | null): boolean {
-  const quotedShas = q.match(/\b[0-9a-f]{7,40}\b/g) ?? [];
-  if (!quotedShas.every((h) => targetSha !== null && targetSha.startsWith(h))) return false;
+  if (quoteShaReasons(q, targetSha).length > 0) return false;
   const extras = [action, "[0-9a-f]{7,40}"];
   for (const v of [rec.branch, rec.host]) if (isText(v)) extras.push(escapeRe(norm(v)));
-  const extra = `(?:\\s*[,:]?\\s*(?:(?:to|on|for)\\s+)?(?:${extras.join("|")}))*`;
+  const extra = `(?:(?:\\s*[,:]\\s*|\\s+)(?:(?:to|on|for)\\s+)?(?:${extras.join("|")}))*`;
   const head = `(?:go|approved|yes\\s*,?\\s*${action})`;
   return new RegExp(`^${head}${extra}\\s*[.!]?$`).test(q);
 }
@@ -282,6 +291,7 @@ function evaluate(record: unknown, context: unknown): ReleaseGateResult {
     if (CONDITIONAL.test(q)) notGo.push("conditional_approval");
     if (BUNDLED.test(q)) notGo.push("bundled_approval");
     if (QUALIFIER.test(q)) notGo.push("qualified_approval");
+    notGo.push(...quoteShaReasons(q, targetSha));
     if (action && !isBareAffirmative(q, action, rec, targetSha)) notGo.push("not_bare_affirmative");
     if (action) {
       const named = ACTIONS.filter((a) => new RegExp(`\\b${a}\\b`).test(q));

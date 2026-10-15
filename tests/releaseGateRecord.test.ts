@@ -289,10 +289,39 @@ describe("releaseGateRecord (advisory, GUR-106 spec v3 §6)", () => {
     for (const quote of ["GO " + OTHER, "GO, deploy " + OTHER + " to kia-prod", "GO cccccccc", "GO " + SHA.slice(0, 7) + " " + OTHER]) {
       const out = reasons(quote);
       expect(out.status, quote).toBe("NOT_GO");
-      expect(out.reasons, quote).toEqual(["not_bare_affirmative"]);
+      expect([...out.reasons].sort(), quote).toEqual(["not_bare_affirmative", "quote_sha_not_target"]);
     }
     for (const quote of ["GO " + SHA.slice(0, 7), "GO " + SHA.slice(0, 12), "GO " + SHA, "yes, deploy " + SHA.slice(0, 10) + " to kia-prod"]) {
       expect(reasons(quote).status, quote).toBe("GO");
+    }
+  });
+
+  it("case 34: hex runs over 40, back-to-back SHAs and mid-target substrings are NOT_GO", () => {
+    const TGT = "0123456789abcdef0123456789abcdef01234567";
+    const run = (quote: string) =>
+      validateReleaseGateRecord(
+        record({ quote, targetSha: TGT }),
+        ctx({ candidate: { action: "deploy", targetSha: TGT, host: "kia-prod", tipCommittedAt: TIP } }),
+      );
+    const cases: Array<[string, string[]]> = [
+      ["GO " + TGT + "0", ["quote_sha_overlong", "quote_sha_not_target"]],
+      ["GO " + TGT + "abcdef0", ["quote_sha_overlong", "quote_sha_not_target"]],
+      ["GO " + OTHER + OTHER, ["quote_sha_overlong", "quote_sha_not_target"]],
+      ["GO " + OTHER + " " + OTHER, ["quote_sha_not_target"]],
+      ["GO " + OTHER + "1234567", ["quote_sha_overlong", "quote_sha_not_target"]],
+      ["GO " + TGT.slice(10, 20), ["quote_sha_not_target"]],
+      ["GO " + TGT.slice(1, 41), ["quote_sha_not_target"]],
+      ["GO " + TGT.slice(0, 7) + TGT.slice(0, 7), ["quote_sha_not_target"]],
+      ["GO" + TGT.slice(0, 7), []],
+      ["GOdeploy", []],
+    ];
+    for (const [quote, shaReasons] of cases) {
+      const out = run(quote);
+      expect(out.status, quote).toBe("NOT_GO");
+      expect([...out.reasons].sort(), quote).toEqual(["not_bare_affirmative", ...shaReasons].sort());
+    }
+    for (const quote of ["GO " + TGT, "GO " + TGT.slice(0, 7), "GO, deploy " + TGT + " to kia-prod", "GO:" + TGT.slice(0, 9)]) {
+      expect(run(quote).status, quote).toBe("GO");
     }
   });
 
