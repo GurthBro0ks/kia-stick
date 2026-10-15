@@ -12,8 +12,39 @@ const pageRanges: Record<string, [number, number]> = {
 };
 const hash = (value: string | Uint8Array) => createHash("sha256").update(value).digest("hex");
 
-export function validateJcimCache(value: unknown, pdf: Uint8Array): value is JcimCache {
-  if (!value || typeof value !== "object" || hash(pdf) !== JCIM_SHA256 || pdf.length !== JCIM_BYTES) return false;
+/** Production PDF pins. Always used by readJcimCache / default validate and live verify. */
+export type JcimPdfIdentityPins = {
+  readonly sha256: string;
+  readonly byteCount: number;
+};
+
+export const JCIM_PDF_IDENTITY_PINS: JcimPdfIdentityPins = {
+  sha256: JCIM_SHA256,
+  byteCount: JCIM_BYTES,
+};
+
+/**
+ * Pure PDF identity guard shared by validate + live paths.
+ * Both length and sha256 are always required; incomplete pins fail closed.
+ * Tests may pass alternate pins to isolate M1–M3 without mocks; production
+ * callers must use JCIM_PDF_IDENTITY_PINS (the function defaults).
+ */
+export function matchesJcimPdfIdentity(pdf: Uint8Array, expected: JcimPdfIdentityPins = JCIM_PDF_IDENTITY_PINS): boolean {
+  if (!expected || typeof expected.sha256 !== "string" || expected.sha256.length === 0) return false;
+  if (typeof expected.byteCount !== "number" || !Number.isInteger(expected.byteCount) || expected.byteCount < 0) return false;
+  // LENGTH guard (M2 / M3): evaluated independently of hash so it can be isolated.
+  if (pdf.length !== expected.byteCount) return false;
+  // HASH guard (M1 / M4): always required; there is no skip/omit path.
+  if (hash(pdf) !== expected.sha256) return false;
+  return true;
+}
+
+export function validateJcimCache(
+  value: unknown,
+  pdf: Uint8Array,
+  expectedPdf: JcimPdfIdentityPins = JCIM_PDF_IDENTITY_PINS,
+): value is JcimCache {
+  if (!value || typeof value !== "object" || !matchesJcimPdfIdentity(pdf, expectedPdf)) return false;
   const cache = value as JcimCache;
   if (cache.schema !== "kia-jcim-cache.v1" || cache.source?.id !== JCIM_SOURCE_ID ||
     cache.source.title !== JCIM_TITLE || cache.source.authorityClass !== JCIM_AUTHORITY_CLASS ||
@@ -65,17 +96,21 @@ export function readJcimCache(): JcimState {
   }
 }
 
-export async function verifyJcimLiveIdentity(fetcher: typeof fetch = fetch): Promise<boolean> {
+export async function verifyJcimLiveIdentity(
+  fetcher: typeof fetch = fetch,
+  expectedPdf: JcimPdfIdentityPins = JCIM_PDF_IDENTITY_PINS,
+): Promise<boolean> {
   try {
     const landing = await fetcher(JCIM_LANDING_URL, { cache: "no-store" });
     if (!landing.ok || landing.url !== JCIM_LANDING_URL) return false;
     const links = [...(await landing.text()).matchAll(/(?:href|src)="(https:\/\/apwu\.org\/[^"]+\.pdf)"/g)].map((match) => match[1]);
     if (links.length === 0 || links.some((link) => link !== JCIM_PDF_URL)) return false;
     const response = await fetcher(JCIM_PDF_URL, { cache: "no-store" });
-    if (!response.ok || response.url !== JCIM_PDF_URL || response.headers.get("content-length") !== String(JCIM_BYTES) ||
+    if (!response.ok || response.url !== JCIM_PDF_URL || response.headers.get("content-length") !== String(expectedPdf.byteCount) ||
       response.headers.get("last-modified") !== JCIM_LAST_MODIFIED ||
       !response.headers.get("content-type")?.includes("application/pdf")) return false;
     const bytes = new Uint8Array(await response.arrayBuffer());
-    return bytes.length === JCIM_BYTES && hash(bytes) === JCIM_SHA256;
+    // Production default expectedPdf is JCIM_PDF_IDENTITY_PINS (both length + sha256).
+    return matchesJcimPdfIdentity(bytes, expectedPdf);
   } catch { return false; }
 }

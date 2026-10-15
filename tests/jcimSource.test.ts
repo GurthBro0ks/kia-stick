@@ -22,7 +22,9 @@ import {
   JCIM_LAST_MODIFIED, JCIM_PDF_URL, JCIM_SECTION_IDS, JCIM_SHA256, JCIM_SOURCE_ID, JCIM_TITLE,
   jcimCitation, jcimPacketSourceVerifier, jcimTopicCitation, verifyJcimCitation,
 } from "@/lib/jcimSource";
-import { readJcimCache, validateJcimCache, verifyJcimLiveIdentity } from "@/lib/jcimSourceServer";
+import {
+  JCIM_PDF_IDENTITY_PINS, matchesJcimPdfIdentity, readJcimCache, validateJcimCache, verifyJcimLiveIdentity,
+} from "@/lib/jcimSourceServer";
 
 const cache = createJcimSourceFixtureCache();
 const pdf = createSyntheticJcimPdfBytes();
@@ -401,5 +403,101 @@ describe("PDF byte guards (real crypto)", () => {
     const { fetcher, readBody } = createJcimLiveIdentityFetcher(pdf, "text/plain");
     expect(await verifyJcimLiveIdentity(fetcher)).toBe(false);
     expect(readBody).not.toHaveBeenCalled();
+  });
+});
+
+
+describe("PDF identity seam (unmocked M1–M3 isolation + production hard gate)", () => {
+  const realSha256 = (bytes: Uint8Array) => createHash("sha256").update(bytes).digest("hex");
+
+  it("production defaults always pin JCIM_SHA256 and JCIM_BYTES", () => {
+    expect(JCIM_PDF_IDENTITY_PINS).toEqual({ sha256: JCIM_SHA256, byteCount: JCIM_BYTES });
+    expect(matchesJcimPdfIdentity(pdf)).toBe(false); // synthetic hash ≠ production pin
+    expect(validateJcimCache(cache, pdf)).toBe(false);
+    expect(validateJcimCache(cache, pdf, JCIM_PDF_IDENTITY_PINS)).toBe(false);
+  });
+
+  it("hard gate: incomplete or empty pins fail closed (cannot skip hash/length)", () => {
+    expect(matchesJcimPdfIdentity(pdf, { sha256: "", byteCount: pdf.length })).toBe(false);
+    expect(matchesJcimPdfIdentity(pdf, { sha256: realSha256(pdf), byteCount: Number.NaN })).toBe(false);
+    expect(matchesJcimPdfIdentity(pdf, { sha256: realSha256(pdf), byteCount: -1 })).toBe(false);
+  });
+
+  it("hard gate: NODE_ENV cannot disable production pin enforcement", async () => {
+    const previous = process.env.NODE_ENV;
+    try {
+      process.env.NODE_ENV = "test";
+      expect(validateJcimCache(cache, pdf)).toBe(false);
+      expect(matchesJcimPdfIdentity(pdf)).toBe(false);
+      const { fetcher } = createJcimLiveIdentityFetcher(pdf);
+      expect(await verifyJcimLiveIdentity(fetcher)).toBe(false);
+      process.env.NODE_ENV = "production";
+      expect(validateJcimCache(cache, pdf)).toBe(false);
+      expect(await verifyJcimLiveIdentity(fetcher)).toBe(false);
+    } finally {
+      if (previous === undefined) delete process.env.NODE_ENV;
+      else process.env.NODE_ENV = previous;
+    }
+  });
+
+  it("[seam M1 VALIDATE_HASH isolated] rejects wrong hash at matching length; survives only if hash guard remains", () => {
+    // Alternate pins = real identity of synthetic PDF. Tamper one byte at same length.
+    const baseline = createSyntheticJcimPdfBytes();
+    const pins = { sha256: realSha256(baseline), byteCount: baseline.length };
+    expect(matchesJcimPdfIdentity(baseline, pins)).toBe(true);
+    const tampered = Buffer.from(baseline);
+    tampered[0] ^= 1;
+    expect(tampered.length).toBe(pins.byteCount);
+    expect(realSha256(tampered)).not.toBe(pins.sha256);
+    // With hash guard: false. Mutant M1 (drop hash check) would return true on length alone.
+    expect(matchesJcimPdfIdentity(tampered, pins)).toBe(false);
+    expect(validateJcimCache(cache, tampered, pins)).toBe(false);
+  });
+
+  it("[seam M2 VALIDATE_LENGTH isolated] rejects wrong length when hash matches alternate pins", () => {
+    // Short PDF; pins.sha256 = real hash of short PDF; pins.byteCount = full length (mismatch).
+    const shortPdf = Buffer.from(createSyntheticJcimPdfBytes().subarray(0, JCIM_BYTES - 1));
+    const pins = { sha256: realSha256(shortPdf), byteCount: JCIM_BYTES };
+    expect(shortPdf.length).not.toBe(pins.byteCount);
+    expect(realSha256(shortPdf)).toBe(pins.sha256);
+    // With length guard: false. Mutant M2 (drop length check) would return true on hash alone.
+    expect(matchesJcimPdfIdentity(shortPdf, pins)).toBe(false);
+    expect(validateJcimCache(cache, shortPdf, pins)).toBe(false);
+  });
+
+  it("[seam M3 LIVE_LENGTH isolated] rejects wrong-length live body when hash matches alternate pins", async () => {
+    const shortPdf = Buffer.from(createSyntheticJcimPdfBytes().subarray(0, JCIM_BYTES - 1));
+    const pins = { sha256: realSha256(shortPdf), byteCount: JCIM_BYTES };
+    expect(shortPdf.length).not.toBe(pins.byteCount);
+    expect(realSha256(shortPdf)).toBe(pins.sha256);
+    // Custom fetcher: content-length header matches expected pins.byteCount (so header passes)
+    // while body is short — isolates the body length guard from header + hash shadows.
+    const landing = new Response(`<a href="${JCIM_PDF_URL}">PDF</a>`);
+    const response = new Response(Buffer.from(shortPdf), {
+      headers: {
+        "content-length": String(pins.byteCount),
+        "last-modified": JCIM_LAST_MODIFIED,
+        "content-type": "application/pdf",
+      },
+    });
+    Object.defineProperty(landing, "url", { value: JCIM_LANDING_URL });
+    Object.defineProperty(response, "url", { value: JCIM_PDF_URL });
+    const readBody = vi.spyOn(response, "arrayBuffer");
+    const fetcher = vi.fn(async (url: Parameters<typeof fetch>[0]) => {
+      if (url === JCIM_LANDING_URL) return landing;
+      return response;
+    }) as unknown as typeof fetch;
+    // With length guard: false. Mutant M3 (drop body length check) would accept on hash alone.
+    expect(await verifyJcimLiveIdentity(fetcher, pins)).toBe(false);
+    expect(readBody).toHaveBeenCalledOnce();
+  });
+
+  it("production live verify without override still requires both JCIM pins", async () => {
+    const matchingLengthWrongHash = createSyntheticJcimPdfBytes();
+    expect(matchingLengthWrongHash.length).toBe(JCIM_BYTES);
+    expect(realSha256(matchingLengthWrongHash)).not.toBe(JCIM_SHA256);
+    const { fetcher, readBody } = createJcimLiveIdentityFetcher(matchingLengthWrongHash);
+    expect(await verifyJcimLiveIdentity(fetcher)).toBe(false);
+    expect(readBody).toHaveBeenCalledOnce();
   });
 });

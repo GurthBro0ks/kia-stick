@@ -54,14 +54,18 @@ This requires npm on PATH and is slower (about 4 seconds per test). If
 | real-bytes VALIDATE hash guard | VALIDATE hash | Opt-in, real bytes and crypto; reversed PDF | Isolated |
 | real-bytes VALIDATE+LIVE hash guard, one-byte tamper | VALIDATE and LIVE hash | Opt-in, real bytes and crypto | Isolates hash guards; overlaps other hash cases |
 | real-bytes appended byte | VALIDATE hash; LIVE length | Opt-in, real bytes and crypto; VALIDATE checks hash first, LIVE checks length first | Neither length guard isolated (VALIDATE length not reached; LIVE length backed by LIVE hash) |
+| seam M1 VALIDATE_HASH isolated | VALIDATE hash | Default suite, real crypto; alternate pins + same-length tamper | Isolated unmocked: removing hash guard would accept |
+| seam M2 VALIDATE_LENGTH isolated | VALIDATE length | Default suite, real crypto; alternate pins with matching hash, wrong length | Isolated unmocked: removing length guard would accept |
+| seam M3 LIVE_LENGTH isolated | LIVE length | Default suite, real crypto; alternate pins + short body, header length = pin | Isolated unmocked: removing live length guard would accept |
+| seam production hard gate | VALIDATE+LIVE pins | Default suite; defaults/`NODE_ENV` cannot skip JCIM pins | N/A (gate, not mutant) |
 
-Not every guard is isolated without mocks. Length guards cannot be isolated
-without a hash mock: VALIDATE checks the hash first, so a wrong-length PDF is
-rejected before the length guard is reached; LIVE checks length first, but if
-that guard is removed the hash guard still rejects. VALIDATE hash isolation
-needs real bytes in the opt-in suite or the unit mock. LIVE hash isolation is
-covered by the default real-crypto suite. The LIVE tamper test is an explicit
-one-byte example that overlaps the LIVE hash test.
+Production PDF identity is centralized in `matchesJcimPdfIdentity` /
+`JCIM_PDF_IDENTITY_PINS` (`lib/jcimSourceServer.ts`). Callers default to the
+real `JCIM_SHA256` + `JCIM_BYTES` pins; there is no env/`NODE_ENV` skip.
+Unmocked seam tests under `tests/jcimSource.test.ts` isolate M1–M3 by passing
+alternate pins (real hash of synthetic bytes) so length and hash fail
+independently. Opt-in real-byte tests and unit-mocked length tests remain.
+The LIVE tamper test remains an explicit one-byte example overlapping LIVE hash.
 
 Phase-runner validation now stops after the first failed step (see
 `scripts/phase-runner.mjs` and `tests/phaseRunner.test.ts` on this branch tip).
