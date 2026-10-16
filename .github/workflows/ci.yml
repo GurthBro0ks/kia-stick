@@ -17,11 +17,15 @@ jobs:
     # Do not set either variable here.
     steps:
       - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - run: git fetch origin main:refs/remotes/origin/main
       - uses: actions/setup-node@v4
         with:
           node-version: 22
           cache: npm
       - run: npm ci
+      - run: sudo apt-get update && sudo apt-get install -y ripgrep
       - run: npm test
 
   gitleaks:
