@@ -23,7 +23,8 @@ export type PublicDataPermissionReason =
   | "special_entry"
   | "lstat_error"
   | "readdir_error"
-  | "too_deep";
+  | "too_deep"
+  | "entry_cap";
 
 export interface PermissionStat {
   mode: number;
@@ -43,7 +44,7 @@ export interface PublicDataPermissionDeps {
 export interface PublicDataPermissionEntry {
   /** Path relative to the checked dir ("." for the dir itself). */
   name: string;
-  /** Octal permission bits, e.g. "0755"; null when lstat failed. */
+  /** 4-digit octal incl. setuid/setgid/sticky, e.g. "0755", "2700"; null when lstat failed. */
   mode: string | null;
   reasons: PublicDataPermissionReason[];
 }
@@ -70,8 +71,16 @@ export const defaultPublicDataPermissionDeps: PublicDataPermissionDeps = {
   uid: defaultUid(),
 };
 
+const PERM_MASK = 0o7777;
+
 function octal(mode: number): string {
-  return "0" + (mode & 0o777).toString(8).padStart(3, "0");
+  return (mode & PERM_MASK).toString(8).padStart(4, "0");
+}
+
+/** Strip trailing slashes so lstat never resolves a symlinked root ("<link>/"). */
+function normalizeRoot(dir: string): string {
+  const stripped = dir.replace(/\/+$/, "");
+  return stripped === "" ? "/" : stripped;
 }
 
 function isMissing(error: unknown): boolean {
@@ -94,7 +103,8 @@ function inspect(dir: string, deps: PublicDataPermissionDeps): PublicDataPermiss
   const visit = (abs: string, rel: string, st: PermissionStat, depth: number): void => {
     checked += 1;
     const reasons: PublicDataPermissionReason[] = [];
-    const perm = st.mode & 0o777;
+    // Full mask: setuid, setgid and sticky bits make an entry unsafe.
+    const perm = st.mode & PERM_MASK;
     if (deps.uid === null) unknown = true;
     else if (st.uid !== deps.uid) reasons.push("wrong_uid");
 
@@ -126,6 +136,11 @@ function inspect(dir: string, deps: PublicDataPermissionDeps): PublicDataPermiss
       return;
     }
     for (const name of [...names].sort()) {
+      if (checked >= MAX_ENTRIES) {
+        unknown = true;
+        entries.push({ name: rel, mode: octal(st.mode), reasons: ["entry_cap"] });
+        return;
+      }
       const childAbs = join(abs, name);
       const childRel = rel === "." ? name : `${rel}/${name}`;
       let childStat: PermissionStat;
@@ -141,7 +156,9 @@ function inspect(dir: string, deps: PublicDataPermissionDeps): PublicDataPermiss
   };
 
   visit(dir, ".", rootStat, 0);
-  const unsafe = entries.some((e) => e.reasons.some((r) => r !== "lstat_error" && r !== "readdir_error" && r !== "too_deep"));
+  const unsafe = entries.some((e) =>
+    e.reasons.some((r) => r !== "lstat_error" && r !== "readdir_error" && r !== "too_deep" && r !== "entry_cap"),
+  );
   const status: PublicDataPermissionStatus = unsafe ? "unsafe" : unknown ? "unknown" : "ok";
   return { status, entries, checked };
 }
@@ -156,7 +173,7 @@ export function checkPublicDataPermissions(
       return { status: "unknown", entries: [], checked: 0 };
     }
     const merged: PublicDataPermissionDeps = { ...defaultPublicDataPermissionDeps, ...deps };
-    return inspect(dir, merged);
+    return inspect(normalizeRoot(dir), merged);
   } catch {
     return { status: "unknown", entries: [], checked: 0 };
   }

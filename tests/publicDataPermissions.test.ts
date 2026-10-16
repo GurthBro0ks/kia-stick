@@ -1,4 +1,5 @@
 import { chmodSync, lstatSync, mkdirSync, mkdtempSync, readFileSync, rmSync, statSync, symlinkSync, writeFileSync } from "node:fs";
+import { execFileSync } from "node:child_process";
 import { tmpdir } from "node:os";
 import { join } from "node:path";
 import { afterEach, describe, expect, it } from "vitest";
@@ -161,6 +162,109 @@ describe("publicDataPermissions (read-only drift detector, GUR-97 item 3)", () =
     });
     expect(r.status).toBe("unsafe");
     expect(readdirCalls).toBe(0);
+  });
+
+  // Fix round (review f1cfc550 conditions 1-3).
+  it("setgid/sticky/setuid dirs (2700, 1700, 4700) are unsafe with 4-digit mode", () => {
+    for (const [mode, label] of [[0o2700, "2700"], [0o1700, "1700"], [0o4700, "4700"]] as const) {
+      const { dir } = fixture();
+      chmodSync(dir, mode);
+      expect(lstatSync(dir).mode & 0o7777, label).toBe(mode);
+      const r = checkPublicDataPermissions(dir);
+      expect(r.status, label).toBe("unsafe");
+      expect(r.entries, label).toEqual([{ name: ".", mode: label, reasons: ["dir_mode"] }]);
+    }
+  });
+
+  it("setgid/setuid files (2600, 4600) are unsafe with 4-digit mode", () => {
+    for (const [mode, label] of [[0o2600, "2600"], [0o4600, "4600"]] as const) {
+      const { dir, file } = fixture();
+      chmodSync(file, mode);
+      expect(lstatSync(file).mode & 0o7777, label).toBe(mode);
+      const r = checkPublicDataPermissions(dir);
+      expect(r.status, label).toBe("unsafe");
+      expect(r.entries, label).toEqual([{ name: "index.json", mode: label, reasons: ["file_mode"] }]);
+    }
+  });
+
+  it("trailing slash on a symlinked root is still flagged as symlink (<symlink>/)", () => {
+    const { root, dir } = fixture();
+    const link = join(root, "link");
+    symlinkSync(dir, link);
+    for (const p of [link + "/", link + "///"]) {
+      const r = checkPublicDataPermissions(p);
+      expect(r.status, p).toBe("unsafe");
+      expect(r.entries[0].reasons, p).toContain("symlink");
+    }
+    expect(checkPublicDataPermissions(dir + "/").status).toBe("ok");
+  });
+
+  it("other-only bits are unsafe: dir 0701, file 0604", () => {
+    const a = fixture();
+    chmodSync(a.dir, 0o701);
+    expect(checkPublicDataPermissions(a.dir).entries).toEqual([{ name: ".", mode: "0701", reasons: ["dir_mode"] }]);
+    const b = fixture();
+    chmodSync(b.file, 0o604);
+    expect(checkPublicDataPermissions(b.dir).entries).toEqual([{ name: "index.json", mode: "0604", reasons: ["file_mode"] }]);
+  });
+
+  it("under-permissive modes are not the expected exact mode: dir 0500, file 0400", () => {
+    const r1 = checkPublicDataPermissions("/synthetic/root", {
+      lstat: () => fakeStat({ mode: 0o40500 }),
+      readdir: () => [],
+      uid,
+    });
+    expect(r1.status).toBe("unsafe");
+    expect(r1.entries).toEqual([{ name: ".", mode: "0500", reasons: ["dir_mode"] }]);
+    const b = fixture();
+    chmodSync(b.file, 0o400);
+    expect(checkPublicDataPermissions(b.dir).entries).toEqual([{ name: "index.json", mode: "0400", reasons: ["file_mode"] }]);
+  });
+
+  it("a stat object that throws maps to unknown via the outer guard", () => {
+    const bad = {
+      mode: 0o40700,
+      uid,
+      isDirectory: () => {
+        throw new Error("malformed");
+      },
+      isFile: () => false,
+      isSymbolicLink: () => false,
+    } as PermissionStat;
+    expect(() => checkPublicDataPermissions("/synthetic/root", { lstat: () => bad, readdir: () => [], uid })).not.toThrow();
+    expect(checkPublicDataPermissions("/synthetic/root", { lstat: () => bad, readdir: () => [], uid }).status).toBe("unknown");
+  });
+
+  it("depth cap (endless 0700 nesting) gives unknown with too_deep", () => {
+    const r = checkPublicDataPermissions("/synthetic/root", { lstat: () => fakeStat({}), readdir: () => ["d"], uid });
+    expect(r.status).toBe("unknown");
+    expect(r.entries.some((e) => e.reasons.includes("too_deep"))).toBe(true);
+    expect(isPublicDataPermissionOk(r)).toBe(false);
+  });
+
+  it("entry cap (10001 safe files) gives unknown with entry_cap", () => {
+    const names = Array.from({ length: 10001 }, (_, i) => `f${i}`);
+    const r = checkPublicDataPermissions("/synthetic/root", {
+      lstat: (p) => (p === "/synthetic/root" ? fakeStat({}) : fakeStat({ mode: 0o100600, dir: false, file: true })),
+      readdir: () => names,
+      uid,
+    });
+    expect(r.status).toBe("unknown");
+    expect(r.entries).toEqual([{ name: ".", mode: "0700", reasons: ["entry_cap"] }]);
+  });
+
+  it("a FIFO inside the dir is unsafe with special_entry (real mkfifo on temp fixture, plus injected)", () => {
+    const { dir } = fixture();
+    execFileSync("mkfifo", ["-m", "600", join(dir, "pipe")]);
+    const r = checkPublicDataPermissions(dir);
+    expect(r.status).toBe("unsafe");
+    expect(r.entries).toEqual([{ name: "pipe", mode: "0600", reasons: ["special_entry"] }]);
+    const inj = checkPublicDataPermissions("/synthetic/root", {
+      lstat: (p) => (p === "/synthetic/root" ? fakeStat({}) : fakeStat({ mode: 0o10600, dir: false, file: false })),
+      readdir: () => ["fifo"],
+      uid,
+    });
+    expect(inj.entries).toEqual([{ name: "fifo", mode: "0600", reasons: ["special_entry"] }]);
   });
 
   it("empty or non-string path is unknown", () => {
