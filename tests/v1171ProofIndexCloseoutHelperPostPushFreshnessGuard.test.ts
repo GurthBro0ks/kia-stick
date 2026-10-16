@@ -1,6 +1,7 @@
 import { spawnSync } from "node:child_process";
 import { describe, expect, it } from "vitest";
 import { expectCurrentCloseoutSummary, expectCurrentProofIndexOutput } from "@/tests/helpers/currentAcceptedState";
+import { localProofRootAvailable, proofPath, proofRootGateLabel } from "@/tests/helpers/localProofRoot";
 
 const proof = "/home/mint/kia-stick-local-proofs/proof_kia_stick_v1_1_68_to_v1_1_72_post_closeout_accepted_state_contract_refresh_20260717T092307Z/closeout_push_20260717T095029Z";
 const env = { ...process.env, KIA_PROOF_ROOT: undefined };
@@ -19,8 +20,8 @@ describe("v1.1.71 helper and rooted proof-index freshness", () => {
     }
   });
 
-  it("resolves the accepted nested closeout from the persistent root", () => {
-    const index = spawnSync("node", ["scripts/local-proof-index.mjs", "latest", "--root", "/home/mint/kia-stick-local-proofs"], { encoding: "utf8", env });
+  it.skipIf(!localProofRootAvailable)(proofRootGateLabel("resolves the accepted nested closeout from the persistent root"), () => {
+    const index = spawnSync("node", ["scripts/local-proof-index.mjs", "latest", "--root", proofPath()], { encoding: "utf8", env });
     expect(index.status).toBe(0);
     expectCurrentProofIndexOutput(index.stdout);
   });

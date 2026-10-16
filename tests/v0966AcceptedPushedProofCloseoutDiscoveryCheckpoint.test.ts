@@ -1,11 +1,17 @@
 import { readFileSync } from "node:fs";
 import { spawnSync } from "node:child_process";
 import { describe, expect, it } from "vitest";
+import { localProofRootAvailable, proofPath, proofRootGateLabel } from "@/tests/helpers/localProofRoot";
 
 const phase = "KIA-Stick-v0.9.66-accepted-pushed-proof-closeout-discovery-checkpoint";
 const docPath = "docs/v0.9.66-accepted-pushed-proof-closeout-discovery-checkpoint.md";
 const closeoutProof =
   "/home/mint/kia-stick-local-proofs/proof_kia_stick_v0_9_58_to_v0_9_62_operator_qa_pass_recording_20260630T213116Z/closeout_push_20260630T214918Z";
+// Real on-disk location for the helper call (rebased under KIA_LOCAL_PROOF_ROOT); the doc/feature_list
+// assertions keep comparing against the recorded literal above.
+const closeoutProofOnDisk = proofPath(
+  "proof_kia_stick_v0_9_58_to_v0_9_62_operator_qa_pass_recording_20260630T213116Z/closeout_push_20260630T214918Z",
+);
 
 describe("v0.9.66 accepted pushed proof/closeout discovery checkpoint", () => {
   it("documents d1a31cd as the latest accepted pushed proof-chain baseline", () => {
@@ -26,12 +32,12 @@ describe("v0.9.66 accepted pushed proof/closeout discovery checkpoint", () => {
     }
   });
 
-  it("surfaces d1a31cd in closeout helper proof-chain output", () => {
-    const summary = spawnSync("node", ["scripts/closeout-helper.mjs", "summary", "--proof-dir", closeoutProof], { encoding: "utf8" });
+  it.skipIf(!localProofRootAvailable)(proofRootGateLabel("surfaces d1a31cd in closeout helper proof-chain output"), () => {
+    const summary = spawnSync("node", ["scripts/closeout-helper.mjs", "summary", "--proof-dir", closeoutProofOnDisk], { encoding: "utf8" });
 
     expect(summary.status).toBe(0);
     expect(summary.stdout).toContain("PROOF_CHAIN_ACCEPTED_PUSHED_CHECKPOINT=d1a31cd");
-    expect(summary.stdout).toContain(`PROOF_CHAIN_CLOSEOUT_PUSH_PROOF=${closeoutProof}`);
+    expect(summary.stdout).toContain(`PROOF_CHAIN_CLOSEOUT_PUSH_PROOF=${closeoutProofOnDisk}`);
     expect(summary.stdout).toContain("PROOF_DISCOVERY_MODE=explicit_proof_dir");
     expect(summary.stdout).toContain("PUSHED=yes");
     expect(summary.stdout).not.toContain("PROOF_CHAIN_ACCEPTED_PUSHED_CHECKPOINT=4093530");
