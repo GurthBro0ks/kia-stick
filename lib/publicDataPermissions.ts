@@ -9,6 +9,20 @@
  *
  * Expected: directories 0700, regular files 0600, owned by the current uid,
  * no symlinks anywhere.
+ *
+ * Scope and limits:
+ * - Only the target folder and everything below it are checked. Parent
+ *   folders of the target are NOT checked (a symlinked or 0777 parent is not
+ *   detected).
+ * - Hardlinks are NOT detected: a 0600 file with nlink > 1 reports ok.
+ * - Input paths containing a "." or ".." segment are rejected as `unknown`
+ *   (reason path_dot_segment) rather than normalized, because lexical
+ *   normalization can disagree with how the kernel resolves ".." through a
+ *   symlink. Trailing slashes are stripped so "<symlink>/" is still flagged.
+ * - Limits: at most MAX_ENTRIES (10000) entries in total, counting the target
+ *   folder itself; a 10001st entry gives entry_cap. A folder at depth
+ *   MAX_DEPTH (8) below the target is mode-checked but not listed, giving
+ *   too_deep. Either limit gives `unknown`.
  */
 import { lstatSync, readdirSync } from "node:fs";
 import { join } from "node:path";
@@ -24,7 +38,8 @@ export type PublicDataPermissionReason =
   | "lstat_error"
   | "readdir_error"
   | "too_deep"
-  | "entry_cap";
+  | "entry_cap"
+  | "path_dot_segment";
 
 export interface PermissionStat {
   mode: number;
@@ -171,6 +186,9 @@ export function checkPublicDataPermissions(
   try {
     if (typeof dir !== "string" || dir.trim() === "") {
       return { status: "unknown", entries: [], checked: 0 };
+    }
+    if (dir.split("/").some((seg) => seg === "." || seg === "..")) {
+      return { status: "unknown", entries: [{ name: ".", mode: null, reasons: ["path_dot_segment"] }], checked: 0 };
     }
     const merged: PublicDataPermissionDeps = { ...defaultPublicDataPermissionDeps, ...deps };
     return inspect(normalizeRoot(dir), merged);

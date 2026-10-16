@@ -267,6 +267,58 @@ describe("publicDataPermissions (read-only drift detector, GUR-97 item 3)", () =
     expect(inj.entries).toEqual([{ name: "fifo", mode: "0600", reasons: ["special_entry"] }]);
   });
 
+  // Fix round 2 (re-review cf96c5e9).
+  it("dot segments are rejected as unknown, never ok (<symlink>/., /./, /./., ..)", () => {
+    const { root, dir } = fixture();
+    const link = join(root, "link");
+    symlinkSync(dir, link);
+    for (const p of [link + "/.", link + "/./", link + "/./.", link + "/.//", dir + "/.", dir + "/../cache", root + "/./cache", "./cache", ".."]) {
+      const r = checkPublicDataPermissions(p);
+      expect(r.status, p).toBe("unknown");
+      expect(r.entries, p).toEqual([{ name: ".", mode: null, reasons: ["path_dot_segment"] }]);
+      expect(isPublicDataPermissionOk(r), p).toBe(false);
+    }
+    // Names that merely contain dots are fine.
+    mkdirSync(join(root, "cache.v2"));
+    chmodSync(join(root, "cache.v2"), 0o700);
+    expect(checkPublicDataPermissions(join(root, "cache.v2")).status).toBe("ok");
+    expect(checkPublicDataPermissions(join(root, "..cache")).status).toBe("missing");
+  });
+
+  const wide = (children: number) =>
+    checkPublicDataPermissions("/synthetic/root", {
+      lstat: (p) => (p === "/synthetic/root" ? fakeStat({}) : fakeStat({ mode: 0o100600, dir: false, file: true })),
+      readdir: () => Array.from({ length: children }, (_, i) => `f${i}`),
+      uid,
+    });
+
+  it("entry limit pinned: 10000 entries total (root + 9999) is ok; 10001 total (root + 10000) is entry_cap", () => {
+    const at = wide(9999);
+    expect(at.status).toBe("ok");
+    expect(at.checked).toBe(10000);
+    const over = wide(10000);
+    expect(over.status).toBe("unknown");
+    expect(over.checked).toBe(10000);
+    expect(over.entries).toEqual([{ name: ".", mode: "0700", reasons: ["entry_cap"] }]);
+  });
+
+  const chain = (levels: number) =>
+    checkPublicDataPermissions("/synthetic/root", {
+      lstat: () => fakeStat({}),
+      readdir: (p) => (p.split("/").length - 3 < levels ? ["n"] : []),
+      uid,
+    });
+
+  it("depth limit pinned: a folder at depth 7 is ok; a folder at depth 8 is too_deep", () => {
+    const seven = chain(7);
+    expect(seven.status).toBe("ok");
+    expect(seven.checked).toBe(8);
+    const eight = chain(8);
+    expect(eight.status).toBe("unknown");
+    expect(eight.checked).toBe(9);
+    expect(eight.entries).toEqual([{ name: "n/n/n/n/n/n/n/n", mode: "0700", reasons: ["too_deep"] }]);
+  });
+
   it("empty or non-string path is unknown", () => {
     expect(checkPublicDataPermissions("").status).toBe("unknown");
     expect(checkPublicDataPermissions(undefined as unknown as string).status).toBe("unknown");
