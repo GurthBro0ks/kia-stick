@@ -66,3 +66,28 @@ one-byte example that overlaps the LIVE hash test.
 Separate production issue: the phase runner does not stop on failure. After a
 failed step it still runs all remaining validation steps and only skips
 commit/push. These test and documentation changes do not fix this.
+
+## Local proof root (opt-in)
+
+Some checkpoint tests read the laptop-only local proof root. `tests/helpers/localProofRoot.ts` resolves it from
+`KIA_LOCAL_PROOF_ROOT`, default `/home/mint/kia-stick-local-proofs`, and only checks that the root exists (read-only;
+it never checks specific proof subdirectories, so a missing proof inside an opted-in root fails instead of skipping).
+
+Gated files (only the tests that use the proof root are gated; doc-text and `feature_list.json` assertions still run):
+
+- `tests/v0966AcceptedPushedProofCloseoutDiscoveryCheckpoint.test.ts` (closeout-helper test only)
+- `tests/v1161ProofIndexCloseoutHelperPostPushFreshnessGuard.test.ts` (persistent-root proof-index test only)
+- `tests/v1166ProofIndexCloseoutHelperPostPushFreshnessGuard.test.ts` (persistent-root proof-index test only)
+- `tests/v1171ProofIndexCloseoutHelperPostPushFreshnessGuard.test.ts` (persistent-root proof-index test only)
+- `tests/v1176ProofIndexCloseoutHelperPostPushFreshnessGuard.test.ts` (persistent-root proof-index test only)
+
+When the root is absent, each gated test is skipped and its name ends with
+`[NOT_RUN: local proof root <root> not present; set KIA_LOCAL_PROOF_ROOT to opt in]`.
+A skipped run is not a PASS. CI and the box skip these tests; the laptop with the real proofs runs them.
+
+```sh
+KIA_LOCAL_PROOF_ROOT=/home/mint/kia-stick-local-proofs ./node_modules/.bin/vitest run tests/v0966AcceptedPushedProofCloseoutDiscoveryCheckpoint.test.ts tests/v11{61,66,71,76}ProofIndexCloseoutHelperPostPushFreshnessGuard.test.ts
+```
+
+Expected values from `tests/helpers/currentAcceptedState.ts` still name the recorded `/home/mint/...` proof paths, so the
+gated tests fully pass only when the proofs live at the default root.
