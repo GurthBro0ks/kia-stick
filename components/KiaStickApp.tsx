@@ -89,7 +89,7 @@ import {
 import {
   buildPublicStewardPacket,
   publicStewardPacketExportEligibility,
-  publicStewardPacketLimitationText,
+  publicStewardPacketDisplayLimitations,
   publicStewardPacketTopicSummaryText,
   publicStewardPacketToMarkdown,
   publicStewardPacketToText,
@@ -1069,7 +1069,7 @@ export function KiaStickApp({ runtimeVersion = clientVersion }: { runtimeVersion
         <AlertTriangle size={16} />
         <details className="safetyNoticeDetails">
           <summary>Fake samples / public data only — no private data</summary>
-          <p>Fake sample mode remains isolated. PUBLIC DATA PILOT: two exact allowlisted official sources, local read-only, no private data. No cloud keys, real uploads, or unrestricted real-doc gate are active.</p>
+          <p>Fake sample mode remains isolated. PUBLIC DATA PILOT: three bounded public sources (the APWU-USPS contract, JCIM joint interpretation, and NLRB general guidance), local read-only, no private data. No cloud keys, real uploads, or unrestricted real-doc gate are active.</p>
         </details>
       </div>
 
@@ -1087,7 +1087,7 @@ export function KiaStickApp({ runtimeVersion = clientVersion }: { runtimeVersion
               {thread.messages.length === 0 && (
                 <div className="emptyChatState">
                   <span className="messageLabel">Ask KIA Stick</span>
-                  <p>Ask a question and follow the citations. Use fake samples or the two allowlisted public sources; keep private information out.</p>
+                  <p>Ask a question and follow the citations. Use fake samples or the three bounded public sources (the APWU-USPS contract, JCIM joint interpretation, and NLRB general guidance); keep private information out.</p>
                   <div className="firstUseExamples">
                     <span className="sectionKicker">Try an example</span>
                     <div className="firstUsePromptRail" aria-label="Example questions">
@@ -4337,7 +4337,7 @@ export function PublicStewardPacketView({
       </section>
       <section className="argumentPlanSection print-section">
         <h4 className="print-heading">11. Limitations and unsupported scope</h4>
-        <CitedList values={packet.limitations.map((item) => ({ ...item, text: publicStewardPacketLimitationText(item.text) }))} />
+        <CitedList values={publicStewardPacketDisplayLimitations(packet.limitations)} />
       </section>
       <section className="argumentPlanSection print-section">
         <h4 className="print-heading">12. Complete verified-current source appendix</h4>

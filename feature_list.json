@@ -14475,5 +14475,25 @@
     "admission_status": "IMPLEMENTED_PENDING_ACCEPTANCE",
     "public_safe_mvp_status": "ACCEPTED_PAUSED",
     "pushed": false
+  },
+  "jcim_operator_checks_1_presentation": {
+    "phase": "KIA-Stick-jcim-operator-checks-1",
+    "status": "IMPLEMENTED_PENDING_REVIEW",
+    "owner_qa": "NOT_RUN",
+    "pushed": false,
+    "base_commit": "1487d0991085af7e33bb47c43eb7aec0b59a6047",
+    "scope": "presentation_only_section11_display_dedup_and_three_source_count_copy",
+    "section11_display_dedup": "union_citation_ids_first_occurrence_order",
+    "stored_limitations_changed": false,
+    "serialized_packet_changed": false,
+    "content_identity_changed": false,
+    "golden_text_markdown_view_hashes_refrozen": "LEAD_AMENDMENT_1_OPTION_1",
+    "golden_serialized_and_content_identity_hashes_changed": false,
+    "jcim_admission_status_changed": false,
+    "jcim_manual_qa_status_changed": false,
+    "outstanding_owner_operator_checks": "NOT_ENUMERATED_PENDING_OWNER_LIST",
+    "operator_checks_marked_passed": false,
+    "reviewer_handoff": "KIA-jcim-operator-checks-1-review",
+    "proof_dir": "/workspace/galaxy-prep/kia-stick/evidence/KIA-jcim-operator-checks-1-qa_gate"
   }
 }

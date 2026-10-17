@@ -39,6 +39,19 @@ export function publicStewardPacketLimitationText(text: string): string {
     : text;
 }
 
+// Presentation-only: show each mapped Section 11 sentence once. Collapsed entries keep the first
+// occurrence's position and carry the union of their citation ids (first-seen order).
+// packet.limitations, serialization and contentIdentity are never changed.
+export function publicStewardPacketDisplayLimitations(limitations: readonly CitedGrievanceOutlineItem[]): CitedGrievanceOutlineItem[] {
+  const byText = new Map<string, CitedGrievanceOutlineItem>();
+  for (const item of limitations) {
+    const text = publicStewardPacketLimitationText(item.text);
+    const existing = byText.get(text);
+    byText.set(text, { text, citationIds: [...new Set([...(existing?.citationIds ?? []), ...item.citationIds])] });
+  }
+  return [...byText.values()];
+}
+
 export interface PublicStewardPacketTopicSummary {
   topicId: PublicStewardWorkflowTopicId;
   title: string;
@@ -651,7 +664,7 @@ export function publicStewardPacketToText(packet: PublicStewardPacket): string {
     numbered("8. Conditional Step 1 preparation outline", packet.stepOnePreparation.map((entry) => entry.text)),
     numbered("9. Procedural and timeliness caveats", packet.procedureCaveats.map((entry) => entry.text)),
     numbered("10. Step 2 or escalation readiness checklist", packet.escalationReadiness.map((entry) => entry.text)),
-    numbered("11. Limitations and unsupported scope", packet.limitations.map((entry) => publicStewardPacketLimitationText(entry.text))),
+    numbered("11. Limitations and unsupported scope", publicStewardPacketDisplayLimitations(packet.limitations).map((entry) => entry.text)),
     numbered("12. Complete verified-current source appendix", packet.sourceAppendix.map(
       (source) => `Article ${source.articleNumber} / ${source.section} / ${source.paragraphId} / ${source.verificationState} / source instance ${source.sourceInstanceId} / paragraph ${source.paragraphContentSha256} / anchor ${source.citationAnchorSha256}`
     )),
@@ -693,7 +706,7 @@ export function publicStewardPacketToMarkdown(packet: PublicStewardPacket): stri
     section("8. Conditional Step 1 preparation outline", packet.stepOnePreparation.map((entry) => entry.text)),
     section("9. Procedural and timeliness caveats", packet.procedureCaveats.map((entry) => entry.text)),
     section("10. Step 2 or escalation readiness checklist", packet.escalationReadiness.map((entry) => entry.text)),
-    section("11. Limitations and unsupported scope", packet.limitations.map((entry) => publicStewardPacketLimitationText(entry.text))),
+    section("11. Limitations and unsupported scope", publicStewardPacketDisplayLimitations(packet.limitations).map((entry) => entry.text)),
     section("12. Complete verified-current source appendix", packet.sourceAppendix.map(
       (source) => `Article ${source.articleNumber} / ${source.section} / ${source.paragraphId} / ${source.verificationState} / source instance ${source.sourceInstanceId} / paragraph ${source.paragraphContentSha256} / anchor ${source.citationAnchorSha256}`
     )),

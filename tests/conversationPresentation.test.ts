@@ -33,7 +33,7 @@ describe("UX-2 conversation presentation preservation", () => {
     const html = renderToStaticMarkup(React.createElement(KiaStickApp));
     expect(html).toContain("Fake samples / public data only — no private data");
     expect(html).toContain('<details class="safetyNoticeDetails">');
-    expect(html).toContain("Fake sample mode remains isolated. PUBLIC DATA PILOT: two exact allowlisted official sources, local read-only, no private data. No cloud keys, real uploads, or unrestricted real-doc gate are active.");
+    expect(html).toContain("Fake sample mode remains isolated. PUBLIC DATA PILOT: three bounded public sources (the APWU-USPS contract, JCIM joint interpretation, and NLRB general guidance), local read-only, no private data. No cloud keys, real uploads, or unrestricted real-doc gate are active.");
     const optionsHtml = html.match(/<details class="composerDisclosure">([\s\S]*?)<\/details>/)?.[1];
     expect(optionsHtml).toContain("Answer lane");
     for (const value of ["auto", "cba", "nlrb", "fake"]) expect(optionsHtml).toContain(`value="${value}"`);
