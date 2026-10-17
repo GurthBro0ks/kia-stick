@@ -54,18 +54,70 @@ This requires npm on PATH and is slower (about 4 seconds per test). If
 | real-bytes VALIDATE hash guard | VALIDATE hash | Opt-in, real bytes and crypto; reversed PDF | Isolated |
 | real-bytes VALIDATE+LIVE hash guard, one-byte tamper | VALIDATE and LIVE hash | Opt-in, real bytes and crypto | Isolates hash guards; overlaps other hash cases |
 | real-bytes appended byte | VALIDATE hash; LIVE length | Opt-in, real bytes and crypto; VALIDATE checks hash first, LIVE checks length first | Neither length guard isolated (VALIDATE length not reached; LIVE length backed by LIVE hash) |
+| seam M1 VALIDATE_HASH isolated | VALIDATE hash | Default suite, real crypto; alternate pins + same-length tamper | Isolated unmocked: removing hash guard would accept |
+| seam M2 VALIDATE_LENGTH isolated | VALIDATE length | Default suite, real crypto; alternate pins with matching hash, wrong length | Isolated unmocked: removing length guard would accept |
+| seam M3 LIVE_LENGTH isolated | LIVE length | Default suite, real crypto; alternate pins + short body, header length = pin | Isolated unmocked: removing live length guard would accept |
+| seam production hard gate | VALIDATE+LIVE pins | Default suite; defaults/`NODE_ENV` cannot skip JCIM pins | N/A (gate, not mutant) |
 
-Not every guard is isolated without mocks. Length guards cannot be isolated
-without a hash mock: VALIDATE checks the hash first, so a wrong-length PDF is
-rejected before the length guard is reached; LIVE checks length first, but if
-that guard is removed the hash guard still rejects. VALIDATE hash isolation
-needs real bytes in the opt-in suite or the unit mock. LIVE hash isolation is
-covered by the default real-crypto suite. The LIVE tamper test is an explicit
-one-byte example that overlaps the LIVE hash test.
+Production PDF identity is centralized in `matchesJcimPdfIdentity` /
+`JCIM_PDF_IDENTITY_PINS` (`lib/jcimSourceServer.ts`). Callers default to the
+real `JCIM_SHA256` + `JCIM_BYTES` pins; there is no env/`NODE_ENV` skip.
+Unmocked seam tests under `tests/jcimSource.test.ts` isolate M1–M3 by passing
+alternate pins (real hash of synthetic bytes) so length and hash fail
+independently. Opt-in real-byte tests and unit-mocked length tests remain.
+The LIVE tamper test remains an explicit one-byte example overlapping LIVE hash.
 
-Separate production issue: the phase runner does not stop on failure. After a
-failed step it still runs all remaining validation steps and only skips
-commit/push. These test and documentation changes do not fix this.
+Phase-runner validation now stops after the first failed step (see
+`scripts/phase-runner.mjs` and `tests/phaseRunner.test.ts` on this branch tip).
+Post-validation git trail steps still run; commit/push remain skipped on failure.
+
+## Condition D — pre-release / merge checklist
+
+Operators and Reviewers cite this section before release or merge when
+source-handling work is in scope. Rules above for `KIA_REAL_PUBLIC_DATA_DIR`
+permissions, NOT_RUN semantics, and the example vitest command are authoritative;
+this checklist does not invent additional gates.
+
+Trigger: source-handling code under `lib/*Source*.ts`, `lib/*SourceServer.ts`,
+citation integrity, or routing changes, **or** source test fixtures change.
+
+- [ ] **D1 — Opt-in real-cache suites.** Before any release/merge under the
+  trigger above, run the opt-in real-cache suites against an **authorized safe
+  copy** of the public cache (never chmod the served cache without a separate
+  GO). Export `KIA_REAL_PUBLIC_DATA_DIR` to an absolute path whose basename is
+  `.kia-public-data`, with dir mode **0700**, files mode **0600**, owned by the
+  running user (no symlinks), matching `readJcimCache` / the permission rules in
+  this document. Example:
+
+  ```sh
+  KIA_REAL_PUBLIC_DATA_DIR=/abs/.kia-public-data ./node_modules/.bin/vitest run \
+    tests/jcimSource.realCache.integration.test.ts \
+    tests/publicSourceSufficiencyMatrixV2.test.ts
+  ```
+
+- [ ] **D2 — Record identities and results separately.** Confirm cache dir/file
+  modes beforehand. Record source identities as already practiced (JCIM PDF
+  sha256 / bytes / last-modified, normalized sha256; CBA PDF sha256) and the
+  opt-in pass/fail counts **separately** from default-suite counts.
+
+- [ ] **D3 — NOT_RUN vs FAIL prerequisite.** Unset/empty `KIA_REAL_PUBLIC_DATA_DIR`
+  → report **NOT_RUN** (skipped opt-in; not a PASS). Supplied but unusable or
+  unsafe cache → **FAIL** the opt-in prerequisite tests (not PASS, not NOT_RUN),
+  with the printed reason. Never substitute synthetic/default-suite results for
+  opt-in real-cache coverage.
+
+- [ ] **D4 — Phase-runner does not set the real-cache env.** 
+  `scripts/phase-runner.mjs` never sets `KIA_REAL_PUBLIC_DATA_DIR`; children only
+  inherit an operator-exported value. Opt-in under the runner requires the
+  operator to export it beforehand (see above).
+
+- [ ] **D5 — Real-npm opt-in is separate.** Phase-runner real-npm coverage uses
+  `KIA_PHASE_RUNNER_REAL_NPM=1` and is independent of Condition D real-cache
+  runs. Unset real-npm remains NOT_RUN and is not a PASS.
+
+Origin: formalized from hermetic-4 Note 2 / PR-packet Condition D references into
+this in-repo checklist so release/merge reviews can cite `tests/OPT_IN_INTEGRATION.md`
+rather than evidence-only markdown.
 
 ## Local proof root (opt-in)
 

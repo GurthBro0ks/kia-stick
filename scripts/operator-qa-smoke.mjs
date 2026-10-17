@@ -116,7 +116,7 @@ function gitRef(root, ref) {
   return result.status === 0 ? result.stdout.trim() : "";
 }
 
-function checkStaticContracts(root, problems) {
+function checkStaticContracts(root, problems, options = {}) {
   const doc = readText(root, "docs/v0.7.9-operator-qa-smoke-pack.md", problems);
   const component = readText(root, "components/KiaStickApp.tsx", problems);
   const health = readText(root, "app/health/route.ts", problems);
@@ -190,7 +190,14 @@ function checkStaticContracts(root, problems) {
   }
   const head = gitRef(root, "HEAD");
   const originMain = gitRef(root, "origin/main");
-  if (!head || !originMain) problems.push("HEAD and origin/main must both resolve for operator smoke");
+  // Static/no-server mode must work in hermetic clones that lack origin/main.
+  // Live operator smoke with --require-server still requires the remote main ref.
+  if (!head) problems.push("HEAD must resolve for operator smoke");
+  if (!originMain) {
+    if (options.requireServer) {
+      problems.push("origin/main must resolve for operator smoke when --require-server is set");
+    }
+  }
   if (packageJson?.scripts?.["operator:smoke"] !== "node scripts/operator-qa-smoke.mjs") problems.push("package.json must expose operator:smoke");
 
   const queue015 = queue?.items?.find?.((item) => item.id === "queue-015-v07-first-real-doc-gate-request");
@@ -267,7 +274,9 @@ export async function runOperatorQaSmoke(options = {}) {
   const problems = [];
   const notes = [];
 
-  const { acceptedState, localRuntimePhase } = checkStaticContracts(root, problems);
+  const { acceptedState, localRuntimePhase } = checkStaticContracts(root, problems, {
+    requireServer: Boolean(options.requireServer),
+  });
   await checkLiveRoutes(baseUrl, Boolean(options.requireServer), acceptedState, localRuntimePhase, problems, notes);
 
   return {

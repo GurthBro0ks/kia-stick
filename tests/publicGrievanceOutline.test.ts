@@ -390,14 +390,14 @@ describe("public CBA annual-leave cited grievance outline", () => {
 
   it("keeps Settings, health, accepted identities, product, and blocked gates truthful", async () => {
     expect(currentAcceptedPushedState.local_bundle_phase).toBe(
-      "KIA-Stick-source-citation-integrity-post-push-accepted-state-promotion"
+      "KIA-Stick-hermetic-2-post-merge-accepted-state-metadata-refresh"
     );
     expect(currentAcceptedPushedState.local_bundle_status).toBe(
-      "source and citation integrity post-push accepted-state promotion; validation PASS; pushed no; manual QA PASS"
+      "hermetic-2 post-merge accepted-state metadata refresh; validation PASS; pushed no; manual QA PASS"
     );
-    expect(currentAcceptedPushedState.accepted_pushed_commit).toBe("9b0fda9f562fb7e632e571e6299eb2dcc77b7b1e");
-    expect(currentAcceptedPushedState.repository_recording_commit).toBe("ca091d37fd8ff5c8f63fad084b81e5f59a749797");
-    expect(currentAcceptedPushedState.latest_pushed_closeout_commit).toBe("ca091d37fd8ff5c8f63fad084b81e5f59a749797");
+    expect(currentAcceptedPushedState.accepted_pushed_commit).toBe("20562b3a0112f6430ac1707ec8a9f7681d4af5f7");
+    expect(currentAcceptedPushedState.repository_recording_commit).toBe("8b438386f2ad1bba6166a95b326c9305b39f9c2f");
+    expect(currentAcceptedPushedState.latest_pushed_closeout_commit).toBe("8b438386f2ad1bba6166a95b326c9305b39f9c2f");
 
     const healthResponse = GET();
     const health = await healthResponse.json();
@@ -417,7 +417,7 @@ describe("public CBA annual-leave cited grievance outline", () => {
       operatorDiagnosticsOpen: false,
       onOperatorDiagnosticsToggle: () => undefined,
     }));
-    expect(settingsHtml).toContain("Source and Citation Integrity Post-Push Accepted-State Promotion");
+    expect(settingsHtml).toContain("Hermetic-2 Post-Merge Accepted-State Metadata Refresh");
     expect(settingsHtml).toContain(currentAcceptedPushedState.local_bundle_phase);
     expect(settingsHtml).toContain("Manual QA</dt><dd>PASS");
     expect(settingsHtml).toContain(currentAcceptedPushedState.accepted_pushed_short_commit);
