@@ -11,7 +11,7 @@ import { createPublicSourceFixtureCache } from "@/tests/fixtures/publicSourceFix
 
 const currentLocalPhase = "KIA-Stick-hermetic-2-post-merge-accepted-state-metadata-refresh";
 const acceptedCommit = "20562b3a0112f6430ac1707ec8a9f7681d4af5f7";
-const repositoryRecordingCommit = "8b438386f2ad1bba6166a95b326c9305b39f9c2f";
+const repositoryRecordingCommit = "cbdcc71160f3442b0d578218ab1cb08d66d64d39";
 
 describe("Bundle 3 QA runtime truth and favicon correction", () => {
   it("separates the accepted pushed repair from the local bookkeeping promotion", async () => {

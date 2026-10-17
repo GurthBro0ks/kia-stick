@@ -21,9 +21,9 @@ describe("public truth runtime identity", () => {
     expect(payload.acceptedCommit).toBe(currentAcceptedPushedState.accepted_pushed_commit);
     expect(payload.acceptedCommit).toBe("20562b3a0112f6430ac1707ec8a9f7681d4af5f7");
     expect(payload.repositoryRecordingCommit).toBe(currentAcceptedPushedState.repository_recording_commit);
-    expect(payload.repositoryRecordingCommit).toBe("8b438386f2ad1bba6166a95b326c9305b39f9c2f");
+    expect(payload.repositoryRecordingCommit).toBe("cbdcc71160f3442b0d578218ab1cb08d66d64d39");
     expect(payload.latestPushedCloseoutCommit).toBe(currentAcceptedPushedState.latest_pushed_closeout_commit);
-    expect(payload.latestPushedCloseoutCommit).toBe("8b438386f2ad1bba6166a95b326c9305b39f9c2f");
+    expect(payload.latestPushedCloseoutCommit).toBe("cbdcc71160f3442b0d578218ab1cb08d66d64d39");
     expect(new Set([
       payload.acceptedCommit,
       payload.repositoryRecordingCommit,
@@ -59,7 +59,7 @@ describe("public truth runtime identity", () => {
     expect(payload.manualQa).toBe("PASS");
     expect(payload.pushed).toBe(false);
     expect(payload.acceptedCommit).toBe("20562b3a0112f6430ac1707ec8a9f7681d4af5f7");
-    expect(payload.latestPushedCloseoutCommit).toBe("8b438386f2ad1bba6166a95b326c9305b39f9c2f");
+    expect(payload.latestPushedCloseoutCommit).toBe("cbdcc71160f3442b0d578218ab1cb08d66d64d39");
     expect(payload.productVersion).toBe("0.7.0");
     expect(currentAcceptedPushedState.historical_prior_checkpoints[0]).toEqual({
       checkpoint: "Source and Citation Integrity Hardening",

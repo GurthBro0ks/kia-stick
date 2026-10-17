@@ -460,8 +460,8 @@ describe("public CBA overtime cited grievance outline", () => {
     expect(health.phase).toBe(currentAcceptedPushedState.local_bundle_phase);
     expect(health.productVersion).toBe("0.7.0");
     expect(health.acceptedCommit).toBe("20562b3a0112f6430ac1707ec8a9f7681d4af5f7");
-    expect(health.repositoryRecordingCommit).toBe("8b438386f2ad1bba6166a95b326c9305b39f9c2f");
-    expect(health.latestPushedCloseoutCommit).toBe("8b438386f2ad1bba6166a95b326c9305b39f9c2f");
+    expect(health.repositoryRecordingCommit).toBe("cbdcc71160f3442b0d578218ab1cb08d66d64d39");
+    expect(health.latestPushedCloseoutCommit).toBe("cbdcc71160f3442b0d578218ab1cb08d66d64d39");
     expect(health.dataModes.private_data).toBe("blocked");
     expect(health.dataModes.external_ai).toBe("disabled");
     expect(health.realDbTouched).toBe(false);

@@ -12,9 +12,9 @@ describe("accepted-state governance loop break", () => {
     expect(currentAcceptedPushedState.accepted_bundle).toBe("KIA-Stick-hermetic-2-owner-accepted-capability");
     expect(currentAcceptedPushedState.accepted_pushed_commit).toBe("20562b3a0112f6430ac1707ec8a9f7681d4af5f7");
     expect(currentAcceptedPushedState.accepted_pushed_short_commit).toBe("20562b3");
-    expect(currentAcceptedPushedState.repository_recording_commit).toBe("8b438386f2ad1bba6166a95b326c9305b39f9c2f");
-    expect(currentAcceptedPushedState.repository_recording_short_commit).toBe("8b43838");
-    expect(currentAcceptedPushedState.accepted_equality).toContain("HEAD == origin/main == remote main == 8b438386f2ad1bba6166a95b326c9305b39f9c2f");
+    expect(currentAcceptedPushedState.repository_recording_commit).toBe("cbdcc71160f3442b0d578218ab1cb08d66d64d39");
+    expect(currentAcceptedPushedState.repository_recording_short_commit).toBe("cbdcc71");
+    expect(currentAcceptedPushedState.accepted_equality).toContain("HEAD == origin/main == remote main == cbdcc71160f3442b0d578218ab1cb08d66d64d39");
     expect(currentAcceptedPushedState.accepted_equality).not.toContain("HEAD == origin/main == remote main == 9b0fda9f");
     expect(currentAcceptedPushedState.accepted_pushed_proof_dir).toContain("KIA-hermetic-6-build.md");
     expect(currentAcceptedPushedState.historical_prior_checkpoints[0]).toEqual({
@@ -99,10 +99,10 @@ describe("accepted-state governance loop break", () => {
     expect(currentAcceptedPushedState.local_bundle_manual_qa).toBe("PASS");
     expect(currentAcceptedPushedState.local_bundle_status).toBe("hermetic-2 post-merge accepted-state metadata refresh; validation PASS; pushed no; manual QA PASS");
     expect(currentAcceptedPushedState.local_bundle_status).not.toContain("stale local-bundle push-status repair");
-    expect(currentAcceptedPushedState.latest_pushed_closeout_commit).toBe("8b438386f2ad1bba6166a95b326c9305b39f9c2f");
-    expect(currentAcceptedPushedState.latest_pushed_closeout_short_commit).toBe("8b43838");
+    expect(currentAcceptedPushedState.latest_pushed_closeout_commit).toBe("cbdcc71160f3442b0d578218ab1cb08d66d64d39");
+    expect(currentAcceptedPushedState.latest_pushed_closeout_short_commit).toBe("cbdcc71");
     expect(currentAcceptedPushedState.latest_pushed_closeout_status).toContain("pushed yes");
-    expect(currentAcceptedPushedState.latest_pushed_closeout_status).toContain("repository equality at 8b438386f2ad1bba6166a95b326c9305b39f9c2f");
+    expect(currentAcceptedPushedState.latest_pushed_closeout_status).toContain("repository equality at cbdcc71160f3442b0d578218ab1cb08d66d64d39");
     expect(currentAcceptedPushedState.local_bundle_status).not.toContain("pushed yes");
     expect([
       currentAcceptedPushedState.accepted_pushed_commit,
@@ -110,8 +110,8 @@ describe("accepted-state governance loop break", () => {
       currentAcceptedPushedState.latest_pushed_closeout_commit,
     ]).toEqual([
       "20562b3a0112f6430ac1707ec8a9f7681d4af5f7",
-      "8b438386f2ad1bba6166a95b326c9305b39f9c2f",
-      "8b438386f2ad1bba6166a95b326c9305b39f9c2f",
+      "cbdcc71160f3442b0d578218ab1cb08d66d64d39",
+      "cbdcc71160f3442b0d578218ab1cb08d66d64d39",
     ]);
     expect(new Set([
       currentAcceptedPushedState.accepted_pushed_commit,
