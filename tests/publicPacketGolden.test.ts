@@ -29,9 +29,9 @@ it('golden', () => {
  expect(values).toEqual({
   serialized: '3646ba04ebb1f44db727099a8b6c26aa0f0c78d9ff7485e7ac6f961a1d348587',
   contentIdentity: '0d381e7610bf6911c1eb7b3d537f5b99b3940748e900fbbee27f0f8bd6cf7e1b',
-  text: 'edab4b38b196bda844d5ee51ceae570241e6032eedfd9cd21c618d1d868afee6',
-  markdown: '9da29ad7b27170a431781b44b56d39ee9ddd09d741cf6a9328c991317189a851',
-  view: '24f53fa6c667c05ce4e9405e9aae8bbe8f4405eb66892c93b48120d38e6832ca',
+  text: 'a491e60c703e1b7118cbdbb70c6e1c6608cf0fc927a206a5daa8781fa0a06ec1',
+  markdown: '7d5c46fa4e7aad398524fe18c631c3bc4112f4a322fc3e54a4e5bfc7e0129e14',
+  view: '74b30184d616e297fde9d84644069c2463afe63d0851295dd5c2f5f7b5903f90',
  });
  expect(packet.supplementalCitations).toBeUndefined();
  expect(packet.supplementalSourceAppendix).toBeUndefined();
