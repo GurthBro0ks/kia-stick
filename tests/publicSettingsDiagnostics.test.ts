@@ -75,10 +75,10 @@ describe("public Settings summary and operator diagnostics split", () => {
     expect(html).toContain("v0.9.12C remains blocked");
     expect(html).toContain("queue-015 blocked");
     expect(html).toContain("Package lock</dt><dd>unchanged");
-    expect(html).toContain("repository equality verified at 8b43838");
+    expect(html).toContain("repository equality verified at cbdcc71");
     expect(html).toContain("accepted feature checkpoint is distinct from the repository/closeout recording point");
-    expect(html).toContain("Accepted-state recording baseline</dt><dd>8b438386f2ad1bba6166a95b326c9305b39f9c2f");
-    expect(html).toContain("Latest pushed repository closeout commit</dt><dd>8b438386f2ad1bba6166a95b326c9305b39f9c2f");
+    expect(html).toContain("Accepted-state recording baseline</dt><dd>cbdcc71160f3442b0d578218ab1cb08d66d64d39");
+    expect(html).toContain("Latest pushed repository closeout commit</dt><dd>cbdcc71160f3442b0d578218ab1cb08d66d64d39");
     expect(html).toContain("Latest pushed repository closeout");
     expect(html).toContain(currentAcceptedPushedState.latest_pushed_closeout_short_commit as string);
     expect(html).toContain(currentAcceptedPushedState.local_bundle_status);
@@ -86,8 +86,8 @@ describe("public Settings summary and operator diagnostics split", () => {
     expect(currentAcceptedPushedState.local_bundle_status).toContain("manual QA PASS");
     expect(html).toContain("Current working bundle</dt><dd>Hermetic-2 Post-Merge Accepted-State Metadata Refresh; validation PASS; pushed no; manual QA PASS");
     expect(currentAcceptedPushedState.accepted_pushed_short_commit).toBe("20562b3");
-    expect(currentAcceptedPushedState.repository_recording_short_commit).toBe("8b43838");
-    expect(currentAcceptedPushedState.latest_pushed_closeout_short_commit).toBe("8b43838");
+    expect(currentAcceptedPushedState.repository_recording_short_commit).toBe("cbdcc71");
+    expect(currentAcceptedPushedState.latest_pushed_closeout_short_commit).toBe("cbdcc71");
     expect(html).not.toContain("HEAD == origin/main at 9b0fda9");
     expect(html).not.toContain("HEAD equal to origin/main at 9b0fda9");
     expect(html).toContain("Build Date");
