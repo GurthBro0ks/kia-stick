@@ -37,7 +37,7 @@ describe("v0.9.66 accepted pushed proof/closeout discovery checkpoint", () => {
 
     expect(summary.status).toBe(0);
     expect(summary.stdout).toContain("PROOF_CHAIN_ACCEPTED_PUSHED_CHECKPOINT=d1a31cd");
-    expect(summary.stdout).toContain(`PROOF_CHAIN_CLOSEOUT_PUSH_PROOF=${closeoutProofOnDisk}`);
+    expect(summary.stdout).toContain(`PROOF_CHAIN_CLOSEOUT_PUSH_PROOF=${closeoutProof}`);
     expect(summary.stdout).toContain("PROOF_DISCOVERY_MODE=explicit_proof_dir");
     expect(summary.stdout).toContain("PUSHED=yes");
     expect(summary.stdout).not.toContain("PROOF_CHAIN_ACCEPTED_PUSHED_CHECKPOINT=4093530");
