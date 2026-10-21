@@ -25,13 +25,15 @@ it('golden', () => {
  const values={serialized:sha(JSON.stringify(packet)),contentIdentity:packet.contentIdentity,text:sha(originalOutput(publicStewardPacketToText(packet))),markdown:sha(originalOutput(publicStewardPacketToMarkdown(packet))),view:sha(originalOutput(renderToStaticMarkup(React.createElement(PublicStewardPacketView,{packet,source,onCitationNavigate:()=>undefined,onSave:()=>undefined}))))};
  expect(publicStewardPacketToText(packet)).toContain(displayedLimitation);
  expect(publicStewardPacketToMarkdown(packet)).toContain(displayedLimitation);
- // Frozen pre-repair hashes: only reverse the authorized presentation replacement.
+ // serialized/contentIdentity: frozen pre-repair identity hashes (never re-frozen). text/markdown/view: re-frozen after the
+ // authorized Section 11 display dedup (KIA-jcim-operator-checks-1) and sorted merged citation ids (KIA-jcim-followups-1);
+ // compared after reversing the authorized presentation replacement.
  expect(values).toEqual({
   serialized: '3646ba04ebb1f44db727099a8b6c26aa0f0c78d9ff7485e7ac6f961a1d348587',
   contentIdentity: '0d381e7610bf6911c1eb7b3d537f5b99b3940748e900fbbee27f0f8bd6cf7e1b',
   text: 'a491e60c703e1b7118cbdbb70c6e1c6608cf0fc927a206a5daa8781fa0a06ec1',
   markdown: '7d5c46fa4e7aad398524fe18c631c3bc4112f4a322fc3e54a4e5bfc7e0129e14',
-  view: '74b30184d616e297fde9d84644069c2463afe63d0851295dd5c2f5f7b5903f90',
+  view: 'e93220a54cdeb2aded0f8e67e25ee4641cfaef11ef90178d7b897797802a4e92',
  });
  expect(packet.supplementalCitations).toBeUndefined();
  expect(packet.supplementalSourceAppendix).toBeUndefined();

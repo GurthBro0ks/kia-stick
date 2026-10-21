@@ -26,7 +26,7 @@ export function GET() {
     targetMachine: "USER_LAPTOP_ONLY",
     dataModes: currentAcceptedPushedState.data_modes,
     publicSources: {
-      count: 2,
+      count: 3,
       accessMode: "exact_allowlisted_read_only",
       available: true,
     },

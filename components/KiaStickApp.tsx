@@ -75,6 +75,7 @@ import {
   publicGrievanceOutlineEligibility,
   publicGrievanceOutlineToMarkdown,
   publicGrievanceOutlineToText,
+  publicLimitationDisplayItems,
   type CitedGrievanceOutlineItem,
   type PublicGrievanceOutline,
 } from "@/lib/publicGrievanceOutline";
@@ -3868,7 +3869,7 @@ export function PublicStewardArgumentPlanView({
       <section className="argumentPlanSection print-section"><h4 className="print-heading">6. Step-by-step argument</h4><CitedItems items={plan.argumentSteps} ordered /></section>
       <section className="argumentPlanSection print-section"><h4 className="print-heading">7. Procedure and timing cautions</h4><CitedItems items={plan.procedureCaveats} /></section>
       <section className="argumentPlanSection print-section argumentPlanEscalation"><h4 className="print-heading">8. Escalation readiness</h4><CitedItems items={plan.escalationReadiness} /></section>
-      <section className="argumentPlanSection print-section"><h4 className="print-heading">9. Limitations and unsupported scope</h4><CitedItems items={plan.limitations} /></section>
+      <section className="argumentPlanSection print-section"><h4 className="print-heading">9. Limitations and unsupported scope</h4><CitedItems items={publicLimitationDisplayItems(plan.limitations)} /></section>
       <section className="argumentPlanSection print-section">
         <h4 className="print-heading">10. Complete verified-current source appendix</h4>
         <ol className="argumentPlanSources">
@@ -3915,7 +3916,7 @@ function EvidenceRequestRows({
   );
 }
 
-function PublicGrievanceOutlineView({
+export function PublicGrievanceOutlineView({
   outline,
   onCitationNavigate,
   onSave,
@@ -4097,7 +4098,7 @@ function PublicGrievanceOutlineView({
       </section>
       <section className="argumentPlanSection print-section">
         <h4 className="print-heading">11. Limitations and uncertainty</h4>
-        <CitedItems items={outline.limitations} />
+        <CitedItems items={publicLimitationDisplayItems(outline.limitations)} />
       </section>
       <section className="argumentPlanSection print-section">
         <h4 className="print-heading">12. Sources</h4>

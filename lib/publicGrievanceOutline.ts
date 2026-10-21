@@ -1070,6 +1070,19 @@ function sentenceFragment(value: string): string {
   return value.endsWith(".") ? value.slice(0, -1) : value;
 }
 
+// Presentation-only compatibility mapping for the legacy limitation literals above.
+// Stored limitations, serialization, ids, and contentIdentity stay verbatim.
+export function publicLimitationDisplayText(text: string): string {
+  return text === "This CBA-only pilot does not verify an LMOU, JCIM interpretation, handbook rule, arbitration precedent, management policy, or local practice."
+    || text === "This CBA-only pilot does not verify an LMOU, JCIM interpretation, handbook rule, arbitration precedent, management policy, local practice, or worked-off-assignment theory beyond the cited Article 8 language."
+    ? "This public pilot verifies only the admitted public sources and citations cited here. It does not determine whether a JCIM interpretation, LMOU, handbook rule, arbitration precedent, management policy, or local practice applies to a particular case."
+    : text;
+}
+
+export function publicLimitationDisplayItems(items: readonly CitedGrievanceOutlineItem[]): CitedGrievanceOutlineItem[] {
+  return items.map((item) => ({ ...item, text: publicLimitationDisplayText(item.text) }));
+}
+
 export function publicGrievanceOutlineToText(outline: PublicGrievanceOutline): string {
   const render = (
     title: string,
@@ -1100,7 +1113,7 @@ export function publicGrievanceOutlineToText(outline: PublicGrievanceOutline): s
     render("8. Possible remedy categories", outline.possibleRemedies),
     render("9. Timeliness and procedural limits", outline.timelinessAndProcedureLimits),
     render("10. Step 2 or escalation readiness", outline.escalationReadiness),
-    render("11. Limitations and uncertainty", outline.limitations),
+    render("11. Limitations and uncertainty", publicLimitationDisplayItems(outline.limitations)),
     render(
       "12. Sources",
       outline.citations.map(
@@ -1160,7 +1173,7 @@ export function publicGrievanceOutlineToMarkdown(
     `## 8. Conditional remedy framework\n\n${citedList(outline.possibleRemedies)}`,
     `## 9. Timeliness and procedure cautions\n\n${citedList(outline.timelinessAndProcedureLimits)}`,
     `## 10. Step 2 or escalation readiness\n\n${citedList(outline.escalationReadiness)}`,
-    `## 11. Limitations and uncertainty\n\n${citedList(outline.limitations)}`,
+    `## 11. Limitations and uncertainty\n\n${citedList(publicLimitationDisplayItems(outline.limitations))}`,
     `## 12. Sources\n\n${sources}`,
     "Unknown facts, local rules, and local practices require separate verification.",
     "Conditional steward outline only. No predetermined violation, remedy, monetary calculation, or legal advice.",

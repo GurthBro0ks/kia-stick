@@ -9,6 +9,7 @@ import { canonicalJson, sha256Hex, verifyCbaCitation } from "@/lib/cbaCitationIn
 import {
   buildPublicGrievanceOutline,
   PUBLIC_STEWARD_CONTACT_DIRECTORY_WARNING,
+  publicLimitationDisplayText,
   publicGrievanceOutlineExportEligibility,
   type CitedGrievanceOutlineItem,
   type EvidenceRequestItem,
@@ -227,7 +228,7 @@ export function publicStewardArgumentPlanToText(plan: PublicStewardArgumentPlan)
     numbered("6. Step-by-step argument", plan.argumentSteps.map((entry) => entry.text)),
     numbered("7. Procedure and timing cautions", plan.procedureCaveats.map((entry) => entry.text)),
     numbered("8. Escalation readiness", plan.escalationReadiness.map((entry) => entry.text)),
-    numbered("9. Limitations and unsupported scope", plan.limitations.map((entry) => entry.text)),
+    numbered("9. Limitations and unsupported scope", plan.limitations.map((entry) => publicLimitationDisplayText(entry.text))),
     numbered("10. Complete verified-current source appendix", plan.citations.map(sourceAppendixEntry)),
   ].join("\n\n");
 }
@@ -253,7 +254,7 @@ export function publicStewardArgumentPlanToMarkdown(plan: PublicStewardArgumentP
     section("6. Step-by-step argument", plan.argumentSteps.map((entry) => entry.text)),
     section("7. Procedure and timing cautions", plan.procedureCaveats.map((entry) => entry.text)),
     section("8. Escalation readiness", plan.escalationReadiness.map((entry) => entry.text)),
-    section("9. Limitations and unsupported scope", plan.limitations.map((entry) => entry.text)),
+    section("9. Limitations and unsupported scope", plan.limitations.map((entry) => publicLimitationDisplayText(entry.text))),
     section("10. Complete verified-current source appendix", plan.citations.map(sourceAppendixEntry)),
   ].join("\n\n");
 }
