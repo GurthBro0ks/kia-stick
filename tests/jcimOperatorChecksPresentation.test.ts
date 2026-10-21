@@ -65,7 +65,7 @@ describe("JCIM operator checks: Section 11 shows each display sentence once (pre
     }
   });
 
-  it("(b) the merged display entry carries the union of the collapsed entries' citation ids, first-seen order", () => {
+  it("(b) the merged display entry carries the union of the collapsed entries' citation ids, sorted", () => {
     const packet = threeTopicPacket();
     const helper = (packetModule as Record<string, unknown>).publicStewardPacketDisplayLimitations as
       | ((items: typeof packet.limitations) => typeof packet.limitations)
@@ -73,7 +73,7 @@ describe("JCIM operator checks: Section 11 shows each display sentence once (pre
     expect(typeof helper).toBe("function");
     const collapsed = packet.limitations.filter((item) => packetModule.publicStewardPacketLimitationText(item.text) === NEW);
     expect(collapsed).toHaveLength(2);
-    const union = [...new Set(collapsed.flatMap((item) => item.citationIds))];
+    const union = [...new Set(collapsed.flatMap((item) => item.citationIds))].sort();
     const display = helper!(packet.limitations);
     const merged = display.filter((item) => item.text === NEW);
     expect(merged).toHaveLength(1);

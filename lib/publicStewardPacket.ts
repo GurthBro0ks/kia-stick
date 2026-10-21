@@ -9,6 +9,7 @@ import { canonicalJson, sha256Hex } from "@/lib/cbaCitationIntegrity";
 import {
   buildPublicGrievanceOutline,
   publicGrievanceOutlineExportEligibility,
+  publicLimitationDisplayText,
   type CitedGrievanceOutlineItem,
   type EvidenceRequestItem,
   type PublicGrievanceOutline,
@@ -31,23 +32,21 @@ export const PUBLIC_STEWARD_PACKET_SAVED_TYPE = "public_steward_packet_plan" as 
 export const PUBLIC_STEWARD_PACKET_PRIVATE_WARNING =
   "Case-neutral public-source workspace only. Do not enter names, dates, case facts, medical information, personnel data, financial facts, or grievance documents." as const;
 
-// Presentation-only compatibility mapping. Stored limitations and identity inputs stay verbatim.
+// Presentation-only compatibility mapping (shared with grievance outlines and steward argument plans).
+// Stored limitations and identity inputs stay verbatim.
 export function publicStewardPacketLimitationText(text: string): string {
-  return text === "This CBA-only pilot does not verify an LMOU, JCIM interpretation, handbook rule, arbitration precedent, management policy, or local practice."
-    || text === "This CBA-only pilot does not verify an LMOU, JCIM interpretation, handbook rule, arbitration precedent, management policy, local practice, or worked-off-assignment theory beyond the cited Article 8 language."
-    ? "This public pilot verifies only the admitted public sources and citations cited here. It does not determine whether a JCIM interpretation, LMOU, handbook rule, arbitration precedent, management policy, or local practice applies to a particular case."
-    : text;
+  return publicLimitationDisplayText(text);
 }
 
 // Presentation-only: show each mapped Section 11 sentence once. Collapsed entries keep the first
-// occurrence's position and carry the union of their citation ids (first-seen order).
+// occurrence's position and carry the sorted union of their citation ids (same order as stored items).
 // packet.limitations, serialization and contentIdentity are never changed.
 export function publicStewardPacketDisplayLimitations(limitations: readonly CitedGrievanceOutlineItem[]): CitedGrievanceOutlineItem[] {
   const byText = new Map<string, CitedGrievanceOutlineItem>();
   for (const item of limitations) {
     const text = publicStewardPacketLimitationText(item.text);
     const existing = byText.get(text);
-    byText.set(text, { text, citationIds: [...new Set([...(existing?.citationIds ?? []), ...item.citationIds])] });
+    byText.set(text, { text, citationIds: [...new Set([...(existing?.citationIds ?? []), ...item.citationIds])].sort() });
   }
   return [...byText.values()];
 }
