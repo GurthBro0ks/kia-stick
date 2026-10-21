@@ -1838,7 +1838,7 @@ export function SourcesPanel({
           <p>Secondary joint interpretation. The CBA remains the controlling contract.</p></div>
           <div className="compactActions"><a className="button subtle officialSourceLink" href={JCIM_LANDING_URL} target="_blank" rel="noreferrer">Official source page</a>
             <a className="button subtle officialSourceLink" href={JCIM_PDF_URL} target="_blank" rel="noreferrer">Official PDF</a></div></div>
-        <p className="statusPill ok">Verified current · bounded Introduction, Preface, Articles 15, 16, 17, 19</p>
+        <p className="statusPill ok">Verified current · bounded Introduction, Preface, Articles 14, 15, 16, 17, 19, 25, 27</p>
         <details className="packetDisclosure"><summary>Bounded citation units and technical identity</summary>
           <p>Source ID {JCIM_SOURCE_ID}; normalized SHA-256 {jcimSourceState.source.normalized.sha256}</p>
           {jcimSourceState.source.normalized.sections.map((section) => <section key={section.id}>

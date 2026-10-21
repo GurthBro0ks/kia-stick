@@ -6,14 +6,17 @@ import {
 
 // SYNTHETIC: invented test prose, never extracted from a source document.
 export function createJcimSourceFixtureCache(): JcimCache {
-  const pages = [3, 29, 139, 150, 158, 169];
+  const pages = [3, 29, 134, 139, 150, 158, 169, 177, 182];
   const texts = [
     "SYNTHETIC preface: the imaginary lantern workshop uses this test booklet.",
     "SYNTHETIC introduction: paper robots arrange invented examples on blue shelves.",
+    "SYNTHETIC Article 14.1 SAFETY: an imaginary lantern crew checks a pretend orange ladder.",
     "SYNTHETIC Article 15.1 GRIEVANCE: an imaginary robot records a purple ticket.",
     "SYNTHETIC Article 16.1 JUST CAUSE: a fictional lantern review considers a green token.",
     "SYNTHETIC Article 17.1 REPRESENTATION: an imaginary helper sorts grievance cards.",
     "SYNTHETIC Article 19 provides an invented handbooks and manuals index for moon lanterns.",
+    "SYNTHETIC Article 25.1 HIGHER LEVEL: a fictional robot borrows a silver hat for one shift.",
+    "SYNTHETIC Article 27 provides an invented claims window for a lost paper kite.",
   ];
   return {
     schema: "kia-jcim-cache.v1",
@@ -22,7 +25,7 @@ export function createJcimSourceFixtureCache(): JcimCache {
       pdfUrl: JCIM_PDF_URL, edition: JCIM_EDITION, readOnly: true },
     response: { sha256: JCIM_SHA256, byteCount: JCIM_BYTES, lastModified: JCIM_LAST_MODIFIED },
     // Admission metadata only: the test narrowly maps this invented content's hash.
-    normalized: { sha256: JCIM_NORMALIZED_SHA256, sectionCount: 6,
+    normalized: { sha256: JCIM_NORMALIZED_SHA256, sectionCount: 9,
       sections: JCIM_SECTION_IDS.map((id, index) => ({
         id, title: `SYNTHETIC ${id}`,
         paragraphs: [{ id: `${id}-pdf${pages[index]}-p01`, text: texts[index],
