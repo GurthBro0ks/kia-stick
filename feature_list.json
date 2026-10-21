@@ -14471,15 +14471,23 @@
     "supported_topic_ids": ["discipline_just_cause", "steward_grievance_handling"],
     "generic_packet_provenance": true,
     "fail_closed_currentness": true,
-    "manual_qa_status": "PENDING_OPERATOR_REVIEW",
-    "admission_status": "IMPLEMENTED_PENDING_ACCEPTANCE",
+    "manual_qa_status": "OWNER_ACCEPTED",
+    "admission_status": "ACCEPTED",
+    "owner_acceptance": {
+      "date": "2026-10-21 11:30 AM EDT",
+      "quote": "I ACCEPT IT> IT WAS 2 WEEKS AGO> WHO CARES WHO DID IT NOW",
+      "provenance": "LEAD_RELAYED: Gurth's own words in KIA Lead 1:1 (t177u), relayed and verified by KIA Lead; KIA Builder did not see them directly",
+      "scope": "JCIM bounded public-source admission (jcim_bounded_admission_retry)",
+      "evidence": ["evidence/KIA-jcim-followups-1-owner-qa.md (sha256 3fc95644)", "PR #7 merged", "PR #8 merged (main 375b4befe2a6c112cdfcc5e9dadf5bf1c0cd354f)"],
+      "operator_checks": "Previously un-enumerated owner operator checks are waived by this owner acceptance; no list was enumerated or invented"
+    },
     "public_safe_mvp_status": "ACCEPTED_PAUSED",
     "pushed": false
   },
   "jcim_operator_checks_1_presentation": {
     "phase": "KIA-Stick-jcim-operator-checks-1",
     "status": "IMPLEMENTED_PENDING_REVIEW",
-    "owner_qa": "NOT_RUN",
+    "owner_qa": "PASS",
     "pushed": false,
     "base_commit": "1487d0991085af7e33bb47c43eb7aec0b59a6047",
     "scope": "presentation_only_section11_display_dedup_and_three_source_count_copy",
@@ -14491,7 +14499,7 @@
     "golden_serialized_and_content_identity_hashes_changed": false,
     "jcim_admission_status_changed": false,
     "jcim_manual_qa_status_changed": false,
-    "outstanding_owner_operator_checks": "NOT_ENUMERATED_PENDING_OWNER_LIST",
+    "outstanding_owner_operator_checks": "WAIVED_BY_OWNER_ACCEPTANCE_2026-10-21",
     "operator_checks_marked_passed": false,
     "reviewer_handoff": "KIA-jcim-operator-checks-1-review",
     "proof_dir": "/workspace/galaxy-prep/kia-stick/evidence/KIA-jcim-operator-checks-1-qa_gate"
