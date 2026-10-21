@@ -14467,8 +14467,8 @@
   "jcim_bounded_admission_retry": {
     "source_id": "apwu-usps-jcim-2025",
     "authority_class": "joint_national_interpretation",
-    "admitted_sections": ["preface", "introduction", "article-15", "article-16", "article-17", "article-19"],
-    "supported_topic_ids": ["discipline_just_cause", "steward_grievance_handling"],
+    "admitted_sections": ["preface", "introduction", "article-14", "article-15", "article-16", "article-17", "article-19", "article-25", "article-27"],
+    "supported_topic_ids": ["discipline_just_cause", "steward_grievance_handling", "safety_health", "higher_level_assignments", "employee_claims"],
     "generic_packet_provenance": true,
     "fail_closed_currentness": true,
     "manual_qa_status": "OWNER_ACCEPTED",
@@ -14480,6 +14480,17 @@
       "scope": "JCIM bounded public-source admission (jcim_bounded_admission_retry)",
       "evidence": ["evidence/KIA-jcim-followups-1-owner-qa.md (sha256 3fc95644)", "PR #7 merged", "PR #8 merged (main 375b4befe2a6c112cdfcc5e9dadf5bf1c0cd354f)"],
       "operator_checks": "Previously un-enumerated owner operator checks are waived by this owner acceptance; no list was enumerated or invented"
+    },
+    "more_articles_1": {
+      "phase": "KIA-jcim-more-articles-1",
+      "added_sections": ["article-14", "article-25", "article-27"],
+      "added_topic_ids": ["safety_health", "higher_level_assignments", "employee_claims"],
+      "normalized_sha256": "ff62a070121b62895dcc66982b8717b4281e3cbb7fac22173c328b7d93ed8338",
+      "previous_normalized_sha256": "4630eb409316468bea9597e7c981e868cd7d5a7f762b473ee23efe613362d8c3",
+      "status": "IMPLEMENTED_PENDING_OPERATOR_RESYNC",
+      "owner_qa": "BATCHED",
+      "operator_resync": "NOT_RUN",
+      "pushed": false
     },
     "public_safe_mvp_status": "ACCEPTED_PAUSED",
     "pushed": false

@@ -141,7 +141,7 @@ describe("Article 19 real-cache Chat routing regression", () => {
 });
 
 describe("bounded JCIM 2025 admission", () => {
-  it("pins exact public source identity and six authorized sections", () => {
+  it("pins exact public source identity and nine authorized sections", () => {
     expect([JCIM_SOURCE_ID, JCIM_LANDING_URL, JCIM_PDF_URL, JCIM_SHA256, JCIM_BYTES, JCIM_LAST_MODIFIED,
       JCIM_EDITION, JCIM_TITLE, JCIM_AUTHORITY_CLASS, JCIM_AUTHORITY_LABEL]).toEqual([
       "apwu-usps-jcim-2025", "https://apwu.org/contracts/jcim-2025-joint-contract-intepretation-manual-jcim/",
@@ -159,6 +159,9 @@ describe("bounded JCIM 2025 admission", () => {
     expect(cache.normalized.sections.map((section) => section.id)).toEqual(JCIM_SECTION_IDS);
     expect(cache.normalized.sections.some((section) => section.id === "article-18")).toBe(false);
     expect(cache.normalized.sections.some((section) => section.id === "article-20")).toBe(false);
+    for (const id of ["article-8", "article-10", "article-11", "article-26"]) {
+      expect(cache.normalized.sections.some((section) => section.id === id)).toBe(false);
+    }
   });
 
   it("fails closed on local identity, content, or section drift", () => {
@@ -189,6 +192,15 @@ describe("bounded JCIM 2025 admission", () => {
     expect(steward.map((citation) => citation.articleNumber)).toEqual(["15", "17"]);
     expect(jcimTopicCitation(cache, "annual_leave")).toEqual([]);
     expect(jcimTopicCitation(cache, "article_19_new_topic")).toEqual([]);
+    const safety = jcimTopicCitation(cache, "safety_health");
+    const higherLevel = jcimTopicCitation(cache, "higher_level_assignments");
+    const claims = jcimTopicCitation(cache, "employee_claims");
+    expect(safety.map((citation) => citation.articleNumber)).toEqual(["14"]);
+    expect(higherLevel.map((citation) => citation.articleNumber)).toEqual(["25"]);
+    expect(claims.map((citation) => citation.articleNumber)).toEqual(["27"]);
+    expect([...safety, ...higherLevel, ...claims].map((citation) => citation.paragraphId)).toEqual([
+      "article-14-pdf134-unit2", "article-25-pdf177-unit2", "article-27-pdf182-unit2"]);
+    for (const added of [...safety, ...higherLevel, ...claims]) expect(verifyJcimCitation(added, cache)).toBe("verified_current");
     const citation = discipline[0];
     expect(citation.page).toContain("PDF 150 / printed 16-1");
     expect(citation.status).toContain(JCIM_AUTHORITY_LABEL);
@@ -287,7 +299,8 @@ describe("JCIM packet presentation repair", () => {
     expect(verifyJcimCitation({ ...citation, paragraphId: "unadmitted-unit" }, cache)).not.toBe("verified_current");
     expect(verifyJcimCitation({ ...citation, citationAnchorSha256: "0".repeat(64) }, cache)).not.toBe("verified_current");
     expect(cache.normalized.sections.map((section) => section.id)).toEqual([
-      "preface", "introduction", "article-15", "article-16", "article-17", "article-19",
+      "preface", "introduction", "article-14", "article-15", "article-16", "article-17", "article-19",
+      "article-25", "article-27",
     ]);
   });
 

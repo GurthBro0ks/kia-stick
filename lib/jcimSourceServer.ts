@@ -7,8 +7,9 @@ export type JcimState = { status: "available"; source: JcimCache } |
   { status: "unavailable"; reason: "cache_missing" | "cache_unsafe" | "drift_detected" | "unverified_current" };
 
 const pageRanges: Record<string, [number, number]> = {
-  preface: [3, 3], introduction: [29, 29], "article-15": [139, 149],
+  preface: [3, 3], introduction: [29, 29], "article-14": [134, 138], "article-15": [139, 149],
   "article-16": [150, 157], "article-17": [158, 167], "article-19": [169, 169],
+  "article-25": [177, 178], "article-27": [182, 183],
 };
 const hash = (value: string | Uint8Array) => createHash("sha256").update(value).digest("hex");
 
@@ -51,8 +52,8 @@ export function validateJcimCache(
     cache.source.authorityLabel !== JCIM_AUTHORITY_LABEL || cache.source.landingUrl !== JCIM_LANDING_URL ||
     cache.source.pdfUrl !== JCIM_PDF_URL || cache.source.edition !== JCIM_EDITION || cache.source.readOnly !== true ||
     cache.response?.sha256 !== JCIM_SHA256 || cache.response.byteCount !== JCIM_BYTES ||
-    cache.response.lastModified !== JCIM_LAST_MODIFIED || cache.normalized?.sectionCount !== 6 ||
-    !Array.isArray(cache.normalized.sections) || cache.normalized.sections.length !== 6 ||
+    cache.response.lastModified !== JCIM_LAST_MODIFIED || cache.normalized?.sectionCount !== 9 ||
+    !Array.isArray(cache.normalized.sections) || cache.normalized.sections.length !== 9 ||
     cache.normalized.sha256 !== JCIM_NORMALIZED_SHA256) return false;
   if (cache.normalized.sections.some((section, i) => section.id !== JCIM_SECTION_IDS[i] ||
     !Array.isArray(section.paragraphs) || section.paragraphs.length === 0 ||

@@ -6,14 +6,15 @@ export const JCIM_SOURCE_ID = "apwu-usps-jcim-2025" as const;
 export const JCIM_LANDING_URL = "https://apwu.org/contracts/jcim-2025-joint-contract-intepretation-manual-jcim/" as const;
 export const JCIM_PDF_URL = "https://apwu.org/wp-content/uploads/2026/03/JCIM-2025-Web_BOOKMARKED_v4.pdf" as const;
 export const JCIM_SHA256 = "6605cc0a94532a0264c0f2bd78f604f23e49c85ded15416c166858ae28a7d6f7" as const;
-export const JCIM_NORMALIZED_SHA256 = "4630eb409316468bea9597e7c981e868cd7d5a7f762b473ee23efe613362d8c3" as const;
+export const JCIM_NORMALIZED_SHA256 = "ff62a070121b62895dcc66982b8717b4281e3cbb7fac22173c328b7d93ed8338" as const;
 export const JCIM_BYTES = 3111811 as const;
 export const JCIM_LAST_MODIFIED = "Wed, 04 Mar 2026 20:17:59 GMT" as const;
 export const JCIM_EDITION = "November 2025" as const;
 export const JCIM_TITLE = "USPS-APWU Joint Contract Interpretation Manual" as const;
 export const JCIM_AUTHORITY_CLASS = "joint_national_interpretation" as const;
 export const JCIM_AUTHORITY_LABEL = "Joint interpretation (JCIM)" as const;
-export const JCIM_SECTION_IDS = ["preface", "introduction", "article-15", "article-16", "article-17", "article-19"] as const;
+export const JCIM_SECTION_IDS = ["preface", "introduction", "article-14", "article-15", "article-16", "article-17", "article-19",
+  "article-25", "article-27"] as const;
 
 export interface JcimParagraph {
   id: string;
@@ -31,7 +32,7 @@ export interface JcimCache {
     authorityLabel: typeof JCIM_AUTHORITY_LABEL; landingUrl: typeof JCIM_LANDING_URL; pdfUrl: typeof JCIM_PDF_URL;
     edition: typeof JCIM_EDITION; readOnly: true };
   response: { sha256: typeof JCIM_SHA256; byteCount: typeof JCIM_BYTES; lastModified: typeof JCIM_LAST_MODIFIED };
-  normalized: { sha256: string; sectionCount: 6; sections: JcimSection[] };
+  normalized: { sha256: string; sectionCount: 9; sections: JcimSection[] };
 }
 
 function instanceId(source: JcimCache): string {
@@ -79,12 +80,21 @@ export function jcimPacketSourceVerifier(source: JcimCache | null): Supplemental
     verify: (citation) => verifyJcimCitation(citation, source) };
 }
 
+const JCIM_GRIEVANCE_UNIT = /Article (?:15|16|17)\.\d|JUST CAUSE|REPRESENTATION|GRIEVANCE/i;
+const JCIM_TOPIC_SECTIONS: Record<string, [string, RegExp][]> = {
+  discipline_just_cause: [["article-16", JCIM_GRIEVANCE_UNIT]],
+  steward_grievance_handling: [["article-15", JCIM_GRIEVANCE_UNIT], ["article-17", JCIM_GRIEVANCE_UNIT]],
+  safety_health: [["article-14", /Article 14\.1\b/]],
+  higher_level_assignments: [["article-25", /Article 25\.1\b/]],
+  employee_claims: [["article-27", /Article 27 provides\b/]],
+};
+
 export function jcimTopicCitation(source: JcimCache | null, topic: string): Citation[] {
-  if (!source || !["discipline_just_cause", "steward_grievance_handling"].includes(topic)) return [];
-  const sections = topic === "discipline_just_cause" ? ["article-16"] : ["article-15", "article-17"];
-  return sections.flatMap((id) => {
+  const sections = Object.hasOwn(JCIM_TOPIC_SECTIONS, topic) ? JCIM_TOPIC_SECTIONS[topic] : undefined;
+  if (!source || !sections) return [];
+  return sections.flatMap(([id, unit]) => {
     const section = source.normalized.sections.find((item) => item.id === id);
-    const paragraph = section?.paragraphs.find((item) => /Article (?:15|16|17)\.\d|JUST CAUSE|REPRESENTATION|GRIEVANCE/i.test(item.text));
+    const paragraph = section?.paragraphs.find((item) => unit.test(item.text));
     return section && paragraph ? [jcimCitation(source, section, paragraph)] : [];
   });
 }
