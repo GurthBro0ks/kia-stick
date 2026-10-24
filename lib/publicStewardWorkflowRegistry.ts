@@ -929,115 +929,106 @@ function blockingFamilies(topicId: PublicStewardWorkflowTopicId, normalized: str
   return (TOPIC_COMPETING_FAMILIES[topicId] ?? []).filter((family) => COMPETING_FAMILY_PATTERNS[family].test(normalized));
 }
 
-// Amendment 4 (delta review 3, B-3): reason-clause gate for annual leave. When time off / PTO / vacation / annual leave comes
-// with a reason, annual leave is selected only if the reason is on this SHORT vacation allowlist; any other reason (illness,
-// another leave type, a holiday in any spelling, a family emergency, ...) is a no-answer by default. The competing families
-// above stay as defense in depth. With no reason clause the behaviour is unchanged.
-const ANNUAL_REASON_ALLOWLIST = new RegExp(`\\b(?:${[
-  "vacations?",
-  "trips?",
-  "travel",
-  "rest",
-  "family visits?",
-  "weddings?",
-  "honeymoon",
-  "birthdays?",
-].join("|")})\\b`);
-/** Triggers; `bare` ones (time off, PTO) also take a reason as a directly following noun phrase or a directly preceding word. */
-const ANNUAL_TRIGGERS: readonly { tokens: readonly string[]; bare: boolean }[] = [
-  { tokens: ["time", "off"], bare: true },
-  { tokens: ["pto"], bare: true },
-  { tokens: ["vacation"], bare: false },
-  { tokens: ["vacations"], bare: false },
-  { tokens: ["annual", "leave"], bare: false },
+// Amendment 5 (delta review 4, B-4): CLOSED VOCABULARY. Annual leave and safety and health are selected only when EVERY
+// word of the question is in a small known set; an unknown word means a no-answer (never another synonym list). The
+// competing families above stay as defense in depth.
+const QUESTION_WORDS = /[a-z0-9]+(?:['’][a-z0-9]+)*/g;
+/** Function words / pronouns / question words shared by both closed sets. */
+const CLOSED_STOPWORDS = [
+  "a", "an", "the", "i", "i'm", "i'll", "me", "my", "we", "our", "you", "your", "it", "it's", "its", "this", "that",
+  "is", "am", "are", "was", "be", "been", "do", "does", "did", "have", "has", "can", "could", "may", "will", "would",
+  "should", "must", "to", "of", "in", "on", "at", "for", "by", "from", "with", "about", "under", "or", "and", "if",
+  "not", "no", "any", "some", "much", "many", "what", "when", "how", "who", "still", "get", "got", "take", "use",
+  "okay", "out", "off", "as", "where", "build", "plan", "argument", "issue", "rules", "apply", "applies", "cba",
+  "contract", "say", "says",
 ];
-/** Words that introduce a reason clause anywhere after the trigger ("due to X" is covered by "to"; "because of X" keeps "of"). */
-const ANNUAL_REASON_MARKERS = new Set([
-  "for",
-  "because",
-  "after",
-  "to",
-  "since",
-  "on",
+/** Annual leave: the trigger, request / scheduling, contract-meta, supervisor and time words. */
+const ANNUAL_CLOSED_WORDS = new Set([
+  ...CLOSED_STOPWORDS,
+  "annual", "leave", "time", "pto", "vacation", "vacations", "days",
+  "request", "requests", "schedule", "scheduling", "deny", "denied", "denial", "approve", "approved", "approval",
+  "cancel", "cancelled", "carry", "over", "submit", "submitted", "forget", "forgot", "deadline", "notice", "prime",
+  "choice", "period", "paid", "pay", "unused", "allowed", "need", "during",
+  "work", "govern", "governs", "administration", "administered", "handled", "dispute", "decision",
+  "supervisor", "ptf", "ptfs", "part", "flexible", "probation",
+  "day", "next", "week", "weeks", "weekend", "today", "tomorrow", "monday", "tuesday", "wednesday", "thursday", "friday", "saturday", "sunday",
 ]);
-/** Words directly after the trigger that belong to it ("vacation days for ...", "leave request denied for ..."). */
-const ANNUAL_TRIGGER_TAIL = new Set([
-  "days",
-  "time",
-  "request",
-  "denied",
-]);
-/** Words directly after the trigger that start no reason (question / scheduling structure). */
-const ANNUAL_NO_REASON_AFTER = new Set([
-  "do",
-  "with",
-  "during",
-  "from",
-  "paid",
-  "by",
-]);
-/** Words directly before the trigger that are not a reason ("take time off", "my PTO", "how much vacation"). */
-const ANNUAL_NO_REASON_BEFORE = new Set([
-  "take",
-  "use",
-  "get",
-  "request",
-  "my",
-  "some",
-  "any",
-  "much",
-  "many",
-  "unused",
-  "is",
-]);
-/** A reason phrase made only of these words (or plain numbers) is a time expression, not a reason ("next week", "on Monday"); an empty phrase is no reason. */
-const ANNUAL_TIME_WORDS = new Set([
-  "a",
-  "the",
-  "next",
-  "this",
-  "day",
-  "days",
-  "week",
-  "weeks",
-  "weekend",
-  "tomorrow",
-  "today",
-  "monday",
-  "tuesday",
-  "wednesday",
-  "thursday",
-  "friday",
-  "saturday",
-  "sunday",
-]);
+/** The vacation-reason words already allowlisted ("family" only in "family visit"; "rest" only as the last word). */
+const ANNUAL_REASON_WORDS = new Set(["vacation", "vacations", "trip", "trips", "travel", "wedding", "weddings", "honeymoon", "birthday", "birthdays"]);
+/** A second sentence without the leave mention must name the contract. */
+const ANNUAL_CONTRACT_WORDS = new Set(["cba", "contract"]);
+/** Words that may follow a reason slot ("time off for / to ...") besides a reason word. */
+const ANNUAL_SLOT_FILLER = new Set(["a", "an", "the", "my", "our", "this"]);
+const ANNUAL_TIME_WORDS = new Set(["day", "days", "weeks", "next", "week", "weekend", "today", "tomorrow", "monday", "tuesday", "wednesday", "thursday", "friday", "saturday", "sunday"]);
 
-function annualReasonAllowed(phrase: readonly string[]): boolean {
-  return ANNUAL_REASON_ALLOWLIST.test(phrase.join(" "))
-    || phrase.every((word) => ANNUAL_TIME_WORDS.has(word) || /^\d+$/.test(word));
+function annualTriggerAt(words: readonly string[], index: number): boolean {
+  const word = words[index];
+  return word === "pto" || word === "vacation" || word === "vacations" || word === "leave"
+    || (word === "off" && words[index - 1] === "time");
 }
 
-/** True when some time off / PTO / vacation / annual leave mention carries a reason that is not on the vacation allowlist. */
-function hasUnlistedAnnualReason(normalized: string): boolean {
-  for (const clause of normalized.split(/[,;:?!.()/]+/)) {
-    const words = clause.match(/[a-z0-9]+(?:['’][a-z0-9]+)*/g) ?? [];
+/** True when annual leave may answer: every word is in the closed set, every sentence names the leave, no unlisted reason. */
+function annualLeaveClosedVocabulary(normalized: string): boolean {
+  const sentences = normalized.split(/[.?!;]+(?=\s|$)/).map((sentence) => sentence.match(QUESTION_WORDS) ?? []).filter((words) => words.length > 0);
+  const all = sentences.flat();
+  const plainLeave = all.some((word, index) => word === "leave" && all[index - 1] !== "annual");
+  for (const words of sentences) {
+    // A sentence that does not name the leave may only ask about the contract ("What does the CBA say?").
+    if (!words.some((_, index) => annualTriggerAt(words, index)) && !words.some((word) => ANNUAL_CONTRACT_WORDS.has(word))) return false;
     for (let index = 0; index < words.length; index += 1) {
-      const trigger = ANNUAL_TRIGGERS.find(({ tokens }) => tokens.every((token, offset) => words[index + offset] === token));
-      if (!trigger) continue;
-      const before = words[index - 1];
-      if (trigger.bare && before !== undefined && !ANNUAL_NO_REASON_BEFORE.has(before) && !annualReasonAllowed([before])) return true;
-      let next = index + trigger.tokens.length;
-      while (next < words.length && ANNUAL_TRIGGER_TAIL.has(words[next])) next += 1;
-      const rest = words.slice(next);
-      const marker = rest.findIndex((word) => ANNUAL_REASON_MARKERS.has(word));
-      if (marker >= 0) {
-        if (!annualReasonAllowed(rest.slice(marker + 1))) return true;
+      const word = words[index];
+      if (word === "rest") {
+        if (index !== words.length - 1 || words !== sentences[sentences.length - 1] || plainLeave) return false;
         continue;
       }
-      if (trigger.bare && !ANNUAL_NO_REASON_AFTER.has(rest[0]) && !annualReasonAllowed(rest)) return true;
+      if (word === "family") {
+        if (!/^visits?$/.test(words[index + 1] ?? "") || plainLeave) return false;
+        continue;
+      }
+      if (/^visits?$/.test(word)) {
+        if (words[index - 1] !== "family") return false;
+        continue;
+      }
+      if (ANNUAL_REASON_WORDS.has(word) && plainLeave) return false;
+      if (!ANNUAL_CLOSED_WORDS.has(word) && !ANNUAL_REASON_WORDS.has(word) && !/^\d+$/.test(word)) return false;
+      // A reason slot after the leave mention takes only an allowlisted reason or a time expression.
+      if ((word === "for" || word === "to") && words.slice(0, index).some((_, at) => annualTriggerAt(words, at))) {
+        let next = index + 1;
+        while (ANNUAL_SLOT_FILLER.has(words[next] ?? "")) next += 1;
+        const slot = words[next];
+        if (slot === undefined) return false;
+        if (plainLeave && word === "for") return false;
+        if (!ANNUAL_REASON_WORDS.has(slot) && !ANNUAL_TIME_WORDS.has(slot) && !/^\d+$/.test(slot) && slot !== "family" && slot !== "rest") return false;
+      }
     }
   }
-  return false;
+  return true;
+}
+
+/** Safety and health: explicit workplace-hazard, reporting and contract-meta words only. No personal health or condition word is in it. */
+const SAFETY_CLOSED_WORDS = new Set([
+  ...CLOSED_STOPWORDS,
+  "safety", "unsafe", "unhealthful", "hazard", "hazards", "hazardous", "dangerous", "osha", "accident", "accidents", "injury", "injuries",
+  "report", "reports", "reported", "reporting", "complaint", "file", "form", "deadline", "same", "day",
+  "work", "working", "workplace", "area", "plant", "dock",
+  "supervisor", "make", "fired", "disciplined", "mad", "rights", "grievance", "need", "article", "14", "tell", "concern",
+  "process", "station", "these", "chemicals", "cold", "electrical", "panel", "exposed", "there", "creating",
+]);
+/** "condition(s)" is a workplace word only right after one of these; "health" only inside "safety and health" / "health and safety". */
+const SAFETY_CONDITION_QUALIFIERS = new Set(["unsafe", "unhealthful", "dangerous", "working", "hazardous"]);
+
+function safetyClosedVocabulary(normalized: string): boolean {
+  const words = normalized.match(QUESTION_WORDS) ?? [];
+  return words.every((word, index) => {
+    if (word === "condition" || word === "conditions") {
+      return SAFETY_CONDITION_QUALIFIERS.has(words[index - 1] ?? "")
+        || (word === "conditions" && words[index - 1] === "these" && /^(?:dangerous|unsafe)$/.test(words[index + 1] ?? ""));
+    }
+    if (word === "health") {
+      return (words[index - 1] === "and" && words[index - 2] === "safety") || (words[index + 1] === "and" && words[index + 2] === "safety");
+    }
+    return SAFETY_CLOSED_WORDS.has(word);
+  });
 }
 
 function matchedSupportedTopicIds(normalized: string): PublicStewardWorkflowTopicId[] {
@@ -1050,9 +1041,10 @@ function matchedSupportedTopicIds(normalized: string): PublicStewardWorkflowTopi
     .map((topic) => ({
       id: topic.id,
       families: blockingFamilies(topic.id, normalized),
-      unlistedReason: topic.id === "annual_leave" && hasUnlistedAnnualReason(normalized),
+      closedVocabularyMiss: (topic.id === "annual_leave" && !annualLeaveClosedVocabulary(normalized))
+        || (topic.id === "safety_health" && !safetyClosedVocabulary(normalized)),
     }))
-    .filter((entry) => entry.families.length > 0 || entry.unlistedReason);
+    .filter((entry) => entry.families.length > 0 || entry.closedVocabularyMiss);
   const guardedPositiveMatches = new Set(
     positiveMatches.map((topic) => topic.id).filter((id) => !blocked.some((entry) => entry.id === id))
   );
@@ -1083,6 +1075,11 @@ function matchedSupportedTopicIds(normalized: string): PublicStewardWorkflowTopi
         if (owner && owner !== entry.id) selectedMatches.add(entry.id).add(owner);
       }
     }
+  }
+  // Amendment 5: a topic the question names but the closed vocabulary rejects (and no competing family hands to its owner)
+  // never hands the question to another topic.
+  if (selectedMatches.size > 0) {
+    for (const entry of blocked) if (entry.closedVocabularyMiss && entry.families.length === 0) selectedMatches.add(entry.id);
   }
   return PUBLIC_STEWARD_WORKFLOW_TOPICS
     .filter((topic) => selectedMatches.has(topic.id))
