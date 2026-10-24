@@ -76,6 +76,9 @@ const annualLeave: PublicStewardWorkflowTopic = {
   positive: [
     // KIA-jcim-qa-fix-1: plain "annual leave" questions are official-topic questions.
     /\bannual[ -]?leave\b/,
+    // Amendment 1 (NB-1): everyday vacation / PTO / time-off wording; time off never steals sick or holiday questions.
+    /\bvacations?\b/,
+    /^(?!.*\b(?:sick|ill|illness|holidays?)\b).*\b(?:pto|paid time off|time off)\b/,
     /\bannual leave\b.*\b(request|den(?:y|ied|ial)|schedul(?:e|ed|ing)?|approv(?:al|e|ed)?|choice|vacation|administration)\b/,
     /\b(request|den(?:y|ied|ial)|schedul(?:e|ed|ing)?|approv(?:al|e|ed)?|choice|administration)\b.*\bannual leave\b/,
     /\bvacation\b.*\b(request|period|schedul(?:e|ed|ing)?|choice|den(?:y|ied|ial))\b/,
@@ -260,6 +263,8 @@ const safetyHealth: PublicStewardWorkflowTopic = {
   positive: [
     /\b(unsafe|unhealthful|safety hazard|unsafe condition|safe working condition)\b/,
     /\b(?:safety and health|health and safety)\b/,
+    // Amendment 1 (NB-1/NB-3): everyday danger / hazard / OSHA / injury wording.
+    /\b(?:dangerous|danger|hazards?|hazardous|osha|injury|injuries|injured)\b/,
     /\b(safety|health)\b.*\b(condition|hazard|grievance|workplace|working)\b/,
     /\bworkplace\b.*\bsafety(?: and health)?\b.*\b(issue|concern|condition|hazard|grievance)\b/,
     /\barticle\s*14\b/,
@@ -382,6 +387,9 @@ const sickLeave: PublicStewardWorkflowTopic = {
   positive: [
     // KIA-jcim-qa-fix-1: plain "sick leave" questions are official-topic questions.
     /\bsick[ -]?leave\b/,
+    // Amendment 1 (NB-1): everyday sick-day / call-in-sick wording.
+    /\bsick[ -]?days?\b/,
+    /\bcall(?:s|ed|ing)?(?: in| out)? sick\b/,
     /\bsick leave\b.*\b(certif(?:y|ied|ication)|charg(?:e|ed|ing)|administration|request|absence|insufficient|minimum)\b/,
     /\b(certif(?:y|ied|ication)|charg(?:e|ed|ing)|administration|request|absence|minimum)\b.*\bsick leave\b/,
     /\b(argument plan|grievance plan|grievance argument|argument outline)\b.*\bsick[ -]?leave\b/,
