@@ -28,7 +28,7 @@ const everyday = [
   ["safety_health", "Can my supervisor make me work in a dangerous area?", "Article 14.1"],
   ["safety_health", "Can I report a hazard?", "Article 14.1"],
   ["safety_health", "Can I file an OSHA complaint?", "Article 14.1"],
-  ["safety_health", "I got an injury at work. What are my rights?", "Article 14.1"],
+  // Amendment 3 (B-2) overrides this row: bare "injury" no longer selects safety_health. It is a no-answer row in jcimQaFix1Amend3.test.ts.
 ] as const;
 
 describe("Amendment 1 NB-1/NB-3: everyday phrasings route to official CBA + mapped JCIM", () => {

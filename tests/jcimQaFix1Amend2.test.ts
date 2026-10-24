@@ -120,9 +120,8 @@ describe("Amendment 2 B-1e: a property claim with injury wording never reaches s
 describe("Amendment 2 narrowing keeps genuine safety and time-off wording working", () => {
   it.each([
     ["safety_health", "Is this area dangerous?", "Article 14.1"],
-    ["safety_health", "There is a danger at my station", "Article 14.1"],
-    ["safety_health", "Hazardous materials at work", "Article 14.1"],
-    ["safety_health", "I was injured on the job", "Article 14.1"],
+    // Amendment 3 (B-2) overrides three rows here: bare danger / hazard / injured wording no longer selects safety_health.
+    // "There is a danger at my station", "Hazardous materials at work", "I was injured on the job" are no-answer rows in jcimQaFix1Amend3.test.ts.
     ["annual_leave", "How much time off do I get?", "Article 10.3.A"],
     ["annual_leave", "My supervisor denied my PTO", "Article 10.3.A"],
   ] as const)("%s: %s", (topicId, question, locator) => {
@@ -142,7 +141,8 @@ describe("Amendment 2 NB-D2: supervisor-phrased official-topic questions never r
     ["My supervisor wants me to work hurt", null],
     ["My supervisor made me work on Christmas", null],
     ["My supervisor says I am sick too often", null],
-    ["My supervisor said I got injured", "safety_health"],
+    // Amendment 3 (B-2) overrides the earlier "safety_health" expectation: bare "injured" no longer selects a topic.
+    ["My supervisor said I got injured", null],
   ] as const)("%s", (question, topicId) => {
     expect(publicStewardWorkflowMatch(question).topicId).toBe(topicId);
     const { snapshot, answer } = ask(question);

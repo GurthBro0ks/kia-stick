@@ -14,7 +14,7 @@ import {
 import { buildPublicSourceAnswer } from "@/lib/publicSourceAnswer";
 import type { Detail, Mode, Scope } from "@/lib/sourceModel";
 import type { RuntimeVersion } from "@/lib/version";
-import { PUBLIC_STEWARD_WORKFLOW_TOPICS, publicStewardWorkflowMatch } from "@/lib/publicStewardWorkflowRegistry";
+import { mentionsWorkflowFamilyVocabulary, PUBLIC_STEWARD_WORKFLOW_TOPICS, publicStewardWorkflowMatch } from "@/lib/publicStewardWorkflowRegistry";
 import { enrichCbaAnswerWithJcim } from "@/lib/jcimAnswer";
 import type { JcimCache } from "@/lib/jcimSource";
 
@@ -36,8 +36,8 @@ function isLabelledFakeQuestion(question: string): boolean {
 function mentionsOfficialTopic(question: string): boolean {
   const normalized = normalizeQuestion(question);
   return /\b(leave|vacation)\b/.test(normalized)
-    // Amendment 2 (NB-D2): everyday PTO / time-off / sick / holiday / hurt / injury wording is official-topic vocabulary too.
-    || /\b(?:pto|paid time off|time off|sick|ill|illness|holidays?|christmas|thanksgiving|hurt|injury|injuries|injured)\b/.test(normalized)
+    // Amendment 2 (NB-D2) / Amendment 3: PTO / time off and every leave, holiday, medical, injury or comp family word is official-topic vocabulary.
+    || mentionsWorkflowFamilyVocabulary(normalized)
     || PUBLIC_STEWARD_WORKFLOW_TOPICS.some((topic) => topic.multiTopicAliases.some((alias) => alias.test(normalized)));
 }
 

@@ -78,9 +78,8 @@ const annualLeave: PublicStewardWorkflowTopic = {
     /\bannual[ -]?leave\b/,
     // Amendment 1 (NB-1): everyday vacation / PTO / time-off wording; time off never steals sick or holiday questions.
     /\bvacations?\b/,
-    // Amendment 2 (B-1): time off / PTO never answers for a named holiday (Article 11 Section 1 list, plus Easter / Fourth of July),
-    // another leave type, or workers' comp / injury wording — those get a no-answer instead of annual leave.
-    /^(?!.*\b(?:sick|ill|illness|holidays?)\b)(?!.*\b(?:christmas|thanksgiving|new year|martin luther king|mlk|king day|washington'?s birthday|presidents?'? day|memorial day|juneteenth|independence day|fourth of july|4th of july|labor day|columbus day|veterans'? day|easter)\b)(?!.*\b(?:doctor|dentist|appointments?|medical|jury|court|funeral|bereavement|military|union|without pay|unpaid|lwop|injur(?:y|ies|ed)|hurt|comp|compensation|owcp|feca)\b).*\b(?:pto|paid time off|time off)\b/,
+    // Amendment 3 (B-2): PTO / time off is an allowlisted trigger; any competing-family word blocks it (TOPIC_COMPETING_FAMILIES).
+    /\b(?:pto|time off)\b/,
     /\bannual leave\b.*\b(request|den(?:y|ied|ial)|schedul(?:e|ed|ing)?|approv(?:al|e|ed)?|choice|vacation|administration)\b/,
     /\b(request|den(?:y|ied|ial)|schedul(?:e|ed|ing)?|approv(?:al|e|ed)?|choice|administration)\b.*\bannual leave\b/,
     /\bvacation\b.*\b(request|period|schedul(?:e|ed|ing)?|choice|den(?:y|ied|ial))\b/,
@@ -265,23 +264,19 @@ const safetyHealth: PublicStewardWorkflowTopic = {
   positive: [
     /\b(unsafe|unhealthful|safety hazard|unsafe condition|safe working condition)\b/,
     /\b(?:safety and health|health and safety)\b/,
-    // Amendment 1 (NB-1/NB-3): everyday danger / hazard / OSHA / injury wording.
-    /\b(?:dangerous|danger|hazards?|hazardous|osha|injury|injuries|injured)\b/,
+    // Amendment 3 (B-2): explicit safety / reporting vocabulary only. Bare injury, injured, hurt, danger, hazard, comp, claim,
+    // covered, insurance or doctor never selects safety and health on its own.
+    /\bosha\b/,
+    /\bdangerous\b.*\b(?:conditions?|areas?|work(?:ing|place)?)\b/,
+    /\b(?:conditions?|areas?|work(?:ing|place)?)\b.*\bdangerous\b/,
+    /\breport(?:s|ed|ing)?\b.*\b(?:accidents?|injur(?:y|ies)|hazards?)\b/,
+    /\b(?:accident|injury) reports?\b/,
     /\b(safety|health)\b.*\b(condition|hazard|grievance|workplace|working)\b/,
     /\bworkplace\b.*\bsafety(?: and health)?\b.*\b(issue|concern|condition|hazard|grievance)\b/,
     /\barticle\s*14\b/,
   ],
   negative: [
     /\b(medical diagnosis|owcp|workers'? compensation|treatment plan|fmla)\b/,
-    // Amendment 2 (B-1a): every workers' comp / OWCP / FECA spelling is this topic's unsupportedScope — no-answer, never Article 14.
-    /\b(?:workers?'?s?'? ?comp|comp|compensation|feca|ca-?[12]|light duty|limited duty|injury (?:leave|claim|comp)|medical (?:bills?|treatment|expenses?))\b/,
-    // Amendment 2 (B-1a/B-1b): pay, bills or a differential tied to injury / hazard / danger wording is a pay or comp question.
-    /\b(?:injury|injuries|injured|hazards?|hazardous|danger|dangerous)\b.*\b(?:pay|pays|paid|wages?|differential|bills?)\b/,
-    /\b(?:pay|pays|paid|wages?|differential|bills?)\b.*\b(?:injury|injuries|injured|hazards?|hazardous|danger|dangerous)\b/,
-    // Amendment 2 (B-1b): job-security "danger" is not a workplace hazard.
-    /\bin danger of\b|\b(?:job|position|bid|career|employment)\b.*\bin danger\b/,
-    // Amendment 2 (B-1e): broken / lost property with a claim is an Article 27 property question, never safety.
-    /\b(?:broke|broken|lost|stolen|glasses|eyeglasses|property|belongings)\b.*\bclaims?\b|\bclaims?\b.*\b(?:broke|broken|lost|stolen|glasses|eyeglasses|property|belongings)\b/,
     /\b(?:reasonable|disability|medical|work restriction|ada|rehabilitation act)?[ -]?accommodation(?: request| issue)?\b/,
     /\bdisability discrimination\b/,
   ],
@@ -764,13 +759,161 @@ export function detectPublicStewardWorkflowTopic(
   return publicStewardWorkflowMatch(question).topicId;
 }
 
+// Amendment 3 (delta review 2, B-2): competing-family vocabulary. A family word next to an allowlisted trigger means the
+// question is not clearly about that topic, so the topic is blocked and the default is no-answer. One term per line so each
+// term is separately tested and mutated. `contestsWith` names the official topic the family belongs to (if any): when the
+// only positive topics are blocked by such a family, the result is an ambiguous multi-topic no-answer, never a single topic.
+type CompetingFamilyId = "sick" | "other_leave" | "medical" | "holiday" | "injury" | "claim" | "comp" | "pay";
+
+const COMPETING_FAMILIES: Record<CompetingFamilyId, { contestsWith: PublicStewardWorkflowTopicId | null; terms: readonly string[] }> = {
+  sick: { contestsWith: "sick_leave", terms: [
+    "sick",
+    "ill",
+    "illness",
+  ] },
+  other_leave: { contestsWith: null, terms: [
+    "admin",
+    "administrative",
+    "l\\.?w\\.?o\\.?p",
+    "without pay",
+    "unpaid",
+    "jury",
+    "court",
+    "funeral",
+    "bereavement",
+    "military",
+    "union",
+    "maternity",
+    "paternity",
+    "parental",
+    "baby",
+    "pregnan(?:t|cy)",
+    "adoption",
+    "vot(?:e|ing)",
+    "blood",
+    "snow",
+    "weather",
+    "car(?:e|ing) for",
+    "caregiv(?:er|ing)",
+    "parents?",
+  ] },
+  medical: { contestsWith: null, terms: [
+    "doctors?",
+    "dentists?",
+    "dental",
+    "physicians?",
+    "medical",
+    "appointments?",
+    "hospital",
+    "treatment",
+  ] },
+  holiday: { contestsWith: null, terms: [
+    "holidays?",
+    "christmas",
+    "x-?mas",
+    "thanksgiving",
+    "new year",
+    "martin luther king",
+    "mlk",
+    "king day",
+    "dr\\.? king",
+    "washington['’]?s birthday",
+    "presidents?['’]?s?['’]? day",
+    "memorial day",
+    "juneteenth",
+    "independence day",
+    "fourth of july",
+    "4th of july",
+    "(?:4th|fourth) july",
+    "turkey day",
+    "vets?['’]? day",
+    "july (?:4|4th|fourth)",
+    "labou?r day",
+    "columbus day",
+    "indigenous peoples?['’]? day",
+    "veterans?['’]?s?['’]? day",
+    "armistice day",
+    "easter",
+    "good friday",
+    "eid",
+    "hanukkah",
+    "chanukah",
+    "passover",
+    "yom kippur",
+    "rosh hashanah",
+    "diwali",
+    "ramadan",
+    "kwanzaa",
+    "religious",
+    "(?:jan(?:uary)?\\.? 1(?:st)?|june 19(?:th)?|nov(?:ember)?\\.? 11(?:th)?|dec(?:ember)?\\.? 2[45](?:th)?)",
+    "(?:1/1|6/19|7/4|11/11|12/2[45])",
+  ] },
+  injury: { contestsWith: "safety_health", terms: [
+    "injur(?:y|ies|ed|e)",
+    "hurt",
+    "accidents?",
+  ] },
+  claim: { contestsWith: "employee_claims", terms: [
+    "claims?",
+    "damaged?",
+    "insurance",
+    "insured",
+    "covered",
+    "coverage",
+    "reimburs\\w*",
+  ] },
+  comp: { contestsWith: null, terms: [
+    "comp",
+    "compensation",
+    "owcp",
+    "feca",
+    "dol",
+    "department of labor",
+    "ca[- ]?[12]",
+    "light duty",
+    "limited duty",
+  ] },
+  pay: { contestsWith: null, terms: [
+    "pa(?:ys?|id)",
+    "wages?",
+    "differential",
+    "money",
+    "bills?",
+  ] },
+};
+
+const COMPETING_FAMILY_PATTERNS = Object.fromEntries(
+  Object.entries(COMPETING_FAMILIES).map(([id, family]) => [id, new RegExp(`\\b(?:${family.terms.join("|")})\\b`)])
+) as Record<CompetingFamilyId, RegExp>;
+
+const TOPIC_COMPETING_FAMILIES: Partial<Record<PublicStewardWorkflowTopicId, readonly CompetingFamilyId[]>> = {
+  annual_leave: ["sick", "other_leave", "medical", "holiday", "injury", "claim", "comp"],
+  sick_leave: ["other_leave", "holiday", "injury", "claim", "comp"],
+  safety_health: ["comp", "claim", "pay", "medical"],
+  employee_claims: ["injury", "comp"],
+};
+
+function blockingFamilies(topicId: PublicStewardWorkflowTopicId, normalized: string): CompetingFamilyId[] {
+  return (TOPIC_COMPETING_FAMILIES[topicId] ?? []).filter((family) => COMPETING_FAMILY_PATTERNS[family].test(normalized));
+}
+
+/** Official-topic vocabulary for the chat router: allowlisted leave triggers plus every leave / holiday / medical / injury / comp family word. */
+export function mentionsWorkflowFamilyVocabulary(normalized: string): boolean {
+  return /\b(?:pto|time off)\b/.test(normalized)
+    || (["sick", "other_leave", "medical", "holiday", "injury", "comp"] as const).some((family) => COMPETING_FAMILY_PATTERNS[family].test(normalized));
+}
+
 function matchedSupportedTopicIds(normalized: string): PublicStewardWorkflowTopicId[] {
+  const positiveMatches = PUBLIC_STEWARD_WORKFLOW_TOPICS.filter(
+    (topic) =>
+      !topic.negative.some((guard) => guard.test(normalized)) &&
+      topic.positive.some((matcher) => matcher.test(normalized))
+  );
+  const blocked = positiveMatches
+    .map((topic) => ({ id: topic.id, families: blockingFamilies(topic.id, normalized) }))
+    .filter((entry) => entry.families.length > 0);
   const guardedPositiveMatches = new Set(
-    PUBLIC_STEWARD_WORKFLOW_TOPICS.filter(
-      (topic) =>
-        !topic.negative.some((guard) => guard.test(normalized)) &&
-        topic.positive.some((matcher) => matcher.test(normalized))
-    ).map((topic) => topic.id)
+    positiveMatches.map((topic) => topic.id).filter((id) => !blocked.some((entry) => entry.id === id))
   );
   const hasExplicitMultiTopicStructure =
     /[;,]/.test(normalized) ||
@@ -790,6 +933,16 @@ function matchedSupportedTopicIds(normalized: string): PublicStewardWorkflowTopi
   const selectedMatches = combinedMatches.size > 1
     ? combinedMatches
     : guardedPositiveMatches;
+  // Amendment 3: every positive topic was blocked by a competing family that belongs to another official topic —
+  // contested between them, so an ambiguous multi-topic no-answer (never a single-topic answer, never the fakes).
+  if (selectedMatches.size === 0) {
+    for (const entry of blocked) {
+      for (const family of entry.families) {
+        const owner = COMPETING_FAMILIES[family].contestsWith;
+        if (owner && owner !== entry.id) selectedMatches.add(entry.id).add(owner);
+      }
+    }
+  }
   return PUBLIC_STEWARD_WORKFLOW_TOPICS
     .filter((topic) => selectedMatches.has(topic.id))
     .map((topic) => topic.id);
