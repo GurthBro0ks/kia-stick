@@ -14496,8 +14496,24 @@
         "evidence": "Gurth pasted the result \"1\" for `grep -c ff62a070` on the new cache (KIA Lead 1:1, t190u)",
         "provenance": "LEAD_RELAYED: Gurth's own paste in KIA Lead 1:1 (t190u), relayed by KIA Lead; KIA Builder did not see it directly",
         "recorded_by": "KIA-jcim-batch1-closeout-hardening-1",
-        "owner_acceptance": false
+        "owner_acceptance_claimed": false,
+        "validation_scope": "t190u proves only that the ff62a070 pin string is present in the new cache; full cache validation is proven by the app's fail-closed reader at runtime and stays unverified until owner QA"
       },
+      "pushed": "PR #10 merged (main 762c9b82722172a9b5a5fd8700ae7aefb6f148d7)"
+    },
+    "more_articles_2": {
+      "phase": "KIA-jcim-more-articles-2",
+      "added_sections": ["article-8", "article-10", "article-11", "article-26"],
+      "added_topic_ids": ["overtime", "annual_leave", "sick_leave", "holiday_scheduling", "uniforms_work_clothes"],
+      "topic_mapping_source": "evidence/KIA-jcim-more-articles-scope-1.md §1 table (47a2f847)",
+      "normalized_sha256": "2b3fcc2b6f946948dff8f64b3229a41e7ed9a0b0289edef6de85f40edcce344e",
+      "previous_normalized_sha256": "ff62a070121b62895dcc66982b8717b4281e3cbb7fac22173c328b7d93ed8338",
+      "annual_leave_change": "annual_leave previously mapped to [] and now cites JCIM Article 10 after the controlling CBA (deliberate)",
+      "content_caution": "JCIM text that references the ELM, LMOUs or MOUs is shown as JCIM text only; ELM, LMOU and MOU sources are not admitted or verified, and KIA citations and answers cite JCIM locators only.",
+      "status": "IMPLEMENTED_PENDING_OPERATOR_RESYNC",
+      "owner_qa": "BATCHED",
+      "top_level_fields_note": "Top-level admitted_sections and supported_topic_ids are intentionally left unchanged; per-batch truth lives in more_articles_1 and more_articles_2.",
+      "owner_acceptance_claimed": false,
       "pushed": false
     },
     "public_safe_mvp_status": "ACCEPTED_PAUSED",

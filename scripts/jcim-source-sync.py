@@ -17,9 +17,10 @@ BYTE_COUNT = 3111811
 LAST_MODIFIED = "Wed, 04 Mar 2026 20:17:59 GMT"
 EDITION = "November 2025"
 TITLE = "USPS-APWU Joint Contract Interpretation Manual"
-PAGES = [("preface", 3, 3), ("introduction", 29, 29), ("article-14", 134, 138), ("article-15", 139, 149),
+PAGES = [("preface", 3, 3), ("introduction", 29, 29), ("article-8", 51, 67), ("article-10", 71, 92),
+         ("article-11", 93, 98), ("article-14", 134, 138), ("article-15", 139, 149),
          ("article-16", 150, 157), ("article-17", 158, 167), ("article-19", 169, 169),
-         ("article-25", 177, 178), ("article-27", 182, 183)]
+         ("article-25", 177, 178), ("article-26", 179, 181), ("article-27", 182, 183)]
 
 def digest(data):
     return hashlib.sha256(data).hexdigest()
@@ -107,7 +108,7 @@ def main():
         fd = os.open(target, os.O_WRONLY | os.O_CREAT | os.O_EXCL | os.O_NOFOLLOW, 0o600)
         with os.fdopen(fd, "wb") as stream:
             stream.write(data)
-    print(f"{SOURCE_ID} admitted locally: {SHA256}, {cache['normalized']['sha256']}, 9 sections")
+    print(f"{SOURCE_ID} admitted locally: {SHA256}, {cache['normalized']['sha256']}, 13 sections")
 
 if __name__ == "__main__":
     main()

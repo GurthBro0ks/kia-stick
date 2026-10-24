@@ -106,15 +106,18 @@ function oldSixSectionCache(): JcimCache {
 }
 
 describe("KIA-jcim-more-articles-1: exact ordered JCIM admission allowlist", () => {
-  it("admits exactly nine sections in PDF order under the new normalized pin", () => {
-    expect([...JCIM_SECTION_IDS]).toEqual(EXPECTED_IDS);
-    expect(JCIM_NORMALIZED_SHA256).toBe("ff62a070121b62895dcc66982b8717b4281e3cbb7fac22173c328b7d93ed8338");
+  it("keeps the nine batch-1 sections admitted in PDF order (pin superseded by more-articles-2)", () => {
+    // KIA-jcim-more-articles-2 deliberately supersedes the ff62a070 nine-section pin; the 13-section pin is
+    // asserted in jcimMoreArticles2.test.ts. Batch-1 sections stay admitted in the same relative order.
+    expect(JCIM_SECTION_IDS.filter((id) => EXPECTED_IDS.includes(id))).toEqual(EXPECTED_IDS);
+    expect(JCIM_NORMALIZED_SHA256).not.toBe("ff62a070121b62895dcc66982b8717b4281e3cbb7fac22173c328b7d93ed8338");
     expect(JCIM_SHA256).toBe("6605cc0a94532a0264c0f2bd78f604f23e49c85ded15416c166858ae28a7d6f7");
-    expect(cache.normalized.sections.map((section) => section.id)).toEqual(EXPECTED_IDS);
+    expect(cache.normalized.sections.map((section) => section.id).filter((id) => EXPECTED_IDS.includes(id))).toEqual(EXPECTED_IDS);
     expect(validateJcimCache(cache, pdf)).toBe(true);
   });
 
-  it.each(["18", "20", "8", "10", "11", "26"])("rejects unadmitted JCIM Article %s", (article) => {
+  // Articles 8, 10, 11 and 26 are admitted by KIA-jcim-more-articles-2; 18 and 20 stay unadmitted.
+  it.each(["18", "20"])("rejects unadmitted JCIM Article %s", (article) => {
     const id = `article-${article}`;
     expect((JCIM_SECTION_IDS as readonly string[]).includes(id)).toBe(false);
     const forbidden = { id, title: "SYNTHETIC forbidden", paragraphs: [{ id: `${id}-pdf1-unit1`, text: `SYNTHETIC Article ${article}.1 forbidden`,
@@ -129,7 +132,7 @@ describe("KIA-jcim-more-articles-1: exact ordered JCIM admission allowlist", () 
 });
 
 describe("KIA-jcim-more-articles-1: fail-closed local cache", () => {
-  it("positive control: the exact synthetic nine-section cache is available", () => {
+  it("positive control: the exact synthetic admitted cache is available", () => {
     withCacheDirectory((directory) => writeCache(directory, cache, pdf), (root) => {
       expect(readFrom(root)).toMatchObject({ status: "available" });
     });
@@ -208,12 +211,12 @@ describe("KIA-jcim-more-articles-1: citations for the new articles", () => {
     expect(jcimCitation(cache, section, section.paragraphs[0]).articleNumber).toBe(article);
   });
 
-  it("keeps the existing topic map and leaves batch-2 topics without JCIM", () => {
+  it("keeps the existing topic map; batch-2 topics are covered by jcimMoreArticles2.test.ts", () => {
     expect(jcimTopicCitation(cache, "discipline_just_cause").map((citation) => citation.articleNumber)).toEqual(["16"]);
     expect(jcimTopicCitation(cache, "steward_grievance_handling").map((citation) => citation.articleNumber)).toEqual(["15", "17"]);
-    for (const topicId of ["annual_leave", "overtime", "holiday_scheduling", "sick_leave", "uniforms_work_clothes", "article_19_new_topic"]) {
-      expect(jcimTopicCitation(cache, topicId), topicId).toEqual([]);
-    }
+    // Deliberate KIA-jcim-more-articles-2 change: annual_leave, overtime, holiday_scheduling, sick_leave and
+    // uniforms_work_clothes no longer map to []; only unknown topics still do.
+    expect(jcimTopicCitation(cache, "article_19_new_topic")).toEqual([]);
     expect(jcimTopicCitation(null, "safety_health")).toEqual([]);
   });
 });

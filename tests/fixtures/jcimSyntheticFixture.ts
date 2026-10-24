@@ -34,7 +34,7 @@ export function createJcimSyntheticFixtureCache(): JcimCache {
     },
     normalized: {
       sha256: "0123456789abcdef".repeat(4), // Synthetic marker, not a document hash.
-      sectionCount: 9,
+      sectionCount: JCIM_SECTION_IDS.length as JcimCache["normalized"]["sectionCount"],
       sections: JCIM_SECTION_IDS.map((id, index) => {
         const articleNumber = id.startsWith("article-") ? id.slice("article-".length) : null;
         const text = id === "article-15"

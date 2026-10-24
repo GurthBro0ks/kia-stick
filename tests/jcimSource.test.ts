@@ -84,7 +84,7 @@ describe("Article 19 fixture-cache Chat routing regression", () => {
 });
 
 describe("bounded JCIM 2025 admission", () => {
-  it("pins exact public source identity and nine authorized sections", () => {
+  it("pins exact public source identity and thirteen authorized sections", () => {
     expect([JCIM_SOURCE_ID, JCIM_LANDING_URL, JCIM_PDF_URL, JCIM_SHA256, JCIM_BYTES, JCIM_LAST_MODIFIED,
       JCIM_EDITION, JCIM_TITLE, JCIM_AUTHORITY_CLASS, JCIM_AUTHORITY_LABEL]).toEqual([
       "apwu-usps-jcim-2025", "https://apwu.org/contracts/jcim-2025-joint-contract-intepretation-manual-jcim/",
@@ -96,6 +96,9 @@ describe("bounded JCIM 2025 admission", () => {
     expect(cache.normalized.sections.some((section) => section.id === "article-18")).toBe(false);
     expect(cache.normalized.sections.some((section) => section.id === "article-20")).toBe(false);
     for (const id of ["article-8", "article-10", "article-11", "article-26"]) {
+      expect(cache.normalized.sections.some((section) => section.id === id)).toBe(true);
+    }
+    for (const id of ["article-9", "article-12", "article-13", "article-24", "article-28"]) {
       expect(cache.normalized.sections.some((section) => section.id === id)).toBe(false);
     }
   });
@@ -119,7 +122,12 @@ describe("bounded JCIM 2025 admission", () => {
     const steward = jcimTopicCitation(cache, "steward_grievance_handling");
     expect(discipline.map((citation) => citation.articleNumber)).toEqual(["16"]);
     expect(steward.map((citation) => citation.articleNumber)).toEqual(["15", "17"]);
-    expect(jcimTopicCitation(cache, "annual_leave")).toEqual([]);
+    // Deliberate KIA-jcim-more-articles-2 change: annual_leave was [] and now cites JCIM Article 10.
+    expect(jcimTopicCitation(cache, "annual_leave").map((citation) => citation.articleNumber)).toEqual(["10"]);
+    expect(jcimTopicCitation(cache, "overtime").map((citation) => citation.articleNumber)).toEqual(["8"]);
+    expect(jcimTopicCitation(cache, "sick_leave").map((citation) => citation.articleNumber)).toEqual(["10"]);
+    expect(jcimTopicCitation(cache, "holiday_scheduling").map((citation) => citation.articleNumber)).toEqual(["11"]);
+    expect(jcimTopicCitation(cache, "uniforms_work_clothes").map((citation) => citation.articleNumber)).toEqual(["26"]);
     expect(jcimTopicCitation(cache, "article_19_new_topic")).toEqual([]);
     const safety = jcimTopicCitation(cache, "safety_health");
     const higherLevel = jcimTopicCitation(cache, "higher_level_assignments");
@@ -150,10 +158,13 @@ describe("bounded JCIM 2025 admission", () => {
     expect(answer.shortAnswer).toContain("The JCIM provides joint interpretation");
     const original = enrichCbaAnswerWithJcim(answer, "What does Article 18 say?", null);
     expect(original).toBe(answer);
-    const unrelated = enrichCbaAnswerWithJcim(buildCbaAnswer({ question: "How does annual leave scheduling work?",
+    const annualLeave = enrichCbaAnswerWithJcim(buildCbaAnswer({ question: "How does annual leave scheduling work?",
       source: cba, nlrbSource: null, runtimeVersion: version, mode: "Strict Research", scope: "Official-Like", detail: "Detailed" }),
       "How does annual leave scheduling work?", cache);
-    expect(unrelated.citations.some((citation) => citation.sourceId === JCIM_SOURCE_ID)).toBe(false);
+    // Deliberate KIA-jcim-more-articles-2 change: annual leave previously received no JCIM; it now gets
+    // JCIM Article 10 strictly after the controlling CBA citations.
+    expect(annualLeave.citations.filter((citation) => citation.sourceId === JCIM_SOURCE_ID).map((citation) => citation.articleNumber)).toEqual(["10"]);
+    expect(annualLeave.citations[0].publicSourceType).toBe("cba_contract");
     const article19Question = "What does Article 19 say about handbooks and manuals?";
     const article19 = enrichCbaAnswerWithJcim(buildCbaAnswer({ question: article19Question, source: fixtureCba,
       nlrbSource: null, runtimeVersion: version, mode: "Strict Research", scope: "Official-Like", detail: "Detailed" }),
@@ -226,8 +237,8 @@ describe("JCIM packet presentation repair", () => {
     expect(verifyJcimCitation({ ...citation, paragraphId: "unadmitted-unit" }, cache)).not.toBe("verified_current");
     expect(verifyJcimCitation({ ...citation, citationAnchorSha256: "0".repeat(64) }, cache)).not.toBe("verified_current");
     expect(cache.normalized.sections.map((section) => section.id)).toEqual([
-      "preface", "introduction", "article-14", "article-15", "article-16", "article-17", "article-19",
-      "article-25", "article-27",
+      "preface", "introduction", "article-8", "article-10", "article-11", "article-14", "article-15", "article-16",
+      "article-17", "article-19", "article-25", "article-26", "article-27",
     ]);
   });
 

@@ -6,18 +6,26 @@ import {
 
 // SYNTHETIC: invented test prose, never extracted from a source document.
 export function createJcimSourceFixtureCache(): JcimCache {
-  const pages = [3, 29, 134, 139, 150, 158, 169, 177, 182];
-  const texts = [
-    "SYNTHETIC preface: the imaginary lantern workshop uses this test booklet.",
-    "SYNTHETIC introduction: paper robots arrange invented examples on blue shelves.",
-    "SYNTHETIC Article 14.1 SAFETY: an imaginary lantern crew checks a pretend orange ladder.",
-    "SYNTHETIC Article 15.1 GRIEVANCE: an imaginary robot records a purple ticket.",
-    "SYNTHETIC Article 16.1 JUST CAUSE: a fictional lantern review considers a green token.",
-    "SYNTHETIC Article 17.1 REPRESENTATION: an imaginary helper sorts grievance cards.",
-    "SYNTHETIC Article 19 provides an invented handbooks and manuals index for moon lanterns.",
-    "SYNTHETIC Article 25.1 HIGHER LEVEL: a fictional robot borrows a silver hat for one shift.",
-    "SYNTHETIC Article 27 provides an invented claims window for a lost paper kite.",
-  ];
+  const pages: Record<string, number> = {
+    preface: 3, introduction: 29, "article-8": 51, "article-10": 71, "article-11": 93, "article-14": 134, "article-15": 139,
+    "article-16": 150, "article-17": 158, "article-19": 169, "article-25": 177, "article-26": 179, "article-27": 182,
+  };
+  const texts: Record<string, string[]> = {
+    preface: ["SYNTHETIC preface: the imaginary lantern workshop uses this test booklet."],
+    introduction: ["SYNTHETIC introduction: paper robots arrange invented examples on blue shelves."],
+    "article-8": ["SYNTHETIC Article 8.5.F provides an invented limit on pretend lantern shifts for paper robots."],
+    "article-10": ["SYNTHETIC Article 10.3.A establishes an invented calendar for moon-lantern vacations.",
+      "SYNTHETIC Article 10.6 provides an invented hundredth-of-a-lantern minimum charge."],
+    "article-11": ["SYNTHETIC Article 11.6 HOLIDAY SCHEDULE: an imaginary pecking order for lantern day."],
+    "article-14": ["SYNTHETIC Article 14.1 SAFETY: an imaginary lantern crew checks a pretend orange ladder."],
+    "article-15": ["SYNTHETIC Article 15.1 GRIEVANCE: an imaginary robot records a purple ticket."],
+    "article-16": ["SYNTHETIC Article 16.1 JUST CAUSE: a fictional lantern review considers a green token."],
+    "article-17": ["SYNTHETIC Article 17.1 REPRESENTATION: an imaginary helper sorts grievance cards."],
+    "article-19": ["SYNTHETIC Article 19 provides an invented handbooks and manuals index for moon lanterns."],
+    "article-25": ["SYNTHETIC Article 25.1 HIGHER LEVEL: a fictional robot borrows a silver hat for one shift."],
+    "article-26": ["SYNTHETIC Article 26.1 provides an invented committee for pretend silver hats."],
+    "article-27": ["SYNTHETIC Article 27 provides an invented claims window for a lost paper kite."],
+  };
   return {
     schema: "kia-jcim-cache.v1",
     source: { id: JCIM_SOURCE_ID, title: JCIM_TITLE, authorityClass: JCIM_AUTHORITY_CLASS,
@@ -25,13 +33,13 @@ export function createJcimSourceFixtureCache(): JcimCache {
       pdfUrl: JCIM_PDF_URL, edition: JCIM_EDITION, readOnly: true },
     response: { sha256: JCIM_SHA256, byteCount: JCIM_BYTES, lastModified: JCIM_LAST_MODIFIED },
     // Admission metadata only: the test narrowly maps this invented content's hash.
-    normalized: { sha256: JCIM_NORMALIZED_SHA256, sectionCount: 9,
-      sections: JCIM_SECTION_IDS.map((id, index) => ({
+    normalized: { sha256: JCIM_NORMALIZED_SHA256, sectionCount: JCIM_SECTION_IDS.length as JcimCache["normalized"]["sectionCount"],
+      sections: JCIM_SECTION_IDS.map((id) => ({
         id, title: `SYNTHETIC ${id}`,
-        paragraphs: [{ id: `${id}-pdf${pages[index]}-p01`, text: texts[index],
-          pdfPageNumber: pages[index], printedPageLabel: id === "article-16" ? "16-1" : null,
+        paragraphs: texts[id].map((text, index) => ({ id: `${id}-pdf${pages[id]}-p0${index + 1}`, text,
+          pdfPageNumber: pages[id], printedPageLabel: id === "article-16" ? "16-1" : null,
           articleNumber: id.startsWith("article-") ? id.slice(8) : null,
-          qaId: null, heading: `SYNTHETIC ${id} heading` }],
+          qaId: null, heading: `SYNTHETIC ${id} heading` })),
       })) },
   };
 }
