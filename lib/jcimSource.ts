@@ -6,15 +6,15 @@ export const JCIM_SOURCE_ID = "apwu-usps-jcim-2025" as const;
 export const JCIM_LANDING_URL = "https://apwu.org/contracts/jcim-2025-joint-contract-intepretation-manual-jcim/" as const;
 export const JCIM_PDF_URL = "https://apwu.org/wp-content/uploads/2026/03/JCIM-2025-Web_BOOKMARKED_v4.pdf" as const;
 export const JCIM_SHA256 = "6605cc0a94532a0264c0f2bd78f604f23e49c85ded15416c166858ae28a7d6f7" as const;
-export const JCIM_NORMALIZED_SHA256 = "ff62a070121b62895dcc66982b8717b4281e3cbb7fac22173c328b7d93ed8338" as const;
+export const JCIM_NORMALIZED_SHA256 = "2b3fcc2b6f946948dff8f64b3229a41e7ed9a0b0289edef6de85f40edcce344e" as const;
 export const JCIM_BYTES = 3111811 as const;
 export const JCIM_LAST_MODIFIED = "Wed, 04 Mar 2026 20:17:59 GMT" as const;
 export const JCIM_EDITION = "November 2025" as const;
 export const JCIM_TITLE = "USPS-APWU Joint Contract Interpretation Manual" as const;
 export const JCIM_AUTHORITY_CLASS = "joint_national_interpretation" as const;
 export const JCIM_AUTHORITY_LABEL = "Joint interpretation (JCIM)" as const;
-export const JCIM_SECTION_IDS = ["preface", "introduction", "article-14", "article-15", "article-16", "article-17", "article-19",
-  "article-25", "article-27"] as const;
+export const JCIM_SECTION_IDS = ["preface", "introduction", "article-8", "article-10", "article-11", "article-14",
+  "article-15", "article-16", "article-17", "article-19", "article-25", "article-26", "article-27"] as const;
 
 export interface JcimParagraph {
   id: string;
@@ -32,7 +32,7 @@ export interface JcimCache {
     authorityLabel: typeof JCIM_AUTHORITY_LABEL; landingUrl: typeof JCIM_LANDING_URL; pdfUrl: typeof JCIM_PDF_URL;
     edition: typeof JCIM_EDITION; readOnly: true };
   response: { sha256: typeof JCIM_SHA256; byteCount: typeof JCIM_BYTES; lastModified: typeof JCIM_LAST_MODIFIED };
-  normalized: { sha256: string; sectionCount: 9; sections: JcimSection[] };
+  normalized: { sha256: string; sectionCount: 13; sections: JcimSection[] };
 }
 
 function instanceId(source: JcimCache): string {
@@ -87,6 +87,11 @@ const JCIM_TOPIC_SECTIONS: Record<string, [string, RegExp][]> = {
   safety_health: [["article-14", /Article 14\.1\b/]],
   higher_level_assignments: [["article-25", /Article 25\.1\b/]],
   employee_claims: [["article-27", /Article 27 provides\b/]],
+  overtime: [["article-8", /Article 8\.5\.F provides\b/]],
+  annual_leave: [["article-10", /Article 10\.3\.A establishes\b/]],
+  sick_leave: [["article-10", /Article 10\.6 provides\b/]],
+  holiday_scheduling: [["article-11", /Article 11\.6 HOLIDAY SCHEDULE\b/]],
+  uniforms_work_clothes: [["article-26", /Article 26\.1 provides\b/]],
 };
 
 export function jcimTopicCitation(source: JcimCache | null, topic: string): Citation[] {

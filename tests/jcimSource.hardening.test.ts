@@ -63,42 +63,55 @@ function pinSections(cache: JcimCache): JcimCache {
 function withPage(sectionId: string, page: number): JcimCache {
   const cache = structuredClone(createJcimSourceFixtureCache());
   const section = cache.normalized.sections.find((item) => item.id === sectionId)!;
-  section.paragraphs = section.paragraphs.map((paragraph) => ({ ...paragraph, id: `${sectionId}-pdf${page}-p01`, pdfPageNumber: page }));
+  section.paragraphs = section.paragraphs.map((paragraph, index) => ({ ...paragraph, id: `${sectionId}-pdf${page}-p0${index + 1}`, pdfPageNumber: page }));
   return cache;
 }
 
 const EXPECTED_PAGE_RANGES: [string, number, number][] = [
-  ["preface", 3, 3], ["introduction", 29, 29], ["article-14", 134, 138], ["article-15", 139, 149],
+  ["preface", 3, 3], ["introduction", 29, 29], ["article-8", 51, 67], ["article-10", 71, 92],
+  ["article-11", 93, 98], ["article-14", 134, 138], ["article-15", 139, 149],
   ["article-16", 150, 157], ["article-17", 158, 167], ["article-19", 169, 169],
-  ["article-25", 177, 178], ["article-27", 182, 183],
+  ["article-25", 177, 178], ["article-26", 179, 181], ["article-27", 182, 183],
 ];
 
 describe("F1: normalized pin is enforced for a self-consistent cache", () => {
-  it("control: the pinned synthetic nine-section cache validates", () => {
+  it("control: the pinned synthetic thirteen-section cache validates", () => {
     expect(validateJcimCache(pinSections(createJcimSourceFixtureCache()), pdf, syntheticPdfPins)).toBe(true);
   });
 
-  it("rejects a self-consistent nine-section cache whose normalized hash is not the pin", () => {
+  it("rejects a self-consistent thirteen-section cache whose normalized hash is not the pin", () => {
     const cache = structuredClone(createJcimSourceFixtureCache());
-    cache.normalized.sections[2].paragraphs[0].text = "SYNTHETIC Article 14.1 SAFETY: a different imaginary lantern ladder check.";
+    cache.normalized.sections.find((section) => section.id === "article-14")!.paragraphs[0].text =
+      "SYNTHETIC Article 14.1 SAFETY: a different imaginary lantern ladder check.";
     const selfConsistent = realSha256(syntheticJcimStableJson(cache.normalized.sections));
     expect(selfConsistent).not.toBe(JCIM_NORMALIZED_SHA256);
     cache.normalized.sha256 = selfConsistent;
-    // Every other guard passes: nine ordered ids, admitted pages, article numbers, and the content re-hash
+    // Every other guard passes: thirteen ordered ids, admitted pages, article numbers, and the content re-hash
     // equals the recorded sha256. Only the pin comparison can reject it.
     expect(cache.normalized.sections.map((section) => section.id)).toEqual([...JCIM_SECTION_IDS]);
     expect(validateJcimCache(cache, pdf, syntheticPdfPins)).toBe(false);
   });
 
-  it("rejects a self-consistent cache recorded under the old six-section pin label", () => {
+  // N6 (review 0f52d313): renamed from the misleading "old six-section pin label" title; this case varies a
+  // different section (preface) and never used the old pin.
+  it("rejects a self-consistent cache varied in the preface section (second mutation site)", () => {
     const cache = structuredClone(createJcimSourceFixtureCache());
     cache.normalized.sections[0].paragraphs[0].text += " SYNTHETIC variant";
     cache.normalized.sha256 = realSha256(syntheticJcimStableJson(cache.normalized.sections));
     expect(validateJcimCache(cache, pdf, syntheticPdfPins)).toBe(false);
   });
+
+  // KIA-jcim-more-articles-2 mutation COUNT-9: only the section-count guard can reject a pinned, self-consistent
+  // prefix that drops the last admitted section (ids, pages, article numbers and re-hash all pass).
+  it("rejects a pinned self-consistent cache missing the last admitted section", () => {
+    const cache = structuredClone(createJcimSourceFixtureCache());
+    cache.normalized.sections = cache.normalized.sections.slice(0, -1);
+    expect(cache.normalized.sections).toHaveLength(JCIM_SECTION_IDS.length - 1);
+    expect(validateJcimCache(pinSections(cache), pdf, syntheticPdfPins)).toBe(false);
+  });
 });
 
-describe("F2: exact page ranges for all nine admitted sections", () => {
+describe("F2: exact page ranges for all thirteen admitted sections", () => {
   it("pins the sync script PAGES table exactly, in PDF order", () => {
     const script = readFileSync(path.join(process.cwd(), "scripts", "jcim-source-sync.py"), "utf8");
     const table = /^PAGES = \[([\s\S]*?)\]\n/m.exec(script)?.[1] ?? "";
@@ -119,6 +132,13 @@ describe("F2: exact page ranges for all nine admitted sections", () => {
   it("rejects Article 25 content on the Article 26 pages 179-181", () => {
     for (const page of [179, 180, 181]) {
       expect(validateJcimCache(pinSections(withPage("article-25", page)), pdf, syntheticPdfPins), `page ${page}`).toBe(false);
+    }
+  });
+
+  it("rejects new-section content on the unadmitted gap pages (Articles 7, 9, 12 and 24)", () => {
+    for (const [sectionId, page] of [["article-8", 50], ["article-8", 68], ["article-10", 70], ["article-11", 99],
+      ["article-26", 176], ["article-10", 93], ["article-11", 92]] as const) {
+      expect(validateJcimCache(pinSections(withPage(sectionId, page)), pdf, syntheticPdfPins), `${sectionId} page ${page}`).toBe(false);
     }
   });
 });
@@ -150,9 +170,28 @@ const SELECTOR_UNITS: Record<string, string[]> = {
   "article-27": ["ARTICLE 27 EMPLOYEE CLAIMS (SYNTHETIC heading)",
     "Article 27 provides SYNTHETIC body: an invented claims window for a lost paper kite.",
     "SYNTHETIC cross-reference: the window that Article 27 provides for paper kites."],
+  "article-8": ["ARTICLE 8 HOURS OF WORK (SYNTHETIC heading)",
+    "Article 8.5.F & 8.5.G SYNTHETIC subheading for invented lantern shifts",
+    "Article 8.5.F provides SYNTHETIC body: an imaginary robot limits pretend extra shifts.",
+    "SYNTHETIC cross-reference: the limit that Article 8.5.F provides for paper robots."],
+  "article-10": ["ARTICLE 10 LEAVE (SYNTHETIC heading)",
+    "Article 10.3.A VACATION PLANNING (SYNTHETIC subheading)",
+    "Article 10.3.A establishes SYNTHETIC body: an invented calendar for moon-lantern vacations.",
+    "SYNTHETIC decoy: Article 10.6 also provides an imaginary paper-kite form.",
+    "Article 10.6 provides SYNTHETIC body: an invented hundredth-of-a-lantern minimum charge.",
+    "SYNTHETIC cross-reference: the plan Article 10.3.A establishes and the minimum Article 10.6 provides."],
+  "article-11": ["ARTICLE 11 HOLIDAYS (SYNTHETIC heading)",
+    "SYNTHETIC decoy: Article 11.6. The invented posting lists paper robots.",
+    "Article 11.6 HOLIDAY SCHEDULE SYNTHETIC body: an imaginary pecking order for lantern day.",
+    "SYNTHETIC cross-reference: see Article 11.6 HOLIDAY SCHEDULE for the invented order."],
+  "article-26": ["ARTICLE 26 UNIFORMS AND WORK CLOTHES (SYNTHETIC heading)",
+    "Article 26.1",
+    "Article 26.1 provides SYNTHETIC body: an invented committee for pretend silver hats.",
+    "SYNTHETIC cross-reference: the committee that Article 26.1 provides for paper hats."],
 };
 const SELECTOR_PAGES: Record<string, number> = {
-  "article-14": 134, "article-15": 139, "article-16": 150, "article-17": 158, "article-25": 177, "article-27": 182,
+  "article-8": 51, "article-10": 71, "article-11": 93, "article-14": 134, "article-15": 139, "article-16": 150,
+  "article-17": 158, "article-25": 177, "article-26": 179, "article-27": 182,
 };
 
 function multiUnitCache(): JcimCache {
@@ -163,6 +202,9 @@ function multiUnitCache(): JcimCache {
   return cache;
 }
 
+const SELECTOR_TOPICS = ["safety_health", "higher_level_assignments", "employee_claims", "discipline_just_cause",
+  "steward_grievance_handling", "overtime", "annual_leave", "sick_leave", "holiday_scheduling", "uniforms_work_clothes"];
+
 describe("F3: selector precision with heading, decoy, body and cross-reference units", () => {
   const cache = multiUnitCache();
   it.each([
@@ -171,6 +213,11 @@ describe("F3: selector precision with heading, decoy, body and cross-reference u
     ["employee_claims", ["article-27-pdf182-unit2"]],
     ["discipline_just_cause", ["article-16-pdf150-unit2"]],
     ["steward_grievance_handling", ["article-15-pdf139-unit2", "article-17-pdf158-unit2"]],
+    ["overtime", ["article-8-pdf51-unit3"]],
+    ["annual_leave", ["article-10-pdf71-unit3"]],
+    ["sick_leave", ["article-10-pdf71-unit5"]],
+    ["holiday_scheduling", ["article-11-pdf93-unit3"]],
+    ["uniforms_work_clothes", ["article-26-pdf179-unit3"]],
   ])("%s selects only the intended body unit", (topicId, expected) => {
     const citations = jcimTopicCitation(cache, topicId);
     expect(citations.map((citation) => citation.paragraphId)).toEqual(expected);
@@ -186,8 +233,30 @@ describe("F3: selector precision with heading, decoy, body and cross-reference u
       if (!SELECTOR_UNITS[section.id]) continue;
       section.paragraphs = section.paragraphs.filter((paragraph) => !/SYNTHETIC body/.test(paragraph.text) && !/cross-reference/.test(paragraph.text));
     }
-    for (const topicId of ["safety_health", "higher_level_assignments", "employee_claims", "discipline_just_cause", "steward_grievance_handling"]) {
+    for (const topicId of SELECTOR_TOPICS) {
       expect(jcimTopicCitation(stripped, topicId), topicId).toEqual([]);
+    }
+  });
+
+  // N4 (review 0f52d313): selection is the FIRST matching unit in PDF order (lib/jcimSource.ts uses
+  // paragraphs.find). This pins the current order dependency: correctness relies on the body unit preceding
+  // any matching cross-reference, as it does in the official PDF. Order independence would need a lib/ change
+  // and is out of scope.
+  it("pins the current order dependency: a matching cross-reference placed before the body is selected", () => {
+    const reordered = structuredClone(cache);
+    for (const section of reordered.normalized.sections) {
+      if (!SELECTOR_UNITS[section.id]) continue;
+      const crossRef = section.paragraphs.find((paragraph) => /cross-reference/.test(paragraph.text))!;
+      section.paragraphs = [crossRef, ...section.paragraphs.filter((paragraph) => paragraph !== crossRef)];
+    }
+    for (const topicId of SELECTOR_TOPICS) {
+      const citations = jcimTopicCitation(reordered, topicId);
+      expect(citations.length, topicId).toBeGreaterThan(0);
+      for (const citation of citations) {
+        const paragraph = reordered.normalized.sections.find((section) => section.id === citation.sectionId)!
+          .paragraphs.find((item) => item.id === citation.paragraphId)!;
+        expect(paragraph.text, topicId).toMatch(/cross-reference/);
+      }
     }
   });
 });

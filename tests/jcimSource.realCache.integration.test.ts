@@ -141,7 +141,7 @@ describe("Article 19 real-cache Chat routing regression", () => {
 });
 
 describe("bounded JCIM 2025 admission", () => {
-  it("pins exact public source identity and nine authorized sections", () => {
+  it("pins exact public source identity and thirteen authorized sections", () => {
     expect([JCIM_SOURCE_ID, JCIM_LANDING_URL, JCIM_PDF_URL, JCIM_SHA256, JCIM_BYTES, JCIM_LAST_MODIFIED,
       JCIM_EDITION, JCIM_TITLE, JCIM_AUTHORITY_CLASS, JCIM_AUTHORITY_LABEL]).toEqual([
       "apwu-usps-jcim-2025", "https://apwu.org/contracts/jcim-2025-joint-contract-intepretation-manual-jcim/",
@@ -160,6 +160,9 @@ describe("bounded JCIM 2025 admission", () => {
     expect(cache.normalized.sections.some((section) => section.id === "article-18")).toBe(false);
     expect(cache.normalized.sections.some((section) => section.id === "article-20")).toBe(false);
     for (const id of ["article-8", "article-10", "article-11", "article-26"]) {
+      expect(cache.normalized.sections.some((section) => section.id === id)).toBe(true);
+    }
+    for (const id of ["article-9", "article-12", "article-13", "article-24", "article-28"]) {
       expect(cache.normalized.sections.some((section) => section.id === id)).toBe(false);
     }
   });
@@ -190,7 +193,12 @@ describe("bounded JCIM 2025 admission", () => {
     const steward = jcimTopicCitation(cache, "steward_grievance_handling");
     expect(discipline.map((citation) => citation.articleNumber)).toEqual(["16"]);
     expect(steward.map((citation) => citation.articleNumber)).toEqual(["15", "17"]);
-    expect(jcimTopicCitation(cache, "annual_leave")).toEqual([]);
+    // Deliberate KIA-jcim-more-articles-2 change: annual_leave was [] and now cites JCIM Article 10.
+    expect(jcimTopicCitation(cache, "annual_leave").map((citation) => citation.articleNumber)).toEqual(["10"]);
+    expect(jcimTopicCitation(cache, "overtime").map((citation) => citation.articleNumber)).toEqual(["8"]);
+    expect(jcimTopicCitation(cache, "sick_leave").map((citation) => citation.articleNumber)).toEqual(["10"]);
+    expect(jcimTopicCitation(cache, "holiday_scheduling").map((citation) => citation.articleNumber)).toEqual(["11"]);
+    expect(jcimTopicCitation(cache, "uniforms_work_clothes").map((citation) => citation.articleNumber)).toEqual(["26"]);
     expect(jcimTopicCitation(cache, "article_19_new_topic")).toEqual([]);
     const safety = jcimTopicCitation(cache, "safety_health");
     const higherLevel = jcimTopicCitation(cache, "higher_level_assignments");
@@ -200,6 +208,10 @@ describe("bounded JCIM 2025 admission", () => {
     expect(claims.map((citation) => citation.articleNumber)).toEqual(["27"]);
     expect([...safety, ...higherLevel, ...claims].map((citation) => citation.paragraphId)).toEqual([
       "article-14-pdf134-unit2", "article-25-pdf177-unit2", "article-27-pdf182-unit2"]);
+    const batch2 = ["overtime", "annual_leave", "sick_leave", "holiday_scheduling", "uniforms_work_clothes"].flatMap((topicId) => jcimTopicCitation(cache, topicId));
+    expect(batch2.map((citation) => citation.paragraphId)).toEqual(["article-8-pdf58-unit4", "article-10-pdf79-unit3",
+      "article-10-pdf85-unit2", "article-11-pdf95-unit1", "article-26-pdf179-unit3"]);
+    for (const added of batch2) expect(verifyJcimCitation(added, cache)).toBe("verified_current");
     for (const added of [...safety, ...higherLevel, ...claims]) expect(verifyJcimCitation(added, cache)).toBe("verified_current");
     const citation = discipline[0];
     expect(citation.page).toContain("PDF 150 / printed 16-1");
@@ -299,8 +311,8 @@ describe("JCIM packet presentation repair", () => {
     expect(verifyJcimCitation({ ...citation, paragraphId: "unadmitted-unit" }, cache)).not.toBe("verified_current");
     expect(verifyJcimCitation({ ...citation, citationAnchorSha256: "0".repeat(64) }, cache)).not.toBe("verified_current");
     expect(cache.normalized.sections.map((section) => section.id)).toEqual([
-      "preface", "introduction", "article-14", "article-15", "article-16", "article-17", "article-19",
-      "article-25", "article-27",
+      "preface", "introduction", "article-8", "article-10", "article-11", "article-14", "article-15", "article-16",
+      "article-17", "article-19", "article-25", "article-26", "article-27",
     ]);
   });
 
