@@ -942,24 +942,25 @@ const CLOSED_STOPWORDS = [
   "okay", "out", "off", "as", "where", "build", "plan", "argument", "issue", "rules", "apply", "applies", "cba",
   "contract", "say", "says",
 ];
+/** Time expressions: closed annual words that may also fill a reason slot ("time off for 3 days", "PTO for next week"). */
+const ANNUAL_TIME_WORDS = new Set(["day", "days", "week", "weeks", "weekend", "next", "today", "tomorrow", "monday", "tuesday", "wednesday", "thursday", "friday", "saturday", "sunday"]);
 /** Annual leave: the trigger, request / scheduling, contract-meta, supervisor and time words. */
 const ANNUAL_CLOSED_WORDS = new Set([
   ...CLOSED_STOPWORDS,
-  "annual", "leave", "time", "pto", "vacation", "vacations", "days",
+  ...ANNUAL_TIME_WORDS,
+  "annual", "leave", "time", "pto",
   "request", "requests", "schedule", "scheduling", "deny", "denied", "denial", "approve", "approved", "approval",
   "cancel", "cancelled", "carry", "over", "submit", "submitted", "forget", "forgot", "deadline", "notice", "prime",
   "choice", "period", "paid", "pay", "unused", "allowed", "need", "during",
   "work", "govern", "governs", "administration", "administered", "handled", "dispute", "decision",
   "supervisor", "ptf", "ptfs", "part", "flexible", "probation",
-  "day", "next", "week", "weeks", "weekend", "today", "tomorrow", "monday", "tuesday", "wednesday", "thursday", "friday", "saturday", "sunday",
 ]);
 /** The vacation-reason words already allowlisted ("family" only in "family visit"; "rest" only as the last word). */
 const ANNUAL_REASON_WORDS = new Set(["vacation", "vacations", "trip", "trips", "travel", "wedding", "weddings", "honeymoon", "birthday", "birthdays"]);
 /** A second sentence without the leave mention must name the contract. */
 const ANNUAL_CONTRACT_WORDS = new Set(["cba", "contract"]);
 /** Words that may follow a reason slot ("time off for / to ...") besides a reason word. */
-const ANNUAL_SLOT_FILLER = new Set(["a", "an", "the", "my", "our", "this"]);
-const ANNUAL_TIME_WORDS = new Set(["day", "days", "weeks", "next", "week", "weekend", "today", "tomorrow", "monday", "tuesday", "wednesday", "thursday", "friday", "saturday", "sunday"]);
+const ANNUAL_SLOT_FILLER = new Set(["a", "the", "my", "our", "this"]);
 
 function annualTriggerAt(words: readonly string[], index: number): boolean {
   const word = words[index];
