@@ -951,11 +951,10 @@ const ANNUAL_TRIGGERS: readonly { tokens: readonly string[]; bare: boolean }[] =
   { tokens: ["vacations"], bare: false },
   { tokens: ["annual", "leave"], bare: false },
 ];
-/** Words that introduce a reason clause anywhere after the trigger ("due to X" / "because of X": the reason phrase keeps "to" / "of"). */
+/** Words that introduce a reason clause anywhere after the trigger ("due to X" is covered by "to"; "because of X" keeps "of"). */
 const ANNUAL_REASON_MARKERS = new Set([
   "for",
   "because",
-  "due",
   "after",
   "to",
   "since",
@@ -984,7 +983,6 @@ const ANNUAL_NO_REASON_BEFORE = new Set([
   "get",
   "request",
   "my",
-  "a",
   "some",
   "any",
   "much",
@@ -992,7 +990,7 @@ const ANNUAL_NO_REASON_BEFORE = new Set([
   "unused",
   "is",
 ]);
-/** A reason phrase made only of these words (or plain numbers) is a time expression, not a reason ("next week", "on Monday"). */
+/** A reason phrase made only of these words (or plain numbers) is a time expression, not a reason ("next week", "on Monday"); an empty phrase is no reason. */
 const ANNUAL_TIME_WORDS = new Set([
   "a",
   "the",
@@ -1015,8 +1013,7 @@ const ANNUAL_TIME_WORDS = new Set([
 ]);
 
 function annualReasonAllowed(phrase: readonly string[]): boolean {
-  return phrase.length === 0
-    || ANNUAL_REASON_ALLOWLIST.test(phrase.join(" "))
+  return ANNUAL_REASON_ALLOWLIST.test(phrase.join(" "))
     || phrase.every((word) => ANNUAL_TIME_WORDS.has(word) || /^\d+$/.test(word));
 }
 
@@ -1032,7 +1029,6 @@ function hasUnlistedAnnualReason(normalized: string): boolean {
       let next = index + trigger.tokens.length;
       while (next < words.length && ANNUAL_TRIGGER_TAIL.has(words[next])) next += 1;
       const rest = words.slice(next);
-      if (rest.length === 0) continue;
       const marker = rest.findIndex((word) => ANNUAL_REASON_MARKERS.has(word));
       if (marker >= 0) {
         if (!annualReasonAllowed(rest.slice(marker + 1))) return true;
