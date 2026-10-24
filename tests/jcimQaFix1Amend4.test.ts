@@ -218,6 +218,18 @@ describe("Amendment 4 defense in depth: with no reason clause, every competing-f
   ])("%s", expectNoAnswer);
 });
 
+describe("Amendment 4 defense in depth: family words outside the reason clause (military, caring for, damaged) still block", () => {
+  it.each([
+    "Military annual leave?",
+    "Annual leave: military orders?",
+    "Caring for my mom: annual leave?",
+    "Annual leave: my phone was damaged?",
+    "Damaged phone: annual leave?",
+    "Can I use sick leave for military duty?",
+    "Can I use sick leave for caring for my mom?",
+  ])("%s", expectNoAnswer);
+});
+
 describe("Amendment 4 NB-F3: a bare date ordinal is not a time expression", () => {
   it.each(["Can I take time off on the 4th?", "PTO on the 4th"])("%s", expectNoAnswer);
 });
