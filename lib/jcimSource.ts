@@ -40,6 +40,12 @@ function instanceId(source: JcimCache): string {
     responseSha256: source.response.sha256, sourceId: source.source.id }));
 }
 
+/** Display locator such as "Article 11.6" from the unit's opening words; unit ids carry only a per-page index. */
+function jcimLocator(text: string): string | null {
+  const match = text.slice(0, 40).match(/\bArticle (\d+(?:\.\d+)*(?:\.[A-Z])?)\b/);
+  return match ? `Article ${match[1]}` : null;
+}
+
 export function jcimCitation(source: JcimCache, section: JcimSection, paragraph: JcimParagraph): Citation {
   const sourceInstanceId = instanceId(source);
   const paragraphContentSha = paragraphContentSha256(paragraph.text);
@@ -49,7 +55,7 @@ export function jcimCitation(source: JcimCache, section: JcimSection, paragraph:
     scope: "Official-Like", status: `${JCIM_AUTHORITY_LABEL} · verified current`,
     page: `PDF ${paragraph.pdfPageNumber}${paragraph.printedPageLabel ? ` / printed ${paragraph.printedPageLabel}` : ""}`,
     article: paragraph.articleNumber ? `Article ${paragraph.articleNumber}` : section.title,
-    section: paragraph.qaId ? `Q&A ${paragraph.qaId}` : paragraph.heading ?? section.title,
+    section: paragraph.qaId ? `Q&A ${paragraph.qaId}` : jcimLocator(paragraph.text) ?? paragraph.heading ?? section.title,
     file: JCIM_PDF_URL, hash: source.normalized.sha256, citable: true, sourceKind: "public",
     sourceId: JCIM_SOURCE_ID, publicSourceType: "jcim_joint_interpretation", sectionId: section.id,
     paragraphId: paragraph.id, officialUrl: JCIM_PDF_URL, officialPdfUrl: JCIM_PDF_URL,

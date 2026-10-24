@@ -14510,8 +14510,10 @@
       "previous_normalized_sha256": "ff62a070121b62895dcc66982b8717b4281e3cbb7fac22173c328b7d93ed8338",
       "annual_leave_change": "annual_leave previously mapped to [] and now cites JCIM Article 10 after the controlling CBA (deliberate)",
       "content_caution": "JCIM text that references the ELM, LMOUs or MOUs is shown as JCIM text only; ELM, LMOU and MOU sources are not admitted or verified, and KIA citations and answers cite JCIM locators only.",
-      "status": "IMPLEMENTED_PENDING_OPERATOR_RESYNC",
-      "owner_qa": "BATCHED",
+      "status": "IMPLEMENTED_OPERATOR_RESYNCED",
+      "operator_resync": {"status": "DONE", "source": "t744u (Lead-relayed)", "evidence_sha256_prefix": "1b5daec0"},
+      "owner_qa": "FAIL_3_OF_8_FIX_PENDING_REQA",
+      "owner_qa_batch_1": {"source": "t766u (omarchy, main 47ebf51a; Lead-relayed)", "result": "FAIL 3/8", "pass": ["overtime", "holiday_scheduling", "uniforms_work_clothes", "higher_level_assignments", "employee_claims"], "fail": ["annual_leave", "sick_leave", "safety_health"], "fix_phase": "KIA-jcim-qa-fix-1 Part A (plain-phrasing routing, fake-lane guard, JCIM citation label/locator)", "fix_status": "IMPLEMENTED_PENDING_REQA", "qa_pass_recorded": false},
       "top_level_fields_note": "Top-level admitted_sections and supported_topic_ids are intentionally left unchanged; per-batch truth lives in more_articles_1 and more_articles_2.",
       "owner_acceptance_claimed": false,
       "pushed": false

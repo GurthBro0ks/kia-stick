@@ -74,6 +74,8 @@ const annualLeave: PublicStewardWorkflowTopic = {
     minimumTopicParagraphs: 4,
   },
   positive: [
+    // KIA-jcim-qa-fix-1: plain "annual leave" questions are official-topic questions.
+    /\bannual[ -]?leave\b/,
     /\bannual leave\b.*\b(request|den(?:y|ied|ial)|schedul(?:e|ed|ing)?|approv(?:al|e|ed)?|choice|vacation|administration)\b/,
     /\b(request|den(?:y|ied|ial)|schedul(?:e|ed|ing)?|approv(?:al|e|ed)?|choice|administration)\b.*\bannual leave\b/,
     /\bvacation\b.*\b(request|period|schedul(?:e|ed|ing)?|choice|den(?:y|ied|ial))\b/,
@@ -257,6 +259,7 @@ const safetyHealth: PublicStewardWorkflowTopic = {
   },
   positive: [
     /\b(unsafe|unhealthful|safety hazard|unsafe condition|safe working condition)\b/,
+    /\b(?:safety and health|health and safety)\b/,
     /\b(safety|health)\b.*\b(condition|hazard|grievance|workplace|working)\b/,
     /\bworkplace\b.*\bsafety(?: and health)?\b.*\b(issue|concern|condition|hazard|grievance)\b/,
     /\barticle\s*14\b/,
@@ -377,6 +380,8 @@ const sickLeave: PublicStewardWorkflowTopic = {
     minimumTopicParagraphs: 3,
   },
   positive: [
+    // KIA-jcim-qa-fix-1: plain "sick leave" questions are official-topic questions.
+    /\bsick[ -]?leave\b/,
     /\bsick leave\b.*\b(certif(?:y|ied|ication)|charg(?:e|ed|ing)|administration|request|absence|insufficient|minimum)\b/,
     /\b(certif(?:y|ied|ication)|charg(?:e|ed|ing)|administration|request|absence|minimum)\b.*\bsick leave\b/,
     /\b(argument plan|grievance plan|grievance argument|argument outline)\b.*\bsick[ -]?leave\b/,

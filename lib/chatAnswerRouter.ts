@@ -14,7 +14,7 @@ import {
 import { buildPublicSourceAnswer } from "@/lib/publicSourceAnswer";
 import type { Detail, Mode, Scope } from "@/lib/sourceModel";
 import type { RuntimeVersion } from "@/lib/version";
-import { publicStewardWorkflowMatch } from "@/lib/publicStewardWorkflowRegistry";
+import { PUBLIC_STEWARD_WORKFLOW_TOPICS, publicStewardWorkflowMatch } from "@/lib/publicStewardWorkflowRegistry";
 import { enrichCbaAnswerWithJcim } from "@/lib/jcimAnswer";
 import type { JcimCache } from "@/lib/jcimSource";
 
@@ -26,6 +26,18 @@ function normalizeQuestion(question: string): string {
 }
 
 const exactPublicPilotQuestions = new Set(publicPilotQuestions.map(normalizeQuestion));
+
+/** An official-topic question reaches the fake-sample lane in auto only when it is explicitly fake/sample-labelled. */
+function isLabelledFakeQuestion(question: string): boolean {
+  return /\b(fake|samples?)\b/.test(normalizeQuestion(question));
+}
+
+/** Official-topic vocabulary: such a question must never be answered silently from fake samples. */
+function mentionsOfficialTopic(question: string): boolean {
+  const normalized = normalizeQuestion(question);
+  return /\b(leave|vacation)\b/.test(normalized)
+    || PUBLIC_STEWARD_WORKFLOW_TOPICS.some((topic) => topic.multiTopicAliases.some((alias) => alias.test(normalized)));
+}
 
 function hasExplicitCbaSourceCue(question: string): boolean {
   const normalized = normalizeQuestion(question);
@@ -73,7 +85,7 @@ export function resolveChatAnswerLane(question: string, policy: ChatSourcePolicy
   if (policy === "fake") return "fake";
   if (isAutoCbaQuestion(question)) return "cba";
   if (isAutoPublicPilotQuestion(question)) return "nlrb";
-  if (detectIntent(question) !== "unknown") return "fake";
+  if (detectIntent(question) !== "unknown") return isLabelledFakeQuestion(question) || !mentionsOfficialTopic(question) ? "fake" : "safe_no_answer";
   return "safe_no_answer";
 }
 
