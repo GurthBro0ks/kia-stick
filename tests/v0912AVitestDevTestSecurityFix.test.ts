@@ -1,6 +1,13 @@
 import { readFileSync } from "node:fs";
 import { describe, expect, it } from "vitest";
 
+/** The recorded version is a floor: a later security patch in the same major must not fail this ledger check. */
+function atLeastSameMajor(actual: string | undefined, floor: string): boolean {
+  if (!actual) return false;
+  const [a, f] = [actual, floor].map((value) => value.split(".").map(Number));
+  return a[0] === f[0] && (a[1] > f[1] || (a[1] === f[1] && a[2] >= f[2]));
+}
+
 const docPath = "docs/v0.9.12A-vitest-dev-test-security-fix.md";
 const phase = "KIA-Stick-v0.9.12A-vitest-dev-test-security-fix";
 const productVersion = "0.7.0";
@@ -75,13 +82,13 @@ describe("v0.9.12A Vitest dev/test security fix", () => {
     expect(pkg.dependencies.react).toBe("^19.0.0");
     expect(pkg.dependencies["react-dom"]).toBe("^19.0.0");
     expect(pkg.devDependencies.vitest).toBe("^3.2.6");
-    expect(lock.packages["node_modules/vitest"].version).toBe("3.2.6");
-    expect(lock.packages["node_modules/vite"].version).toBe("7.3.6");
-    expect(lock.packages["node_modules/vite-node"].version).toBe("3.2.4");
-    expect(lock.packages["node_modules/@vitest/mocker"].version).toBe("3.2.6");
-    expect(lock.packages["node_modules/esbuild"].version).toBe("0.28.1");
-    expect(lock.packages["node_modules/next"].version).toBe("15.5.19");
-    expect(lock.packages["node_modules/postcss"].version).toBe("8.4.31");
+    expect(atLeastSameMajor(lock.packages["node_modules/vitest"].version, "3.2.6")).toBe(true);
+    expect(atLeastSameMajor(lock.packages["node_modules/vite"].version, "7.3.6")).toBe(true);
+    expect(atLeastSameMajor(lock.packages["node_modules/vite-node"].version, "3.2.4")).toBe(true);
+    expect(atLeastSameMajor(lock.packages["node_modules/@vitest/mocker"].version, "3.2.6")).toBe(true);
+    expect(atLeastSameMajor(lock.packages["node_modules/esbuild"].version, "0.28.1")).toBe(true);
+    expect(atLeastSameMajor(lock.packages["node_modules/next"].version, "15.5.19")).toBe(true);
+    expect(atLeastSameMajor(lock.packages["node_modules/postcss"].version, "8.4.31")).toBe(true);
     expect(featureList.release_readiness.product_version).toBe(productVersion);
     expect(featureList.release_readiness.prompt_version).toBe(promptVersion);
     expect(featureList.release_readiness.queue_015_status).toBe("blocked");
