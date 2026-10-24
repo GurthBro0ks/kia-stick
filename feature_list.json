@@ -14487,9 +14487,17 @@
       "added_topic_ids": ["safety_health", "higher_level_assignments", "employee_claims"],
       "normalized_sha256": "ff62a070121b62895dcc66982b8717b4281e3cbb7fac22173c328b7d93ed8338",
       "previous_normalized_sha256": "4630eb409316468bea9597e7c981e868cd7d5a7f762b473ee23efe613362d8c3",
-      "status": "IMPLEMENTED_PENDING_OPERATOR_RESYNC",
+      "status": "IMPLEMENTED_OPERATOR_RESYNCED",
       "owner_qa": "BATCHED",
-      "operator_resync": "NOT_RUN",
+      "operator_resync": {
+        "result": "RESYNCED",
+        "host": "omarchy",
+        "date": "2026-10-21 12:21 PM EDT",
+        "evidence": "Gurth pasted the result \"1\" for `grep -c ff62a070` on the new cache (KIA Lead 1:1, t190u)",
+        "provenance": "LEAD_RELAYED: Gurth's own paste in KIA Lead 1:1 (t190u), relayed by KIA Lead; KIA Builder did not see it directly",
+        "recorded_by": "KIA-jcim-batch1-closeout-hardening-1",
+        "owner_acceptance": false
+      },
       "pushed": false
     },
     "public_safe_mvp_status": "ACCEPTED_PAUSED",
