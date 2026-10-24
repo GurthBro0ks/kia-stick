@@ -112,7 +112,9 @@ describe("KIA-jcim-followups-1 F6: grievance outline and steward argument plan l
 describe("KIA-jcim-followups-1 F7: /health public source count", () => {
   it("reports three bounded public sources", async () => {
     const payload = await GET().json();
-    expect(payload.publicSources).toEqual({ count: 3, accessMode: "exact_allowlisted_read_only", available: true });
+    // Proposal (E review N2): `available` now reflects the local caches instead of a hard-coded true.
+    expect(payload.publicSources).toMatchObject({ count: 3, accessMode: "exact_allowlisted_read_only" });
+    expect(typeof payload.publicSources.available).toBe("boolean");
   });
 });
 
