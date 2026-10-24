@@ -2,7 +2,10 @@ import { readFileSync } from "node:fs";
 import { mkdirSync, mkdtempSync, realpathSync, rmSync, writeFileSync } from "node:fs";
 import { tmpdir } from "node:os";
 import path from "node:path";
+import React from "react";
+import { renderToStaticMarkup } from "react-dom/server";
 import { describe, expect, it, vi } from "vitest";
+import { SourcesPanel } from "@/components/KiaStickApp";
 import { createChatSubmitSnapshot, routeChatQuestion } from "@/lib/chatAnswerRouter";
 import {
   JCIM_NORMALIZED_SHA256, JCIM_SECTION_IDS, JCIM_SHA256, JCIM_SOURCE_ID, type JcimCache,
@@ -234,5 +237,16 @@ describe("KIA-jcim-more-articles-2: routing for the five topics", () => {
     expect(packet).not.toBeNull();
     expect(packet.supplementalCitations?.map((citation) => citation.articleNumber)).toEqual([article]);
     expect(publicStewardPacketExportEligibility(packet, cba, [verifier])).toEqual({ eligible: true });
+  });
+});
+
+describe("KIA-jcim-more-articles-2: NB-5 thirteen-section status pill", () => {
+  const PILL = "Verified current · bounded Introduction, Preface, Articles 8, 10, 11, 14, 15, 16, 17, 19, 25, 26, 27";
+  it("renders the exact thirteen-section pill text for an available JCIM source", () => {
+    const html = renderToStaticMarkup(React.createElement(SourcesPanel, { sourceHierarchyGroups: [],
+      cbaSourceState: { status: "available", source: cba }, jcimSourceState: { status: "available", source: cache },
+      runtimeVersion: version }));
+    expect(html).toContain(`<p class="statusPill ok">${PILL}</p>`);
+    expect(html).not.toContain("Articles 14, 15, 16, 17, 19, 25, 27</p>");
   });
 });

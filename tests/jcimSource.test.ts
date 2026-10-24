@@ -158,13 +158,13 @@ describe("bounded JCIM 2025 admission", () => {
     expect(answer.shortAnswer).toContain("The JCIM provides joint interpretation");
     const original = enrichCbaAnswerWithJcim(answer, "What does Article 18 say?", null);
     expect(original).toBe(answer);
-    const unrelated = enrichCbaAnswerWithJcim(buildCbaAnswer({ question: "How does annual leave scheduling work?",
+    const annualLeave = enrichCbaAnswerWithJcim(buildCbaAnswer({ question: "How does annual leave scheduling work?",
       source: cba, nlrbSource: null, runtimeVersion: version, mode: "Strict Research", scope: "Official-Like", detail: "Detailed" }),
       "How does annual leave scheduling work?", cache);
     // Deliberate KIA-jcim-more-articles-2 change: annual leave previously received no JCIM; it now gets
     // JCIM Article 10 strictly after the controlling CBA citations.
-    expect(unrelated.citations.filter((citation) => citation.sourceId === JCIM_SOURCE_ID).map((citation) => citation.articleNumber)).toEqual(["10"]);
-    expect(unrelated.citations[0].publicSourceType).toBe("cba_contract");
+    expect(annualLeave.citations.filter((citation) => citation.sourceId === JCIM_SOURCE_ID).map((citation) => citation.articleNumber)).toEqual(["10"]);
+    expect(annualLeave.citations[0].publicSourceType).toBe("cba_contract");
     const article19Question = "What does Article 19 say about handbooks and manuals?";
     const article19 = enrichCbaAnswerWithJcim(buildCbaAnswer({ question: article19Question, source: fixtureCba,
       nlrbSource: null, runtimeVersion: version, mode: "Strict Research", scope: "Official-Like", detail: "Detailed" }),
