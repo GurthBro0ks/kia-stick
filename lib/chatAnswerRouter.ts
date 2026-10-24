@@ -36,6 +36,8 @@ function isLabelledFakeQuestion(question: string): boolean {
 function mentionsOfficialTopic(question: string): boolean {
   const normalized = normalizeQuestion(question);
   return /\b(leave|vacation)\b/.test(normalized)
+    // Amendment 2 (NB-D2): everyday PTO / time-off / sick / holiday / hurt / injury wording is official-topic vocabulary too.
+    || /\b(?:pto|paid time off|time off|sick|ill|illness|holidays?|christmas|thanksgiving|hurt|injury|injuries|injured)\b/.test(normalized)
     || PUBLIC_STEWARD_WORKFLOW_TOPICS.some((topic) => topic.multiTopicAliases.some((alias) => alias.test(normalized)));
 }
 

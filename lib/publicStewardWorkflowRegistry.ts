@@ -78,7 +78,9 @@ const annualLeave: PublicStewardWorkflowTopic = {
     /\bannual[ -]?leave\b/,
     // Amendment 1 (NB-1): everyday vacation / PTO / time-off wording; time off never steals sick or holiday questions.
     /\bvacations?\b/,
-    /^(?!.*\b(?:sick|ill|illness|holidays?)\b).*\b(?:pto|paid time off|time off)\b/,
+    // Amendment 2 (B-1): time off / PTO never answers for a named holiday (Article 11 Section 1 list, plus Easter / Fourth of July),
+    // another leave type, or workers' comp / injury wording — those get a no-answer instead of annual leave.
+    /^(?!.*\b(?:sick|ill|illness|holidays?)\b)(?!.*\b(?:christmas|thanksgiving|new year|martin luther king|mlk|king day|washington'?s birthday|presidents?'? day|memorial day|juneteenth|independence day|fourth of july|4th of july|labor day|columbus day|veterans'? day|easter)\b)(?!.*\b(?:doctor|dentist|appointments?|medical|jury|court|funeral|bereavement|military|union|without pay|unpaid|lwop|injur(?:y|ies|ed)|hurt|comp|compensation|owcp|feca)\b).*\b(?:pto|paid time off|time off)\b/,
     /\bannual leave\b.*\b(request|den(?:y|ied|ial)|schedul(?:e|ed|ing)?|approv(?:al|e|ed)?|choice|vacation|administration)\b/,
     /\b(request|den(?:y|ied|ial)|schedul(?:e|ed|ing)?|approv(?:al|e|ed)?|choice|administration)\b.*\bannual leave\b/,
     /\bvacation\b.*\b(request|period|schedul(?:e|ed|ing)?|choice|den(?:y|ied|ial))\b/,
@@ -271,6 +273,15 @@ const safetyHealth: PublicStewardWorkflowTopic = {
   ],
   negative: [
     /\b(medical diagnosis|owcp|workers'? compensation|treatment plan|fmla)\b/,
+    // Amendment 2 (B-1a): every workers' comp / OWCP / FECA spelling is this topic's unsupportedScope — no-answer, never Article 14.
+    /\b(?:workers?'?s?'? ?comp|comp|compensation|feca|ca-?[12]|light duty|limited duty|injury (?:leave|claim|comp)|medical (?:bills?|treatment|expenses?))\b/,
+    // Amendment 2 (B-1a/B-1b): pay, bills or a differential tied to injury / hazard / danger wording is a pay or comp question.
+    /\b(?:injury|injuries|injured|hazards?|hazardous|danger|dangerous)\b.*\b(?:pay|pays|paid|wages?|differential|bills?)\b/,
+    /\b(?:pay|pays|paid|wages?|differential|bills?)\b.*\b(?:injury|injuries|injured|hazards?|hazardous|danger|dangerous)\b/,
+    // Amendment 2 (B-1b): job-security "danger" is not a workplace hazard.
+    /\bin danger of\b|\b(?:job|position|bid|career|employment)\b.*\bin danger\b/,
+    // Amendment 2 (B-1e): broken / lost property with a claim is an Article 27 property question, never safety.
+    /\b(?:broke|broken|lost|stolen|glasses|eyeglasses|property|belongings)\b.*\bclaims?\b|\bclaims?\b.*\b(?:broke|broken|lost|stolen|glasses|eyeglasses|property|belongings)\b/,
     /\b(?:reasonable|disability|medical|work restriction|ada|rehabilitation act)?[ -]?accommodation(?: request| issue)?\b/,
     /\bdisability discrimination\b/,
   ],
