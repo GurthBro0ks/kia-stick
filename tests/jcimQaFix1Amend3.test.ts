@@ -276,3 +276,27 @@ describe("Amendment 3 labelled fake / sample questions keep the labelled fake la
     expect(resolveChatAnswerLane(question, "auto")).toBe("fake");
   });
 });
+
+// Mutation follow-up (targeted run on 8fdc948a, 10 survivors): one isolated row per surviving term / rule.
+describe("Amendment 3 mutation follow-up: isolated rows for every competing-family term and allowlist alternative", () => {
+  it.each([
+    "Can I take time off for caring for my son?",
+    "How do I report an accident that needs medical attention?",
+    "Can I take time off for my DOL hearing?",
+    "Can I take time off to fill out a CA-1?",
+    "Who handles my bills after I report an accident?",
+  ])("%s", expectNoAnswer);
+
+  it("Who do I tell about a dangerous area?", () => expectWorks("safety_health", "Who do I tell about a dangerous area?", "Article 14.1"));
+
+  it.each([
+    "My supervisor denied my PTO for FMLA",
+    "My supervisor denied my jury duty",
+    "My supervisor asked about my doctor visit",
+    "My supervisor put me on light duty",
+  ])("router vocabulary keeps %s off the fakes", (question) => {
+    expect(publicStewardWorkflowMatch(question).topicId).toBeNull();
+    expect(resolveChatAnswerLane(question, "auto")).toBe("safe_no_answer");
+    expect(ask(question).answer.version.provider).not.toBe("local-fake-deterministic");
+  });
+});
