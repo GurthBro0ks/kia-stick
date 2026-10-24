@@ -1,5 +1,6 @@
 import {
   buildAnswer,
+  cannedQuestions,
   detectIntent,
   type AnswerHistoryMessage,
   type AnswerResult,
@@ -14,7 +15,7 @@ import {
 import { buildPublicSourceAnswer } from "@/lib/publicSourceAnswer";
 import type { Detail, Mode, Scope } from "@/lib/sourceModel";
 import type { RuntimeVersion } from "@/lib/version";
-import { mentionsWorkflowFamilyVocabulary, PUBLIC_STEWARD_WORKFLOW_TOPICS, publicStewardWorkflowMatch } from "@/lib/publicStewardWorkflowRegistry";
+import { publicStewardWorkflowMatch } from "@/lib/publicStewardWorkflowRegistry";
 import { enrichCbaAnswerWithJcim } from "@/lib/jcimAnswer";
 import type { JcimCache } from "@/lib/jcimSource";
 
@@ -27,19 +28,12 @@ function normalizeQuestion(question: string): string {
 
 const exactPublicPilotQuestions = new Set(publicPilotQuestions.map(normalizeQuestion));
 
-/** An official-topic question reaches the fake-sample lane in auto only when it is explicitly fake/sample-labelled. */
+/** A question reaches the fake-sample lane in auto only when it is explicitly fake/sample-labelled. */
 function isLabelledFakeQuestion(question: string): boolean {
   return /\b(fake|samples?)\b/.test(normalizeQuestion(question));
 }
 
-/** Official-topic vocabulary: such a question must never be answered silently from fake samples. */
-function mentionsOfficialTopic(question: string): boolean {
-  const normalized = normalizeQuestion(question);
-  return /\b(leave|vacation)\b/.test(normalized)
-    // Amendment 2 (NB-D2) / Amendment 3: PTO / time off and every leave, holiday, medical, injury or comp family word is official-topic vocabulary.
-    || mentionsWorkflowFamilyVocabulary(normalized)
-    || PUBLIC_STEWARD_WORKFLOW_TOPICS.some((topic) => topic.multiTopicAliases.some((alias) => alias.test(normalized)));
-}
+const cannedFakeQuestions = new Set(cannedQuestions.map(normalizeQuestion));
 
 function hasExplicitCbaSourceCue(question: string): boolean {
   const normalized = normalizeQuestion(question);
@@ -87,7 +81,9 @@ export function resolveChatAnswerLane(question: string, policy: ChatSourcePolicy
   if (policy === "fake") return "fake";
   if (isAutoCbaQuestion(question)) return "cba";
   if (isAutoPublicPilotQuestion(question)) return "nlrb";
-  if (detectIntent(question) !== "unknown") return isLabelledFakeQuestion(question) || !mentionsOfficialTopic(question) ? "fake" : "safe_no_answer";
+  // Amendment 4 (acceptance probe): auto mode never answers an unlabelled question from the fake samples — only explicitly
+  // fake/sample-labelled questions and the canned questions; everything else is an honest no-answer.
+  if (detectIntent(question) !== "unknown") return isLabelledFakeQuestion(question) || cannedFakeQuestions.has(normalizeQuestion(question)) ? "fake" : "safe_no_answer";
   return "safe_no_answer";
 }
 

@@ -763,7 +763,7 @@ export function detectPublicStewardWorkflowTopic(
 // question is not clearly about that topic, so the topic is blocked and the default is no-answer. One term per line so each
 // term is separately tested and mutated. `contestsWith` names the official topic the family belongs to (if any): when the
 // only positive topics are blocked by such a family, the result is an ambiguous multi-topic no-answer, never a single topic.
-type CompetingFamilyId = "sick" | "other_leave" | "medical" | "holiday" | "injury" | "claim" | "comp" | "pay";
+type CompetingFamilyId = "sick" | "other_leave" | "medical" | "condition" | "holiday" | "injury" | "claim" | "comp" | "pay";
 
 const COMPETING_FAMILIES: Record<CompetingFamilyId, { contestsWith: PublicStewardWorkflowTopicId | null; terms: readonly string[] }> = {
   sick: { contestsWith: "sick_leave", terms: [
@@ -796,6 +796,8 @@ const COMPETING_FAMILIES: Record<CompetingFamilyId, { contestsWith: PublicStewar
     "car(?:e|ing) for",
     "caregiv(?:er|ing)",
     "parents?",
+    // Amendment 4 (delta review 3): an emergency is not a plain vacation request (family emergency -> no-answer).
+    "emergenc(?:y|ies)",
   ] },
   medical: { contestsWith: null, terms: [
     "doctors?",
@@ -806,6 +808,32 @@ const COMPETING_FAMILIES: Record<CompetingFamilyId, { contestsWith: PublicStewar
     "appointments?",
     "hospital",
     "treatment",
+    // Amendment 4 (NB-F1): surgery competes with safety and annual leave (never with sick leave).
+    "surger(?:y|ies)",
+  ] },
+  // Amendment 4 (NB-F1): a personal health condition is a fitness-for-duty / sick-leave question, not a safety answer.
+  condition: { contestsWith: null, terms: [
+    "flu",
+    "casts?",
+    "broken (?:arms?|legs?|bones?|wrists?|ankles?|hands?|foot|feet)",
+    "health conditions?",
+    "my health",
+    "fevers?",
+    "cough(?:s|ing)?",
+    "covid(?:-19)?",
+    "contagious",
+    "infect(?:ion|ions|ed)",
+    "virus",
+    "concussions?",
+    "sprain(?:s|ed)?",
+    "fractur(?:e|es|ed)",
+    "migraines?",
+    "pain",
+    "medications?",
+    "asthma",
+    "diabetes",
+    "dizzy",
+    "symptoms?",
   ] },
   holiday: { contestsWith: null, terms: [
     "holidays?",
@@ -861,6 +889,9 @@ const COMPETING_FAMILIES: Record<CompetingFamilyId, { contestsWith: PublicStewar
     "covered",
     "coverage",
     "reimburs\\w*",
+    // Amendment 4: a damaged car / vehicle is a property question (Article 27 or no-answer), never a safety answer.
+    "cars?",
+    "vehicles?",
   ] },
   comp: { contestsWith: null, terms: [
     "comp",
@@ -887,9 +918,10 @@ const COMPETING_FAMILY_PATTERNS = Object.fromEntries(
 ) as Record<CompetingFamilyId, RegExp>;
 
 const TOPIC_COMPETING_FAMILIES: Partial<Record<PublicStewardWorkflowTopicId, readonly CompetingFamilyId[]>> = {
-  annual_leave: ["sick", "other_leave", "medical", "holiday", "injury", "claim", "comp"],
+  annual_leave: ["sick", "other_leave", "medical", "condition", "holiday", "injury", "claim", "comp"],
   sick_leave: ["other_leave", "holiday", "injury", "claim", "comp"],
-  safety_health: ["comp", "claim", "pay", "medical"],
+  // Amendment 4 (NB-F1): sick (sick, ill, illness), surgery (medical) and personal health conditions block safety and health.
+  safety_health: ["comp", "claim", "pay", "medical", "sick", "condition"],
   employee_claims: ["injury", "comp"],
 };
 
@@ -897,10 +929,119 @@ function blockingFamilies(topicId: PublicStewardWorkflowTopicId, normalized: str
   return (TOPIC_COMPETING_FAMILIES[topicId] ?? []).filter((family) => COMPETING_FAMILY_PATTERNS[family].test(normalized));
 }
 
-/** Official-topic vocabulary for the chat router: allowlisted leave triggers plus every leave / holiday / medical / injury / comp family word. */
-export function mentionsWorkflowFamilyVocabulary(normalized: string): boolean {
-  return /\b(?:pto|time off)\b/.test(normalized)
-    || (["sick", "other_leave", "medical", "holiday", "injury", "comp"] as const).some((family) => COMPETING_FAMILY_PATTERNS[family].test(normalized));
+// Amendment 4 (delta review 3, B-3): reason-clause gate for annual leave. When time off / PTO / vacation / annual leave comes
+// with a reason, annual leave is selected only if the reason is on this SHORT vacation allowlist; any other reason (illness,
+// another leave type, a holiday in any spelling, a family emergency, ...) is a no-answer by default. The competing families
+// above stay as defense in depth. With no reason clause the behaviour is unchanged.
+const ANNUAL_REASON_ALLOWLIST = new RegExp(`\\b(?:${[
+  "vacations?",
+  "trips?",
+  "travel",
+  "rest",
+  "family visits?",
+  "weddings?",
+  "honeymoon",
+  "birthdays?",
+].join("|")})\\b`);
+/** Triggers; `bare` ones (time off, PTO) also take a reason as a directly following noun phrase or a directly preceding word. */
+const ANNUAL_TRIGGERS: readonly { tokens: readonly string[]; bare: boolean }[] = [
+  { tokens: ["time", "off"], bare: true },
+  { tokens: ["pto"], bare: true },
+  { tokens: ["vacation"], bare: false },
+  { tokens: ["vacations"], bare: false },
+  { tokens: ["annual", "leave"], bare: false },
+];
+/** Words that introduce a reason clause anywhere after the trigger ("due to X" / "because of X": the reason phrase keeps "to" / "of"). */
+const ANNUAL_REASON_MARKERS = new Set([
+  "for",
+  "because",
+  "due",
+  "after",
+  "to",
+  "since",
+  "on",
+]);
+/** Words directly after the trigger that belong to it ("vacation days for ...", "leave request denied for ..."). */
+const ANNUAL_TRIGGER_TAIL = new Set([
+  "days",
+  "time",
+  "request",
+  "denied",
+]);
+/** Words directly after the trigger that start no reason (question / scheduling structure). */
+const ANNUAL_NO_REASON_AFTER = new Set([
+  "do",
+  "with",
+  "during",
+  "from",
+  "paid",
+  "by",
+]);
+/** Words directly before the trigger that are not a reason ("take time off", "my PTO", "how much vacation"). */
+const ANNUAL_NO_REASON_BEFORE = new Set([
+  "take",
+  "use",
+  "get",
+  "request",
+  "my",
+  "a",
+  "some",
+  "any",
+  "much",
+  "many",
+  "unused",
+  "is",
+]);
+/** A reason phrase made only of these words (or plain numbers) is a time expression, not a reason ("next week", "on Monday"). */
+const ANNUAL_TIME_WORDS = new Set([
+  "a",
+  "the",
+  "next",
+  "this",
+  "day",
+  "days",
+  "week",
+  "weeks",
+  "weekend",
+  "tomorrow",
+  "today",
+  "monday",
+  "tuesday",
+  "wednesday",
+  "thursday",
+  "friday",
+  "saturday",
+  "sunday",
+]);
+
+function annualReasonAllowed(phrase: readonly string[]): boolean {
+  return phrase.length === 0
+    || ANNUAL_REASON_ALLOWLIST.test(phrase.join(" "))
+    || phrase.every((word) => ANNUAL_TIME_WORDS.has(word) || /^\d+$/.test(word));
+}
+
+/** True when some time off / PTO / vacation / annual leave mention carries a reason that is not on the vacation allowlist. */
+function hasUnlistedAnnualReason(normalized: string): boolean {
+  for (const clause of normalized.split(/[,;:?!.()/]+/)) {
+    const words = clause.match(/[a-z0-9]+(?:['’][a-z0-9]+)*/g) ?? [];
+    for (let index = 0; index < words.length; index += 1) {
+      const trigger = ANNUAL_TRIGGERS.find(({ tokens }) => tokens.every((token, offset) => words[index + offset] === token));
+      if (!trigger) continue;
+      const before = words[index - 1];
+      if (trigger.bare && before !== undefined && !ANNUAL_NO_REASON_BEFORE.has(before) && !annualReasonAllowed([before])) return true;
+      let next = index + trigger.tokens.length;
+      while (next < words.length && ANNUAL_TRIGGER_TAIL.has(words[next])) next += 1;
+      const rest = words.slice(next);
+      if (rest.length === 0) continue;
+      const marker = rest.findIndex((word) => ANNUAL_REASON_MARKERS.has(word));
+      if (marker >= 0) {
+        if (!annualReasonAllowed(rest.slice(marker + 1))) return true;
+        continue;
+      }
+      if (trigger.bare && !ANNUAL_NO_REASON_AFTER.has(rest[0]) && !annualReasonAllowed(rest)) return true;
+    }
+  }
+  return false;
 }
 
 function matchedSupportedTopicIds(normalized: string): PublicStewardWorkflowTopicId[] {
@@ -910,8 +1051,12 @@ function matchedSupportedTopicIds(normalized: string): PublicStewardWorkflowTopi
       topic.positive.some((matcher) => matcher.test(normalized))
   );
   const blocked = positiveMatches
-    .map((topic) => ({ id: topic.id, families: blockingFamilies(topic.id, normalized) }))
-    .filter((entry) => entry.families.length > 0);
+    .map((topic) => ({
+      id: topic.id,
+      families: blockingFamilies(topic.id, normalized),
+      unlistedReason: topic.id === "annual_leave" && hasUnlistedAnnualReason(normalized),
+    }))
+    .filter((entry) => entry.families.length > 0 || entry.unlistedReason);
   const guardedPositiveMatches = new Set(
     positiveMatches.map((topic) => topic.id).filter((id) => !blocked.some((entry) => entry.id === id))
   );
