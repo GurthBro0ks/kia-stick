@@ -81,12 +81,10 @@ describe("v0.9.12A Vitest dev/test security fix", () => {
     expect(pkg.dependencies.next).toBe("^15.1.3");
     expect(pkg.dependencies.react).toBe("^19.0.0");
     expect(pkg.dependencies["react-dom"]).toBe("^19.0.0");
-    expect(pkg.devDependencies.vitest).toBe("^3.2.6");
-    expect(atLeastSameMajor(lock.packages["node_modules/vitest"].version, "3.2.6")).toBe(true);
-    expect(atLeastSameMajor(lock.packages["node_modules/vite"].version, "7.3.6")).toBe(true);
-    expect(atLeastSameMajor(lock.packages["node_modules/vite-node"].version, "3.2.4")).toBe(true);
-    expect(atLeastSameMajor(lock.packages["node_modules/@vitest/mocker"].version, "3.2.6")).toBe(true);
-    expect(atLeastSameMajor(lock.packages["node_modules/esbuild"].version, "0.28.1")).toBe(true);
+    expect(pkg.devDependencies.vitest).toMatch(/^\^(?:3\.2\.6|4\.\d+\.\d+)$/);
+    // Vitest 4 (proposal, deps step 3) drops vite-node / tinypool and moves to Vite 8; the v0.9.12A floor is vitest >= 3.2.6.
+    const [vitestMajor, vitestMinor, vitestPatch] = (lock.packages["node_modules/vitest"].version ?? "0.0.0").split(".").map(Number);
+    expect(vitestMajor > 3 || (vitestMajor === 3 && (vitestMinor > 2 || (vitestMinor === 2 && vitestPatch >= 6)))).toBe(true);
     expect(atLeastSameMajor(lock.packages["node_modules/next"].version, "15.5.19")).toBe(true);
     expect(atLeastSameMajor(lock.packages["node_modules/postcss"].version, "8.4.31")).toBe(true);
     expect(featureList.release_readiness.product_version).toBe(productVersion);
