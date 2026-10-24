@@ -1017,10 +1017,34 @@ const SAFETY_CLOSED_WORDS = new Set([
 ]);
 /** "condition(s)" is a workplace word only right after one of these; "health" only inside "safety and health" / "health and safety". */
 const SAFETY_CONDITION_QUALIFIERS = new Set(["unsafe", "unhealthful", "dangerous", "working", "hazardous"]);
+// B-5 (delta review 5): accident / injury, cold and exposed are personal words unless the context makes them workplace words.
+/** "accident(s)" / "injury(ies)" only as the thing reported: right after a report verb (an article between is fine) or right before report(s) / form. */
+const SAFETY_REPORT_VERBS = new Set(["report", "reports", "reported", "reporting"]);
+const SAFETY_REPORTED_THINGS = new Set(["accident", "accidents", "injury", "injuries"]);
+/** Every sentence must name the hazard, the reporting, or the contract; a second sentence such as "I have a cold." cannot ride along. */
+const SAFETY_SENTENCE_ANCHORS = new Set([
+  "safety", "unsafe", "unhealthful", "hazard", "hazards", "hazardous", "dangerous", "osha", ...SAFETY_REPORT_VERBS, "article", "cba", "contract",
+]);
+
+function safetyReportedThingAt(words: readonly string[], index: number): boolean {
+  const before = /^(?:a|an|the)$/.test(words[index - 1] ?? "") ? words[index - 2] : words[index - 1];
+  return SAFETY_REPORT_VERBS.has(before ?? "") || /^(?:reports?|form)$/.test(words[index + 1] ?? "");
+}
 
 function safetyClosedVocabulary(normalized: string): boolean {
-  const words = normalized.match(QUESTION_WORDS) ?? [];
+  const sentences = normalized.split(/[.?!;]+(?=\s|$)/).map((sentence) => sentence.match(QUESTION_WORDS) ?? []).filter((words) => words.length > 0);
+  // Naming an accident or injury and asking whether to work ("I reported an injury. Is it unsafe to work?") is fitness for duty.
+  const all = sentences.flat();
+  if (all.some((word) => SAFETY_REPORTED_THINGS.has(word))
+    && all.some((word, index) => /^work(?:ing)?$/.test(word) && (all[index - 1] === "to" || all[index + 1] === "with"))) return false;
+  return sentences.every((words) => words.some((word) => SAFETY_SENTENCE_ANCHORS.has(word)) && safetySentenceClosedVocabulary(words));
+}
+
+function safetySentenceClosedVocabulary(words: readonly string[]): boolean {
   return words.every((word, index) => {
+    if (SAFETY_REPORTED_THINGS.has(word)) return safetyReportedThingAt(words, index);
+    if (word === "cold") return words[index - 1] === "in" || (words[index - 1] === "the" && words[index - 2] === "in");
+    if (word === "exposed") return words[index + 1] === "electrical";
     if (word === "condition" || word === "conditions") {
       return SAFETY_CONDITION_QUALIFIERS.has(words[index - 1] ?? "")
         || (word === "conditions" && words[index - 1] === "these" && /^(?:dangerous|unsafe)$/.test(words[index + 1] ?? ""));
