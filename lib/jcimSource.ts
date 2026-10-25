@@ -95,7 +95,7 @@ const JCIM_TOPIC_SECTIONS: Record<string, [string, RegExp][]> = {
   employee_claims: [["article-27", /Article 27 provides\b/]],
   overtime: [["article-8", /Article 8\.5\.F provides\b/]],
   annual_leave: [["article-10", /Article 10\.3\.A establishes\b/]],
-  sick_leave: [["article-10", /Article 10\.6 provides\b/]],
+  sick_leave: [["article-10", /Article 10\.5 provides\b/]],
   holiday_scheduling: [["article-11", /Article 11\.6 HOLIDAY SCHEDULE\b/]],
   uniforms_work_clothes: [["article-26", /Article 26\.1 provides\b/]],
 };

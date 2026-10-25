@@ -20,7 +20,7 @@ function ask(question: string) {
 const qaTopics = [
   ["Annual Leave", "How much annual leave do I get?", "10", "Article 10.3.A"],
   ["Annual Leave (alt)", "How does annual leave work?", "10", "Article 10.3.A"],
-  ["Sick Leave", "How does sick leave work?", "10", "Article 10.6"],
+  ["Sick Leave", "How does sick leave work?", "10", "Article 10.5"],
   ["Safety and Health", "What are my rights on an unsafe condition?", "14", "Article 14.1"],
   ["Safety and Health (alt)", "What about safety and health?", "14", "Article 14.1"],
   ["Overtime", "How does overtime work?", "8", "Article 8.5.F"],

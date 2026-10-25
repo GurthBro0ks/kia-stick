@@ -66,7 +66,7 @@ const NINE_NORMALIZED_SHA256 = "ff62a070121b62895dcc66982b8717b4281e3cbb7fac2217
 const NEW_TOPICS = [
   ["overtime", "8", "article-8", "article-8-pdf51-p01"],
   ["annual_leave", "10", "article-10", "article-10-pdf71-p01"],
-  ["sick_leave", "10", "article-10", "article-10-pdf71-p02"],
+  ["sick_leave", "10", "article-10", "article-10-pdf71-p05"],
   ["holiday_scheduling", "11", "article-11", "article-11-pdf93-p01"],
   ["uniforms_work_clothes", "26", "article-26", "article-26-pdf179-p01"],
 ] as const;

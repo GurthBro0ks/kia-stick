@@ -265,9 +265,9 @@ describe("Amendment 3 allowlists keep explicit wording working", () => {
     ["annual_leave", "How much PTO do I get?", "Article 10.3.A"],
     ["annual_leave", "Can I take time off next week?", "Article 10.3.A"],
     ["annual_leave", "My supervisor denied my PTO", "Article 10.3.A"],
-    ["sick_leave", "How does sick leave work?", "Article 10.6"],
-    ["sick_leave", "Can I take time off for a sick day?", "Article 10.6"],
-    ["sick_leave", "Can I use sick leave for a doctor's appointment?", "Article 10.6"],
+    ["sick_leave", "How does sick leave work?", "Article 10.5"],
+    ["sick_leave", "Can I take time off for a sick day?", "Article 10.5"],
+    ["sick_leave", "Can I use sick leave for a doctor's appointment?", "Article 10.5"],
   ] as const)("%s: %s", expectWorks);
 });
 
