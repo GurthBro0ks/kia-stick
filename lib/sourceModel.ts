@@ -336,7 +336,11 @@ export function citationLabel(citation: Citation): string {
     if (citation.publicSourceType === "cba_contract") {
       const printed = citation.printedPageLabel ? ` · printed ${citation.printedPageLabel}` : " · printed unknown";
       const integrity = citation.citationVerificationState === "verified_current" ? " · verified current source" : citation.citationVerificationState ? ` · ${citation.citationVerificationState.replaceAll("_", " ")}` : "";
-      return `${citation.sourceId} · Article ${citation.articleNumber ?? "unknown"} · Section ${citation.sectionId ?? "unknown"} · PDF ${citation.pdfPageNumber ?? "unknown"}${printed} · ${citation.paragraphId}${integrity}`;
+      // NB-E3: sectionId is "section-N" / "section-unknown"; show the section number only, and drop an unknown article / section.
+      const section = citation.sectionId?.replace(/^section-/, "");
+      const locator = [citation.articleNumber ? `Article ${citation.articleNumber}` : null, section && section !== "unknown" ? `Section ${section}` : null]
+        .filter(Boolean).join(" · ") || "section unknown";
+      return `${citation.sourceId} · ${locator} · PDF ${citation.pdfPageNumber ?? "unknown"}${printed} · ${citation.paragraphId}${integrity}`;
     }
     if (citation.publicSourceType === "jcim_joint_interpretation") {
       const locator = citation.section?.startsWith("Article ") ? citation.section
