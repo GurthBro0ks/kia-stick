@@ -18,6 +18,9 @@ const DECOYS = [
   "Article 10.4 provides SYNTHETIC decoy: an invented lantern-rest rule.",
   "Article 10.50 provides SYNTHETIC decoy: an invented out-of-range lantern number.",
   "SYNTHETIC decoy: Article 10.5provides runs two words together.",
+  "SYNTHETIC decoy: Article 10.5 providesque is an invented run-on word.",
+  "SYNTHETIC decoy: ELM 10.5 provides an imaginary lantern table.",
+  "Article 1015 provides SYNTHETIC decoy: an invented article number without a dot.",
 ];
 
 function unit(index: number, text: string): JcimParagraph {
