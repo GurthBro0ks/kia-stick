@@ -52,7 +52,8 @@ describe("v0.9.29 current Next audit evidence refresh", () => {
 
     expect(pkg.version).toBe("0.7.0");
     expect(pkg.dependencies.next).toBe("^15.1.3");
-    expect(lock.packages["node_modules/next"].version).toBe("15.5.19");
+    // Exact pins at the current lockfile (this ledger recorded next 15.5.19; the deps proposal moved it to 15.5.28).
+    expect(lock.packages["node_modules/next"].version).toBe("15.5.28");
     expect(lock.packages["node_modules/postcss"].version).toBe("8.4.31");
     expect(state.phase).toBe(phase);
     expect(state.status).toBe("ready_to_push");

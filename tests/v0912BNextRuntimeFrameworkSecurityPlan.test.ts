@@ -108,11 +108,12 @@ describe("v0.9.12B Next runtime framework security plan", () => {
     expect(pkg.dependencies.next).toBe("^15.1.3");
     expect(pkg.dependencies.react).toBe("^19.0.0");
     expect(pkg.dependencies["react-dom"]).toBe("^19.0.0");
-    expect(lock.packages["node_modules/next"].version).toBe("15.5.19");
+    // Exact pins at the current lockfile (v0.9.12B recorded next 15.5.19 and vite's postcss 8.5.15).
+    expect(lock.packages["node_modules/next"].version).toBe("15.5.28");
     expect(lock.packages["node_modules/react"].version).toBe("19.2.7");
     expect(lock.packages["node_modules/react-dom"].version).toBe("19.2.7");
     expect(lock.packages["node_modules/postcss"].version).toBe("8.4.31");
-    expect(lock.packages["node_modules/vite/node_modules/postcss"].version).toBe("8.5.15");
+    expect(lock.packages["node_modules/vite/node_modules/postcss"].version).toBe("8.5.31");
     expect(featureList.release_readiness.product_version).toBe(productVersion);
     expect(featureList.release_readiness.prompt_version).toBe(promptVersion);
     expect(featureList.release_readiness.queue_015_status).toBe("blocked");
