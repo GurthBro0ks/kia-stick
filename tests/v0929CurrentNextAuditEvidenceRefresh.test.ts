@@ -1,13 +1,6 @@
 import { readFileSync } from "node:fs";
 import { describe, expect, it } from "vitest";
 
-/** The recorded version is a floor: a later security patch in the same major must not fail this ledger check. */
-function atLeastSameMajor(actual: string | undefined, floor: string): boolean {
-  if (!actual) return false;
-  const [a, f] = [actual, floor].map((value) => value.split(".").map(Number));
-  return a[0] === f[0] && (a[1] > f[1] || (a[1] === f[1] && a[2] >= f[2]));
-}
-
 const phase = "KIA-Stick-v0.9.29-current-next-audit-evidence-refresh";
 const docPath = "docs/v0.9.29-current-next-audit-evidence-refresh.md";
 
@@ -59,8 +52,9 @@ describe("v0.9.29 current Next audit evidence refresh", () => {
 
     expect(pkg.version).toBe("0.7.0");
     expect(pkg.dependencies.next).toBe("^15.1.3");
-    expect(atLeastSameMajor(lock.packages["node_modules/next"].version, "15.5.19")).toBe(true);
-    expect(atLeastSameMajor(lock.packages["node_modules/postcss"].version, "8.4.31")).toBe(true);
+    // Exact pins at the current lockfile (this ledger recorded next 15.5.19; the deps proposal moved it to 15.5.28).
+    expect(lock.packages["node_modules/next"].version).toBe("15.5.28");
+    expect(lock.packages["node_modules/postcss"].version).toBe("8.4.31");
     expect(state.phase).toBe(phase);
     expect(state.status).toBe("ready_to_push");
     expect(state.network_metadata_status).toBe("PASS");

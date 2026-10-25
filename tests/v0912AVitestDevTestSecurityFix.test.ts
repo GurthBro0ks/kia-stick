@@ -1,13 +1,6 @@
 import { readFileSync } from "node:fs";
 import { describe, expect, it } from "vitest";
 
-/** The recorded version is a floor: a later security patch in the same major must not fail this ledger check. */
-function atLeastSameMajor(actual: string | undefined, floor: string): boolean {
-  if (!actual) return false;
-  const [a, f] = [actual, floor].map((value) => value.split(".").map(Number));
-  return a[0] === f[0] && (a[1] > f[1] || (a[1] === f[1] && a[2] >= f[2]));
-}
-
 const docPath = "docs/v0.9.12A-vitest-dev-test-security-fix.md";
 const phase = "KIA-Stick-v0.9.12A-vitest-dev-test-security-fix";
 const productVersion = "0.7.0";
@@ -23,6 +16,7 @@ describe("v0.9.12A Vitest dev/test security fix", () => {
       "npm install --save-dev vitest@3.2.6",
       "vitest@2.1.9",
       "vitest@3.2.6",
+      "- Installed lockfile version: `vitest@4.1.12`",
       "vite@7.3.6",
       "vite-node@3.2.4",
       "@vitest/mocker@3.2.6",
@@ -81,12 +75,19 @@ describe("v0.9.12A Vitest dev/test security fix", () => {
     expect(pkg.dependencies.next).toBe("^15.1.3");
     expect(pkg.dependencies.react).toBe("^19.0.0");
     expect(pkg.dependencies["react-dom"]).toBe("^19.0.0");
-    expect(pkg.devDependencies.vitest).toMatch(/^\^(?:3\.2\.6|4\.\d+\.\d+)$/);
-    // Vitest 4 (proposal, deps step 3) drops vite-node / tinypool and moves to Vite 8; the v0.9.12A floor is vitest >= 3.2.6.
-    const [vitestMajor, vitestMinor, vitestPatch] = (lock.packages["node_modules/vitest"].version ?? "0.0.0").split(".").map(Number);
-    expect(vitestMajor > 3 || (vitestMajor === 3 && (vitestMinor > 2 || (vitestMinor === 2 && vitestPatch >= 6)))).toBe(true);
-    expect(atLeastSameMajor(lock.packages["node_modules/next"].version, "15.5.19")).toBe(true);
-    expect(atLeastSameMajor(lock.packages["node_modules/postcss"].version, "8.4.31")).toBe(true);
+    // Exact pins at the current lockfile (v0.9.12A recorded vitest 3.2.6, vite 7.3.6, vite-node 3.2.4,
+    // @vitest/mocker 3.2.6, esbuild 0.28.1, next 15.5.19; the deps proposal moved to vitest 4.1.12 / Vite 8 and next 15.5.28).
+    expect(pkg.devDependencies.vitest).toBe("^4.1.12");
+    expect(lock.packages["node_modules/vitest"].version).toBe("4.1.12");
+    expect(lock.packages["node_modules/vite"].version).toBe("8.3.5");
+    expect(lock.packages["node_modules/@vitest/mocker"].version).toBe("4.1.12");
+    // vite-node is gone: vitest 4.1.12 no longer depends on it (vitest 3.2.6 required vite-node 3.2.4).
+    expect(lock.packages["node_modules/vite-node"]).toBeUndefined();
+    // esbuild (and every @esbuild/* platform binary) is gone: Vite 8.3.5 bundles with Rolldown and lists esbuild only as an
+    // optional peer, and nothing else in the lockfile depends on it.
+    expect(Object.keys(lock.packages).filter((key) => /(?:^|\/)node_modules\/(?:esbuild|@esbuild\/[^/]+)$/.test(key))).toEqual([]);
+    expect(lock.packages["node_modules/next"].version).toBe("15.5.28");
+    expect(lock.packages["node_modules/postcss"].version).toBe("8.4.31");
     expect(featureList.release_readiness.product_version).toBe(productVersion);
     expect(featureList.release_readiness.prompt_version).toBe(promptVersion);
     expect(featureList.release_readiness.queue_015_status).toBe("blocked");
