@@ -1559,15 +1559,6 @@ function PanelHeader(props: { title: string; meta: React.ReactNode }) {
   );
 }
 
-export function NavButton(props: { active: boolean; label: string; icon: React.ReactNode; onClick: () => void }) {
-  return (
-    <button className={props.active ? "navButton active" : "navButton"} type="button" onClick={props.onClick}>
-      {props.icon}
-      <span>{props.label}</span>
-    </button>
-  );
-}
-
 export function FakeUploadPanel(props: {
   fakeOnlyConfirmed: boolean;
   onFakeOnlyConfirmedChange: (checked: boolean) => void;

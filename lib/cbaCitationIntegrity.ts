@@ -395,10 +395,6 @@ export function citationVerificationMessage(state: CitationVerificationState): s
   }
 }
 
-export function isCbaCitationCurrent(citation: CbaCitationMetadata): boolean {
-  return citation.citationVerificationState === "verified_current";
-}
-
 function byParagraphId(source: CbaSourceCache): Map<string, CbaParagraph> {
   return new Map(cbaParagraphs(source).map((paragraph) => [paragraph.id, paragraph]));
 }
