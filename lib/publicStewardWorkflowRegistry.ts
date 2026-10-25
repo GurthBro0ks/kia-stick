@@ -74,6 +74,12 @@ const annualLeave: PublicStewardWorkflowTopic = {
     minimumTopicParagraphs: 4,
   },
   positive: [
+    // KIA-jcim-qa-fix-1: plain "annual leave" questions are official-topic questions.
+    /\bannual[ -]?leave\b/,
+    // Amendment 1 (NB-1): everyday vacation / PTO / time-off wording; time off never steals sick or holiday questions.
+    /\bvacations?\b/,
+    // Amendment 3 (B-2): PTO / time off is an allowlisted trigger; any competing-family word blocks it (TOPIC_COMPETING_FAMILIES).
+    /\b(?:pto|time off)\b/,
     /\bannual leave\b.*\b(request|den(?:y|ied|ial)|schedul(?:e|ed|ing)?|approv(?:al|e|ed)?|choice|vacation|administration)\b/,
     /\b(request|den(?:y|ied|ial)|schedul(?:e|ed|ing)?|approv(?:al|e|ed)?|choice|administration)\b.*\bannual leave\b/,
     /\bvacation\b.*\b(request|period|schedul(?:e|ed|ing)?|choice|den(?:y|ied|ial))\b/,
@@ -257,6 +263,14 @@ const safetyHealth: PublicStewardWorkflowTopic = {
   },
   positive: [
     /\b(unsafe|unhealthful|safety hazard|unsafe condition|safe working condition)\b/,
+    /\b(?:safety and health|health and safety)\b/,
+    // Amendment 3 (B-2): explicit safety / reporting vocabulary only. Bare injury, injured, hurt, danger, hazard, comp, claim,
+    // covered, insurance or doctor never selects safety and health on its own.
+    /\bosha\b/,
+    /\bdangerous\b.*\b(?:conditions?|areas?|work(?:ing|place)?)\b/,
+    /\b(?:conditions?|areas?|work(?:ing|place)?)\b.*\bdangerous\b/,
+    /\breport(?:s|ed|ing)?\b.*\b(?:accidents?|injur(?:y|ies)|hazards?)\b/,
+    /\b(?:accident|injury) reports?\b/,
     /\b(safety|health)\b.*\b(condition|hazard|grievance|workplace|working)\b/,
     /\bworkplace\b.*\bsafety(?: and health)?\b.*\b(issue|concern|condition|hazard|grievance)\b/,
     /\barticle\s*14\b/,
@@ -377,6 +391,11 @@ const sickLeave: PublicStewardWorkflowTopic = {
     minimumTopicParagraphs: 3,
   },
   positive: [
+    // KIA-jcim-qa-fix-1: plain "sick leave" questions are official-topic questions.
+    /\bsick[ -]?leave\b/,
+    // Amendment 1 (NB-1): everyday sick-day / call-in-sick wording.
+    /\bsick[ -]?days?\b/,
+    /\bcall(?:s|ed|ing)?(?: in| out)? sick\b/,
     /\bsick leave\b.*\b(certif(?:y|ied|ication)|charg(?:e|ed|ing)|administration|request|absence|insufficient|minimum)\b/,
     /\b(certif(?:y|ied|ication)|charg(?:e|ed|ing)|administration|request|absence|minimum)\b.*\bsick leave\b/,
     /\b(argument plan|grievance plan|grievance argument|argument outline)\b.*\bsick[ -]?leave\b/,
@@ -740,13 +759,319 @@ export function detectPublicStewardWorkflowTopic(
   return publicStewardWorkflowMatch(question).topicId;
 }
 
+// Amendment 3 (delta review 2, B-2): competing-family vocabulary. A family word next to an allowlisted trigger means the
+// question is not clearly about that topic, so the topic is blocked and the default is no-answer. One term per line so each
+// term is separately tested and mutated. `contestsWith` names the official topic the family belongs to (if any): when the
+// only positive topics are blocked by such a family, the result is an ambiguous multi-topic no-answer, never a single topic.
+type CompetingFamilyId = "sick" | "other_leave" | "medical" | "condition" | "holiday" | "injury" | "claim" | "comp" | "pay";
+
+const COMPETING_FAMILIES: Record<CompetingFamilyId, { contestsWith: PublicStewardWorkflowTopicId | null; terms: readonly string[] }> = {
+  sick: { contestsWith: "sick_leave", terms: [
+    "sick",
+    "ill",
+    "illness",
+  ] },
+  other_leave: { contestsWith: null, terms: [
+    "admin",
+    "administrative",
+    "l\\.?w\\.?o\\.?p",
+    "without pay",
+    "unpaid",
+    "jury",
+    "court",
+    "funeral",
+    "bereavement",
+    "military",
+    "union",
+    "maternity",
+    "paternity",
+    "parental",
+    "baby",
+    "pregnan(?:t|cy)",
+    "adoption",
+    "vot(?:e|ing)",
+    "blood",
+    "snow",
+    "weather",
+    "car(?:e|ing) for",
+    "caregiv(?:er|ing)",
+    "parents?",
+    // Amendment 4 (delta review 3): an emergency is not a plain vacation request (family emergency -> no-answer).
+    "emergenc(?:y|ies)",
+  ] },
+  medical: { contestsWith: null, terms: [
+    "doctors?",
+    "dentists?",
+    "dental",
+    "physicians?",
+    "medical",
+    "appointments?",
+    "hospital",
+    "treatment",
+    // Amendment 4 (NB-F1): surgery competes with safety and annual leave (never with sick leave).
+    "surger(?:y|ies)",
+  ] },
+  // Amendment 4 (NB-F1): a personal health condition is a fitness-for-duty / sick-leave question, not a safety answer.
+  condition: { contestsWith: null, terms: [
+    "flu",
+    "casts?",
+    "broken (?:arms?|legs?|bones?|wrists?|ankles?|hands?|foot|feet)",
+    "health conditions?",
+    "my health",
+    "fevers?",
+    "cough(?:s|ing)?",
+    "covid(?:-19)?",
+    "contagious",
+    "infect(?:ion|ions|ed)",
+    "virus",
+    "concussions?",
+    "sprain(?:s|ed)?",
+    "fractur(?:e|es|ed)",
+    "migraines?",
+    "pain",
+    "medications?",
+    "asthma",
+    "diabetes",
+    "dizzy",
+    "symptoms?",
+  ] },
+  holiday: { contestsWith: null, terms: [
+    "holidays?",
+    "christmas",
+    "x-?mas",
+    "thanksgiving",
+    "new year",
+    "martin luther king",
+    "mlk",
+    "king day",
+    "dr\\.? king",
+    "washington['’]?s birthday",
+    "presidents?['’]?s?['’]? day",
+    "memorial day",
+    "juneteenth",
+    "independence day",
+    "fourth of july",
+    "4th of july",
+    "(?:4th|fourth) july",
+    "turkey day",
+    "vets?['’]? day",
+    "july (?:4|4th|fourth)",
+    "labou?r day",
+    "columbus day",
+    "indigenous peoples?['’]? day",
+    "veterans?['’]?s?['’]? day",
+    "armistice day",
+    "easter",
+    "good friday",
+    "eid",
+    "hanukkah",
+    "chanukah",
+    "passover",
+    "yom kippur",
+    "rosh hashanah",
+    "diwali",
+    "ramadan",
+    "kwanzaa",
+    "religious",
+    "(?:jan(?:uary)?\\.? 1(?:st)?|june 19(?:th)?|nov(?:ember)?\\.? 11(?:th)?|dec(?:ember)?\\.? 2[45](?:th)?)",
+    "(?:1/1|6/19|7/4|11/11|12/2[45])",
+  ] },
+  injury: { contestsWith: "safety_health", terms: [
+    "injur(?:y|ies|ed|e)",
+    "hurt",
+    "accidents?",
+  ] },
+  claim: { contestsWith: "employee_claims", terms: [
+    "claims?",
+    "damaged?",
+    "insurance",
+    "insured",
+    "covered",
+    "coverage",
+    "reimburs\\w*",
+    // Amendment 4: a damaged car / vehicle is a property question (Article 27 or no-answer), never a safety answer.
+    "cars?",
+    "vehicles?",
+  ] },
+  comp: { contestsWith: null, terms: [
+    "comp",
+    "compensation",
+    "owcp",
+    "feca",
+    "dol",
+    "department of labor",
+    "ca[- ]?[12]",
+    "light duty",
+    "limited duty",
+  ] },
+  pay: { contestsWith: null, terms: [
+    "pa(?:ys?|id)",
+    "wages?",
+    "differential",
+    "money",
+    "bills?",
+  ] },
+};
+
+const COMPETING_FAMILY_PATTERNS = Object.fromEntries(
+  Object.entries(COMPETING_FAMILIES).map(([id, family]) => [id, new RegExp(`\\b(?:${family.terms.join("|")})\\b`)])
+) as Record<CompetingFamilyId, RegExp>;
+
+const TOPIC_COMPETING_FAMILIES: Partial<Record<PublicStewardWorkflowTopicId, readonly CompetingFamilyId[]>> = {
+  annual_leave: ["sick", "other_leave", "medical", "condition", "holiday", "injury", "claim", "comp"],
+  sick_leave: ["other_leave", "holiday", "injury", "claim", "comp"],
+  // Amendment 4 (NB-F1): sick (sick, ill, illness), surgery (medical) and personal health conditions block safety and health.
+  safety_health: ["comp", "claim", "pay", "medical", "sick", "condition"],
+  employee_claims: ["injury", "comp"],
+};
+
+function blockingFamilies(topicId: PublicStewardWorkflowTopicId, normalized: string): CompetingFamilyId[] {
+  return (TOPIC_COMPETING_FAMILIES[topicId] ?? []).filter((family) => COMPETING_FAMILY_PATTERNS[family].test(normalized));
+}
+
+// Amendment 5 (delta review 4, B-4): CLOSED VOCABULARY. Annual leave and safety and health are selected only when EVERY
+// word of the question is in a small known set; an unknown word means a no-answer (never another synonym list). The
+// competing families above stay as defense in depth.
+const QUESTION_WORDS = /[a-z0-9]+(?:['’][a-z0-9]+)*/g;
+/** Function words / pronouns / question words shared by both closed sets. */
+const CLOSED_STOPWORDS = [
+  "a", "an", "the", "i", "i'm", "i'll", "me", "my", "we", "our", "you", "your", "it", "it's", "its", "this", "that",
+  "is", "am", "are", "was", "be", "been", "do", "does", "did", "have", "has", "can", "could", "may", "will", "would",
+  "should", "must", "to", "of", "in", "on", "at", "for", "by", "from", "with", "about", "under", "or", "and", "if",
+  "not", "no", "any", "some", "much", "many", "what", "when", "how", "who", "still", "get", "got", "take", "use",
+  "okay", "out", "off", "as", "where", "build", "plan", "argument", "issue", "rules", "apply", "applies", "cba",
+  "contract", "say", "says",
+];
+/** Time expressions: closed annual words that may also fill a reason slot ("time off for 3 days", "PTO for next week"). */
+const ANNUAL_TIME_WORDS = new Set(["day", "days", "week", "weeks", "weekend", "next", "today", "tomorrow", "monday", "tuesday", "wednesday", "thursday", "friday", "saturday", "sunday"]);
+/** Annual leave: the trigger, request / scheduling, contract-meta, supervisor and time words. */
+const ANNUAL_CLOSED_WORDS = new Set([
+  ...CLOSED_STOPWORDS,
+  ...ANNUAL_TIME_WORDS,
+  "annual", "leave", "time", "pto",
+  "request", "requests", "schedule", "scheduling", "deny", "denied", "denial", "approve", "approved", "approval",
+  "cancel", "cancelled", "carry", "over", "submit", "submitted", "forget", "forgot", "deadline", "notice", "prime",
+  "choice", "period", "paid", "pay", "unused", "allowed", "need", "during",
+  "work", "govern", "governs", "administration", "administered", "handled", "dispute", "decision",
+  "supervisor", "ptf", "ptfs", "part", "flexible", "probation",
+]);
+/** The vacation-reason words already allowlisted ("family" only in "family visit"; "rest" only as the last word). */
+const ANNUAL_REASON_WORDS = new Set(["vacation", "vacations", "trip", "trips", "travel", "wedding", "weddings", "honeymoon", "birthday", "birthdays"]);
+/** A second sentence without the leave mention must name the contract. */
+const ANNUAL_CONTRACT_WORDS = new Set(["cba", "contract"]);
+/** Words that may follow a reason slot ("time off for / to ...") besides a reason word. */
+const ANNUAL_SLOT_FILLER = new Set(["a", "the", "my", "our", "this"]);
+
+function annualTriggerAt(words: readonly string[], index: number): boolean {
+  const word = words[index];
+  return word === "pto" || word === "vacation" || word === "vacations" || word === "leave"
+    || (word === "off" && words[index - 1] === "time");
+}
+
+/** True when annual leave may answer: every word is in the closed set, every sentence names the leave, no unlisted reason. */
+function annualLeaveClosedVocabulary(normalized: string): boolean {
+  const sentences = normalized.split(/[.?!;]+(?=\s|$)/).map((sentence) => sentence.match(QUESTION_WORDS) ?? []).filter((words) => words.length > 0);
+  const all = sentences.flat();
+  const plainLeave = all.some((word, index) => word === "leave" && all[index - 1] !== "annual");
+  for (const words of sentences) {
+    // A sentence that does not name the leave may only ask about the contract ("What does the CBA say?").
+    if (!words.some((_, index) => annualTriggerAt(words, index)) && !words.some((word) => ANNUAL_CONTRACT_WORDS.has(word))) return false;
+    for (let index = 0; index < words.length; index += 1) {
+      const word = words[index];
+      if (word === "rest") {
+        if (index !== words.length - 1 || words !== sentences[sentences.length - 1] || plainLeave) return false;
+        continue;
+      }
+      if (word === "family") {
+        if (!/^visits?$/.test(words[index + 1] ?? "") || plainLeave) return false;
+        continue;
+      }
+      if (/^visits?$/.test(word)) {
+        if (words[index - 1] !== "family") return false;
+        continue;
+      }
+      if (ANNUAL_REASON_WORDS.has(word) && plainLeave) return false;
+      if (!ANNUAL_CLOSED_WORDS.has(word) && !ANNUAL_REASON_WORDS.has(word) && !/^\d+$/.test(word)) return false;
+      // A reason slot after the leave mention takes only an allowlisted reason or a time expression.
+      if ((word === "for" || word === "to") && words.slice(0, index).some((_, at) => annualTriggerAt(words, at))) {
+        let next = index + 1;
+        while (ANNUAL_SLOT_FILLER.has(words[next] ?? "")) next += 1;
+        const slot = words[next];
+        if (slot === undefined) return false;
+        if (plainLeave && word === "for") return false;
+        if (!ANNUAL_REASON_WORDS.has(slot) && !ANNUAL_TIME_WORDS.has(slot) && !/^\d+$/.test(slot) && slot !== "family" && slot !== "rest") return false;
+      }
+    }
+  }
+  return true;
+}
+
+/** Safety and health: explicit workplace-hazard, reporting and contract-meta words only. No personal health or condition word is in it. */
+const SAFETY_CLOSED_WORDS = new Set([
+  ...CLOSED_STOPWORDS,
+  "safety", "unsafe", "unhealthful", "hazard", "hazards", "hazardous", "dangerous", "osha", "accident", "accidents", "injury", "injuries",
+  "report", "reports", "reported", "reporting", "complaint", "file", "form", "deadline", "same", "day",
+  "work", "working", "workplace", "area", "plant", "dock",
+  "supervisor", "make", "fired", "disciplined", "mad", "rights", "grievance", "need", "article", "14", "tell", "concern",
+  "process", "station", "these", "chemicals", "cold", "electrical", "panel", "exposed", "there", "creating",
+]);
+/** "condition(s)" is a workplace word only right after one of these; "health" only inside "safety and health" / "health and safety". */
+const SAFETY_CONDITION_QUALIFIERS = new Set(["unsafe", "unhealthful", "dangerous", "working", "hazardous"]);
+// B-5 (delta review 5): accident / injury, cold and exposed are personal words unless the context makes them workplace words.
+/** "accident(s)" / "injury(ies)" only as the thing reported: right after a report verb (an article between is fine) or right before report(s) / form. */
+const SAFETY_REPORT_VERBS = new Set(["report", "reports", "reported", "reporting"]);
+const SAFETY_REPORTED_THINGS = new Set(["accident", "accidents", "injury", "injuries"]);
+/** Every sentence must name the hazard, the reporting, or the contract; a second sentence such as "I have a cold." cannot ride along. */
+const SAFETY_SENTENCE_ANCHORS = new Set([
+  "safety", "unsafe", "unhealthful", "hazard", "hazards", "hazardous", "dangerous", "osha", ...SAFETY_REPORT_VERBS, "article", "cba", "contract",
+]);
+
+function safetyReportedThingAt(words: readonly string[], index: number): boolean {
+  const before = /^(?:a|an|the)$/.test(words[index - 1] ?? "") ? words[index - 2] : words[index - 1];
+  return SAFETY_REPORT_VERBS.has(before ?? "") || /^(?:reports?|form)$/.test(words[index + 1] ?? "");
+}
+
+function safetyClosedVocabulary(normalized: string): boolean {
+  const sentences = normalized.split(/[.?!;]+(?=\s|$)/).map((sentence) => sentence.match(QUESTION_WORDS) ?? []).filter((words) => words.length > 0);
+  // Naming an accident or injury and asking whether to work ("I reported an injury. Is it unsafe to work?") is fitness for duty.
+  const all = sentences.flat();
+  if (all.some((word) => SAFETY_REPORTED_THINGS.has(word))
+    && all.some((word, index) => /^work(?:ing)?$/.test(word) && (all[index - 1] === "to" || all[index + 1] === "with"))) return false;
+  return sentences.every((words) => words.some((word) => SAFETY_SENTENCE_ANCHORS.has(word)) && safetySentenceClosedVocabulary(words));
+}
+
+function safetySentenceClosedVocabulary(words: readonly string[]): boolean {
+  return words.every((word, index) => {
+    if (SAFETY_REPORTED_THINGS.has(word)) return safetyReportedThingAt(words, index);
+    if (word === "cold") return words[index - 1] === "in" || (words[index - 1] === "the" && words[index - 2] === "in");
+    if (word === "exposed") return words[index + 1] === "electrical";
+    if (word === "condition" || word === "conditions") {
+      return SAFETY_CONDITION_QUALIFIERS.has(words[index - 1] ?? "")
+        || (word === "conditions" && words[index - 1] === "these" && /^(?:dangerous|unsafe)$/.test(words[index + 1] ?? ""));
+    }
+    if (word === "health") {
+      return (words[index - 1] === "and" && words[index - 2] === "safety") || (words[index + 1] === "and" && words[index + 2] === "safety");
+    }
+    return SAFETY_CLOSED_WORDS.has(word);
+  });
+}
+
 function matchedSupportedTopicIds(normalized: string): PublicStewardWorkflowTopicId[] {
+  const positiveMatches = PUBLIC_STEWARD_WORKFLOW_TOPICS.filter(
+    (topic) =>
+      !topic.negative.some((guard) => guard.test(normalized)) &&
+      topic.positive.some((matcher) => matcher.test(normalized))
+  );
+  const blocked = positiveMatches
+    .map((topic) => ({
+      id: topic.id,
+      families: blockingFamilies(topic.id, normalized),
+      closedVocabularyMiss: (topic.id === "annual_leave" && !annualLeaveClosedVocabulary(normalized))
+        || (topic.id === "safety_health" && !safetyClosedVocabulary(normalized)),
+    }))
+    .filter((entry) => entry.families.length > 0 || entry.closedVocabularyMiss);
   const guardedPositiveMatches = new Set(
-    PUBLIC_STEWARD_WORKFLOW_TOPICS.filter(
-      (topic) =>
-        !topic.negative.some((guard) => guard.test(normalized)) &&
-        topic.positive.some((matcher) => matcher.test(normalized))
-    ).map((topic) => topic.id)
+    positiveMatches.map((topic) => topic.id).filter((id) => !blocked.some((entry) => entry.id === id))
   );
   const hasExplicitMultiTopicStructure =
     /[;,]/.test(normalized) ||
@@ -766,6 +1091,21 @@ function matchedSupportedTopicIds(normalized: string): PublicStewardWorkflowTopi
   const selectedMatches = combinedMatches.size > 1
     ? combinedMatches
     : guardedPositiveMatches;
+  // Amendment 3: every positive topic was blocked by a competing family that belongs to another official topic —
+  // contested between them, so an ambiguous multi-topic no-answer (never a single-topic answer, never the fakes).
+  if (selectedMatches.size === 0) {
+    for (const entry of blocked) {
+      for (const family of entry.families) {
+        const owner = COMPETING_FAMILIES[family].contestsWith;
+        if (owner && owner !== entry.id) selectedMatches.add(entry.id).add(owner);
+      }
+    }
+  }
+  // Amendment 5: a topic the question names but the closed vocabulary rejects (and no competing family hands to its owner)
+  // never hands the question to another topic.
+  if (selectedMatches.size > 0) {
+    for (const entry of blocked) if (entry.closedVocabularyMiss && entry.families.length === 0) selectedMatches.add(entry.id);
+  }
   return PUBLIC_STEWARD_WORKFLOW_TOPICS
     .filter((topic) => selectedMatches.has(topic.id))
     .map((topic) => topic.id);

@@ -1,5 +1,6 @@
 import {
   buildAnswer,
+  cannedQuestions,
   detectIntent,
   type AnswerHistoryMessage,
   type AnswerResult,
@@ -26,6 +27,13 @@ function normalizeQuestion(question: string): string {
 }
 
 const exactPublicPilotQuestions = new Set(publicPilotQuestions.map(normalizeQuestion));
+
+/** A question reaches the fake-sample lane in auto only when it is explicitly fake/sample-labelled. */
+function isLabelledFakeQuestion(question: string): boolean {
+  return /\b(fake|samples?)\b/.test(normalizeQuestion(question));
+}
+
+const cannedFakeQuestions = new Set(cannedQuestions.map(normalizeQuestion));
 
 function hasExplicitCbaSourceCue(question: string): boolean {
   const normalized = normalizeQuestion(question);
@@ -73,7 +81,9 @@ export function resolveChatAnswerLane(question: string, policy: ChatSourcePolicy
   if (policy === "fake") return "fake";
   if (isAutoCbaQuestion(question)) return "cba";
   if (isAutoPublicPilotQuestion(question)) return "nlrb";
-  if (detectIntent(question) !== "unknown") return "fake";
+  // Amendment 4 (acceptance probe): auto mode never answers an unlabelled question from the fake samples — only explicitly
+  // fake/sample-labelled questions and the canned questions; everything else is an honest no-answer.
+  if (detectIntent(question) !== "unknown") return isLabelledFakeQuestion(question) || cannedFakeQuestions.has(normalizeQuestion(question)) ? "fake" : "safe_no_answer";
   return "safe_no_answer";
 }
 

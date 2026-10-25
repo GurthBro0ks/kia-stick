@@ -338,6 +338,13 @@ export function citationLabel(citation: Citation): string {
       const integrity = citation.citationVerificationState === "verified_current" ? " · verified current source" : citation.citationVerificationState ? ` · ${citation.citationVerificationState.replaceAll("_", " ")}` : "";
       return `${citation.sourceId} · Article ${citation.articleNumber ?? "unknown"} · Section ${citation.sectionId ?? "unknown"} · PDF ${citation.pdfPageNumber ?? "unknown"}${printed} · ${citation.paragraphId}${integrity}`;
     }
+    if (citation.publicSourceType === "jcim_joint_interpretation") {
+      const locator = citation.section?.startsWith("Article ") ? citation.section
+        : [citation.articleNumber ? `Article ${citation.articleNumber}` : null, citation.section].filter(Boolean).join(" · ");
+      const printed = citation.printedPageLabel ? ` · printed ${citation.printedPageLabel}` : "";
+      const integrity = citation.citationVerificationState === "verified_current" ? " · verified current source" : citation.citationVerificationState ? ` · ${citation.citationVerificationState.replaceAll("_", " ")}` : "";
+      return `${citation.sourceId} · ${locator || "section unknown"} · PDF ${citation.pdfPageNumber ?? "unknown"}${printed} · ${citation.paragraphId}${integrity}`;
+    }
     return `${citation.sourceId} · ${citation.sectionId} · ${citation.paragraphId} · retrieved ${citation.retrievedAt?.slice(0, 10)} · ${citation.contentHash}`;
   }
   return `${citation.title} · ${citation.article} · ${citation.section} · ${citation.page} · ${citation.hash.slice(0, 10)}`;
