@@ -1,19 +1,25 @@
 import { createHash } from "node:crypto";
-import { describe, expect, it } from "vitest";
+import { mkdirSync, mkdtempSync, realpathSync, rmSync, writeFileSync } from "node:fs";
+import { tmpdir } from "node:os";
+import path from "node:path";
+import { describe, expect, it, vi } from "vitest";
 import React from "react";
 import { renderToStaticMarkup } from "react-dom/server";
 import { GET } from "@/app/health/route";
 import { PublicGrievanceOutlineView, PublicStewardArgumentPlanView, PublicStewardPacketView } from "@/components/KiaStickApp";
 import { buildCbaAnswer } from "@/lib/cbaAnswer";
-import { jcimPacketSourceVerifier, jcimTopicCitation } from "@/lib/jcimSource";
+import { CBA_JSON_CACHE_RELATIVE_PATH, CBA_PDF_CACHE_RELATIVE_PATH } from "@/lib/cbaSource";
+import { JCIM_SOURCE_ID, jcimPacketSourceVerifier, jcimTopicCitation } from "@/lib/jcimSource";
+import { PUBLIC_SOURCE_CACHE_RELATIVE_PATH } from "@/lib/publicSource";
 import { buildPublicGrievanceOutline, publicGrievanceOutlineToMarkdown, publicGrievanceOutlineToText } from "@/lib/publicGrievanceOutline";
 import { buildPublicStewardArgumentPlan, publicStewardArgumentPlanToMarkdown, publicStewardArgumentPlanToText } from "@/lib/publicStewardArgumentPlan";
 import { buildPublicStewardPacket, publicStewardPacketDisplayLimitations, publicStewardPacketLimitationText } from "@/lib/publicStewardPacket";
 import { PUBLIC_STEWARD_WORKFLOW_TOPICS, publicStewardWorkflowTopic, type PublicStewardWorkflowTopicId } from "@/lib/publicStewardWorkflowRegistry";
 import { createRuntimeVersion } from "@/lib/version";
-import { createCbaSourceFixtureCache } from "@/tests/fixtures/cbaSourceFixture";
+import { cbaFixturePdfBytes, createCbaSourceFixtureCache } from "@/tests/fixtures/cbaSourceFixture";
 import { createCbaSourceFixtureCacheWithArticle19 } from "@/tests/fixtures/cbaSourceArticle19Fixture";
-import { createJcimSourceFixtureCache } from "@/tests/fixtures/jcimSourceFixture";
+import { createJcimSourceFixtureCache, createSyntheticJcimPdfBytes } from "@/tests/fixtures/jcimSourceFixture";
+import { createPublicSourceFixtureCache } from "@/tests/fixtures/publicSourceFixture";
 
 // KIA-jcim-followups-1: presentation-only follow-ups from the PR #7 review (F6, F7, F1).
 // Synthetic fixtures only; every outline, plan, and packet is built at runtime.
@@ -110,9 +116,56 @@ describe("KIA-jcim-followups-1 F6: grievance outline and steward argument plan l
 });
 
 describe("KIA-jcim-followups-1 F7: /health public source count", () => {
-  it("reports three bounded public sources", async () => {
-    const payload = await GET().json();
-    expect(payload.publicSources).toEqual({ count: 3, accessMode: "exact_allowlisted_read_only", available: true });
+  // Proposal (E review N2) + KIA-claude-proposals-fixup-1 (review C2-1): `available` reflects the local caches instead of a
+  // hard-coded true. The real GET() runs against a synthetic repository root (os tmpdir), never the real .kia-public-data,
+  // and the exact publicSources block is asserted per source.
+  const missing = { status: "unavailable", reason: "cache_missing" };
+  const block = (sources: Record<"cba" | "nlrb" | "jcim", unknown>, available = false) => ({
+    count: 3, accessMode: "exact_allowlisted_read_only", available, sources, jcimLiveIdentity: "not_checked_by_health",
+  });
+  async function healthAt(files: (readonly [string, string | Uint8Array])[] | null) {
+    const root = mkdtempSync(path.join(realpathSync(tmpdir()), "kia-synthetic-health-"));
+    try {
+      if (files) {
+        const directory = path.join(root, ".kia-public-data");
+        mkdirSync(directory, { mode: 0o700 });
+        for (const [relative, contents] of files) writeFileSync(path.join(root, relative), contents, { mode: 0o600 });
+      }
+      const cwdSpy = vi.spyOn(process, "cwd").mockReturnValue(root);
+      try {
+        return (await GET().json()).publicSources;
+      } finally {
+        cwdSpy.mockRestore();
+      }
+    } finally {
+      rmSync(root, { recursive: true, force: true });
+    }
+  }
+  const cbaFiles = [
+    [CBA_PDF_CACHE_RELATIVE_PATH, cbaFixturePdfBytes],
+    [CBA_JSON_CACHE_RELATIVE_PATH, JSON.stringify(createCbaSourceFixtureCache())],
+  ] as const;
+  const nlrbFiles = [[PUBLIC_SOURCE_CACHE_RELATIVE_PATH, JSON.stringify(createPublicSourceFixtureCache())]] as const;
+  const jcimFiles = [
+    [`.kia-public-data/${JCIM_SOURCE_ID}.json`, JSON.stringify(createJcimSourceFixtureCache())],
+    [`.kia-public-data/${JCIM_SOURCE_ID}.pdf`, createSyntheticJcimPdfBytes()],
+  ] as const;
+
+  it("reports three bounded public sources, all cache_missing, on an empty synthetic root", async () => {
+    expect(await healthAt(null)).toEqual(block({ cba: missing, nlrb: missing, jcim: missing }));
+  });
+  it("reports all three cache_missing when the synthetic cache directory is empty", async () => {
+    expect(await healthAt([])).toEqual(block({ cba: missing, nlrb: missing, jcim: missing }));
+  });
+  it("reports each source from its own reader when only the synthetic CBA cache exists", async () => {
+    expect(await healthAt([...cbaFiles])).toEqual(block({ cba: { status: "available" }, nlrb: missing, jcim: missing }));
+  });
+  it("reports the exact block when all synthetic fixture caches exist (synthetic JCIM PDF fails the real 2b3fcc2b pins)", async () => {
+    expect(await healthAt([...cbaFiles, ...nlrbFiles, ...jcimFiles])).toEqual(block({
+      cba: { status: "available" },
+      nlrb: { status: "available" },
+      jcim: { status: "unavailable", reason: "drift_detected" },
+    }));
   });
 });
 

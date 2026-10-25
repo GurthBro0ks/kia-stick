@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server";
 import { corpus } from "@/lib/sourceModel";
 import { getRuntimeVersion } from "@/lib/serverVersion";
+import { publicSourcesHealth } from "@/lib/publicSourcesHealth";
 import { currentAcceptedPushedState, localBundleManualQaStatus } from "@/lib/acceptedState";
 import {
   PUBLIC_STEWARD_WORKFLOW_TOPICS,
@@ -25,11 +26,7 @@ export function GET() {
     latestPushedCloseoutCommit: currentAcceptedPushedState.latest_pushed_closeout_commit,
     targetMachine: "USER_LAPTOP_ONLY",
     dataModes: currentAcceptedPushedState.data_modes,
-    publicSources: {
-      count: 3,
-      accessMode: "exact_allowlisted_read_only",
-      available: true,
-    },
+    publicSources: publicSourcesHealth(),
     supportedStewardTopicCount: PUBLIC_STEWARD_WORKFLOW_TOPICS.length,
     privateData: "blocked",
     externalAi: "disabled",
