@@ -209,7 +209,7 @@ describe("Amendment 5: Gurth's 10 phrasings and the 5 canned questions keep work
   it.each([
     ["annual_leave", "How much annual leave do I get?", "Article 10.3.A"],
     ["annual_leave", "How does annual leave work?", "Article 10.3.A"],
-    ["sick_leave", "How does sick leave work?", "Article 10.6"],
+    ["sick_leave", "How does sick leave work?", "Article 10.5"],
     ["safety_health", "What are my rights on an unsafe condition?", "Article 14.1"],
     ["safety_health", "What about safety and health?", "Article 14.1"],
     ["overtime", "How does overtime work?", "Article 8.5.F"],

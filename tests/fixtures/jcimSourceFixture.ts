@@ -15,7 +15,11 @@ export function createJcimSourceFixtureCache(): JcimCache {
     introduction: ["SYNTHETIC introduction: paper robots arrange invented examples on blue shelves."],
     "article-8": ["SYNTHETIC Article 8.5.F provides an invented limit on pretend lantern shifts for paper robots."],
     "article-10": ["SYNTHETIC Article 10.3.A establishes an invented calendar for moon-lantern vacations.",
-      "SYNTHETIC Article 10.6 provides an invented hundredth-of-a-lantern minimum charge."],
+      "SYNTHETIC Article 10.6 provides an invented hundredth-of-a-lantern minimum charge.",
+      // KIA-jcim-sick-leave-10-5-1: a heading-only decoy and an "also provides" decoy precede the 10.5 body unit.
+      "SYNTHETIC Article 10.5 SICK LEAVE",
+      "SYNTHETIC Article 10.5 also provides an invented sick-lantern call-in card.",
+      "SYNTHETIC Article 10.5 provides an invented sick-lantern program kept in Section 513 of an imaginary manual."],
     "article-11": ["SYNTHETIC Article 11.6 HOLIDAY SCHEDULE: an imaginary pecking order for lantern day."],
     "article-14": ["SYNTHETIC Article 14.1 SAFETY: an imaginary lantern crew checks a pretend orange ladder."],
     "article-15": ["SYNTHETIC Article 15.1 GRIEVANCE: an imaginary robot records a purple ticket."],

@@ -332,8 +332,8 @@ describe("Amendment 4 NB-F1: sick / ill / illness / surgery and personal health 
     "Unsafe conditions are giving me symptoms",
   ])("%s", expectNoAnswer);
   it.each([
-    ["sick_leave", "Sick leave for surgery", "Article 10.6"],
-    ["sick_leave", "Sick leave for the flu", "Article 10.6"],
+    ["sick_leave", "Sick leave for surgery", "Article 10.5"],
+    ["sick_leave", "Sick leave for the flu", "Article 10.5"],
     ["safety_health", "Is it dangerous to work with chemicals?", "Article 14.1"],
     ["safety_health", "Is it dangerous to work in the cold?", "Article 14.1"],
   ] as const)("%s keeps working: %s", expectWorks);
