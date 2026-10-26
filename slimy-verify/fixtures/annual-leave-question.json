@@ -1,0 +1,24 @@
+{
+  "detail": "Detailed",
+  "expect": {
+    "bestGuessDisabled": false,
+    "citationClasses": [
+      "local_controlling_source",
+      "past_practice_evidence",
+      "controlling_contract_language"
+    ],
+    "citationIds": [
+      "fake-local-annual-leave-window",
+      "fake-past-practice-vacation-board",
+      "fake-official-annual-leave"
+    ],
+    "intent": "annual_leave",
+    "noAnswer": false,
+    "productVersion": "0.7.0",
+    "provider": "local-fake-deterministic",
+    "shortAnswerSha256": "bf2b39222699fa1f5901d05cec582a03046a775b0ee9c247b245c0a8b4bdf654"
+  },
+  "mode": "Strict Research",
+  "question": "Can annual leave be denied after I submitted inside the fake window?",
+  "scope": "All Fake"
+}
