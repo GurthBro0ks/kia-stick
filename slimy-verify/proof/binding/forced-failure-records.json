@@ -1,0 +1,43 @@
+{
+  "adapter_sha256": "d42f246ec338c0b93e8458944ab274ba1060a2941cfe2cd9f365a047cf409b0f",
+  "adapter_version": "0.1.0",
+  "check": {
+    "child_exit": 8,
+    "code": 4,
+    "counts": {},
+    "dry_run": false,
+    "duration_ms": 216,
+    "operation": "check",
+    "reason": "adapter-failed"
+  },
+  "evidence_records": [
+    {
+      "child_exit": 0,
+      "code": 0,
+      "counts": {
+        "failed": 0,
+        "passed": 1,
+        "skipped": 0,
+        "tests": 1
+      },
+      "duration_ms": 215,
+      "operation": "drive",
+      "reason": "completed"
+    },
+    {
+      "child_exit": 8,
+      "code": 4,
+      "counts": {},
+      "duration_ms": 216,
+      "operation": "check",
+      "reason": "adapter-failed"
+    },
+    {
+      "code": 0,
+      "operation": "cleanup",
+      "reason": "scratch-removed"
+    }
+  ],
+  "note": "Actual pre-binding pilot-fail records. Identity omitted because its runtime key was a path. These records were not re-run on adapter 0.2.0.",
+  "target_head": "fda12d2202da930bde1fb1a76e10c5d07c32209e"
+}

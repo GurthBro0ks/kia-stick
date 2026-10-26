@@ -1,3 +1,14 @@
+## slimy-verify local binding — 2026-10-26
+
+- Phase: `kia/slimy-verify-adapter-pilot`. Same branch. No pull request, no merge, no main update, no deploy, no publish to the slimy-verify repo.
+- Binding: `slimy-verify/prepare.py` resolves the approved `python3` and `node` aliases once and writes gitignored `slimy-verify/adapter.json` and `slimy-verify/binding.json`. Adapter version `0.2.0`. The tracked 0.1.0 manifest is gone. The hook does not discover Node and has no fallback. It execs the bound Node path only. Drive and check use the same canonical Python file that `runtime_files` pins.
+- Proof checkout: `186fcf2ec5d8747df9703a99085563b6dadbde03`. Doctor exit 0, reason `ready`. Task `pilot-bind-001`: drive and check exit 0, cleanup exit 0, reason `scratch-removed`. Evidence after cleanup is drive, check, cleanup. The executed runtime matched the bound Node hash and `v22.23.4`. Conformance 17 of 17, `live_acceptance` false. A missing bound Node and a changed bound Node each failed doctor with exit 3, reason `runtime-file-mismatch`, and created no runs directory. A decoy `node` first on `PATH` was not the executed binary. Artifacts: `slimy-verify/proof/binding/`. Paths there are roles plus hashes.
+- Forced failure: `slimy-verify/proof/binding/forced-failure-records.json` holds the actual pre-binding `pilot-fail` records (adapter `0.1.0`, target `fda12d2202da930bde1fb1a76e10c5d07c32209e`). Check child exit 8, controller code 4, reason `adapter-failed`; cleanup reason `scratch-removed`. Those records were not produced again on `0.2.0`.
+- The ledger entry below is the pre-binding run (proof checkout `fda12d22`, packet head `3f0ac5bb`). Its note that Node is discovered at runtime applies only to that earlier hook.
+- Commands: preparation; controller doctor, drive, check, evidence, cleanup; conformance; both doctor refusals; the decoy hook run. Node `v22.23.4` `npm test`, with commit signing and fsmonitor off for that process: 382 files passed, 1 skipped; 2421 tests passed, 25 skipped. Corpus bytes stayed unchanged. `scripts/git_auto_sync.sh` was not run.
+- `feature_list.json` was left unchanged.
+- Remaining unknowns: v1.0.3 still does not prove that every executable trusted adapter code could launch was declared; the decoy result covers this hook. The journey is synthetic module-level proof, not browser or live acceptance. Another machine has to rerun preparation when a bound binary changes. The commit that records this section is later than `186fcf2` and is not the executed checkout.
+
 ## slimy-verify adapter pilot — 2026-10-26
 
 - Phase: `kia/slimy-verify-adapter-pilot`. Owner-approved bounded pilot. Branch only. No pull request, no merge, no main update, no deploy, no publish to the slimy-verify repo.

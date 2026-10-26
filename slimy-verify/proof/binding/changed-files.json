@@ -1,0 +1,40 @@
+{
+  "files": [
+    {
+      "git_blob": "ed37e01cfbdb862a7a600ad26484ecce0e5cd856",
+      "path": ".gitignore",
+      "sha256": "d5703bb39ea7ceded7cbee8fd9da649d23399e1a2178b284217261e6fe443e8b",
+      "status": "M"
+    },
+    {
+      "git_blob": "77c4ecfce3be5915356e2f57f26f66f5b175767b",
+      "path": "references/features/deterministic-answer-governor.md",
+      "sha256": "975d5159182bff64e308eefb74b0eae3d6c74b526eae6e7105dc271e15af2a94",
+      "status": "M"
+    },
+    {
+      "git_blob": "f21d4cd0492b31d208a42a12d78fa94929a25fdd",
+      "path": "slimy-verify/README.md",
+      "sha256": "356de1cf127382868b189a7982af33d2c0569daaac78b4a093a3662536d2ddd9",
+      "status": "M"
+    },
+    {
+      "path": "slimy-verify/adapter.json",
+      "previous_git_blob": "ec411ed28f44e7ea196d13dc676c6f189ffc905c",
+      "status": "D"
+    },
+    {
+      "git_blob": "b93620748fd5f2f853faabaf640f2ab3ab267646",
+      "path": "slimy-verify/hooks/journey.py",
+      "sha256": "8b1e96b1e247f8012fd9b48fda802c38d438f42e882d79628eee4f1278e567ad",
+      "status": "M"
+    },
+    {
+      "git_blob": "10c7c5ce9d7ba1e9a414bc9f5998508312d6fb4c",
+      "path": "slimy-verify/prepare.py",
+      "sha256": "9ab0eaa7908d298371e15c6a7fce72feed9857f954cd47f9461bd57526edb5ae",
+      "status": "A"
+    }
+  ],
+  "proof_checkout": "186fcf2ec5d8747df9703a99085563b6dadbde03"
+}

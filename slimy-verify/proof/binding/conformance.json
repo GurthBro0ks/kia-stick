@@ -1,0 +1,6 @@
+{
+  "checks": 17,
+  "live_acceptance": false,
+  "passed": 17,
+  "suite": "adapter-conformance-1.0.0"
+}
