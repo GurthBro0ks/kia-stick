@@ -6,6 +6,7 @@ under Node 22. The question and expected projection live in the adapter fixture.
 Scratch receives only that projection plus result counts. Raw module output stays
 in work/transient, which the controller deletes.
 """
+import hashlib
 import json
 import os
 from pathlib import Path
@@ -74,7 +75,11 @@ const projection = {
   provider: answer.version.provider,
   shortAnswerSha256: createHash("sha256").update(shortAnswer).digest("hex"),
 };
-process.stdout.write(JSON.stringify(projection));
+const runtime = {
+  sha256: createHash("sha256").update(readFileSync(process.execPath)).digest("hex"),
+  version: process.version,
+};
+process.stdout.write(JSON.stringify({ projection, runtime }));
 """
 
 
@@ -90,63 +95,47 @@ def write_json(path, value):
     os.replace(temp, path)
 
 
-def real_executable(path):
-    if not path.exists():
-        return None
-    resolved = path.resolve()
-    if resolved.is_file() and not resolved.is_symlink() and os.access(resolved, os.X_OK):
-        return resolved
-    return None
+def canonical_pinned(raw, expected_hash):
+    if not isinstance(raw, str) or not isinstance(expected_hash, str):
+        fail(3)
+    path = Path(raw)
+    if not path.is_absolute() or path.is_symlink() or not path.is_file() or not os.access(path, os.X_OK):
+        fail(3)
+    for parent in path.parents:
+        if parent.is_symlink():
+            fail(3)
+    actual = hashlib.sha256(path.read_bytes()).hexdigest()
+    if actual != expected_hash:
+        fail(3)
+    return path
 
 
-def node_version(binary, env):
+def load_binding(target):
+    binding_path = target / "slimy-verify" / "binding.json"
     try:
-        completed = subprocess.run(
-            [str(binary), "-p", "process.versions.node"],
-            capture_output=True,
-            text=True,
-            env=env,
-            timeout=10,
-            check=False,
-        )
-    except (OSError, subprocess.SubprocessError):
-        return ""
-    if completed.returncode != 0:
-        return ""
-    return completed.stdout.strip()
+        binding = json.loads(binding_path.read_text(encoding="utf-8"))
+        node = binding["node"]
+        python_pin = binding["python"]
+    except (OSError, ValueError, KeyError, TypeError):
+        fail(3)
+    python_path = canonical_pinned(python_pin.get("path"), python_pin.get("sha256"))
+    node_path = canonical_pinned(node.get("path"), node.get("sha256"))
+    if Path(sys.executable).resolve() != python_path:
+        fail(3)
+    version = node.get("version")
+    if not isinstance(version, str) or not version.startswith("v22."):
+        fail(3)
+    return node_path, node["sha256"], version
 
 
-def find_node(env):
-    preferred = [Path("/usr/bin/node"), Path("/usr/local/bin/node")]
-    discovered = []
-    skip = {"proc", "sys", "dev", "run", "tmp", "var", "sys"}
-    try:
-        top_level = list(Path("/").iterdir())
-    except OSError:
-        top_level = []
-    for child in top_level:
-        if child.name in skip or child.name.startswith("."):
-            continue
-        candidate = child / "node"
-        if candidate.is_file() and not candidate.is_symlink():
-            discovered.append(candidate)
-    ordered = preferred + sorted(discovered, key=lambda item: str(item))
-    seen = set()
-    for candidate in ordered:
-        resolved = real_executable(candidate)
-        if resolved is None or resolved in seen:
-            continue
-        seen.add(resolved)
-        version = node_version(resolved, env)
-        if version.startswith("22."):
-            return resolved
-    return None
-
-
-def run_journey(target, work, fixture_path):
+def run_journey(target, work, fixture_path, node_path, node_sha256, node_version):
     transient = work / "transient"
     transient.mkdir(mode=0o700, exist_ok=True)
-    base_env = {
+    loader = transient / "loader.mjs"
+    runner = transient / "runner.mjs"
+    loader.write_text(LOADER, encoding="utf-8")
+    runner.write_text(RUNNER, encoding="utf-8")
+    env = {
         "PATH": "/usr/bin:/bin",
         "HOME": str(work),
         "TMPDIR": str(work),
@@ -154,23 +143,13 @@ def run_journey(target, work, fixture_path):
         "CI": "true",
         "NODE_ENV": "test",
         "NODE_NO_WARNINGS": "1",
-    }
-    node = find_node(base_env)
-    if node is None:
-        fail(3)
-    loader = transient / "loader.mjs"
-    runner = transient / "runner.mjs"
-    loader.write_text(LOADER, encoding="utf-8")
-    runner.write_text(RUNNER, encoding="utf-8")
-    env = dict(base_env)
-    env.update({
         "KIA_TARGET": str(target),
         "KIA_WORK": str(work),
         "KIA_FIXTURE": str(fixture_path),
         "KIA_LOADER": str(loader),
-    })
+    }
     completed = subprocess.run(
-        [str(node), str(runner)],
+        [str(node_path), str(runner)],
         cwd=work,
         env=env,
         capture_output=True,
@@ -181,9 +160,14 @@ def run_journey(target, work, fixture_path):
     if completed.returncode != 0 or not completed.stdout:
         fail(8)
     try:
-        projection = json.loads(completed.stdout)
-    except ValueError:
+        payload = json.loads(completed.stdout)
+        projection = payload["projection"]
+        runtime = payload["runtime"]
+    except (ValueError, KeyError, TypeError):
         fail(8)
+    if runtime.get("sha256") != node_sha256 or runtime.get("version") != node_version:
+        fail(8)
+    write_json(work / "runtime.json", {"sha256": runtime["sha256"], "version": runtime["version"]})
     return projection
 
 
@@ -194,12 +178,13 @@ def main(argv):
     target = Path(argv[2]).resolve()
     work = Path(argv[3]).resolve()
     fixture_path = target / "slimy-verify" / "fixtures" / "annual-leave-question.json"
+    node_path, node_sha256, node_version = load_binding(target)
     try:
         fixture = json.loads(fixture_path.read_text(encoding="utf-8"))
         expect = fixture["expect"]
     except (OSError, ValueError, KeyError):
         fail(8)
-    projection = run_journey(target, work, fixture_path)
+    projection = run_journey(target, work, fixture_path, node_path, node_sha256, node_version)
     if projection != expect:
         fail(8)
     state_path = work / "state.json"

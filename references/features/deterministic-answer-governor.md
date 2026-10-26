@@ -27,7 +27,7 @@ The short answer is checked by SHA-256 in `slimy-verify/fixtures/annual-leave-qu
 
 ## Adapter
 
-`slimy-verify/hooks/journey.py` loads that module with Node 22 and the repo path alias. It does not start the web server, write a saved answer, or call a public-source route.
+`slimy-verify/prepare.py` resolves the approved `python3` and `node` aliases once and writes a gitignored manifest and binding. `slimy-verify/hooks/journey.py` then execs that bound Node and loads the module with the repo path alias. It does not search `PATH`, start the web server, write a saved answer, or call a public-source route.
 
 ## Out of this map
 
