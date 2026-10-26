@@ -1,3 +1,13 @@
+## slimy-verify adapter pilot — 2026-10-26
+
+- Phase: `kia/slimy-verify-adapter-pilot`. Owner-approved bounded pilot. Branch only. No pull request, no merge, no main update, no deploy, no publish to the slimy-verify repo.
+- Adapter: `slimy-verify/adapter.json` pins contract `1.0.0`, core tag `v1.0.3` commit `9e4b475c03ee74ace2fc9e0dc4485e1823a402c4`, and product baseline `25177e0d6f9bec4c00494f782359067bb1fd6b81`. The controller is not vendored. Fetch steps are in `slimy-verify/README.md`.
+- Journey: one synthetic fake-corpus question through the real `buildAnswer` governor. Feature map: `references/features/deterministic-answer-governor.md`. Proof kind `synthetic`. No browser step, so no screenshot.
+- Files: `slimy-verify/adapter.json`, `slimy-verify/README.md`, `slimy-verify/hooks/journey.py`, `slimy-verify/fixtures/annual-leave-question.json`, `slimy-verify/proof/`, `references/features/`, and this ledger. Product runtime files were not edited.
+- Commands: interface archive SHA-256 check; `sha256sum -c SHA256SUMS`; clone of the owner bundle and `v1.0.3^{commit}` check; controller `doctor`, dry-run of every verb, `drive`, `check`, `evidence`, `cleanup`, a forced check failure, and `conformance.py`. Node `v22.23.4` `npm test` (the CI test job, including corpus generation): 382 files passed, 1 skipped; 2421 tests passed, 25 skipped. Two earlier parallel runs timed out inside existing git-spawning tests while this machine's git config signed commits and enabled fsmonitor; the same suite passed with those two settings turned off for the test process, which is the CI-like setting. `scripts/git_auto_sync.sh` was not run: this pilot may push only `kia/slimy-verify-adapter-pilot` and must not touch main.
+- Proof: `slimy-verify/proof/INDEX.md`. Conformance 17 of 17. Forced check exit 4 with cleanup exit 0. Evidence was captured at adapter commit `fda12d2202da930bde1fb1a76e10c5d07c32209e`. `feature_list.json` was left unchanged so existing phase pins stay valid.
+- Remaining unknowns: a later checkout must refresh the interpreter pin when that binary's bytes differ; Node 22 is discovered at runtime and is not in `runtime_files`; operator browser QA of this journey was not run; this pilot is not live acceptance and not product acceptance.
+
 ## Generic public-source packet provenance implementation — 2026-10-03
 
 - Phase: `KIA-Stick-public-source-packet-provenance-generic-model-implementation`. Exact clean baseline `4b85260662fd00b66951089e6e47bcbaf9124144` on `omarchy-path-setup`, equal to origin and live `main` (0/0). Global bootstrap files absent; repo instructions and init used. Design proof manifest PASS and JCIM WARN proof manifest PASS; JCIM remains NOT_ADMITTED.
