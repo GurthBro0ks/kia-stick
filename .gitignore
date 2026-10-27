@@ -37,3 +37,7 @@ tsconfig.tsbuildinfo
 *.luac
 data/quarantine/
 data/redacted-approved/
+
+slimy-verify/adapter.json
+slimy-verify/binding.json
+slimy-verify/adapter.*.json

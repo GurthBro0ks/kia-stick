@@ -1,0 +1,43 @@
+{
+  "code": 0,
+  "dry_run": false,
+  "identity": {
+    "adapter": "kia-stick",
+    "adapter_sha256": "d9b8a2ea946869a575481a35a0f1d0def7b1b4ff0820568615a45d78e5975d24",
+    "adapter_source_sha256": {
+      "binding.json": "72e8486613afa5df797c1a6a10bfe4e89bf7af3597f3281490d79e61300b2405",
+      "fixtures/annual-leave-question.json": "059a8bc6a819f7b88266d6745cdd4d8d154575ac99e44f4254c7b10498eea8bc",
+      "hooks/journey.py": "8b1e96b1e247f8012fd9b48fda802c38d438f42e882d79628eee4f1278e567ad"
+    },
+    "adapter_version": "0.2.0",
+    "contract": "1.0.0",
+    "core": {
+      "commit": "9e4b475c03ee74ace2fc9e0dc4485e1823a402c4",
+      "version": "v1.0.3"
+    },
+    "proof_kind": "synthetic",
+    "runtime": [
+      {
+        "role": "node",
+        "sha256": "94efd062ed066c1a0b332e18249859c905e920eeada5df55d24c99b919629a90"
+      },
+      {
+        "role": "python",
+        "sha256": "e50d468e8b0adfb05733f5b87b3cff34829c4a8c1aea50c865aa8bdfe4bb150f"
+      }
+    ],
+    "source_sha256": {
+      "data/current-accepted-pushed-state.json": "7807be5374bc81a63be6ee83b9ed72b2a0b0ebdcfe1fa8ad22e101c89df8978f",
+      "data/fake-corpus.json": "805c8fee5c9d5e31cbd43762c9df83d92c235a84b287d6882afd172d8012baf4",
+      "lib/acceptedState.ts": "a9e1ca95b17641dce48cff2f05dda6da22f6e0a001ff8cffc4be12955f1cbdad",
+      "lib/answerGovernor.ts": "fc65c2387bda2ede6db0829a9bf913f95c018ae1b43881a734aed2d23ea7e26d",
+      "lib/sourceModel.ts": "4b216097bab4bd24fa7d0705600e01fd392b20e9c9b7d46e795b3645bca79bf7",
+      "lib/version.ts": "56e11ac8e462061a798c48df0979aa963fe6bb2b9ddb5ea1488c548f6e7c4bfd",
+      "package.json": "1050ff6397efe0c95e04452faed13be04ff1d1a5c8e72988162113e5be9c2165"
+    },
+    "target_commit": "25177e0d6f9bec4c00494f782359067bb1fd6b81",
+    "target_head": "186fcf2ec5d8747df9703a99085563b6dadbde03"
+  },
+  "operation": "cleanup",
+  "reason": "scratch-removed"
+}
