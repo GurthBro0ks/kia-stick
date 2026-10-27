@@ -24,8 +24,12 @@ Adapter `kia-stick` `0.2.0`. Identity, including the manifest hash and the chang
 | missing bound Node | doctor exit 3, `runtime-file-mismatch`, runs directory not created (`missing-node.json`) |
 | changed bound Node | doctor exit 3, `runtime-file-mismatch`, runs directory not created (`changed-node.json`) |
 | PATH decoy | first `node` was the decoy; executed hash and version matched the bound Node (`decoy.json`) |
+| tampered fixture hash | doctor exit 3, `adapter-file-mismatch`, runs directory not created (`fixture-hash-tamper.json`, `fixture-hash-tamper.exit`) |
+| wrong expected answer | drive exit 0; check exit 4, `adapter-failed`, child exit 8; cleanup exit 0, `scratch-removed` (`wrong-answer-drive.json`, `wrong-answer-check.json`, `wrong-answer-evidence.json`, `wrong-answer-evidence-after-cleanup.json`, `wrong-answer-cleanup.json`, and the matching `.exit` files) |
 
-`forced-failure-records.json` is the actual pre-binding `pilot-fail` record objects (adapter `0.1.0`, target `fda12d22`). The identity wrapper is omitted because its runtime key was a path. Those records were not produced again on adapter `0.2.0`.
+The tampered-fixture and wrong-answer cases ran at head `88d85492fc0e6c817b81d2c701230a43290489d5`. The declared hash for `fixtures/annual-leave-question.json` had one hex digit flipped, and the fixture bytes stayed as committed. Doctor refused that manifest before a command ran. The wrong-answer task `pilot-bind-wrong-001` drove the real governor, then the saved `shortAnswerSha256` was replaced with 64 zero hex digits. Check reran the governor and refused the mismatch. Evidence after cleanup keeps drive `completed`, check `adapter-failed`, and cleanup `scratch-removed`.
+
+`forced-failure-records.json` is the actual pre-binding `pilot-fail` record objects (adapter `0.1.0`, target `fda12d22`). The identity wrapper is omitted because its runtime key was a path. The `wrong-answer-*` files are the separate `0.2.0` run.
 
 The journey is synthetic module-level proof of `buildAnswer`. It is not browser or live acceptance.
 

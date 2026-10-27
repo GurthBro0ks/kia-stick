@@ -1,5 +1,9 @@
 # Pilot proof index
 
+Current proof is `binding/` for adapter `kia-stick` `0.2.0`. It supersedes the earlier pre-binding `0.1.0` records in this directory. Those earlier records are kept for history.
+
+## Pre-binding history (adapter 0.1.0)
+
 Core `v1.0.3` commit `9e4b475c03ee74ace2fc9e0dc4485e1823a402c4`. Adapter `kia-stick` `0.1.0`. Product baseline `25177e0d6f9bec4c00494f782359067bb1fd6b81`. Checkout at run time `fda12d2202da930bde1fb1a76e10c5d07c32209e`. Proof kind `synthetic`. Live acceptance is false.
 
 Each `*.json` file is the controller's stdout. The matching `*.exit` file is the process exit code.
