@@ -147,6 +147,7 @@ import {
   type VaultWorkflowState,
 } from "@/lib/vaultModel";
 import { clientVersion, type RuntimeVersion } from "@/lib/version";
+import { createSourceLoader, sourceForAnswer, SOURCE_LOAD_TIMEOUT_MS, type SourceLoader } from "@/lib/sourceLoader";
 import { currentAcceptedPushedState, historicalAcceptedPushedShortCommits, localBundleManualQaLabel, localDataModeLabel } from "@/lib/acceptedState";
 import {
   CBA_DOCUMENT_STATUS,
@@ -164,6 +165,7 @@ import {
   type CbaParagraph,
   type CbaSourceCache,
   type CbaSourceRouteResponse,
+  type CbaSourceUnavailableReason,
 } from "@/lib/cbaSource";
 import {
   PUBLIC_SOURCE_APPLICABILITY_WARNING,
@@ -173,13 +175,32 @@ import {
   PUBLIC_SOURCE_URL,
   publicPilotQuestions,
   publicSourceParagraphAnchorId,
+  type PublicSourceCache,
   type PublicSourceRouteResponse,
+  type PublicSourceUnavailableReason,
 } from "@/lib/publicSource";
 
 type Tab = ShellView;
 type VaultView = "vault" | "quarantine" | "redaction" | "metadata" | "index" | "audit";
-type PublicSourceLoadState = { status: "loading" } | PublicSourceRouteResponse;
-type CbaSourceLoadState = { status: "loading" } | CbaSourceRouteResponse;
+// "load_failed": this page's request for the source failed (client-only; KIA-source-early-send-1).
+type PublicSourceLoadState = { status: "loading" } | PublicSourceRouteResponse | { status: "unavailable"; reason: "load_failed" };
+type CbaSourceLoadState = { status: "loading" } | CbaSourceRouteResponse | { status: "unavailable"; reason: "load_failed" };
+export type CbaSourceLoader = SourceLoader<CbaSourceCache, CbaSourceUnavailableReason>;
+export type PublicSourceLoader = SourceLoader<PublicSourceCache, PublicSourceUnavailableReason>;
+
+/** One loader per source per page load: each starts its fetch once and is shared by the Sources view and every answer. */
+export function createCbaSourceLoader(fetcher?: typeof fetch): CbaSourceLoader {
+  return createSourceLoader<CbaSourceCache, CbaSourceUnavailableReason>({ url: "/api/public-cba-source",
+    // The one pathless request per page load (no query string); tests inject a mock fetcher.
+    fetcher: fetcher ?? ((_url, init) => fetch("/api/public-cba-source", init)) });
+}
+
+export function createPublicSourceLoader(fetcher?: typeof fetch): PublicSourceLoader {
+  return createSourceLoader<PublicSourceCache, PublicSourceUnavailableReason>({ url: "/api/public-source",
+    // The one pathless request per page load (no query string); tests inject a mock fetcher.
+    fetcher: fetcher ?? ((_url, init) => fetch("/api/public-source", init)) });
+}
+
 type JcimSourceLoadState = JcimClientState;
 type CbaCitationNavigationNotice = { citation: Citation; state: CitationVerificationState };
 
@@ -373,26 +394,45 @@ export function deleteLibraryItemWithConfirmation(
   return true;
 }
 
+type ChatTurnSources =
+  /** The app: CBA and NLRB are read from their loaders at answer time (KIA-source-early-send-1). */
+  | { cbaSourceLoader: CbaSourceLoader; publicSourceLoader: PublicSourceLoader; cbaSource?: never; publicSource?: never }
+  /** Already-settled sources (tests and callers that hold a loaded cache); behaves as before. */
+  | { cbaSource: CbaSourceCache | null; publicSource: PublicSourceCache | null; cbaSourceLoader?: never; publicSourceLoader?: never };
+
 /**
  * KIA-jcim-early-send-1, option (a): a CBA-lane answer sent while JCIM is still loading waits (bounded by
  * JCIM_LOAD_TIMEOUT_MS) for the load to settle. If JCIM is still missing, the answer says plainly that JCIM was not checked.
+ *
+ * KIA-source-early-send-1: the CBA and NLRB sources are awaited the same way (bounded by SOURCE_LOAD_TIMEOUT_MS) and read
+ * at answer time, not at click time. A source still loading after the wait, or whose request failed, gets an explicit
+ * "still loading" / "couldn't load" no-answer instead of "cache unavailable / run sync".
  */
 export async function answerChatTurn(input: {
   question: string;
   snapshot: ModeScopeDetailSnapshot;
-  publicSource: Parameters<typeof routeChatQuestion>[0]["publicSource"];
-  cbaSource: CbaSourceCache | null;
   jcimLoader: JcimSourceLoader;
   runtimeVersion: RuntimeVersion;
   threadHistory?: Parameters<typeof routeChatQuestion>[0]["threadHistory"];
   jcimWaitMs?: number;
-}): Promise<AnswerResult> {
-  const jcim = await jcimForAnswer(input.jcimLoader, input.snapshot.sourceMode === "cba", input.jcimWaitMs ?? JCIM_LOAD_TIMEOUT_MS);
+  sourceWaitMs?: number;
+} & ChatTurnSources): Promise<AnswerResult> {
+  const lane = input.snapshot.sourceMode;
+  const needsCba = lane === "cba";
+  const needsPublic = lane === "cba" || lane === "nlrb" || lane === "public";
+  const sourceWaitMs = input.sourceWaitMs ?? SOURCE_LOAD_TIMEOUT_MS;
+  const [jcim, cba, nlrb] = await Promise.all([
+    jcimForAnswer(input.jcimLoader, needsCba, input.jcimWaitMs ?? JCIM_LOAD_TIMEOUT_MS),
+    input.cbaSourceLoader ? sourceForAnswer(input.cbaSourceLoader, needsCba, sourceWaitMs) : null,
+    input.publicSourceLoader ? sourceForAnswer(input.publicSourceLoader, needsPublic, sourceWaitMs) : null,
+  ]);
   return routeChatQuestion({
     question: input.question,
     snapshot: input.snapshot,
-    publicSource: input.publicSource,
-    cbaSource: input.cbaSource,
+    publicSource: nlrb ? nlrb.source : input.publicSource ?? null,
+    publicSourceStatus: nlrb?.status,
+    cbaSource: cba ? cba.source : input.cbaSource ?? null,
+    cbaStatus: cba?.status,
     jcimSource: jcim.source,
     jcimStatus: jcim.status,
     runtimeVersion: input.runtimeVersion,
@@ -411,8 +451,10 @@ export function KiaStickApp({ runtimeVersion = clientVersion }: { runtimeVersion
   const [scope, setScope] = useState<Scope>("All Fake");
   const [detail, setDetail] = useState<Detail>("Detailed");
   const [chatSourceMode, setChatSourceMode] = useState<ChatSourcePolicy>("auto");
-  const [publicSourceState, setPublicSourceState] = useState<PublicSourceLoadState>({ status: "loading" });
-  const [cbaSourceState, setCbaSourceState] = useState<CbaSourceLoadState>({ status: "loading" });
+  const [publicSourceLoader] = useState<PublicSourceLoader>(() => createPublicSourceLoader());
+  const [cbaSourceLoader] = useState<CbaSourceLoader>(() => createCbaSourceLoader());
+  const [publicSourceState, setPublicSourceState] = useState<PublicSourceLoadState>(() => publicSourceLoader.getState());
+  const [cbaSourceState, setCbaSourceState] = useState<CbaSourceLoadState>(() => cbaSourceLoader.getState());
   const [jcimLoader] = useState<JcimSourceLoader>(() => createJcimSourceLoader());
   const [jcimSourceState, setJcimSourceState] = useState<JcimSourceLoadState>(() => jcimLoader.getState());
   const [cbaCitationTargetId, setCbaCitationTargetId] = useState<string | null>(null);
@@ -483,35 +525,21 @@ export function KiaStickApp({ runtimeVersion = clientVersion }: { runtimeVersion
     }
   }, []);
 
+  // KIA-source-early-send-1: each source is fetched once per page load by its loader; the Sources view mirrors the
+  // loader state, and chat answers read the loader itself at answer time. Tab changes never refetch.
   useEffect(() => {
-    let cancelled = false;
-    fetch("/api/public-cba-source", { method: "GET", cache: "no-store" })
-      .then(async (response) => {
-        const payload = (await response.json()) as CbaSourceRouteResponse;
-        if (!cancelled && (payload.status === "available" || payload.status === "unavailable")) setCbaSourceState(payload);
-      })
-      .catch(() => {
-        if (!cancelled) setCbaSourceState({ status: "unavailable", reason: "cache_unsafe" });
-      });
-    return () => {
-      cancelled = true;
-    };
-  }, []);
+    setCbaSourceState(cbaSourceLoader.getState());
+    const unsubscribe = cbaSourceLoader.subscribe(setCbaSourceState);
+    cbaSourceLoader.ensureLoaded();
+    return unsubscribe;
+  }, [cbaSourceLoader]);
 
   useEffect(() => {
-    let cancelled = false;
-    fetch("/api/public-source", { method: "GET", cache: "no-store" })
-      .then(async (response) => {
-        const payload = (await response.json()) as PublicSourceRouteResponse;
-        if (!cancelled && (payload.status === "available" || payload.status === "unavailable")) setPublicSourceState(payload);
-      })
-      .catch(() => {
-        if (!cancelled) setPublicSourceState({ status: "unavailable", reason: "cache_unsafe" });
-      });
-    return () => {
-      cancelled = true;
-    };
-  }, []);
+    setPublicSourceState(publicSourceLoader.getState());
+    const unsubscribe = publicSourceLoader.subscribe(setPublicSourceState);
+    publicSourceLoader.ensureLoaded();
+    return unsubscribe;
+  }, [publicSourceLoader]);
 
   useEffect(() => {
     setJcimSourceState(jcimLoader.getState());
@@ -600,8 +628,8 @@ export function KiaStickApp({ runtimeVersion = clientVersion }: { runtimeVersion
         const answer = await answerChatTurn({
           question: input.userMessage.content,
           snapshot: input.snapshot,
-          publicSource: publicSourceState.status === "available" ? publicSourceState.source : null,
-          cbaSource: cbaSourceState.status === "available" ? cbaSourceState.source : null,
+          publicSourceLoader,
+          cbaSourceLoader,
           jcimLoader,
           runtimeVersion,
           threadHistory: recentAnswerHistory(input.baseThread),
