@@ -79,6 +79,8 @@ describe("KIA-jcim-early-send-1 test 2: early Send while JCIM is still loading",
     expect(jcimIds(answer)).toEqual(["Article 10.5"]);
     jcimTabEffect(loader); // back to sources
     jcimTabEffect(loader); // and to chat again after the load
+    // The loader starts its fetch in a microtask, so let one run before counting fetches.
+    await Promise.resolve();
     expect(mock.calls).toHaveLength(1);
     expect(loader.getState().status).toBe("available");
     expect(seen).toEqual(["available"]);
