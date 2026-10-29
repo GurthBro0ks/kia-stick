@@ -1,3 +1,10 @@
+## /health recorded-metadata labels — 2026-10-29
+
+- Phase: `KIA-health-labels-1`, branch `kia/health-labels-1` off `kia/deps-doc-followup-1` tip `47b28896b9fc5292f0840ad18768fedffaecc0f5` (not yet merged into `origin/main` `196e92bd`). Owner GO for the fix; local commit only, no push, no PR, no merge, no served-app move.
+- Change: `app/health/route.ts` adds one `stateRecord` block. Every existing `/health` key and value is unchanged. The block names `data/current-accepted-pushed-state.json` as the source, marks `phase`, `localBundle`, `localValidation`, `pushed`, `manualQa`, `acceptedCheckpoint`, `acceptedCommit`, `repositoryRecordingCommit` and `latestPushedCloseoutCommit` as recorded metadata rather than live build state, and names `gitSha` as the only live build identity. It shows the last recorded local bundle (`pushed` from `local_bundle_pushed`) beside the accepted checkpoint (`pushed` from `accepted_pushed`); the local-bundle fields are not labelled as the accepted checkpoint.
+- Test: `tests/healthStateRecordLabels.test.ts` pins the legacy key list and values against the data file and the exact `stateRecord` shape. Seven route mutants, including removing the block and flipping `acceptedCheckpoint.pushed`, all fail it.
+- Unchanged: the data file, `package.json`, the lockfile, existing tests and `scripts/operator-qa-smoke.mjs`. The staleness itself is fixed only by a later accepted-state refresh under its own GO; this change makes it visible.
+
 ## Deps refresh ledger and npm advisory note — 2026-10-29
 
 - Phase: `KIA-deps-doc-followup-1`, branch `kia/deps-doc-followup-1` off `196e92bd8ff17870ccad408d3a3a26cfd319f7f5`. Docs only. Local commit, no push, no PR, no merge, no deploy.
