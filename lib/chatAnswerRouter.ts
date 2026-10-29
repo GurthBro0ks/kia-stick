@@ -17,7 +17,7 @@ import type { Detail, Mode, Scope } from "@/lib/sourceModel";
 import type { RuntimeVersion } from "@/lib/version";
 import { publicStewardWorkflowMatch } from "@/lib/publicStewardWorkflowRegistry";
 import { enrichCbaAnswerWithJcim } from "@/lib/jcimAnswer";
-import type { JcimCache } from "@/lib/jcimSource";
+import type { JcimCache, JcimCheckStatus } from "@/lib/jcimSource";
 
 export type ChatSourcePolicy = "auto" | "fake" | "nlrb" | "cba" | "public";
 export type ChatAnswerLane = "fake" | "nlrb" | "cba" | "safe_no_answer";
@@ -110,6 +110,8 @@ export function routeChatQuestion(input: {
   publicSource: PublicSourceCache | null;
   cbaSource?: CbaSourceCache | null;
   jcimSource?: JcimCache | null;
+  /** When set, a CBA answer prepared without JCIM discloses that JCIM was not checked. */
+  jcimStatus?: JcimCheckStatus;
   runtimeVersion: RuntimeVersion;
   threadHistory?: AnswerHistoryMessage[];
 }): AnswerResult {
@@ -122,7 +124,7 @@ export function routeChatQuestion(input: {
       mode: input.snapshot.mode,
       scope: input.snapshot.scope,
       detail: input.snapshot.detail,
-    }), input.question, input.jcimSource ?? null);
+    }), input.question, input.jcimSource ?? null, input.jcimStatus);
   }
 
   if (input.snapshot.sourceMode === "nlrb" || input.snapshot.sourceMode === "public") {

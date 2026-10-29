@@ -27,10 +27,14 @@ import {
   type SupplementalSourceVerifier,
 } from "@/lib/publicPacketProvenance";
 import type { RuntimeVersion } from "@/lib/version";
+import type { JcimCheckStatus } from "@/lib/jcimSource";
 
 export const PUBLIC_STEWARD_PACKET_SAVED_TYPE = "public_steward_packet_plan" as const;
 export const PUBLIC_STEWARD_PACKET_PRIVATE_WARNING =
   "Case-neutral public-source workspace only. Do not enter names, dates, case facts, medical information, personnel data, financial facts, or grievance documents." as const;
+/** KIA-jcim-early-send-1: carried by a packet that was built while JCIM could not be consulted. */
+export const PUBLIC_STEWARD_PACKET_JCIM_NOT_CHECKED =
+  "JCIM not checked: this packet was built while the JCIM joint interpretation was not available, so it cites only the contract language. Rebuild it once JCIM is available." as const;
 
 // Presentation-only compatibility mapping (shared with grievance outlines and steward argument plans).
 // Stored limitations and identity inputs stay verbatim.
@@ -109,6 +113,7 @@ export interface PublicStewardPacket {
   sourceAppendix: PublicStewardPacketSourceAppendixItem[];
   supplementalCitations?: Citation[];
   supplementalSourceAppendix?: PublicStewardPacketSupplementalSourceAppendixItem[];
+  jcimDisclosure?: typeof PUBLIC_STEWARD_PACKET_JCIM_NOT_CHECKED;
   outlines: PublicGrievanceOutline[];
   provider: typeof CBA_PROVIDER;
   promptVersion: typeof CBA_PROMPT_VERSION;
@@ -302,6 +307,8 @@ export function buildPublicStewardPacket(input: {
   createdAt?: string;
   supplementalCitations?: readonly Citation[];
   supplementalSourceVerifiers?: readonly SupplementalSourceVerifier[];
+  /** When set and not "available", the packet carries the JCIM-not-checked disclosure. Omitted: unchanged packet. */
+  jcimStatus?: JcimCheckStatus;
 }): PublicStewardPacket | null {
   if (!input.source) return null;
   const selectedTopicIds = sortedTopicIds(input.topicIds);
@@ -500,6 +507,8 @@ export function buildPublicStewardPacket(input: {
       verificationState: "verified_current" as const,
     })),
     ...(supplementalCitations.length > 0 ? { supplementalCitations, supplementalSourceAppendix } : {}),
+    ...(input.jcimStatus !== undefined && input.jcimStatus !== "available"
+      ? { jcimDisclosure: PUBLIC_STEWARD_PACKET_JCIM_NOT_CHECKED } : {}),
     outlines: currentOutlines,
     provider: CBA_PROVIDER,
     promptVersion: CBA_PROMPT_VERSION,
@@ -586,6 +595,7 @@ export function publicStewardPacketExportEligibility(
     createdAt: packet.createdAt,
     supplementalCitations: supplemental,
     supplementalSourceVerifiers,
+    jcimStatus: packet.jcimDisclosure !== undefined ? "unavailable" : undefined,
   });
   if (!rebuilt || rebuilt.id !== packet.id || rebuilt.contentIdentity !== packet.contentIdentity) {
     return { eligible: false, reason: "Packet blocked because its source, template, or citation identity is no longer current." };
@@ -647,6 +657,7 @@ export function publicStewardPacketToText(packet: PublicStewardPacket): string {
       `Sources: Controlling contract (CBA); ${[...new Set(packet.supplementalSourceAppendix.map((item) => supplementalAuthorityRole(item.authorityClass)))].join("; ")}`,
     ] : []),
     packet.privateCaseWarning,
+    ...(packet.jcimDisclosure ? [packet.jcimDisclosure] : []),
     numbered("1. Selected topic summary", packet.topicSummaries.map(
       (topic) => publicStewardPacketTopicSummaryText(packet, topic)
     )),
@@ -689,6 +700,7 @@ export function publicStewardPacketToMarkdown(packet: PublicStewardPacket): stri
       `- Sources: Controlling contract (CBA); ${[...new Set(packet.supplementalSourceAppendix.map((item) => supplementalAuthorityRole(item.authorityClass)))].join("; ")}`,
     ] : []),
     `> ${packet.privateCaseWarning}`,
+    ...(packet.jcimDisclosure ? [`> ${packet.jcimDisclosure}`] : []),
     section("1. Selected topic summary", packet.topicSummaries.map(
       (topic) => publicStewardPacketTopicSummaryText(packet, topic)
     )),
