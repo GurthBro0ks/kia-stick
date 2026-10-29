@@ -44,5 +44,36 @@ export function GET() {
     promptVersion: version.promptVersion,
     provider: version.provider,
     version,
+    // Additive label block: the fields above that come from the data file are recorded metadata, not live build state.
+    stateRecord: {
+      source: "data/current-accepted-pushed-state.json",
+      kind: "recorded_metadata_not_live_build_state",
+      liveBuildIdentity: "gitSha",
+      recordedFields: [
+        "phase",
+        "localBundle",
+        "localValidation",
+        "pushed",
+        "manualQa",
+        "acceptedCheckpoint",
+        "acceptedCommit",
+        "repositoryRecordingCommit",
+        "latestPushedCloseoutCommit",
+      ],
+      note: "phase, localBundle, localValidation, pushed and manualQa are the last recorded local-bundle record; acceptedCheckpoint, acceptedCommit, repositoryRecordingCommit and latestPushedCloseoutCommit are recorded accepted-checkpoint facts. Neither describes the running build; gitSha is the only live build identity.",
+      localBundle: {
+        label: "last recorded local bundle (not the running build)",
+        phase: currentAcceptedPushedState.local_bundle_phase,
+        validation: currentAcceptedPushedState.local_bundle_validation,
+        pushed: currentAcceptedPushedState.local_bundle_pushed,
+        manualQa: currentAcceptedPushedState.local_bundle_manual_qa,
+      },
+      acceptedCheckpoint: {
+        label: currentAcceptedPushedState.checkpoint_label,
+        commit: currentAcceptedPushedState.accepted_pushed_commit,
+        pushed: currentAcceptedPushedState.accepted_pushed,
+        manualQa: currentAcceptedPushedState.accepted_manual_qa,
+      },
+    },
   });
 }
