@@ -18,6 +18,15 @@ import type { RuntimeVersion } from "@/lib/version";
 import { publicStewardWorkflowMatch } from "@/lib/publicStewardWorkflowRegistry";
 import { enrichCbaAnswerWithJcim } from "@/lib/jcimAnswer";
 import type { JcimCache, JcimCheckStatus } from "@/lib/jcimSource";
+import { sourceNotLoadedAnswer, type SourceCheckStatus } from "@/lib/sourceLoader";
+
+/** Names used when an answer says a source was still loading or could not be loaded (KIA-source-early-send-1). */
+export const CBA_SOURCE_LOAD_LABEL = "APWU-USPS CBA" as const;
+export const NLRB_SOURCE_LOAD_LABEL = "NLRB Weingarten guidance" as const;
+
+function notLoaded(status: SourceCheckStatus | undefined): status is "loading" | "load_failed" {
+  return status === "loading" || status === "load_failed";
+}
 
 export type ChatSourcePolicy = "auto" | "fake" | "nlrb" | "cba" | "public";
 export type ChatAnswerLane = "fake" | "nlrb" | "cba" | "safe_no_answer";
@@ -112,10 +121,27 @@ export function routeChatQuestion(input: {
   jcimSource?: JcimCache | null;
   /** When set, a CBA answer prepared without JCIM discloses that JCIM was not checked. */
   jcimStatus?: JcimCheckStatus;
+  /**
+   * KIA-source-early-send-1: when set and the CBA (or NLRB) source is missing because it was still loading or this
+   * page's request failed, the answer says that instead of "cache unavailable / run sync". Unset keeps the old behavior.
+   */
+  cbaStatus?: SourceCheckStatus;
+  publicSourceStatus?: SourceCheckStatus;
   runtimeVersion: RuntimeVersion;
   threadHistory?: AnswerHistoryMessage[];
 }): AnswerResult {
   if (input.snapshot.sourceMode === "cba") {
+    if (!input.cbaSource && notLoaded(input.cbaStatus)) {
+      return sourceNotLoadedAnswer(buildCbaAnswer({
+        question: input.question,
+        source: null,
+        nlrbSource: input.publicSource,
+        runtimeVersion: input.runtimeVersion,
+        mode: input.snapshot.mode,
+        scope: input.snapshot.scope,
+        detail: input.snapshot.detail,
+      }), CBA_SOURCE_LOAD_LABEL, input.cbaStatus);
+    }
     return enrichCbaAnswerWithJcim(buildCbaAnswer({
       question: input.question,
       source: input.cbaSource ?? null,
@@ -128,6 +154,16 @@ export function routeChatQuestion(input: {
   }
 
   if (input.snapshot.sourceMode === "nlrb" || input.snapshot.sourceMode === "public") {
+    if (!input.publicSource && notLoaded(input.publicSourceStatus)) {
+      return sourceNotLoadedAnswer(buildPublicSourceAnswer({
+        question: input.question,
+        source: null,
+        runtimeVersion: input.runtimeVersion,
+        mode: input.snapshot.mode,
+        scope: input.snapshot.scope,
+        detail: input.snapshot.detail,
+      }), NLRB_SOURCE_LOAD_LABEL, input.publicSourceStatus);
+    }
     return buildPublicSourceAnswer({
       question: input.question,
       source: input.publicSource,
