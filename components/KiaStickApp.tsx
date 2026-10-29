@@ -100,9 +100,9 @@ import {
   type PublicStewardPacketStep,
 } from "@/lib/publicStewardPacket";
 import { nlrbPacketSourceVerifier, type SupplementalSourceVerifier } from "@/lib/publicPacketProvenance";
-import { JCIM_AUTHORITY_LABEL, JCIM_LANDING_URL, JCIM_PDF_URL, JCIM_SOURCE_ID,
-  jcimPacketSourceVerifier, jcimTopicCitation, verifyJcimCitation } from "@/lib/jcimSource";
-import type { JcimState } from "@/lib/jcimSourceServer";
+import { JCIM_AUTHORITY_LABEL, JCIM_LANDING_URL, JCIM_LOAD_TIMEOUT_MS, JCIM_PDF_URL, JCIM_SOURCE_ID,
+  createJcimSourceLoader, jcimForAnswer, jcimPacketSourceVerifier, jcimTopicCitation, verifyJcimCitation,
+  type JcimClientState, type JcimSourceLoader } from "@/lib/jcimSource";
 import {
   buildPublicStewardArgumentPlan,
   publicStewardArgumentPlanExportEligibility,
@@ -180,7 +180,7 @@ type Tab = ShellView;
 type VaultView = "vault" | "quarantine" | "redaction" | "metadata" | "index" | "audit";
 type PublicSourceLoadState = { status: "loading" } | PublicSourceRouteResponse;
 type CbaSourceLoadState = { status: "loading" } | CbaSourceRouteResponse;
-type JcimSourceLoadState = { status: "loading" } | JcimState;
+type JcimSourceLoadState = JcimClientState;
 type CbaCitationNavigationNotice = { citation: Citation; state: CitationVerificationState };
 
 export const PUBLIC_STEWARD_PACKET_TOPIC_LIMIT_NOTICE =
@@ -373,6 +373,38 @@ export function deleteLibraryItemWithConfirmation(
   return true;
 }
 
+/**
+ * KIA-jcim-early-send-1, option (a): a CBA-lane answer sent while JCIM is still loading waits (bounded by
+ * JCIM_LOAD_TIMEOUT_MS) for the load to settle. If JCIM is still missing, the answer says plainly that JCIM was not checked.
+ */
+export async function answerChatTurn(input: {
+  question: string;
+  snapshot: ModeScopeDetailSnapshot;
+  publicSource: Parameters<typeof routeChatQuestion>[0]["publicSource"];
+  cbaSource: CbaSourceCache | null;
+  jcimLoader: JcimSourceLoader;
+  runtimeVersion: RuntimeVersion;
+  threadHistory?: Parameters<typeof routeChatQuestion>[0]["threadHistory"];
+  jcimWaitMs?: number;
+}): Promise<AnswerResult> {
+  const jcim = await jcimForAnswer(input.jcimLoader, input.snapshot.sourceMode === "cba", input.jcimWaitMs ?? JCIM_LOAD_TIMEOUT_MS);
+  return routeChatQuestion({
+    question: input.question,
+    snapshot: input.snapshot,
+    publicSource: input.publicSource,
+    cbaSource: input.cbaSource,
+    jcimSource: jcim.source,
+    jcimStatus: jcim.status,
+    runtimeVersion: input.runtimeVersion,
+    threadHistory: input.threadHistory,
+  });
+}
+
+/** Tab changes call ensureLoaded: no re-fetch once JCIM is loaded, and loaded data is never reset to "loading". */
+export function jcimTabEffect(loader: JcimSourceLoader): void {
+  loader.ensureLoaded();
+}
+
 export function KiaStickApp({ runtimeVersion = clientVersion }: { runtimeVersion?: RuntimeVersion }) {
   const [tab, setTab] = useState<Tab>("chat");
   const [mode, setMode] = useState<Mode>("Strict Research");
@@ -381,7 +413,8 @@ export function KiaStickApp({ runtimeVersion = clientVersion }: { runtimeVersion
   const [chatSourceMode, setChatSourceMode] = useState<ChatSourcePolicy>("auto");
   const [publicSourceState, setPublicSourceState] = useState<PublicSourceLoadState>({ status: "loading" });
   const [cbaSourceState, setCbaSourceState] = useState<CbaSourceLoadState>({ status: "loading" });
-  const [jcimSourceState, setJcimSourceState] = useState<JcimSourceLoadState>({ status: "loading" });
+  const [jcimLoader] = useState<JcimSourceLoader>(() => createJcimSourceLoader());
+  const [jcimSourceState, setJcimSourceState] = useState<JcimSourceLoadState>(() => jcimLoader.getState());
   const [cbaCitationTargetId, setCbaCitationTargetId] = useState<string | null>(null);
   const [cbaCitationNavigationNotice, setCbaCitationNavigationNotice] = useState<CbaCitationNavigationNotice | null>(null);
   const [draft, setDraft] = useState("");
@@ -481,16 +514,14 @@ export function KiaStickApp({ runtimeVersion = clientVersion }: { runtimeVersion
   }, []);
 
   useEffect(() => {
-    let cancelled = false;
-    setJcimSourceState({ status: "loading" });
-    fetch("/api/public-jcim-source", { method: "GET", cache: "no-store" })
-      .then(async (response) => {
-        const payload = (await response.json()) as JcimState;
-        if (!cancelled && (payload.status === "available" || payload.status === "unavailable")) setJcimSourceState(payload);
-      })
-      .catch(() => { if (!cancelled) setJcimSourceState({ status: "unavailable", reason: "unverified_current" }); });
-    return () => { cancelled = true; };
-  }, [tab]);
+    setJcimSourceState(jcimLoader.getState());
+    return jcimLoader.subscribe(setJcimSourceState);
+  }, [jcimLoader]);
+
+  // Loads JCIM once; a tab change retries only while JCIM is unavailable and keeps any loaded data.
+  useEffect(() => {
+    jcimTabEffect(jcimLoader);
+  }, [jcimLoader, tab]);
 
   useEffect(() => {
     if (!hydrated) return;
@@ -564,14 +595,14 @@ export function KiaStickApp({ runtimeVersion = clientVersion }: { runtimeVersion
     snapshot: ModeScopeDetailSnapshot;
     baseThread: ConversationThread;
   }) {
-    window.setTimeout(() => {
+    window.setTimeout(async () => {
       try {
-        const answer = routeChatQuestion({
+        const answer = await answerChatTurn({
           question: input.userMessage.content,
           snapshot: input.snapshot,
           publicSource: publicSourceState.status === "available" ? publicSourceState.source : null,
           cbaSource: cbaSourceState.status === "available" ? cbaSourceState.source : null,
-          jcimSource: jcimSourceState.status === "available" ? jcimSourceState.source : null,
+          jcimLoader,
           runtimeVersion,
           threadHistory: recentAnswerHistory(input.baseThread),
         });
@@ -861,6 +892,7 @@ export function KiaStickApp({ runtimeVersion = clientVersion }: { runtimeVersion
       runtimeVersion,
       supplementalCitations: packetTopicIds.flatMap((topic) => jcimTopicCitation(jcimSourceState.status === "available" ? jcimSourceState.source : null, topic)),
       supplementalSourceVerifiers: [jcimPacketSourceVerifier(jcimSourceState.status === "available" ? jcimSourceState.source : null)],
+      jcimStatus: jcimSourceState.status,
     });
     if (!packet) {
       setSaveNotice({
@@ -4236,6 +4268,10 @@ export function PublicStewardPacketView({
         <AlertTriangle size={16} />
         <strong>{packet.privateCaseWarning}</strong>
       </p>
+      {packet.jcimDisclosure && <p className="argumentPlanPrivateWarning print-atomic" role="note" aria-label="JCIM not checked">
+        <AlertTriangle size={16} />
+        <strong>{packet.jcimDisclosure}</strong>
+      </p>}
       <details className="packetDisclosure packetTechnicalDetails">
         <summary>Packet details</summary>
       <div className="argumentPlanMeta print-atomic" aria-label="Steward packet identity">

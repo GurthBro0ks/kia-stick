@@ -109,3 +109,89 @@ export function jcimTopicCitation(source: JcimCache | null, topic: string): Cita
     return section && paragraph ? [jcimCitation(source, section, paragraph)] : [];
   });
 }
+
+/** Whether JCIM could be consulted when an answer or packet was prepared (KIA-jcim-early-send-1). */
+export type JcimCheckStatus = "available" | "loading" | "unavailable";
+
+/** Client-side JCIM load state. "load_timeout" / "load_failed" are client-only reasons (the route is unchanged). */
+export type JcimClientState = { status: "loading" } | { status: "available"; source: JcimCache } |
+  { status: "unavailable"; reason: "cache_missing" | "cache_unsafe" | "drift_detected" | "unverified_current" | "load_timeout" | "load_failed" };
+
+/** Bound on both the client JCIM fetch and the wait an early Send makes for it. */
+export const JCIM_LOAD_TIMEOUT_MS = 15000 as const;
+
+export interface JcimSourceLoader {
+  getState(): JcimClientState;
+  subscribe(listener: (state: JcimClientState) => void): () => void;
+  /** Starts a fetch unless JCIM is already available or a fetch is in flight. Never discards loaded data. */
+  ensureLoaded(): void;
+  /** Resolves once the state is no longer "loading", or after timeoutMs with the (still loading) state. */
+  whenSettled(timeoutMs?: number): Promise<JcimClientState>;
+}
+
+export function createJcimSourceLoader(options: {
+  fetcher?: typeof fetch;
+  url?: string;
+  timeoutMs?: number;
+} = {}): JcimSourceLoader {
+  const url = options.url ?? "/api/public-jcim-source";
+  const timeoutMs = options.timeoutMs ?? JCIM_LOAD_TIMEOUT_MS;
+  let state: JcimClientState = { status: "loading" };
+  let inFlight = false;
+  const listeners = new Set<(state: JcimClientState) => void>();
+  const settle = (next: JcimClientState) => {
+    state = next;
+    for (const listener of [...listeners]) listener(state);
+  };
+  return {
+    getState: () => state,
+    subscribe(listener) {
+      listeners.add(listener);
+      return () => { listeners.delete(listener); };
+    },
+    ensureLoaded() {
+      if (state.status === "available" || inFlight) return;
+      inFlight = true;
+      let finished = false;
+      const controller = typeof AbortController === "function" ? new AbortController() : null;
+      const finish = (next: JcimClientState) => {
+        if (finished) return;
+        finished = true;
+        clearTimeout(timer);
+        inFlight = false;
+        // A failed retry never replaces data that is already loaded.
+        if (next.status === "available" || state.status !== "available") settle(next);
+      };
+      const timer = setTimeout(() => {
+        finish({ status: "unavailable", reason: "load_timeout" });
+        controller?.abort();
+      }, timeoutMs);
+      const fetcher = options.fetcher ?? ((...args: Parameters<typeof fetch>) => fetch(...args));
+      Promise.resolve()
+        .then(() => fetcher(url, { method: "GET", cache: "no-store", ...(controller ? { signal: controller.signal } : {}) }))
+        .then(async (response) => {
+          const payload = (await response.json()) as JcimClientState;
+          if (payload?.status === "available" && payload.source) finish(payload);
+          else if (payload?.status === "unavailable") finish(payload);
+          else finish({ status: "unavailable", reason: "cache_unsafe" });
+        })
+        .catch(() => finish({ status: "unavailable", reason: "load_failed" }));
+    },
+    whenSettled(waitMs = timeoutMs) {
+      if (state.status !== "loading") return Promise.resolve(state);
+      return new Promise((resolve) => {
+        const done = () => { clearTimeout(timer); listeners.delete(onChange); resolve(state); };
+        const onChange = (next: JcimClientState) => { if (next.status !== "loading") done(); };
+        const timer = setTimeout(done, waitMs);
+        listeners.add(onChange);
+      });
+    },
+  };
+}
+
+/** JCIM input for one answer: waits (bounded) for an in-progress load only when the answer lane can use JCIM. */
+export async function jcimForAnswer(loader: JcimSourceLoader, needsJcim: boolean, waitMs: number = JCIM_LOAD_TIMEOUT_MS):
+  Promise<{ source: JcimCache | null; status: JcimCheckStatus }> {
+  const state = needsJcim ? await loader.whenSettled(waitMs) : loader.getState();
+  return state.status === "available" ? { source: state.source, status: "available" } : { source: null, status: state.status };
+}
