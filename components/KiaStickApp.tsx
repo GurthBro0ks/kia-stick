@@ -1910,8 +1910,14 @@ export function SourcesPanel({
       {cbaSourceState.status === "unavailable" && (
         <article className="sourceCard publicSourceCard" aria-label="official CBA source unavailable">
           <h3>Official APWU-USPS CBA unavailable</h3>
-          <p>The bounded CBA cache is safely unavailable ({cbaSourceState.reason}). No other path, URL, source, or fake lane was tried.</p>
-          <p>Operator restore command: <code>node scripts/public-source-sync.mjs {CBA_SOURCE_ID}</code></p>
+          {cbaSourceState.reason === "load_failed" ? (
+            <p>This page could not load the local CBA cache. Reload the page.</p>
+          ) : (
+            <>
+              <p>The bounded CBA cache is safely unavailable ({cbaSourceState.reason}). No other path, URL, source, or fake lane was tried.</p>
+              <p>Operator restore command: <code>node scripts/public-source-sync.mjs {CBA_SOURCE_ID}</code></p>
+            </>
+          )}
         </article>
       )}
 
@@ -2137,8 +2143,14 @@ export function SourcesPanel({
       {publicSourceState.status === "unavailable" && (
         <article className="sourceCard publicSourceCard" aria-label="public source unavailable">
           <h3>Weingarten Rights source unavailable</h3>
-          <p>The bounded cache is safely unavailable ({publicSourceState.reason}). No other path or source was tried.</p>
-          <p>Operator restore command: <code>node scripts/public-source-sync.mjs {PUBLIC_SOURCE_ID}</code></p>
+          {publicSourceState.reason === "load_failed" ? (
+            <p>This page could not load the local NLRB cache. Reload the page.</p>
+          ) : (
+            <>
+              <p>The bounded cache is safely unavailable ({publicSourceState.reason}). No other path or source was tried.</p>
+              <p>Operator restore command: <code>node scripts/public-source-sync.mjs {PUBLIC_SOURCE_ID}</code></p>
+            </>
+          )}
         </article>
       )}
 
