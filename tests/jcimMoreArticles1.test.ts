@@ -1,5 +1,5 @@
 import { createHash } from "node:crypto";
-import { lstatSync, mkdirSync, mkdtempSync, realpathSync, rmSync, symlinkSync, writeFileSync } from "node:fs";
+import { chmodSync, lstatSync, mkdirSync, mkdtempSync, realpathSync, rmSync, symlinkSync, writeFileSync } from "node:fs";
 import { tmpdir } from "node:os";
 import path from "node:path";
 import { describe, expect, it, vi } from "vitest";
@@ -75,7 +75,10 @@ function withCacheDirectory(
   const root = mkdtempSync(path.join(realpathSync(tmpdir()), "kia-synthetic-jcim-more-"));
   try {
     const directory = path.join(root, ".kia-public-data");
-    mkdirSync(directory, { mode: options.directoryMode ?? 0o700 });
+    const directoryMode = options.directoryMode ?? 0o700;
+    mkdirSync(directory, { mode: directoryMode });
+    // mkdir mode is masked by umask. Apply the requested mode so an unsafe mode is what the test creates.
+    chmodSync(directory, directoryMode);
     setup(directory);
     check(root);
   } finally {
@@ -166,7 +169,9 @@ describe("KIA-jcim-more-articles-1: fail-closed local cache", () => {
       expect(readFrom(root)).toEqual({ status: "unavailable", reason: "cache_unsafe" });
     }, { directoryMode: 0o755 });
     withCacheDirectory((directory) => {
-      writeFileSync(path.join(directory, `${JCIM_SOURCE_ID}.json`), JSON.stringify(cache), { mode: 0o644 });
+      const jsonPath = path.join(directory, `${JCIM_SOURCE_ID}.json`);
+      writeFileSync(jsonPath, JSON.stringify(cache), { mode: 0o644 });
+      chmodSync(jsonPath, 0o644);
       writeFileSync(path.join(directory, `${JCIM_SOURCE_ID}.pdf`), pdf, { mode: 0o600 });
     }, (root) => {
       expect(lstatSync(path.join(root, ".kia-public-data", `${JCIM_SOURCE_ID}.json`)).mode & 0o077).not.toBe(0);

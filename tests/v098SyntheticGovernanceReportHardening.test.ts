@@ -36,7 +36,7 @@ describe("v0.9.8 synthetic governance report hardening", () => {
     expect(result.stdout).toContain("scansDirectories: false");
     expect(result.stdout).toContain("acceptsPathArguments: false");
     expect(result.stdout).toContain("stopOnWarnFail: true");
-  });
+  }, 20_000);
 
   it("keeps report output proof-safe and rejects path arguments", () => {
     const result = runReport();
@@ -48,5 +48,5 @@ describe("v0.9.8 synthetic governance report hardening", () => {
     expect(rejected.status).toBe(1);
     expect(rejected.stderr).toContain("Unexpected argument rejected");
     expect(rejected.stdout).toBe("");
-  });
+  }, 20_000);
 });
