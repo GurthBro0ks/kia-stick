@@ -506,7 +506,7 @@ describe("runtime build identity", () => {
     expect(html).toContain("Current Local Validation</dt><dd>PASS");
     expect(html).toContain("Current Local Pushed</dt><dd>no");
     expect(html).toContain("Current Local Manual QA</dt><dd>PASS");
-    expect(html).toContain("Accepted Capability</dt><dd>20562b3");
+    expect(html).toContain("Accepted Capability</dt><dd>4d47f5f");
     expect(html).toContain("Back to KIA Stick");
     expect(html).toContain("href=\"/\"");
     expect(html).toMatch(/0\.7\.0-dev\.\d{8}\+(?:[a-z0-9]+|unknown)/);

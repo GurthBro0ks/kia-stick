@@ -30,14 +30,14 @@ describe("public Settings summary and operator diagnostics split", () => {
 
     expect(html).toContain("Data and privacy mode");
     expect(html).toContain("local public pilot + fake samples");
-    expect(html).toContain("Hermetic JCIM/CBA Fixtures and Opt-In Real-Cache Gates");
-    expect(html).toContain("20562b3");
+    expect(html).toContain("Sources load-failure reload message");
+    expect(html).toContain("4d47f5f");
     expect(html).toContain("Validation</dt><dd>PASS");
     expect(html).toContain("Operator QA</dt><dd>PASS");
     expect(html).toContain("Pushed</dt><dd>yes");
     expect(html).toContain("KIA Stick 0.7.0");
     expect(html).toContain("Current build</dt><dd>9773768");
-    expect(html).toContain("Hermetic-2 Post-Merge Accepted-State Metadata Refresh");
+    expect(html).toContain("Sources load-failure accepted-checkpoint refresh");
     expect(html).toContain(PUBLIC_STEWARD_WORKFLOW_PHASE);
     expect(html).toContain("PASS for the local proof gate");
     expect(html).toContain("Pushed</dt><dd>no");
@@ -75,19 +75,19 @@ describe("public Settings summary and operator diagnostics split", () => {
     expect(html).toContain("v0.9.12C remains blocked");
     expect(html).toContain("queue-015 blocked");
     expect(html).toContain("Package lock</dt><dd>unchanged");
-    expect(html).toContain("repository equality verified at cbdcc71");
+    expect(html).toContain("repository equality verified at 9d41665");
     expect(html).toContain("accepted feature checkpoint is distinct from the repository/closeout recording point");
-    expect(html).toContain("Accepted-state recording baseline</dt><dd>cbdcc71160f3442b0d578218ab1cb08d66d64d39");
-    expect(html).toContain("Latest pushed repository closeout commit</dt><dd>cbdcc71160f3442b0d578218ab1cb08d66d64d39");
+    expect(html).toContain("Accepted-state recording baseline</dt><dd>9d4166550daa8ac628f8243d5e47a3be6a6e4b1c");
+    expect(html).toContain("Latest pushed repository closeout commit</dt><dd>9d4166550daa8ac628f8243d5e47a3be6a6e4b1c");
     expect(html).toContain("Latest pushed repository closeout");
     expect(html).toContain(currentAcceptedPushedState.latest_pushed_closeout_short_commit as string);
     expect(html).toContain(currentAcceptedPushedState.local_bundle_status);
     expect(currentAcceptedPushedState.local_bundle_status).toContain("pushed no");
     expect(currentAcceptedPushedState.local_bundle_status).toContain("manual QA PASS");
-    expect(html).toContain("Current working bundle</dt><dd>Hermetic-2 Post-Merge Accepted-State Metadata Refresh; validation PASS; pushed no; manual QA PASS");
-    expect(currentAcceptedPushedState.accepted_pushed_short_commit).toBe("20562b3");
-    expect(currentAcceptedPushedState.repository_recording_short_commit).toBe("cbdcc71");
-    expect(currentAcceptedPushedState.latest_pushed_closeout_short_commit).toBe("cbdcc71");
+    expect(html).toContain("Current working bundle</dt><dd>Sources load-failure accepted-checkpoint refresh; validation PASS; pushed no; manual QA PASS");
+    expect(currentAcceptedPushedState.accepted_pushed_short_commit).toBe("4d47f5f");
+    expect(currentAcceptedPushedState.repository_recording_short_commit).toBe("9d41665");
+    expect(currentAcceptedPushedState.latest_pushed_closeout_short_commit).toBe("9d41665");
     expect(html).not.toContain("HEAD == origin/main at 9b0fda9");
     expect(html).not.toContain("HEAD equal to origin/main at 9b0fda9");
     expect(html).toContain("Build Date");
@@ -120,7 +120,7 @@ describe("public Settings summary and operator diagnostics split", () => {
     expect(html).toContain("Current Local Validation</dt><dd>PASS");
     expect(html).toContain("Current Local Pushed</dt><dd>no");
     expect(html).toContain("Current Local Manual QA</dt><dd>PASS");
-    expect(html).toContain("Accepted Capability</dt><dd>20562b3");
+    expect(html).toContain("Accepted Capability</dt><dd>4d47f5f");
     for (const label of ["Product Version", "Channel", "Build Date", "Git SHA", "Corpus", "Index", "Prompt", "Provider", "Source Classes"]) {
       expect(html).toContain(label);
     }

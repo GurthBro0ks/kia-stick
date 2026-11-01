@@ -6,24 +6,24 @@ import { CURRENT_PHASE } from "@/lib/version";
 describe("public truth runtime identity", () => {
   it("keeps the accepted pushed phase derived from the accepted-state contract", () => {
     expect(CURRENT_PHASE).toBe(currentAcceptedPushedState.accepted_pushed_phase);
-    expect(currentAcceptedPushedState.checkpoint_label).toBe("Hermetic JCIM/CBA Fixtures and Opt-In Real-Cache Gates at 20562b3");
+    expect(currentAcceptedPushedState.checkpoint_label).toBe("Sources load-failure reload message at 4d47f5f");
   });
 
   it("reports the local bundle phase and distinct repository identities", async () => {
     const response = GET();
     const payload = await response.json();
     expect(currentAcceptedPushedState.local_bundle_phase).toBe(
-      "KIA-Stick-hermetic-2-post-merge-accepted-state-metadata-refresh"
+      "KIA-sources-load-acceptance-1"
     );
     expect(payload.phase).toBe(currentAcceptedPushedState.local_bundle_phase);
-    expect(payload.localBundle).toBe("Hermetic-2 Post-Merge Accepted-State Metadata Refresh");
+    expect(payload.localBundle).toBe("Sources load-failure accepted-checkpoint refresh");
     expect(payload.acceptedCheckpoint).toBe(currentAcceptedPushedState.checkpoint_label);
     expect(payload.acceptedCommit).toBe(currentAcceptedPushedState.accepted_pushed_commit);
-    expect(payload.acceptedCommit).toBe("20562b3a0112f6430ac1707ec8a9f7681d4af5f7");
+    expect(payload.acceptedCommit).toBe("4d47f5f6f2e7ee3a1d76b4058cc89548afcc157c");
     expect(payload.repositoryRecordingCommit).toBe(currentAcceptedPushedState.repository_recording_commit);
-    expect(payload.repositoryRecordingCommit).toBe("cbdcc71160f3442b0d578218ab1cb08d66d64d39");
+    expect(payload.repositoryRecordingCommit).toBe("9d4166550daa8ac628f8243d5e47a3be6a6e4b1c");
     expect(payload.latestPushedCloseoutCommit).toBe(currentAcceptedPushedState.latest_pushed_closeout_commit);
-    expect(payload.latestPushedCloseoutCommit).toBe("cbdcc71160f3442b0d578218ab1cb08d66d64d39");
+    expect(payload.latestPushedCloseoutCommit).toBe("9d4166550daa8ac628f8243d5e47a3be6a6e4b1c");
     expect(new Set([
       payload.acceptedCommit,
       payload.repositoryRecordingCommit,
@@ -58,13 +58,13 @@ describe("public truth runtime identity", () => {
     expect(payload.manualQa).toBe(localBundleManualQaStatus());
     expect(payload.manualQa).toBe("PASS");
     expect(payload.pushed).toBe(false);
-    expect(payload.acceptedCommit).toBe("20562b3a0112f6430ac1707ec8a9f7681d4af5f7");
-    expect(payload.latestPushedCloseoutCommit).toBe("cbdcc71160f3442b0d578218ab1cb08d66d64d39");
+    expect(payload.acceptedCommit).toBe("4d47f5f6f2e7ee3a1d76b4058cc89548afcc157c");
+    expect(payload.latestPushedCloseoutCommit).toBe("9d4166550daa8ac628f8243d5e47a3be6a6e4b1c");
     expect(payload.productVersion).toBe("0.7.0");
     expect(currentAcceptedPushedState.historical_prior_checkpoints[0]).toEqual({
-      checkpoint: "Source and Citation Integrity Hardening",
-      commit: "9b0fda9f562fb7e632e571e6299eb2dcc77b7b1e",
-      short_commit: "9b0fda9",
+      checkpoint: "Hermetic JCIM/CBA Fixtures and Opt-In Real-Cache Gates",
+      commit: "20562b3a0112f6430ac1707ec8a9f7681d4af5f7",
+      short_commit: "20562b3",
       status: "historical_only_not_current",
     });
   });

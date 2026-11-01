@@ -459,9 +459,9 @@ describe("public CBA overtime cited grievance outline", () => {
     const health = await GET().json();
     expect(health.phase).toBe(currentAcceptedPushedState.local_bundle_phase);
     expect(health.productVersion).toBe("0.7.0");
-    expect(health.acceptedCommit).toBe("20562b3a0112f6430ac1707ec8a9f7681d4af5f7");
-    expect(health.repositoryRecordingCommit).toBe("cbdcc71160f3442b0d578218ab1cb08d66d64d39");
-    expect(health.latestPushedCloseoutCommit).toBe("cbdcc71160f3442b0d578218ab1cb08d66d64d39");
+    expect(health.acceptedCommit).toBe("4d47f5f6f2e7ee3a1d76b4058cc89548afcc157c");
+    expect(health.repositoryRecordingCommit).toBe("9d4166550daa8ac628f8243d5e47a3be6a6e4b1c");
+    expect(health.latestPushedCloseoutCommit).toBe("9d4166550daa8ac628f8243d5e47a3be6a6e4b1c");
     expect(health.dataModes.private_data).toBe("blocked");
     expect(health.dataModes.external_ai).toBe("disabled");
     expect(health.realDbTouched).toBe(false);
@@ -475,7 +475,7 @@ describe("public CBA overtime cited grievance outline", () => {
       operatorDiagnosticsOpen: false,
       onOperatorDiagnosticsToggle: () => undefined,
     }));
-    expect(settings).toContain("Hermetic-2 Post-Merge Accepted-State Metadata Refresh");
+    expect(settings).toContain("Sources load-failure accepted-checkpoint refresh");
     expect(settings).toContain(currentAcceptedPushedState.local_bundle_phase);
     expect(settings).toContain("Manual QA</dt><dd>PASS");
     expect(settings).toContain(runtimeVersion.gitSha);
