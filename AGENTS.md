@@ -6,7 +6,7 @@ Omarchy setup and current path conventions are documented in `docs/omarchy-setup
 The private shared-drive boundary also applies to `/run/media/<user>/SHARED/APWU`.
 Legacy Mint proof paths are historical identifiers; proof tools resolve them to the current user's state directory.
 
-This repo is a laptop-only MVP for KIA Stick / Know-It-All Stick using **fake sample documents only**.
+This repo is a laptop-only MVP for KIA Stick / Know-It-All Stick using **fake sample documents only**. The only remote path is the Cloudflare exception under Forbidden.
 
 ## Design/UX Routing
 
@@ -27,6 +27,8 @@ Forbidden:
 - Tokens, cookies, auth headers, device IDs, API keys, or secrets.
 - APK/XAPK, `.so`, `.luac`, raw captures, vector stores, uploads, private docs, exports, or backups.
 - NUC, SSH, Discord, Caddy, DNS, cron, systemd, tmux, or cloud calls for this MVP.
+
+Exception, Gurth 2026-11-01: one Cloudflare tunnel to Gurth's own machine is allowed. The audience is Gurth only until the app is finished or user testing starts. That tunnel may serve the public CBA, JCIM, and NLRB cache. No spending, no agent-created accounts, no Vercel, and no Fly.io. NUC, SSH, Discord, Caddy, cron, systemd, tmux, and every other cloud call stay forbidden.
 
 ## Agent Prompt Wrapper
 
