@@ -58,10 +58,10 @@ describe("UX-8 accessibility semantics and navigation", () => {
       view: "chat", onNavigate: () => undefined, onNewConversation: () => undefined,
       conversationTitle: "Current test conversation", displayVersion: "test-build", children: "main content",
     }));
-    for (const label of ["Pinned", "Projects", "Chats"]) {
-      expect(html).toContain(`<div class="sidebarSectionLabel">${label}</div>`);
-      expect(html).not.toContain(`<h2>${label}</h2>`);
-    }
+    expect(html).toContain('<div class="sidebarSectionLabel">Pinned</div>');
+    expect(html).not.toContain("<h2>Pinned</h2>");
+    expect(html).not.toContain("<h2>Projects</h2>");
+    expect(html).not.toContain("<h2>Chats</h2>");
     expect(html).not.toContain("<h2");
     expect(css).toContain(".sidebarSectionLabel { font-size: .7rem; color: var(--muted); font-weight: 600; padding: 0 10px; margin-block: .83em; }");
   });

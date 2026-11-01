@@ -1,3 +1,9 @@
+## GUR-120 approved layout — 2026-11-01
+
+- Gurth corrected the visual scope the same day: show the approved Hybrid, Light, and Dark screen, and stub controls that are not finished. Training lessons and the Expert matrix stay later gates. Manual QA stays pending. Product version remains `0.7.0`. No push, no merge, no deploy.
+- The shell now has the brand line, the panel-collapse control above the Chat / Steward Training / Expert dropdown, the PNG sidebar rows, six suggestion cards that use the existing composer send path, and honest stubs for Search, Help, Guides, voice, and file add. The public-data warning stays. Source status is computed from the three public loaders and is not a hard-coded "Sources Current" label.
+- Proof: `/workspace/galaxy-prep/kia-stick/evidence/GUR-120-visual-layout-2026-11-01`.
+
 ## GUR-120 three visual themes — 2026-11-01
 
 - Phase: `GUR-120`, branch `kia/visual-facelift-1` off `87ec505ea50f83bce48c8f9afa1d420c7ae6e84e`. Bounded local appearance work only. No push, no merge, no deploy. Manual QA stays pending. Product version remains `0.7.0`.

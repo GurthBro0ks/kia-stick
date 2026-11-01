@@ -20,13 +20,33 @@ describe("GUR-120 three visual themes", () => {
     expect(shell).toContain("PanelLeftOpen");
   });
 
-  it("does not invent the reference-only controls", () => {
+  it("shows the approved layout and stubs unfinished controls", () => {
     const html = renderToStaticMarkup(createElement(AppShell, {
       view: "chat", onNavigate: () => undefined, onNewConversation: () => undefined,
       conversationTitle: "Current test conversation", displayVersion: "test-build", children: "existing panels",
     }));
-    for (const absent of ["Training", "Expert", "Suggested by KIA", "Search Sources", "Weingarten"]) expect(html).not.toContain(absent);
-    expect(shell).not.toContain("Chat</option>");
+    const app = readFileSync("components/KiaStickApp.tsx", "utf8");
+    expect(html.indexOf('aria-label="Collapse sidebar"')).toBeLessThan(html.indexOf('aria-label="Mode"'));
+    expect(html).toContain("value=\"chat\"");
+    expect(html).toContain(">Chat</option>");
+    expect(html).toContain("Steward Training");
+    expect(html).toContain("Expert");
+    expect(shell).toContain("Steward Training is not built yet. The Chat conversation is unchanged.");
+    expect(shell).toContain("Expert is not built yet. The Chat conversation is unchanged.");
+    expect(shell).toContain("Search is not ready.");
+    expect(shell).toContain("Help is not ready.");
+    expect(shell).toContain("Guides are not ready.");
+    expect(html).toContain("Contract Knowledge &amp; Steward Assistant");
+    for (const label of ["New chat", "Search", "Library", "Sources", "Annual Leave Rights", "Investigative Interview Prep", "Discipline Grievance"]) expect(html).toContain(label);
+    expect(html).not.toContain("Sources Current");
+    expect(app).not.toContain("Sources Current");
+    expect(app).toContain("Suggested by KIA");
+    expect(app).toContain("Search Sources");
+    expect(app).toContain("Explain my Weingarten rights in simple terms.");
+    expect(app).toContain("Voice input is not ready.");
+    expect(app).toContain("Adding files is not ready.");
+    expect(app).toContain("Fake samples / public data only — no private data");
+    expect(shell).toContain("PanelLeftClose");
   });
 
   it("paints a light hybrid workspace and a separate dark sidebar", () => {
