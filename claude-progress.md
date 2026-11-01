@@ -1,3 +1,12 @@
+## Sources load-failure accepted checkpoint — 2026-11-01
+
+- Phase: `KIA-sources-load-acceptance-1`, branch `kia/sources-load-acceptance-1` off `origin/main` `9d4166550daa8ac628f8243d5e47a3be6a6e4b1c` (PR #25 merge). Owner words in KIA Lead 1:1, 2026-10-31: "Lets do the next steps." This entry records the accepted checkpoint only. No deploy and no push.
+- Accepted capability: `4d47f5f6f2e7ee3a1d76b4058cc89548afcc157c` (`4d47f5f`), contained in that main commit. Checkpoint: `Sources load-failure reload message`. Label: `Sources load-failure reload message at 4d47f5f`. Bundle: `KIA-Stick-sources-load-failure-owner-accepted-capability`. Validation PASS, manual QA PASS, pushed yes.
+- Repository recording and latest pushed closeout: `9d4166550daa8ac628f8243d5e47a3be6a6e4b1c` (`9d41665`). Equality is that capability commit contained in HEAD == origin/main == remote main == `9d4166550daa8ac628f8243d5e47a3be6a6e4b1c` at the PR #25 merge.
+- Prior hermetic checkpoint `20562b3a0112f6430ac1707ec8a9f7681d4af5f7` is first in `historical_prior_checkpoints` with status `historical_only_not_current`.
+- Local bundle: `Sources load-failure accepted-checkpoint refresh`, phase `KIA-sources-load-acceptance-1`, validation PASS, manual QA PASS, pushed no. Owner screen check: `/workspace/galaxy-prep/kia-stick/evidence/KIA-sources-load-failure-owner-qa.md`. Local proof: `/workspace/galaxy-prep/kia-stick/evidence/WO-KIA-2026-10-31-pr25-review.md`.
+- Scope: `data/current-accepted-pushed-state.json`, the seven current-checkpoint tests, and this ledger. No product component edits.
+
 ## /health recorded-metadata labels — 2026-10-29
 
 - Phase: `KIA-health-labels-1`, branch `kia/health-labels-1` off `kia/deps-doc-followup-1` tip `47b28896b9fc5292f0840ad18768fedffaecc0f5` (not yet merged into `origin/main` `196e92bd`). Owner GO for the fix; local commit only, no push, no PR, no merge, no served-app move.

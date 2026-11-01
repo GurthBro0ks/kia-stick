@@ -9,9 +9,9 @@ import { createRuntimeVersion } from "@/lib/version";
 import { createCbaSourceFixtureCache } from "@/tests/fixtures/cbaSourceFixture";
 import { createPublicSourceFixtureCache } from "@/tests/fixtures/publicSourceFixture";
 
-const currentLocalPhase = "KIA-Stick-hermetic-2-post-merge-accepted-state-metadata-refresh";
-const acceptedCommit = "20562b3a0112f6430ac1707ec8a9f7681d4af5f7";
-const repositoryRecordingCommit = "cbdcc71160f3442b0d578218ab1cb08d66d64d39";
+const currentLocalPhase = "KIA-sources-load-acceptance-1";
+const acceptedCommit = "4d47f5f6f2e7ee3a1d76b4058cc89548afcc157c";
+const repositoryRecordingCommit = "9d4166550daa8ac628f8243d5e47a3be6a6e4b1c";
 
 describe("Bundle 3 QA runtime truth and favicon correction", () => {
   it("separates the accepted pushed repair from the local bookkeeping promotion", async () => {
@@ -22,7 +22,7 @@ describe("Bundle 3 QA runtime truth and favicon correction", () => {
     expect(currentAcceptedPushedState.repository_recording_commit).toBe(repositoryRecordingCommit);
     expect(currentAcceptedPushedState.latest_pushed_closeout_commit).toBe(repositoryRecordingCommit);
 
-    expect(currentAcceptedPushedState.local_bundle).toBe("Hermetic-2 Post-Merge Accepted-State Metadata Refresh");
+    expect(currentAcceptedPushedState.local_bundle).toBe("Sources load-failure accepted-checkpoint refresh");
     expect(currentAcceptedPushedState.local_bundle_phase).toBe(currentLocalPhase);
     expect(currentAcceptedPushedState.local_bundle_validation).toBe("PASS");
     expect(currentAcceptedPushedState.local_bundle_pushed).toBe(false);
@@ -51,7 +51,7 @@ describe("Bundle 3 QA runtime truth and favicon correction", () => {
       onOperatorDiagnosticsToggle: () => undefined,
     }));
     expect(html).toContain("Current accepted capability");
-    expect(html).toContain("Feature commit</dt><dd>20562b3");
+    expect(html).toContain("Feature commit</dt><dd>4d47f5f");
     expect(html).toContain("Operator QA</dt><dd>PASS");
     expect(html).toContain("Current application build");
     expect(html).toContain(currentLocalPhase);

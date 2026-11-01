@@ -390,14 +390,14 @@ describe("public CBA annual-leave cited grievance outline", () => {
 
   it("keeps Settings, health, accepted identities, product, and blocked gates truthful", async () => {
     expect(currentAcceptedPushedState.local_bundle_phase).toBe(
-      "KIA-Stick-hermetic-2-post-merge-accepted-state-metadata-refresh"
+      "KIA-sources-load-acceptance-1"
     );
     expect(currentAcceptedPushedState.local_bundle_status).toBe(
-      "hermetic-2 post-merge accepted-state metadata refresh; validation PASS; pushed no; manual QA PASS"
+      "Sources load-failure accepted-checkpoint refresh; validation PASS; pushed no; manual QA PASS"
     );
-    expect(currentAcceptedPushedState.accepted_pushed_commit).toBe("20562b3a0112f6430ac1707ec8a9f7681d4af5f7");
-    expect(currentAcceptedPushedState.repository_recording_commit).toBe("cbdcc71160f3442b0d578218ab1cb08d66d64d39");
-    expect(currentAcceptedPushedState.latest_pushed_closeout_commit).toBe("cbdcc71160f3442b0d578218ab1cb08d66d64d39");
+    expect(currentAcceptedPushedState.accepted_pushed_commit).toBe("4d47f5f6f2e7ee3a1d76b4058cc89548afcc157c");
+    expect(currentAcceptedPushedState.repository_recording_commit).toBe("9d4166550daa8ac628f8243d5e47a3be6a6e4b1c");
+    expect(currentAcceptedPushedState.latest_pushed_closeout_commit).toBe("9d4166550daa8ac628f8243d5e47a3be6a6e4b1c");
 
     const healthResponse = GET();
     const health = await healthResponse.json();
@@ -417,7 +417,7 @@ describe("public CBA annual-leave cited grievance outline", () => {
       operatorDiagnosticsOpen: false,
       onOperatorDiagnosticsToggle: () => undefined,
     }));
-    expect(settingsHtml).toContain("Hermetic-2 Post-Merge Accepted-State Metadata Refresh");
+    expect(settingsHtml).toContain("Sources load-failure accepted-checkpoint refresh");
     expect(settingsHtml).toContain(currentAcceptedPushedState.local_bundle_phase);
     expect(settingsHtml).toContain("Manual QA</dt><dd>PASS");
     expect(settingsHtml).toContain(currentAcceptedPushedState.accepted_pushed_short_commit);
