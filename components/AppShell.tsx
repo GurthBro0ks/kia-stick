@@ -65,7 +65,7 @@ export function AppShell({ view, onNavigate, onNewConversation, conversationTitl
         <details className="sidebarMenu">
           <summary aria-label="Menu" title="Menu"><Menu size={19} /><span>Menu</span></summary>
           <div className="sidebarMenuContents">
-            <label>Appearance<select aria-label="Appearance" value={appearance} onChange={(event) => { const next = normalizeAppearance(event.target.value); applyAppearance(next); setAppearance(next); }}><option value="light">Light</option><option value="dark">Dark</option><option value="system">System</option></select></label>
+            <label>Appearance<select aria-label="Appearance" value={appearance} onChange={(event) => { const next = normalizeAppearance(event.target.value); applyAppearance(next); setAppearance(next); }}><option value="hybrid">Hybrid</option><option value="light">Light</option><option value="dark">Dark</option><option value="system">System</option></select></label>
             <button type="button" onClick={() => navigate("settings")}>Settings</button>
             <details><summary>Advanced / Tools</summary><div className="sidebarTools">{(["upload", "vault", "import"] as const).map((target) => <button key={target} type="button" aria-current={view === target ? "page" : undefined} onClick={() => navigate(target)}>{titles[target]}</button>)}</div></details>
             <a href="/version">Version / About</a><small>{displayVersion}</small>

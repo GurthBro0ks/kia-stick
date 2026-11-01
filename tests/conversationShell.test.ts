@@ -14,7 +14,7 @@ describe("conversation shell preservation", () => {
       view: "chat", onNavigate: () => undefined, onNewConversation: () => undefined,
       conversationTitle: "Current test conversation", displayVersion: "test-build", children: "existing panels",
     }));
-    for (const label of ["New conversation", "Packets", "Sources", "Library", "Pinned", "Projects", "Coming later", "Chats", "Current test conversation", "Settings", "Advanced / Tools", "Upload", "Vault", "Import", "Version / About", "Appearance", "Light", "Dark", "System"])
+    for (const label of ["New conversation", "Packets", "Sources", "Library", "Pinned", "Projects", "Coming later", "Chats", "Current test conversation", "Settings", "Advanced / Tools", "Upload", "Vault", "Import", "Version / About", "Appearance", "Hybrid", "Light", "Dark", "System"])
       expect(html).toContain(label);
     expect(html).not.toContain("Nothing pinned yet");
     expect(html).not.toContain("No projects yet");

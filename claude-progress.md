@@ -1,3 +1,10 @@
+## GUR-120 three visual themes — 2026-11-01
+
+- Phase: `GUR-120`, branch `kia/visual-facelift-1` off `87ec505ea50f83bce48c8f9afa1d420c7ae6e84e`. Bounded local appearance work only. No push, no merge, no deploy. Manual QA stays pending. Product version remains `0.7.0`.
+- Themes: Hybrid (dark navy semi-glass sidebar, light workspace), Light, and Dark, beside the existing System choice. Fonts, icons, radii, and shell structure stay. The desktop sidebar still uses the panel-collapse icon. No Chat dropdown, Training, Expert, or home-screen suggestion cards.
+- Files: `lib/appearance.ts`, `components/AppShell.tsx`, `app/globals.css`, `tests/appearanceMenu.test.ts`, `tests/conversationShell.test.ts`, `tests/visualThemes.test.ts`, and this ledger. `feature_list.json` was left unchanged. `scripts/git_auto_sync.sh` was not run.
+- Proof: `/workspace/galaxy-prep/kia-stick/evidence/GUR-120-visual-2026-11-01`.
+
 ## Sources load-failure accepted checkpoint — 2026-11-01
 
 - Phase: `KIA-sources-load-acceptance-1`, branch `kia/sources-load-acceptance-1` off `origin/main` `9d4166550daa8ac628f8243d5e47a3be6a6e4b1c` (PR #25 merge). Owner words in KIA Lead 1:1, 2026-10-31: "Lets do the next steps." This entry records the accepted checkpoint only. No deploy and no push.
