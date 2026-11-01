@@ -47,4 +47,23 @@ describe("GUR-120 three visual themes", () => {
     const system = css.match(/:root:not\(\[data-theme="light"\]\) \{([^}]+)\}/)?.[1];
     expect(explicit).toBe(system);
   });
+
+  it("recomputes ink and muted on the hybrid sidebar and mobile drawer", () => {
+    const block = css.match(/:root\[data-theme="hybrid"\] :is\(\.desktopSidebar, \.mobileSidebarDrawer\) \{([^}]+)\}/)?.[1] ?? "";
+    expect(block).toMatch(/--text-primary:\s*#f4f7fb/);
+    expect(block).toMatch(/--text-secondary:\s*#c9d4e6/);
+    expect(block).toContain("--ink: var(--text-primary)");
+    expect(block).toContain("--muted: var(--text-secondary)");
+    const interior = css.match(/:root\[data-theme="hybrid"\] \.mobileSidebarInterior \{([^}]+)\}/)?.[1] ?? "";
+    expect(interior).toContain("--ink: var(--text-primary)");
+    expect(interior).toContain("--muted: var(--text-secondary)");
+    expect(interior).not.toContain("background");
+    expect(interior).not.toContain("backdrop-filter");
+    const rootAliases = css.match(/:root \{\s*--ink: var\(--text-primary\);\s*--muted: var\(--text-secondary\);/);
+    expect(rootAliases).not.toBeNull();
+    expect(block).not.toContain("#0f172a");
+    expect(block).not.toContain("#475569");
+    expect(css).toContain("color: var(--ink)");
+    expect(css).toContain("color: var(--muted)");
+  });
 });

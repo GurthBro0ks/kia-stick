@@ -184,6 +184,8 @@
   --bg-elevated: #1a2744;
   --text-primary: #f4f7fb;
   --text-secondary: #c9d4e6;
+  --ink: var(--text-primary);
+  --muted: var(--text-secondary);
   --border-subtle: rgba(255, 255, 255, 0.14);
   --border-strong: rgba(255, 255, 255, 0.28);
   --accent: #93c5fd;
@@ -199,6 +201,10 @@
   border-color: rgba(255, 255, 255, 0.12);
   box-shadow: 10px 0 28px rgba(7, 16, 36, 0.12);
   backdrop-filter: blur(16px);
+}
+:root[data-theme="hybrid"] .mobileSidebarInterior {
+  --ink: var(--text-primary);
+  --muted: var(--text-secondary);
 }
 :root[data-theme="hybrid"] .sidebarWordmark { color: var(--text-primary); }
 
