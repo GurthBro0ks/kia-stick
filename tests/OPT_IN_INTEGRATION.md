@@ -106,10 +106,15 @@ citation integrity, or routing changes, **or** source test fixtures change.
   with the printed reason. Never substitute synthetic/default-suite results for
   opt-in real-cache coverage.
 
-- [ ] **D4 — Phase-runner does not set the real-cache env.** 
-  `scripts/phase-runner.mjs` never sets `KIA_REAL_PUBLIC_DATA_DIR`; children only
-  inherit an operator-exported value. Opt-in under the runner requires the
-  operator to export it beforehand (see above).
+- [ ] **D4 — Phase-runner does not set the real-cache env.**
+  `scripts/phase-runner.mjs` never sets `KIA_REAL_PUBLIC_DATA_DIR`. Step
+  `05b_real_public_cache` runs immediately after `05_test`. Unset or empty:
+  that step's log is `NOT_RUN`, the step passes, and Vitest is not launched.
+  A set value is inherited unchanged and the step runs
+  `./node_modules/.bin/vitest run tests/jcimSource.realCache.integration.test.ts tests/publicSourceSufficiencyMatrixV2.test.ts`.
+  A nonzero exit fails validation and stops later validation steps. Children
+  only inherit an operator-exported value. Opt-in under the runner requires
+  the operator to export it beforehand (see above).
 
 - [ ] **D5 — Real-npm opt-in is separate.** Phase-runner real-npm coverage uses
   `KIA_PHASE_RUNNER_REAL_NPM=1` and is independent of Condition D real-cache
