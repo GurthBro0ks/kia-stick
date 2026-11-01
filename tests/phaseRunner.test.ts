@@ -206,6 +206,7 @@ describe("phase-runner", () => {
     const skippedAfterFailure = [
       "04_typecheck",
       "05_test",
+      "05b_real_public_cache",
       "06_build",
       "07_scan_fake",
       "08_scan_privacy",
@@ -231,6 +232,82 @@ describe("phase-runner", () => {
     expect(existsSync(join(proofDir, "03_lint.log"))).toBe(true);
     expect(existsSync(join(proofDir, "04_typecheck.log"))).toBe(false);
     expect(existsSync(join(proofDir, "09_qa.log"))).toBe(false);
+  });
+
+  function envWithoutRealCache(extra: NodeJS.ProcessEnv = {}): NodeJS.ProcessEnv {
+    const env: NodeJS.ProcessEnv = { ...process.env };
+    delete env.KIA_REAL_PUBLIC_DATA_DIR;
+    return { ...env, ...extra };
+  }
+
+  function writeFakeVitest(root: string): void {
+    const binDir = join(root, "node_modules", ".bin");
+    mkdirSync(binDir, { recursive: true });
+    writeFileSync(join(binDir, "vitest"), [
+      "#!/usr/bin/env node",
+      "const { appendFileSync } = require('node:fs');",
+      "const dir = Object.prototype.hasOwnProperty.call(process.env, 'KIA_REAL_PUBLIC_DATA_DIR') ? process.env.KIA_REAL_PUBLIC_DATA_DIR : null;",
+      "appendFileSync(process.env.KIA_FAKE_VITEST_LOG, JSON.stringify({ argv: process.argv.slice(2), dir }) + '\\n');",
+      "process.exit(Number(process.env.KIA_FAKE_VITEST_EXIT || '0'));",
+      "",
+    ].join("\n"), { mode: 0o755 });
+  }
+
+  it("leaves the real-cache step NOT_RUN and does not launch Vitest when the variable is unset or empty", () => {
+    const source = readFileSync(scriptPath, "utf8");
+    expect(source).not.toMatch(/KIA_REAL_PUBLIC_DATA_DIR\s*=/);
+
+    for (const realPublicCacheDir of [undefined, ""] as const) {
+      const root = createRunnerFixture();
+      const vitestLog = join(root, "vitest-invocations.jsonl");
+      writeFakeVitest(root);
+      const extra: NodeJS.ProcessEnv = { KIA_FAKE_VITEST_LOG: vitestLog };
+      if (realPublicCacheDir === "") extra.KIA_REAL_PUBLIC_DATA_DIR = "";
+      const result = runPhaseRunner(root, ["--phase", "KIA-Stick-real-cache-not-run"], envWithoutRealCache(extra));
+      const proofDir = proofDirFromOutput(result.stdout);
+
+      expect(result.status).toBe(0);
+      expect(existsSync(vitestLog)).toBe(false);
+      expect(readFileSync(join(proofDir, "05b_real_public_cache.log"), "utf8")).toBe("NOT_RUN\n");
+      expect(readFileSync(join(proofDir, "RESULT.md"), "utf8")).toContain("- PASS 05b_real_public_cache (05b_real_public_cache.log)");
+      expect(readFileSync(join(proofDir, "RESULT.md"), "utf8")).toContain("- PASS 06_build (06_build.log)");
+    }
+  });
+
+  it("passes a set real-cache directory through and stops later validation when that step fails", () => {
+    const root = createRunnerFixture();
+    const vitestLog = join(root, "vitest-invocations.jsonl");
+    const realPublicCacheDir = join(root, "not-a-real-cache");
+    writeFakeVitest(root);
+    const result = runPhaseRunner(root, ["--phase", "KIA-Stick-real-cache-fail"], envWithoutRealCache({
+      KIA_FAKE_VITEST_LOG: vitestLog,
+      KIA_FAKE_VITEST_EXIT: "1",
+      KIA_REAL_PUBLIC_DATA_DIR: realPublicCacheDir,
+    }));
+    const proofDir = proofDirFromOutput(result.stdout);
+    const resultMd = readFileSync(join(proofDir, "RESULT.md"), "utf8");
+    const invocations = readFileSync(vitestLog, "utf8").trim().split("\n").map((line) => JSON.parse(line));
+
+    expect(invocations).toEqual([{
+      argv: [
+        "run",
+        "tests/jcimSource.realCache.integration.test.ts",
+        "tests/publicSourceSufficiencyMatrixV2.test.ts",
+      ],
+      dir: realPublicCacheDir,
+    }]);
+    expect(readNpmInvocations(result.npmLogPath).map((entry) => entry.args[1])).toEqual([
+      "release:check",
+      "lint",
+      "typecheck",
+      "test",
+    ]);
+    expect(result.status).toBe(1);
+    expect(resultMd).toContain("- PASS 05_test (05_test.log)");
+    expect(resultMd).toContain("- FAIL 05b_real_public_cache (05b_real_public_cache.log)");
+    expect(resultMd).not.toContain("06_build");
+    expect(resultMd).toContain("- RESULT: FAIL");
+    expect(existsSync(realPublicCacheDir)).toBe(false);
   });
 
   it("never executes git push while producing the manual push command", () => {

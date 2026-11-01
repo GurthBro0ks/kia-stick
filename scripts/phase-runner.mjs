@@ -36,6 +36,7 @@ const validationSteps = [
   { name: "03_lint", command: "npm", args: ["run", "lint"] },
   { name: "04_typecheck", command: "npm", args: ["run", "typecheck"] },
   { name: "05_test", command: "npm", args: ["run", "test"] },
+  { name: "05b_real_public_cache", run: runRealPublicCacheStep },
   { name: "06_build", command: "npm", args: ["run", "build"] },
   { name: "07_scan_fake", command: "npm", args: ["run", "scan:fake"] },
   { name: "08_scan_privacy", command: "npm", args: ["run", "scan:privacy"] },
@@ -169,6 +170,23 @@ function runShell(root, proofDir, name, shell) {
   return runCommand(root, proofDir, name, "bash", ["-lc", shell]);
 }
 
+const realPublicCacheVitestArgs = [
+  "run",
+  "tests/jcimSource.realCache.integration.test.ts",
+  "tests/publicSourceSufficiencyMatrixV2.test.ts",
+];
+
+function runRealPublicCacheStep(root, proofDir) {
+  const name = "05b_real_public_cache";
+  const logPath = path.join(proofDir, `${name}.log`);
+  const realPublicCacheDir = process.env.KIA_REAL_PUBLIC_DATA_DIR;
+  if (realPublicCacheDir === undefined || realPublicCacheDir === "") {
+    writeFileSync(logPath, "NOT_RUN\n");
+    return { name, status: 0, logFile: path.basename(logPath) };
+  }
+  return runCommand(root, proofDir, name, "./node_modules/.bin/vitest", realPublicCacheVitestArgs);
+}
+
 function gitOutput(root, args) {
   const result = spawnSync("git", args, { cwd: root, encoding: "utf8" });
   if (result.status !== 0) return "";
@@ -220,7 +238,9 @@ function runPhase(args) {
 
   for (const step of validationSteps) {
     let stepResult;
-    if (step.shell) {
+    if (step.run) {
+      stepResult = step.run(args.root, proofDir);
+    } else if (step.shell) {
       stepResult = runShell(args.root, proofDir, step.name, step.shell);
     } else {
       const extraEnv = step.env ? step.env(proofDir, args.phase) : {};
