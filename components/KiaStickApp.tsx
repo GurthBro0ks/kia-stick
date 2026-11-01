@@ -3,20 +3,28 @@
 import {
   AlertTriangle,
   Archive,
+  Calendar,
   CheckCircle2,
   ChevronRight,
   ClipboardList,
   Download,
   FileSearch,
-  MessageSquareText,
+  FileText,
+  Folder,
+  Globe,
+  Mic,
   Plus,
   Printer,
   RotateCcw,
   Save,
+  Send,
+  Shield,
   ShieldCheck,
+  UserRound,
+  Wrench,
 } from "lucide-react";
 import { WorkProductPanel } from "./WorkProductPanel";
-import { AppShell, type ShellView } from "./AppShell";
+import { AppShell, PINNED_PROMPTS, type ShellView } from "./AppShell";
 import React, { useEffect, useMemo, useRef, useState } from "react";
 import { cannedQuestions, type AnswerResult } from "@/lib/answerGovernor";
 import {
@@ -445,6 +453,28 @@ export function jcimTabEffect(loader: JcimSourceLoader): void {
   loader.ensureLoaded();
 }
 
+const SUGGESTED_CARDS = [
+  { title: "Annual Leave", question: PINNED_PROMPTS[0].question, icon: Calendar, tone: "leave" },
+  { title: "Investigative Interviews", question: PINNED_PROMPTS[1].question, icon: UserRound, tone: "interview" },
+  { title: "Discipline", question: PINNED_PROMPTS[2].question, icon: Shield, tone: "discipline" },
+  { title: "Weingarten Rights", question: "Explain my Weingarten rights in simple terms.", icon: ShieldCheck, tone: "weingarten" },
+  { title: "Build a Grievance", question: "Help me outline a Step 1 grievance.", icon: FileText, tone: "grievance" },
+  { title: "Steward Packet", question: "Create a complete packet for this issue.", icon: Folder, tone: "packet" },
+] as const;
+
+function publicSourceHeaderStatus(
+  cba: { status: string },
+  nlrb: { status: string },
+  jcim: { status: string },
+): { label: string; tone: "ok" | "pending" | "warn" } {
+  const statuses = [cba.status, nlrb.status, jcim.status];
+  if (statuses.some((status) => status === "loading")) return { label: "Checking sources", tone: "pending" };
+  const ready = statuses.filter((status) => status === "available").length;
+  if (ready === 3) return { label: "3 public sources ready", tone: "ok" };
+  if (ready === 0) return { label: "Public sources unavailable", tone: "warn" };
+  return { label: `${ready} of 3 public sources ready`, tone: "warn" };
+}
+
 export function KiaStickApp({ runtimeVersion = clientVersion }: { runtimeVersion?: RuntimeVersion }) {
   const [tab, setTab] = useState<Tab>("chat");
   const [mode, setMode] = useState<Mode>("Strict Research");
@@ -483,6 +513,8 @@ export function KiaStickApp({ runtimeVersion = clientVersion }: { runtimeVersion
   const chatScrollRef = useRef<HTMLElement>(null);
   const composerToolsRef = useRef<HTMLDetailsElement>(null);
   const composerInputRef = useRef<HTMLTextAreaElement>(null);
+  const composerStubDialog = useRef<HTMLDialogElement>(null);
+  const [composerStub, setComposerStub] = useState<"add" | "voice" | null>(null);
   const conversationScrollTop = useRef(0);
   const promptShortcuts = useMemo(
     () => chatSourceMode === "cba"
@@ -505,6 +537,11 @@ export function KiaStickApp({ runtimeVersion = clientVersion }: { runtimeVersion
     if (composerToolsRef.current) composerToolsRef.current.open = false;
     composerInputRef.current?.focus();
   }
+
+  useEffect(() => {
+    if (composerStub) composerStubDialog.current?.showModal();
+    else composerStubDialog.current?.close();
+  }, [composerStub]);
 
   useEffect(() => {
     if (chatScrollRef.current) {
@@ -1124,7 +1161,7 @@ export function KiaStickApp({ runtimeVersion = clientVersion }: { runtimeVersion
   const panelVisible = tab === "chat" && workPanelOpen;
 
   return (
-    <AppShell view={tab} onNavigate={setTab} onNewConversation={startNewChat} conversationTitle={thread.title} displayVersion={runtimeVersion.displayVersion}>
+    <AppShell view={tab} onNavigate={setTab} onNewConversation={startNewChat} onPinQuestion={selectPromptShortcut} conversationTitle={thread.title} displayVersion={runtimeVersion.displayVersion} sourceStatus={publicSourceHeaderStatus(cbaSourceState, publicSourceState, jcimSourceState)}>
       <div className="answerAnnouncement" aria-live="polite" aria-atomic="true">{answerAnnouncement}</div>
       <div className="fakeNotice">
         <AlertTriangle size={16} />
@@ -1147,19 +1184,8 @@ export function KiaStickApp({ runtimeVersion = clientVersion }: { runtimeVersion
             <section className="chatThread" aria-label="Current conversation">
               {thread.messages.length === 0 && (
                 <div className="emptyChatState">
-                  <span className="messageLabel">Ask KIA Stick</span>
-                  <p>Ask a question and follow the citations. Use fake samples or the three bounded public sources (the APWU-USPS contract, JCIM joint interpretation, and NLRB general guidance); keep private information out.</p>
-                  <div className="firstUseExamples">
-                    <span className="sectionKicker">Try an example</span>
-                    <div className="firstUsePromptRail" aria-label="Example questions">
-                      {promptShortcuts.slice(0, 3).map((prompt) => (
-                        <button className="promptChip" key={prompt} type="button" onClick={() => selectPromptShortcut(prompt)}>
-                          {prompt}
-                          <ChevronRight size={14} />
-                        </button>
-                      ))}
-                    </div>
-                  </div>
+                  <h2 className="askTitle">Ask <span>KIA</span> Stick</h2>
+                  <p>Get contract answers, prepare your steward work, and create source-backed packets in plain English.</p>
                 </div>
               )}
               {thread.messages.map((message, index) =>
@@ -1328,7 +1354,7 @@ export function KiaStickApp({ runtimeVersion = clientVersion }: { runtimeVersion
             <textarea
               ref={composerInputRef}
               aria-label="Message KIA Stick"
-              placeholder="Message KIA Stick..."
+              placeholder="Ask a question about your contract, rights, or grievance preparation..."
               value={draft}
               onChange={(event) => setDraft(event.target.value)}
               onKeyDown={(event) => {
@@ -1339,8 +1365,10 @@ export function KiaStickApp({ runtimeVersion = clientVersion }: { runtimeVersion
               }}
             />
             <div className="composerFooter">
+              <button className="composerIconButton" type="button" aria-label="Add" onClick={() => setComposerStub("add")}><Plus size={18} /></button>
+              <button className="composerTextButton" type="button" onClick={() => setTab("sources")}><Globe size={16} />Search Sources</button>
               <details className="composerTools" ref={composerToolsRef}>
-                <summary>Tools</summary>
+                <summary><Wrench size={16} />Tools</summary>
                 <details className="composerDisclosure">
                   <summary>Response options</summary>
                   <div className="visibleLaneControl" aria-label="Chat answer lane policy">
@@ -1395,18 +1423,37 @@ export function KiaStickApp({ runtimeVersion = clientVersion }: { runtimeVersion
                   </div>
                 </details>
               </details>
+              <button className="composerIconButton composerMic" type="button" aria-label="Voice input" onClick={() => setComposerStub("voice")}><Mic size={18} /></button>
               <div className="chatActions">
-                <button className="button primary" type="button" disabled={!draft.trim() || isSending} onClick={() => sendMessage()}>
-                  <MessageSquareText size={17} />
-                  {isSending ? "Sending" : "Send"}
+                <button className="button primary iconOnly sendButton" type="button" aria-label={isSending ? "Sending" : "Send"} disabled={!draft.trim() || isSending} onClick={() => sendMessage()}>
+                  <Send size={17} />
                 </button>
               </div>
             </div>
+            <dialog ref={composerStubDialog} className="stubDialog" aria-label={composerStub === "voice" ? "Voice input is not ready." : "Adding files is not ready."} onClose={() => setComposerStub(null)}>
+              <p>{composerStub === "voice" ? "Voice input is not ready." : "Adding files is not ready."}</p>
+              <button type="button" onClick={() => setComposerStub(null)}>Close</button>
+            </dialog>
             {saveNotice && (
               <div className={`saveNotice ${saveNotice.status === "duplicate" ? "warning" : "ok"}`} role="status" aria-live="polite">
                 {saveNotice.text}
               </div>
             )}
+          </div>
+        </section>
+      )}
+      {tab === "chat" && thread.messages.length === 0 && (
+        <section className="suggestedByKia" aria-label="Suggested by KIA">
+          <h2>Suggested by KIA</h2>
+          <div className="suggestedGrid">
+            {SUGGESTED_CARDS.map((card) => {
+              const Icon = card.icon;
+              return <button key={card.title} className="suggestedCard" type="button" onClick={() => sendMessage(card.question)}>
+                <span className={`suggestedIcon suggestedIcon-${card.tone}`}><Icon size={18} /></span>
+                <span className="suggestedCardBody"><strong>{card.title}</strong><span>{card.question}</span></span>
+                <ChevronRight size={16} />
+              </button>;
+            })}
           </div>
         </section>
       )}

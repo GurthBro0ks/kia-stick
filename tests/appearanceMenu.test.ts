@@ -22,12 +22,12 @@ describe("operator QA appearance and menu fixes", () => {
       expect(footer.match(/aria-label="Menu"/g)).toHaveLength(1);
       expect(footer.match(/>Settings<\/button>/g)).toHaveLength(1);
       expect(footer).not.toContain("secondarySettings");
-      for (const text of ["Appearance", "Light", "Dark", "System", "Advanced / Tools", "Upload", "Vault", "Import", "Version / About"])
+      for (const text of ["Appearance", "Hybrid", "Light", "Dark", "System", "Advanced / Tools", "Upload", "Vault", "Import", "Version / About"])
         expect(footer).toContain(text);
     }
   });
 
-  it.each(["light", "dark", "system", null, "", "invalid", "LIGHT"])("bootstraps %s consistently on every route", (stored) => {
+  it.each(["hybrid", "light", "dark", "system", null, "", "invalid", "LIGHT"])("bootstraps %s consistently on every route", (stored) => {
     const dataset: Record<string, string> = {};
     const storage = { getItem: vi.fn(() => stored), setItem: vi.fn() };
     vi.stubGlobal("window", { sessionStorage: storage });
@@ -43,12 +43,12 @@ describe("operator QA appearance and menu fixes", () => {
     const storage = { getItem: vi.fn(() => { throw new Error("unavailable"); }), setItem: vi.fn() };
     vi.stubGlobal("window", { sessionStorage: storage });
     vi.stubGlobal("document", { documentElement: { dataset } });
-    for (const value of ["light", "dark", "system"] as const) {
+    for (const value of ["hybrid", "light", "dark", "system"] as const) {
       applyAppearance(value);
       expect(dataset.theme).toBe(value);
       expect(storage.setItem).toHaveBeenLastCalledWith(APPEARANCE_KEY, value);
     }
-    expect(storage.setItem).toHaveBeenCalledTimes(3);
+    expect(storage.setItem).toHaveBeenCalledTimes(4);
     expect(readAppearance()).toBe("system");
     runInNewContext(APPEARANCE_INIT_SCRIPT, { sessionStorage: storage, document: { documentElement: { dataset } } });
     expect(dataset.theme).toBe("system");

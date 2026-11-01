@@ -78,26 +78,27 @@ describe("UX-6 Library and first-use clarity", () => {
     const html = renderToStaticMarkup(React.createElement(KiaStickApp));
     const emptyState = html.slice(html.indexOf('class="emptyChatState"'), html.indexOf('class="composerHeader"'));
 
-    expect(emptyState).toContain("Ask KIA Stick");
-    expect(emptyState).toContain("Try an example");
-    expect(emptyState).toContain('aria-label="Example questions"');
-    expect(emptyState.match(/class="promptChip"/g)).toHaveLength(3);
-    expect(appSource).toContain("promptShortcuts.slice(0, 3).map");
+    expect(emptyState).toContain("Ask");
+    expect(emptyState).toContain("KIA");
+    expect(emptyState).toContain("Get contract answers, prepare your steward work, and create source-backed packets in plain English.");
     expect(appSource).toContain("{promptShortcuts.map((prompt) => (");
-    expect(appSource.match(/onClick=\{\(\) => selectPromptShortcut\(prompt\)\}/g)).toHaveLength(2);
+    expect(appSource).toContain("onClick={() => selectPromptShortcut(prompt)}");
+    expect(appSource).toContain("onClick={() => sendMessage(card.question)}");
     const handler = appSource.slice(appSource.indexOf("function selectPromptShortcut"), appSource.indexOf("useEffect", appSource.indexOf("function selectPromptShortcut")));
     expect(handler).toContain("setDraft(prompt)");
     expect(handler).toContain("composerInputRef.current?.focus()");
     expect(handler).not.toContain("sendMessage");
   });
 
-  it("labels Pinned and Projects as unavailable without adding controls or storage", () => {
-    expect(shellSource).toContain('<div className="sidebarSectionLabel">Pinned</div><p>Coming later</p>');
-    expect(shellSource).toContain('<div className="sidebarSectionLabel">Projects</div><p>Coming later</p>');
+  it("fills the composer from pinned questions and does not invent projects or case files", () => {
+    expect(shellSource).toContain('<div className="sidebarSectionLabel">Pinned</div>');
+    expect(shellSource).toContain("onPinQuestion?.(item.question)");
+    expect(shellSource).not.toContain("Coming later");
     expect(shellSource).not.toContain('<h2>Pinned</h2>');
     expect(shellSource).not.toContain('<h2>Projects</h2>');
     expect(shellSource).not.toContain("Nothing pinned yet");
     expect(shellSource).not.toContain("No projects yet");
     expect(shellSource).not.toContain("localStorage");
+    expect(shellSource).not.toContain("case file");
   });
 });
